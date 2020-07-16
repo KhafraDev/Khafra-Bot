@@ -1,3 +1,7 @@
+# Khafra
+Error/*
+build/*
+
 # Logs
 logs
 *.log

@@ -1,0 +1,26 @@
+{
+  "name": "khafra-bot",
+  "version": "1.0.0",
+  "description": "Synergism Discord Bot",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "typescript": "^3.9.6"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.23"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/khafra-bot.git"
+  },
+  "author": "Khafra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/khafra-bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/khafra-bot#readme"
+}
