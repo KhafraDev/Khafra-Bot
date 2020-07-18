@@ -33,7 +33,8 @@ class KhafraError extends Error {
         const filePath = join(KhafraError.ErrorDir, fileName);
 
         if(existsSync(filePath)) {
-            throw new KhafraError(this.name, this.description, this.occurance);
+            // not KhafraError because recursion
+            throw new Error(this.name + ' ' + this.description + ' ' + this.occurance);
         }
 
         writeFile(filePath, `[${this.name}]: "${this.description}" ${this.occurance ?? ''}`, () => {

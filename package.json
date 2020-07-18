@@ -4,6 +4,8 @@
   "description": "Synergism Discord Bot",
   "main": "index.js",
   "dependencies": {
+    "@types/better-sqlite3": "^5.4.0",
+    "better-sqlite3": "^7.1.0",
     "discord.js": "^12.2.0",
     "typescript": "^3.9.6"
   },

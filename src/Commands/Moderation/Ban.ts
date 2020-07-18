@@ -75,7 +75,7 @@ export default class extends Command {
             Put 0 as time to keep all messages.
             \`\`${this.name} @user 1d12h1800m trolling\`\`
             \`\`${this.name} @user 3d900m18h for a good reason!\`\`
-            \`\`${this.name  } @user invalid for a bad reason\`\` -> 0 days of messages deleted
+            \`\`${this.name} @user invalid for a bad reason\`\` -> 0 days of messages deleted
             `);
 
         return embed;

@@ -6,7 +6,8 @@ export default class extends Command {
         super(
             'channel',
             'Get info on a specified channel!',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ]
+            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ 'chan', 'channelinfo' ]
         );
     }
 

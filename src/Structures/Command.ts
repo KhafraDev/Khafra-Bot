@@ -4,7 +4,8 @@ import {
     Permissions, 
     PermissionString,
     MessageEmbed,
-    TextChannel
+    TextChannel,
+    Snowflake
 } from 'discord.js';
 
 class Command {
@@ -44,6 +45,16 @@ class Command {
     }
 
     /**
+     * Check individual perms for user, not bot perms.
+     * @param message Message from API
+     * @param perms Array of permissions the user must have
+     */
+    userHasPerms(message: Message, perms: PermissionString[]) {
+        const memberPerms = message.member.permissions;
+        return perms.every(perm => memberPerms.has(perm));
+    }
+
+    /**
      * initialize the command
      */
     init(_: Message, __: string[]): any {
@@ -60,6 +71,10 @@ class Command {
         embed.setDescription(reason);
 
         return embed;
+    }
+
+    isBotOwner(id: Snowflake): boolean {
+        return id === '267774648622645249';
     }
 
     /**

@@ -6,7 +6,8 @@ export default class extends Command {
         super(
             'user',
             'Get info about a user.',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ]
+            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ 'userinfo' ]
         );
     }
 

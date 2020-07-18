@@ -1,4 +1,4 @@
-import KhafraError from '../Error';
+import KhafraError from '../Structures/Error';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { EOL } from 'os';

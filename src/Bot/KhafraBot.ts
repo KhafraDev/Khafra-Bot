@@ -1,7 +1,7 @@
 import Command from '../Structures/Command';
 import KhafraError from '../Structures/Error';
 
-import { Client, ClientOptions } from 'discord.js';
+import { Client, ClientOptions, Snowflake } from 'discord.js';
 import { join } from 'path';
 import { readdirSync, statSync } from 'fs';
 
@@ -53,7 +53,8 @@ class KhafraClient extends Client {
         await this.loadCommands([
             'Fun',
             'Moderation',
-            'Server'
+            'Server',
+            'Settings'
         ]);
         await this.login();
 

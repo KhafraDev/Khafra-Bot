@@ -6,7 +6,8 @@ export default class extends Command {
         super(
             'server',
             'Get info about the server!',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ]
+            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ 'serverinfo' ]
         );
     }
 
