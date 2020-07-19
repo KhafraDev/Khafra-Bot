@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, GuildMember, MessageEmbed } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -12,19 +13,12 @@ export default class extends Command {
 
     async init(message: Message, args: string[]): Promise<Message> {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
-            return message.channel.send(this.failEmbed(`
-            Required at least 1 argument, received 0!
-
-            Examples:
-            \`\`kick @user for trolling\`\`
-            \`\`kick 1234567891234567\`\`
-            `));
+            return message.channel.send(Embed.missing_args(1, this.name, [
+                '@user for trolling',
+                '1234567891234567'
+            ]));
         }
 
         let member: GuildMember;
@@ -32,7 +26,7 @@ export default class extends Command {
             try {
                 member = await message.guild.members.fetch(args[0])
             } catch {
-                return message.channel.send(this.failEmbed(`
+                return message.channel.send(Embed.fail(`
                 *${args[0]}* is not a valid member!
 
                 Examples:
@@ -45,7 +39,7 @@ export default class extends Command {
         }
 
         if(!member.kickable) {
-            return message.channel.send(this.failEmbed('Member is not kickable!'));
+            return message.channel.send(Embed.fail('Member is not kickable!'));
         }
 
         await member.kick(args.slice(1).join(' '));
@@ -53,9 +47,8 @@ export default class extends Command {
     }
 
     formatEmbed(user: GuildMember, reason?: string): MessageEmbed {
-        const embed = new MessageEmbed()
-            .setDescription(`**Successfully** kicked ${user}${reason.length ? ' for ' + reason : ''}!`)
-
+        const embed = Embed.success(`**Successfully** kicked ${user}${reason.length ? ' for ' + reason : ''}!`);
+        
         return embed;
     }
 }

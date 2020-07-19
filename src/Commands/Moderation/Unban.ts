@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, User, MessageEmbed } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -12,28 +13,21 @@ export default class extends Command {
 
     async init(message: Message, args: string[]): Promise<Message> {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
-        } else if(args.length === 0) {
-            return message.channel.send(this.failEmbed(`
-            Missing at least 1 argument!
-
-            Examples:
-            \`\`unban 1234567891234567 for apologizing\`\`
-            \`\`unban 1234567891234567\`\`
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
+        } else if(args.length < 1) {
+            return message.channel.send(Embed.missing_args(1, this.name, [
+                '1234567891234567 for apologizing',
+                '9876543217654321'
+            ]));
         }
 
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
         let user: User;
         try {
             user = await message.client.users.fetch(id);
-            await message.guild.members.unban(user, reason.join(' '));
+            await message.guild.members.unban(user, (reason || []).join(' '));
         } catch(e) {
-            return message.channel.send(this.failEmbed(`
+            return message.channel.send(Embed.fail(`
             Invalid User!
             \`\`${e}\`\`
             `));
@@ -43,10 +37,9 @@ export default class extends Command {
     }
 
     formatEmbed(user: User, reason?: string): MessageEmbed {
-        const embed = new MessageEmbed()
-            .setDescription(`
-            **Successfully** unbanned ${user}${reason.length ? ' for \`\`' + reason : '\`\`'}!
-            `);
+        const embed = Embed.success(`
+        **Successfully** unbanned ${user}${reason.length ? ' for \`\`' + reason + '\`\`' : ''}!
+        `);
 
         return embed;
     }

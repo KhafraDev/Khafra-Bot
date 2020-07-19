@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, TextChannel, MessageEmbed } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -12,24 +13,17 @@ export default class extends Command {
 
     async init(message: Message, args: string[]): Promise<Message> {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // clear [amount] -> 1 arg meeded
-            return message.channel.send(this.failEmbed(`
-            1 argument is required!
-
-            Some examples to help you start:
-            \`\`${this.name} 100\`\`
-            \`\`${this.name} 250\`\` -> 200 messages deleted
-            `));
+            return message.channel.send(Embed.missing_args(1, this.name, [
+                '100',
+                '250'
+            ]));
         } 
         
-        const toDelete = parseInt(args.shift());
+        const toDelete = +args.shift();
         if(isNaN(toDelete)) {
-            return message.channel.send(this.failEmbed(`
+            return message.channel.send(Embed.fail(`
             Received: ${toDelete}, this command requires a number!
 
             Example: \`\`${this.name} 100\`\`
@@ -44,7 +38,7 @@ export default class extends Command {
     formatEmbed(message: Message, deleted: number): MessageEmbed {
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
-        const embed = new MessageEmbed()
+        const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)

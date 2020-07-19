@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, MessageEmbed } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -13,32 +14,26 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(!message.member.bannable) {
-            return message.channel.send(this.failEmbed('Member is not bannable!'));
+            return message.channel.send(Embed.fail('Member is not bannable!'));
         } else if(message.mentions.members.size < 1) {
-            return message.channel.send(this.failEmbed('No users mentioned!'));
+            return message.channel.send(Embed.fail('No users mentioned!'));
         } else if(args.length < 3) { // ban @user 3d1h trolling -> 3+ args
-            return message.channel.send(this.failEmbed(`
-            3 arguments are required!
-
-            \`\`${this.name} @user 1d12h1800m for a good reason\`\`
-            \`\`${this.name} @user 0 bye!\`\`
-            `))
+            return message.channel.send(Embed.missing_args(3, this.name, [
+                '@user 1d12h1800m for a good reason',
+                '@user 0 bye!'
+            ]));
         }
 
         const [ user, time, ...reason ] = args;
         const realTime = this.parseTime(time) ?? 0;
         if(user.replace(/[^\d+]/g, '') !== message.mentions.members.first().toString().replace(/[^\d+]/g, '')) {
-            return message.channel.send(this.failEmbed('User was not the same as mentioned!'));
+            return message.channel.send(Embed.fail('User was not the same as mentioned!'));
         }
 
         await message.mentions.members.first().ban({
-            days: realTime,
+            days: realTime > 14 ? 14 : realTime,
             reason: (reason || []).join(' ')
         });
 
@@ -64,7 +59,7 @@ export default class extends Command {
     formatEmbed(message: Message, user: string, time: number, reason: string): MessageEmbed {
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
-        const embed = new MessageEmbed()
+        const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)

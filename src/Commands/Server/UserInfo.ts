@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, MessageEmbed, GuildMember, Activity } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -13,17 +14,13 @@ export default class extends Command {
 
     async init(message: Message, args: string[]): Promise<Message> {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
         }
 
         return message.channel.send(await this.formatEmbed(message, args.shift()));
     }
 
-    async formatEmbed(message: Message, id): Promise<MessageEmbed> {
+    async formatEmbed(message: Message, id: string): Promise<MessageEmbed> {
         let member: GuildMember; // = message.mentions.members?.first() ?? message.member;
         if(id && !message.mentions.members.first()) {
             try {
@@ -36,7 +33,7 @@ export default class extends Command {
         }
         const perms = member.permissions.toArray().join(', ');
 
-        const embed = new MessageEmbed()
+        const embed = Embed.success()
             .setDescription(`
             ${member.displayName} on *${member.guild.name}*.
             ${this.formatPresence(member.presence.activities)}

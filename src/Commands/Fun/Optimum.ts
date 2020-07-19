@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
-import { Message, MessageEmbed } from 'discord.js';
+import Embed from '../../Structures/Embed';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {
@@ -12,7 +13,7 @@ export default class extends Command {
     }
 
     init(message: Message): Promise<Message> {
-        const embed = new MessageEmbed()
+        const embed = Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`
             Reviews by *real* people:

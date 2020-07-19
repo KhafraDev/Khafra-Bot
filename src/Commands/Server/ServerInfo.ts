@@ -1,5 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, MessageEmbed, GuildEmojiManager } from 'discord.js';
+import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
@@ -13,11 +14,7 @@ export default class extends Command {
 
     init(message: Message): Promise<Message> {        
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.failEmbed(`
-            One of us doesn't have the needed permissions!
-
-            Both of us must have \`\`${this.permissions.join(', ')}\`\` permissions to use this command!
-            `));
+            return message.channel.send(Embed.missing_perms(this.permissions));
         }
 
         return message.channel.send(this.formatEmbed(message));
@@ -27,13 +24,13 @@ export default class extends Command {
         const guild = message.guild;
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
-        const embed = new MessageEmbed()
+        const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)
             .setTimestamp()
             .setThumbnail(guild.bannerURL())
             .setDescription(`
             *${guild.name}*
-            \`\`${guild.description ?? 'No description set'}\`\`
+            \`\`${guild.description?.length ? guild.description : 'No description set'}\`\`
             `)
             .addField('**ID:**', guild.id, true)
             .addField('**Large:**', guild.large ? 'Yes' : 'No', true)

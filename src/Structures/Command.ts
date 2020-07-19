@@ -62,15 +62,11 @@ class Command {
     }
 
     /**
-     * send a message if an operation fails!
-     * @param reason fail reason
+     * Format an embed used for a successful command.
+     * @param params 
      */
-    failEmbed(reason: string): MessageEmbed {
-        const embed = new MessageEmbed();
-        embed.setColor('#FF0000');
-        embed.setDescription(reason);
-
-        return embed;
+    formatEmbed(...params: any): MessageEmbed | Promise<MessageEmbed> | any {
+        new KhafraError('formatEmbed', 'called on class without method!');
     }
 
     isBotOwner(id: Snowflake): boolean {
