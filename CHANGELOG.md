@@ -17,3 +17,10 @@
 * GuildSettings: react to a message for a role. New message, old message, guild emoji, unicode emoji. Tweak this setting to your liking.
 * Include typings for twemoji-parser.
 * Remove inferred return types, add in other types.
+
+# v1.0.0~beta3
+* Ban now accepts a mention or a user's ID.
+* Fixed a few permission issues.
+* Better way of getting a user's avatar.
+* Default permissions for commands are automatically added.
+* GuildSettings: react roles are now stable, and many issues have been resolved.

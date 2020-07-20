@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'user',
             'Get info about a user.',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ /* No extra perms needed */ ],
             [ 'userinfo' ]
         );
     }
@@ -41,7 +41,7 @@ export default class extends Command {
             Permissions: 
             \`\`${perms}\`\`
             `)
-            .setThumbnail(member.user.displayAvatarURL() ?? member.user.defaultAvatarURL)
+            .setThumbnail(member.user.displayAvatarURL())
             .addField('**Tag:**',        member.user.tag, true)
             .addField('**Role Color:**', member.displayHexColor, true)
             .addField('**ID:**',         member.id, true)

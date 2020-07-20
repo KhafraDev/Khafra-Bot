@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'channel',
             'Get info on a specified channel!',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ /* No extra perms needed */ ],
             [ 'chan', 'channelinfo' ]
         );
     }
@@ -21,7 +21,7 @@ export default class extends Command {
     }
 
     async formatEmbed(message: Message, id: string): Promise<MessageEmbed> {
-        const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
+        const icon = message.client.user.displayAvatarURL();
         let channel: TextChannel;
         if(id && message.mentions.channels.size === 0) {
             try {

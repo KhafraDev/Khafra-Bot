@@ -24,7 +24,10 @@ class Command {
     ) {
         this.name = name;
         this.description = description;
-        this.permissions = permissions;
+        this.permissions = [].concat(
+            [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS, Permissions.FLAGS.VIEW_CHANNEL ], // required permissions
+            permissions
+        );
         this.aliases = aliases ?? [];
     }
 
@@ -84,11 +87,15 @@ class Command {
 
         const perms = message.guild.me.permissions;
         const channelPerms = (message.channel as TextChannel).permissionsFor(message.guild.me);
-        if(
+        if(perms.has(Permissions.FLAGS.ADMINISTRATOR)) { 
+            return true;
+        } else if(
             !perms.has(Permissions.FLAGS.SEND_MESSAGES)         || // guild perms
             !perms.has(Permissions.FLAGS.EMBED_LINKS)           || // guild perms
+            !perms.has(Permissions.FLAGS.VIEW_CHANNEL)          || // guild perms
             !channelPerms.has(Permissions.FLAGS.SEND_MESSAGES)  || // channel perms
-            !channelPerms.has(Permissions.FLAGS.EMBED_LINKS)       // channel perms
+            !channelPerms.has(Permissions.FLAGS.EMBED_LINKS)    || // channel perms
+            !channelPerms.has(Permissions.FLAGS.VIEW_CHANNEL)      // channel perms
         ) {
             return false;
         }

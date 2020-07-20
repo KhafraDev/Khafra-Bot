@@ -8,7 +8,7 @@ export default class extends Command {
         super(
             'create',
             'Adds the guild to server settings.',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ /* No extra perms needed */ ],
             [ 'add' ]
         );
     }

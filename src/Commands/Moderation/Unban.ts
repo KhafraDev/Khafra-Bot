@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'unban',
             'Unban a user from the guild.',
-            [ 'SEND_MESSAGES', 'BAN_MEMBERS', 'EMBED_LINKS' ]
+            [ 'BAN_MEMBERS' ]
         );
     }
 

@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'clear', 
             'Clear messages from a given channel.', 
-            [ 'MANAGE_MESSAGES', 'SEND_MESSAGES', 'EMBED_LINKS' ]
+            [ 'MANAGE_MESSAGES' ]
         );
     }
 
@@ -36,7 +36,7 @@ export default class extends Command {
     }
 
     formatEmbed(message: Message, deleted: number) {
-        const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
+        const icon = message.client.user.displayAvatarURL();
 
         const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)

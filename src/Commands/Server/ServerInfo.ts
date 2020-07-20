@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'server',
             'Get info about the server!',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ /* No extra perms needed */ ],
             [ 'serverinfo' ]
         );
     }
@@ -22,7 +22,7 @@ export default class extends Command {
 
     formatEmbed(message: Message) {
         const guild = message.guild;
-        const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
+        const icon = message.client.user.displayAvatarURL();
 
         const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)

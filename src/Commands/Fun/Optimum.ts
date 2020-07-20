@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'optimum',
             'See the worst ISP in the U.S.',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ /* No extra perms needed */ ],
             [ 'altice' ]
         );
     }

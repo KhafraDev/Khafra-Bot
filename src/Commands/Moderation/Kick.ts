@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'kick',
             'Kick a member from the server.',
-            [ 'SEND_MESSAGES', 'KICK_MEMBERS', 'EMBED_LINKS' ]
+            [ 'KICK_MEMBERS' ]
         );
     }
 

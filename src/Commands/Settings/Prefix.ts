@@ -8,7 +8,7 @@ export default class extends Command {
         super(
             'prefix',
             'Change the prefix for the current guild.',
-            [ 'SEND_MESSAGES', "EMBED_LINKS" ]
+            [ /* No extra perms needed */ ]
         );
     }
 

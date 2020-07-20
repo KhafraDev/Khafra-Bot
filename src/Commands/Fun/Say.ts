@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'say', 
             'Have KhafraBot say something!', 
-            [ 'SEND_MESSAGES' ],
+            [ /* No extra perms needed */ ],
             [ 'speak', 'talk', 'tell' ]
         );
     }

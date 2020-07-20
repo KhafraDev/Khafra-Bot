@@ -17,7 +17,7 @@ export default class extends Command {
         super(
             'messagereact',
             'GuildSettings: give a user a role when they react to a given message.',
-            [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES' ],
+            [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
             [ 'messagerole' ]
         );
     }
@@ -73,20 +73,14 @@ export default class extends Command {
             } else if(content.length === 0) {
                 return message.channel.send(Embed.fail('A message must be provided for new messages!'));
             }
-
-            const wherePerms = (where as TextChannel).permissionsFor(message.guild.me);
-            if(!([ 'SEND_MESSAGES', 'EMBED_LINKS' ] as PermissionString[]).every(perm => wherePerms.has(perm))) {
-                return message.channel.send(Embed.fail(`
-                I am lacking either \`\`SEND_MESSAGES or EMBED_LINKS\`\` permission(s) in ${where}!
-                `));
-            }
         }
 
         const whereChannel = where instanceof Channel ? (where as TextChannel) : (where.channel as TextChannel);
         const wherePerms = whereChannel.permissionsFor(message.guild.me);
-        if(!([ 'SEND_MESSAGES', 'EMBED_LINKS' ] as PermissionString[]).every(perm => wherePerms.has(perm))) {
+        const permsNeeded = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ] as PermissionString[];
+        if(!permsNeeded.every(perm => wherePerms.has(perm))) {
             return message.channel.send(Embed.fail(`
-            I am lacking either \`\`SEND_MESSAGES or EMBED_LINKS\`\` permission(s) in ${whereChannel}!
+            I am lacking \`\`${permsNeeded.join(', ')}\`\` permission(s) in ${whereChannel}!
             `));
         } 
 
@@ -116,9 +110,9 @@ export default class extends Command {
 
         let sent_id: string;
         if(where instanceof Channel) {
-            const messageSent = await (where as TextChannel).send(Embed.success(content.join(' ')));
-            messageSent.react(Emoji);
-
+            const messageSent = await whereChannel.send(Embed.success(content.join(' ')));
+            await messageSent.react(Emoji);
+            
             sent_id = messageSent.id;
         } else {
             where.react(Emoji);

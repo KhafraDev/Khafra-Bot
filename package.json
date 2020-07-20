@@ -7,7 +7,7 @@
     "@types/better-sqlite3": "^5.4.0",
     "@types/twemoji-parser": "^12.1.0",
     "better-sqlite3": "^7.1.0",
-    "discord.js": "^12.2.0",
+    "discord.js": "github:discordjs/discord.js",
     "twemoji-parser": "^13.0.0",
     "typescript": "^3.9.6"
   },
@@ -16,7 +16,7 @@
   },
   "scripts": {
     "dev:build": "node scripts/build && npx tsc && node build/index",
-    "prod:build": "npx tsc --clean",
+    "prod:build": "npx tsc && node build/index",
     "run": "node build/index"
   },
   "repository": {

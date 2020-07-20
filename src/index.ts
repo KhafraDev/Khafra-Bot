@@ -5,7 +5,7 @@ import db from './Structures/Database';
 
 import loadEnv from './Helpers/load.env';
 import { dbHelpers, react_messages } from './Helpers/GuildSettings';
-import { PermissionString, Role } from 'discord.js';
+import { Permissions } from 'discord.js';
 loadEnv();
 
 const client = new KhafraClient({
@@ -54,7 +54,7 @@ client.on('message', message => {
 
     if(settings?.reacts) {
         const botPerms = message.guild.me.permissions;
-        const hasPerms = [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ].every((p: PermissionString) => botPerms.has(p));
+        const hasPerms = [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.READ_MESSAGE_HISTORY ].every(p => botPerms.has(p));
         if(!hasPerms) {
             return;
         }
@@ -102,8 +102,11 @@ client.on('messageReactionAdd', async (reaction, user) => {
     }
 
     const filtered: any[] = guildSettings.react_messages.filter((r: react_messages) => {
-        const emoji = reaction.message.client.emojis.resolve(r.emoji);
-        if(r.id === reaction.message.id && (emoji?.id === r.emoji || emoji.toString() === r.emoji)) {
+        const emoji = (reaction.message.client.emojis.resolve(r.emoji) ?? r.emoji) as any;
+        if(
+            (emoji === r.emoji || emoji?.id === r.emoji) &&
+            r.id === reaction.message.id
+        ) {
             return r;
         }
     });
@@ -112,15 +115,9 @@ client.on('messageReactionAdd', async (reaction, user) => {
         return;
     }
 
-    let role: Role;
-    try {
-        role = await reaction.message.guild.roles.fetch(filtered[0].role);
-    } catch {
-        return;
-    }
-
-    if(reaction.message.member.manageable) {
-        return reaction.message.member.roles.add(role);
+    const member = await reaction.message.guild.members.fetch(user.id);
+    if(member.manageable) {
+        return member.roles.add(filtered[0].role, 'Reacted');
     }
 });
 

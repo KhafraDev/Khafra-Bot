@@ -9,7 +9,7 @@ export default class extends Command {
         super(
             'randomreact',
             'GuildSettings: react to a given user\'s message with a static emoji.',
-            [ 'EMBED_LINKS', 'SEND_MESSAGES', 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
+            [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
             [ 'react' ]
         );
     }

@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message } from 'discord.js';
+import { Message, GuildMember } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -7,7 +7,7 @@ export default class extends Command {
         super(
             'ban',
             'Ban a member from a guild.',
-            [ 'BAN_MEMBERS', 'SEND_MESSAGES', 'EMBED_LINKS' ],
+            [ 'BAN_MEMBERS' ],
             [ 'bna' ]
         );
     }
@@ -17,8 +17,6 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(!message.member.bannable) {
             return message.channel.send(Embed.fail('Member is not bannable!'));
-        } else if(message.mentions.members.size < 1) {
-            return message.channel.send(Embed.fail('No users mentioned!'));
         } else if(args.length < 3) { // ban @user 3d1h trolling -> 3+ args
             return message.channel.send(Embed.missing_args(3, this.name, [
                 '@user 1d12h1800m for a good reason',
@@ -28,20 +26,34 @@ export default class extends Command {
 
         const [ user, time, ...reason ] = args;
         const realTime = this.parseTime(time);
-        if(user.replace(/[^\d+]/g, '') !== message.mentions.members.first().toString().replace(/[^\d+]/g, '')) {
-            return message.channel.send(Embed.fail('User was not the same as mentioned!'));
+        
+        let member: GuildMember;
+        if(!message.mentions.members?.first()) {
+            try {
+                member = await message.guild.members.fetch(user);
+            } catch {
+                return message.channel.send(Embed.fail(`
+                *${user}* is not a valid member!
+
+                Examples:
+                \`\`kick @user for trolling\`\`
+                \`\`kick 1234567891234567\`\`
+                `));
+            }
+        } else {
+            member = message.mentions.members.first();
         }
 
-        await message.mentions.members.first().ban({
+        await member.ban({
             days: realTime > 14 ? 14 : realTime,
             reason: (reason || []).join(' ')
         });
 
-        return message.channel.send(this.formatEmbed(message, user, realTime, (reason || []).join(' ')));
+        return message.channel.send(this.formatEmbed(message, member, realTime, (reason || []).join(' ')));
     }
 
     parseTime(time: string): number {
-        const b = time.match(/\d+[\s+A-z]|\d+.\d+[\s+A-z]/gi);
+        const b = time.match(/\d+[A-z]|\d+.\d+[A-z]/gi);
         const c = b.map(d => {
             const unit = d.replace(/[^A-z]/g, '');
             const time = parseFloat(d.replace(/[^0-9.]/g, ''));
@@ -56,8 +68,8 @@ export default class extends Command {
         return c.every(n => !isNaN(n)) ? Math.round(c.reduce((a, b) => a + b)) : 0;
     }
 
-    formatEmbed(message: Message, user: string, time: number, reason: string) {
-        const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
+    formatEmbed(message: Message, user: GuildMember, time: number, reason: string) {
+        const icon = message.client.user.displayAvatarURL();
 
         const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)

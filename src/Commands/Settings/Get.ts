@@ -8,7 +8,7 @@ export default class extends Command {
         super(
             'get',
             'Get the current guild info from the bot.',
-            [ 'SEND_MESSAGES', 'EMBED_LINKS' ]
+            [ /* No extra perms needed */ ]
         );
     }
 
