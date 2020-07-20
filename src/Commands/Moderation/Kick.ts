@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, GuildMember, MessageEmbed } from 'discord.js';
+import { Message, GuildMember } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -11,7 +11,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]): Promise<Message> {
+    async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
@@ -46,7 +46,7 @@ export default class extends Command {
         return message.channel.send(this.formatEmbed(member, args.slice(1).join(' ')));
     }
 
-    formatEmbed(user: GuildMember, reason?: string): MessageEmbed {
+    formatEmbed(user: GuildMember, reason?: string) {
         const embed = Embed.success(`**Successfully** kicked ${user}${reason.length ? ' for ' + reason : ''}!`);
         
         return embed;

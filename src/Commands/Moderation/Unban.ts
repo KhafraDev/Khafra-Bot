@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, User, MessageEmbed } from 'discord.js';
+import { Message, User } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -11,7 +11,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]): Promise<Message> {
+    async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
@@ -36,7 +36,7 @@ export default class extends Command {
         return message.channel.send(this.formatEmbed(user, reason.join(' ')));
     }
 
-    formatEmbed(user: User, reason?: string): MessageEmbed {
+    formatEmbed(user: User, reason?: string) {
         const embed = Embed.success(`
         **Successfully** unbanned ${user}${reason.length ? ' for \`\`' + reason + '\`\`' : ''}!
         `);

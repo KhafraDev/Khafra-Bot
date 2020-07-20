@@ -1,11 +1,11 @@
 import KhafraClient from './Bot/KhafraBot';
 import Command from './Structures/Command';
 
-import db from './Structures/GuildSettings/Database';
+import db from './Structures/Database';
 
 import loadEnv from './Helpers/load.env';
-import { dbHelpers } from './Structures/GuildSettings/GuildSettings';
-import { PermissionString } from 'discord.js';
+import { dbHelpers, react_messages } from './Helpers/GuildSettings';
+import { PermissionString, Role } from 'discord.js';
 loadEnv();
 
 const client = new KhafraClient({
@@ -14,7 +14,8 @@ const client = new KhafraClient({
         status: 'online'
     },
     messageCacheLifetime: 1800, // defaults to never..
-    messageSweepInterval: 1800  // defaults to never..
+    messageSweepInterval: 1800, // defaults to never..
+    partials: [ 'REACTION', 'MESSAGE', 'USER' ]
 }, process.env.TOKEN);
 
 client.on('ready', () => {
@@ -80,6 +81,47 @@ client.on('message', message => {
     }
 
     return KhafraClient.Commands.get(command).init(message, args);
+});
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    if(reaction.partial) {
+        await reaction.fetch();
+    }
+
+    if(user.partial) {
+        await user.fetch();
+    }
+
+    if(user.id === reaction.message.client.user.id) {
+        return;
+    }
+
+    const guildSettings = dbHelpers.get(reaction.message.guild.id);
+    if(!guildSettings) {
+        return;
+    }
+
+    const filtered: any[] = guildSettings.react_messages.filter((r: react_messages) => {
+        const emoji = reaction.message.client.emojis.resolve(r.emoji);
+        if(r.id === reaction.message.id && (emoji?.id === r.emoji || emoji.toString() === r.emoji)) {
+            return r;
+        }
+    });
+
+    if(filtered.length === 0) {
+        return;
+    }
+
+    let role: Role;
+    try {
+        role = await reaction.message.guild.roles.fetch(filtered[0].role);
+    } catch {
+        return;
+    }
+
+    if(reaction.message.member.manageable) {
+        return reaction.message.member.roles.add(role);
+    }
 });
 
 client.init();

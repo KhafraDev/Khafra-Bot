@@ -1,6 +1,6 @@
 import Command from "../../Structures/Command";
-import { Message, MessageEmbed } from "discord.js";
-import { dbHelpers } from "../../Structures/GuildSettings/GuildSettings";
+import { Message } from "discord.js";
+import { dbHelpers } from "../../Helpers/GuildSettings";
 import Embed from "../../Structures/Embed";
 
 export default class extends Command {
@@ -34,21 +34,12 @@ export default class extends Command {
         }
 
         const newPrefix = args.shift();
-        const updated = dbHelpers.updatePrefix({
-            newPrefix,
-            id: message.guild.id
-        });
+        const updated = dbHelpers.updatePrefix(newPrefix, message.guild.id);
 
         if(updated.changes === 1) {
-            return message.channel.send(this.formatEmbed(newPrefix));
+            return message.channel.send(Embed.success(`Changed prefix to \`\`${newPrefix}\`\`!`));
         } else {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
-    }
-
-    formatEmbed(prefix: string): MessageEmbed {
-        const embed = Embed.success(`Changed prefix to \`\`${prefix}\`\`!`);
-
-        return embed;
     }
 }

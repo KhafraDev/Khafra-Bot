@@ -1,5 +1,4 @@
 import Command from '../Structures/Command';
-import KhafraError from '../Structures/Error';
 
 import { Client, ClientOptions, Snowflake } from 'discord.js';
 import { join } from 'path';
@@ -24,7 +23,7 @@ class KhafraClient extends Client {
             /** absolute path of the command */
             const path = join(KhafraClient.CommandDir, group);
             if(!statSync(path).isDirectory()) {
-                new KhafraError('Client', `Loading commands failed! ${path} is not a valid directory.`);
+                throw new Error(`Client: Loading commands failed! ${path} is not a valid directory.`);
             }
 
             for(const f of readdirSync(path)) {

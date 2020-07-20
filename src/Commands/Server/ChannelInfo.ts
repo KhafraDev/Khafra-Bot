@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, MessageEmbed, Channel, TextChannel } from 'discord.js';
+import { Message, MessageEmbed, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -22,34 +22,33 @@ export default class extends Command {
 
     async formatEmbed(message: Message, id: string): Promise<MessageEmbed> {
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
-        let channel: Channel;
+        let channel: TextChannel;
         if(id && message.mentions.channels.size === 0) {
             try {
-                channel = await message.client.channels.fetch(id);
+                channel = await message.client.channels.fetch(id) as TextChannel;
             } catch {
                 return Embed.fail('The channel ID provided is invalid!');    
             }
         } else if(message.mentions.channels.size > 0) {
-            channel = await message.client.channels.fetch(message.mentions.channels.first().id);
+            channel = await message.client.channels.fetch(message.mentions.channels.first().id) as TextChannel;
         } else {
-            channel = message.channel;
+            channel = message.channel as TextChannel;
         }
 
-        const chnl = channel as TextChannel;
         const embed = Embed.success()
             .setAuthor(message.client.user.username, icon)
             .setTimestamp()
             .setDescription(`
-            ${chnl.toString()}
-            \`\`${chnl.topic?.length ? chnl.topic : 'No topic set'}\`\`
+            ${channel.toString()}
+            \`\`${channel.topic?.length ? channel.topic : 'No topic set'}\`\`
             `)
-            .addField('**ID:**',         chnl.id, true)
-            .addField('**Type:**',       chnl.type, true)
-            .addField('**Name:**',       chnl.name, true)
-            .addField('**NSFW:**',       chnl.nsfw ? 'Yes' : 'No', true)
-            .addField('**Parent:**',     chnl.parent?.toString?.() ?? 'None', true)
-            .addField('**Rate-limit:**', (chnl.rateLimitPerUser?.toLocaleString?.() ?? 0) + ' secs', true)
-            .addField('**Created:**',    chnl.createdAt, true)
+            .addField('**ID:**',         channel.id, true)
+            .addField('**Type:**',       channel.type, true)
+            .addField('**Name:**',       channel.name, true)
+            .addField('**NSFW:**',       channel.nsfw ? 'Yes' : 'No', true)
+            .addField('**Parent:**',     channel.parent?.toString?.() ?? 'None', true)
+            .addField('**Rate-limit:**', (channel.rateLimitPerUser?.toLocaleString?.() ?? 0) + ' secs', true)
+            .addField('**Created:**',    channel.createdAt, true)
 
         return embed;
     }

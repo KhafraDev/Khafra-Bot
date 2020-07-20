@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, MessageEmbed, GuildEmojiManager } from 'discord.js';
+import { Message, GuildEmojiManager } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -12,7 +12,7 @@ export default class extends Command {
         );
     }
 
-    init(message: Message): Promise<Message> {        
+    init(message: Message) {        
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         }
@@ -20,7 +20,7 @@ export default class extends Command {
         return message.channel.send(this.formatEmbed(message));
     }
 
-    formatEmbed(message: Message): MessageEmbed {
+    formatEmbed(message: Message) {
         const guild = message.guild;
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
@@ -54,8 +54,8 @@ export default class extends Command {
      * Max fields: 5, so we don't go over the limit (hopefully!)
      * @param emojis Emoji collection
      */
-    formatEmojis(emojis: GuildEmojiManager): string[] {
-        const emotes = [];
+    formatEmojis(emojis: GuildEmojiManager) {
+        const emotes: string[] = [];
         let idx = 0;
 
         for(const [id, emoji] of emojis.cache) {
@@ -66,12 +66,10 @@ export default class extends Command {
             emotes[idx] ? emotes[idx] += e : (emotes[idx] = e);
         }
 
-        if(!emotes) {
+        if(emotes.length) {
             return ['No emojis cached!'];
         }
         
-        const final = [];
-        emotes.forEach(e => final.length < 5 ? final.push(e) : null)
-        return final;
+        return emotes.slice(0, 5);
     }
 }

@@ -1,9 +1,7 @@
-import KhafraError from './Error';
 import { 
     Message, 
     Permissions, 
     PermissionString,
-    MessageEmbed,
     TextChannel,
     Snowflake
 } from 'discord.js';
@@ -30,7 +28,14 @@ class Command {
         this.aliases = aliases ?? [];
     }
 
-    hasPermissions(message: Message): boolean {
+    /**
+     * initialize the command
+     */
+    init(_: Message, __: string[]): any {
+        throw new Error('No init method found on class!');
+    }
+
+    hasPermissions(message: Message) {
         const memberPerms           = message.member.permissions;
         const botPerms              = message.guild.me.permissions;
         const botChannelPerms       = (message.channel as TextChannel).permissionsFor(message.guild.me);
@@ -54,22 +59,7 @@ class Command {
         return perms.every(perm => memberPerms.has(perm));
     }
 
-    /**
-     * initialize the command
-     */
-    init(_: Message, __: string[]): any {
-        new KhafraError('Command Interface', 'No init method found on class!', 'Command.ts');
-    }
-
-    /**
-     * Format an embed used for a successful command.
-     * @param params 
-     */
-    formatEmbed(...params: any): MessageEmbed | Promise<MessageEmbed> | any {
-        new KhafraError('formatEmbed', 'called on class without method!');
-    }
-
-    isBotOwner(id: Snowflake): boolean {
+    isBotOwner(id: Snowflake) {
         return id === '267774648622645249';
     }
 
@@ -77,7 +67,7 @@ class Command {
      * Check message for required criteria.
      * @param message 
      */
-    static Sanitize(message: Message) : boolean {
+    static Sanitize(message: Message) {
         if(message.author.bot) {
             return false;
         } else if(!message.guild?.available) {
@@ -87,6 +77,8 @@ class Command {
         } else if(!message.member) {
             return false;
         } else if(message.system) {
+            return false;
+        } else if(message.partial) {
             return false;
         }
 

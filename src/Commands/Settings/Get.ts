@@ -1,6 +1,6 @@
 import Command from '../../Structures/Command';
-import { Message, MessageEmbed } from 'discord.js';
-import { dbHelpers } from '../../Structures/GuildSettings/GuildSettings';
+import { Message } from 'discord.js';
+import { dbHelpers, dbGuild } from '../../Helpers/GuildSettings';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -29,7 +29,7 @@ export default class extends Command {
         return message.channel.send(await this.formatEmbed(row, message));
     }
 
-    async formatEmbed(row: any, message: Message): Promise<MessageEmbed> {
+    async formatEmbed(row: dbGuild, message: Message) {
         const owner = await message.client.users.fetch(row.owner_id);
         const embed = Embed.success()
             .addField('**ID:**', row.id, true)

@@ -1,25 +1,46 @@
 import { Snowflake, Message } from 'discord.js';
-import { RunResult } from 'better-sqlite3';
-import db from './Database';
+import db from '../Structures/Database';
 
 /**
  * Settings cache
  */
 const GC = new Map();
 
+type reacts = {
+    id: string;
+    emoji:  string;
+    chance: string;      
+};
+
+type react_messages = {
+    id: string;
+    content: string;
+    emoji: string;
+    role: string;
+};
+
+interface dbGuild {
+    id: string;
+    owner_id: string; 
+    custom_commands: any, // not yet implemented 
+    reacts: reacts[];
+    react_messages: react_messages[];
+    prefix: string;
+}
+
 const dbHelpers = {
     /**
      * Get an existing value from the database
      */
-    get: (id: Snowflake) => {
+    get: (id: Snowflake): dbGuild => {
         if(dbHelpers.isCached(id)) {
             return GC.get(id);
         }
 
-        const row = db.prepare('SELECT * FROM guilds WHERE id = ? LIMIT 1').get(id);
+        const row: dbGuild = db.prepare('SELECT * FROM guilds WHERE id = ? LIMIT 1').get(id);
         if(row) {
             for(const prop in Object.assign(Object.create(null), row)) {
-                if(/\[.*\]/.test(row[prop])) {
+                if(row[prop].startsWith('[') && row[prop].endsWith(']')) { // array like
                     row[prop] = JSON.parse(row[prop]);
                 }
             }
@@ -30,7 +51,7 @@ const dbHelpers = {
     /**
      * Insert a new entry into the database
      */
-    set: (message: Message): RunResult => {
+    set: (message: Message) => {
         return db.prepare(`INSERT OR IGNORE INTO guilds (
                 id, 
                 owner_id,
@@ -58,7 +79,7 @@ const dbHelpers = {
     /**
      * Updates the server's prefix
      */
-    updatePrefix: ({ newPrefix, id }: { newPrefix: string, id: string }): RunResult => {
+    updatePrefix: (newPrefix: string, id: string ) => {
         const query = `UPDATE guilds SET prefix = ? WHERE id = ?`;
         const value = db.prepare(query).run(newPrefix, id);
 
@@ -74,13 +95,29 @@ const dbHelpers = {
     /**
      * Update custom reactions for messages.
      */
-    updateReacts: (reacts: string, id: string): RunResult => {
+    updateReacts: (reacts: string, id: string) => {
         const query = `UPDATE guilds SET reacts = ? WHERE id = ?`;
         const value = db.prepare(query).run(reacts, id);
 
         if(dbHelpers.isCached(id) && value.changes === 1) {
             const old = GC.get(id);
             old.reacts = JSON.parse(reacts);
+
+            GC.set(id, old);
+        }
+
+        return value;
+    },
+    /**
+     * Update message roles
+     */
+    updateMessageRoles: (react_messages: string, id: string) => {
+        const query = `UPDATE guilds SET react_messages = ? WHERE id = ?`;
+        const value = db.prepare(query).run(react_messages, id);
+
+        if(dbHelpers.isCached(id) && value.changes === 1) {
+            const old = GC.get(id);
+            old.react_messages = JSON.parse(react_messages);
 
             GC.set(id, old);
         }
@@ -95,4 +132,4 @@ const dbHelpers = {
     }
 }
 
-export { dbHelpers };
+export { dbHelpers, dbGuild, react_messages, reacts };

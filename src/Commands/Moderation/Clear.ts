@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, TextChannel, MessageEmbed } from 'discord.js';
+import { Message, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -11,7 +11,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]): Promise<Message> {
+    async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // clear [amount] -> 1 arg meeded
@@ -35,7 +35,7 @@ export default class extends Command {
         return message.channel.send(this.formatEmbed(message, deleted.size));
     }
 
-    formatEmbed(message: Message, deleted: number): MessageEmbed {
+    formatEmbed(message: Message, deleted: number) {
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
         const embed = Embed.success()

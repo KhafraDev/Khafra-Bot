@@ -1,5 +1,5 @@
 import Command from '../../Structures/Command';
-import { Message, MessageEmbed } from 'discord.js';
+import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -27,7 +27,7 @@ export default class extends Command {
         }
 
         const [ user, time, ...reason ] = args;
-        const realTime = this.parseTime(time) ?? 0;
+        const realTime = this.parseTime(time);
         if(user.replace(/[^\d+]/g, '') !== message.mentions.members.first().toString().replace(/[^\d+]/g, '')) {
             return message.channel.send(Embed.fail('User was not the same as mentioned!'));
         }
@@ -40,7 +40,7 @@ export default class extends Command {
         return message.channel.send(this.formatEmbed(message, user, realTime, (reason || []).join(' ')));
     }
 
-    parseTime(time: string): number | null {
+    parseTime(time: string): number {
         const b = time.match(/\d+[\s+A-z]|\d+.\d+[\s+A-z]/gi);
         const c = b.map(d => {
             const unit = d.replace(/[^A-z]/g, '');
@@ -53,10 +53,10 @@ export default class extends Command {
             }
         });
 
-        return c.every(n => !isNaN(n)) ? Math.round(c.reduce((a, b) => a + b)) : null;
+        return c.every(n => !isNaN(n)) ? Math.round(c.reduce((a, b) => a + b)) : 0;
     }
 
-    formatEmbed(message: Message, user: string, time: number, reason: string): MessageEmbed {
+    formatEmbed(message: Message, user: string, time: number, reason: string) {
         const icon = message.client.user.avatarURL() ?? message.client.user.defaultAvatarURL;
 
         const embed = Embed.success()

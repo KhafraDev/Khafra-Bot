@@ -12,7 +12,7 @@ export default class extends Command {
         );
     }
 
-    init(message: Message): Promise<Message> {
+    init(message: Message) {
         const embed = Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`

@@ -1,6 +1,6 @@
 import Command from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-import { dbHelpers } from '../../Structures/GuildSettings/GuildSettings';
+import { dbHelpers, reacts } from '../../Helpers/GuildSettings';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
@@ -14,7 +14,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]): Promise<Message> {
+    async init(message: Message, args: string[]) {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
@@ -48,7 +48,6 @@ export default class extends Command {
         }
 
         let member: GuildMember;
-
         if(message.mentions.members.size === 0) {
             try {
                 member = await message.guild.members.fetch(user);
@@ -73,7 +72,7 @@ export default class extends Command {
             `));
         }
 
-        if(row.reacts.filter((r: any) => r.id === member.id).pop()) {
+        if(row.reacts.filter((r: reacts) => r.id === member.id).pop()) {
             return message.channel.send(Embed.fail(`
             ${user} already has a custom emoji!
             `));
@@ -85,7 +84,7 @@ export default class extends Command {
             id:     member.id,
             emoji:  emojis.text,
             chance: chance       
-        });
+        } as reacts);
         
         const updated = dbHelpers.updateReacts(
             JSON.stringify(row.reacts),
