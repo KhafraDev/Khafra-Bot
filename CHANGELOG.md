@@ -24,3 +24,14 @@
 * Better way of getting a user's avatar.
 * Default permissions for commands are automatically added.
 * GuildSettings: react roles are now stable, and many issues have been resolved.
+
+# v1.0.0~beta4
+* Split events into separate files.
+* Add in a cooldown for commands.
+* Removing a reaction from a react role will now remove the role.
+* ``loadCommands`` now works on nested directories and no longer requires arguments.
+* ``Sanitize`` has been removed from the ``Command`` class.
+* Token is loaded from environment variables instead of ``KhafraClient``.
+* Add ``mdn`` command for searching Mozilla Development Network easily.
+* Add ``npm`` command for searching npmjs.com.
+* Functional date formatter without external dependencies.

@@ -1,6 +1,7 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, GuildEmojiManager } from 'discord.js';
 import Embed from '../../Structures/Embed';
+import { formatDate } from '../../Helpers/Date';
 
 export default class extends Command {
     constructor() {
@@ -8,6 +9,7 @@ export default class extends Command {
             'server',
             'Get info about the server!',
             [ /* No extra perms needed */ ],
+            5,
             [ 'serverinfo' ]
         );
     }
@@ -32,15 +34,16 @@ export default class extends Command {
             *${guild.name}*
             \`\`${guild.description?.length ? guild.description : 'No description set'}\`\`
             `)
-            .addField('**ID:**', guild.id, true)
-            .addField('**Large:**', guild.large ? 'Yes' : 'No', true)
-            .addField('**Members:**', guild.memberCount.toLocaleString(), true)
-            .addField('**Owner:**', guild.owner.toString(), true)
-            .addField('**Boosts:**', guild.premiumSubscriptionCount.toLocaleString(), true)
-            .addField('**Tier:**', guild.premiumTier, true)
-            .addField('**Region:**', guild.region, true)
-            .addField('**Vanity URL:**', guild.vanityURLCode ? `discord.gg/${guild.vanityURLCode}` : 'None', true)
-            .addField('**Verification:**', guild.verificationLevel, true)
+            .addField('**ID:**',            guild.id, true)
+            .addField('**Large:**',         guild.large ? 'Yes' : 'No', true)
+            .addField('**Members:**',       guild.memberCount.toLocaleString(), true)
+            .addField('**Owner:**',         guild.owner.toString(), true)
+            .addField('**Boosts:**',        guild.premiumSubscriptionCount.toLocaleString(), true)
+            .addField('**Tier:**',          guild.premiumTier, true)
+            .addField('**Region:**',        guild.region, true)
+            .addField('**Vanity URL:**',    guild.vanityURLCode ? `discord.gg/${guild.vanityURLCode}` : 'None', true)
+            .addField('**Verification:**',  guild.verificationLevel, true)
+            .addField('**Joined:**',        formatDate('MMMM Do, YYYY kk:mm:ssA', guild.createdAt), false)
 
         for(const e of this.formatEmojis(guild.emojis)) {
             embed.addField('Emoji', e);

@@ -1,4 +1,4 @@
-import Command from "../../Structures/Command";
+import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { dbHelpers } from "../../Helpers/GuildSettings";
 import Embed from "../../Structures/Embed";
@@ -8,7 +8,8 @@ export default class extends Command {
         super(
             'prefix',
             'Change the prefix for the current guild.',
-            [ /* No extra perms needed */ ]
+            [ /* No extra perms needed */ ],
+            30
         );
     }
 

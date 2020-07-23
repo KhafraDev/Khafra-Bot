@@ -52,7 +52,8 @@ const dbHelpers = {
      * Insert a new entry into the database
      */
     set: (message: Message) => {
-        return db.prepare(`INSERT OR IGNORE INTO guilds (
+        return db.prepare(
+            `INSERT OR IGNORE INTO guilds (
                 id, 
                 owner_id,
                 custom_commands,
@@ -67,13 +68,14 @@ const dbHelpers = {
                 @reacts, 
                 @react_messages,
                 @prefix
-            )`).run({ 
-                id:                 message.guild.id, 
-                owner_id:           message.guild.ownerID,
-                custom_commands:    JSON.stringify([]),
-                reacts:             JSON.stringify([]),
-                react_messages:     JSON.stringify([]),
-                prefix:             '!'
+            )`
+        ).run({ 
+            id:                 message.guild.id, 
+            owner_id:           message.guild.ownerID,
+            custom_commands:    JSON.stringify([]),
+            reacts:             JSON.stringify([]),
+            react_messages:     JSON.stringify([]),
+            prefix:             '!'
         });
     },
     /**

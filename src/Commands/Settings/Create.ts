@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { dbHelpers } from '../../Helpers/GuildSettings';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
@@ -9,6 +9,7 @@ export default class extends Command {
             'create',
             'Adds the guild to server settings.',
             [ /* No extra perms needed */ ],
+            60,
             [ 'add' ]
         );
     }

@@ -1,6 +1,7 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, GuildMember, Activity } from 'discord.js';
 import Embed from '../../Structures/Embed';
+import { formatDate } from '../../Helpers/Date';
 
 export default class extends Command {
     constructor() {
@@ -8,6 +9,7 @@ export default class extends Command {
             'user',
             'Get info about a user.',
             [ /* No extra perms needed */ ],
+            5,
             [ 'userinfo' ]
         );
     }
@@ -42,12 +44,13 @@ export default class extends Command {
             \`\`${perms}\`\`
             `)
             .setThumbnail(member.user.displayAvatarURL())
-            .addField('**Tag:**',        member.user.tag, true)
+            .addField('**Username:**',   member.user.username, true)
             .addField('**Role Color:**', member.displayHexColor, true)
             .addField('**ID:**',         member.id, true)
             .addField('**Discrim:**',    member.user.discriminator, true)
             .addField('**Nickname:**',   member.nickname ?? 'None', true)
             .addField('**Bot:**',        member.user.bot ? 'Yes' : 'No', true)
+            .addField('**Joined:**',     formatDate('MMMM Do, YYYY kk:mm:ssA', member.user.createdAt), false)
         
         return embed;
     }

@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
@@ -7,7 +7,8 @@ export default class extends Command {
         super(
             'kick',
             'Kick a member from the server.',
-            [ 'KICK_MEMBERS' ]
+            [ 'KICK_MEMBERS' ],
+            10
         );
     }
 

@@ -1,63 +1,56 @@
-import Command from '../Structures/Command';
+import { Command } from '../Structures/Command';
 
-import { Client, ClientOptions, Snowflake } from 'discord.js';
+import { Client, ClientOptions, ClientEvents } from 'discord.js';
 import { join } from 'path';
 import { readdirSync, statSync } from 'fs';
+import { Event } from '../Structures/Event';
 
 class KhafraClient extends Client {
-    static CommandDir = join(process.cwd(), 'build/Commands');
     static Commands: Map<string, Command> = new Map();
-    token: string;
+    static Events: Map<keyof ClientEvents, Event> = new Map();
 
-    constructor(args: ClientOptions, token: string) {
+    constructor(args: ClientOptions) {
         super(args);
-        this.token = token;
     }
 
     /**
      * Load commands
      * @param groups 
      */
-    async loadCommands(groups: string[]): Promise<Map<string, Command>> {
-        for(const group of groups) {
-            /** absolute path of the command */
-            const path = join(KhafraClient.CommandDir, group);
-            if(!statSync(path).isDirectory()) {
-                throw new Error(`Client: Loading commands failed! ${path} is not a valid directory.`);
-            }
+    async loadCommands(dir = 'build/Commands') {
+        for(const path of readdirSync(dir)) {
+            const curr = join(dir, path);
+            if(statSync(curr).isDirectory()) {
+                this.loadCommands(curr);
+            } else {
+                const { default: c } = await import(join(process.cwd(), curr));
+                const build: Command = new c();
 
-            for(const f of readdirSync(path)) {
-                // dynamic import
-                const c = await import(join(KhafraClient.CommandDir, group, f));
-                // TS compiles this to { default: [Function: ...] }
-                const build = new c.default();
-                
-                build.aliases.forEach((alias: string) => KhafraClient.Commands.set(alias, build));
                 KhafraClient.Commands.set(build.name, build);
+                build.aliases.forEach(alias => KhafraClient.Commands.set(alias, build));
             }
         }
 
-        return KhafraClient.Commands;
+        return KhafraClient.Events;
     }
 
-    /*** Login to Discord */
-    async login(): Promise<string> {
-        return super.login(this.token);
+    async loadEvents(dir = 'build/Events') {
+        for(const event of readdirSync(dir)) {
+            const { default: e } = await import(join(process.cwd(), dir, event));
+            const build: Event = new e();
+            KhafraClient.Events.set(build.name, build);
+        }
+
+        return KhafraClient.Events;
     }
 
     /**
      * Initialize the bot.
      */
-    async init(): Promise<void> {
-        await this.loadCommands([
-            'Fun',
-            'Moderation',
-            'Server',
-            'Settings'
-        ]);
-        await this.login();
-
-        return;
+    async init() {
+        await this.loadEvents();
+        await this.loadCommands();
+        await this.login(process.env.TOKEN);
     }
 }
 

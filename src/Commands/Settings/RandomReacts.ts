@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
 import { dbHelpers, reacts } from '../../Helpers/GuildSettings';
 import { parse } from 'twemoji-parser';
@@ -10,6 +10,7 @@ export default class extends Command {
             'randomreact',
             'GuildSettings: react to a given user\'s message with a static emoji.',
             [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
+            20,
             [ 'react' ]
         );
     }

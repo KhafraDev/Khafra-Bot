@@ -1,18 +1,19 @@
 import { 
     Message, 
-    Permissions, 
     PermissionString,
     TextChannel,
     Snowflake
 } from 'discord.js';
 
-class Command {
+export class Command {
     /*** Name of the command; used for fetching and executing. */
     name: string;
     /*** Description of the command for the help command. */
     description: string;
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     permissions: PermissionString[];
+    /** Cooldown for command (-1 for none) */
+    cooldown: number;
     /*** Command aliases */
     aliases?: string[]
     
@@ -20,21 +21,23 @@ class Command {
         name: string,
         description: string,
         permissions: PermissionString[],
+        cooldown: number,
         aliases?: string[] 
     ) {
         this.name = name;
         this.description = description;
         this.permissions = [].concat(
-            [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS, Permissions.FLAGS.VIEW_CHANNEL ], // required permissions
+            [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL' ] as PermissionString[], // required permissions
             permissions
         );
+        this.cooldown = cooldown;
         this.aliases = aliases ?? [];
     }
 
     /**
      * initialize the command
      */
-    init(_: Message, __: string[]): any {
+    init(message: Message, args: string[]): any {
         throw new Error('No init method found on class!');
     }
 
@@ -65,43 +68,4 @@ class Command {
     isBotOwner(id: Snowflake) {
         return id === '267774648622645249';
     }
-
-    /**
-     * Check message for required criteria.
-     * @param message 
-     */
-    static Sanitize(message: Message) {
-        if(message.author.bot) {
-            return false;
-        } else if(!message.guild?.available) {
-            return false;
-        } else if(message.channel.type === 'dm') {
-            return false;
-        } else if(!message.member) {
-            return false;
-        } else if(message.system) {
-            return false;
-        } else if(message.partial) {
-            return false;
-        }
-
-        const perms = message.guild.me.permissions;
-        const channelPerms = (message.channel as TextChannel).permissionsFor(message.guild.me);
-        if(perms.has(Permissions.FLAGS.ADMINISTRATOR)) { 
-            return true;
-        } else if(
-            !perms.has(Permissions.FLAGS.SEND_MESSAGES)         || // guild perms
-            !perms.has(Permissions.FLAGS.EMBED_LINKS)           || // guild perms
-            !perms.has(Permissions.FLAGS.VIEW_CHANNEL)          || // guild perms
-            !channelPerms.has(Permissions.FLAGS.SEND_MESSAGES)  || // channel perms
-            !channelPerms.has(Permissions.FLAGS.EMBED_LINKS)    || // channel perms
-            !channelPerms.has(Permissions.FLAGS.VIEW_CHANNEL)      // channel perms
-        ) {
-            return false;
-        }
-
-        return true;
-    }
 }
-
-export default Command;

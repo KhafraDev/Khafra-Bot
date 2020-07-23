@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
@@ -8,6 +8,7 @@ export default class extends Command {
             'ban',
             'Ban a member from a guild.',
             [ 'BAN_MEMBERS' ],
+            10,
             [ 'bna' ]
         );
     }

@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { 
     Message, 
     Channel, 
@@ -18,6 +18,7 @@ export default class extends Command {
             'messagereact',
             'GuildSettings: give a user a role when they react to a given message.',
             [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
+            10,
             [ 'messagerole' ]
         );
     }

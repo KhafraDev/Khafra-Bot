@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
@@ -7,7 +7,8 @@ export default class extends Command {
         super(
             'clear', 
             'Clear messages from a given channel.', 
-            [ 'MANAGE_MESSAGES' ]
+            [ 'MANAGE_MESSAGES' ],
+            10
         );
     }
 
@@ -21,7 +22,7 @@ export default class extends Command {
             ]));
         } 
         
-        const toDelete = +args.shift();
+        const toDelete = +args.shift() + 1;
         if(isNaN(toDelete)) {
             return message.channel.send(Embed.fail(`
             Received: ${toDelete}, this command requires a number!

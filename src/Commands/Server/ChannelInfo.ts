@@ -1,6 +1,7 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import { Message, MessageEmbed, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
+import { formatDate } from '../../Helpers/Date';
 
 export default class extends Command {
     constructor() {
@@ -8,6 +9,7 @@ export default class extends Command {
             'channel',
             'Get info on a specified channel!',
             [ /* No extra perms needed */ ],
+            5,
             [ 'chan', 'channelinfo' ]
         );
     }
@@ -48,7 +50,7 @@ export default class extends Command {
             .addField('**NSFW:**',       channel.nsfw ? 'Yes' : 'No', true)
             .addField('**Parent:**',     channel.parent?.toString?.() ?? 'None', true)
             .addField('**Rate-limit:**', (channel.rateLimitPerUser?.toLocaleString?.() ?? 0) + ' secs', true)
-            .addField('**Created:**',    channel.createdAt, true)
+            .addField('**Created:**',    formatDate('MMMM Do, YYYY kk:mm:ssA', channel.createdAt), true)
 
         return embed;
     }

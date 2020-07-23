@@ -1,4 +1,4 @@
-import Command from '../../Structures/Command';
+import { Command } from '../../Structures/Command';
 import Embed from '../../Structures/Embed';
 import { Message } from 'discord.js';
 
@@ -8,6 +8,7 @@ export default class extends Command {
             'optimum',
             'See the worst ISP in the U.S.',
             [ /* No extra perms needed */ ],
+            5,
             [ 'altice' ]
         );
     }
