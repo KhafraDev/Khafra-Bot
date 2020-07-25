@@ -1,8 +1,9 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { get } from "https";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Helpers/Date";
+import { formatDate } from "../../Backend/Helpers/Date";
+import { npm } from "../../Backend/Commands/npmHandler";
+import { INPMPackage } from "../../Backend/types/npm.i";
 
 export default class extends Command {
     constructor() {
@@ -24,9 +25,9 @@ export default class extends Command {
             ]));
         }
 
-        let _package: any;
+        let _package: INPMPackage;
         try {
-            _package = await this.npm(args[0]);
+            _package = await npm(args[0]);
         } catch(e) {
             return message.channel.send(Embed.fail(`
             An unexpected error occurred!
@@ -47,29 +48,8 @@ export default class extends Command {
             .addField('**Last Modified:**', formatDate('MMMM Do, YYYY kk:mm:ssA', _package.time?.modified), true)
             .addField('**Published:**', formatDate('MMMM Do, YYYY kk:mm:ssA', _package.time?.created), true)
             .addField('**Homepage:**', _package.homepage ?? 'None', true)
-            .addField('**Maintainers:**', (dist.maintainers as any[]).slice(0, 10).map(u => u.name).join(', '), false)
+            .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
 
         return message.channel.send(embed);
-    }
-
-    npm(package_name: string) {
-        return new Promise((resolve, reject) => {
-            get('https://registry.npmjs.com/' + encodeURIComponent(package_name), res => {
-                if(res.statusCode !== 200) {
-                    return reject(new Error('Non-200 status code'));
-                }
-
-                let body = '';
-                res.on('data', d => body += d);
-                res.on('end', () => {
-                    try {
-                        body = JSON.parse(body);
-                        return resolve(body);
-                    } catch(e) {
-                        return reject(e);
-                    }
-                });
-            }).on('error', reject);
-        });
     }
 }

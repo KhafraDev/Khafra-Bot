@@ -35,3 +35,13 @@
 * Add ``mdn`` command for searching Mozilla Development Network easily.
 * Add ``npm`` command for searching npmjs.com.
 * Functional date formatter without external dependencies.
+
+# v1.0.0~beta5
+* Add in Spotify command.
+* Use ``node-fetch`` for http requests. 
+* Remove as many ``any`` types as possible.
+* Separate types/interfaces in a separate folder.
+* Fix a missing permissions bug in both messageReactionAdd and messageReactionRemove events.
+* Fixed randomreacts not working.
+* Remove member from random reacts.
+* Remove a role react.

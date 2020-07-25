@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-import { dbHelpers, reacts } from '../../Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
@@ -11,7 +11,7 @@ export default class extends Command {
             'GuildSettings: react to a given user\'s message with a static emoji.',
             [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
             20,
-            [ 'react' ]
+            [ 'react', 'randomreacts', 'reacts' ]
         );
     }
 
@@ -73,7 +73,7 @@ export default class extends Command {
             `));
         }
 
-        if(row.reacts.filter((r: reacts) => r.id === member.id).pop()) {
+        if(row.reacts.filter(r => r.id === member.id).pop()) {
             return message.channel.send(Embed.fail(`
             ${user} already has a custom emoji!
             `));
@@ -85,7 +85,7 @@ export default class extends Command {
             id:     member.id,
             emoji:  emojis.text,
             chance: chance       
-        } as reacts);
+        });
         
         const updated = dbHelpers.updateReacts(
             JSON.stringify(row.reacts),

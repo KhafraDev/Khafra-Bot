@@ -11,11 +11,11 @@ export class Command {
     /*** Description of the command for the help command. */
     description: string;
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    permissions: PermissionString[];
+    permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
     /** Cooldown for command (-1 for none) */
     cooldown: number;
     /*** Command aliases */
-    aliases?: string[]
+    aliases?: string[];
     
     constructor(
         name: string,
@@ -26,10 +26,7 @@ export class Command {
     ) {
         this.name = name;
         this.description = description;
-        this.permissions = [].concat(
-            [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL' ] as PermissionString[], // required permissions
-            permissions
-        );
+        this.permissions = this.permissions.concat(permissions);
         this.cooldown = cooldown;
         this.aliases = aliases ?? [];
     }
@@ -37,7 +34,7 @@ export class Command {
     /**
      * initialize the command
      */
-    init(message: Message, args: string[]): any {
+    init(message: Message, args: string[]) {
         throw new Error('No init method found on class!');
     }
 

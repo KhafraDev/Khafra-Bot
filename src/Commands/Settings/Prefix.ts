@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { dbHelpers } from "../../Helpers/GuildSettings";
+import { dbHelpers } from "../../Backend/Helpers/GuildSettings";
 import Embed from "../../Structures/Embed";
 
 export default class extends Command {

@@ -1,32 +1,11 @@
 import { Snowflake, Message } from 'discord.js';
-import db from '../Structures/Database';
+import db from '../../Structures/Database';
+import { dbGuild } from '../types/db.i';
 
 /**
  * Settings cache
  */
-const GC = new Map();
-
-type reacts = {
-    id: string;
-    emoji:  string;
-    chance: string;      
-};
-
-type react_messages = {
-    id: string;
-    content: string;
-    emoji: string;
-    role: string;
-};
-
-interface dbGuild {
-    id: string;
-    owner_id: string; 
-    custom_commands: any, // not yet implemented 
-    reacts: reacts[];
-    react_messages: react_messages[];
-    prefix: string;
-}
+const GC: Map<Snowflake, dbGuild> = new Map();
 
 const dbHelpers = {
     /**
@@ -134,4 +113,4 @@ const dbHelpers = {
     }
 }
 
-export { dbHelpers, dbGuild, react_messages, reacts };
+export { dbHelpers };

@@ -1,5 +1,5 @@
 import KhafraClient from './Bot/KhafraBot';
-import loadEnv from './Helpers/load.env';
+import loadEnv from './Backend/Helpers/load.env';
 loadEnv();
 
 const client = new KhafraClient({

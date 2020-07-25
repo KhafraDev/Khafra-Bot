@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { dbHelpers } from '../../Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 

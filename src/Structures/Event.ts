@@ -9,8 +9,8 @@ class Event {
         this.name = name;
     }
 
-    init(...args: valueof<ClientEvents>): any {
-
+    init(...args: valueof<ClientEvents>) {
+        throw new Error('init method called on ' + this.name + ' without adding method!')
     }
 }
 

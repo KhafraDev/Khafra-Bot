@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildEmojiManager } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { formatDate } from '../../Helpers/Date';
+import { formatDate } from '../../Backend/Helpers/Date';
 
 export default class extends Command {
     constructor() {
@@ -10,7 +10,7 @@ export default class extends Command {
             'Get info about the server!',
             [ /* No extra perms needed */ ],
             5,
-            [ 'serverinfo' ]
+            [ 'serverinfo', 'guild', 'guildinfo' ]
         );
     }
 
@@ -44,10 +44,11 @@ export default class extends Command {
             .addField('**Vanity URL:**',    guild.vanityURLCode ? `discord.gg/${guild.vanityURLCode}` : 'None', true)
             .addField('**Verification:**',  guild.verificationLevel, true)
             .addField('**Joined:**',        formatDate('MMMM Do, YYYY kk:mm:ssA', guild.createdAt), false)
-
-        for(const e of this.formatEmojis(guild.emojis)) {
-            embed.addField('Emoji', e);
-        }
+            .addFields(this.formatEmojis(guild.emojis).map(e => ({
+                name: 'Emoji',
+                value: e,
+                inline: true
+            })));
 
         return embed;
     }

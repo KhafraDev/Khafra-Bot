@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember, Activity } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { formatDate } from '../../Helpers/Date';
+import { formatDate } from '../../Backend/Helpers/Date';
 
 export default class extends Command {
     constructor() {

@@ -5,9 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "@types/better-sqlite3": "^5.4.0",
+    "@types/node-fetch": "^2.5.7",
     "@types/twemoji-parser": "^12.1.0",
     "better-sqlite3": "^7.1.0",
     "discord.js": "github:discordjs/discord.js",
+    "node-fetch": "^2.6.0",
     "twemoji-parser": "^13.0.0",
     "typescript": "^3.9.6"
   },

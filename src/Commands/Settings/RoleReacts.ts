@@ -8,7 +8,8 @@ import {
     PermissionString, 
     GuildEmoji 
 } from 'discord.js';
-import { dbHelpers, react_messages } from '../../Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
+import { react_messages } from '../../Backend/types/db.i';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
@@ -78,6 +79,7 @@ export default class extends Command {
 
         const whereChannel = where instanceof Channel ? (where as TextChannel) : (where.channel as TextChannel);
         const wherePerms = whereChannel.permissionsFor(message.guild.me);
+        
         const permsNeeded = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ] as PermissionString[];
         if(!permsNeeded.every(perm => wherePerms.has(perm))) {
             return message.channel.send(Embed.fail(`
@@ -119,12 +121,12 @@ export default class extends Command {
             where.react(Emoji);
         }
 
-        const react_messages = [].concat(row.react_messages, {
+        const react_messages: react_messages[] = [].concat(row.react_messages, {
             id: where instanceof Message ? where.id : sent_id,
             content: content.join(' '),
             emoji: Emoji.id ?? Emoji.name ?? Emoji,
             role: role.id
-        } as react_messages);
+        });
 
         const updated = dbHelpers.updateMessageRoles(
             JSON.stringify(react_messages),
