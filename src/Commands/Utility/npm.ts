@@ -9,7 +9,10 @@ export default class extends Command {
     constructor() {
         super(
             'npm',
-            'Search NPM\'s registry for a package',
+            [
+                'Search NPM\'s registry for a package',
+                'node-fetch latest', 'typescript'
+            ],
             [ /* No extra perms needed */ ],
             15,
             [ 'npmjs' ]
@@ -20,9 +23,7 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // npm node-fetch
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                'node-fetch latest', 'typescript'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
         let _package: INPMPackage;

@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'create',
-            'Adds the guild to server settings.',
+            [
+                'GuildSettings: Adds the guild to server settings.',
+                ''
+            ],
             [ /* No extra perms needed */ ],
             60,
             [ 'add' ]

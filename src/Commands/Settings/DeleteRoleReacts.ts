@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'removemessagereact',
-            'GuildSettings: stop giving a user a role when reacting to a specific message.',
+            [ 
+                'GuildSettings: stop giving a user a role when reacting to a specific message.',
+                '267774648622645249'
+            ],
             [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
             20,
             [ 'removemessagerole', 'removemessagereact', 
@@ -21,12 +24,10 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 1) { // removemessagereact [message id]
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                message.id
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
-        const row = dbHelpers.get(message.guild.id);
+        const row = dbHelpers.get(message.guild.id, 'react_messages');
         if(!row) {
             return message.channel.send(Embed.fail(`
             GuildSettings has to be implemented by an administrator!

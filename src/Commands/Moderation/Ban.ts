@@ -6,7 +6,12 @@ export default class extends Command {
     constructor() {
         super(
             'ban',
-            'Ban a member from a guild.',
+            [
+                'Ban a member from the guild.',
+                '@user 1d12h1800m for a good reason',
+                '@user 0 bye!',
+                '239566240987742220 14d'
+            ],
             [ 'BAN_MEMBERS' ],
             10,
             [ 'bna' ]
@@ -19,10 +24,7 @@ export default class extends Command {
         } else if(!message.member.bannable) {
             return message.channel.send(Embed.fail('Member is not bannable!'));
         } else if(args.length < 3) { // ban @user 3d1h trolling -> 3+ args
-            return message.channel.send(Embed.missing_args(3, this.name, [
-                '@user 1d12h1800m for a good reason',
-                '@user 0 bye!'
-            ]));
+            return message.channel.send(Embed.missing_args(3, this.name, this.help.slice(1)));
         }
 
         const [ user, time, ...reason ] = args;
@@ -50,7 +52,21 @@ export default class extends Command {
             reason: (reason || []).join(' ')
         });
 
-        return message.channel.send(this.formatEmbed(message, member, realTime, (reason || []).join(' ')));
+        const embed = Embed.success()
+            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
+            .setTimestamp()
+            .setFooter(`Requested by ${message.author.tag}!`)
+            .setDescription(`
+            Successfully banned ${member} and cleared ${realTime} days of messages! ${reason.length > 0 ? 'They were banned for: ``' + reason + '``' : 'No reason given.'}
+
+            Delete messages from the user with higher precision! 
+            Put 0 as time to keep all messages.
+            \`\`${this.name} @user 1d12h1800m trolling\`\`
+            \`\`${this.name} @user 3d900m18h for a good reason!\`\`
+            \`\`${this.name} @user invalid for a bad reason\`\` -> 0 days of messages deleted
+            `);
+
+        return message.channel.send(embed);
     }
 
     parseTime(time: string): number {
@@ -67,25 +83,5 @@ export default class extends Command {
         });
 
         return c.every(n => !isNaN(n)) ? Math.round(c.reduce((a, b) => a + b)) : 0;
-    }
-
-    formatEmbed(message: Message, user: GuildMember, time: number, reason: string) {
-        const icon = message.client.user.displayAvatarURL();
-
-        const embed = Embed.success()
-            .setAuthor(message.client.user.username, icon)
-            .setTimestamp()
-            .setFooter(`Requested by ${message.author.tag}!`)
-            .setDescription(`
-            Successfully banned ${user} and cleared ${time} days of messages! ${reason.length > 0 ? 'They were banned for: ``' + reason + '``' : 'No reason given.'}
-
-            Delete messages from the user with higher precision! 
-            Put 0 as time to keep all messages.
-            \`\`${this.name} @user 1d12h1800m trolling\`\`
-            \`\`${this.name} @user 3d900m18h for a good reason!\`\`
-            \`\`${this.name} @user invalid for a bad reason\`\` -> 0 days of messages deleted
-            `);
-
-        return embed;
     }
 }

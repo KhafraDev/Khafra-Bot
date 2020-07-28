@@ -6,7 +6,10 @@ export default class extends Command {
     constructor() {
         super(
             'say', 
-            'Have KhafraBot say something!', 
+            [
+                'Have KhafraBot say something!',
+                'Have a great day!', 'You suck.'
+            ], 
             [ /* No extra perms needed */ ],
             5,
             [ 'speak', 'talk', 'tell' ]
@@ -17,15 +20,9 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions))
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                'Hello!', 'Goodbye!'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
-        return message.channel.send(this.formatEmbed(message, args));
-    }
-
-    formatEmbed(message: Message, args: string[]) {
         const embed = Embed.success()
             .setTimestamp()
             .setDescription(`
@@ -33,6 +30,6 @@ export default class extends Command {
             \`\`${args.join(' ').slice(0, 1900)}\`\`
             `);
 
-        return embed;
+        return message.channel.send(embed);
     }
 }

@@ -32,7 +32,7 @@ export default class extends Event {
             return;
         }
     
-        const guildSettings = dbHelpers.get(reaction.message.guild.id);
+        const guildSettings = dbHelpers.get(reaction.message.guild.id, 'react_messages');
         if(!guildSettings) {
             return;
         }

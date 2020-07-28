@@ -8,7 +8,12 @@ export default class extends Command {
     constructor() {
         super(
             'spotify',
-            'Search for a song on Spotify',
+            [
+                'Search for a song on Spotify',
+                'Bohemian Rhapsody',
+                'Boston - More Than a Feeling',
+                ''
+            ],
             [ /* No extra perms needed */],
             10
         );
@@ -17,16 +22,23 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
-        } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                'Bohemian Rhapsody',
-                'Boston - More Than a Feeling'
-            ]));
+        }
+
+        const presence = message.author.presence.activities.filter(activity => 
+            activity.type === 'LISTENING' && activity.name === 'Spotify'
+        ).pop();
+
+        if(!presence && args.length < 1) {
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
         let res: SpotifyResult;
         try {
-            res = await spotify.search(args.join(' '));
+            res = await spotify.search(
+                presence && args.length === 0
+                    ? `${presence.details}${presence.state ? ' - ' + presence.state : ''}`
+                    : args.join(' ')
+            );
         } catch {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }

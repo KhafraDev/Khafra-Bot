@@ -45,3 +45,16 @@
 * Fixed randomreacts not working.
 * Remove member from random reacts.
 * Remove a role react.
+
+# v1.0.0~beta6
+* Spotify command now defaults to the current song playing if no query is provided.
+* Add in a ``role`` command, similar to user/server/channel lookup.
+* Remove ``formatEmbed`` method from all commands that implemented it.
+* Add in ``cowsay`` command with Tux and head-in options.
+* Add in ``poll`` command to create polls.
+* Add in ``discrim`` command to find users with a given discriminator.
+* Only fetch columns needed from the database when fetching guild settings.
+* Compile TypeScript to ESNext instead of ES6.
+* Add in ``tictactoe`` command. For now you can only play against the bot.
+* Add in ``help`` command for a description and example(s) of usage.
+* Add in ``meepcraft`` command to get the number of players on MeepCraft. Routes request through a proxy.

@@ -6,7 +6,10 @@ export default class extends Command {
     constructor() {
         super(
             'clear', 
-            'Clear messages from a given channel.', 
+            [
+                'Clear messages from a given channel.',
+                '100', '200'
+            ], 
             [ 'MANAGE_MESSAGES' ],
             10
         );
@@ -16,10 +19,7 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // clear [amount] -> 1 arg meeded
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                '100',
-                '250'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         } 
         
         const toDelete = +args.shift() + 1;
@@ -33,22 +33,18 @@ export default class extends Command {
 
         const channel = message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel;
         const deleted = await (channel as TextChannel).bulkDelete(toDelete > 200 ? 200 : toDelete);
-        return message.channel.send(this.formatEmbed(message, deleted.size));
-    }
-
-    formatEmbed(message: Message, deleted: number) {
-        const icon = message.client.user.displayAvatarURL();
 
         const embed = Embed.success()
-            .setAuthor(message.client.user.username, icon)
+            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)
             .setDescription(`
-            Successfully deleted ${deleted} messages!
+            Successfully deleted ${deleted.size} messages!
 
-            \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared.\`\`
+            \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared and your input message has also been deleted.\`\`
             `);
 
-        return embed;
+        return message.channel.send(embed)
+            .then(m => m.delete({ timeout: 5000 }))
     }
 }

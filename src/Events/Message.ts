@@ -1,5 +1,5 @@
 import { Event } from "../Structures/Event";
-import { Message, Permissions, PermissionString } from "discord.js";
+import { Message, PermissionString } from "discord.js";
 import { dbHelpers } from "../Backend/Helpers/GuildSettings";
 import KhafraClient from "../Bot/KhafraBot";
 import { Sanitize } from "../Backend/Helpers/SanitizeCommand";
@@ -20,7 +20,7 @@ export default class extends Event {
         // don't split a single string if there are no arguments
         const [cmd, ...args] = split.length > 1 ? split : [split].flat();
     
-        const settings = dbHelpers.get(message.guild.id);
+        const settings = dbHelpers.get(message.guild.id, 'reacts, prefix');
         const prefix = settings?.prefix ?? '!';
         const command = KhafraClient.Commands.get(cmd.slice(prefix.length));
 

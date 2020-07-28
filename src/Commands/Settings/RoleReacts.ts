@@ -17,7 +17,12 @@ export default class extends Command {
     constructor() {
         super(
             'messagereact',
-            'GuildSettings: give a user a role when they react to a given message.',
+            [
+                'GuildSettings: give a user a role when they react to a given message.',
+                '[Message ID] [@Role or Role ID] [Emoji]',
+                '[Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
+                '#react_for_role @I_Reacted 👑 Hello, react to this message for a role! :)'
+            ],
             [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
             10,
             [ 'messagerole' ]
@@ -30,14 +35,10 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 3) { // messagerole [message id | SEND NEW - channel (ID)] [role] [emoji] [message content if channel]
-            return message.channel.send(Embed.missing_args(3, this.name, [
-                '[Message ID] [@Role or Role ID] [Emoji]',
-                '[Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
-                '#react_for_role @I_Reacted 👑 Hello, react to this message for a role! :)'
-            ]));
+            return message.channel.send(Embed.missing_args(3, this.name, this.help.slice(1)));
         }
 
-        const row = dbHelpers.get(message.guild.id);
+        const row = dbHelpers.get(message.guild.id, 'react_messages');
         if(!row) {
             return message.channel.send(Embed.fail(`
             GuildSettings has to be implemented by an administrator!

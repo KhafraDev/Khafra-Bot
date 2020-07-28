@@ -2,12 +2,13 @@
     "compilerOptions": {
         "outDir": "./build",
         "allowJs": true,
-        "target": "es6",
+        "target": "ESNext",
         "moduleResolution": "node",
         "module": "commonjs",
         "lib": [
             "ES2020"
-        ]
+        ],
+        "esModuleInterop": true
     },
     "include": [
         "./src/"

@@ -6,7 +6,10 @@ export default class extends Command {
     constructor() {
         super(
             'optimum',
-            'See the worst ISP in the U.S.',
+            [
+                'See reviews for the worst ISP in the U.S.',
+                ''
+            ],
             [ /* No extra perms needed */ ],
             5,
             [ 'altice' ]

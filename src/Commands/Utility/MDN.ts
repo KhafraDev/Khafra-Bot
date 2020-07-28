@@ -10,7 +10,11 @@ export default class extends Command {
     constructor() {
         super(
             'mdn',
-            'MDN Results',
+            [
+                'Search MDN for a phrase.',
+                'Array.prototype.slice',
+                'Number toLocaleString'
+            ],
             [ /* No extra perms needed */],
             20
         );
@@ -20,10 +24,7 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // mdn Array.prototype.slice
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                'Array.prototype.slice',
-                'Number toLocaleString'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
         let parsed: mdnResult[] = [];

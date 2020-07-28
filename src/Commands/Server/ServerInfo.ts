@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'server',
-            'Get info about the server!',
+            [
+                'Get info about the server!',
+                ''
+            ],
             [ /* No extra perms needed */ ],
             5,
             [ 'serverinfo', 'guild', 'guildinfo' ]
@@ -19,38 +22,31 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions));
         }
 
-        return message.channel.send(this.formatEmbed(message));
-    }
-
-    formatEmbed(message: Message) {
-        const guild = message.guild;
-        const icon = message.client.user.displayAvatarURL();
-
         const embed = Embed.success()
-            .setAuthor(message.client.user.username, icon)
+            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
-            .setThumbnail(guild.bannerURL())
+            .setThumbnail(message.guild.bannerURL())
             .setDescription(`
-            *${guild.name}*
-            \`\`${guild.description?.length ? guild.description : 'No description set'}\`\`
+            *${message.guild.name}*
+            \`\`${message.guild.description?.length ? message.guild.description : 'No description set'}\`\`
             `)
-            .addField('**ID:**',            guild.id, true)
-            .addField('**Large:**',         guild.large ? 'Yes' : 'No', true)
-            .addField('**Members:**',       guild.memberCount.toLocaleString(), true)
-            .addField('**Owner:**',         guild.owner.toString(), true)
-            .addField('**Boosts:**',        guild.premiumSubscriptionCount.toLocaleString(), true)
-            .addField('**Tier:**',          guild.premiumTier, true)
-            .addField('**Region:**',        guild.region, true)
-            .addField('**Vanity URL:**',    guild.vanityURLCode ? `discord.gg/${guild.vanityURLCode}` : 'None', true)
-            .addField('**Verification:**',  guild.verificationLevel, true)
-            .addField('**Joined:**',        formatDate('MMMM Do, YYYY kk:mm:ssA', guild.createdAt), false)
-            .addFields(this.formatEmojis(guild.emojis).map(e => ({
+            .addField('**ID:**',            message.guild.id, true)
+            .addField('**Large:**',         message.guild.large ? 'Yes' : 'No', true)
+            .addField('**Members:**',       message.guild.memberCount.toLocaleString(), true)
+            .addField('**Owner:**',         message.guild.owner.toString(), true)
+            .addField('**Boosts:**',        message.guild.premiumSubscriptionCount.toLocaleString(), true)
+            .addField('**Tier:**',          message.guild.premiumTier, true)
+            .addField('**Region:**',        message.guild.region, true)
+            .addField('**Vanity URL:**',    message.guild.vanityURLCode ? `discord.gg/${message.guild.vanityURLCode}` : 'None', true)
+            .addField('**Verification:**',  message.guild.verificationLevel, true)
+            .addField('**Created:**',        formatDate('MMMM Do, YYYY kk:mm:ssA', message.guild.createdAt), false)
+            .addFields(this.formatEmojis(message.guild.emojis).map(e => ({
                 name: 'Emoji',
                 value: e,
                 inline: true
             })));
 
-        return embed;
+        return message.channel.send(embed);
     }
 
     /**

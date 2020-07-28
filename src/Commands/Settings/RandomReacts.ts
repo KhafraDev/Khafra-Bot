@@ -8,7 +8,10 @@ export default class extends Command {
     constructor() {
         super(
             'randomreact',
-            'GuildSettings: react to a given user\'s message with a static emoji.',
+            [
+                'GuildSettings: react to a given user\'s message with a static emoji.',
+                '@user 👑 3'
+            ],
             [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
             20,
             [ 'react', 'randomreacts', 'reacts' ]
@@ -21,9 +24,7 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 3) { // react [user: @user|ID] [emoji] [chance]
-            return message.channel.send(Embed.missing_args(3, this.name, [
-                '@user 👑 3\`\` 3% chance to react to @user\'s message.'
-            ]));
+            return message.channel.send(Embed.missing_args(3, this.name, this.help.slice(1)));
         }
 
         const [ user, emoji, chance ] = args;
@@ -64,7 +65,7 @@ export default class extends Command {
             member = message.mentions.members.first();
         }
 
-        const row = dbHelpers.get(message.guild.id);
+        const row = dbHelpers.get(message.guild.id, 'reacts');
         if(!row?.reacts) {
             return message.channel.send(Embed.fail(`
             GuildSettings has to be implemented by an administrator!

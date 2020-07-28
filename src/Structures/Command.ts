@@ -8,8 +8,8 @@ import {
 export class Command {
     /*** Name of the command; used for fetching and executing. */
     name: string;
-    /*** Description of the command for the help command. */
-    description: string;
+    /*** Description and example usage. */
+    help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
     /** Cooldown for command (-1 for none) */
@@ -19,13 +19,13 @@ export class Command {
     
     constructor(
         name: string,
-        description: string,
+        help: string[],
         permissions: PermissionString[],
         cooldown: number,
         aliases?: string[] 
     ) {
         this.name = name;
-        this.description = description;
+        this.help = help;
         this.permissions = this.permissions.concat(permissions);
         this.cooldown = cooldown;
         this.aliases = aliases ?? [];

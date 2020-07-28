@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { Message, MessageEmbed, TextChannel } from 'discord.js';
+import { Message, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
 import { formatDate } from '../../Backend/Helpers/Date';
 
@@ -7,7 +7,11 @@ export default class extends Command {
     constructor() {
         super(
             'channel',
-            'Get info on a specified channel!',
+            [
+                'Get info on a specified channel!',
+                '#general',
+                '705896160673661041'
+            ],
             [ /* No extra perms needed */ ],
             5,
             [ 'chan', 'channelinfo' ]
@@ -19,26 +23,21 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions));
         }
 
-        return message.channel.send(await this.formatEmbed(message, args.shift()));
-    }
-
-    async formatEmbed(message: Message, id: string): Promise<MessageEmbed> {
-        const icon = message.client.user.displayAvatarURL();
         let channel: TextChannel;
-        if(id && message.mentions.channels.size === 0) {
-            try {
-                channel = await message.client.channels.fetch(id) as TextChannel;
-            } catch {
-                return Embed.fail('The channel ID provided is invalid!');    
-            }
-        } else if(message.mentions.channels.size > 0) {
-            channel = await message.client.channels.fetch(message.mentions.channels.first().id) as TextChannel;
-        } else {
+        if(args.length === 0) {
             channel = message.channel as TextChannel;
+        } else if(message.mentions.channels.size === 0) {
+            try {
+                channel = await message.client.channels.fetch(args[0]) as TextChannel;
+            } catch {
+                channel = message.channel as TextChannel;   
+            }
+        } else {
+            channel = message.mentions.channels.first() as TextChannel;
         }
 
         const embed = Embed.success()
-            .setAuthor(message.client.user.username, icon)
+            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
             .setDescription(`
             ${channel.toString()}
@@ -52,6 +51,6 @@ export default class extends Command {
             .addField('**Rate-limit:**', (channel.rateLimitPerUser?.toLocaleString?.() ?? 0) + ' secs', true)
             .addField('**Created:**',    formatDate('MMMM Do, YYYY kk:mm:ssA', channel.createdAt), true)
 
-        return embed;
+        return message.channel.send(embed);
     }
 }

@@ -2,13 +2,15 @@ import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
 import Embed from '../../Structures/Embed';
-import { dbGuild } from '../../Backend/types/db.i';
 
 export default class extends Command {
     constructor() {
         super(
             'get',
-            'Get the current guild info from the bot.',
+            [
+                'GuildSettings: Get the current guild info from the bot.',
+                ''
+            ],
             [ /* No extra perms needed */ ],
             10
         );
@@ -28,10 +30,6 @@ export default class extends Command {
             `));
         }
 
-        return message.channel.send(await this.formatEmbed(row, message));
-    }
-
-    async formatEmbed(row: dbGuild, message: Message) {
         const owner = await message.client.users.fetch(row.owner_id);
         const embed = Embed.success()
             .addField('**ID:**', row.id, true)
@@ -39,8 +37,8 @@ export default class extends Command {
             .addField('\u200B', '\u200B')
             .addField('**Custom Commands:**', row.custom_commands.length, true)
             .addField('**Random Reacts:**', row.reacts.length, true)
-            .addField('**React Roles:**', row.react_messages.length, true)
-            
-        return embed;
+            .addField('**React Roles:**', row.react_messages.length, true);
+
+        return message.channel.send(embed);
     }
 }

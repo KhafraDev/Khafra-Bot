@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'removerandomreact',
-            'GuildSettings: remove user\'s chance of message being reacted to.',
+            [
+                'GuildSettings: remove user\'s chance of message being reacted to.',
+                '267774648622645249', '@Khafra#0001'
+            ],
             [ 'ADD_REACTIONS', 'READ_MESSAGE_HISTORY' ],
             20,
             [ 'removereact', 'removerandomreacts', 'removereacts',
@@ -21,13 +24,10 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 1) { // removereact [user]
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                message.member.toString(),
-                message.client.user.id
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         } 
 
-        const row = dbHelpers.get(message.guild.id);
+        const row = dbHelpers.get(message.guild.id, 'reacts');
         if(!row) {
             return message.channel.send(Embed.fail(`
             GuildSettings has to be implemented by an administrator!

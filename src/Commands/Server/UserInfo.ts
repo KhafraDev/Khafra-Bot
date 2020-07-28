@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'user',
-            'Get info about a user.',
+            [
+                'Get info about a user.',
+                '@Khafra#0001', '267774648622645249'
+            ],
             [ /* No extra perms needed */ ],
             5,
             [ 'userinfo' ]
@@ -19,29 +22,24 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions));
         }
 
-        return message.channel.send(await this.formatEmbed(message, args.shift()));
-    }
-
-    async formatEmbed(message: Message, id: string) {
         let member: GuildMember; // = message.mentions.members?.first() ?? message.member;
-        if(id && !message.mentions.members.first()) {
+        if(args[0] && !message.mentions.members.first()) {
             try {
-                member = await message.guild.members.fetch(id);
+                member = await message.guild.members.fetch(args[0]);
             } catch{
                 member = message.member;
             }
         } else {
             member = message.mentions.members?.first() ?? message.member;
         }
-        const perms = member.permissions.toArray().join(', ');
 
         const embed = Embed.success()
             .setDescription(`
-            ${member.displayName} on *${member.guild.name}*.
+            ${member} on *${member.guild.name}*.
             ${this.formatPresence(member.presence.activities)}
             
             Permissions: 
-            \`\`${perms}\`\`
+            \`\`${member.permissions.toArray().join(', ')}\`\`
             `)
             .setThumbnail(member.user.displayAvatarURL())
             .addField('**Username:**',   member.user.username, true)
@@ -52,7 +50,7 @@ export default class extends Command {
             .addField('**Bot:**',        member.user.bot ? 'Yes' : 'No', true)
             .addField('**Joined:**',     formatDate('MMMM Do, YYYY kk:mm:ssA', member.user.createdAt), false)
         
-        return embed;
+        return message.channel.send(embed);
     }
 
     formatPresence(activities: Activity[]) {

@@ -6,7 +6,11 @@ export default class extends Command {
     constructor() {
         super(
             'unban',
-            'Unban a user from the guild.',
+            [
+                'Unban a user from the guild.',
+                '1234567891234567 for apologizing',
+                '9876543217654321'
+            ],
             [ 'BAN_MEMBERS' ],
             10
         );
@@ -16,10 +20,7 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                '1234567891234567 for apologizing',
-                '9876543217654321'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
@@ -34,14 +35,10 @@ export default class extends Command {
             `));
         }
 
-        return message.channel.send(this.formatEmbed(user, reason.join(' ')));
-    }
-
-    formatEmbed(user: User, reason?: string) {
         const embed = Embed.success(`
-        **Successfully** unbanned ${user}${reason.length ? ' for \`\`' + reason + '\`\`' : ''}!
+        **Successfully** unbanned ${user}${reason.join(' ').length ? ' for \`\`' + reason.join(' ') + '\`\`' : ''}!
         `);
 
-        return embed;
+        return message.channel.send(embed);
     }
 }

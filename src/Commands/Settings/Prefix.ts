@@ -7,7 +7,10 @@ export default class extends Command {
     constructor() {
         super(
             'prefix',
-            'Change the prefix for the current guild.',
+            [ 
+                'GuildSettings: Change the prefix for the current guild.',
+                '>>', '!!', '?'
+            ],
             [ /* No extra perms needed */ ],
             30
         );
@@ -19,13 +22,10 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, [
-                '>>',
-                '!!'
-            ]));
+            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 
-        const row = dbHelpers.get(message.guild.id);
+        const row = dbHelpers.get(message.guild.id, 'prefix');
         if(!row) {
             return message.channel.send(Embed.fail(`
             GuildSettings has to be implemented by an administrator!

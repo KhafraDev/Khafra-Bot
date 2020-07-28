@@ -11,12 +11,12 @@ const dbHelpers = {
     /**
      * Get an existing value from the database
      */
-    get: (id: Snowflake): dbGuild => {
+    get: (id: Snowflake, columns?: string): dbGuild => {
         if(dbHelpers.isCached(id)) {
             return GC.get(id);
         }
 
-        const row: dbGuild = db.prepare('SELECT * FROM guilds WHERE id = ? LIMIT 1').get(id);
+        const row: dbGuild = db.prepare(`SELECT ${columns ?? '*'} FROM guilds WHERE id = ? LIMIT 1`).get(id);
         if(row) {
             for(const prop in Object.assign(Object.create(null), row)) {
                 if(row[prop].startsWith('[') && row[prop].endsWith(']')) { // array like
