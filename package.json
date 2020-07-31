@@ -7,20 +7,22 @@
     "better-sqlite3": "^7.1.0",
     "discord.js": "github:discordjs/discord.js",
     "https-proxy-agent": "^5.0.0",
+    "mongodb": "^3.5.9",
     "node-fetch": "^2.6.0",
     "twemoji-parser": "^13.0.0",
     "typescript": "^3.9.6"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
+    "@types/mongodb": "^3.5.25",
     "@types/node": "^14.0.26",
     "@types/node-fetch": "^2.5.7",
     "@types/twemoji-parser": "^12.1.0"
   },
   "scripts": {
-    "dev:build": "node scripts/build && npx tsc && node build/index",
-    "prod:build": "npx tsc && node build/index",
-    "run": "node build/index"
+    "dev:build": "node scripts/build && npx tsc && node scripts/copy && node build/index",
+    "prod:build": "npx tsc && node scripts/copy && node build/index",
+    "run": "node scripts/copy"
   },
   "repository": {
     "type": "git",

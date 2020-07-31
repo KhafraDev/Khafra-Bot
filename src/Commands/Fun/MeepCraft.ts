@@ -5,6 +5,11 @@ import { agent } from '../../Backend/Helpers/Proxy';
 import fetch from 'node-fetch';
 import Embed from "../../Structures/Embed";
 
+const latest = {
+    fetched: 0,
+    results: -1,
+}
+
 export default class extends Command {
     constructor() {
         super(
@@ -14,21 +19,30 @@ export default class extends Command {
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60
+            10
         );
     }
 
     async init(message: Message) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
+        if(latest.results !== -1 && ((Date.now() - latest.fetched) / 1000 / 60) < 5) {
+            const sentence = `There ${latest.results === 1 ? 'is ``1`` player': 'are ``' + latest.results + '`` players'}`
+            const embed = Embed.success(`${sentence} on Meepcraft right now!`)
+                .setTimestamp(latest.fetched)
+                .setFooter('Last checked at');
 
+            return message.channel.send(embed);
+        }
+        
         const players = await this.fetch();
         if(players === null) {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
 
-        const embed = Embed.success(`There are \`\`${players.playersOnline}\`\` players on Meepcraft right now!`);
+        latest.fetched = Date.now();
+        latest.results = players.playersOnline;
+
+        const sentence = `There ${players.playersOnline === 1 ? 'is ``1`` player': 'are ``' + players.playersOnline + '`` players'}`
+        const embed = Embed.success(`${sentence} on Meepcraft right now!`);
         return message.channel.send(embed);
     }
 

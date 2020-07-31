@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { formatDate } from "../../Backend/Helpers/Date";
-import { npm } from "../../Backend/Commands/npmHandler";
+import { npm } from "../../Backend/CommandStructures/npmHandler";
 import { INPMPackage } from "../../Backend/types/npm.i";
 
 export default class extends Command {
@@ -20,9 +20,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        } else if(args.length < 1) { // npm node-fetch
+        if(args.length < 1) { // npm node-fetch
             return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 

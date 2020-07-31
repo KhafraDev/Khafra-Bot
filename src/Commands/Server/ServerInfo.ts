@@ -18,10 +18,6 @@ export default class extends Command {
     }
 
     init(message: Message) {        
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         const embed = Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()

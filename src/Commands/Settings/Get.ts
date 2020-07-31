@@ -17,10 +17,6 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         const row = dbHelpers.get(message.guild.id);
         if(!row) {
             return message.channel.send(Embed.fail(`

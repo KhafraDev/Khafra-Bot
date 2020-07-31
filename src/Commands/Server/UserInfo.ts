@@ -18,10 +18,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         let member: GuildMember; // = message.mentions.members?.first() ?? message.member;
         if(args[0] && !message.mentions.members.first()) {
             try {

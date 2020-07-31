@@ -31,13 +31,6 @@ export class Command {
         this.aliases = aliases ?? [];
     }
 
-    /**
-     * initialize the command
-     */
-    init(message: Message, args: string[]) {
-        throw new Error('No init method found on class!');
-    }
-
     hasPermissions(message: Message) {
         const memberPerms           = message.member.permissions;
         const botPerms              = message.guild.me.permissions;

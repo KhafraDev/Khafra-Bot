@@ -1,11 +1,9 @@
 import { Event } from "../Structures/Event";
-import { MessageReaction, User, PartialUser, PermissionString } from "discord.js";
+import { MessageReaction, User, PartialUser, PermissionString, ClientEvents } from "discord.js";
 import { dbHelpers } from "../Backend/Helpers/GuildSettings";
 
-export default class extends Event {
-    constructor() {
-        super('messageReactionRemove');
-    }
+export default class implements Event {
+    name: keyof ClientEvents = 'messageReactionRemove';
 
     async init(reaction: MessageReaction, user: User | PartialUser) {
         if(reaction.partial) {

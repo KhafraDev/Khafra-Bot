@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { mdn } from "../../Backend/Commands/MDNHandler";
+import { mdn } from "../../Backend/CommandStructures/MDNHandler";
 import Embed from "../../Structures/Embed";
 import { compareTwoStrings } from "../../Backend/Helpers/CompareStrings";
 
@@ -21,9 +21,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        } else if(args.length < 1) { // mdn Array.prototype.slice
+        if(args.length < 1) { // mdn Array.prototype.slice
             return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 

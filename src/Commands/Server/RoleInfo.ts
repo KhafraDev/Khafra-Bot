@@ -19,9 +19,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        } else if(args.length < 1) {
+        if(args.length < 1) {
             return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
         }
 

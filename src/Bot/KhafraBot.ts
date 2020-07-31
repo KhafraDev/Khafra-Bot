@@ -23,15 +23,17 @@ class KhafraClient extends Client {
             if(statSync(curr).isDirectory()) {
                 this.loadCommands(curr);
             } else {
-                const { default: c } = await import(join(process.cwd(), curr));
-                const build: Command = new c();
+                if(curr.endsWith('.js')) {
+                    const { default: c } = await import(join(process.cwd(), curr));
+                    const build: Command = new c();
 
-                KhafraClient.Commands.set(build.name, build);
-                build.aliases.forEach(alias => KhafraClient.Commands.set(alias, build));
+                    KhafraClient.Commands.set(build.name, build);
+                    build.aliases.forEach(alias => KhafraClient.Commands.set(alias, build));
+                }
             }
         }
 
-        return KhafraClient.Events;
+        return KhafraClient.Commands;
     }
 
     async loadEvents(dir = 'build/Events') {

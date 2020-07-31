@@ -38,7 +38,9 @@ class TicTacToe {
     }
 
     goRandom() {
-        if(this.state.turn === 'X') {
+        if(Object.values(this.state.pos).every(box => box !== ' ')) {
+            return 3; // draw
+        } else if(this.state.turn === 'X') {
             return 0;
         }
         
@@ -59,6 +61,36 @@ class TicTacToe {
 
     setTurn() {
         return this.state.turn = this.state.turn === 'X' ? 'O' : 'X';
+    }
+
+    bestTurn() {
+        const lines = [
+            // horizontal
+            [0, 1, 2], [1, 2, 0], [0, 2, 1], 
+            [3, 4, 5], [4, 5, 4], [3, 5, 4],
+            [6, 7, 8], [7, 8, 6], [6, 8, 7],
+            // vertical
+            [0, 3, 6], [3, 6, 0], [0, 6, 3],
+            [1, 4, 7], [4, 7, 1], [1, 7, 4],
+            [2, 5, 8], [5, 8, 2], [2, 8, 5],
+            // diagonal
+            [0, 4, 8], [4, 8, 0], [0, 8, 4],
+            [2, 4, 6], [4, 6, 2], [2, 6, 4],
+        ];
+        
+        const squares = Object.values(this.state.pos); // 1, 2, 3... 9
+        for(let i = 0; i < lines.length; i++) { // go through turns where someone could win in the next turn
+            const [a, b, c] = lines[i]; // a,b = spots to check, c = go
+            if(
+                ((squares[a] === 'X' && squares[b] === 'X') ||
+                (squares[a] === 'O' && squares[b] === 'O')) &&
+                squares[c] === ' '
+            )  {
+                return this.go(c);
+            }
+        }
+        
+        return this.goRandom();
     }
 
     checkWinner() {

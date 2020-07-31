@@ -1,5 +1,5 @@
 import { Snowflake, Message } from 'discord.js';
-import db from '../../Structures/Database';
+import db from '../../Structures/Database/SQLite';
 import { dbGuild } from '../types/db.i';
 
 /**
@@ -99,6 +99,22 @@ const dbHelpers = {
         if(dbHelpers.isCached(id) && value.changes === 1) {
             const old = GC.get(id);
             old.react_messages = JSON.parse(react_messages);
+
+            GC.set(id, old);
+        }
+
+        return value;
+    },
+    /**
+     * Update message roles
+     */
+    updateList: (custom_commands: string, id: string) => {
+        const query = `UPDATE guilds SET custom_commands = ? WHERE id = ?`;
+        const value = db.prepare(query).run(custom_commands, id);
+
+        if(dbHelpers.isCached(id) && value.changes === 1) {
+            const old = GC.get(id);
+            old.custom_commands = JSON.parse(custom_commands);
 
             GC.set(id, old);
         }

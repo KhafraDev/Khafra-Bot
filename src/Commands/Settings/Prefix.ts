@@ -17,7 +17,7 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
+        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));

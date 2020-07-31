@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { TicTacToe } from "../../Backend/Commands/TicTacToeHandler";
+import { TicTacToe } from "../../Backend/CommandStructures/TicTacToeHandler";
 import Embed from "../../Structures/Embed";
 
 export default class extends Command {
@@ -12,15 +12,11 @@ export default class extends Command {
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60
+            10
         );
     }
 
     async init(message: Message) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         const game = new TicTacToe();
 
         const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``);
@@ -48,8 +44,14 @@ export default class extends Command {
                 return sent.edit(embed);
             }
 
-            const auto = game.goRandom();
-            if(auto === 2) { // game is over
+            const auto = game.bestTurn();
+            if(auto === 3) { // draw
+                const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)
+                    .setTitle('It\'s a draw!');
+
+                collector.stop();
+                return sent.edit(embed);
+            } else if(auto === 2) { // game is over
                 const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)
                     .setTitle('Player ' + game.state.turn + ' won!');
 

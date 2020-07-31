@@ -1,10 +1,9 @@
 import { Event } from "../Structures/Event";
-import db from "../Structures/Database";
+import db from "../Structures/Database/SQLite";
+import { ClientEvents } from "discord.js";
 
-export default class extends Event {
-    constructor() {
-        super('ready');
-    }
+export default class implements Event {
+    name: keyof ClientEvents = 'ready';
 
     init() {
         console.log('Logged in!');

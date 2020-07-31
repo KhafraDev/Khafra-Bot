@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { spotify } from '../../Backend/Commands/SpotifyHandler';
+import { spotify } from '../../Backend/CommandStructures/SpotifyHandler';
 import { SpotifyResult } from '../../Backend/types/spotify.i';
 
 export default class extends Command {
@@ -20,10 +20,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         const presence = message.author.presence.activities.filter(activity => 
             activity.type === 'LISTENING' && activity.name === 'Spotify'
         ).pop();

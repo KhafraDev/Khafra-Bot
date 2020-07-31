@@ -19,10 +19,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]): Promise<Message> {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         let channel: TextChannel;
         if(args.length === 0) {
             channel = message.channel as TextChannel;

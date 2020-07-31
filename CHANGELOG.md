@@ -58,3 +58,16 @@
 * Add in ``tictactoe`` command. For now you can only play against the bot.
 * Add in ``help`` command for a description and example(s) of usage.
 * Add in ``meepcraft`` command to get the number of players on MeepCraft. Routes request through a proxy.
+
+# v1.0.0~beta7
+* Add in ability to ``blacklist`` commands for a user, channel, or entirety of the guild.
+* Add in ability to ``whitelist`` commands for a user or channel.
+* Add in different ``cowsay`` types.
+* Add in ``pocket`` commands which is a partial wrapper for the GetPocket.com API.
+* MongoDB handles Pocket command(s). SQLite3 still handles guildsettings.
+* Add in ``tags`` command. Small snippets of text that can be returned at any given point.
+* Remove useless permission checks in commands.
+* ``meepcraft`` command caches latest results for 5 minutes.
+* ``tictactoe`` command will intelligently pick spots now.
+* ``tictactoe`` will no longer freeze if it's a draw.
+* Fixed issue where bot would give cooldowns if a valid command used a different prefix. For example: `+help` would issue a cooldown on the `help` command if the prefix was `!`.

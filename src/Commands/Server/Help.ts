@@ -17,10 +17,6 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
-        }
-
         const command = KhafraClient.Commands.get(args[0] ?? 'help');
         if(!command) {
             return message.channel.send(Embed.fail('No command found!'));
