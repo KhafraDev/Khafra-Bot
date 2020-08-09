@@ -5,7 +5,7 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            'kick',
+            { name: 'kick', folder: 'Moderation' },
             [
                 'Kick a member from the server.',
                 '@user for trolling',
@@ -20,11 +20,11 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
-        let member: GuildMember;
-        if(args.length > 0 && !message.mentions.members?.first()) {
+        let member: GuildMember = message.mentions.members.first();
+        if(args.length > 0 && !member) {
             try {
                 member = await message.guild.members.fetch(args[0])
             } catch {
@@ -36,12 +36,10 @@ export default class extends Command {
                 \`\`kick 1234567891234567\`\`
                 `));
             }
-        } else {
-            member = message.mentions.members.first();
         }
 
         if(!member.kickable) {
-            return message.channel.send(Embed.fail('Member is not kickable!'));
+            return message.channel.send(Embed.fail(`${member} is not kickable!`));
         }
 
         await member.kick(args.slice(1).join(' '));

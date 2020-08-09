@@ -5,7 +5,7 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            'discrim',
+            { name: 'discrim', folder: 'Server' },
             [
                 'Get all users with a certain discriminator!',
                 '1337', '0001'
@@ -17,8 +17,8 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1 || isNaN(Number(args[0]))) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+        if(args.length < 1 || Number.isNaN(Number(args[0]))) {
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         let members: Collection<string, GuildMember>;

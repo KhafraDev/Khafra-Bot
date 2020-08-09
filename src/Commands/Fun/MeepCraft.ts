@@ -1,7 +1,7 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 // @ts-ignore
-import { agent } from '../../Backend/Helpers/Proxy';
+import { agent } from '../../Backend/Utility/Proxy';
 import fetch from 'node-fetch';
 import Embed from "../../Structures/Embed";
 
@@ -13,7 +13,7 @@ const latest = {
 export default class extends Command {
     constructor() {
         super(
-            'meepcraft',
+            { name: 'meepcraft', folder: 'Fun' },
             [ 
                 'Get the number of users playing MeepCraft right now.',
                 ''

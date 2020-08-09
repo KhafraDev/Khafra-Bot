@@ -1,44 +1,57 @@
-// cooldown.has(id, 'command name');
+class Cooldown {
+    cache: Map<string, {
+        id: string,
+        seconds: number,
+        time: number
+    }[]> = new Map();
 
-import { Snowflake } from "discord.js";
-
-class Cooldown extends Map<Snowflake, string[]> {
-    $set(id: Snowflake, name: string, seconds: number) {
-        if(this.$has(id, name)) { // cooldown for id has command in array
-            return this;
+    set(id: string, name: string, seconds: number) {
+        const hold = this.cache.get(name);
+        if(hold) {
+            this.cache.set(name, hold.concat({
+                id: id,
+                seconds: seconds,
+                time: Date.now()
+            }));
+        } else {
+            this.cache.set(name, [
+                {
+                    id: id,
+                    seconds: seconds,
+                    time: Date.now()  
+                }
+            ])
         }
 
-        const get = this.get(id);
-        if(!get) { // non-existent user, either deleter or first command
-            this.set(id, [ name ]);
-        } else { // if they do exist, add the command name to their cooldowns
-            get.push(name);
-        }
-
-        // set timeout to remove command from cooldown array
-        // or delete the entry if the user has no cooldowns
-        this.$clear(id, name, seconds);
-        return this;
+        this.delete(name, id, seconds);
     }
 
-    $has(id: Snowflake, name: string) {
-        const get = this.get(id);
-        return get?.indexOf?.(name) > -1;
+    /**
+     * Get cooldowns for a specific command.
+     * @param name command name to get cooldowns for
+     */
+    get(name: string) {
+        return this.cache.get(name);
     }
 
-    $clear(id: Snowflake, name: string, seconds: number) {
+    /**
+     * Test if a user has a cooldown for a command already
+     * @param name command name
+     * @param id User id
+     */
+    has(name: string, id: string) {
+        return this.get(name)?.filter(p => p.id === id).pop() ?? false;
+    }
+
+    delete(name: string, id: string, seconds: number) {
         setTimeout(() => {
-            const get = this.get(id);
-            const index = get.indexOf(name);
-            if(index !== -1) {
-                get.splice(index, 1);
-            }
-
-            if(get.length === 0) {
-                this.delete(id);
+            const hold = this.has(name, id);
+            if(hold) {
+                const filtered = this.get(name).filter(p => p.id !== id);
+                this.cache.set(name, filtered);
             }
         }, seconds * 1000);
     }
 }
 
-export default new Cooldown();
+export { Cooldown };

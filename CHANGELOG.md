@@ -71,3 +71,18 @@
 * ``tictactoe`` command will intelligently pick spots now.
 * ``tictactoe`` will no longer freeze if it's a draw.
 * Fixed issue where bot would give cooldowns if a valid command used a different prefix. For example: `+help` would issue a cooldown on the `help` command if the prefix was `!`.
+
+# v1.0.0~beta8
+* Added ``pocketadd`` to add articles, videos, or images to your Pocket list!
+* ``pocketinit`` is now faster.
+* Rename .i.ts files to .d.ts so they aren't transpiled.
+* ``messagereact`` is now split into two commands: ``messagereact`` and ``messagereactmessage``. This fixes an issue where a message ID could never be fetched, unless it was in the current channel. GuildSettings will no longer store message content either, as it was unused. 
+* On ``messageReactionAdd`` events, if the user isn't manageable by the client, it will (attempt) to DM the user to explain the issue and how to correct it.
+* Commands that use the date formatter will now show the timezone (in GMT) and are in 12-hour times rather than 24-hours.
+* Fixed a logic error in the ``ban`` command that would incorrectly check which member was bannable.
+* Incorrect time inputs in ``ban`` will no longer throw an error.
+* Cooldown messages will now tell the user the remaining time until they can use the command again.
+* ``list`` command now sorts by category, making it much better.
+* Add in ``insights``, which are similar to Discord's insights.
+* Replace global ``isNaN`` with ``Number.isNaN``.
+* Add in ``trivia``, ``triviahelp``, and ``trivialist`` commands.

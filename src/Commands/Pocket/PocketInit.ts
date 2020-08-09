@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 import { Message, MessageReaction, User } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { Pocket } from "../../Backend/CommandStructures/Pocket";
@@ -7,7 +7,7 @@ import { Pocket } from "../../Backend/CommandStructures/Pocket";
 export default class extends Command {
     constructor() {
         super(
-            'pocketinit',
+            { name: 'pocketinit', folder: 'Pocket' },
             [
                 'Pocket: Start the process of authorizing your Pocket account.',
                 ''
@@ -22,7 +22,7 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } 
 
-        const client = await Mongo.connect();
+        const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
         const pocket = new Pocket();
@@ -54,40 +54,41 @@ export default class extends Command {
         const filter = (reaction: MessageReaction, user: User) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { time: 120000, max: 1 });
 
-        await new Promise((resolve, reject) => {
-            collector.on('collect', r => {
-                const emoji = r.emoji.name;
-                collector.stop();
+        collector.on('collect', async r => {
+            const emoji = r.emoji.name;
+            collector.stop();
 
-                return emoji === '✅' ? resolve() : reject();
+            if(emoji === '❌') {
+                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+            }
+
+            try {
+                await pocket.accessToken();
+            } catch {
+                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+            }
+
+            const entry = Object.assign(pocket.toObject(), {
+                id: message.author.id
             });
-            collector.on('end', () => {
-                try {
-                    msg.reactions.removeAll();
-                } catch {}
-            });
-        })
-        .then(() => pocket.accessToken())
-        .catch(e => msg.edit(Embed.fail(`
-        Khafra-Bot wasn't authorized.
-
-        \`\`\`${(e as Error).toString()}\`\`\`
-        `))); // canceled
-
-        const entry = Object.assign(pocket.toObject(), {
-            id: message.author.id
+    
+            const value = await collection.updateOne(
+                { id: message.author.id },
+                { $set: { ...entry } },
+                { upsert: true }
+            );
+    
+            if(value.result.ok) {
+                return msg.edit(Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
+            } else {
+                return msg.edit(Embed.fail('An unexpected error occurred!'));
+            }
         });
 
-        const value = await collection.updateOne(
-            { id: message.author.id },
-            { $set: { ...entry } },
-            { upsert: true }
-        );
-
-        if(value.result.ok) {
-            return msg.edit(Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
-        } else {
-            return msg.edit(Embed.fail('An unexpected error occurred!'));
-        }
+        collector.on('end', () => {
+            try {
+                msg.reactions.removeAll();
+            } catch {}
+        });
     }
 }

@@ -5,7 +5,7 @@ import { Message } from 'discord.js';
 export default class extends Command {
     constructor() {
         super(
-            'optimum',
+            { name: 'optimum', folder: 'Fun' },
             [
                 'See reviews for the worst ISP in the U.S.',
                 ''

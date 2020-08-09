@@ -1,25 +1,25 @@
 import { Command } from "../../Structures/Command";
 import { Message, User } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
-import { formatDate } from "../../Backend/Helpers/Date";
+import { pool } from "../../Structures/Database/Mongo";
+import { formatDate } from "../../Backend/Utility/Date";
 
 export default class extends Command {
     constructor() {
         super(
-            'taginfo',
+            { name: 'tagsinfo', folder: 'Tags' },
             [
                 'Tags: get info on a tag.',
                 ''
             ],
             [ /* No extra perms needed */ ],
             10,
-            [ 'tagsinfo', 'tagsget', 'tagget' ]
+            [ 'taginfo', 'tagsget', 'tagget' ]
         );
     }
 
     async init(message: Message, args: string[]) {
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const tag = await collection.findOne(
@@ -37,7 +37,7 @@ export default class extends Command {
         const embed = Embed.success()
             .addField('**Name:**', item.name, true)
             .addField('**Owner:**', await message.client.users.fetch(item.owner), true)
-            .addField('**Created:**', formatDate('MMMM Do, YYYY kk:mm:ssA', item.created), true)
+            .addField('**Created:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', item.created), true)
 
         return message.channel.send(embed);
     }

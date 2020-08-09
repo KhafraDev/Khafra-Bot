@@ -6,13 +6,15 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            'tictactoe',
+            { name: 'tictactoe', folder: 'Fun' },
             [
-                'Play a game of Tic-Tac-Toe in Discord.',
+                `Play a game of Tic-Tac-Toe in Discord. Each box (read left->right, up->down) represents a single box, 1-9.
+                To play, type the box number you want to go in. You are player \`\`X\`\` by default.
+                `,
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10
+            45
         );
     }
 

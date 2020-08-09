@@ -6,7 +6,7 @@ import KhafraClient from "../../Bot/KhafraBot";
 export default class extends Command {
     constructor() {
         super(
-            'help',
+            { name: 'help', folder: 'Server' },
             [
                 'Display examples and description of a command!',
                 'say', ''
@@ -17,16 +17,20 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        const command = KhafraClient.Commands.get(args[0] ?? 'help');
+        const command = KhafraClient.Commands.get(args[0]);        
         if(!command) {
-            return message.channel.send(Embed.fail('No command found!'));
+            return message.channel.send(Embed.fail(`
+            No command found!
+
+            For a list of commands try the \`\`list\`\` command!
+            `));
         }
 
         const embed = Embed.success(`
         ${command.help[0]}
 
         Examples:
-        ${command.help.slice(1).map(ex => `\`\`${command.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
+        ${command.help.slice(1).map(ex => `\`\`${command.name.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
         `);
 
         return message.channel.send(embed);

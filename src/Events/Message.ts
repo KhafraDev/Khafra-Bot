@@ -1,10 +1,12 @@
 import { Event } from "../Structures/Event";
 import { Message, PermissionString, ClientEvents } from "discord.js";
-import { dbHelpers } from "../Backend/Helpers/GuildSettings";
+import { dbHelpers } from "../Backend/Utility/GuildSettings";
 import KhafraClient from "../Bot/KhafraBot";
-import { Sanitize } from "../Backend/Helpers/SanitizeCommand";
-import Cooldown from "../Structures/Cooldown";
+import { Sanitize } from "../Backend/Utility/SanitizeCommand";
+import { Cooldown } from "../Structures/Cooldown";
 import Embed from "../Structures/Embed";
+
+const cooldown = new Cooldown();
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
@@ -46,10 +48,10 @@ export default class implements Event {
             }
         }
 
-        const blacklisted = settings?.custom_commands.filter(bl => bl.name === command?.name && bl.type === 'blacklist');
-        const whitelisted = settings?.custom_commands.filter(wl => wl.name === command?.name && wl.type === 'whitelist');
+        const blacklisted = settings?.custom_commands.filter(bl => bl.name === command?.name.name && bl.type === 'blacklist');
+        const whitelisted = settings?.custom_commands.filter(wl => wl.name === command?.name.name && wl.type === 'whitelist');
 
-        if(!command || !cmd?.startsWith(prefix)) {
+        if(!command || cmd?.indexOf(prefix) !== 0) {
             return;
         } else if(whitelisted?.length > 0) {
             const { users, channels } = whitelisted.pop();
@@ -69,16 +71,18 @@ export default class implements Event {
             ) {
                 return;
             }
-        } else if(Cooldown.$has(message.author.id, command.name)) {
+        } 
+        
+        const user_cd = cooldown.has(command.name.name, message.author.id);
+
+        if(user_cd) {
             return message.channel.send(Embed.fail(`
-            Command \`\`${command.name}\`\` has a ${command.cooldown} second cooldown!
-            `));
+            Command \`\`${command.name.name}\`\` has a ${command.cooldown} second cooldown!
+            
+            Please wait \`\`${(user_cd.seconds - ((Date.now() - user_cd.time) / 1000)).toFixed(2)}\`\` seconds to use this command again!
+            `))
         } else {
-            Cooldown.$set(message.author.id, command.name, command.cooldown);
-        }
-    
-        if(!cmd.startsWith(prefix)) {
-            return;
+            cooldown.set(message.author.id, command.name.name, command.cooldown);
         }
 
         return command['init'](message, args);

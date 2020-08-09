@@ -8,7 +8,6 @@ export type reacts = {
 
 export type react_messages = {
     id: string;
-    content: string;
     emoji: string;
     role: string;
 };

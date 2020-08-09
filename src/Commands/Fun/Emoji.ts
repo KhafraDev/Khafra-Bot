@@ -6,7 +6,7 @@ import { parse } from "twemoji-parser";
 export default class extends Command {
     constructor() {
         super(
-            'emoji',
+            { name: 'emoji', folder: 'Fun' },
             [
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙'
@@ -20,7 +20,7 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const parsed = parse(args.join(' '), {

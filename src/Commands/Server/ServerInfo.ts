@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildEmojiManager } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { formatDate } from '../../Backend/Helpers/Date';
+import { formatDate } from '../../Backend/Utility/Date';
 
 export default class extends Command {
     constructor() {
         super(
-            'server',
+            { name: 'server', folder: 'Server' },
             [
                 'Get info about the server!',
                 ''
@@ -35,7 +35,7 @@ export default class extends Command {
             .addField('**Region:**',        message.guild.region, true)
             .addField('**Vanity URL:**',    message.guild.vanityURLCode ? `discord.gg/${message.guild.vanityURLCode}` : 'None', true)
             .addField('**Verification:**',  message.guild.verificationLevel, true)
-            .addField('**Created:**',        formatDate('MMMM Do, YYYY kk:mm:ssA', message.guild.createdAt), false)
+            .addField('**Created:**',        formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), false)
             .addFields(this.formatEmojis(message.guild.emojis).map(e => ({
                 name: 'Emoji',
                 value: e,

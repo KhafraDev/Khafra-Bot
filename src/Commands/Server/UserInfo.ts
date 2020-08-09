@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember, Activity } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { formatDate } from '../../Backend/Helpers/Date';
+import { formatDate } from '../../Backend/Utility/Date';
 
 export default class extends Command {
     constructor() {
         super(
-            'user',
+            { name: 'user', folder: 'Server' },
             [
                 'Get info about a user.',
                 '@Khafra#0001', '267774648622645249'
@@ -18,7 +18,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let member: GuildMember; // = message.mentions.members?.first() ?? message.member;
+        let member: GuildMember;
         if(args[0] && !message.mentions.members.first()) {
             try {
                 member = await message.guild.members.fetch(args[0]);
@@ -26,7 +26,7 @@ export default class extends Command {
                 member = message.member;
             }
         } else {
-            member = message.mentions.members?.first() ?? message.member;
+            member = message.mentions.members.first() ?? message.member;
         }
 
         const embed = Embed.success()
@@ -44,7 +44,7 @@ export default class extends Command {
             .addField('**Discrim:**',    member.user.discriminator, true)
             .addField('**Nickname:**',   member.nickname ?? 'None', true)
             .addField('**Bot:**',        member.user.bot ? 'Yes' : 'No', true)
-            .addField('**Joined:**',     formatDate('MMMM Do, YYYY kk:mm:ssA', member.user.createdAt), false)
+            .addField('**Joined:**',     formatDate('MMMM Do, YYYY hh:mm:ss A t', member.user.createdAt), false)
         
         return message.channel.send(embed);
     }

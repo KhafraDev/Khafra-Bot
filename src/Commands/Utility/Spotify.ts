@@ -2,12 +2,12 @@ import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 import { spotify } from '../../Backend/CommandStructures/SpotifyHandler';
-import { SpotifyResult } from '../../Backend/types/spotify.i';
+import { SpotifyResult } from '../../Backend/types/spotify';
 
 export default class extends Command {
     constructor() {
         super(
-            'spotify',
+            { name: 'spotify', folder: 'Utility' },
             [
                 'Search for a song on Spotify',
                 'Bohemian Rhapsody',
@@ -25,7 +25,7 @@ export default class extends Command {
         ).pop();
 
         if(!presence && args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         let res: SpotifyResult;

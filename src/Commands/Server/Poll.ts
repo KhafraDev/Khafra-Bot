@@ -6,7 +6,7 @@ import { parse } from "twemoji-parser";
 export default class extends Command {
     constructor() {
         super(
-            'poll',
+            { name: 'poll', folder: 'Server' },
             [
                 'Poll', 
                 `705894525473784303 👍 👎
@@ -24,7 +24,7 @@ Option 2: No."`
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 4) { // poll channel emoji1, emoji2, etc, "message"
-            return message.channel.send(Embed.missing_args(4, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(4, this.name.name, this.help.slice(1)));
         }
 
         let channel: TextChannel = message.mentions.channels.first();
@@ -53,7 +53,7 @@ Option 2: No."`
             return message.channel.send(Embed.fail('Invalid poll message!'));
         }
 
-        const toBeParsed = args.slice(1).join(' ').match(/^(.*?)"/)?.[1]?.trim();
+        const toBeParsed = args.slice(1).join(' ').match(/^(.*?)"/)?.[1].trim();
         if(!toBeParsed) {
             return message.channel.send(Embed.fail('Invalid emojis given!'));
         }

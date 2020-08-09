@@ -2,14 +2,14 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { mdn } from "../../Backend/CommandStructures/MDNHandler";
 import Embed from "../../Structures/Embed";
-import { compareTwoStrings } from "../../Backend/Helpers/CompareStrings";
+import { compareTwoStrings } from "../../Backend/Utility/CompareStrings";
 
 type mdnResult = { partialURL: string, title: string, diff: number }
 
 export default class extends Command {
     constructor() {
         super(
-            'mdn',
+            { name: 'mdn', folder: 'Utility' },
             [
                 'Search MDN for a phrase.',
                 'Array.prototype.slice',
@@ -22,7 +22,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) { // mdn Array.prototype.slice
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         let parsed: mdnResult[] = [];

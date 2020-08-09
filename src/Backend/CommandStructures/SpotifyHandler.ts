@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { URLSearchParams } from "url";
-import { SpotifyResult } from "../types/spotify.i";
+import { SpotifyResult } from "../types/spotify";
 
 class Spotify {
     private id = process.env.SPOTIFY_ID;

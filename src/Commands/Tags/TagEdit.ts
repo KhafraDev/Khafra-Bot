@@ -1,28 +1,28 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            'tagedit',
+            { name: 'tagsedit', folder: 'Tags' },
             [
                 'Tags: edit a tag you own.',
                 'hello Goodbye!'
             ],
             [ /* No extra perms needed */ ],
             15,
-            [ 'tagsedit' ]
+            [ 'tagedit' ]
         );
     }
 
     async init(message: Message, args: string[]) {
         if(args.length < 2) {
-            return message.channel.send(Embed.missing_args(2, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(2, this.name.name, this.help.slice(1)));
         }
 
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const value = await collection.updateOne(

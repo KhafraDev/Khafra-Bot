@@ -10,7 +10,7 @@ const start = `
 export default class extends Command {
     constructor() {
         super(
-            'cowsay',
+            { name: 'cowsay', folder: 'Fun' },
             [
                 'The classic CowSay command for Discord!',
                 'head-in Help, I\'m stuck!', 'tux Global warming is a hoax', 'just your ordinary cow.', 'list'
@@ -22,7 +22,7 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const types = [

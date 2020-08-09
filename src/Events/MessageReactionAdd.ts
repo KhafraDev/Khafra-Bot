@@ -6,7 +6,8 @@ import {
     PermissionString, 
     ClientEvents 
 } from "discord.js";
-import { dbHelpers } from "../Backend/Helpers/GuildSettings";
+import { dbHelpers } from "../Backend/Utility/GuildSettings";
+import Embed from "../Structures/Embed";
 
 export default class implements Event {
     name: keyof ClientEvents = 'messageReactionAdd';
@@ -27,7 +28,8 @@ export default class implements Event {
         const perms = reaction.message.guild.me.permissionsIn(reaction.message.channel);
         const needed = [
             'READ_MESSAGE_HISTORY',
-            'MANAGE_ROLES' // not sure if required
+            'MANAGE_ROLES',
+            'VIEW_CHANNEL',
         ] as PermissionString[];
         
         if(user.id === reaction.message.client.user.id) {
@@ -59,6 +61,10 @@ export default class implements Event {
         const member = await reaction.message.guild.members.fetch(user.id);
         if(member.manageable) {    
             return member.roles.add(filtered[0].role, 'Reacted');
+        } else {
+            try {
+                member.send(Embed.fail('I can\'t manage your roles. Please ask an admin to update my perms. 🙏'));
+            } catch {}
         }
     }
 }

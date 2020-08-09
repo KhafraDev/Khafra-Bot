@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Utility/GuildSettings';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
         super(
-            'get',
+            { name: 'get', folder: 'Settings' },
             [
                 'GuildSettings: Get the current guild info from the bot.',
                 ''

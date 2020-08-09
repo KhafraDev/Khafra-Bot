@@ -5,7 +5,7 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            'unban',
+            { name: 'unban', folder: 'Moderation' },
             [
                 'Unban a user from the guild.',
                 '1234567891234567 for apologizing',
@@ -20,14 +20,14 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
         let user: User;
         try {
             user = await message.client.users.fetch(id);
-            await message.guild.members.unban(user, (reason || []).join(' '));
+            await message.guild.members.unban(user, reason?.join(' '));
         } catch(e) {
             return message.channel.send(Embed.fail(`
             Invalid User!

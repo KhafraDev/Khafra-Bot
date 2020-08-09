@@ -1,6 +1,6 @@
 import { Event } from "../Structures/Event";
 import { MessageReaction, User, PartialUser, PermissionString, ClientEvents } from "discord.js";
-import { dbHelpers } from "../Backend/Helpers/GuildSettings";
+import { dbHelpers } from "../Backend/Utility/GuildSettings";
 
 export default class implements Event {
     name: keyof ClientEvents = 'messageReactionRemove';
@@ -21,7 +21,8 @@ export default class implements Event {
         const perms = reaction.message.guild.me.permissionsIn(reaction.message.channel);
         const needed = [
             'READ_MESSAGE_HISTORY',
-            'MANAGE_ROLES' // not sure if required
+            'MANAGE_ROLES',
+            'VIEW_CHANNEL'
         ] as PermissionString[];
         
         if(user.id === reaction.message.client.user.id) {

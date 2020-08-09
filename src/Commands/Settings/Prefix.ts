@@ -1,12 +1,12 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { dbHelpers } from "../../Backend/Helpers/GuildSettings";
+import { dbHelpers } from "../../Backend/Utility/GuildSettings";
 import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
         super(
-            'prefix',
+            { name: 'prefix', folder: 'Settings' },
             [ 
                 'GuildSettings: Change the prefix for the current guild.',
                 '>>', '!!', '?'
@@ -22,7 +22,7 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const row = dbHelpers.get(message.guild.id, 'prefix');

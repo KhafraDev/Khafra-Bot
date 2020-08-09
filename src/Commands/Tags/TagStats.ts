@@ -1,24 +1,24 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            'tagstats',
+            { name: 'tagsstats', folder: 'Tags' },
             [
                 'Tags: get guild stats on tags.',
                 ''
             ],
             [ /* No extra perms needed */ ],
             10,
-            [ 'tagstat', 'tagsstat', 'tagsstats' ]
+            [ 'tagstat', 'tagsstat', 'tagstats' ]
         );
     }
 
     async init(message: Message) {
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const tags = await collection.findOne(

@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message, TextChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { formatDate } from '../../Backend/Helpers/Date';
+import { formatDate } from '../../Backend/Utility/Date';
 
 export default class extends Command {
     constructor() {
         super(
-            'channel',
+            { name: 'channel', folder: 'Server' },
             [
                 'Get info on a specified channel!',
                 '#general',
@@ -43,9 +43,9 @@ export default class extends Command {
             .addField('**Type:**',       channel.type, true)
             .addField('**Name:**',       channel.name, true)
             .addField('**NSFW:**',       channel.nsfw ? 'Yes' : 'No', true)
-            .addField('**Parent:**',     channel.parent?.toString?.() ?? 'None', true)
-            .addField('**Rate-limit:**', (channel.rateLimitPerUser?.toLocaleString?.() ?? 0) + ' secs', true)
-            .addField('**Created:**',    formatDate('MMMM Do, YYYY kk:mm:ssA', channel.createdAt), true)
+            .addField('**Parent:**',     channel.parent?.toString() ?? 'None', true)
+            .addField('**Rate-limit:**', (channel.rateLimitPerUser?.toLocaleString() ?? 0) + ' secs', true)
+            .addField('**Created:**',    formatDate('MMMM Do, YYYY hh:mm:ssA', channel.createdAt), true)
 
         return message.channel.send(embed);
     }

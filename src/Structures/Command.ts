@@ -2,12 +2,12 @@ import {
     Message, 
     PermissionString,
     TextChannel,
-    Snowflake
+    Snowflake,
 } from 'discord.js';
 
 export class Command {
     /*** Name of the command; used for fetching and executing. */
-    name: string;
+    name: { name: string, folder: string };
     /*** Description and example usage. */
     help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
@@ -18,7 +18,7 @@ export class Command {
     aliases?: string[];
     
     constructor(
-        name: string,
+        name: { name: string, folder: string },
         help: string[],
         permissions: PermissionString[],
         cooldown: number,
@@ -31,13 +31,13 @@ export class Command {
         this.aliases = aliases ?? [];
     }
 
-    hasPermissions(message: Message) {
+    hasPermissions(message: Message, channel?: TextChannel, permissions?: PermissionString[]) {
         const memberPerms           = message.member.permissions;
         const botPerms              = message.guild.me.permissions;
-        const botChannelPerms       = (message.channel as TextChannel).permissionsFor(message.guild.me);
-        const memberChannelPerms    = (message.channel as TextChannel).permissionsFor(message.member);
+        const botChannelPerms       = ((channel ?? message.channel) as TextChannel).permissionsFor(message.guild.me);
+        const memberChannelPerms    = ((channel ?? message.channel) as TextChannel).permissionsFor(message.member);
         
-        return this.permissions.every(perm => 
+        return (permissions ?? this.permissions).every(perm => 
             memberPerms.has(perm)        && // general perms
             botPerms.has(perm)           && // general perms
             botChannelPerms.has(perm)    && // channel perms

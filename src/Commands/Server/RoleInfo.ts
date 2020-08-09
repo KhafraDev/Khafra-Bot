@@ -1,12 +1,12 @@
 import { Command } from "../../Structures/Command";
 import { Message, Role } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Backend/Helpers/Date";
+import { formatDate } from "../../Backend/Utility/Date";
 
 export default class extends Command {
     constructor() {
         super(
-            'role',
+            { name: 'role', folder: 'Server' },
             [
                 'Get role info',
                 '1234567891234567',
@@ -20,7 +20,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         let role: Role = message.mentions.roles.first();
@@ -45,7 +45,7 @@ export default class extends Command {
             `)
             .addField('**Name:**', role.name, true)
             .addField('**Color:**', role.hexColor, true)
-            .addField('**Created:**', formatDate('MMMM Do, YYYY kk:mm:ssA', role.createdAt), true)
+            .addField('**Created:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', role.createdAt), true)
             .addField('**Mentionable:**', role.mentionable ? 'Yes' : 'No', true)
             .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
             .addField('**Position:**', role.position, true);

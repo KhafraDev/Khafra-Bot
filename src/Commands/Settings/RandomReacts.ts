@@ -1,13 +1,13 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Utility/GuildSettings';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
         super(
-            'randomreact',
+            { name: 'randomreact', folder: 'Settings' },
             [
                 'GuildSettings: react to a given user\'s message with a static emoji.',
                 '@user 👑 3'
@@ -24,13 +24,13 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 3) { // react [user: @user|ID] [emoji] [chance]
-            return message.channel.send(Embed.missing_args(3, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(3, this.name.name, this.help.slice(1)));
         }
 
         const [ user, emoji, chance ] = args;
         const emojis = parse(emoji).pop();
 
-        if(isNaN(+chance)) {
+        if(Number.isNaN(+chance)) {
             return message.channel.send(Embed.fail(`
             Received invalid argument type for chance!
 

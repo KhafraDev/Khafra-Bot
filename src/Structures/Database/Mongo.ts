@@ -1,8 +1,16 @@
 import { MongoClient } from 'mongodb';
+import { MongoPool } from '../../Backend/types/Mongo';
  
 const url = 'mongodb://localhost:27017';
- 
-// Use connect method to connect to the server
+
+const pool: MongoPool = Object.assign(
+    Object.create(null), {
+        pocket: null,
+        tags: null,
+        insights: null
+    }
+);
+
 class MongoDB {
     client: MongoClient
 
@@ -20,8 +28,8 @@ class MongoDB {
     }
 }
 
-const mongo = new MongoDB();
-
-export {
-    mongo as Mongo
+for(const prop in pool) {
+    pool[prop] = new MongoDB();
 }
+
+export { pool };

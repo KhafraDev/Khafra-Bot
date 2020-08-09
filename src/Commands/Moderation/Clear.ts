@@ -5,7 +5,7 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            'clear', 
+            { name: 'clear', folder: 'Moderation' }, 
             [
                 'Clear messages from a given channel.',
                 '100', '200'
@@ -19,11 +19,11 @@ export default class extends Command {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms(this.permissions));
         } else if(args.length < 1) { // clear [amount] -> 1 arg meeded
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         } 
         
         const toDelete = +args.shift() + 1;
-        if(isNaN(toDelete)) {
+        if(Number.isNaN(toDelete)) {
             return message.channel.send(Embed.fail(`
             Received: ${toDelete}, this command requires a number!
 

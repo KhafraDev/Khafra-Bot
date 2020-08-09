@@ -1,12 +1,12 @@
 import { Command } from "../../Structures/Command";
 import { Message, GuildMember } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            'taggive',
+            { name: 'tagsgive', folder: 'Tags' },
             [
                 'Tags: give a tag to another user.',
                 'hello @Khafra#0001',
@@ -14,13 +14,13 @@ export default class extends Command {
             ],
             [ /* No extra perms needed */ ],
             15,
-            [ 'tagsgive' ]
+            [ 'taggive' ]
         );
     }
 
     async init(message: Message, args: string[]) {
         if(args.length < 2) {
-            return message.channel.send(Embed.missing_args(2, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(2, this.name.name, this.help.slice(1)));
         }
 
         let member: GuildMember;
@@ -30,7 +30,7 @@ export default class extends Command {
             return message.channel.send(Embed.fail('A user must be mentioned or an ID must be provided after the tag\'s name!'));
         }
 
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const value = await collection.updateOne(

@@ -1,28 +1,28 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            'tagcreate',
+            { name: 'tagscreate', folder: 'Tags' },
             [
                 'Tags: create a tag.',
                 'hello Hello, everyone!'
             ],
             [ /* No extra perms needed */ ],
             15,
-            [ 'tagscreate' ]
+            [ 'tagcreate' ]
         );
     }
 
     async init(message: Message, args: string[]) {
         if(args.length < 2) {
-            return message.channel.send(Embed.missing_args(2, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(2, this.name.name, this.help.slice(1)));
         }
 
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const value = await collection.updateOne(
@@ -47,7 +47,7 @@ export default class extends Command {
 
         if(value.result.n === 0) {
             return message.channel.send(Embed.fail(`
-            Tag already exists, or have yet to be implemented by an administrator!
+            Tag already exists, or has yet to be implemented by an administrator!
             `));
         } else {
             return message.channel.send(Embed.success(`

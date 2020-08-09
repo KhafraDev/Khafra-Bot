@@ -5,7 +5,7 @@ import { Message } from 'discord.js';
 export default class extends Command {
     constructor() {
         super(
-            'say', 
+            { name: 'say', folder: 'Fun' }, 
             [
                 'Have KhafraBot say something!',
                 'Have a great day!', 'You suck.'
@@ -18,7 +18,7 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const embed = Embed.success()

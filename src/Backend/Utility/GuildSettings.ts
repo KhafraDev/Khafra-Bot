@@ -1,6 +1,6 @@
 import { Snowflake, Message } from 'discord.js';
 import db from '../../Structures/Database/SQLite';
-import { dbGuild } from '../types/db.i';
+import { dbGuild } from '../types/bettersqlite3';
 
 /**
  * Settings cache

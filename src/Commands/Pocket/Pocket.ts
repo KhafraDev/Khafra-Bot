@@ -5,7 +5,7 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            'pocket',
+            { name: 'pocket', folder: 'Pocket' },
             [
                 'Pocket: Connect your Pocket account to Khafra-Bot!',
                 ''

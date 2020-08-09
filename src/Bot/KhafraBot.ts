@@ -27,7 +27,7 @@ class KhafraClient extends Client {
                     const { default: c } = await import(join(process.cwd(), curr));
                     const build: Command = new c();
 
-                    KhafraClient.Commands.set(build.name, build);
+                    KhafraClient.Commands.set(build.name.name, build);
                     build.aliases.forEach(alias => KhafraClient.Commands.set(alias, build));
                 }
             }

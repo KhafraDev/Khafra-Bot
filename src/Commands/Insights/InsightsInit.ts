@@ -1,19 +1,19 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
+import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsinit', folder: 'Tags' },
+            { name: 'insightsinit', folder: 'Insights' },
             [
-                'Tags: start using tags!',
+                'Insights: Start having Khafra-Bot track new members, lurkers, and chatters!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            300, // only needs to be done once, so
-            [ 'taginit' ]
+            60,
+            [ 'insightinit' ]
         );
     }
 
@@ -24,24 +24,26 @@ export default class extends Command {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         }
 
-        const client = await pool.tags.connect();
-        const collection = client.db('khafrabot').collection('tags');
+        const client = await pool.insights.connect();
+        const collection = client.db('khafrabot').collection('insights');
 
         const value = await collection.updateOne(
             { id: message.guild.id },
             {
                 $setOnInsert: {
                     id: message.guild.id,
-                    tags: {}
+                    daily: {}
                 }
             },
             { upsert: true }
-        )
+        );
 
-        if(value.result.ok) {
+        if(value.upsertedCount === 1) {
             return message.channel.send(Embed.success(`
-            Tags are now accessible in this guild!
+            Insights are now accessible in this guild!
             `));
+        } else {
+            return message.channel.send(Embed.fail('An unexpected error occurred! Insights are likely already enabled.'));
         }
     }
 }

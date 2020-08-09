@@ -1,14 +1,14 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Backend/Helpers/Date";
+import { formatDate } from "../../Backend/Utility/Date";
 import { npm } from "../../Backend/CommandStructures/npmHandler";
-import { INPMPackage } from "../../Backend/types/npm.i";
+import { INPMPackage } from "../../Backend/types/npm";
 
 export default class extends Command {
     constructor() {
         super(
-            'npm',
+            { name: 'npm', folder: 'Utility' },
             [
                 'Search NPM\'s registry for a package',
                 'node-fetch latest', 'typescript'
@@ -21,7 +21,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) { // npm node-fetch
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         let _package: INPMPackage;
@@ -44,8 +44,8 @@ export default class extends Command {
             .addField('**Version:**', dist.version, true)
             .addField('**License:**', dist.license, true)
             .addField('**Author:**', _package.author?.name ?? 'N/A', true)
-            .addField('**Last Modified:**', formatDate('MMMM Do, YYYY kk:mm:ssA', _package.time?.modified), true)
-            .addField('**Published:**', formatDate('MMMM Do, YYYY kk:mm:ssA', _package.time?.created), true)
+            .addField('**Last Modified:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', _package.time?.modified), true)
+            .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', _package.time?.created), true)
             .addField('**Homepage:**', _package.homepage ?? 'None', true)
             .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
 

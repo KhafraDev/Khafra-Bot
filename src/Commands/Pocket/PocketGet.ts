@@ -1,25 +1,25 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
-import { get } from "../../Backend/CommandStructures/Pocket";
-import { PocketGetResults, PocketArticle } from "../../Backend/types/Pocket.i";
+import { pool } from "../../Structures/Database/Mongo";
+import { Pocket } from "../../Backend/CommandStructures/Pocket";
+import { PocketGetResults, PocketArticle } from "../../Backend/types/Pocket";
 
 export default class extends Command {
     constructor() {
         super(
-            'pocketget',
+            { name: 'pocketget', folder: 'Pocket' },
             [
                 'Pocket: retrieve your saved items!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            300
+            60
         );
     }
 
     async init(message: Message) {
-        const client = await Mongo.connect();
+        const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
         const user = await collection.findOne({ id: message.author.id });
@@ -33,7 +33,8 @@ export default class extends Command {
 
         let latest: PocketGetResults;
         try {
-            latest = await get(process.env.POCKET_CONSUMER_KEY, user.access_token);
+            const pocket = new Pocket(user);
+            latest = await pocket.getList();
         } catch(e) {
             return message.channel.send(Embed.fail(`
             An unexpected error occurred!

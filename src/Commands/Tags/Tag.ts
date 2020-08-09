@@ -1,12 +1,12 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Mongo } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            'tags',
+            { name: 'tags', folder: 'Tags' },
             [
                 'Tags: retrieve a tag!',
                 'first', 'hello'
@@ -18,7 +18,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const client = await Mongo.connect();
+        const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
         const tag = await collection.findOne(

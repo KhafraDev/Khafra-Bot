@@ -14,15 +14,17 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'messagereact', folder: 'Settings' },
+            { name: 'messagereactmessage', folder: 'Settings' },
             [
-                'GuildSettings: give a user a role when they react to a given message.',
-                '[Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
-                '#react_for_role @I_Reacted 👑 Hello, react to this message for a role! :-)'
+                'GuildSettings: give a user a role when they react to a pre-existing message.',
+                '[Message ID] [Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
+                '739301857226129528 #react_for_role @I_Reacted 👑 Hello, react to this message for a role! :)'
             ],
             [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
             10,
-            [ 'messagerole', 'rolereact', 'rolereacts' ]
+            [ 'messagerolemessage', 'rolereactmessage', 'rolereactsmessage',
+              'messagereactm', 'messagerolem', 'rolereactm', 'rolereactsm',
+              'messagereactmsg', 'messagerolemsg', 'rolereactmsg', 'rolereactsmsg']
         );
     }
 
@@ -31,8 +33,8 @@ export default class extends Command {
             && !this.isBotOwner(message.author.id)
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
-        } else if(args.length < 3) { // messagerole [message id | SEND NEW - channel (ID)] [role] [emoji] [message content if channel]
-            return message.channel.send(Embed.missing_args(3, this.name.name, this.help.slice(1)));
+        } else if(args.length < 4) {
+            return message.channel.send(Embed.missing_args(4, this.name.name, this.help.slice(1)));
         }
 
         const row = dbHelpers.get(message.guild.id, 'react_messages');
@@ -44,12 +46,12 @@ export default class extends Command {
             `));
         }
 
-        const [ id, _role, emoji, ...content ] = args;
+        const [ messageID, channel, _role, emoji ] = args;
 
         let where: TextChannel = message.mentions.channels.first();  
         if(!where) { // no channels mentioned
             try { // try fetching a channel id
-                where = await message.client.channels.fetch(id) as TextChannel; 
+                where = await message.client.channels.fetch(channel) as TextChannel; 
                 if(where.type !== 'text') {
                     return message.channel.send(Embed.fail('Non-TextChannel mentioned!'));
                 }
@@ -97,15 +99,18 @@ export default class extends Command {
             }
         }
 
-        const messageSent = await where.send(Embed.success(content.join(' ')));
-        await messageSent.react(Emoji);        
+        let msg: Message;
+        try {
+            msg = await where.messages.fetch(messageID);
+        } catch {
+            return message.channel.send(Embed.fail('Message couldn\'t be fetched from ' + where.toString() + '!'));
+        }   
 
         const react_messages: react_messages[] = [].concat(row.react_messages, {
-            id: messageSent.id,
-            content: content.join(' '),
+            id: msg.id,
             emoji: Emoji.id ?? Emoji.name ?? Emoji,
             role: role.id
-        });
+        } as react_messages);
 
         const updated = dbHelpers.updateMessageRoles(
             JSON.stringify(react_messages),
@@ -114,7 +119,7 @@ export default class extends Command {
 
         if(updated.changes === 1) {
             return message.channel.send(Embed.success(`
-            Sending message to ${where} where ${role} will be given on ${Emoji} reactions!
+            Listening for ${Emoji} reactions on ${msg.url} where ${role} will be given!
             `));
         } else {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));

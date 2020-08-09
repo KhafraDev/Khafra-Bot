@@ -22,7 +22,7 @@ const ordinal = (num = 0) => {
 export const formatDate = (format = '', _date: Date | string, locale = Intl.DateTimeFormat().resolvedOptions().locale) => {
     const date = (_date instanceof Date ? _date : new Date(_date)) as Date;
 
-    const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?/g;
+    const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?|t/g;
     const replace = format.replace(formatRegex, formatter => {
         switch(formatter) {
             case 'YYYY':    // 2020
@@ -47,10 +47,16 @@ export const formatDate = (format = '', _date: Date | string, locale = Intl.Date
             case 'ddd':     // Mon
             case 'dddd':    // Monday
                 return Intl.DateTimeFormat(locale, { weekday: formatter === 'dddd' ? 'long' : 'short' }).format(date);
-            case 'H':       // 0..23
-            case 'HH':      // 00..23
             case 'h':       // 0..12
             case 'hh':      // 00..12
+                const hours = date.getHours();
+                if(hours - 12 > 0) {
+                    return formatter === 'h' ? '' + (hours - 12) : ('' + (hours - 12)).padStart(2, '0');
+                }
+
+                return formatter === 'h' ? '' + hours : ('' + hours).padStart(2, '0');
+            case 'H':       // 0..23
+            case 'HH':      // 00..23
             case 'A':
             case 'a':
             case 'p':
@@ -67,7 +73,7 @@ export const formatDate = (format = '', _date: Date | string, locale = Intl.Date
                         : isUppercase ? 'AM' : 'am';
                 }
                 
-                return formatter === 'H' || formatter === 'h' ? '' + hour23 : ('' + hour23).padStart(2, '0');
+                return formatter === 'H' ? '' + hour23 : ('' + hour23).padStart(2, '0');
             case 'k':       // 1..24
             case 'kk':      // 01..24
                 const hour24 = date.getHours();
@@ -78,6 +84,10 @@ export const formatDate = (format = '', _date: Date | string, locale = Intl.Date
             case 's':       // 0..59
             case 'ss':      // 00.59
                 return formatter === 's' ? '' + date.getSeconds() : ('' + date.getSeconds()).padStart(2, '0');
+            case 't':
+                const offset = new Date().getTimezoneOffset();
+                const realOffset = offset / (offset > 0 ? -60 : 60);
+                return 'GMT' + (realOffset > 0 ? '+' : '-') + Math.abs(realOffset);
             default:
                 throw new Error('Unexpected identifier ' + formatter);
         }

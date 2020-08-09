@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
-import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Utility/GuildSettings';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
         super(
-            'create',
+            { name: 'create', folder: 'Settings' },
             [
                 'GuildSettings: Adds the guild to server settings.',
                 ''

@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import { dbHelpers } from '../../Backend/Helpers/GuildSettings';
+import { dbHelpers } from '../../Backend/Utility/GuildSettings';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
     constructor() {
         super(
-            'removemessagereact',
+            { name: 'removemessagereact', folder: 'Settings' },
             [ 
                 'GuildSettings: stop giving a user a role when reacting to a specific message.',
                 '267774648622645249'
@@ -24,7 +24,7 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms(this.permissions, true));
         } else if(args.length < 1) { // removemessagereact [message id]
-            return message.channel.send(Embed.missing_args(1, this.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
         }
 
         const row = dbHelpers.get(message.guild.id, 'react_messages');
