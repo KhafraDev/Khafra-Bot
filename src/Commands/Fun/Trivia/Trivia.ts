@@ -1,10 +1,10 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../../Structures/Embed";
-import { trivia } from "../../../Backend/CommandStructures/Trivia";
+import { trivia } from "../../../lib/Backend/Trivia";
 
 const shuffle = (a: string[]) => {
-    for (let i = a.length - 1; i > 0; i--) {
+    for(let i = a.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [a[i], a[j]] = [a[j], a[i]];
     }
@@ -30,10 +30,10 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 3) {
-            return message.channel.send(Embed.missing_args(3, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 3));
         }
 
-        const amount = !Number.isNaN(args[2]) && +args[2] <= 10 ? +args[2] : 10;
+        const amount = !isNaN(+args[2]) && +args[2] <= 10 ? +args[2] : 10;
         const difficulty = ['easy', 'hard', 'medium'].includes(args[1]) ? args[1] : 'easy';
 
         const list = await trivia.fetchList();

@@ -1,7 +1,7 @@
 import { Event } from "../Structures/Event";
 import { ClientEvents, GuildMember } from "discord.js";
 import { pool } from "../Structures/Database/Mongo";
-import { formatDate } from "../Backend/Utility/Date";
+import { formatDate } from "../lib/Utility/Date";
 
 export default class implements Event {
     name: keyof ClientEvents = 'guildMemberRemove';

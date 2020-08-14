@@ -2,8 +2,8 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../Backend/CommandStructures/Pocket";
-import { PocketAddResults } from "../../Backend/types/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket";
+import { PocketAddResults } from "../../lib/types/Pocket";
 import { URL } from "url";
 
 export default class extends Command {
@@ -21,7 +21,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const client = await pool.pocket.connect();
@@ -40,7 +40,7 @@ export default class extends Command {
         try {
             url = new URL(args[0]);
         } catch {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let added: PocketAddResults;

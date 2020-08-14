@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { pool } from "../../Structures/Database/Mongo";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Backend/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date";
 
 export default class extends Command {
     constructor() {
@@ -22,7 +22,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         }
 
         const client = await pool.insights.connect();

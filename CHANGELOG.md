@@ -86,3 +86,17 @@
 * Add in ``insights``, which are similar to Discord's insights.
 * Replace global ``isNaN`` with ``Number.isNaN``.
 * Add in ``trivia``, ``triviahelp``, and ``trivialist`` commands.
+
+# v1.0.0~beta9
+* Fixed ``Trivia`` types being compiled.
+* MDN command now uses an official search API which I detail [here](https://github.com/Anish-Shobith/mdn-api/issues/2#issuecomment-671545742).
+* Fix regressions where ``Number.isNaN`` was used rather than global ``isNaN``.
+* Add in ``minesweeper`` command.
+* Add in ``nytimes`` command that fetches the most popular articles of the day.
+* ``tag`` command will no longer throw an error if no arguments are provided.
+* ``Proxy`` helper is now written in ts.
+* Add in ``weather`` command.
+* ``cowsay`` will no longer crash when a type if given but no text (ie. ``cowsay tux`` would crash).
+* Embeds are now easier.
+* Add in ``whatisnpm`` command.
+* ``help`` command now lists aliases.

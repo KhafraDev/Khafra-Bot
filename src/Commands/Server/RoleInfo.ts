@@ -1,7 +1,7 @@
 import { Command } from "../../Structures/Command";
 import { Message, Role } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Backend/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date";
 
 export default class extends Command {
     constructor() {
@@ -20,7 +20,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let role: Role = message.mentions.roles.first();

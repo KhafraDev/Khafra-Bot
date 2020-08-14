@@ -22,9 +22,9 @@ Option 2: No."`
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(args.length < 4) { // poll channel emoji1, emoji2, etc, "message"
-            return message.channel.send(Embed.missing_args(4, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 4));
         }
 
         let channel: TextChannel = message.mentions.channels.first();

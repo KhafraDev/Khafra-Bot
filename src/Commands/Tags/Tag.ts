@@ -18,6 +18,10 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
+        if(args.length === 0) {
+            return message.channel.send(Embed.fail('No tag name provided! Use the ``help`` command for usage!'));
+        }
+
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
@@ -36,7 +40,7 @@ export default class extends Command {
             `));
         }
 
-        const embed = Embed.success(`\`\`${tag.tags[args[0].toLowerCase()].value}\`\``)
+        const embed = Embed.success(`\`\`${tag.tags[args[0]?.toLowerCase()].value}\`\``)
             .setTimestamp()
             .setFooter(`${message.author.username}`, message.author.displayAvatarURL())
 

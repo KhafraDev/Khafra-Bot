@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import { dbHelpers } from '../../Backend/Utility/GuildSettings';
+import { dbHelpers } from '../../lib/Utility/GuildSettings';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -22,9 +22,9 @@ export default class extends Command {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(args.length < 1) { // removemessagereact [message id]
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const row = dbHelpers.get(message.guild.id, 'react_messages');

@@ -1,5 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { MongoPool } from '../../Backend/types/Mongo';
+import { MongoPool } from '../../lib/types/Mongo';
  
 const url = 'mongodb://localhost:27017';
 

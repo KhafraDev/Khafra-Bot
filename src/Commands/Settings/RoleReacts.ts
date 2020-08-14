@@ -6,8 +6,8 @@ import {
     TextChannel, 
     GuildEmoji 
 } from 'discord.js';
-import { dbHelpers } from '../../Backend/Utility/GuildSettings';
-import { react_messages } from '../../Backend/types/bettersqlite3';
+import { dbHelpers } from '../../lib/Utility/GuildSettings';
+import { react_messages } from '../../lib/types/bettersqlite3';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
@@ -30,9 +30,9 @@ export default class extends Command {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(args.length < 3) { // messagerole [message id | SEND NEW - channel (ID)] [role] [emoji] [message content if channel]
-            return message.channel.send(Embed.missing_args(3, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 3));
         }
 
         const row = dbHelpers.get(message.guild.id, 'react_messages');
@@ -68,8 +68,8 @@ export default class extends Command {
             [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ])
         ) {
             return message.channel.send(Embed.missing_perms(
-                [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ],
-                true
+                true,
+                [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ]
             ));
         }
 

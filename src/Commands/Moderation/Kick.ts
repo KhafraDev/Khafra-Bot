@@ -18,9 +18,9 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
+            return message.channel.send(Embed.missing_perms.call(this));
         } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let member: GuildMember = message.mentions.members.first();

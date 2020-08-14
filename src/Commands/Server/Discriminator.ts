@@ -17,8 +17,8 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1 || Number.isNaN(Number(args[0]))) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+        if(args.length < 1 || Number.isNaN(+args[0])) {
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let members: Collection<string, GuildMember>;

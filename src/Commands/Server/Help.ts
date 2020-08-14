@@ -31,6 +31,9 @@ export default class extends Command {
 
         Examples:
         ${command.help.slice(1).map(ex => `\`\`${command.name.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
+
+        Aliases:
+        \`\`${command.aliases?.length > 0 ? command.aliases.join(', ') : 'None'}\`\`
         `);
 
         return message.channel.send(embed);

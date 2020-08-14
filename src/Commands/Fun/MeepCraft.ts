@@ -1,7 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-// @ts-ignore
-import { agent } from '../../Backend/Utility/Proxy';
+import { agent } from '../../lib/Utility/Proxy';
 import fetch from 'node-fetch';
 import Embed from "../../Structures/Embed";
 
@@ -33,8 +32,14 @@ export default class extends Command {
             return message.channel.send(embed);
         }
         
-        const players = await this.fetch();
-        if(players === null) {
+        let players: { playersOnline: number };
+        try {
+            const res = await fetch('https://forum.meepcraft.com/game/query.php', {
+                agent
+            });
+
+            players = await res.json();
+        } catch {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
 
@@ -44,19 +49,5 @@ export default class extends Command {
         const sentence = `There ${players.playersOnline === 1 ? 'is ``1`` player': 'are ``' + players.playersOnline + '`` players'}`
         const embed = Embed.success(`${sentence} on Meepcraft right now!`);
         return message.channel.send(embed);
-    }
-
-    async fetch() {
-        try {
-            const res = await fetch('https://forum.meepcraft.com/game/query.php', {
-                agent
-            });
-
-            const json = await res.json();
-            return json;
-        } catch(e) {
-            console.log(e);
-            return null;
-        }
     }
 }

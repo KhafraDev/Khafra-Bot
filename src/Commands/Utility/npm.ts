@@ -1,9 +1,9 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../Backend/Utility/Date";
-import { npm } from "../../Backend/CommandStructures/npmHandler";
-import { INPMPackage } from "../../Backend/types/npm";
+import { formatDate } from "../../lib/Utility/Date";
+import { npm } from "../../lib/Backend/npmHandler";
+import { INPMPackage } from "../../lib/types/npm";
 
 export default class extends Command {
     constructor() {
@@ -21,7 +21,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) { // npm node-fetch
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let _package: INPMPackage;

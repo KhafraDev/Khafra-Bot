@@ -1,8 +1,8 @@
 import { Event } from "../Structures/Event";
 import { Message, PermissionString, ClientEvents } from "discord.js";
-import { dbHelpers } from "../Backend/Utility/GuildSettings";
+import { dbHelpers } from "../lib/Utility/GuildSettings";
 import KhafraClient from "../Bot/KhafraBot";
-import { Sanitize } from "../Backend/Utility/SanitizeCommand";
+import { Sanitize } from "../lib/Utility/SanitizeCommand";
 import { Cooldown } from "../Structures/Cooldown";
 import Embed from "../Structures/Embed";
 

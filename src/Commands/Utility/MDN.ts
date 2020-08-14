@@ -1,10 +1,9 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { mdn } from "../../Backend/CommandStructures/MDNHandler";
+import { mdn } from "../../lib/Backend/MDNHandler";
 import Embed from "../../Structures/Embed";
-import { compareTwoStrings } from "../../Backend/Utility/CompareStrings";
-
-type mdnResult = { partialURL: string, title: string, diff: number }
+import { compareTwoStrings } from "../../lib/Utility/CompareStrings";
+import { MDNSearch } from "../../lib/types/MDN";
 
 export default class extends Command {
     constructor() {
@@ -22,42 +21,28 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) { // mdn Array.prototype.slice
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        let parsed: mdnResult[] = [];
+        let results: MDNSearch;
         try {
-            const html = await mdn(args.join(' '));
-            parsed = this.parseHTML(html, args.join(' '));
+            results = await mdn(args.join(' '));
         } catch {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
 
+        const best = results.documents
+            .map(doc => Object.assign(doc, { 
+                diff: compareTwoStrings(args.join(' ').toLowerCase(), doc.title.toLowerCase()) 
+            }))
+            .sort((a, b) => b.diff - a.diff);
+
         const embed = Embed.success()
             .setAuthor('Mozilla Development Network', 'https://developer.mozilla.org/static/img/opengraph-logo.72382e605ce3.png')
-            .setDescription(parsed.map(res => `[${res.title}](https://developer.mozilla.org${res.partialURL})`).join('\n'))
+            .setDescription(best.map(doc => `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`))
             .setFooter('Requested by ' + message.author.tag)
             .setTimestamp()
 
         return message.channel.send(embed);
-    }
-
-    /**
-     * Parse the page's HTML
-     * @param html html
-     */
-    parseHTML(html: string, search: string): mdnResult[] {
-        const c = html.match(/<a class="result-title" href="(.*?)">(.*?)<\/a>/g);
-        const b = [];
-        for(const u of c) {
-            const [, partialURL, title] = u.match(/href="(.*?)">(.*?)<\/a>/);
-            b.push({
-                partialURL,
-                title,
-                diff: compareTwoStrings(search.toLowerCase(), title.toLowerCase())
-            });
-        }
-        
-        return b.sort((a, b) => b.diff - a.diff);
     }
 }

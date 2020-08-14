@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { dbHelpers } from '../../Backend/Utility/GuildSettings';
+import { dbHelpers } from '../../lib/Utility/GuildSettings';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
@@ -21,7 +21,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(dbHelpers.isCached(message.guild.id)) {
             return message.channel.send(Embed.fail('Guild has already been inserted into database and cached!'));
         }

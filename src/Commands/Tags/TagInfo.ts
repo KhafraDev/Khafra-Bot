@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { Message, User } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
-import { formatDate } from "../../Backend/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date";
 
 export default class extends Command {
     constructor() {

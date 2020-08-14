@@ -2,12 +2,14 @@ const auth = 'Basic ' + Buffer.from(
     process.env.PROXY_USERNAME + ':' + process.env.PROXY_PASSWORD
 ).toString('base64');
 
-const { parse } = require('url');
-const HttpsProxyAgent = require('https-proxy-agent');
+import { parse } from 'url';
+import HttpsProxyAgent from 'https-proxy-agent';
 
-const proxy = new HttpsProxyAgent(Object.assign(
+const opts = Object.assign(
     parse('http://us5082.nordvpn.com'),
     { headers: { 'Proxy-Authorization': auth } }
-));
+);
 
-module.exports.agent = proxy;
+const proxy = new (HttpsProxyAgent as any)(opts);
+
+export { proxy as agent };

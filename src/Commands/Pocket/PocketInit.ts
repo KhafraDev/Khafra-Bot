@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { pool } from "../../Structures/Database/Mongo";
 import { Message, MessageReaction, User } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Pocket } from "../../Backend/CommandStructures/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket";
 
 export default class extends Command {
     constructor() {
@@ -19,7 +19,7 @@ export default class extends Command {
 
     async init(message: Message) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms(this.permissions));
+            return message.channel.send(Embed.missing_perms.call(this));
         } 
 
         const client = await pool.pocket.connect();
@@ -87,7 +87,7 @@ export default class extends Command {
 
         collector.on('end', () => {
             try {
-                msg.reactions.removeAll();
+                return msg.reactions.removeAll();
             } catch {}
         });
     }

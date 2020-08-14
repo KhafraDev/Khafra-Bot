@@ -1,8 +1,8 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { spotify } from '../../Backend/CommandStructures/SpotifyHandler';
-import { SpotifyResult } from '../../Backend/types/spotify';
+import { spotify } from '../../lib/Backend/SpotifyHandler';
+import { SpotifyResult } from '../../lib/types/spotify';
 
 export default class extends Command {
     constructor() {
@@ -25,7 +25,7 @@ export default class extends Command {
         ).pop();
 
         if(!presence && args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         let res: SpotifyResult;

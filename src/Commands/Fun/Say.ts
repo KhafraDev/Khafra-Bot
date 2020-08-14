@@ -18,7 +18,7 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const embed = Embed.success()

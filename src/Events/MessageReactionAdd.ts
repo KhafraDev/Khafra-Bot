@@ -6,7 +6,7 @@ import {
     PermissionString, 
     ClientEvents 
 } from "discord.js";
-import { dbHelpers } from "../Backend/Utility/GuildSettings";
+import { dbHelpers } from "../lib/Utility/GuildSettings";
 import Embed from "../Structures/Embed";
 
 export default class implements Event {

@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-import { dbHelpers } from '../../Backend/Utility/GuildSettings';
+import { dbHelpers } from '../../lib/Utility/GuildSettings';
 import { parse } from 'twemoji-parser';
 import Embed from '../../Structures/Embed';
 
@@ -22,9 +22,9 @@ export default class extends Command {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms(this.permissions, true));
+            return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(args.length < 3) { // react [user: @user|ID] [emoji] [chance]
-            return message.channel.send(Embed.missing_args(3, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 3));
         }
 
         const [ user, emoji, chance ] = args;

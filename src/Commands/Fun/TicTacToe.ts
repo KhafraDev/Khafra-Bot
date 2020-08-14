@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { TicTacToe } from "../../Backend/CommandStructures/TicTacToeHandler";
+import { TicTacToe } from "../../lib/Backend/TicTacToeHandler";
 import Embed from "../../Structures/Embed";
 
 export default class extends Command {
@@ -24,14 +24,14 @@ export default class extends Command {
         const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``);
         const sent = await message.channel.send(embed);
 
-        const filter = (m: Message) => m.author.id === message.author.id && Number(m.content) > 0 && Number(m.content) < 10;
+        const filter = (m: Message) => m.author.id === message.author.id && +m.content > 0 && +m.content < 10;
         const collector = message.channel.createMessageCollector(filter, { 
             max: 5,
             time: 60000 
         });
 
         collector.on('collect', (m: Message) => {
-            const user = game.go(Number(m.content) - 1);
+            const user = game.go(+m.content - 1);
 
             if(user === 2) { // user won the game
                 const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)

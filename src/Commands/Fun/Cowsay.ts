@@ -21,8 +21,9 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
+        //console.log(this);
         if(args.length < 1) {
-            return message.channel.send(Embed.missing_args(1, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const types = [
@@ -42,6 +43,8 @@ export default class extends Command {
             return message.channel.send(Embed.success(`
             ${types.map(t => '``' + t + '``').join(', ')}
             `));
+        } else if(args.length < 2) {
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');

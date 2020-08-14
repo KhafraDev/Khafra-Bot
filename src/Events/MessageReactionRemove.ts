@@ -1,6 +1,6 @@
 import { Event } from "../Structures/Event";
 import { MessageReaction, User, PartialUser, PermissionString, ClientEvents } from "discord.js";
-import { dbHelpers } from "../Backend/Utility/GuildSettings";
+import { dbHelpers } from "../lib/Utility/GuildSettings";
 
 export default class implements Event {
     name: keyof ClientEvents = 'messageReactionRemove';

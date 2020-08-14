@@ -1,10 +1,10 @@
 import { MessageEmbed, PermissionString } from "discord.js";
 
-export default class {
+export default {
     /**
      * An embed for any type of error!
      */
-    static fail(reason?: string) {
+    fail: function(reason?: string) {
         const embed = new MessageEmbed()
             .setColor('#FF0000');
 
@@ -12,12 +12,12 @@ export default class {
             embed.setDescription(reason);
         }
         return embed;
-    }
+    },
 
     /**
      * An embed for a command being successfully executed!
      */
-    static success (reason?: string) {
+    success: function(reason?: string) {
         const embed = new MessageEmbed()
             .setColor('#ffe449');
         
@@ -26,28 +26,29 @@ export default class {
         }
         
         return embed;
-    }
+    },
 
     /**
      * An embed for missing permissions!
      */
-    static missing_perms(perms: PermissionString[], admin?: boolean) {
-        return this.fail(`
+    missing_perms: function(admin?: boolean, perms?: PermissionString[]) {
+        return new MessageEmbed().setColor('#FF0000').setDescription(`
         One of us doesn't have the needed permissions!
 
-        Both of us must have \`\`${perms.join(', ')}\`\` permissions to use this command!
+        Both of us must have \`\`${perms?.join(', ') ?? this.permissions.join(', ')}\`\` permissions to use this command!
         ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
         `);
-    }
+    },
 
     /**
      * An embed for missing argument(s)!
+     * @this {Command}
      */
-    static missing_args(missing: number, name: string, examples: string[]) {
-        return this.fail(`
+    missing_args: function(missing: number) {
+        return new MessageEmbed().setColor('#FF0000').setDescription(`
         ${missing} argument${missing === 1 ? ' is' : 's are'} required!
 
-        ${examples.map(e => `\`\`${name} ${e}\`\``).join('\n')}
+        ${this.help.slice(1).map((e: string) => `\`\`${this.name.name} ${e}\`\``).join('\n')}
         `);
     }
 }

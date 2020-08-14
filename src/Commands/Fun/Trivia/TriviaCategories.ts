@@ -1,6 +1,6 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import { trivia } from "../../../Backend/CommandStructures/Trivia";
+import { trivia } from "../../../lib/Backend/Trivia";
 import Embed from "../../../Structures/Embed";
 
 export default class extends Command {

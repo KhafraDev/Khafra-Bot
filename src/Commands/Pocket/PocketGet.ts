@@ -2,8 +2,8 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../Backend/CommandStructures/Pocket";
-import { PocketGetResults, PocketArticle } from "../../Backend/types/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket";
+import { PocketGetResults, PocketArticle } from "../../lib/types/Pocket";
 
 export default class extends Command {
     constructor() {

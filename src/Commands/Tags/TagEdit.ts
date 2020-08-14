@@ -19,7 +19,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length < 2) {
-            return message.channel.send(Embed.missing_args(2, this.name.name, this.help.slice(1)));
+            return message.channel.send(Embed.missing_args.call(this, 2));
         }
 
         const client = await pool.tags.connect();
