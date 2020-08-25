@@ -6,7 +6,6 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tictactoe', folder: 'Fun' },
             [
                 `Play a game of Tic-Tac-Toe in Discord. Each box (read left->right, up->down) represents a single box, 1-9.
                 To play, type the box number you want to go in. You are player \`\`X\`\` by default.
@@ -14,7 +13,11 @@ export default class extends Command {
                 ''
             ],
             [ /* No extra perms needed */ ],
-            45
+            {
+                name: 'tictactoe',
+                folder: 'Fun',
+                cooldown: 30
+            }
         );
     }
 
@@ -31,6 +34,10 @@ export default class extends Command {
         });
 
         collector.on('collect', (m: Message) => {
+            if(sent.deleted) {
+                return;
+            }
+            
             const user = game.go(+m.content - 1);
 
             if(user === 2) { // user won the game

@@ -2,18 +2,23 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
+import { Tags } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tags', folder: 'Tags' },
             [
                 'Tags: retrieve a tag!',
                 'first', 'hello'
             ],
             [ /* No extra perms needed */ ],
-            10,
-            [ 'tag' ]
+            {
+                name: 'tags',
+                folder: 'Tags',
+                aliases: [ 'tag' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -32,7 +37,7 @@ export default class extends Command {
                     { [`tags.${args[0].toLowerCase()}`]: { $exists: true } }
                 ],
             }
-        );
+        ) as Tags;
         
         if(!tag) {
             return message.channel.send(Embed.fail(`

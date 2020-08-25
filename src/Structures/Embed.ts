@@ -44,11 +44,11 @@ export default {
      * An embed for missing argument(s)!
      * @this {Command}
      */
-    missing_args: function(missing: number) {
+    missing_args: function(missing: number, reason?: string) {
         return new MessageEmbed().setColor('#FF0000').setDescription(`
-        ${missing} argument${missing === 1 ? ' is' : 's are'} required!
-
-        ${this.help.slice(1).map((e: string) => `\`\`${this.name.name} ${e}\`\``).join('\n')}
+        ${reason ?? `${missing} argument${missing === 1 ? ' is' : 's are'} required!`}
+        
+        ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name} ${e}\`\``).join('\n')}
         `);
     }
 }

@@ -6,19 +6,22 @@ import KhafraClient from "../../Bot/KhafraBot";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'commandlist', folder: 'Server' },
             [
                 'List all the commands Khafra-Bot offers!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'list' ]
+            {
+                name: 'commandlist',
+                folder: 'Server',
+                aliases: [ 'list' ],
+                cooldown: 5
+            }
         );
     }
 
     init(message: Message, args: string[]) {
-        const folders = new Set([...KhafraClient.Commands.values()].map(c => c.name.folder));
+        const folders = new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder));
         const category = args[0]?.charAt(0).toUpperCase() + args[0]?.slice(1).toLowerCase();
 
         if(args.length === 0 || !folders.has(category)) {
@@ -34,11 +37,11 @@ export default class extends Command {
             return message.channel.send(embed);
         }
 
-        const commands = [...KhafraClient.Commands.values()].filter(c => c.name.folder === category);
+        const commands = [...KhafraClient.Commands.values()].filter(c => c.settings.folder === category);
         const embed = Embed.success()
             .setTitle(`${category} Category`)
             .setDescription(`
-            ${[...new Set(commands.map(c => '``' + c.name.name + '``'))].join(', ')}
+            ${[...new Set(commands.map(c => '``' + c.settings.name + '``'))].join(', ')}
             
             Use the \`\`help\`\` command to get example usage and description of a command!
             `);

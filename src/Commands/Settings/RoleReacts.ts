@@ -1,28 +1,25 @@
-import { Command } from '../../Structures/Command';
-import { 
-    Message, 
-    Role, 
-    ReactionEmoji, 
-    TextChannel, 
-    GuildEmoji 
-} from 'discord.js';
-import { dbHelpers } from '../../lib/Utility/GuildSettings';
-import { react_messages } from '../../lib/types/bettersqlite3';
-import { parse } from 'twemoji-parser';
-import Embed from '../../Structures/Embed';
+import { Command } from "../../Structures/Command";
+import { Message, Channel, PermissionString, Role, TextChannel, MessageMentions } from "discord.js";
+import Embed from "../../Structures/Embed";
+import { parse } from "twemoji-parser";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'messagereact', folder: 'Settings' },
             [
                 'GuildSettings: give a user a role when they react to a given message.',
                 '[Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
                 '#react_for_role @I_Reacted 👑 Hello, react to this message for a role! :-)'
             ],
             [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
-            10,
-            [ 'messagerole', 'rolereact', 'rolereacts' ]
+            {
+                name: 'messagereact',
+                folder: 'Settings',
+                aliases: [ 'messagerole', 'rolereact', 'rolereacts' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -32,92 +29,102 @@ export default class extends Command {
         ) {
             return message.channel.send(Embed.missing_perms.call(this, true));
         } else if(args.length < 3) { // messagerole [message id | SEND NEW - channel (ID)] [role] [emoji] [message content if channel]
-            return message.channel.send(Embed.missing_args.call(this, 3));
+            return message.channel.send(Embed.missing_args.call(this, 4));
         }
 
-        const row = dbHelpers.get(message.guild.id, 'react_messages');
-        if(!row) {
-            return message.channel.send(Embed.fail(`
-            GuildSettings has to be implemented by an administrator!
+        const [ channel, role, emoji, ...content ] = args;
+        // https://discord.com/developers/docs/reference#message-formatting
+        if(!/<?#?\d{17,19}>?/.test(channel)) {
+            return message.channel.send(Embed.missing_args.call(this, 4));
+        } else if(!/<?@?&?\d{17,19}>?/.test(role)) {
+            return message.channel.send(Embed.missing_args.call(this, 4));
+        } 
 
-            Let them know to use the \`\`create\`\` command!
+        /*** Emoji that will give role */
+        const e = parse(emoji).shift()?.text;
+        if(e === undefined) {
+            return message.channel.send(Embed.missing_args.call(this, 4));
+        }
+
+        /** Channel to send message to. */
+        let c: Channel;
+        try {
+            const id = channel.replace(/[^0-9]/g, '');
+            c = await message.client.channels.fetch(id);
+        } catch {
+            return message.channel.send(Embed.fail(`
+            No channel could be found!
+            \`\`${channel}\`\`
             `));
         }
 
-        const [ id, _role, emoji, ...content ] = args;
+        const perms = ([ 'ADD_REACTIONS' ] as PermissionString[]).concat(this.permissions);
+        if(c.type !== 'text') { // only text channels allowed
+            return message.channel.send(Embed.fail(`
+            Only available for text channels.
+            `));
+        } else if(!super.hasPermissions(message, c, perms)) { // has permissions in channel
+            return message.channel.send(Embed.missing_perms.call(this, false, perms));
+        } else if(c.deleted) {
+            return message.channel.send(Embed.fail(`
+            Congrats! I have no idea how you got this to happen, but the channel is deleted.
+            `));
+        }
 
-        let where: TextChannel = message.mentions.channels.first();  
-        if(!where) { // no channels mentioned
-            try { // try fetching a channel id
-                where = await message.client.channels.fetch(id) as TextChannel; 
-                if(where.type !== 'text') {
-                    return message.channel.send(Embed.fail('Non-TextChannel mentioned!'));
+        /** Role to give on reaction */
+        const r = MessageMentions.ROLES_PATTERN.test(role) 
+            ? message.mentions.roles.first() 
+            : await message.guild.roles.fetch(role);
+            
+        if(!r || !(r instanceof Role)) {
+            return message.channel.send(Embed.fail('No role found!'));
+        } else if(r.deleted) {
+            return message.channel.send(Embed.fail(`
+            Congrats! I have no idea how you got this to happen, but the role is deleted.
+            `));
+        } else if(r.managed) {
+            return message.channel.send(Embed.fail(`
+            Role is managed by another party.
+            `));
+        }
+
+        let m: Message;
+        try {
+            m = await (c as TextChannel).send(Embed.success(content.join(' ')));
+            await m.react(e);
+        } catch(e) {
+            return message.channel.send(Embed.fail(`
+            An unexpected error occurred!
+            \`\`${e.toString()}\`\`
+            `));
+        }
+
+        const client = await pool.settings.connect();
+        const collection = client.db('khafrabot').collection('settings');
+
+        // same channel should be allowed, and a new message cannot have a duplicate Snowflake
+        // so no bother checking if they're already inserted
+        const inserted = await collection.updateOne(
+            { id: message.guild.id },
+            { $push: {
+                roleReacts: {
+                    message:    m.id,
+                    role:       r.id,
+                    channel:    c.id,
+                    emoji:      e
                 }
-            } catch {
-                return message.channel.send(Embed.fail(`
-                No channel mentioned and an invalid ID was provided!
-
-                If you want to use this command on a pre-existing message, use \`\`messagereactmsg\`\`!
-                `));
-            }
-        }
-        
-        if(!super.hasPermissions(
-            message, 
-            where, 
-            [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ])
-        ) {
-            return message.channel.send(Embed.missing_perms(
-                true,
-                [ 'SEND_MESSAGES', 'EMBED_LINKS', 'ADD_REACTIONS', 'MANAGE_ROLES', 'READ_MESSAGE_HISTORY' ]
-            ));
-        }
-
-        let role: Role;
-        if(message.mentions.roles.size === 0) {
-            try {
-                role = await message.guild.roles.fetch(_role);
-            } catch {
-                return message.channel.send(Embed.fail('Invalid role or role ID.'));
-            }
-        } else {
-            role = message.mentions.roles.first();
-        }
-
-        let Emoji: ReactionEmoji | GuildEmoji; // unicode emoji or guild emoji id
-        const parsed = parse(emoji);
-        if(parsed.length > 0) {
-            Emoji = parsed.pop().text as unknown as ReactionEmoji;
-        } else {
-            const match = emoji.match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/)?.[3]; // from discord.js server
-            try {
-                Emoji = message.guild.emojis.resolve(match ?? emoji); //.id;
-            } catch {
-                return message.channel.send(Embed.fail('Invalid emoji or emoji ID.'));
-            }
-        }
-
-        const messageSent = await where.send(Embed.success(content.join(' ')));
-        await messageSent.react(Emoji);        
-
-        const react_messages: react_messages[] = [].concat(row.react_messages, {
-            id: messageSent.id,
-            content: content.join(' '),
-            emoji: Emoji.id ?? Emoji.name ?? Emoji,
-            role: role.id
-        });
-
-        const updated = dbHelpers.updateMessageRoles(
-            JSON.stringify(react_messages),
-            message.guild.id
+            } },
+            { upsert: true }
         );
 
-        if(updated.changes === 1) {
+        if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
             return message.channel.send(Embed.success(`
-            Sending message to ${where} where ${role} will be given on ${Emoji} reactions!
+            Sending message to ${c} where ${r} will be given on ${e} reactions!
             `));
         } else {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(Embed.fail(`
+            Already listening to this message, or an unexpected error occurred!
+            `));
         }
     }
 }

@@ -1,21 +1,24 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { mdn } from "../../lib/Backend/MDNHandler";
+import { mdn } from "../../lib/Backend/MDN/MDNHandler";
 import Embed from "../../Structures/Embed";
 import { compareTwoStrings } from "../../lib/Utility/CompareStrings";
-import { MDNSearch } from "../../lib/types/MDN";
+import { MDNSearch } from "../../lib/Backend/MDN/types/MDN";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'mdn', folder: 'Utility' },
             [
                 'Search MDN for a phrase.',
                 'Array.prototype.slice',
                 'Number toLocaleString'
             ],
             [ /* No extra perms needed */],
-            20
+            {
+                name: 'mdn',
+                folder: 'Utility',
+                cooldown: 5,
+            }
         );
     }
 

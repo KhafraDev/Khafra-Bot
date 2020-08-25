@@ -12,14 +12,17 @@ let updated = false;
 export default class extends Command {
     constructor() {
         super(
-            { name: 'whatisnpm', folder: 'Fun' },
             [
                 'What does "NPM" stand for?',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'what-is-npm', 'whatsnpm', 'whatisnpm?', 'what-is-npm?', 'whatsnpm?', 'whats-npm?', 'whats-npm' ]
+            {
+                name: 'whatisnpm',
+                folder: 'Fun',
+                aliases: [ 'what-is-npm', 'whatsnpm', 'whatisnpm?', 'what-is-npm?', 'whatsnpm?', 'whats-npm?', 'whats-npm' ],
+                cooldown: 5
+            }
         );
     }
 

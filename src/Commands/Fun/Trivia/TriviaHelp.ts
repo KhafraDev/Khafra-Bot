@@ -5,13 +5,16 @@ import Embed from "../../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'triviahelp', folder: 'Trivia' },
             [
                 'TriviaHelp: get help with trivia commands!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10
+            {
+                name: 'triviahelp',
+                folder: 'Trivia',
+                cooldown: 10
+            }
         );
     }
 

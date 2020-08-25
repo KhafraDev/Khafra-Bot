@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./",
+        "allowJs": true,
+        "target": "ESNext",
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "lib": [
+            "ES2020"
+        ],
+        "esModuleInterop": true
+    },
+    "include": [
+        "SpotifyHandler.ts"
+    ],
+    "exclude": []
+}

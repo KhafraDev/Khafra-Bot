@@ -2,20 +2,23 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { formatDate } from "../../lib/Utility/Date";
-import { npm } from "../../lib/Backend/npmHandler";
-import { INPMPackage } from "../../lib/types/npm";
+import { npm } from "../../lib/Backend/NPM/npmHandler";
+import { INPMPackage } from "../../lib/Backend/NPM/types/npm";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'npm', folder: 'Utility' },
             [
                 'Search NPM\'s registry for a package',
                 'node-fetch latest', 'typescript'
             ],
             [ /* No extra perms needed */ ],
-            15,
-            [ 'npmjs' ]
+            {
+                name: 'npm',
+                folder: 'Utility',
+                aliases: [ 'npmjs' ],
+                cooldown: 5
+            }
         );
     }
 
@@ -32,6 +35,12 @@ export default class extends Command {
             An unexpected error occurred!
             ${e.message ? '``' + e.message + '``' : ''}
             `));
+        }
+
+        if('code' in _package) {
+            return message.channel.send(Embed.fail('No package with that name was found!'));
+        } else if('error' in _package) {
+            return message.channel.send(Embed.fail(`Received error \`\`${_package.error}\`\`.`));
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];

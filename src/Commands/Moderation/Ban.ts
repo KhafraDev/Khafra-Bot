@@ -1,11 +1,11 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
 import Embed from '../../Structures/Embed';
+import ms from 'ms';
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'ban', folder: 'Moderation' },
             [
                 'Ban a member from the guild.',
                 '@user 1d12h1800m for a good reason',
@@ -13,8 +13,13 @@ export default class extends Command {
                 '239566240987742220 14d'
             ],
             [ 'BAN_MEMBERS' ],
-            10,
-            [ 'bna' ]
+            {
+                name: 'ban', 
+                folder: 'Moderation',
+                aliases: [ 'bna' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -26,7 +31,8 @@ export default class extends Command {
         }
 
         const [ user, time, ...reason ] = args;
-        const realTime = this.parseTime(time);
+        // days of messages to clear
+        const realTime = (ms(time) ?? 0) / 86400000;
         
         let member: GuildMember = message.mentions.members.first();
         if(!member) {
@@ -48,8 +54,8 @@ export default class extends Command {
         }
 
         await member.ban({
-            days: realTime > 14 ? 14 : realTime,
-            reason: (reason || []).join(' ')
+            days: realTime,
+            reason: reason?.join(' ')
         });
 
         const embed = Embed.success()
@@ -57,26 +63,11 @@ export default class extends Command {
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)
             .setDescription(`
-            Successfully banned ${member} and cleared ${realTime} days of messages! 
-            ${reason.length > 0 ? 'They were banned for: ``' + reason + '``' : 'No reason given.'}
+            Successfully banned ${member} and cleared ${realTime} days of messages!
+
+            ${reason.length === 0 ? '' : reason.join(' ').length > 1000 ? reason.join(' ') + '...' : reason.join(' ')} 
             `);
 
         return message.channel.send(embed);
-    }
-
-    parseTime(time: string): number {
-        const b = time.match(/\d+[A-z]|\d+.\d+[A-z]/gi);
-        const c = b?.map(d => {
-            const unit = d.replace(/[^A-z]/g, '');
-            const time = parseFloat(d.replace(/[^0-9.]/g, ''));
-
-            switch(unit.toLowerCase()) {
-                case 'd': return time       ;
-                case 'h': return time / 24  ;
-                case 'm': return time / 3600;
-            }
-        });
-
-        return c?.every(n => !isNaN(n)) ? Math.round(c.reduce((a, b) => a + b)) : 0;
     }
 }

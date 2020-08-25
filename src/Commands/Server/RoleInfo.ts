@@ -1,38 +1,41 @@
 import { Command } from "../../Structures/Command";
-import { Message, Role } from "discord.js";
+import { Message, Role, MessageMentions } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { formatDate } from "../../lib/Utility/Date";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'role', folder: 'Server' },
             [
                 'Get role info',
                 '1234567891234567',
                 '@role'
             ],
             [ /* No extra perms needed */],
-            5,
-            [ 'roleinfo' ]
+            {
+                name: 'role',
+                folder: 'Server',
+                aliases: [ 'roleinfo' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
     async init(message: Message, args: string[]) {
         if(args.length < 1) {
             return message.channel.send(Embed.missing_args.call(this, 1));
+        } else if(!/[A-z0-9]/.test(args[0])) {
+            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        let role: Role = message.mentions.roles.first();
-        try {
-            if(!role) {
-                role = await message.guild.roles.fetch(args[0]);
-            }
-        } catch {
-            return message.channel.send(Embed.fail('Invalid role!'));
-        }
+        const role = MessageMentions.ROLES_PATTERN.test(args[0]) 
+            ? message.mentions.roles.first() 
+            : await message.guild.roles.fetch(args[0]);
 
-        if(role.deleted) {
+        if(!(role instanceof Role)) {
+            return message.channel.send(Embed.fail('No role found!'));
+        } else if(role.deleted) {
             return message.channel.send(Embed.fail('Role has been deleted.'));
         }
 

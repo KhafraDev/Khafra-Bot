@@ -6,15 +6,19 @@ import { formatDate } from '../../lib/Utility/Date';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'channel', folder: 'Server' },
             [
                 'Get info on a specified channel!',
                 '#general',
                 '705896160673661041'
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'chan', 'channelinfo' ]
+            {
+                name: 'channel',
+                folder: 'Server',
+                aliases: [ 'chan', 'channelinfo' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

@@ -6,15 +6,19 @@ import { pool } from "../../Structures/Database/Mongo";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsgive', folder: 'Tags' },
             [
                 'Tags: give a tag to another user.',
                 'hello @Khafra#0001',
                 'hello 541430134230482967'
             ],
             [ /* No extra perms needed */ ],
-            15,
-            [ 'taggive' ]
+            {
+                name: 'tagsgive',
+                folder: 'Tags',
+                aliases: [ 'taggive' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

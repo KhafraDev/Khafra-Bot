@@ -5,13 +5,16 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'pocket', folder: 'Pocket' },
             [
                 'Pocket: Connect your Pocket account to Khafra-Bot!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            5
+            {
+                name: 'pocket',
+                folder: 'Pocket',
+                cooldown: 5
+            }
         );
     }
 

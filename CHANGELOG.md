@@ -100,3 +100,28 @@
 * Embeds are now easier.
 * Add in ``whatisnpm`` command.
 * ``help`` command now lists aliases.
+
+# v1.0.0
+* Add in ``connect4`` command.
+* ``npm`` will no longer crash when invalid packages are queried.
+* Commands now work in DMs that aren't marked guild only.
+* ``tictactoe`` command will no longer throw an error if the game message was deleted.
+* [copy](./scripts/copy.js) is fixed for Windows.
+* Add in ``theguardian`` command to search for articles given a date (optional) and a query.
+* Add in ``insightsgraph`` command.
+* Add in ``warn``, ``getwarns`` and ``setwarn`` commands. ``Setwarn`` will set the number of warning points a user must obtain before getting kicked. ``Getwarn`` will get warnings from another user (if user has KICK_MEMBERS perms) or their own warnings.
+* MongoDB now allows username/password authentication.
+* Add in ``slots`` command.
+* Add in ``youtube`` command that searches for YouTube videos.
+* Replace SQLite3 with MongoDB. Remove GuildSettings that were likely buggy, untested, or I weren't happy with.
+* Message handler now checks if the first argument has a command name in it. Basically, GuildSettings aren't fetched on every message anymore.
+* Add in ``rollingstones`` command to search for the top 500 songs for all time.
+* Split functions into separate packages.
+* Add in ``giverole`` command, which is a custom command to give a user a role when they use a command.
+* Fix all modules using ``RoleManager.fetch`` (Discord.js function), which can return ``Role | null | RoleManager``.
+* ``tsconfig.json`` is now slightly more strict.
+* Fix ``mask`` throwing an error on message URLs without embeds. Also, it now lists all embeds in a message instead of only one.
+* Add in ``bible`` command.
+* Replace string to day function in ``ban`` with ``ms``, which happens to be installed already.
+* Add in ``enable``, ``disable``, ``unenable``, and ``undisable`` commands. 
+* Added typings for all database collections.

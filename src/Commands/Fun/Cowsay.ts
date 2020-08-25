@@ -10,18 +10,21 @@ const start = `
 export default class extends Command {
     constructor() {
         super(
-            { name: 'cowsay', folder: 'Fun' },
             [
                 'The classic CowSay command for Discord!',
                 'head-in Help, I\'m stuck!', 'tux Global warming is a hoax', 'just your ordinary cow.', 'list'
             ],
             [ /* No extra perms needed */ ],
-            5
+            {
+                name: 'cowsay',
+                folder: 'Fun',
+                aliases: [ 'retard' ],
+                cooldown: 5
+            }
         );
     }
 
     init(message: Message, args: string[]) {
-        //console.log(this);
         if(args.length < 1) {
             return message.channel.send(Embed.missing_args.call(this, 1));
         }

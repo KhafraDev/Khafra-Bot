@@ -6,7 +6,6 @@ import { parse } from "twemoji-parser";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'poll', folder: 'Server' },
             [
                 'Poll', 
                 `705894525473784303 👍 👎
@@ -14,7 +13,12 @@ export default class extends Command {
 Option 2: No."`
             ],
             [ 'ADD_REACTIONS' ],
-            60
+            {
+                name: 'poll',
+                folder: 'Server',
+                cooldown: 30,
+                guildOnly: true
+            }
         );
     }
 

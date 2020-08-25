@@ -6,14 +6,18 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'insightsinit', folder: 'Insights' },
             [
                 'Insights: Start having Khafra-Bot track new members, lurkers, and chatters!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60,
-            [ 'insightinit' ]
+            {
+                name: 'insightsinit',
+                folder: 'Insights',
+                aliases: [ 'insightinit' ],
+                cooldown: 60,
+                guildOnly: true
+            }
         );
     }
 

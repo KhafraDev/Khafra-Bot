@@ -1,22 +1,26 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { dbHelpers } from "../../lib/Utility/GuildSettings";
 import Embed from "../../Structures/Embed";
+import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'prefix', folder: 'Settings' },
             [ 
                 'GuildSettings: Change the prefix for the current guild.',
                 '>>', '!!', '?'
             ],
             [ /* No extra perms needed */ ],
-            30
+            {
+                name: 'prefix',
+                folder: 'Settings',
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
-    init(message: Message, args: string[]) {
+    async init(message: Message, args: string[]) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
@@ -25,22 +29,31 @@ export default class extends Command {
             return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        const row = dbHelpers.get(message.guild.id, 'prefix');
-        if(!row) {
+        if(args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
             return message.channel.send(Embed.fail(`
-            GuildSettings has to be implemented by an administrator!
-
-            Let them know to use the \`\`create\`\` command!
+            Only non-alphanumeric characters are allowed!
             `));
         }
 
-        const newPrefix = args.shift();
-        const updated = dbHelpers.updatePrefix(newPrefix, message.guild.id);
+        const client = await pool.settings.connect();
+        const collection = client.db('khafrabot').collection('settings');
 
-        if(updated.changes === 1) {
-            return message.channel.send(Embed.success(`Changed prefix to \`\`${newPrefix}\`\`!`));
+        const updated = await collection.updateOne(
+            { id: message.guild.id },
+            { $set: {
+                prefix: args[0]
+            } },
+            { upsert: true }
+        );
+
+        if(updated.upsertedCount === 1 || updated.modifiedCount === 1) {
+            return message.channel.send(Embed.success(`
+            Changed prefix to \`\`${args[0]}\`\`!
+            `));
         } else {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(Embed.fail(`
+            An unexpected error occurred!
+            `));
         }
     }
 }

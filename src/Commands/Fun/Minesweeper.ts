@@ -6,13 +6,16 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'minesweeper', folder: 'fun' },
             [
                 'Play a game of MineSweeper!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10
+            {
+                name: 'minesweeper',
+                folder: 'Fun',
+                cooldown: 5
+            }
         );
     }
 

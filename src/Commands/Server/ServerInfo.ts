@@ -6,14 +6,18 @@ import { formatDate } from '../../lib/Utility/Date';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'server', folder: 'Server' },
             [
                 'Get info about the server!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'serverinfo', 'guild', 'guildinfo' ]
+            {
+                name: 'server',
+                folder: 'Server',
+                aliases: [ 'serverinfo', 'guild', 'guildinfo' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

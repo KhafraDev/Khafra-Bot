@@ -6,14 +6,17 @@ import { formatDate } from '../../lib/Utility/Date';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'user', folder: 'Server' },
             [
                 'Get info about a user.',
                 '@Khafra#0001', '267774648622645249'
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'userinfo' ]
+            {
+                name: 'user',
+                folder: 'Server',
+                aliases: [ 'userinfo' ],
+                cooldown: 5
+            }
         );
     }
 

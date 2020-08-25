@@ -1,7 +1,7 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { weather } from "../../lib/Backend/HereWeather";
+import { weather } from "../../lib/Backend/HereWeather/HereWeather";
 import { formatDate } from "../../lib/Utility/Date";
 
 const ctof = (celcius: string | number) => {
@@ -11,14 +11,17 @@ const ctof = (celcius: string | number) => {
 export default class extends Command {
     constructor() {
         super(
-            { name: 'weather', folder: 'Utility' },
             [
                 'Get the weather in a given location!',
                 'Berlin, Germany',
                 'Tunisia'
             ],
             [ /* No extra perms needed */ ],
-            60
+            {
+                name: 'weather',
+                folder: 'Utility',
+                cooldown: 15
+            }
         );
     }
 

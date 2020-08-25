@@ -3,18 +3,23 @@ import { Message } from "discord.js";
 import { pool } from "../../Structures/Database/Mongo";
 import Embed from "../../Structures/Embed";
 import { formatDate } from "../../lib/Utility/Date";
+import { Insights } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'insightsdaily', folder: 'Insights' },
             [
                 'Insights: Get the daily stats!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60,
-            [ 'insightdaily' ]
+            {
+                name: 'insightsdaily',
+                folder: 'Insights',
+                aliases: [ 'insightdaily' ],
+                cooldown: 30,
+                guildOnly: true
+            }
         );
     }
 
@@ -28,7 +33,7 @@ export default class extends Command {
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
 
-        const value = await collection.findOne({ id: message.guild.id });
+        const value = await collection.findOne({ id: message.guild.id }) as Insights;
         if(!value) {
             return message.channel.send(Embed.fail(`
             Insights have to be implemented by an administrator!

@@ -1,7 +1,7 @@
 import { Command } from "../../../Structures/Command";
-import { Message } from "discord.js";
+import { Message, GuildMember } from "discord.js";
 import Embed from "../../../Structures/Embed";
-import { trivia } from "../../../lib/Backend/Trivia";
+import { trivia } from "../../../lib/Backend/Trivia/Trivia";
 
 const shuffle = (a: string[]) => {
     for(let i = a.length - 1; i > 0; i--) {
@@ -18,13 +18,17 @@ const unbase64 = (base64: string) => {
 export default class extends Command {
     constructor() {
         super(
-            { name: 'trivia', folder: 'trivia' },
             [
                 'Trivia: start a game of trivia! For help, use the ``triviahelp`` command.',
                 '23 hard 5'
             ],
             [ /* No extra perms needed */ ],
-            60 
+            {
+                name: 'trivia',
+                folder: 'Trivia',
+                cooldown: 60,
+                guildOnly: true
+            }
         );
     }
 
@@ -84,7 +88,7 @@ export default class extends Command {
         const winner = Object.entries(winners).sort(([,b], [,d]) => (d as number) - (b as number)).pop();
         const member = winner?.[0] ? await message.guild.members.fetch(winner[0]) : null;
 
-        const end = Embed.success(`${member ?? 'No one'} guessed ${winner?.[1] ?? 'any'} out of ${amount} questions correct!`)
+        const end = Embed.success(`${member instanceof GuildMember ? member : 'No one'} guessed ${winner?.[1] ?? 'any'} out of ${amount} questions correct!`)
             .setTitle('The winner is');
 
         return sent.edit(end);

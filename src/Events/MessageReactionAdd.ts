@@ -6,8 +6,9 @@ import {
     PermissionString, 
     ClientEvents 
 } from "discord.js";
-import { dbHelpers } from "../lib/Utility/GuildSettings";
 import Embed from "../Structures/Embed";
+import { pool } from "../Structures/Database/Mongo";
+import { GuildSettings } from "../lib/types/Collections";
 
 export default class implements Event {
     name: keyof ClientEvents = 'messageReactionAdd';
@@ -17,7 +18,8 @@ export default class implements Event {
             await reaction.fetch();
         }
     
-        if(reaction.message.deleted) {
+        // dm channel or guild isn't available
+        if(!reaction.message.guild || !reaction.message.guild.available) {
             return;
         }
     
@@ -32,39 +34,43 @@ export default class implements Event {
             'VIEW_CHANNEL',
         ] as PermissionString[];
         
-        if(user.id === reaction.message.client.user.id) {
+        if(user.id === reaction.message.client.user.id || user.bot) {
             return;
         } else if(!needed.every(perm => perms.has(perm))) {
             return;
-        }
-    
-        const guildSettings = dbHelpers.get(reaction.message.guild.id, 'react_messages');
-        if(!guildSettings) {
-            return;
-        }
-    
-        const filtered = guildSettings.react_messages.filter(r => {
-            const emoji = (reaction.message.client.emojis.resolve(r.emoji) ?? r.emoji) as any;
-            if(
-                (emoji === r.emoji || emoji?.id === r.emoji) && // Emoji is the same
-                r.id === reaction.message.id                    // message id is the same
-            ) {
-                return r;
-            }
-        });
-    
-        if(filtered.length === 0) {
-            return;
-        }
+        }        
     
         // member MUST be fetched or they will never be manageable!
-        const member = await reaction.message.guild.members.fetch(user.id);
-        if(member.manageable) {    
-            return member.roles.add(filtered[0].role, 'Reacted');
-        } else {
+        const member = await reaction.message.guild.members.fetch(user.id); 
+        const client = await pool.settings.connect();
+        const collection = client.db('khafrabot').collection('settings');
+        const guild = await collection.findOne({
+            $and: [
+                { id: reaction.message.guild.id },
+                { 'roleReacts.message': {
+                    $eq: reaction.message.id
+                } },
+                { 'roleReacts.emoji': {
+                    $eq: reaction.emoji.name
+                } }
+            ]
+        }) as GuildSettings;
+            
+        if(!guild) { // no react role found
+            console.log(reaction.message.guild.id, ' not found!');
+            return;
+        } else if(guild && !member.manageable) {
+            // valid react role but member isn't manageable
             try {
-                member.send(Embed.fail('I can\'t manage your roles. Please ask an admin to update my perms. 🙏'));
+                return member.send(Embed.fail('I can\'t manage your roles. Please ask an admin to update my perms. 🙏'));
             } catch {}
         }
+        
+        const filtered = (guild.roleReacts as any[]).filter((r: { message: string; emoji: string; }) =>
+            r.message === reaction.message.id && r.emoji === reaction.emoji.name
+        ).shift();
+        try {
+            return member.roles.add(filtered.role, 'Khafra-Bot: reacted to ' + filtered.message);
+        } catch {}
     }
 }

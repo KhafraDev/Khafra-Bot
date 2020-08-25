@@ -5,14 +5,18 @@ import Embed from "../../Structures/Embed";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'discrim', folder: 'Server' },
             [
                 'Get all users with a certain discriminator!',
                 '1337', '0001'
             ],
             [ /* No extra perms needed */ ],
-            30,
-            [ 'discriminator' ]
+            {
+                name: 'discrim',
+                folder: 'Server',
+                aliases: [ 'discriminator' ],
+                cooldown: 30,
+                guildOnly: true
+            }
         );
     }
 

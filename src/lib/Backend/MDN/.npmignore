@@ -1,0 +1,2 @@
+# If no .npmignore file is found, NPM will automatically
+# exclude .gitignored files.

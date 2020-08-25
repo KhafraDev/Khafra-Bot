@@ -2,18 +2,21 @@ import { Command } from "../../Structures/Command";
 import { pool } from "../../Structures/Database/Mongo";
 import { Message, MessageReaction, User } from "discord.js";
 import Embed from "../../Structures/Embed";
-import { Pocket } from "../../lib/Backend/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'pocketinit', folder: 'Pocket' },
             [
                 'Pocket: Start the process of authorizing your Pocket account.',
                 ''
             ],
             [ 'ADD_REACTIONS', 'MANAGE_EMOJIS' ],
-            300 // pretty intensive command
+            {
+                name: 'pocketinit',
+                folder: 'Pocket',
+                cooldown: 300
+            }
         );
     }
 
@@ -43,7 +46,8 @@ export default class extends Command {
         
         [Click Here](${pocket.requestAuthorization})!
         After authorizing react with ✅ to confirm or ❌ to cancel. Command will be canceled after 2 minutes automatically.
-        `);
+        `)
+        .setTitle('Pocket');
 
         const msg = await message.channel.send(embed);
         try {

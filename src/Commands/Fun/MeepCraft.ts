@@ -12,13 +12,17 @@ const latest = {
 export default class extends Command {
     constructor() {
         super(
-            { name: 'meepcraft', folder: 'Fun' },
             [ 
                 'Get the number of users playing MeepCraft right now.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10
+            {
+                name: 'meepcraft',
+                folder: 'Fun',
+                cooldown: 5,
+                aliases: [ 'meep' ]
+            }
         );
     }
 

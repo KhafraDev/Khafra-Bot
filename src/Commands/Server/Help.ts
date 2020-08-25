@@ -6,13 +6,16 @@ import KhafraClient from "../../Bot/KhafraBot";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'help', folder: 'Server' },
             [
                 'Display examples and description of a command!',
                 'say', ''
             ],
             [ /* No extra perms needed */ ],
-            5
+            {
+                name: 'help',
+                folder: 'Server',
+                cooldown: 5
+            }
         );
     }
 
@@ -30,10 +33,10 @@ export default class extends Command {
         ${command.help[0]}
 
         Examples:
-        ${command.help.slice(1).map(ex => `\`\`${command.name.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
+        ${command.help.slice(1).map(ex => `\`\`${command.settings.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
 
         Aliases:
-        \`\`${command.aliases?.length > 0 ? command.aliases.join(', ') : 'None'}\`\`
+        \`\`${command.settings.aliases?.length > 0 ? command.settings.aliases.join(', ') : 'None'}\`\`
         `);
 
         return message.channel.send(embed);

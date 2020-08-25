@@ -6,13 +6,16 @@ import { parse } from "twemoji-parser";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'emoji', folder: 'Fun' },
             [
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙'
             ],
             [ 'ATTACH_FILES' ],
-            5
+            {
+                name: 'emoji',
+                folder: 'Fun',
+                cooldown: 5
+            }
         );
     }
 

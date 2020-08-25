@@ -5,14 +5,18 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'unban', folder: 'Moderation' },
             [
                 'Unban a user from the guild.',
                 '1234567891234567 for apologizing',
                 '9876543217654321'
             ],
             [ 'BAN_MEMBERS' ],
-            10
+            {
+                name: 'unban',
+                folder: 'Moderation',
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

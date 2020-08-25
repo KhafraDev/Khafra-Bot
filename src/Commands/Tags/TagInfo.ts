@@ -1,20 +1,25 @@
 import { Command } from "../../Structures/Command";
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 import { formatDate } from "../../lib/Utility/Date";
+import { Tags } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsinfo', folder: 'Tags' },
             [
                 'Tags: get info on a tag.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10,
-            [ 'taginfo', 'tagsget', 'tagget' ]
+            {
+                name: 'tagsinfo',
+                folder: 'Tags',
+                aliases: [ 'taginfo', 'tagsget', 'tagget' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -27,7 +32,7 @@ export default class extends Command {
                 id: message.guild.id,
                 [`tags.${args[0]}`]: { $exists: true } 
             }
-        );
+        ) as Tags;
         
         if(!tag) {
             return message.channel.send(Embed.fail('No tag with that name exists!'));

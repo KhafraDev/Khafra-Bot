@@ -6,14 +6,18 @@ import { pool } from "../../Structures/Database/Mongo";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsdelete', folder: 'Tags' },
             [
                 'Tags: delete a tag you own.',
                 'hello', 'mytag'
             ],
             [ /* No extra perms needed */ ],
-            15,
-            [ 'tagdelete' ]
+            {
+                name: 'tagsdelete',
+                folder: 'Tags',
+                aliases: [ 'tagdelete' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

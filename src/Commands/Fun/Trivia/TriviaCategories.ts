@@ -1,19 +1,22 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import { trivia } from "../../../lib/Backend/Trivia";
+import { trivia } from "../../../lib/Backend/Trivia/Trivia";
 import Embed from "../../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'trivialist', folder: 'Trivia' },
             [
                 'Trivia: list the trivia categories you can choose from.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10,
-            [ 'triviacategory', 'triviacategories' ]
+            {
+                name: 'trivialist',
+                folder: 'Trivia',
+                aliases: [ 'triviacategory', 'triviacategories' ],
+                cooldown: 10
+            }
         );
     }
 

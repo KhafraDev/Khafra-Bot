@@ -15,7 +15,6 @@ class KhafraClient extends Client {
 
     /**
      * Load commands
-     * @param groups 
      */
     async loadCommands(dir = 'build/Commands') {
         for(const path of readdirSync(dir)) {
@@ -27,8 +26,8 @@ class KhafraClient extends Client {
                     const { default: c } = await import(join(process.cwd(), curr));
                     const build: Command = new c();
 
-                    KhafraClient.Commands.set(build.name.name, build);
-                    build.aliases.forEach(alias => KhafraClient.Commands.set(alias, build));
+                    KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
+                    (build.settings.aliases ?? []).forEach(alias => KhafraClient.Commands.set(alias, build));
                 }
             }
         }

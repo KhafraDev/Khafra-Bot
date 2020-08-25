@@ -2,20 +2,24 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../lib/Backend/Pocket";
-import { PocketAddResults } from "../../lib/types/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+import { PocketAddResults } from "../../lib/Backend/Pocket/types/Pocket";
 import { URL } from "url";
+import { PocketUser } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'pocketadd', folder: 'Pocket' },
             [
                 'Pocket: add an article, video, or image to your saved items!',
                 'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films The 21st Century’s 100 greatest films'
             ],
             [ /* No extra perms needed */ ],
-            30
+            {
+                name: 'pocketadd',
+                folder: 'Pocket',
+                cooldown: 15
+            }
         );
     }
 
@@ -27,7 +31,7 @@ export default class extends Command {
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
-        const user = await collection.findOne({ id: message.author.id });
+        const user = await collection.findOne({ id: message.author.id }) as PocketUser;
         if(!user) {
             return message.channel.send(Embed.fail(`
             You haven't set-up Pocket integration!

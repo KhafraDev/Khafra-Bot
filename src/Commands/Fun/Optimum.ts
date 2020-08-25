@@ -5,14 +5,17 @@ import { Message } from 'discord.js';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'optimum', folder: 'Fun' },
             [
                 'See reviews for the worst ISP in the U.S.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            5,
-            [ 'altice' ]
+            {
+                name: 'optimum',
+                folder: 'Fun',
+                aliases: [ 'altice' ],
+                cooldown: 5
+            }
         );
     }
 

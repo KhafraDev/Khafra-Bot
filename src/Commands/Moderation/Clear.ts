@@ -5,13 +5,18 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'clear', folder: 'Moderation' }, 
             [
                 'Clear messages from a given channel.',
-                '100', '200'
+                '100', '53'
             ], 
             [ 'MANAGE_MESSAGES' ],
-            10
+            {
+                name: 'clear',
+                folder: 'Moderation',
+                aliases: [ 'bulkdelete' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -27,12 +32,12 @@ export default class extends Command {
             return message.channel.send(Embed.fail(`
             Received: ${toDelete}, this command requires a number!
 
-            Example: \`\`${this.name} 100\`\`
+            Example: \`\`${this.settings.name} 100\`\`
             `));
         }
 
         const channel = message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel;
-        const deleted = await (channel as TextChannel).bulkDelete(toDelete > 200 ? 200 : toDelete);
+        const deleted = await (channel as TextChannel).bulkDelete(toDelete > 100 ? 100 : toDelete);
 
         const embed = Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())

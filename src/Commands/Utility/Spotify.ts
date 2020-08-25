@@ -1,13 +1,12 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
-import { spotify } from '../../lib/Backend/SpotifyHandler';
-import { SpotifyResult } from '../../lib/types/spotify';
+import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler';
+import { SpotifyResult } from '../../lib/Backend/Spotify/types/Spotify';
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'spotify', folder: 'Utility' },
             [
                 'Search for a song on Spotify',
                 'Bohemian Rhapsody',
@@ -15,7 +14,11 @@ export default class extends Command {
                 ''
             ],
             [ /* No extra perms needed */],
-            10
+            {
+                name: 'spotify',
+                folder: 'Utility',
+                cooldown: 10
+            }
         );
     }
 

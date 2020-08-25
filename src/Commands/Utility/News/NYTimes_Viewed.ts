@@ -1,19 +1,22 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import { nytimes } from "../../../lib/Backend/NYTimes";
-import { ViewedArticle } from "../../../lib/types/NYTimes";
+import { nytimes } from "../../../lib/Backend/NYTimes/NYTimes";
+import { ViewedArticle } from "../../../lib/Backend/NYTimes/types/NYTimes";
 import Embed from "../../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'nytimes', folder: 'News' },
             [
                 'NYTimes: get the most viewed articles from today.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60
+            {
+                name: 'nytimes',
+                folder: 'News',
+                cooldown: 5
+            }
         );
     }
 

@@ -2,19 +2,23 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../lib/Backend/Pocket";
-import { PocketGetResults, PocketArticle } from "../../lib/types/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+import { PocketGetResults, PocketArticle } from "../../lib/Backend/Pocket/types/Pocket";
+import { PocketUser } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'pocketget', folder: 'Pocket' },
             [
                 'Pocket: retrieve your saved items!',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            60
+            {
+                name: 'pocketget',
+                folder: 'Pocket',
+                cooldown: 20
+            }
         );
     }
 
@@ -22,7 +26,7 @@ export default class extends Command {
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
-        const user = await collection.findOne({ id: message.author.id });
+        const user = await collection.findOne({ id: message.author.id }) as PocketUser;
         if(!user) {
             return message.channel.send(Embed.fail(`
             You haven't set-up Pocket integration!

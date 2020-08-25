@@ -5,14 +5,18 @@ import Embed from '../../Structures/Embed';
 export default class extends Command {
     constructor() {
         super(
-            { name: 'kick', folder: 'Moderation' },
             [
                 'Kick a member from the server.',
                 '@user for trolling',
                 '1234567891234567'
             ],
             [ 'KICK_MEMBERS' ],
-            10
+            {
+                name: 'kick',
+                folder: 'Moderation',
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 

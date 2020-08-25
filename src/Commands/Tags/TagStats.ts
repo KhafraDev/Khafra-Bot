@@ -2,18 +2,23 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
+import { Tags } from "../../lib/types/Collections";
 
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsstats', folder: 'Tags' },
             [
                 'Tags: get guild stats on tags.',
                 ''
             ],
             [ /* No extra perms needed */ ],
-            10,
-            [ 'tagstat', 'tagsstat', 'tagstats' ]
+            {
+                name: 'tagsstats',
+                folder: 'Tags',
+                aliases: [ 'tagstat', 'tagsstat', 'tagsstats' ],
+                cooldown: 5,
+                guildOnly: true
+            }
         );
     }
 
@@ -23,7 +28,7 @@ export default class extends Command {
 
         const tags = await collection.findOne(
             { id: message.guild.id }
-        );
+        ) as Tags;
         
         if(!tags) {
             return message.channel.send(Embed.fail(`

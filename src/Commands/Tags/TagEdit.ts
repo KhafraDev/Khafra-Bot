@@ -6,14 +6,18 @@ import { pool } from "../../Structures/Database/Mongo";
 export default class extends Command {
     constructor() {
         super(
-            { name: 'tagsedit', folder: 'Tags' },
             [
                 'Tags: edit a tag you own.',
                 'hello Goodbye!'
             ],
             [ /* No extra perms needed */ ],
-            15,
-            [ 'tagedit' ]
+            {
+                name: 'tagsedit',
+                folder: 'Tags',
+                aliases: [ 'tagedit' ],
+                cooldown: 5, 
+                guildOnly: true
+            }
         );
     }
 
