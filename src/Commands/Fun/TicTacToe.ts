@@ -1,80 +1,85 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { TicTacToe } from "../../lib/Backend/TicTacToeHandler";
 import Embed from "../../Structures/Embed";
+import { TicTacToe } from "../../lib/Backend/TicTacToe";
 
 export default class extends Command {
     constructor() {
         super(
             [
-                `Play a game of Tic-Tac-Toe in Discord. Each box (read left->right, up->down) represents a single box, 1-9.
-                To play, type the box number you want to go in. You are player \`\`X\`\` by default.
-                `,
-                ''
+                'Play a game of TicTacToe!',
+                '', '@Khafra#0001'
             ],
             [ /* No extra perms needed */ ],
             {
                 name: 'tictactoe',
                 folder: 'Fun',
-                cooldown: 30
+                cooldown: 60
             }
         );
     }
+    
+    async init(message: Message, args: string[]) {
+        const opponent = args.length === 0
+            ? null 
+            : message.mentions.members.first();
 
-    async init(message: Message) {
-        const game = new TicTacToe();
+        const g = new TicTacToe(); // game
+        const m = await message.channel.send(Embed.success(`
+        \`\`\`${g.format()}\`\`\`
+        `)); // message to edit
 
-        const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``);
-        const sent = await message.channel.send(embed);
+        const f = (msg: Message) => 
+            (msg.author.id === message.author.id || msg.author.id === opponent?.id)
+            && !isNaN(+msg.content) && +msg.content > 0 && +msg.content <= 9;
 
-        const filter = (m: Message) => m.author.id === message.author.id && +m.content > 0 && +m.content < 10;
-        const collector = message.channel.createMessageCollector(filter, { 
-            max: 5,
-            time: 60000 
-        });
+        const c = message.channel.createMessageCollector(f, { time: 120000 });
 
-        collector.on('collect', (m: Message) => {
-            if(sent.deleted) {
+        c.on('collect', (collected: Message) => {
+            const validTurn = (collected.author.id === message.author.id && g.turn === 'X') // author's message, and turn is X
+                              || (collected.author.id === opponent?.id && g.turn === 'O');  // opponent's message, turn is O
+
+            if(!validTurn) {
                 return;
             }
-            
-            const user = game.go(+m.content - 1);
 
-            if(user === 2) { // user won the game
-                const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)
-                    .setTitle('Player ' + game.state.turn + ' won!');
+            const playerTurn = g.go(+collected.content);
+            if(!playerTurn) { // valid turn
+                if(!opponent) { // no opponent, so have bot go
+                    const botTurn = g.go(); // bot goes
+                    if(!botTurn) { // valid bot turn
+                        return m.edit(Embed.success(`
+                        \`\`\`${g.format()}\`\`\`
+                        `));
+                    } else { // something went wrong, or the bot won
+                        const embed = 'winner' in botTurn
+                            ? Embed.success(`\`\`\`${g.format()}\`\`\``)
+                            : Embed.fail(`\`\`\`${g.format()}\`\`\``);
+                        embed.setTitle('winner' in botTurn ? botTurn.winner + ' won!' : botTurn.error);
+                        
+                        if('winner' in botTurn) {
+                            c.stop();
+                        }
 
-                collector.stop();
-                return sent.edit(embed);
-            } else if(user === 0) { // spot is already taken
-                const embed = Embed.fail(`\`\`\`${game.formatBoard()}\`\`\``)
-                    .setTitle('Spot is already taken!');
+                        return m.edit(embed);
+                    }
+                } else {
+                    return m.edit(Embed.success(`
+                    \`\`\`${g.format()}\`\`\`
+                    `));
+                }
+            } else {
+                const embed = 'winner' in playerTurn
+                    ? Embed.success(`\`\`\`${g.format()}\`\`\``)
+                    : Embed.fail(`\`\`\`${g.format()}\`\`\``);
+                embed.setTitle('winner' in playerTurn ? playerTurn.winner + ' won!' : playerTurn.error);
+                
+                if('winner' in playerTurn) {
+                    c.stop();
+                }
 
-                return sent.edit(embed);
+                return m.edit(embed);
             }
-
-            const auto = game.bestTurn();
-            if(auto === 3) { // draw
-                const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)
-                    .setTitle('It\'s a draw!');
-
-                collector.stop();
-                return sent.edit(embed);
-            } else if(auto === 2) { // game is over
-                const embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``)
-                    .setTitle('Player ' + game.state.turn + ' won!');
-
-                collector.stop();
-                return sent.edit(embed);
-            } else if(auto === 0) { // still user's turn
-                const embed = Embed.fail(`\`\`\`${game.formatBoard()}\`\`\``)
-                    .setTitle('Spot is already taken!');
-                    
-                return sent.edit(embed);
-            }
-
-            const edit_embed = Embed.success(`\`\`\`${game.formatBoard()}\`\`\``);
-            sent.edit(edit_embed);
         });
     }
 }

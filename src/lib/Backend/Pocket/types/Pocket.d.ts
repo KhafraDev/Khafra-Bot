@@ -66,8 +66,6 @@ export type PocketAddResults = {
         lang: string,
         time_first_parsed: string,
         authors: { [key: string]: [Object] },
-        images: any[],
-        videos: any[],
         top_image_url: string,
         resolved_normal_url: string,
         domain_metadata: {
@@ -78,4 +76,8 @@ export type PocketAddResults = {
         given_url: string
     },
     status: 1
+}
+
+export interface PocketRateLimit {
+    [key: string]: number
 }

@@ -51,7 +51,9 @@ export default class extends Command {
         const questions = await trivia.fetchQuestions(amount, +args[0], difficulty);
         
         let sent: Message;
-        const winners = {};
+        const winners: {
+            [key: string]: number
+        } = {};
 
         for(const question of questions.results) {    
             const multiple: string[] = [];

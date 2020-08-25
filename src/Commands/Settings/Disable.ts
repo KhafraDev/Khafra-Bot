@@ -63,7 +63,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string) {
+    async init(message: Message, args: string[]) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {

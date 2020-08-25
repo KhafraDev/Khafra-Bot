@@ -66,7 +66,7 @@ export default class implements Event {
             } catch {}
         }
         
-        const filtered = (guild.roleReacts as any[]).filter((r: { message: string; emoji: string; }) =>
+        const filtered = guild.roleReacts.filter(r =>
             r.message === reaction.message.id && r.emoji === reaction.emoji.name
         ).shift();
         try {

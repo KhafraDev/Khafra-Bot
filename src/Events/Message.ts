@@ -45,7 +45,7 @@ export default class implements Event {
         // -> custom commands, disabled/enabled commands, ...
         if(message.channel.type === 'dm') {
             if(cmd.indexOf(prefix) === 0 && !command.settings.guildOnly) {
-                return command['init'](message, args);
+                return command.init(message, args);
             } else if(command.settings.guildOnly) {
                 return message.author.send(Embed.fail('Command is only available in guilds!'))
                     .catch(() => {}); // if user has direct DMs disabled, an error will be thrown
@@ -127,6 +127,6 @@ export default class implements Event {
             cooldown.set(message.author.id, command.settings.name, command.settings.cooldown);
         }
 
-        return command['init'](message, args);
+        return command.init(message, args);
     }
 }

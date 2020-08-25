@@ -10,9 +10,10 @@
         ],
         "esModuleInterop": true,
         "noUnusedParameters": true,
-        "noUnusedLocals": true
+        "noUnusedLocals": true,
+        "noImplicitAny": true
     },
     "include": [
-        "./src/"
+        "./src/", "TicTacToeHandler.ts"
     ]
 }

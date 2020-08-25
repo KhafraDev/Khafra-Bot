@@ -1,6 +1,8 @@
 # Khafra
 Error/*
 build
+*.js
+!scripts/*.js
 
 # Logs
 logs

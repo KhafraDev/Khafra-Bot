@@ -72,4 +72,4 @@ for(const prop in pool) {
     pool[prop] = new MongoDB();
 }
 
-export { pool };
+export { pool, MongoDB };

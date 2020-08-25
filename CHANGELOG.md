@@ -125,3 +125,12 @@
 * Replace string to day function in ``ban`` with ``ms``, which happens to be installed already.
 * Add in ``enable``, ``disable``, ``unenable``, and ``undisable`` commands. 
 * Added typings for all database collections.
+
+# v1.0.1
+* Remove most casts to ``any|any[]``. Must be kept in ``Proxy`` helper since its types are trash.
+* Remove incorrect types in new Settings commands.
+* Remove casts in MessageReaction events that no longer need to be inferred.
+* Remove types from ``Bible`` package that were from ``BadMeme``.
+* MineSweeper helper will no longer mix ``number`` and ``string`` types.
+* Enable ``noImplicitAny`` by default!
+* ``TicTacToe`` command has been rewritten and can now be played against the bot or another user! This also fixed a bug when the bot would check for the best spot to go.

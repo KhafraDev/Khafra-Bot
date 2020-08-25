@@ -79,4 +79,8 @@ export class Command {
     isBotOwner(id: Snowflake) {
         return id === '267774648622645249';
     }
+
+    init(_: Message, __?: string[]): unknown {
+        throw new Error('init called on Command with function');
+    }
 }

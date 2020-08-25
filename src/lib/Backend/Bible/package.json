@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Parse the King James Bible, meant as a joke.",
   "main": "Bible",
-  "types": "types/Bible.d.ts",
   "devDependencies": {
     "typescript": "3.4.3"
   },
