@@ -1,9 +1,5 @@
 # Khafra
-Error/*
-build
 *.js
-!scripts/*.js
-!ecosystem.config.js
 
 # Logs
 logs

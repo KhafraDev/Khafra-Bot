@@ -1,4 +1,11 @@
 import { MessageEmbed, PermissionString } from "discord.js";
+// import { embed as EmbedColors } from '../../config.json';
+import { readFileSync } from 'fs';
+import { join } from "path";
+
+const EmbedColors: { fail: string, success: string } = JSON.parse(
+    readFileSync(join(__dirname, '../../config.json')).toString()
+).embed;
 
 export default {
     /**
@@ -6,7 +13,7 @@ export default {
      */
     fail: function(reason?: string) {
         const embed = new MessageEmbed()
-            .setColor('#FF0000');
+            .setColor(EmbedColors.fail);
 
         if(reason) {
             embed.setDescription(reason);
@@ -19,7 +26,7 @@ export default {
      */
     success: function(reason?: string) {
         const embed = new MessageEmbed()
-            .setColor('#ffe449');
+            .setColor(EmbedColors.success);
         
         if(reason) {
             embed.setDescription(reason);
@@ -32,7 +39,7 @@ export default {
      * An embed for missing permissions!
      */
     missing_perms: function(admin?: boolean, perms?: PermissionString[]) {
-        return new MessageEmbed().setColor('#FF0000').setDescription(`
+        return new MessageEmbed().setColor(EmbedColors.fail).setDescription(`
         One of us doesn't have the needed permissions!
 
         Both of us must have \`\`${perms?.join(', ') ?? this.permissions.join(', ')}\`\` permissions to use this command!
@@ -45,7 +52,7 @@ export default {
      * @this {Command}
      */
     missing_args: function(missing: number, reason?: string) {
-        return new MessageEmbed().setColor('#FF0000').setDescription(`
+        return new MessageEmbed().setColor(EmbedColors.fail).setDescription(`
         ${reason ?? `${missing} argument${missing === 1 ? ' is' : 's are'} required!`}
         
         ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name} ${e}\`\``).join('\n')}

@@ -5,6 +5,12 @@ import {
     Snowflake,
     Channel,
 } from 'discord.js';
+import { readFileSync } from 'fs';
+import { join } from 'path';
+
+// import { botOwner } from '../../config.json';
+
+const { botOwner }: { botOwner: string[] | string } = JSON.parse(readFileSync(join(__dirname, '../../config.json')).toString());
 
 export class Command {
     /*** Description and example usage. */
@@ -77,7 +83,7 @@ export class Command {
     }
 
     isBotOwner(id: Snowflake) {
-        return id === '267774648622645249';
+        return Array.isArray(botOwner) ? botOwner.indexOf(id) > -1 : botOwner === id;
     }
 
     init(_: Message, __?: string[]): unknown {

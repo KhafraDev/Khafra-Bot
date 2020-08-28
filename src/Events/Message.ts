@@ -1,16 +1,18 @@
 import { Event } from "../Structures/Event";
-import { Message, ClientEvents, Role } from "discord.js";
+import { Message, ClientEvents, Role, MessageMentions } from "discord.js";
 import KhafraClient from "../Bot/KhafraBot";
 import { Sanitize } from "../lib/Utility/SanitizeCommand";
 import { Cooldown } from "../Structures/Cooldown";
 import Embed from "../Structures/Embed";
 import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
+import { Logger } from "../Structures/Logger";
 
 const cooldown = new Cooldown();
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
+    logger = new Logger('Message');
 
     async init(message: Message) {
         // Sanitize checks:
@@ -29,6 +31,15 @@ export default class implements Event {
         if(!/[^A-z0-9]/.test(cmd[0]) || !/[A-z0-9]/.test(cmd)) {
             // command doesn't start with a valid prefix (non-alphanumeric character)
             // or the command has no alpha-numeric characters in it
+            return;
+        } 
+        
+        if(
+            MessageMentions.ROLES_PATTERN.test(cmd)      || // role mention
+            MessageMentions.USERS_PATTERN.test(cmd)      || // user mention
+            MessageMentions.CHANNELS_PATTERN.test(cmd)   || // is a channel mention
+            /<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(cmd)    // custom emoji
+        ) {
             return;
         }
     
@@ -54,9 +65,15 @@ export default class implements Event {
             }
         } else if(cmd.indexOf(prefix) !== 0) { // supposed command doesn't start with prefix
             return;
-        } else if(!guild && !command) { // no custom commands and no command found
-            return;
         }
+
+        this.logger.log(`
+        Command: ${command?.settings?.name ?? 'Not valid'} 
+        | Author: ${message.author.id} 
+        | URL: ${message.url} 
+        | Guild: ${message.guild.id} 
+        | Input: ${message.content}
+        `.split('\n').map(e => e.trim()).join(' ').trim());
 
         if(guild) {
             const customCommands = guild.commandRole
@@ -69,7 +86,7 @@ export default class implements Event {
                 // RoleManager.fetch can return Role | null | RoleManager.
                 // so we check if it was fetched, it is a role, it is not managed
                 // and not deleted. No other manager behaves like this.
-                if(!r || !(r instanceof Role) || r.managed || r.deleted) { 
+                if(!(r instanceof Role) || r.managed || r.deleted) { 
                     return;
                 } else {
                     if(!message.member.manageable) { // client doesn't have perms to manage user
@@ -114,6 +131,10 @@ export default class implements Event {
             if(enabled?.length > 0 && typeof isEnabled === 'boolean' && isEnabled === false) {
                 return;
             }
+        }
+
+        if(!command) {
+            return;
         }
         
         const user_cd = cooldown.has(command.settings.name, message.author.id);

@@ -1,6 +1,6 @@
 {
   "name": "khafra-bot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Synergism Discord Bot",
   "main": "index.js",
   "dependencies": {
@@ -21,7 +21,7 @@
   },
   "scripts": {
     "dev:build": "node scripts/build && npx tsc && node scripts/copy && node build/index",
-    "prod:build": "npx tsc && node scripts/copy && node build/index"
+    "prod:build": "npx tsc && node scripts/copy && pm2 start ecosystem.config.js --env production"
   },
   "repository": {
     "type": "git",

@@ -92,3 +92,8 @@ export interface Tags {
         }
     }
 }
+
+export interface Onion {
+    href: string,
+    title: string
+}

@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command";
-import { Message } from "discord.js";
+import { Message, MessageMentions } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 
@@ -32,6 +32,15 @@ export default class extends Command {
         if(args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
             return message.channel.send(Embed.fail(`
             Only non-alphanumeric characters are allowed!
+            `));
+        } else if(
+            MessageMentions.ROLES_PATTERN.test(args[0])      || // role mention
+            MessageMentions.USERS_PATTERN.test(args[0])      || // user mention
+            MessageMentions.CHANNELS_PATTERN.test(args[0])   || // is a channel mention
+            /<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])    // custom emoji
+        ) {
+            return message.channel.send(Embed.fail(`
+            A mention cannot be a role mention, user mention, channel mention, or custom emoji.
             `));
         }
 

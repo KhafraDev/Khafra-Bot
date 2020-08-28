@@ -134,3 +134,14 @@
 * MineSweeper helper will no longer mix ``number`` and ``string`` types.
 * Enable ``noImplicitAny`` by default!
 * ``TicTacToe`` command has been rewritten and can now be played against the bot or another user! This also fixed a bug when the bot would check for the best spot to go.
+
+# v1.0.2
+* Add in [config](./config.json) file to configure bot owner and embed colors.
+* Fix an issue in the ``Message`` event that would throw an error.
+* Add in ``theonion`` command.
+* Add in ``wikipedia`` command.
+* Add in ``members`` command which is a smaller way of viewing member count.
+* Change insight graph file type to JPG and let matplotlib optimize it. 
+* Added a logger for future debugging of issues. Deleted on ``npm run dev:build``.
+* Added ``pm2`` configuration and edited production run script to use it.
+* Add in ``steal`` command to take an emoji from another server and create one on the current server.

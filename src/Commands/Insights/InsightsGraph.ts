@@ -17,7 +17,7 @@ export default class extends Command {
     constructor() {
         super(
             [
-                'Insights: get a graph of the people who have joined today!',
+                'Insights: get a graph of the people who have joined today! The mis-matched colors are Discord\'s fault, I can\'t do anything about them!',
                 '10', ''
             ],
             [ /* No extra perms needed */ ],
@@ -43,7 +43,7 @@ export default class extends Command {
             updated = true;
         }
 
-        const filePath = join(outPath, message.guild.id + '.png');
+        const filePath = join(outPath, message.guild.id + '.jpg');
 
         let stats: Stats;
         // stats gets stats on a file
@@ -57,7 +57,7 @@ export default class extends Command {
         if(stats && (Date.now() - stats.mtimeMs) / 1000 / 60 < 15) {
             const embed = Embed.success()
                 .attachFiles([ filePath ])
-                .setImage(`attachment://${message.guild.id}.png`)
+                .setImage(`attachment://${message.guild.id}.jpg`)
                 .setFooter('Last updated')
                 .setTimestamp(stats.mtimeMs)
 
@@ -94,7 +94,7 @@ export default class extends Command {
 
             const embed = Embed.success()
                 .attachFiles([ filePath ])
-                .setImage(`attachment://${message.guild.id}.png`)
+                .setImage(`attachment://${message.guild.id}.jpg`)
                 
             return message.channel.send(embed);
         });
