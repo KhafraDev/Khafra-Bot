@@ -54,8 +54,8 @@ export default class extends Command {
     constructor() {
         super(
             [
-                'Enable a command in a guild, channel, or for a user! Only those who are enabled to use a command will be able to.',
-                '[command name] [user/channel/role/leave blank for entire guild]',
+                'Enable a command in a channel, role, or for a user! Only those who are enabled to use a command will be able to.',
+                '[command name] [user/channel/role]',
                 'badmeme #bot-commands',
                 'badmeme @memers',
                 'badmeme @Khafra#0001',

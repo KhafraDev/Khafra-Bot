@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command";
-import { Message, TextChannel } from "discord.js";
+import { Message } from "discord.js";
 import { reddit } from "../../lib/Backend/BadMeme/BadMeme";
 import Embed from "../../Structures/Embed";
 
@@ -20,7 +20,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const res = await reddit(args[0], (message.channel as TextChannel).nsfw);
+        const res = await reddit(args[0], message.channel.type === 'dm' ? true : message.channel.nsfw);
         if(!res) {
             return message.channel.send(Embed.fail(`
             No images found! NSFW images will only work if the channel is marked \`\`nsfw\`\`!

@@ -18,7 +18,6 @@ export default class extends Command {
             {
                 name: 'cowsay',
                 folder: 'Fun',
-                aliases: [ 'retard' ],
                 cooldown: 5
             }
         );

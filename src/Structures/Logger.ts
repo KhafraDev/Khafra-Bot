@@ -11,7 +11,9 @@ export class Logger {
 
     constructor(name: string) {
         this.name = name;
-        this.stream = createWriteStream(join(logPath, this.name + '.log'), { flags: 'a' })
+        this.stream = createWriteStream(join(logPath, this.name + '.log'), { flags: 'a' });
+
+        this.stream.write(`[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] Initialized ${this.name}.\n`);
     }
 
     log(data: string) {

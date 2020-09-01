@@ -5,7 +5,16 @@ A Discord bot with a lot of commands.
 * Khafra-Bot does not sell access to any content or features.
 
 # Privacy
-* Khafra-Bot *does* collect some information about 
+```md
+When using Khafra-Bot some information about you and the command used will be temporarily stored. The purpose of these logs is to provide debug info if errors or misuse occur. A complete log entry looks like:
+
+``[08-26-2020 09:42:09PM] Message: "Command: minesweeper | Author: 267774648622645249 | URL: https://discord.com/channels/677271830838640680/733157666737881149/748356650515300394 | Guild: 677271830838640680 | Input: !minesweeper"``
+
+These logs are temporary and only stored when using the bot (whether that is reacting for a role or using a command).
+Read through the terms of service for bot developers at https://discord.com/developers/docs/legal (collecting logs falls under section 2-A).
+
+Taken from [here](https://discord.com/channels/677271830838640680/705894525473784303/748361427328303175)
+```
 
 # Setup
 1. Install dependencies using ``npm i``.

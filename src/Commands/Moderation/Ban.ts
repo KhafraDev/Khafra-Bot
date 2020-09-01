@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { Message, GuildMember } from 'discord.js';
+import { Message, User } from 'discord.js';
 import Embed from '../../Structures/Embed';
 import ms from 'ms';
 
@@ -8,9 +8,9 @@ export default class extends Command {
         super(
             [
                 'Ban a member from the guild.',
-                '@user 1d12h1800m for a good reason',
+                '@user 3d for a good reason',
                 '@user 0 bye!',
-                '239566240987742220 14d'
+                '239566240987742220 7d'
             ],
             [ 'BAN_MEMBERS' ],
             {
@@ -26,47 +26,46 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms.call(this));
-        } else if(args.length < 3) { // ban @user 3d1h trolling -> 3+ args
-            return message.channel.send(Embed.missing_args.call(this, 3));
+        } else if(args.length < 2) {
+            return message.channel.send(Embed.missing_args.call(this, 2));
         }
 
-        const [ user, time, ...reason ] = args;
+        const [ userType, time, ...reason ] = args;
         // days of messages to clear
-        const realTime = (ms(time) ?? 0) / 86400000;
-        
-        let member: GuildMember = message.mentions.members.first();
-        if(!member) {
-            try {
-                member = await message.guild.members.fetch(user);
-            } catch {
-                return message.channel.send(Embed.fail(`
-                *${user}* is not a valid member!
+        const realTime = Math.round((ms(time) ?? 0) / 86400000);
+        const realReason = realTime === 0 ? [time].concat(reason) : reason;
 
-                Examples:
-                \`\`kick @user for trolling\`\`
-                \`\`kick 1234567891234567\`\`
-                `));
+        if(!/<?@?!?\d{17,19}>?/.test(userType)) {
+            return message.channel.send(Embed.missing_args.call(this, 2, 'Invalid User ID or mention!'));
+        } else if(realTime > 7) {
+            // max 7 days or an error will be thrown
+            return message.channel.send(Embed.missing_args.call(this, 2, 'Only 7 days of messages can be cleared max!'));
+        }
+        
+        // we get a User because they might not be in the guild
+        let user: User = message.mentions.members.first()?.user;
+        if(!user) {
+            try {
+                user = await message.client.users.fetch(userType.replace(/[^0-9]/g, ''));
+            } catch {
+                return message.channel.send(Embed.missing_args.call(this, 2, 'Invalid User ID or mention!'));
             }
         }
 
-        if(!member.bannable) {
-            return message.channel.send(Embed.fail(`${member} is not bannable!`));
+        try {
+            await message.guild.members.ban(user, {
+                reason: realReason.length > 0 ? realReason.join(' ') : null,
+                days: realTime
+            });
+        } catch {
+            return message.channel.send(Embed.fail('User isn\'t bannable!'));
         }
 
-        await member.ban({
-            days: realTime,
-            reason: reason?.join(' ')
-        });
+        const embed = Embed.success(`
+        ${user} has been banned for \`\`${realReason.length ? realReason.join(' ').slice(0, 100) : 'No reason given'}\`\`.
 
-        const embed = Embed.success()
-            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
-            .setTimestamp()
-            .setFooter(`Requested by ${message.author.tag}!`)
-            .setDescription(`
-            Successfully banned ${member} and cleared ${realTime} days of messages!
-
-            ${reason.length === 0 ? '' : reason.join(' ').length > 1000 ? reason.join(' ') + '...' : reason.join(' ')} 
-            `);
+        ${realTime} days worth of messages have been cleared from them.
+        `);
 
         return message.channel.send(embed);
     }

@@ -3,6 +3,7 @@ import { Message } from "discord.js";
 import { agent } from '../../lib/Utility/Proxy';
 import fetch from 'node-fetch';
 import Embed from "../../Structures/Embed";
+import { Agent } from "https";
 
 const latest = {
     fetched: 0,
@@ -39,7 +40,10 @@ export default class extends Command {
         let players: { playersOnline: number };
         try {
             const res = await fetch('https://forum.meepcraft.com/game/query.php', {
-                agent
+                // Love when the only available package for proxying connections
+                // hasn't been properly updated in years. 
+                // https://github.com/TooTallNate/node-https-proxy-agent/issues/108
+                agent: agent as unknown as Agent
             });
 
             players = await res.json();

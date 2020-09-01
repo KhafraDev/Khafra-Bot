@@ -1,5 +1,11 @@
 import { Command } from "../../Structures/Command";
-import { Message, Channel, PermissionString, Role, TextChannel, MessageMentions } from "discord.js";
+import { 
+    Message, 
+    Channel, 
+    Role, 
+    TextChannel, 
+    MessageMentions 
+} from "discord.js";
 import Embed from "../../Structures/Embed";
 import { parse } from "twemoji-parser";
 import { pool } from "../../Structures/Database/Mongo";
@@ -58,7 +64,7 @@ export default class extends Command {
             `));
         }
 
-        const perms = ([ 'ADD_REACTIONS' ] as PermissionString[]).concat(this.permissions);
+        const perms = this.permissions.concat('ADD_REACTIONS');
         if(c.type !== 'text') { // only text channels allowed
             return message.channel.send(Embed.fail(`
             Only available for text channels.

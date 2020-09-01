@@ -1,19 +1,34 @@
 import { Event } from "../Structures/Event";
-import { MessageReaction, User, PartialUser, PermissionString, ClientEvents } from "discord.js";
+import { 
+    MessageReaction, 
+    User, 
+    PartialUser, 
+    ClientEvents, 
+    Permissions 
+} from "discord.js";
 import Embed from "../Structures/Embed";
 import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
+import { Logger } from "../Structures/Logger";
+
+const cache: Map<string, number> = new Map();
 
 export default class implements Event {
     name: keyof ClientEvents = 'messageReactionRemove';
+    logger = new Logger(this.name);
 
     async init(reaction: MessageReaction, user: User | PartialUser) {
         if(reaction.partial) {
-            await reaction.fetch();
+            try {
+                await reaction.fetch();
+            } catch(e) {
+                this.logger.log(e.toString());
+                return;
+            }
         }
     
         // dm channel or guild isn't available
-        if(!reaction.message.guild || !reaction.message.guild.available) {
+        if(reaction.message.channel.type === 'dm' || !reaction.message.guild.available) {
             return;
         }
     
@@ -22,17 +37,26 @@ export default class implements Event {
         }
     
         const perms = reaction.message.guild.me.permissionsIn(reaction.message.channel);
-        const needed = [
+        const needed = new Permissions([
             'READ_MESSAGE_HISTORY',
             'MANAGE_ROLES',
-            'VIEW_CHANNEL',
-        ] as PermissionString[];
+            'VIEW_CHANNEL'
+        ]);
         
         if(user.id === reaction.message.client.user.id || user.bot) {
             return;
-        } else if(!needed.every(perm => perms.has(perm))) {
+        } else if(!perms.has(needed)) {
             return;
-        }        
+        }      
+        
+        const cached = cache.get(reaction.message.author.id);
+        if(cached) {
+            if((Date.now() - cached) / 1000 / 60 < 1) { // user reacted within the last minute
+                return;
+            }
+        } else {
+            cache.set(reaction.message.author.id, Date.now());
+        }
     
         // member MUST be fetched or they will never be manageable!
         const member = await reaction.message.guild.members.fetch(user.id); 
@@ -51,7 +75,6 @@ export default class implements Event {
         }) as GuildSettings;
             
         if(!guild) { // no react role found
-            console.log(reaction.message.guild.id, ' not found!');
             return;
         } else if(guild && !member.manageable) {
             // valid react role but member isn't manageable

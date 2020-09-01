@@ -1,6 +1,9 @@
 import KhafraClient from './Bot/KhafraBot';
 import loadEnv from './lib/Utility/load.env';
+import { Logger } from './Structures/Logger';
 loadEnv();
+
+const logger = new Logger('RateLimit');
 
 const client = new KhafraClient({
     disableMentions: 'everyone',
@@ -17,5 +20,14 @@ const client = new KhafraClient({
     .on('messageReactionRemove', (reaction, user) => KhafraClient.Events.get('messageReactionRemove').init(reaction, user))
     .on('guildMemberAdd', member => KhafraClient.Events.get('guildMemberAdd').init(member))
     .on('guildMemberRemove', member => KhafraClient.Events.get('guildMemberRemove').init(member))
+    .on('rateLimit', data => {
+        logger.log(`
+        Timeout: ${data.timeout} 
+        | Limit: ${data.limit} 
+        | HTTP Method: ${data.method} 
+        | Route: ${data.route} 
+        | Path: ${data.path}
+        `.split('\n').map(e => e.trim()).join(' ').trim());
+    })
 
 client.init();

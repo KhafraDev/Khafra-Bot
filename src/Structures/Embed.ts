@@ -1,5 +1,4 @@
 import { MessageEmbed, PermissionString } from "discord.js";
-// import { embed as EmbedColors } from '../../config.json';
 import { readFileSync } from 'fs';
 import { join } from "path";
 

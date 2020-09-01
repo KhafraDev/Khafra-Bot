@@ -42,9 +42,10 @@ Option 2: No."`
 
         const perms = message.guild.me.permissionsIn(channel);
         const required = [ 'SEND_MESSAGES', 'ADD_REACTIONS', 'VIEW_CHANNEL', 'EMBED_LINKS' ] as PermissionString[];
+        
         if(channel.type !== 'text') {
             return message.channel.send(Embed.fail('Channel must be a text channel!'));
-        } else if(!required.every(perm => perms.has(perm))) {
+        } else if(!perms.has(required)) {
             return message.channel.send(Embed.fail(`
             One of us doesn't have the needed permissions!
     

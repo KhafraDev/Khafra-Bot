@@ -9,7 +9,8 @@ export default class extends Command {
         super(
             [
                 'Set a custom message to give users a role.',
-                'give @role'
+                'give @role',
+                'freerole @FreeRole {user}, have a free role!'
             ],
             [ /* No extra perms needed */ ],
             {
@@ -70,7 +71,8 @@ export default class extends Command {
             { $push: {
                 commandRole: {
                     role: r.id,
-                    command: args[0]
+                    command: args[0],
+                    message: args.slice(2).length > 0 ? args.slice(2).join(' ').slice(0, 1900) : null
                 }
             } }
         );

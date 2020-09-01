@@ -1,5 +1,8 @@
 import { MongoClient } from 'mongodb';
-import { MongoPool } from '../../lib/types/Mongo';
+
+type MongoPool = {
+    [key: string]: MongoDB
+}
 
 const anonymousURL = 'mongodb://localhost:27017/';
 const authURL = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:27017/`;

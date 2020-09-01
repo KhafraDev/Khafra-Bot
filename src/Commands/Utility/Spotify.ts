@@ -28,7 +28,9 @@ export default class extends Command {
         ).pop();
 
         if(!presence && args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(Embed.missing_args.call(this, 1, 
+                'If you are not listening to any songs, a search query must be provided!')
+            );
         }
 
         let res: SpotifyResult;

@@ -24,7 +24,7 @@ class KhafraClient extends Client {
             } else {
                 if(curr.endsWith('.js')) {
                     const { default: c } = await import(join(process.cwd(), curr));
-                    const build: Command = new c();
+                    const build = new c() as Command;
 
                     KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
                     (build.settings.aliases ?? []).forEach(alias => KhafraClient.Commands.set(alias, build));
@@ -38,7 +38,7 @@ class KhafraClient extends Client {
     async loadEvents(dir = 'build/Events') {
         for(const event of readdirSync(dir)) {
             const { default: e } = await import(join(process.cwd(), dir, event));
-            const build: Event = new e();
+            const build = new e() as Event;
             KhafraClient.Events.set(build.name, build);
         }
 

@@ -14,49 +14,49 @@ const ordinal = (num = 0) => {
 /**
  * Format dates with a human readable string. API is based off of moment but lacks some features that aren't needed for my uses.
  * @example
- * formatDate('MMMM Do, YYYY kk:mm:ssA', new Date('2020-04-15T09:35:07.785Z')); // April 15th, 2020 06:35:07am
+ * formatDate('MMMM Do, YYYY hh:mm:ssA', new Date('2020-04-15T09:35:07.785Z')); // April 15th, 2020 05:35:07am
  * @param format string to format date
- * @param _date Date object
+ * @param date Date-like (string, number, or Date)
  * @param locale
  */
-export const formatDate = (format = '', _date: Date | string, locale = Intl.DateTimeFormat().resolvedOptions().locale) => {
-    const date = (_date instanceof Date ? _date : new Date(_date)) as Date;
+export const formatDate = (
+    format = '', 
+    date: Date | string | number, 
+    locale = Intl.DateTimeFormat().resolvedOptions().locale
+) => {
+    const dateObj = new Date(date);
 
     const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?|t/g;
     const replace = format.replace(formatRegex, formatter => {
         switch(formatter) {
             case 'YYYY':    // 2020
-                return '' + date.getFullYear();
+                return '' + dateObj.getFullYear();
             case 'YY':      // 2010 -> 10
-                return ('' + date.getFullYear()).slice(-2);
+                return ('' + dateObj.getFullYear()).slice(-2);
             case 'Q':       // May -> Quarter 2, April -> Quarter 1
+                return '' + Math.ceil((dateObj.getMonth() + 1) / 4);
             case 'M':       // 1
             case 'MM':      // 01 (month)
-                const month = date.getMonth() + 1
-                return formatter === 'Q' ? '' + Math.ceil(month / 4) :
-                       formatter === 'M' ? '' + month : ('' + month).padStart(2, '0');
-            case 'MMM':
-            case 'MMMM':
-                return Intl.DateTimeFormat(locale, { month: formatter === 'MMMM' ? 'long' : 'short' }).format(date);
+                return ('' + dateObj.getMonth() + 1).padStart(formatter.length, '0');
+            case 'MMM':     // Aug
+            case 'MMMM':    // August
+                return Intl.DateTimeFormat(locale, { month: formatter === 'MMMM' ? 'long' : 'short' }).format(dateObj);
             case 'D':       // 1
             case 'DD':      // 01 (day of month)
+                return ('' + dateObj.getDate()).padStart(formatter.length, '0')
             case 'Do':      // 1st
-                const day = date.getDate();
-                return formatter === 'Do' ? '' + day + ordinal(day) :
-                       formatter === 'D'  ? '' + day : ('' + day).padStart(2, '0');
+                return '' + dateObj.getDate() + ordinal(dateObj.getDate());
             case 'ddd':     // Mon
             case 'dddd':    // Monday
-                return Intl.DateTimeFormat(locale, { weekday: formatter === 'dddd' ? 'long' : 'short' }).format(date);
+                return Intl.DateTimeFormat(locale, { weekday: formatter === 'dddd' ? 'long' : 'short' }).format(dateObj);
             case 'h':       // 0..12
             case 'hh':      // 00..12
-                const hours = date.getHours();
-                if(hours - 12 > 0) {
-                    return formatter === 'h' ? '' + (hours - 12) : ('' + (hours - 12)).padStart(2, '0');
-                }
-
-                return formatter === 'h' ? '' + hours : ('' + hours).padStart(2, '0');
             case 'H':       // 0..23
             case 'HH':      // 00..23
+                return dateObj.toLocaleString(locale, { 
+                    hour12: formatter[0] === 'H' ? false : true, 
+                    hour: 'numeric' 
+                }).split(' ').shift().padStart(formatter.length, '0');
             case 'A':
             case 'a':
             case 'p':
@@ -64,26 +64,19 @@ export const formatDate = (format = '', _date: Date | string, locale = Intl.Date
             case 'pm':
             case 'AM':
             case 'PM':
-                const hour23 = date.getHours();
-
-                if(['a', 'p', 'am', 'pm'].includes(formatter.toLowerCase())) {
-                    const isUppercase = formatter.toUpperCase() === formatter;
-                    return (hour23 > 12) 
-                        ? isUppercase ? 'PM' : 'pm' 
-                        : isUppercase ? 'AM' : 'am';
-                }
-                
-                return formatter === 'H' ? '' + hour23 : ('' + hour23).padStart(2, '0');
+                return dateObj.toLocaleString(locale, { 
+                    hour12: true, 
+                    hour: 'numeric' 
+                }).split(' ').pop();
             case 'k':       // 1..24
             case 'kk':      // 01..24
-                const hour24 = date.getHours();
-                return formatter === 'k' ? '' + hour24 : ('' + hour24).padStart(2, '0');
+                return ('' + dateObj.getHours()).padStart(formatter.length, '0');
             case 'm':       // 0..59
             case 'mm':      // 00.59
-                return formatter === 'm' ? '' + date.getMinutes() : ('' + date.getMinutes()).padStart(2, '0');
+                return ('' + dateObj.getMinutes()).padStart(formatter.length, '0');
             case 's':       // 0..59
             case 'ss':      // 00.59
-                return formatter === 's' ? '' + date.getSeconds() : ('' + date.getSeconds()).padStart(2, '0');
+                return ('' + dateObj.getSeconds()).padStart(formatter.length, '0');
             case 't':
                 const offset = new Date().getTimezoneOffset();
                 const realOffset = offset / (offset > 0 ? -60 : 60);

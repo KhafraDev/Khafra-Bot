@@ -1,10 +1,17 @@
 import { Message, Permissions } from "discord.js";
 
+const basic = new Permissions([
+    'SEND_MESSAGES',
+    'EMBED_LINKS',
+    'VIEW_CHANNEL',
+    'READ_MESSAGE_HISTORY'
+]);
+
 /**
  * Check message for required criteria.
  * @param message 
  */
-export function Sanitize(message: Message) {
+export const Sanitize = (message: Message) => {
     if(message.author.bot) {
         return false;
     } else if(message.guild && !message.guild.available) {
@@ -21,12 +28,8 @@ export function Sanitize(message: Message) {
         if(perms.has(Permissions.FLAGS.ADMINISTRATOR)) { // Admin perms = has all perms.
             return true;
         } else if(
-            !perms.has(Permissions.FLAGS.SEND_MESSAGES)         || // guild perms
-            !perms.has(Permissions.FLAGS.EMBED_LINKS)           || // guild perms
-            !perms.has(Permissions.FLAGS.VIEW_CHANNEL)          || // guild perms
-            !channelPerms.has(Permissions.FLAGS.SEND_MESSAGES)  || // channel perms
-            !channelPerms.has(Permissions.FLAGS.EMBED_LINKS)    || // channel perms
-            !channelPerms.has(Permissions.FLAGS.VIEW_CHANNEL)      // channel perms
+            !perms.has(basic) ||     // guild perms
+            !channelPerms.has(basic) // channel perms
         ) {
             return false;
         }

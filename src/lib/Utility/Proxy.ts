@@ -10,6 +10,6 @@ const opts = Object.assign(
     { headers: { 'Proxy-Authorization': auth } }
 );
 
-const proxy = new (HttpsProxyAgent as any)(opts);
+const proxy = HttpsProxyAgent(opts);
 
 export { proxy as agent };

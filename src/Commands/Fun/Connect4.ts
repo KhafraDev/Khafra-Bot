@@ -53,7 +53,7 @@ export default class extends Command {
 
         for(const emoji of Object.values(turns)) {
             await game_msg.react(emoji)
-                .catch(() => {});
+                .catch(err => this.logger.log(err.toString()));
         }
 
         const collector = game_msg.createReactionCollector(filter, { time: 180000 });

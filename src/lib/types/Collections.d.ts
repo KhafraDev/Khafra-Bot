@@ -65,6 +65,7 @@ export interface GuildSettings {
     commandRole?: {
         role: string
         command: string
+        message?: string
     }[]
     enabled?: {
         command: string

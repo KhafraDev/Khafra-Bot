@@ -145,3 +145,23 @@
 * Added a logger for future debugging of issues. Deleted on ``npm run dev:build``.
 * Added ``pm2`` configuration and edited production run script to use it.
 * Add in ``steal`` command to take an emoji from another server and create one on the current server.
+
+# v1.0.3 - Structure changes.
+* Add in ``synergismstats`` command.
+* ``channelinfo`` now works on VoiceChannels and NewsChannels.
+* Add in basic rate-limiting in ``MessageReactionAdd`` and ``MessageReactionRemove`` events to prevent spam.
+* Custom commands will now give confirmation on success.
+* Cooldowns are now limited to number of commands a minute rather than a set time. Users can use up to 5 commands a minute (1 every 12 seconds) and a guild is limited to 15 commands a minute (1 every 4 seconds). 
+* Cooldowns now apply to commands in DM and custom guild commands. Same rates as normal commands (DM counts as user cooldown).
+* Log info on rate-limits.
+* ``ban`` can now ban members not in the guild and will prevent errors when the days to clear messages is over 7.
+* Custom commands now accept a message on success and the message allows simple formatting. Put ``{user}`` in the message to replace with a mention of the person receiving the role.
+* Fix potential errors in ``MessageReactionAdd`` and ``MessageReactionRemove`` events if the message was deleted before a partial reaction could be fetched.
+* Re-worked permissions to use native Discord.js loops for checking multiple permissions.
+* Re-worked message event to be more readable and maintainable.
+* Guild Settings are no longer checked in DMs.
+* ``Sanitize`` function now includes updated permissions.
+* Fixed a crash in DMs when using ``BadMeme``.
+* Fixed a crash in DMs when using ``userinfo``.
+* Re-worked Date formatting Utility function. Improved readability and the code is structured better to not rely on so many hard-coded values (for example: string lengths).
+* ``Proxy`` util removes last ``as any`` declaration.

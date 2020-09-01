@@ -45,7 +45,7 @@ export default class extends Command {
     constructor() {
         super(
             [
-                'Disable a command in a guild, channel, or for a user!',
+                'Disable a command in a guild, channel, role, or for a user!',
                 '[command name] [user/channel/role/leave blank for entire guild]',
                 'badmeme #general',
                 'badmeme @muted',

@@ -7,12 +7,12 @@ import {
 } from 'discord.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-
-// import { botOwner } from '../../config.json';
+import { Logger } from './Logger';
 
 const { botOwner }: { botOwner: string[] | string } = JSON.parse(readFileSync(join(__dirname, '../../config.json')).toString());
 
 export class Command {
+    logger = new Logger('Command');
     /*** Description and example usage. */
     help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
@@ -26,7 +26,7 @@ export class Command {
         /** Command aliases */
         aliases?: string[],
         /** Command cooldown */
-        cooldown: number,
+        cooldown?: number,
         /** If command only works in guilds */
         guildOnly?: boolean,
         /** If command is only available to bot owner */
@@ -39,7 +39,7 @@ export class Command {
         settings: {
             name: string,
             folder: string,
-            cooldown: number,
+            cooldown?: number,
             aliases?: string[],
             guildOnly?: boolean,
             ownerOnly?: boolean
@@ -60,12 +60,11 @@ export class Command {
         const botChannelPerms       = ((channel ?? message.channel) as TextChannel).permissionsFor(message.guild.me);
         const memberChannelPerms    = ((channel ?? message.channel) as TextChannel).permissionsFor(message.member);
         
-        return (permissions ?? this.permissions).every(perm => 
-            memberPerms.has(perm)        && // general perms
-            botPerms.has(perm)           && // general perms
-            botChannelPerms.has(perm)    && // channel perms
-            memberChannelPerms.has(perm)    // channel perms
-        );
+        const check = permissions ?? this.permissions;
+        return    memberPerms.has(check)         // message author perms
+               && botPerms.has(check)            // perms for bot in guild
+               && botChannelPerms.has(check)     // bot perms in channel
+               && memberChannelPerms.has(check); // member perms in channel
     }
 
     /**
@@ -79,7 +78,7 @@ export class Command {
         }
         
         const memberPerms = message.member.permissions;
-        return perms.every(perm => memberPerms.has(perm));
+        return memberPerms.has(perms);
     }
 
     isBotOwner(id: Snowflake) {

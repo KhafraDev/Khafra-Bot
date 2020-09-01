@@ -14,22 +14,25 @@ export default class extends Command {
             {
                 name: 'user',
                 folder: 'Server',
-                aliases: [ 'userinfo' ],
-                cooldown: 5
+                aliases: [ 'userinfo', 'whois' ],
+                cooldown: 5,
+                guildOnly: true
             }
         );
     }
 
     async init(message: Message, args: string[]) {
         let member: GuildMember;
-        if(args[0] && !message.mentions.members.first()) {
+        if(args.length === 0 || !/<?@?!?\d{17,19}>?/.test(args[0])) {
+            member = message.member
+        } else if(message.mentions.members.size > 0) {
+            member = message.mentions.members.first();
+        } else {
             try {
                 member = await message.guild.members.fetch(args[0]);
-            } catch{
-                member = message.member;
+            } catch {
+                return message.channel.send(Embed.missing_args.call(this, 1, 'User ID or mention is invalid!'));
             }
-        } else {
-            member = message.mentions.members.first() ?? message.member;
         }
 
         const embed = Embed.success()
@@ -44,7 +47,7 @@ export default class extends Command {
             .addField('**Username:**',   member.user.username, true)
             .addField('**Role Color:**', member.displayHexColor, true)
             .addField('**ID:**',         member.id, true)
-            .addField('**Discrim:**',    member.user.discriminator, true)
+            .addField('**Discrim:**',    `#${member.user.discriminator}`, true)
             .addField('**Nickname:**',   member.nickname ?? 'None', true)
             .addField('**Bot:**',        member.user.bot ? 'Yes' : 'No', true)
             .addField('**Joined:**',     formatDate('MMMM Do, YYYY hh:mm:ss A t', member.user.createdAt), false)

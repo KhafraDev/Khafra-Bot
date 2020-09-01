@@ -34,7 +34,7 @@ export default class extends Command {
             return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
 
-        let desc: string = '';
+        let desc = '';
         for(const article of res.response.results) {
             const line = `[${article.webTitle}](${article.webUrl}) - ${article.pillarName}\n`;
             if(desc.length + line.length > 2048) {

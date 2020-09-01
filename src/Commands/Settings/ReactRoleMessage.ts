@@ -4,7 +4,6 @@ import {
     Role,  
     TextChannel, 
     Channel,
-    PermissionString,
     MessageMentions
 } from 'discord.js';
 import { parse } from 'twemoji-parser';
@@ -59,7 +58,7 @@ export default class extends Command {
             `));
         }
 
-        const perms = ([ 'ADD_REACTIONS' ] as PermissionString[]).concat(this.permissions);
+        const perms = this.permissions.concat('ADD_REACTIONS');
         if(c.type !== 'text') { // only text channels allowed
             return message.channel.send(Embed.fail(`
             Only available for text channels.

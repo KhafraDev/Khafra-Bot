@@ -2,7 +2,7 @@ export interface YouTubeError {
     error: {
         code: number,
         message: string,
-        errors: Object[],
+        errors: unknown[],
         status: string
     }
 }
