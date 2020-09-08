@@ -18,7 +18,7 @@ export default class extends Command {
             {
                 name: 'cowsay',
                 folder: 'Fun',
-                cooldown: 5
+                args: [1]
             }
         );
     }

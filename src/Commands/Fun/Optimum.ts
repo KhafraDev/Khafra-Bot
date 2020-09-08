@@ -14,7 +14,7 @@ export default class extends Command {
                 name: 'optimum',
                 folder: 'Fun',
                 aliases: [ 'altice' ],
-                cooldown: 5
+                args: [0, 0]
             }
         );
     }

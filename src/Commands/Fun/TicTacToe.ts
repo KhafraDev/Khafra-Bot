@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'tictactoe',
                 folder: 'Fun',
-                cooldown: 60
+                args: [0, 1]
             }
         );
     }

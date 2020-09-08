@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'badmeme',
                 folder: 'Fun',
-                cooldown: 5
+                args: [0, 1]
             }
         );
     }

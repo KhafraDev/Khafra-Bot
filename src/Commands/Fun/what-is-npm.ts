@@ -20,8 +20,8 @@ export default class extends Command {
             {
                 name: 'whatisnpm',
                 folder: 'Fun',
-                aliases: [ 'what-is-npm', 'whatsnpm', 'whatisnpm?', 'what-is-npm?', 'whatsnpm?', 'whats-npm?', 'whats-npm' ],
-                cooldown: 5
+                args: [0, 0],
+                aliases: [ 'what-is-npm', 'whatsnpm', 'whatisnpm?', 'what-is-npm?', 'whatsnpm?', 'whats-npm?', 'whats-npm' ]
             }
         );
     }
@@ -38,7 +38,7 @@ export default class extends Command {
             const text = await res.text();
             await mkdir(join(__dirname, 'npm'), { recursive: true });
             const valid = text
-                .split('\n')
+                .split(/\n\r|\n|\r/g)
                 .filter(l => !l.startsWith('#'))
                 .join('\n')
                 .trim();

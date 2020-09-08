@@ -27,7 +27,7 @@ export default class extends Command {
                 name: 'slots',
                 folder: 'Fun',
                 aliases: [ 'slot' ],
-                cooldown: 10
+                args: [0, 0]
             }
         );
     }

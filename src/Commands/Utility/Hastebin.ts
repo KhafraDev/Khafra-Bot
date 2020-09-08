@@ -17,7 +17,7 @@ export default class extends Command {
             {
                 name: 'hastebin',
                 folder: 'Utility',
-                cooldown: 10,
+                args: [1],
                 aliases: Object.keys(hasteServers).slice(1) // dynamic aliases :o
             }
         );

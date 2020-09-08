@@ -17,7 +17,7 @@ export default class extends Command {
             {
                 name: 'spotify',
                 folder: 'Utility',
-                cooldown: 10
+                args: [0]
             }
         );
     }

@@ -3,6 +3,7 @@ import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia";
 import { AllHtmlEntities } from "html-entities";
+import { WikipediaSearch } from "../../lib/Backend/Wikipedia/types/Wikipedia";
 
 const all = new AllHtmlEntities();
 
@@ -16,7 +17,7 @@ export default class extends Command {
             [ /* No extra perms needed */ ], {
                 name: 'wikipedia',
                 folder: 'Utility',
-                cooldown: 10,
+                args: [1],
                 aliases: [ 'wiki' ]
             }
         );
@@ -27,12 +28,33 @@ export default class extends Command {
             return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        const wiki = await Wikipedia(args.join(' '));
-        if('error' in wiki) {
+        let wiki = await Wikipedia(args.join(' '));
+        if('method' in wiki) { // WikipediaArticleNotFound
+            wiki = await Wikipedia(args.join(' '), 'en', 1); // force search
+        }
+        
+        if('error' in wiki) { // WikipediaError
             return message.channel.send(Embed.fail(`
             Received status ${wiki.httpCode} (${wiki.httpReason}).
             `));
-        } else if(wiki.pages.length === 0) {
+        } 
+        
+        if('extract' in wiki) {
+            const embed = Embed.success(`
+            ${wiki.content_urls.desktop?.page.slice(0, 140)}
+
+            ${wiki.extract?.slice(0, 1900)}
+            `)
+                .setTitle(wiki.title)
+                .setThumbnail(wiki.originalimage?.source ?? wiki.thumbnail?.source ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Khafra.jpg/800px-Khafra.jpg')
+                .setTimestamp(new Date(wiki.timestamp ?? Date.now()))
+                .setFooter('Last updated');
+
+            return message.channel.send(embed);
+        }
+        
+        wiki = wiki as WikipediaSearch; // can't be WikipediaArticleNotFound
+        if(wiki.pages.length === 0) {
             return message.channel.send(Embed.fail(`No results found!`));
         }
 

@@ -10,6 +10,6 @@ try {
         execSync('del /f /s /q "build" 1>nul');
         execSync('rd /s /q "build"');
     } else {
-        execSync('rm -rf build');
+        execSync('rmdir build');
     }
 } catch {}

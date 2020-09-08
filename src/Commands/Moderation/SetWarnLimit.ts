@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'setwarn',
                 folder: 'Moderation',
-                cooldown: 10,
+                args: [1, 1],
                 guildOnly: true
             }
         );

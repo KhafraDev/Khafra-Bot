@@ -25,7 +25,7 @@ export default class extends Command {
                 name: 'insightsgraph',
                 folder: 'Insights',
                 aliases: [ 'insightgraph' ],
-                cooldown: 15,
+                args: [0, 0],
                 guildOnly: true
             }
         );
@@ -70,6 +70,11 @@ export default class extends Command {
         const collection = client.db('khafrabot').collection('insights');
 
         const guild = await collection.findOne({ id: message.guild.id }) as Insights;
+
+        if(!guild) {
+            return message.channel.send(Embed.fail('No insights available - yet!'));
+        }
+
         const mapped = Object.entries(guild.daily)
             .reverse()
             .slice(0, days <= 100 ? days : 10)
@@ -84,7 +89,7 @@ export default class extends Command {
                         file location               dates for x-axis labels     y values    ..       output dir
         */
         
-        execFile('py', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
+        execFile('python', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
             if(err) {
                 return message.channel.send(Embed.fail(`
                 An unexpected error occurred!

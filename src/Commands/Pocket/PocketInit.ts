@@ -15,7 +15,7 @@ export default class extends Command {
             {
                 name: 'pocketinit',
                 folder: 'Pocket',
-                cooldown: 300
+                args: [0, 0]
             }
         );
     }

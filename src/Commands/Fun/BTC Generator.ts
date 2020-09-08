@@ -13,8 +13,8 @@ export default class extends Command {
             {
                 name: 'btc-generator',
                 folder: 'Fun',
-                cooldown: 10,
-                aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ]
+                aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ],
+                args: [2, 2]
             }
         );
     }

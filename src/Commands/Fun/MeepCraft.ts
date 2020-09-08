@@ -21,8 +21,8 @@ export default class extends Command {
             {
                 name: 'meepcraft',
                 folder: 'Fun',
-                cooldown: 5,
-                aliases: [ 'meep' ]
+                aliases: [ 'meep' ],
+                args: [0, 0]
             }
         );
     }

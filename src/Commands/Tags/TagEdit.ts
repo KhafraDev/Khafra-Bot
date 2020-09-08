@@ -14,8 +14,8 @@ export default class extends Command {
             {
                 name: 'tagsedit',
                 folder: 'Tags',
+                args: [2],
                 aliases: [ 'tagedit' ],
-                cooldown: 5, 
                 guildOnly: true
             }
         );
@@ -29,24 +29,25 @@ export default class extends Command {
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const value = await collection.updateOne(
+        const u = await collection.updateOne(
             { 
-                $and: [
-                    { id: message.guild.id, }, 
-                    { [`tags.${args[0].toLowerCase()}.owner`]: message.author.id }
-                ]
+                id: message.guild.id,
+                name: args[0],
+                owner: message.author.id
             },
             { 
                 $set: {
-                    [`tags.${args[0].toLowerCase()}.value`]: args.slice(1).join(' ')
+                    content: args.slice(1).join(' ')
                 }
             }
         );
 
-        if(value.result.n === 1) {
-            return message.channel.send(Embed.success('Tag was updated!'));
-        } else {
-            return message.channel.send(Embed.fail('No tag was edited. Are you sure you own it?'));
+        if(u.modifiedCount === 0) {
+            return message.channel.send(Embed.fail(`
+            Tag wasn't edited. This can happen if you don't own the tag or if the tag is from another guild.
+            `));
         }
+
+        return message.channel.send(Embed.success('Edited the tag!'));
     }
 }

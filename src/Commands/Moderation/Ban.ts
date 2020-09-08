@@ -17,7 +17,7 @@ export default class extends Command {
                 name: 'ban', 
                 folder: 'Moderation',
                 aliases: [ 'bna' ],
-                cooldown: 5,
+                args: [2],
                 guildOnly: true
             }
         );

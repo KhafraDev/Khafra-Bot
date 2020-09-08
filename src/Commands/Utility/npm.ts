@@ -3,7 +3,6 @@ import { Message } from "discord.js";
 import Embed from "../../Structures/Embed";
 import { formatDate } from "../../lib/Utility/Date";
 import { npm } from "../../lib/Backend/NPM/npmHandler";
-import { INPMPackage } from "../../lib/Backend/NPM/types/npm";
 
 export default class extends Command {
     constructor() {
@@ -17,7 +16,7 @@ export default class extends Command {
                 name: 'npm',
                 folder: 'Utility',
                 aliases: [ 'npmjs' ],
-                cooldown: 5
+                args: [1, 2]
             }
         );
     }
@@ -27,7 +26,7 @@ export default class extends Command {
             return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        let _package: INPMPackage;
+        let _package;
         try {
             _package = await npm(args[0]);
         } catch(e) {

@@ -56,7 +56,7 @@ export default class extends Command {
             {
                 name: 'disable',
                 folder: 'Settings',
-                cooldown: 5,
+                args: [1, 2],
                 aliases: [ 'blacklist', 'denylist' ],
                 guildOnly: true
             }

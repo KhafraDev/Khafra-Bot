@@ -13,7 +13,7 @@ export default class extends Command {
             {
                 name: 'triviahelp',
                 folder: 'Trivia',
-                cooldown: 10
+                args: [0, 0]
             }
         );
     }

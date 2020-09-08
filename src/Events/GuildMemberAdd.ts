@@ -16,7 +16,8 @@ export default class implements Event {
             { $inc: { 
                 [`daily.${date}.total`]: 1,
                 [`daily.${date}.joined`]: 1
-            } }
+            } },
+            { upsert: true }
         );
     }
 }

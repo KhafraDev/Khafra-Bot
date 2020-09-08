@@ -17,7 +17,7 @@ export default class extends Command {
             {
                 name: 'mdn',
                 folder: 'Utility',
-                cooldown: 5,
+                args: [1],
             }
         );
     }

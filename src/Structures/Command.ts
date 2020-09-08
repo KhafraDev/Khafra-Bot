@@ -18,15 +18,15 @@ export class Command {
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
 
-    settings?: {
+    settings: {
         /** Command name */
         name: string,
         /** Folder where command exists */
         folder: string,
+        /** Required number of arguments */
+        args: [number, number?];
         /** Command aliases */
         aliases?: string[],
-        /** Command cooldown */
-        cooldown?: number,
         /** If command only works in guilds */
         guildOnly?: boolean,
         /** If command is only available to bot owner */
@@ -39,7 +39,7 @@ export class Command {
         settings: {
             name: string,
             folder: string,
-            cooldown?: number,
+            args: [number, number?],
             aliases?: string[],
             guildOnly?: boolean,
             ownerOnly?: boolean

@@ -24,7 +24,7 @@ export default class extends Command {
             { 
                 name: 'connect4', 
                 folder: 'Fun',
-                cooldown: 60,
+                args: [1, 1],
                 guildOnly: true
             },
         );

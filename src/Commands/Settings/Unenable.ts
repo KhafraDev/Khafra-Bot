@@ -54,7 +54,7 @@ export default class extends Command {
             {
                 name: 'unenable',
                 folder: 'Settings',
-                cooldown: 5,
+                args: [1, 2],
                 guildOnly: true
             }
         );

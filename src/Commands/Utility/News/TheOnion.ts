@@ -19,7 +19,7 @@ export default class extends Command {
             {
                 name: 'theonion',
                 folder: 'News',
-                cooldown: 7,
+                args: [0, 0],
                 aliases: [ 'onion' ] 
             }
         );

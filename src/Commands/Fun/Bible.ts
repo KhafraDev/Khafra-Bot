@@ -22,7 +22,7 @@ export default class extends Command {
             {
                 name: 'bible',
                 folder: 'Fun',
-                cooldown: 5
+                args: [0, 2]
             }
         );
     }

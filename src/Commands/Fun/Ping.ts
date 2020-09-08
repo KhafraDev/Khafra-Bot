@@ -13,7 +13,7 @@ export default class extends Command {
             {
                 name: 'ping',
                 folder: 'Fun',
-                cooldown: 10
+                args: [0, 0]
             }
         );
     }

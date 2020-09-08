@@ -14,7 +14,7 @@ export default class extends Command {
                 name: 'clear',
                 folder: 'Moderation',
                 aliases: [ 'bulkdelete' ],
-                cooldown: 5,
+                args: [1, 1],
                 guildOnly: true
             }
         );

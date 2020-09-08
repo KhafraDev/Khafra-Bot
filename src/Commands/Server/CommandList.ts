@@ -8,14 +8,14 @@ export default class extends Command {
         super(
             [
                 'List all the commands Khafra-Bot offers!',
-                ''
+                '', 'settings', 'utility'
             ],
             [ /* No extra perms needed */ ],
             {
                 name: 'commandlist',
                 folder: 'Server',
                 aliases: [ 'list' ],
-                cooldown: 5
+                args: [0, 1]
             }
         );
     }

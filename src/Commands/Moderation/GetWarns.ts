@@ -15,7 +15,7 @@ export default class extends Command {
             {
                 name: 'getwarns',
                 folder: 'Moderation',
-                cooldown: 5,
+                args: [0, 1],
                 aliases: [ 'getwarn', 'getwarning', 'getwarnings' ],
                 guildOnly: true
             }
@@ -60,7 +60,7 @@ export default class extends Command {
                 // max length = 2048 or error
                 embed.description = embed.description.slice(0, 2048);
                 // remove incomplete line
-                embed.description = embed.description.split('\n').slice(0, -1).join('\n');
+                embed.description = embed.description.split(/\n\r|\n|\r/g).slice(0, -1).join('\n');
             }
 
             return message.channel.send(embed);

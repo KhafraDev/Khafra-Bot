@@ -16,7 +16,7 @@ export default class extends Command {
             {
                 name: 'giverole',
                 folder: 'Settings',
-                cooldown: 5,
+                args: [2],
                 guildOnly: true
             }
         );
@@ -74,7 +74,8 @@ export default class extends Command {
                     command: args[0],
                     message: args.slice(2).length > 0 ? args.slice(2).join(' ').slice(0, 1900) : null
                 }
-            } }
+            } },
+            { upsert: true }
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {

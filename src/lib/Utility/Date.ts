@@ -37,7 +37,7 @@ export const formatDate = (
                 return '' + Math.ceil((dateObj.getMonth() + 1) / 4);
             case 'M':       // 1
             case 'MM':      // 01 (month)
-                return ('' + dateObj.getMonth() + 1).padStart(formatter.length, '0');
+                return (dateObj.getMonth() + 1 + '').padStart(formatter.length, '0');
             case 'MMM':     // Aug
             case 'MMMM':    // August
                 return Intl.DateTimeFormat(locale, { month: formatter === 'MMMM' ? 'long' : 'short' }).format(dateObj);

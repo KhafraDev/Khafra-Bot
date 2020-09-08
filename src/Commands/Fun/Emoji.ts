@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'emoji',
                 folder: 'Fun',
-                cooldown: 5
+                args: [1, 5]
             }
         );
     }
@@ -29,6 +29,10 @@ export default class extends Command {
         const parsed = parse(args.join(' '), {
             assetType: 'png'
         }).map(({ url }) => url).slice(0, 5);
+
+        if(parsed.length < 1) {
+            return message.channel.send(Embed.missing_args.call(this, 1, 'No unicode emoji provided!'));
+        }
 
         return message.channel.send(parsed.join('\n'));
     }

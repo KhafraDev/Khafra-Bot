@@ -11,9 +11,16 @@ import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 import Embed from "../Structures/Embed";
+import { readFileSync } from "fs";
+import { join } from "path";
+
+const { prefix: defaultPrefix }: { prefix: string } = JSON.parse(
+    readFileSync(join(__dirname, '../../config.json')).toString()
+);
 
 const cooldownGuild = new GuildCooldown();
 const cooldownUsers = new GuildCooldown(5);
+const cooldownCustom = new GuildCooldown(5);
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
@@ -37,34 +44,42 @@ export default class implements Event {
         const guild =       isDM ? null : await collection.findOne({ id: message.guild.id }) as GuildSettings;
 
         /** Guild prefix, defaults to ``!`` */
-        const prefix = guild?.prefix ?? '!';
+        const prefix = guild?.prefix ?? defaultPrefix;
         /** Name of the command with the prefix stripped */
         const name = commandName.toLowerCase().slice(prefix.length);
         const command = KhafraClient.Commands.get(name);
 
-        if(!command && (!guild?.commandRole || guild?.commandRole?.length === 0)) { // no native commands and guild has no custom commands
+        if(commandName.indexOf(prefix) !== 0) {
             return;
-        } else if(commandName.indexOf(prefix) !== 0) {
-            return;
+        } else if(command) {
+            const [min, max] = command.settings.args;
+            if(min > args.length || args.length > max) {
+                return message.channel.send(Embed.fail(`
+                Incorrect number of arguments provided.
+                
+                The command requires ${command.settings.args[0]} minimum arguments and ${command.settings.args[1] ?? 'no'} max.
+                Use \`\`help ${command.settings.name}\`\` for example usage!
+                `));
+            }
         }
 
         this.logger.log(`
         Command: ${command?.settings?.name ?? 'Not valid'} 
         | Author: ${message.author.id} 
         | URL: ${message.url} 
-        | Guild: ${message.guild.id} 
+        | Guild: ${message.guild?.id ?? 'DMs'} 
         | Input: ${message.content}
-        `.split('\n').map(e => e.trim()).join(' ').trim());
+        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
 
-        const cdGuild = cooldownGuild.set(message.guild?.id ?? message.channel.id); // set cooldowns for guild/DM channel
-        const cdUsers = cooldownUsers.set(message.author.id);                       // set cooldowns for Users
-        if(cdGuild.limited(message.guild?.id ?? message.channel.id)) {
+        cooldownGuild.set(message.guild?.id ?? message.channel.id); // set cooldowns for guild/DM channel
+        command && cooldownUsers.set(message.author.id); // set cooldowns for Users
+        if(cooldownGuild.limited(message.guild?.id ?? message.channel.id)) {
             return message.channel.send(Embed.fail(`
             ${message.channel.type === 'dm' ? 'DMs' : 'Guilds'} are limited to ${cooldownGuild.MAX} commands a minute.
 
             Please refrain from spamming the bot.
             `));
-        } else if(cdUsers.limited(message.author.id)) {
+        } else if(command && cooldownUsers.limited(message.author.id)) {
             return message.channel.send(Embed.fail(`
             Users are limited to ${cooldownUsers.MAX} commands a minute.
 
@@ -106,7 +121,13 @@ export default class implements Event {
             // user used a custom command!
             // undefined > 0 === false
             if(custom?.length > 0) {
-                if(!message.member.manageable) { // bot doesn't have perms to give member role
+                if(cooldownCustom.set(message.author.id).limited(message.author.id)) {
+                    return message.channel.send(Embed.fail(`
+                    Users are limited to ${cooldownCustom.MAX} custom commands a minute.
+
+                    Please refrain from spamming the bot.
+                    `));
+                } else if(!message.member.manageable) { // bot doesn't have perms to give member role
                     return message.channel.send(Embed.fail(`I do not have sufficient perms to manage ${message.member}!`));
                 }
 
@@ -133,6 +154,10 @@ export default class implements Event {
 
                 return;
             }
+        }
+
+        if(!command) { // already checked custom commands
+            return;
         }
 
         return command.init(message, args);

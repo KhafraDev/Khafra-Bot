@@ -13,7 +13,7 @@ export default class extends Command {
             {
                 name: 'members',
                 folder: 'Server',
-                cooldown: 5,
+                args: [0, 0],
                 guildOnly: true,
                 aliases: [ 'member' ]
             }

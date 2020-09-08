@@ -1,5 +1,6 @@
 {
     "botOwner": "267774648622645249",
+    "prefix": "!!",
     "embed": {
         "fail": "#FF0000",
         "success": "#ffe449"

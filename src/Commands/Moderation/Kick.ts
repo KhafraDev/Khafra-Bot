@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'kick',
                 folder: 'Moderation',
-                cooldown: 5,
+                args: [1],
                 guildOnly: true
             }
         );

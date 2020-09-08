@@ -14,7 +14,7 @@ export default class extends Command {
                 name: 'discrim',
                 folder: 'Server',
                 aliases: [ 'discriminator' ],
-                cooldown: 30,
+                args: [1, 1],
                 guildOnly: true
             }
         );

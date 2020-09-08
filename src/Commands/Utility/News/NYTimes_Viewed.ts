@@ -15,7 +15,7 @@ export default class extends Command {
             {
                 name: 'nytimes',
                 folder: 'News',
-                cooldown: 5
+                args: [0, 0]
             }
         );
     }

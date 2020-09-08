@@ -16,7 +16,7 @@ export default class extends Command {
                 name: 'channel',
                 folder: 'Server',
                 aliases: [ 'chan', 'channelinfo' ],
-                cooldown: 5,
+                args: [1, 1],
                 guildOnly: true
             }
         );

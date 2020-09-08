@@ -16,7 +16,7 @@ Option 2: No."`
             {
                 name: 'poll',
                 folder: 'Server',
-                cooldown: 30,
+                args: [4],
                 guildOnly: true
             }
         );

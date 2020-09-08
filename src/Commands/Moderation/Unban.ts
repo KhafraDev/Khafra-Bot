@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'unban',
                 folder: 'Moderation',
-                cooldown: 5,
+                args: [1, 1],
                 guildOnly: true
             }
         );

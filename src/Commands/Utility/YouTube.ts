@@ -31,7 +31,7 @@ export default class extends Command {
             {
                 name: 'youtube',
                 folder: 'Utility',
-                cooldown: 10,
+                args: [1],
                 aliases: [ 'yt' ]
             }
         );

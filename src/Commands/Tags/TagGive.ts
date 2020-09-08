@@ -15,8 +15,8 @@ export default class extends Command {
             {
                 name: 'tagsgive',
                 folder: 'Tags',
-                aliases: [ 'taggive' ],
-                cooldown: 5,
+                args: [2, 2],
+                aliases: [ 'taggive' ], 
                 guildOnly: true
             }
         );
@@ -29,7 +29,7 @@ export default class extends Command {
 
         let member: GuildMember;
         try {
-            member = message.mentions.members.first() ?? await message.guild.members.fetch(args[1]); // name [user id]
+            member = message.mentions.members.first() ?? await message.guild.members.fetch(args[1]);
         } catch {
             return message.channel.send(Embed.fail('A user must be mentioned or an ID must be provided after the tag\'s name!'));
         }
@@ -37,24 +37,32 @@ export default class extends Command {
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const value = await collection.updateOne(
+        const u = await collection.updateOne(
             { 
-                $and: [
-                    { id: message.guild.id, }, 
-                    { [`tags.${args[0].toLowerCase()}.owner`]: message.author.id }
-                ]
+                id: message.guild.id,
+                name: args[0],
+                owner: message.author.id
             },
             { 
                 $set: {
-                    [`tags.${args[0].toLowerCase()}.owner`]: member.id
+                    owner: member.id
+                },
+                $push: {
+                    history: {
+                        old: message.author.id,
+                        new: member.id,
+                        now: Date.now()
+                    }
                 }
             }
         );
 
-        if(value.result.n === 1) {
-            return message.channel.send(Embed.success(`Tag was given to ${member}!`));
-        } else {
-            return message.channel.send(Embed.fail('No tag was edited. Are you sure you own it?'));
+        if(u.modifiedCount === 0) {
+            return message.channel.send(Embed.fail(`
+            Tag hasn't changed ownership. This can happen if you don't own the tag or if the tag is from another guild.
+            `));
         }
+
+        return message.channel.send(Embed.success(`Gave the tag to ${member}!`));
     }
 }

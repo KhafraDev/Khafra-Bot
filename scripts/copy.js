@@ -5,7 +5,7 @@ try {
     if(type() === 'Windows_NT') {
         execSync('xcopy "./src/Commands/Fun/Cowsay" "./build/Commands/Fun/Cowsay" /S /I /Y');
     } else {
-        throw 'not available yet';
+        execSync('cp -r ./src/Commands/Fun/Cowsay ./build/Commands/Fun/Cowsay')
     }
 } catch(e) {
     throw e;

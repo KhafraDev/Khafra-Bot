@@ -20,7 +20,7 @@ export default class extends Command {
             {
                 name: 'weather',
                 folder: 'Utility',
-                cooldown: 15
+                args: [1]
             }
         );
     }

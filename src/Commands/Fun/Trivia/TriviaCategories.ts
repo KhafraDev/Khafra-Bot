@@ -15,7 +15,7 @@ export default class extends Command {
                 name: 'trivialist',
                 folder: 'Trivia',
                 aliases: [ 'triviacategory', 'triviacategories' ],
-                cooldown: 10
+                args: [0, 0]
             }
         );
     }
@@ -28,6 +28,8 @@ export default class extends Command {
                 .setDescription(`${list.trivia_categories.map(a => `\`\`${a.id}\`\`: ${a.name}`).join('\n')}`)
 
             return message.channel.send(embed);
+        } else {
+            return message.channel.send(Embed.fail('An unexpected error occurred!'));
         }
     }
 }

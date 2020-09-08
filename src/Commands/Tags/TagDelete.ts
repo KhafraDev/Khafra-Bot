@@ -14,8 +14,8 @@ export default class extends Command {
             {
                 name: 'tagsdelete',
                 folder: 'Tags',
+                args: [1, 1],
                 aliases: [ 'tagdelete' ],
-                cooldown: 5,
                 guildOnly: true
             }
         );
@@ -29,19 +29,18 @@ export default class extends Command {
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const value = await collection.deleteOne(
-            { 
-                $and: [
-                    { id: message.guild.id, }, 
-                    { [`tags.${args[0].toLowerCase()}.owner`]: message.author.id }
-                ]
-            }
-        );
+        const d = await collection.findOneAndDelete({
+            id: message.guild.id,
+            name: args[0],
+            owner: message.author.id
+        });
 
-        if(value.result.n === 1) {
-            return message.channel.send(Embed.success('Tag was deleted!'));
-        } else {
-            return message.channel.send(Embed.fail('No tag was deleted. Are you sure you own it?'));
+        if(!d || d.lastErrorObject?.n === 0 || !d.value) {
+            return message.channel.send(Embed.fail(`
+            Tag wasn't deleted. This can happen if you don't own the tag or if the tag is from another guild.
+            `));
         }
+
+        return message.channel.send(Embed.success('Deleted the tag! Re-create it with ``tags create``!'));
     }
 }

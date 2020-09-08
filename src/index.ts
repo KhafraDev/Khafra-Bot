@@ -27,7 +27,7 @@ const client = new KhafraClient({
         | HTTP Method: ${data.method} 
         | Route: ${data.route} 
         | Path: ${data.path}
-        `.split('\n').map(e => e.trim()).join(' ').trim());
+        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
     })
 
 client.init();

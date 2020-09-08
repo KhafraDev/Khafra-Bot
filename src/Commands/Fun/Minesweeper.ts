@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'minesweeper',
                 folder: 'Fun',
-                cooldown: 5
+                args: [0, 0]
             }
         );
     }

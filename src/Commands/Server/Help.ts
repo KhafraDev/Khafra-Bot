@@ -14,7 +14,7 @@ export default class extends Command {
             {
                 name: 'help',
                 folder: 'Server',
-                cooldown: 5
+                args: [0, 1]
             }
         );
     }

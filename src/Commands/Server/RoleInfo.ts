@@ -16,7 +16,7 @@ export default class extends Command {
                 name: 'role',
                 folder: 'Server',
                 aliases: [ 'roleinfo' ],
-                cooldown: 5,
+                args: [1, 1],
                 guildOnly: true
             }
         );

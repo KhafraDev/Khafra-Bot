@@ -1,6 +1,5 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { EOL } from 'os';
 
 export default function loadEnv() {
     const path = join(process.cwd(), '.env');
@@ -8,9 +7,9 @@ export default function loadEnv() {
        throw new Error('.env: No .env file found at the root of the repo!');
     }
 
-    const buffer = readFileSync(path).toString().split(EOL);
+    const buffer = readFileSync(path).toString().split(/\n\r|\n|\r/g);
     for(const line of buffer) {
-        const [env, val] = line.split('=');
+        const [env, val] = line.trim().split('=');
         Object.defineProperty(process.env, env, {
             value: val
         });

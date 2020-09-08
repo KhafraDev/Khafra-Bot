@@ -77,6 +77,12 @@ export default class implements Event {
         if(!guild) { // no react role found
             return;
         } else if(guild && !member.manageable) {
+            this.logger.log(`
+                Action: ${this.name}
+                | URL: ${reaction.message.url} 
+                | Guild: ${reaction.message.guild.id} 
+                | Failed: Not manageable
+            `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
             // valid react role but member isn't manageable
             try {
                 return member.send(Embed.fail('I can\'t manage your roles. Please ask an admin to update my perms. 🙏'));
@@ -86,7 +92,12 @@ export default class implements Event {
         const filtered = guild.roleReacts.filter(r =>
             r.message === reaction.message.id && r.emoji === reaction.emoji.name
         ).shift();
-        
+        this.logger.log(`
+            Action: ${this.name} 
+            | URL: ${reaction.message.url} 
+            | Guild: ${reaction.message.guild.id} 
+            | Role: ${filtered.role}
+        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
         try {
             return member.roles.remove(filtered.role, 'Khafra-Bot: reacted to ' + filtered.message);
         } catch {}

@@ -16,7 +16,7 @@ export default class extends Command {
             {
                 name: 'theguardian',
                 folder: 'News',
-                cooldown: 10,
+                args: [1],
                 aliases: [ 'guardian' ]
             }
         );

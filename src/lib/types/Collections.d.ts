@@ -43,15 +43,6 @@ export interface PocketUser {
     username: string
 }
 
-export interface RollingStones {
-    _id: ObjectId
-    image: string
-    place: number
-    title: string
-    permalink: string
-    bio: string
-}
-
 export interface GuildSettings {
     _id: ObjectId
     id: string
@@ -84,14 +75,15 @@ export interface GuildSettings {
 export interface Tags {
     _id: ObjectId
     id: string
-    tags: {
-        [key: string]: {
-            name: string
-            owner: string
-            value: string
-            created: Date
-        }
-    }
+    name: string
+    owner: string
+    content: string
+    created: number,
+    history?: {
+        old: string
+        new: string
+        now: number
+    }[]
 }
 
 export interface Onion {

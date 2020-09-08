@@ -37,7 +37,7 @@ GOOGLE_API=[Google API Key]
 If you don't want a certain module, errors should be handled if no API key/credentials are used. The only required entry is the bot's token.
 
 4. Install Python 3 (tested on 3.8.2).
-5. Install Python requirements with `pip install -r requirements.txt`
+5. Install Python requirements with `[sudo] pip[3] install -r requirements.txt`
 6. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
 7. Run the bot

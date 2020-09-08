@@ -1,6 +1,6 @@
 {
   "name": "khafra-bot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Discord Bot",
   "main": "build/index.js",
   "dependencies": {
@@ -21,8 +21,10 @@
     "@types/twemoji-parser": "^12.1.0"
   },
   "scripts": {
-    "dev:build": "node scripts/build && npx tsc && node scripts/copy && node build/index",
-    "prod:build": "npx tsc && node scripts/copy && pm2 start ecosystem.config.js --env production"
+    "dev:build": "node scripts/build && npx tsc && node scripts/copy",
+    "prod:build": "npx tsc && node scripts/copy",
+    "dev:run": "node build/index",
+    "prod:run": "pm2 start ecosystem.config.js --env production"
   },
   "repository": {
     "type": "git",

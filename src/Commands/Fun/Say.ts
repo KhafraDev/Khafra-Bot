@@ -14,7 +14,7 @@ export default class extends Command {
                 name: 'say',
                 folder: 'Fun',
                 aliases: [ 'speak', 'talk', 'tell' ],
-                cooldown: 5
+                args: [1]
             }
         );
     }

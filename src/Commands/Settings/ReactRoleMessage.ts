@@ -22,7 +22,7 @@ export default class extends Command {
             {
                 name: 'messagereactmessage',
                 folder: 'Settings',
-                cooldown: 5,
+                args: [4, 4],
                 guildOnly: true
             }
         );
@@ -118,7 +118,8 @@ export default class extends Command {
                     channel:    c.id,
                     emoji:      e
                 }
-            } }
+            } },
+            { upsert: true }
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {

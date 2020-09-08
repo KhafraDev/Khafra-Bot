@@ -8,7 +8,10 @@ export class GuildCooldown {
 
         const date = new Date();
         this.formatted = `${date.getMonth()+1}${date.getDate()}${date.getFullYear()}-${date.getHours()}${date.getMinutes()}`; // '8292020-2216'
-        setInterval(() => this.autoclear(), 60000);
+
+        setTimeout(() => {
+            setInterval(() => this.autoclear(), 60000);
+        }, (60 - new Date().getSeconds()) * 1000); // wait until the next minute to set interval
     }
 
     set(id: string) {

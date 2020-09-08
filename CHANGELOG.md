@@ -165,3 +165,28 @@
 * Fixed a crash in DMs when using ``userinfo``.
 * Re-worked Date formatting Utility function. Improved readability and the code is structured better to not rely on so many hard-coded values (for example: string lengths).
 * ``Proxy`` util removes last ``as any`` declaration.
+
+# v1.0.4
+* Fix concatenation ordering bug in ``Date`` when formatting months.
+* Add ``meepmember`` command.
+* Fix ``emoji`` command returning no response when no emojis are provided.
+* Remove ``cooldown`` option in Commands.
+* Add build scripts for Linux.
+* Fix an error with ``InsightsGraph`` when a guild had no members joined/left yet.
+* Trim strings in ``load.env`` utility function.
+* Remove ``insightsinit``. Insights are now tracked automatically.
+* Upsert documents for all Guild Settings.
+* Add in ``dev:run`` and ``prod:run`` scripts for running the bot without transpiling.
+* ``Wikipedia`` command will now give better, more in-depth results. If no results are found it will revert to the old API.
+* ``Trivia`` now accepts answer numbers as answers (1, 2, 3, 4, etc.), allows category names or IDs, and is all around better.
+* Default prefix can be changed in the [config](./config.json) file.
+* ``Tags`` and all helper commands have been rewritten:
+1. Subcommands now work. For example, ``tags create`` and ``tagscreate`` perform the same action.
+2. Fixed a potential crash in ``tagsinfo`` when no arguments were provided. At the very least it checks if arguments are passed.
+3. ``tags info`` now shows transfer history (of latest transfer) to prevent trolls. 
+4. ``tagsinit`` has been removed. Tags can be created without extra steps.
+* Fix an issue in the message event that would throw an error.
+* Custom commands are included in their own cooldown now.
+* React roles are now logged.
+* Remove ``rollingstones`` command.
+* Add in a minimum and optional max arguments settings per command.

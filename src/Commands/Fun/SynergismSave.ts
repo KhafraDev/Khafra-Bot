@@ -15,7 +15,7 @@ export default class extends Command {
             {
                 name: 'synergism',
                 folder: 'Fun',
-                cooldown: 5,
+                args: [0, 0],
                 aliases: [ 'synergismsave', 'kiara' ]
             }
         );

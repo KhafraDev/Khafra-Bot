@@ -17,7 +17,7 @@ export default class extends Command {
                 name: 'insightsdaily',
                 folder: 'Insights',
                 aliases: [ 'insightdaily' ],
-                cooldown: 30,
+                args: [0, 0],
                 guildOnly: true
             }
         );
@@ -35,11 +35,7 @@ export default class extends Command {
 
         const value = await collection.findOne({ id: message.guild.id }) as Insights;
         if(!value) {
-            return message.channel.send(Embed.fail(`
-            Insights have to be implemented by an administrator!
-
-            Let them know to use the \`\`!insightsinit\`\` command!
-            `));
+            return message.channel.send(Embed.fail('No insights available - yet!'));
         }
         
         const date = formatDate('MM-DD-YYYY', new Date());
