@@ -4,7 +4,7 @@
   "description": "Scrape TheOnion since there's no available API.",
   "main": "TheOnion",
   "dependencies": {
-    "node-fetch": "2.6.0"
+    "node-fetch": "2.6.1"
   },
   "devDependencies": {
     "@types/node-fetch": "1.6.9",
