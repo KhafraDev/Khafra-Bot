@@ -201,3 +201,6 @@
 * ``badmeme`` now fetches the max amount of posts (100), and the cache now stores less, more relevant data. It will also reject on bad data.
 * ``insightsdaily`` has been re-written. Now allows a user-inputted amount of days to check and requires ``VIEW_GUILD_INSIGHTS`` permission rather than ``ADMINISTRATOR``.
 * Bump ``node-fetch`` to v2.6.1.
+
+# v1.0.6
+* Handle unhandled rejections without memory leaks.

@@ -1,5 +1,6 @@
 import KhafraClient from './Bot/KhafraBot';
 import loadEnv from './lib/Utility/load.env';
+import './lib/Utility/Rejections';
 import { Logger } from './Structures/Logger';
 loadEnv();
 
