@@ -12,7 +12,10 @@ const client = new KhafraClient({
     },
     messageCacheLifetime: 1800, // defaults to never..
     messageSweepInterval: 1800, // defaults to never..
-    partials: [ 'REACTION', 'MESSAGE', 'USER' ]
+    partials: [ 'REACTION', 'MESSAGE', 'USER' ],
+    ws: {
+        intents: [ 'GUILDS', 'GUILD_MEMBERS', 'GUILD_PRESENCES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES' ]
+    }
 })
     .on('ready', () => KhafraClient.Events.get('ready').init())
     .on('message', message => KhafraClient.Events.get('message').init(message))

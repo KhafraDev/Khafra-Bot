@@ -1,38 +1,38 @@
 import fetch from 'node-fetch';
-import { RedditCache, RedditNew, RedditNotFound } from './types/BadMeme';
+import { RedditNew, RedditNotFound, RedditChildren } from './types/BadMeme';
 
-const cached: RedditCache = {}
+const cached: Map<string, RedditChildren[]> = new Map();
+
+const getFromCache = (name: string, nsfw = false) => {
+    const item = cached.get(name);
+    const valid = item
+        // if it is nsfw, include all results. if it's not, remove all that are over 18
+        .filter(p => nsfw ? true : !p.data.over_18) 
+        // remove any url that's not a valid image type
+        .filter(p => /(.gif|.png|.jpeg|.jpg)$/.test(p.data.url));
+
+    const single = valid[Math.floor(Math.random() * valid.length)];
+
+    item.splice(item.indexOf(single), 1);
+    cached.set(name, item);
+    return single;
+}
 
 export const reddit = async (subreddit = 'dankmemes', nsfw: boolean) => {
-    if(cached[subreddit]?.res.data.children.length > 0) {
-        const item = cached[subreddit].res;
-        const random = item.data.children[Math.random() * item.data.children.length << 0];
-        cached[subreddit].res.data.children.splice(item.data.children.indexOf(random), 1);
-
-        return Promise.resolve(random);
+    if(cached.has(subreddit)) {
+        return Promise.resolve(getFromCache(subreddit, nsfw));
     }
 
-    const res = await fetch(`https://www.reddit.com/r/${encodeURIComponent(subreddit)}/new.json`);
+    const res = await fetch(`https://www.reddit.com/r/${encodeURIComponent(subreddit)}/new.json?limit=100`);
     if(res.status !== 200) {
-        return res;
+        return Promise.reject(res);
     }
 
     const json = await res.json() as RedditNew | RedditNotFound;
     if('error' in json) {
-        return json;
+        return Promise.reject(json);
     }
 
-    cached[subreddit] = {
-        res: json
-    };
-
-    // remove .gifv and non-image/gif related results
-    cached[subreddit].res.data.children = cached[subreddit].res.data.children
-        .filter(i => [ '.png', '.jpg', '.jpeg', '.gif' ].some(j => i.data.url.endsWith(j)));
-    // get the results from the cache
-    // then if nsfw = true, don't filter
-    // otherwise, remove all over_18 posts.
-    const item = cached[subreddit].res.data.children.filter(e => nsfw ? true : e.data.over_18 === false);
-    const random = item[Math.random() * item.length << 0];
-    return random;
+    cached.set(subreddit, json.data.children);
+    return getFromCache(subreddit, nsfw);
 }

@@ -2,61 +2,78 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { pool } from "../../Structures/Database/Mongo";
 import Embed from "../../Structures/Embed";
-import { formatDate } from "../../lib/Utility/Date";
 import { Insights } from "../../lib/types/Collections";
+import ms from "ms";
+import { formatDate } from "../../lib/Utility/Date";
+
+type valueof<T> = T[keyof T];
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Insights: Get the daily stats!',
-                ''
+                'Insights: Get stats between multiple days!',
+                '', '3d'
             ],
             [ /* No extra perms needed */ ],
             {
-                name: 'insightsdaily',
+                name: 'insights',
                 folder: 'Insights',
-                aliases: [ 'insightdaily' ],
-                args: [0, 0],
+                aliases: [ 'insightdaily', 'insightsdaily', 'insight' ],
+                args: [0, 1],
                 guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
+    async init(message: Message, args: string[]) {
+        if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
             return message.channel.send(Embed.missing_perms.call(this, true));
         }
 
+        const days = args.length === 1 ? Math.floor((ms(args[0]) / 86400000)) : 5;
+        if(!days) {
+            return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid number of days provided!'));
+        } else if(days < 2 || days > 7) {
+            return message.channel.send(Embed.missing_args.call(this, 1, 'Only numbers between 2 and 7, please!'));
+        }
+
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
-
         const value = await collection.findOne({ id: message.guild.id }) as Insights;
         if(!value) {
             return message.channel.send(Embed.fail('No insights available - yet!'));
+        } else if(Object.keys(value).length < 2) {
+            return message.channel.send(Embed.fail('Only one day tracked so far. Wait until tomorrow!'));
         }
-        
-        const date = formatDate('MM-DD-YYYY', new Date());
-        const daily = value.daily[date];
-        if(Object.keys(value.daily).length < 2) {
-            return message.channel.send(Embed.success(`
-            So far \`\`${daily?.joined ?? 0}\`\` people have joined the server today and \`\`${daily?.left ?? 0}\`\` left.
-            
-            There is a 0% change from yesterday.
-            `));
-        } else {
-            const yesterday = formatDate('MM-DD-YYYY', new Date(new Date().setDate(new Date().getDate() - 1)));
-            const change = ((daily?.joined ?? 0) - (value.daily[yesterday]?.joined ?? 0))
-                            / (value.daily[yesterday]?.joined ?? 0) * 100;
 
-            return message.channel.send(Embed.success(`
-            Yesterday \`\`${value.daily[yesterday]?.joined ?? 0}\`\` people joined and \`\`${value.daily[yesterday]?.left ?? 0}\`\` left.
-            Today \`\`${value.daily[date]?.joined ?? 0}\`\` people joined and \`\`${value.daily[date]?.left}\`\` left.
+        // last date is today
+        const lastIsToday = Object.keys(value.daily).pop() === formatDate('MM-DD-YYYY', new Date());
 
-            There is a ${Math.abs(change)}% ${change > 0 ? 'increase' : 'decrease'} in members joining today.
-            `));
-        }
+        const joins: (valueof<Insights['daily']> & { change?: number })[] = Object
+            .values(value.daily)
+            .reverse()
+            .slice(lastIsToday ? 1 : 0, lastIsToday ? days + 1 : days)
+            .reverse()
+            .map((j, i, a) => i !== 0 ? Object.assign(j, { 
+                change: (j.joined - a[i-1].joined) / a[i-1].joined * 100, 
+            }) : j);
+
+        const keys = Object
+            .keys(value.daily)
+            .reverse()
+            .slice(lastIsToday ? 1 : 0, lastIsToday ? days + 1 : days)
+            .reverse()
+
+        const formatted = joins
+            .map((d, i) => `\`\`${keys[i]}\`\`: ${d.joined} joins | ${d.left} left | ${d.change?.toFixed(2) ?? 0}% ${d.change > 0 ? 'increase' : 'decrease'}`)
+            .join('\n');
+
+        const embed = Embed.success(formatted)
+            .setTitle(`Insights over ${days} days.`);
+
+        return message.channel.send(embed);
     }
 }

@@ -22,11 +22,16 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
+        if(message.mentions.members.size > 2) {
+            return message.channel.send(Embed.fail('Too many people mentioned!'));
+        }
+
         let member: GuildMember;
         if(args.length === 0 || !/<?@?!?\d{17,19}>?/.test(args[0])) {
             member = message.member
         } else if(message.mentions.members.size > 0) {
-            member = message.mentions.members.first();
+            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+            member = selfMentioned ? message.mentions.members.last() : message.mentions.members.first();
         } else {
             try {
                 member = await message.guild.members.fetch(args[0]);

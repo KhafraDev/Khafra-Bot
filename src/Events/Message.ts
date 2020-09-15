@@ -2,7 +2,7 @@ import { Event } from "../Structures/Event";
 import { 
     Message, 
     ClientEvents,
-    Role, 
+    Role
 } from "discord.js";
 import KhafraClient from "../Bot/KhafraBot";
 import { Sanitize } from "../lib/Utility/SanitizeCommand";
@@ -13,8 +13,9 @@ import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 import Embed from "../Structures/Embed";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { compareTwoStrings } from "../lib/Utility/CompareStrings";
 
-const { prefix: defaultPrefix }: { prefix: string } = JSON.parse(
+const { prefix: defaultPrefix, id }: { prefix: string, id: string } = JSON.parse(
     readFileSync(join(__dirname, '../../config.json')).toString()
 );
 
@@ -37,7 +38,15 @@ export default class implements Event {
             return;
         }
     
-        const [commandName, ...args] = message.content.split(/\s+/g);
+        const split = message.content.split(/\s+/g);
+        const selfMentioned = new RegExp(`<@!?${message.guild?.me.id ?? id}>`).test(split[0]);
+        const [commandName, ...args] = selfMentioned
+            ? split.slice(1)
+            : split;
+
+        if(!commandName) {
+            return;
+        }
     
         const client =      isDM ? null : await pool.settings.connect();
         const collection =  isDM ? null : client.db('khafrabot').collection('settings');
@@ -46,10 +55,12 @@ export default class implements Event {
         /** Guild prefix, defaults to ``!`` */
         const prefix = guild?.prefix ?? defaultPrefix;
         /** Name of the command with the prefix stripped */
-        const name = commandName.toLowerCase().slice(prefix.length);
+        const name = commandName.toLowerCase().slice(selfMentioned ? 0 : prefix.length);
         const command = KhafraClient.Commands.get(name);
 
-        if(commandName.indexOf(prefix) !== 0) {
+        if(name.length === 0) {
+            return;
+        } if(commandName.indexOf(prefix) !== 0 && !selfMentioned) {
             return;
         } else if(command) {
             const [min, max] = command.settings.args;
@@ -157,6 +168,20 @@ export default class implements Event {
         }
 
         if(!command) { // already checked custom commands
+            if(selfMentioned) {
+                // we want all aliases included
+                const allCommands = new Set(KhafraClient.Commands.keys());
+                const diff = Array.from(allCommands)
+                    .map(c => ({ name: c, diff: compareTwoStrings(commandName, c) }))
+                    .sort((a, b) => b.diff - a.diff);
+
+                if(diff[0].diff < .1) {
+                    return message.channel.send(Embed.fail('No command close to that name was even remotely found.'));
+                }
+
+                return message.channel.send(Embed.fail(`No command found! Did you mean ${diff[0].name}?`));
+            }
+
             return;
         }
 

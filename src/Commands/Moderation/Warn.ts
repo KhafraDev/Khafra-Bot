@@ -29,7 +29,8 @@ export default class extends Command {
             return message.channel.send(Embed.fail('Second argument must be a number!'));
         }
 
-        let member: GuildMember = message.mentions.members.first();
+        const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+        let member: GuildMember = selfMentioned ? message.mentions.members.first(2)?.pop() : message.mentions.members.first();
         if(!member) {
             try {
                 member = await message.guild.members.fetch(args[0]);

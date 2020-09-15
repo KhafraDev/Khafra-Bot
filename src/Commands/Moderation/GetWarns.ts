@@ -23,7 +23,12 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let fetchedMember = message.mentions.members.first();
+        if(message.mentions.members.size > 2) {
+            return message.channel.send(Embed.fail('Too many people mentioned!'));
+        }
+
+        const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+        let fetchedMember = selfMentioned ? message.mentions.members.last() : message.mentions.members.first();
         // if you don't have perms you can only retrieve your own records
         if(!super.hasPermissions(message, null, [ 'KICK_MEMBERS' ]) || args.length === 0) {
             fetchedMember = message.member;

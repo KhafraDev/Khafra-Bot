@@ -190,3 +190,14 @@
 * React roles are now logged.
 * Remove ``rollingstones`` command.
 * Add in a minimum and optional max arguments settings per command.
+
+# v1.0.5 - Bug Fixes & Structure changes.
+* Bot can be mentioned instead of using the prefix. Does not affect commands that rely on mentions.
+* If no command is found, Khafra-Bot will suggest a replacement if any commands are similar. Only happens when the command is initialized by mentioning it, to prevent annoyances if another bot with the same prefix is in the server.
+* Added bot intents.
+* Max arguments for the ``unban`` has been fixed.
+* Commands will now properly check permissions in NewsChannels.
+* Extra guards in ``message`` to catch bad inputs early.
+* ``badmeme`` now fetches the max amount of posts (100), and the cache now stores less, more relevant data. It will also reject on bad data.
+* ``insightsdaily`` has been re-written. Now allows a user-inputted amount of days to check and requires ``VIEW_GUILD_INSIGHTS`` permission rather than ``ADMINISTRATOR``.
+* Bump ``node-fetch`` to v2.6.1.

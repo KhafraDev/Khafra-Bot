@@ -41,15 +41,26 @@ export default class extends Command {
             // max 7 days or an error will be thrown
             return message.channel.send(Embed.missing_args.call(this, 2, 'Only 7 days of messages can be cleared max!'));
         }
-        
-        // we get a User because they might not be in the guild
-        let user: User = message.mentions.members.first()?.user;
-        if(!user) {
+
+        const mentions = message.mentions.members;
+        let user: User;
+        // only 1 member mentioned and the mention isn't the bot itself.
+        if(
+            (mentions.size === 1 && mentions.first().id === message.guild.me.id)
+            || (mentions.size === 0 && !isNaN(+userType) && userType.length >= 17 && userType.length <= 19)
+        ) {
             try {
                 user = await message.client.users.fetch(userType.replace(/[^0-9]/g, ''));
-            } catch {
-                return message.channel.send(Embed.missing_args.call(this, 2, 'Invalid User ID or mention!'));
+            } catch(e) {
+                this.logger.log(e.toString());
+                return message.channel.send(Embed.fail('No user found!'));
             }
+        } else if(mentions.size > 1) { // @KhafraBot#0001 kick @user#0001 blah - @Mod#0001
+            user = mentions.first().id === message.guild.me.id ? mentions.first(2).pop().user : mentions.first().user;
+        }
+        
+        if(!(user instanceof User)) {
+            return message.channel.send(Embed.fail('No user found!'));
         }
 
         try {
@@ -57,16 +68,13 @@ export default class extends Command {
                 reason: realReason.length > 0 ? realReason.join(' ') : null,
                 days: realTime
             });
+            return message.channel.send(Embed.success(`
+            ${user} has been banned for \`\`${realReason.length ? realReason.join(' ').slice(0, 100) : 'No reason given'}\`\`.
+
+            ${realTime} days worth of messages have been cleared from them.
+            `));
         } catch {
-            return message.channel.send(Embed.fail('User isn\'t bannable!'));
+            return message.channel.send(Embed.fail(`${user} isn't bannable!`));
         }
-
-        const embed = Embed.success(`
-        ${user} has been banned for \`\`${realReason.length ? realReason.join(' ').slice(0, 100) : 'No reason given'}\`\`.
-
-        ${realTime} days worth of messages have been cleared from them.
-        `);
-
-        return message.channel.send(embed);
     }
 }

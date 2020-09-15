@@ -25,11 +25,16 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         if(args.length < 2) {
             return message.channel.send(Embed.missing_args.call(this, 2));
+        } if(message.mentions.members.size === 0) {
+            return message.channel.send(Embed.missing_args.call(this, 2, 'A guild member must be mentioned!'));
+        } else if(message.mentions.members.size > 2) {
+            return message.channel.send(Embed.fail('Too many people mentioned!'));
         }
 
         let member: GuildMember;
         try {
-            member = message.mentions.members.first() ?? await message.guild.members.fetch(args[1]);
+            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+            member = (selfMentioned ? message.mentions.members.last() : message.mentions.members.first()) ?? await message.guild.members.fetch(args[1]);
         } catch {
             return message.channel.send(Embed.fail('A user must be mentioned or an ID must be provided after the tag\'s name!'));
         }

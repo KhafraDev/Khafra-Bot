@@ -24,6 +24,10 @@ export default class extends Command {
             ? null 
             : message.mentions.members.first();
 
+        if(opponent?.user.bot && opponent?.id !== message.guild?.me.id) {
+            return message.channel.send(Embed.fail('You can\'t play against another bot!'));
+        }
+
         const g = new TicTacToe(); // game
         const m = await message.channel.send(Embed.success(`
         \`\`\`${g.format()}\`\`\`

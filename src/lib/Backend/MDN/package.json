@@ -5,7 +5,7 @@
   "main": "MDNHandler",
   "types": "types/MDN.d.ts",
   "dependencies": {
-    "node-fetch": "2.6.0"
+    "node-fetch": "2.6.1"
   },
   "devDependencies": {
     "@types/node-fetch": "1.6.9",

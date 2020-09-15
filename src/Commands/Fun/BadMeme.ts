@@ -2,6 +2,8 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { reddit } from "../../lib/Backend/BadMeme/BadMeme";
 import Embed from "../../Structures/Embed";
+import { RedditChildren, RedditNotFound } from "../../lib/Backend/BadMeme/types/BadMeme";
+import { Response } from "node-fetch";
 
 export default class extends Command {
     constructor() {
@@ -20,19 +22,20 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const res = await reddit(args[0], message.channel.type === 'dm' ? true : message.channel.nsfw);
+        let res: RedditChildren;
+        try {
+            res = await reddit(args[0] ?? 'dankmemes', message.channel.type === 'dm' ? true : message.channel.nsfw);
+        } catch(e) {
+            const err = e as Response | RedditNotFound
+            return message.channel.send(Embed.fail(
+                'status' in err ? `Received status ${err.status} (${err.statusText})!` : (err.message ?? '¯\\_(ツ)_/¯')
+            ));
+        }
+
         if(!res) {
-            return message.channel.send(Embed.fail(`
-            No images found! NSFW images will only work if the channel is marked \`\`nsfw\`\`!
-            `));
-        } else if('error' in res) {
-            return message.channel.send(Embed.fail(`
-            ${res.error}: ${res.message}
-            `));
-        } else if('status' in res) {
-            return message.channel.send(Embed.fail(`
-            Received status code ${res.status} (${res.statusText})!
-            `));
+            return message.channel.send(Embed.fail(
+                'No images found! NSFW images will only work if the channel is marked ``nsfw``!'
+            ));
         }
 
         const embed = Embed.success()

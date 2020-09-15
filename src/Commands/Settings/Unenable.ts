@@ -114,7 +114,8 @@ export default class extends Command {
         } catch {}
 
         try {
-            const g = message.mentions.members.first() ?? await message.guild.members.fetch(id);
+            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+            const g = (selfMentioned ? message.mentions.members.last() : message.mentions.members.first()) ?? await message.guild.members.fetch(id);
 
             return handle(message, kCommand, 'user', g);
         } catch {

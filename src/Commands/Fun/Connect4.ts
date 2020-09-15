@@ -33,9 +33,14 @@ export default class extends Command {
     async init(message: Message) {
         if(message.mentions.members.size === 0) {
             return message.channel.send(Embed.fail('No opponent to play against!'));
+        } else if(message.mentions.members.size > 2) {
+            return message.channel.send(Embed.fail('Too many people mentioned!'));
         }
 
-        const opponent = message.mentions.members.first();
+        const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
+        // gets the last mentioned if the command was initialized by mentioning it
+        // only works in guilds so message.guild is always defined.
+        const opponent = selfMentioned ? message.mentions.members.last() : message.mentions.members.first();
         const game = new Connect4();
         
         const embed = Embed.success()

@@ -32,7 +32,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
+        if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
             return message.channel.send(Embed.missing_perms.call(this, true));
