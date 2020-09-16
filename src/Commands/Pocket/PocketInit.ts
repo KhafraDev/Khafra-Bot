@@ -50,6 +50,9 @@ export default class extends Command {
         .setTitle('Pocket');
 
         const msg = await message.channel.send(embed);
+        if(!msg) {
+            return;
+        }
         await msg.react('✅');
         msg.react('❌');
 

@@ -32,6 +32,9 @@ export default class extends Command {
         const m = await message.channel.send(Embed.success(`
         \`\`\`${g.format()}\`\`\`
         `)); // message to edit
+        if(!m) {
+            return;
+        }
 
         const f = (msg: Message) => 
             (msg.author.id === message.author.id || msg.author.id === opponent?.id)

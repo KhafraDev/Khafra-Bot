@@ -51,6 +51,10 @@ export default class extends Command {
             `);
 
         const game_msg = await message.channel.send(embed);
+        if(!game_msg) {
+            return;
+        }
+        
         const filter = (reaction: MessageReaction, user: User) => 
             (user.id === opponent.id || user.id === message.author.id) &&
             Object.values(turns).includes(reaction.emoji.name)

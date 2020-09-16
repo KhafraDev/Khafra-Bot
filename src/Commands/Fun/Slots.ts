@@ -41,6 +41,10 @@ export default class extends Command {
         `);
 
         const sent = await message.channel.send(embed);
+        if(!sent) {
+            return;
+        }
+        
         await delay();
         for(let i = 2; i < 5; i++) {
             const embed = Embed.success(`

@@ -29,7 +29,10 @@ export default class extends Command {
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
         const msg = await message.channel.send(embed);
-
+        if(!msg) {
+            return;
+        }
+        
         setTimeout(() => {
             if(msg.deleted) {
                 return;

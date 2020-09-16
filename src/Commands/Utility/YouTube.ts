@@ -65,7 +65,9 @@ export default class extends Command {
         const embeds = [...format(results)];
         let idx = 0;
         const m = await message.channel.send(embeds[0]);
-
+        if(!m) {
+            return;
+        }
         await m.react('▶️');
         await m.react('◀️');
         await m.react('⏹️');
