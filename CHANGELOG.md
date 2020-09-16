@@ -202,5 +202,7 @@
 * ``insightsdaily`` has been re-written. Now allows a user-inputted amount of days to check and requires ``VIEW_GUILD_INSIGHTS`` permission rather than ``ADMINISTRATOR``.
 * Bump ``node-fetch`` to v2.6.1.
 
-# v1.0.6
+# v1.0.6 - Handling the Unhandled
 * Handle unhandled rejections without memory leaks.
+* ``TextChannel | DMChannel | NewsChannel`` send methods will no longer throw errors on rejections. These methods are Proxied, modifying the prototype to return null and log the error if one occurs. No changes have to be made because it has the same type/return signatures already.
+* ``Message#react`` will no longer throw errors similar to ``<Channel>.send``.

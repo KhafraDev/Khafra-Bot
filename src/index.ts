@@ -1,6 +1,9 @@
+import './lib/Utility/Rejections';
+import './Structures/Proxy/ChannelSend';
+import './Structures/Proxy/React';
+
 import KhafraClient from './Bot/KhafraBot';
 import loadEnv from './lib/Utility/load.env';
-import './lib/Utility/Rejections';
 import { Logger } from './Structures/Logger';
 loadEnv();
 

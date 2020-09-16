@@ -97,13 +97,13 @@ export default class extends Command {
         let m: Message;
         try {
             m = await (c as TextChannel).send(Embed.success(content.join(' ')));
-            await m.react(e);
         } catch(e) {
             return message.channel.send(Embed.fail(`
             An unexpected error occurred!
             \`\`${e.toString()}\`\`
             `));
         }
+        await m.react(e);
 
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');

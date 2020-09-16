@@ -66,11 +66,9 @@ export default class extends Command {
         let idx = 0;
         const m = await message.channel.send(embeds[0]);
 
-        try {
-            await m.react('▶️');
-            await m.react('◀️');
-            await m.react('⏹️');
-        } catch {}
+        await m.react('▶️');
+        await m.react('◀️');
+        await m.react('⏹️');
 
         const filter = (reaction: MessageReaction, user: User) => 
             user.id === message.author.id && ['▶️', '◀️', '⏹️'].indexOf(reaction.emoji.name) > -1;

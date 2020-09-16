@@ -73,10 +73,8 @@ Option 2: No."`
         const embed = Embed.success(msg.shift());
 
         const sent = await channel.send(embed);
-        try {
-            for(const emoji of emojis) {
-                await sent.react(emoji);
-            }
-        } catch {}
+        for(const emoji of emojis) {
+            await sent.react(emoji);
+        }
     }
 }

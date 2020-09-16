@@ -57,14 +57,13 @@ export default class extends Command {
         ;
 
         for(const emoji of Object.values(turns)) {
-            await game_msg.react(emoji)
-                .catch(err => this.logger.log(err.toString()));
+            await game_msg.react(emoji);
         }
 
         const collector = game_msg.createReactionCollector(filter, { time: 180000 });
 
         collector.on('collect', async collected => {
-            if(game_msg.deleted) {
+            if(!game_msg || game_msg.deleted) {
                 return collector.stop();
             }
 

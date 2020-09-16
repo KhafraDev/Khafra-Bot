@@ -50,10 +50,8 @@ export default class extends Command {
         .setTitle('Pocket');
 
         const msg = await message.channel.send(embed);
-        try {
-            await msg.react('✅');
-            msg.react('❌');
-        } catch {} // if it fails, user can add them.
+        await msg.react('✅');
+        msg.react('❌');
 
         const filter = (reaction: MessageReaction, user: User) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { time: 120000, max: 1 });
