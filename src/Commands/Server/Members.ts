@@ -15,7 +15,7 @@ export default class extends Command {
                 folder: 'Server',
                 args: [0, 0],
                 guildOnly: true,
-                aliases: [ 'member' ]
+                aliases: [ 'membercount' ]
             }
         );
     }
