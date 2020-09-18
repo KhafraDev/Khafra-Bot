@@ -29,16 +29,17 @@ export default class extends Command {
             return message.channel.send(Embed.fail('Second argument must be a number!'));
         }
 
-        const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
-        let member: GuildMember = selfMentioned ? message.mentions.members.first(2)?.pop() : message.mentions.members.first();
-        if(!member) {
-            try {
-                member = await message.guild.members.fetch(args[0]);
-            } catch {
-                return message.channel.send(Embed.fail(`
-                A user must be mentioned or an ID provided. Warnings only work if the user is in the guild!
-                `));
-            }
+        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+            return message.channel.send(Embed.fail(`
+            No guild member mentioned and no user ID provided.
+            `));
+        }
+
+        let member: GuildMember;
+        try {
+            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
+        } catch {
+            return message.channel.send(Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         if(!member.kickable) {

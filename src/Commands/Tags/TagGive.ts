@@ -31,12 +31,17 @@ export default class extends Command {
             return message.channel.send(Embed.fail('Too many people mentioned!'));
         }
 
+        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+            return message.channel.send(Embed.fail(`
+            No guild member mentioned and no user ID provided.
+            `));
+        }
+
         let member: GuildMember;
         try {
-            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
-            member = (selfMentioned ? message.mentions.members.last() : message.mentions.members.first()) ?? await message.guild.members.fetch(args[1]);
+            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
-            return message.channel.send(Embed.fail('A user must be mentioned or an ID must be provided after the tag\'s name!'));
+            return message.channel.send(Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         const client = await pool.tags.connect();

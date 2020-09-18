@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { Message, TextChannel } from 'discord.js';
+import { Message, TextChannel, NewsChannel } from 'discord.js';
 import Embed from '../../Structures/Embed';
 
 export default class extends Command {
@@ -36,8 +36,8 @@ export default class extends Command {
             `));
         }
 
-        const channel = message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel;
-        const deleted = await (channel as TextChannel).bulkDelete(toDelete > 100 ? 100 : toDelete);
+        const channel = (message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel) as TextChannel | NewsChannel;
+        const deleted = await channel.bulkDelete(toDelete > 100 ? 100 : toDelete, true);
 
         const embed = Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())

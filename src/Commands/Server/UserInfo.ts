@@ -26,18 +26,17 @@ export default class extends Command {
             return message.channel.send(Embed.fail('Too many people mentioned!'));
         }
 
+        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+            return message.channel.send(Embed.fail(`
+            No guild member mentioned and no user ID provided.
+            `));
+        }
+
         let member: GuildMember;
-        if(args.length === 0 || !/<?@?!?\d{17,19}>?/.test(args[0])) {
-            member = message.member
-        } else if(message.mentions.members.size > 0) {
-            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
-            member = selfMentioned ? message.mentions.members.last() : message.mentions.members.first();
-        } else {
-            try {
-                member = await message.guild.members.fetch(args[0]);
-            } catch {
-                return message.channel.send(Embed.missing_args.call(this, 1, 'User ID or mention is invalid!'));
-            }
+        try {
+            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
+        } catch {
+            return message.channel.send(Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         const embed = Embed.success()
@@ -55,7 +54,7 @@ export default class extends Command {
             .addField('**Discrim:**',    `#${member.user.discriminator}`, true)
             .addField('**Nickname:**',   member.nickname ?? 'None', true)
             .addField('**Bot:**',        member.user.bot ? 'Yes' : 'No', true)
-            .addField('**Joined:**',     formatDate('MMMM Do, YYYY hh:mm:ss A t', member.user.createdAt), false)
+            .addField('**Created:**',     formatDate('MMMM Do, YYYY hh:mm:ss A t', member.user.createdAt), false)
         
         return message.channel.send(embed);
     }

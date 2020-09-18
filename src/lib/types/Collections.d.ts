@@ -69,7 +69,8 @@ export interface GuildSettings {
         aliases?: string[]
         type: 'role' | 'guild' | 'user' | 'channel'
         id?: string
-    }[]
+    }[],
+    welcomeChannel?: string
 }
 
 export interface Tags {
