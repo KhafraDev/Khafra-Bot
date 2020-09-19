@@ -31,14 +31,14 @@ export default class extends Command {
             {
                 name: 'user',
                 folder: 'Server',
-                args: [1, 1],
+                args: [0, 1],
                 aliases: [ 'userinfo' ]
             }
         );
     }
 
     async init(message: Message, args: string[]) {
-        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+        if(!/(<@!)?\d{17,19}>?/.test(args[0]) && args.length === 1) {
             return message.channel.send(Embed.fail(`
             No guild member mentioned and no user ID provided.
             `));
@@ -46,7 +46,7 @@ export default class extends Command {
 
         let user: User;
         try {
-            user = await message.client.users.fetch(args[0].replace(/[^\d]/g, ''));
+            user = args.length === 0 ? message.author : await message.client.users.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
             return message.channel.send(Embed.fail('No user found!'));
         }

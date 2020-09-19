@@ -210,3 +210,5 @@
 * Get welcome/leave messages when a user joins, leaves, is kicked, or banned from a guild.
 * Fix multiple issues and replaced bad code when trying to get the correct mentioned user.
 * ``user`` command can now fetch information from any Discord account, not just guild members. The old command is under the new name ``member``.
+* Catch bad inputs earlier on.
+* Add ``discover`` command.

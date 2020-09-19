@@ -53,7 +53,7 @@ export default class implements Event {
 
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member} has left the server!`);
+            .setDescription(`${member} (${member.user.tag}) has left the server!`);
 
         return channel.send(embed);
     }

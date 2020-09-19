@@ -17,11 +17,15 @@ const basic = new Permissions([
 export const Sanitize = (message: Message) => {
     if(message.author.bot) {
         return false;
+    } else if(message.type !== 'DEFAULT') {
+        return false;
     } else if(message.guild && !message.guild.available) {
         return false;
     } else if(message.system) {
         return false;
     } else if(message.partial) {
+        return false;
+    } else if(message.tts) {
         return false;
     }
 

@@ -44,7 +44,7 @@ export default class implements Event {
 
         const embed = Embed.success()
             .setAuthor(user.username, user.displayAvatarURL())
-            .setTitle(`${user} was banned!`);
+            .setTitle(`${user} (${user.tag}) was banned!`);
 
         return channel.send(embed);
     }
