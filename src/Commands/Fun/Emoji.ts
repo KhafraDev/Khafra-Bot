@@ -8,7 +8,7 @@ export default class extends Command {
         super(
             [
                 'Enlarge an emoji!',
-                '🦸 🤠', '🥙'
+                '🦸 🤠', '🥙', '<:Jack:579367928722489346>'
             ],
             [ 'ATTACH_FILES' ],
             {
@@ -22,18 +22,25 @@ export default class extends Command {
     init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
             return message.channel.send(Embed.missing_perms.call(this));
-        } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
-        const parsed = parse(args.join(' '), {
+        const guildEmojis   = args.slice(0, 5).join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g) ?? [];
+        const unicodeEmojis = args.slice(0, 5).join(' ').replace(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g, '');
+
+        const unicodeParsed = parse(unicodeEmojis, {
             assetType: 'png'
-        }).map(({ url }) => url).slice(0, 5);
+        }).map(({ url }) => url);
+        
+        const guildParsed = guildEmojis
+            .map(e => e.match(/\d{17,19}/).shift())
+            .map(id => message.guild.emojis.cache.get(id) ?? message.client.emojis.cache.get(id))
+            .filter(Boolean)
+            .map(e => e.url);
 
-        if(parsed.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'No unicode emoji provided!'));
+        if(unicodeParsed.length === 0 && guildParsed.length === 0) {
+            return message.channel.send(Embed.fail('No guild or unicode emojis provided!'));
         }
 
-        return message.channel.send(parsed.join('\n'));
+        return message.channel.send([...unicodeParsed, ...guildParsed].join('\n'));
     }
 }

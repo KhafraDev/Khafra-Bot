@@ -51,6 +51,10 @@ export default class implements Event {
             return;
         }
 
+        try {
+            await member.fetch();
+        } catch {}
+
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`${member} (${member.user.tag}) joined the server!`);

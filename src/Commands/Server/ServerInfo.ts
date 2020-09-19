@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command';
-import { Message, GuildEmojiManager } from 'discord.js';
+import { Message } from 'discord.js';
 import Embed from '../../Structures/Embed';
 import { formatDate } from '../../lib/Utility/Date';
 
@@ -30,46 +30,19 @@ export default class extends Command {
             *${message.guild.name}*
             \`\`${message.guild.description?.length ? message.guild.description : 'No description set'}\`\`
             `)
-            .addField('**ID:**',            message.guild.id, true)
-            .addField('**Large:**',         message.guild.large ? 'Yes' : 'No', true)
-            .addField('**Members:**',       message.guild.memberCount.toLocaleString(), true)
-            .addField('**Owner:**',         message.guild.owner.toString(), true)
-            .addField('**Boosts:**',        message.guild.premiumSubscriptionCount.toLocaleString(), true)
-            .addField('**Tier:**',          message.guild.premiumTier, true)
-            .addField('**Region:**',        message.guild.region, true)
-            .addField('**Vanity URL:**',    message.guild.vanityURLCode ? `discord.gg/${message.guild.vanityURLCode}` : 'None', true)
-            .addField('**Verification:**',  message.guild.verificationLevel, true)
-            .addField('**Created:**',        formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), false)
-            .addFields(this.formatEmojis(message.guild.emojis).map(e => ({
-                name: 'Emoji',
-                value: e,
-                inline: true
-            })));
+            .addFields(
+                { name: '**ID:**', value: message.guild.id, inline: true },
+                { name: '**Large:**', value: message.guild.large ? 'Yes' : 'No', inline: true },
+                { name: '**Members:**', value: message.guild.memberCount.toLocaleString(), inline: true },
+                { name: '**Owner:**', value: message.guild.owner.toString(), inline: true },
+                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount.toLocaleString(), inline: true },
+                { name: '**Tier:**', value: message.guild.premiumTier, inline: true },
+                { name: '**Region:**', value: message.guild.region, inline: true },
+                { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
+                { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },
+                { name: '**Created:**', value: formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), inline: false }
+            );
 
         return message.channel.send(embed);
-    }
-
-    /**
-     * Formats Emojis into separate arrays of strings that can be used in a field.
-     * Max fields: 5, so we don't go over the limit (hopefully!)
-     * @param emojis Emoji collection
-     */
-    formatEmojis(emojis: GuildEmojiManager) {
-        const emotes: string[] = [];
-        let idx = 0;
-
-        for(const [id, emoji] of emojis.cache) {
-            const e = `<:${emoji.name}:${id}>`;
-            if(emotes[idx] && emotes[idx].length + e.length > 1024) {
-                idx++;
-            }
-            emotes[idx] ? emotes[idx] += e : (emotes[idx] = e);
-        }
-
-        if(emotes.length) {
-            return ['No emojis cached!'];
-        }
-        
-        return emotes.slice(0, 5);
     }
 }

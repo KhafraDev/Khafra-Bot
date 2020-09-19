@@ -212,3 +212,4 @@
 * ``user`` command can now fetch information from any Discord account, not just guild members. The old command is under the new name ``member``.
 * Catch bad inputs earlier on.
 * Add ``discover`` command.
+* ``emoji`` command now works with Guild emojis and the emoji section of the ``server`` command has been removed.
