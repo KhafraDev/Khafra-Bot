@@ -213,3 +213,5 @@
 * Catch bad inputs earlier on.
 * Add ``discover`` command.
 * ``emoji`` command now works with Guild emojis and the emoji section of the ``server`` command has been removed.
+* ``message`` event has once again been re-written to include better logic and updated code for guild settings.
+* Inhibitors are now much easier to use and use less resources. Some commands can no longer be disabled or enabled.

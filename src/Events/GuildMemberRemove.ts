@@ -24,7 +24,7 @@ export default class implements Event {
         const insightsCollection = client.db('khafrabot').collection('insights');   
         const settingsCollection = client.db('khafrabot').collection('settings');
             
-        insightsCollection.updateOne(
+        await insightsCollection.updateOne(
             { id: member.guild.id },
             { $inc: { 
                 [`daily.${date}.total`]: -1,
@@ -50,10 +50,6 @@ export default class implements Event {
         if(!channel.permissionsFor(member.guild.me).has(basic)) {
             return;
         }
-
-        try {
-            await member.fetch();
-        } catch {}
 
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
