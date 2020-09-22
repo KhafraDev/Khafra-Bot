@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
@@ -22,10 +21,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
@@ -36,11 +31,11 @@ export default class extends Command {
         });
 
         if(!d || d.lastErrorObject?.n === 0 || !d.value) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Tag wasn't deleted. This can happen if you don't own the tag or if the tag is from another guild.
             `));
         }
 
-        return message.channel.send(Embed.success('Deleted the tag! Re-create it with ``tags create``!'));
+        return message.channel.send(this.Embed.success('Deleted the tag! Re-create it with ``tags create``!'));
     }
 }

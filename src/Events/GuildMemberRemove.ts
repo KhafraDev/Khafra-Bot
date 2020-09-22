@@ -4,8 +4,10 @@ import { pool } from "../Structures/Database/Mongo";
 import { formatDate } from "../lib/Utility/Date";
 import { Logger } from "../Structures/Logger";
 import { inspect } from "util";
-import Embed from "../Structures/Embed";
 import { GuildSettings } from "../lib/types/Collections";
+import { Command } from '../Structures/Command';
+
+const Embed = Command.Embed;
 
 const basic = new Permissions([
     'SEND_MESSAGES',

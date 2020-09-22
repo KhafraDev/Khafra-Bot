@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { parse } from "twemoji-parser";
 
 export default class extends Command {
@@ -21,7 +20,7 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
+            return message.channel.send(this.Embed.missing_perms.call(this));
         }
 
         const guildEmojis   = args.slice(0, 5).join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g) ?? [];
@@ -38,7 +37,7 @@ export default class extends Command {
             .map(e => e.url);
 
         if(unicodeParsed.length === 0 && guildParsed.length === 0) {
-            return message.channel.send(Embed.fail('No guild or unicode emojis provided!'));
+            return message.channel.send(this.Embed.fail('No guild or unicode emojis provided!'));
         }
 
         return message.channel.send([...unicodeParsed, ...guildParsed].join('\n'));

@@ -11,7 +11,6 @@ import { Logger } from "../Structures/Logger";
 import KhafraClient from "../Bot/KhafraBot";
 import { readFileSync } from "fs";
 import { join } from "path";
-import Embed from "../Structures/Embed";
 import { inspect } from "util";
 import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
@@ -19,6 +18,8 @@ import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 const { prefix: defaultPrefix }: { prefix: string } = JSON.parse(
     readFileSync(join(__dirname, '../../config.json')).toString()
 );
+
+const Embed = Command.Embed;
 
 const cooldownGuild = new GuildCooldown();
 const cooldownUsers = new GuildCooldown(7);

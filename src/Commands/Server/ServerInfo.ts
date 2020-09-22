@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import Embed from '../../Structures/Embed';
 import { formatDate } from '../../lib/Utility/Date';
 
 export default class extends Command {
@@ -22,7 +21,7 @@ export default class extends Command {
     }
 
     init(message: Message) {        
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
             .setThumbnail(message.guild.bannerURL())

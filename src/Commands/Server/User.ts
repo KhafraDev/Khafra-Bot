@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message, User, Activity } from "discord.js";
-import Embed from "../../Structures/Embed";
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -38,8 +37,8 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!/(<@!)?\d{17,19}>?/.test(args[0]) && args.length === 1) {
-            return message.channel.send(Embed.fail(`
+        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+            return message.channel.send(this.Embed.fail(`
             No guild member mentioned and no user ID provided.
             `));
         }
@@ -48,10 +47,10 @@ export default class extends Command {
         try {
             user = args.length === 0 ? message.author : await message.client.users.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
-            return message.channel.send(Embed.fail('No user found!'));
+            return message.channel.send(this.Embed.fail('No user found!'));
         }
 
-        const embed = Embed.success(formatPresence(user.presence.activities))
+        const embed = this.Embed.success(formatPresence(user.presence.activities))
             .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user.displayAvatarURL())
             .addField('**Username:**', user.username, true)
             .addField('**ID:**', user.id, true)

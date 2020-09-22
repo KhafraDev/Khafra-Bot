@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
+
 
 export default class extends Command {
     constructor() {
@@ -20,11 +20,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length !== 2) {
-            return message.channel.send(Embed.missing_args.call(this, 2));
-        }
-
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle(`Generating ${!isNaN(+args[0]) ? args[0] : '1000'} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
@@ -38,7 +34,7 @@ export default class extends Command {
                 return;
             }
 
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .setTitle(`Generated ${isNaN(+args[0]) ? args[0] : '1000'} BTC!`)
                 .setDescription('Sending the BTC to ' + args[1] + ' now!');
 

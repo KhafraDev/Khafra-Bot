@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia";
 import { AllHtmlEntities } from "html-entities";
 import { WikipediaSearch } from "../../lib/Backend/Wikipedia/types/Wikipedia";
@@ -25,7 +24,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(this.Embed.generic());
         }
 
         let wiki = await Wikipedia(args.join(' '));
@@ -34,13 +33,13 @@ export default class extends Command {
         }
         
         if('error' in wiki) { // WikipediaError
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Received status ${wiki.httpCode} (${wiki.httpReason}).
             `));
         } 
         
         if('extract' in wiki) {
-            const embed = Embed.success(`
+            const embed = this.Embed.success(`
             ${wiki.content_urls.desktop?.page.slice(0, 140)}
 
             ${wiki.extract?.slice(0, 1900)}
@@ -55,10 +54,10 @@ export default class extends Command {
         
         wiki = wiki as WikipediaSearch; // can't be WikipediaArticleNotFound
         if(wiki.pages.length === 0) {
-            return message.channel.send(Embed.fail(`No results found!`));
+            return message.channel.send(this.Embed.fail(`No results found!`));
         }
 
-        const embed = Embed.success(all.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048)))
+        const embed = this.Embed.success(all.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048)))
             .setTitle(wiki.pages[0].title)
             .setThumbnail(wiki.pages[0].thumbnail?.url ? 'https:' + wiki.pages[0].thumbnail?.url : null);
 

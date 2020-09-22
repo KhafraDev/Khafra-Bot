@@ -1,7 +1,6 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import { trivia } from "../../../lib/Backend/Trivia/Trivia";
-import Embed from "../../../Structures/Embed";
 
 const shuffle = <T>(a: T[]): T[] => {
     for(let i = a.length - 1; i > 0; i--) {
@@ -31,27 +30,23 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 3) {
-            return message.channel.send(Embed.missing_args.call(this, 3));
-        }
-
         const list = await trivia.fetchList();
         if(!list) {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const category = args.join(' ').match(trivia.categoryRegex);
         if(category.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 3, 'Invalid category provided! Use the ``triviacategory`` command!'));
+            return message.channel.send(this.Embed.fail('Invalid category provided! Use the ``triviacategory`` command!'));
         }
 
         const [difficulty, q] = args.slice(category[0].split(' ').length);
         if(!difficulty || ['easy', 'medium', 'hard'].indexOf(difficulty.toLowerCase()) === -1) {
-            return message.channel.send(Embed.missing_args.call(this, 3, 'Invalid difficulty provided!'))
+            return message.channel.send(this.Embed.fail('Invalid difficulty provided!'));
         }
 
         if(isNaN(+q)) {
-            return message.channel.send(Embed.missing_args.call(this, 3, 'Invalid amount of questions!'));
+            return message.channel.send(this.Embed.fail('Invalid amount of questions!'));
         }
 
         const questions = await trivia.fetchQuestions(+q > 10 ? 10 : +q, category[0], difficulty);
@@ -66,7 +61,7 @@ export default class extends Command {
             }
 
             const answers = shuffle(question.incorrect_answers.concat(question.correct_answer)); // answers.indexOf(correct answer)
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .setTitle(`Question ${questions.results.indexOf(question) + 1}`)
                 .setDescription(`
                 \`\`${unbase64(question.question)}\`\`
@@ -94,9 +89,9 @@ export default class extends Command {
         const user = w[1] === 0 ? null : await message.client.users.fetch(w[0]);
 
         if(sent.deleted || !sent.editable) {
-            return message.channel.send(Embed.success(`${user ?? 'No one'} won with ${w[1]} correct answers.`));
+            return message.channel.send(this.Embed.success(`${user ?? 'No one'} won with ${w[1]} correct answers.`));
         }
 
-        return sent.edit(Embed.success(`${user ?? 'No one'} won with ${w[1]} correct answers.`));
+        return sent.edit(this.Embed.success(`${user ?? 'No one'} won with ${w[1]} correct answers.`));
     }
 }

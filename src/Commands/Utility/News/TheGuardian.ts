@@ -1,6 +1,6 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../../Structures/Embed";
+
 import { GuardianResponse } from "../../../lib/Backend/Guardian/types/Guardian";
 import { guardian } from "../../../lib/Backend/Guardian/Guardian";
 
@@ -23,15 +23,11 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         let res: GuardianResponse;
         try {
             res = await guardian(args, new Date(args[0]));
         } catch {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         let desc = '';
@@ -43,7 +39,7 @@ export default class extends Command {
             desc += line;
         }
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setFooter('© 2020 Guardian News & Media Limited or its affiliated companies.')
             .setDescription(desc)
             .setTitle('Results')

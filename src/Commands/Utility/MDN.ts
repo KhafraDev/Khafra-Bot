@@ -1,7 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { mdn } from "../../lib/Backend/MDN/MDNHandler";
-import Embed from "../../Structures/Embed";
 import { compareTwoStrings } from "../../lib/Utility/CompareStrings";
 import { MDNSearch } from "../../lib/Backend/MDN/types/MDN";
 
@@ -23,15 +22,11 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1) { // mdn Array.prototype.slice
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         let results: MDNSearch;
         try {
             results = await mdn(args.join(' '));
         } catch {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const best = results.documents
@@ -40,7 +35,7 @@ export default class extends Command {
             }))
             .sort((a, b) => b.diff - a.diff);
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setAuthor('Mozilla Development Network', 'https://developer.mozilla.org/static/img/opengraph-logo.72382e605ce3.png')
             .setDescription(best.map(doc => `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`))
             .setFooter('Requested by ' + message.author.tag)

@@ -2,13 +2,12 @@ import { Command } from "../../Structures/Command";
 import { join } from "path";
 import { Message } from "discord.js";
 import { mkdir, stat } from "fs/promises";
-import { readFileSync, Stats } from 'fs';
+import { Stats } from 'fs';
 import { execFile } from "child_process";
-import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 import { Insights } from "../../lib/types/Collections";
 
-const { outDir } = JSON.parse(readFileSync(join(process.cwd(), 'tsconfig.json')).toString()).compilerOptions;
+const outDir = join(process.cwd(), 'build')
 const outPath = join(process.cwd(), outDir, 'lib/Images/');
 const pyPath = join(process.cwd(), 'src/lib/Backend/Py/InsightsGraph.py');
 let updated = false;
@@ -35,7 +34,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms.call(this, true));
         }
 
         if(!updated) {
@@ -55,7 +54,7 @@ export default class extends Command {
         } catch {} 
 
         if(stats && (Date.now() - stats.mtimeMs) / 1000 / 60 < 15) {
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .attachFiles([ filePath ])
                 .setImage(`attachment://${message.guild.id}.jpg`)
                 .setFooter('Last updated')
@@ -72,7 +71,7 @@ export default class extends Command {
         const guild = await collection.findOne({ id: message.guild.id }) as Insights;
 
         if(!guild) {
-            return message.channel.send(Embed.fail('No insights available - yet!'));
+            return message.channel.send(this.Embed.fail('No insights available - yet!'));
         }
 
         const mapped = Object.entries(guild.daily)
@@ -91,13 +90,13 @@ export default class extends Command {
         
         execFile('python', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
             if(err) {
-                return message.channel.send(Embed.fail(`
+                return message.channel.send(this.Embed.fail(`
                 An unexpected error occurred!
                 \`\`${err.toString()}\`\`
                 `));
             }
 
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .attachFiles([ filePath ])
                 .setImage(`attachment://${message.guild.id}.jpg`)
                 

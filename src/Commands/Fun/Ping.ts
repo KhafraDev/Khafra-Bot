@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
@@ -19,12 +18,12 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const m = await message.channel.send(Embed.success('Pinging...!'));
+        const m = await message.channel.send(this.Embed.success('Pinging...!'));
         if(!m) {
             return;
         }
         
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         Pong! 🏓
 
         Bot: ${m.createdTimestamp - message.createdTimestamp} ms

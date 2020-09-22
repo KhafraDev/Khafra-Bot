@@ -1,7 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { Kongregate } from "../../lib/Backend/SynergismStats";
-import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
@@ -23,11 +22,11 @@ export default class extends Command {
     async init(message: Message) {
         const stats = await Kongregate();
         if('status' in stats) {
-            return message.channel.send(Embed.fail(`Received status ${stats.status} (${stats.statusText})!`));
+            return message.channel.send(this.Embed.fail(`Received status ${stats.status} (${stats.statusText})!`));
         }
 
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle('Synergism Stats (Kongregate)')
             .setDescription(`
             **Plays:**: ${stats.gameplays_count.toLocaleString()}

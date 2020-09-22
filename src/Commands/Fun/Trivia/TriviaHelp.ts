@@ -1,6 +1,5 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
@@ -19,7 +18,7 @@ export default class extends Command {
     }
 
     init(message: Message) {
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle('Trivia')
             .setDescription(`
             For trivia categories try the \`\`trivialist\`\` command.

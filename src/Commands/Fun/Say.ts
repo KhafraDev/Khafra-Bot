@@ -1,5 +1,4 @@
 import { Command } from '../../Structures/Command';
-import Embed from '../../Structures/Embed';
 import { Message } from 'discord.js';
 
 export default class extends Command {
@@ -20,11 +19,7 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTimestamp()
             .setDescription(`
             ${message.author} says:

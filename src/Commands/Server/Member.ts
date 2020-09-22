@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember, Activity } from 'discord.js';
-import Embed from '../../Structures/Embed';
 import { formatDate } from '../../lib/Utility/Date';
 
 const formatPresence = (activities: Activity[]) => {
@@ -41,7 +40,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(message.mentions.members.size > 2) {
-            return message.channel.send(Embed.fail('Too many people mentioned!'));
+            return message.channel.send(this.Embed.fail('Too many people mentioned!'));
         }
 
         let member: GuildMember;
@@ -51,7 +50,7 @@ export default class extends Command {
             member = message.member;
         }
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setDescription(`
             ${member} on *${member.guild.name}*.
             ${formatPresence(member.presence.activities)}

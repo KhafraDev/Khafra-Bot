@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { formatDate } from "../../lib/Utility/Date";
 import { npm } from "../../lib/Backend/NPM/npmHandler";
 
@@ -22,28 +21,24 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1) { // npm node-fetch
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         let _package;
         try {
             _package = await npm(args[0]);
         } catch(e) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             An unexpected error occurred!
             ${e.message ? '``' + e.message + '``' : ''}
             `));
         }
 
         if('code' in _package) {
-            return message.channel.send(Embed.fail('No package with that name was found!'));
+            return message.channel.send(this.Embed.fail('No package with that name was found!'));
         } else if('error' in _package) {
-            return message.channel.send(Embed.fail(`Received error \`\`${_package.error}\`\`.`));
+            return message.channel.send(this.Embed.fail(`Received error \`\`${_package.error}\`\`.`));
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})

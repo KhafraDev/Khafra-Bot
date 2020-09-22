@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { getMember } from "../../lib/Backend/MeepCraft/MeepCraft";
 import { parse } from "url";
 
@@ -22,18 +21,14 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length !== 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         const member = await getMember(args[0]);
         if(member.length === 0) {
-            return message.channel.send(Embed.fail('No member found!'));
+            return message.channel.send(this.Embed.fail('No member found!'));
         }
 
         const real = member.shift();
         const avatar = parse(real.avatar).host ? real.avatar : `https://forum.meepcraft.com/${real.avatar}`;
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setDescription(`
             ${real.username} - ${real.id}
             [Profile Link](https://forum.meepcraft.com/members/.${real.id}/)

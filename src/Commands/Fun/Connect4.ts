@@ -1,7 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message, User, MessageReaction } from "discord.js";
 import { Connect4 } from "../../lib/Backend/Connect4/Connect4";
-import Embed from "../../Structures/Embed";
 
 const turns = {
     1: '1️⃣', 
@@ -32,9 +31,9 @@ export default class extends Command {
 
     async init(message: Message) {
         if(message.mentions.members.size === 0) {
-            return message.channel.send(Embed.fail('No opponent to play against!'));
+            return message.channel.send(this.Embed.fail('No opponent to play against!'));
         } else if(message.mentions.members.size > 2) {
-            return message.channel.send(Embed.fail('Too many people mentioned!'));
+            return message.channel.send(this.Embed.fail('Too many people mentioned!'));
         }
 
         const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
@@ -43,7 +42,7 @@ export default class extends Command {
         const opponent = selfMentioned ? message.mentions.members.last() : message.mentions.members.first();
         const game = new Connect4();
         
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle('Connect 4')
             .setDescription(`
             It is ${message.author}'s (${game.turn}) turn!
@@ -88,7 +87,7 @@ export default class extends Command {
             }
 
             game.go(+pos[0] - 1);
-            const embed = Embed.success()
+            const embed = this.Embed.success()
             .setDescription(`
             It is ${game.turn === 'red' ? user : opponent}'s (${game.turn}) turn!
             ${game.format()}

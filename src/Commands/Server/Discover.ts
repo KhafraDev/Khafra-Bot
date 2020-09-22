@@ -1,7 +1,7 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { DiscordDiscoverResults } from "../../lib/Backend/Discord Discover/types/DiscordDiscover";
-import Embed from "../../Structures/Embed";
+
 import { DiscordDiscover } from "../../lib/Backend/Discord Discover/DiscordDiscover";
 
 export default class extends Command {
@@ -27,15 +27,15 @@ export default class extends Command {
             results = await DiscordDiscover(args.join(' '));
         } catch(e) {
             this.logger.log(`${this.settings.name}: ${e}`);
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(results.hits.length === 0) {
-            return message.channel.send(Embed.fail('No results found!'));
+            return message.channel.send(this.Embed.fail('No results found!'));
         }
 
         const guild = results.hits.shift();
-        const embed = Embed.success(guild.description)
+        const embed = this.Embed.success(guild.description)
             .setAuthor(
                 guild.name, 
                 `https://cdn.discordapp.com/icons/${guild.objectID}/${guild.icon}.png?size=128`, 

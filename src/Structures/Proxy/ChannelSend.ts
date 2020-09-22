@@ -8,10 +8,12 @@ import { Logger } from "../Logger";
 
 const logger = new Logger('ChannelSend Proxy');
 
+type Parameters<T> = T extends (... args: infer T) => any ? T : never; 
+
 TextChannel.prototype.send = new Proxy(TextChannel.prototype.send, {
-    async apply(target, thisArg: TextChannel | DMChannel, args) {
+    async apply(target, thisArg: TextChannel | DMChannel, args: Parameters<TextChannel['send']>) {
         try {
-            const m: Message = await target.call(thisArg, ...args);
+            const m = await target.call(thisArg, ...args) as Message;
             return m;
         } catch(e) {
             logger.log(`

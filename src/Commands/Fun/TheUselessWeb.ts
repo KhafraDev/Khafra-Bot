@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import Embed from '../../Structures/Embed';
 
 /**
  * List of all sites available.
@@ -101,6 +100,6 @@ export default class extends Command {
 
     async init(message: Message) {
         const random = list[Math.random() * list.length << 0];
-        return message.channel.send(Embed.success(random));
+        return message.channel.send(this.Embed.success(random));
     }
 }

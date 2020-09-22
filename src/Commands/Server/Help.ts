@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import KhafraClient from "../../Bot/KhafraBot";
 
 export default class extends Command {
@@ -22,14 +21,14 @@ export default class extends Command {
     init(message: Message, args: string[]) {
         const command = KhafraClient.Commands.get(args[0]);        
         if(!command) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No command found!
 
             For a list of commands try the \`\`list\`\` command!
             `));
         }
 
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         ${command.help[0]}
 
         Examples:

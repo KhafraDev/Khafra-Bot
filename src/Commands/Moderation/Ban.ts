@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-import Embed from '../../Structures/Embed';
+
 import ms from 'ms';
 
 export default class extends Command {
@@ -25,7 +25,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
+            return message.channel.send(this.Embed.missing_perms.call(this));
         }
 
         const [ userType, time, ...reason ] = args;
@@ -34,19 +34,19 @@ export default class extends Command {
         const realReason = realTime === 0 ? [time].concat(reason) : reason;
 
         if(!/(<@!)?\d{17,19}>?/.test(userType)) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No guild member mentioned and no user ID provided.
             `));
         } else if(realTime > 7) {
             // max 7 days or an error will be thrown
-            return message.channel.send(Embed.missing_args.call(this, 2, 'Only 7 days of messages can be cleared max!'));
+            return message.channel.send(this.Embed.fail('Only 7 days of messages can be cleared max!'));
         }
 
         let member: GuildMember;
         try {
             member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
-            return message.channel.send(Embed.fail('Invalid ID provided or member mentioned!'));
+            return message.channel.send(this.Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         try {
@@ -55,10 +55,10 @@ export default class extends Command {
                 days: realTime
             });
         } catch {
-            return message.channel.send(Embed.fail(`${member} isn't bannable!`));
+            return message.channel.send(this.Embed.fail(`${member} isn't bannable!`));
         }
 
-        return message.channel.send(Embed.success(`
+        return message.channel.send(this.Embed.success(`
         ${member} has been banned from the server!
 
         ${realTime} days worth of messages have been cleared from them.

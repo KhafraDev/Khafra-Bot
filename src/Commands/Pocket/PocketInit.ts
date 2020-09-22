@@ -1,7 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { pool } from "../../Structures/Database/Mongo";
 import { Message, MessageReaction, User } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { Pocket } from "../../lib/Backend/Pocket/Pocket";
 
 export default class extends Command {
@@ -22,7 +21,7 @@ export default class extends Command {
 
     async init(message: Message) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
+            return message.channel.send(this.Embed.missing_perms.call(this));
         } 
 
         const client = await pool.pocket.connect();
@@ -33,15 +32,11 @@ export default class extends Command {
 
         try {
             await pocket.requestCode()
-        } catch(e) {
-            return message.channel.send(Embed.fail(`
-            An unexpected error occurred!
-            
-            \`\`\`${(e as Error).toString()}\`\`\`
-            `));
+        } catch {
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
@@ -64,13 +59,13 @@ export default class extends Command {
             collector.stop();
 
             if(emoji === '❌') {
-                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized.'));
             }
 
             try {
                 await pocket.accessToken();
             } catch {
-                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized.'));
             }
 
             const entry = Object.assign(pocket.toObject(), {
@@ -84,9 +79,9 @@ export default class extends Command {
             );
     
             if(value.result.ok) {
-                return msg.edit(Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
+                return msg.edit(this.Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
             } else {
-                return msg.edit(Embed.fail('An unexpected error occurred!'));
+                return msg.edit(this.Embed.fail('An unexpected error occurred!'));
             }
         });
 

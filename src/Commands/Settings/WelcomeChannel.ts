@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { 
     Message, TextChannel, Permissions
 } from "discord.js";
-import Embed from "../../Structures/Embed";
+
 import { pool } from "../../Structures/Database/Mongo";
 import { inspect } from "util";
 
@@ -34,7 +34,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms.call(this, true));
         } 
 
         let channel: TextChannel;
@@ -42,13 +42,13 @@ export default class extends Command {
             channel = message.mentions.channels.first() ?? await message.client.channels.fetch(args[0]) as TextChannel;
         } catch(e) {
             this.logger.log(inspect(e));
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(channel.type !== 'text') {
-            return message.channel.send(Embed.fail(`${channel} is not a text channel!`));
+            return message.channel.send(this.Embed.fail(`${channel} is not a text channel!`));
         } else if(!channel.permissionsFor(message.guild.me).has(basic)) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             I am missing one or more of ${basic.toArray().map(p => `\`\`${p}\`\``).join(', ')} permissions!
             `));
         }
@@ -65,11 +65,11 @@ export default class extends Command {
         );
         
         if(updated.modifiedCount === 1 || updated.upsertedCount === 1) {
-            return message.channel.send(Embed.success(`
+            return message.channel.send(this.Embed.success(`
             You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
             `));
         } else {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
     }
 }

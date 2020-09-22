@@ -2,7 +2,7 @@ import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import { nytimes } from "../../../lib/Backend/NYTimes/NYTimes";
 import { ViewedArticle } from "../../../lib/Backend/NYTimes/types/NYTimes";
-import Embed from "../../../Structures/Embed";
+
 
 export default class extends Command {
     constructor() {
@@ -25,7 +25,7 @@ export default class extends Command {
         try {
             res = await nytimes.viewed();
         } catch {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const description: string[] = [];
@@ -38,7 +38,7 @@ export default class extends Command {
             }
         }
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setFooter(res.copyright)
             .setDescription(description.join(''))
             .setTitle(`Top ${description.length} articles today!`);

@@ -6,7 +6,6 @@ import {
     TextChannel, 
     MessageMentions 
 } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { parse } from "twemoji-parser";
 import { pool } from "../../Structures/Database/Mongo";
 
@@ -33,23 +32,21 @@ export default class extends Command {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
-        } else if(args.length < 3) { // messagerole [message id | SEND NEW - channel (ID)] [role] [emoji] [message content if channel]
-            return message.channel.send(Embed.missing_args.call(this, 4));
+            return message.channel.send(this.Embed.missing_perms.call(this, true));
         }
 
         const [ channel, role, emoji, ...content ] = args;
         // https://discord.com/developers/docs/reference#message-formatting
         if(!/<?#?\d{17,19}>?/.test(channel)) {
-            return message.channel.send(Embed.missing_args.call(this, 4));
+            return message.channel.send(this.Embed.generic());
         } else if(!/<?@?&?\d{17,19}>?/.test(role)) {
-            return message.channel.send(Embed.missing_args.call(this, 4));
+            return message.channel.send(this.Embed.generic());
         } 
 
         /*** Emoji that will give role */
         const e = parse(emoji).shift()?.text;
         if(e === undefined) {
-            return message.channel.send(Embed.missing_args.call(this, 4));
+            return message.channel.send(this.Embed.generic());
         }
 
         /** Channel to send message to. */
@@ -58,7 +55,7 @@ export default class extends Command {
             const id = channel.replace(/[^0-9]/g, '');
             c = await message.client.channels.fetch(id);
         } catch {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No channel could be found!
             \`\`${channel}\`\`
             `));
@@ -66,13 +63,13 @@ export default class extends Command {
 
         const perms = this.permissions.concat('ADD_REACTIONS');
         if(c.type !== 'text') { // only text channels allowed
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Only available for text channels.
             `));
         } else if(!super.hasPermissions(message, c, perms)) { // has permissions in channel
-            return message.channel.send(Embed.missing_perms.call(this, false, perms));
+            return message.channel.send(this.Embed.missing_perms(true, perms));
         } else if(c.deleted) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Congrats! I have no idea how you got this to happen, but the channel is deleted.
             `));
         }
@@ -83,22 +80,22 @@ export default class extends Command {
             : await message.guild.roles.fetch(role);
             
         if(!r || !(r instanceof Role)) {
-            return message.channel.send(Embed.fail('No role found!'));
+            return message.channel.send(this.Embed.fail('No role found!'));
         } else if(r.deleted) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Congrats! I have no idea how you got this to happen, but the role is deleted.
             `));
         } else if(r.managed) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Role is managed by another party.
             `));
         }
 
         let m: Message;
         try {
-            m = await (c as TextChannel).send(Embed.success(content.join(' ')));
+            m = await (c as TextChannel).send(this.Embed.success(content.join(' ')));
         } catch(e) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             An unexpected error occurred!
             \`\`${e.toString()}\`\`
             `));
@@ -124,11 +121,11 @@ export default class extends Command {
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
-            return message.channel.send(Embed.success(`
+            return message.channel.send(this.Embed.success(`
             Sending message to ${c} where ${r} will be given on ${e} reactions!
             `));
         } else {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Already listening to this message, or an unexpected error occurred!
             `));
         }

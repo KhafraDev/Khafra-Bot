@@ -1,14 +1,13 @@
 import { Command } from "../../Structures/Command";
-import { Message, MessageReaction, User } from "discord.js";
-import Embed from "../../Structures/Embed";
+import { Message, MessageReaction, User, MessageEmbed } from "discord.js";
 import { YouTubeSearchResults, YouTubeError } from "../../lib/Backend/YouTube/types/YouTube";
 import { YouTube } from "../../lib/Backend/YouTube/YouTube";
 import { formatDate } from "../../lib/Utility/Date";
 
-function* format(items: YouTubeSearchResults) {
+function* format(items: YouTubeSearchResults, embed: (reason?: string) => MessageEmbed) {
     for(let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
-        const embed = Embed.success()
+        const Embed = embed()
             .setTitle(video.title)
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
@@ -16,7 +15,7 @@ function* format(items: YouTubeSearchResults) {
             .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', new Date(video.publishTime)))
             .addField('**URL:**', `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
             
-        yield embed;
+        yield Embed;
     }
 }
 
@@ -38,31 +37,27 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         let results: YouTubeSearchResults | YouTubeError;
         try {
             results = await YouTube(args);
         } catch(e) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             An unexpected error occurred!
             \`\`${e.toString()}\`\`
             `));
         }
 
         if('error' in results) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             ${results.error.code}: ${results.error.message}
             `));
         } else if(results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No results found!
             `));
         }
 
-        const embeds = [...format(results)];
+        const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
         const m = await message.channel.send(embeds[0]);
         if(!m) {

@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command';
 import { Message, TextChannel, VoiceChannel, Channel, NewsChannel } from 'discord.js';
-import Embed from '../../Structures/Embed';
 import { formatDate } from '../../lib/Utility/Date';
 
 export default class extends Command {
@@ -24,7 +23,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!/<?#?\d{17,19}>?/.test(args[0])) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid Channel ID or mention!'));
+            return message.channel.send(this.Embed.fail('Invalid Channel ID or mention!'));
         }
 
         let _channel: Channel = message.mentions.channels.first();
@@ -32,17 +31,17 @@ export default class extends Command {
             try {
                 _channel = await message.client.channels.fetch(args[0]);
             } catch {
-                return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid Channel ID provided!'));
+                return message.channel.send(this.Embed.fail('Invalid Channel ID provided!'));
             }
         }
 
         if(['text', 'news', 'voice'].indexOf(_channel.type) === -1) {
-            return message.channel.send(Embed.fail('Only text, news, and voice channels are allowed!'));
+            return message.channel.send(this.Embed.fail('Only text, news, and voice channels are allowed!'));
         }
 
         const channel = _channel as TextChannel | NewsChannel | VoiceChannel;
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .addField('**ID:**',     channel.id, true)
             .addField('**Type:**',   channel.type, true)

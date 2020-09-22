@@ -1,6 +1,5 @@
 import { Command } from "../../../Structures/Command";
 import { Message, Role, TextChannel, NewsChannel, User } from "discord.js";
-import Embed from "../../../Structures/Embed";
 import { pool } from "../../../Structures/Database/Mongo";
 import KhafraClient from "../../../Bot/KhafraBot";
 
@@ -28,48 +27,48 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         } 
 
         const [ f, type, mentionOrID, commandName ] = args;
         const id = mentionOrID?.replace(/[^\d]/g, '');
 
         if(f !== 'for' && f !== 'in') {
-            return message.channel.send(Embed.missing_args.call(this, 'First argument must be "for" or "in"!'));
+            return message.channel.send(this.Embed.generic('First argument must be "for" or "in"!'));
         } else if(!['role', 'user', 'channel'].includes(type.toLowerCase())) {
-            return message.channel.send(Embed.missing_args.call(this, 'Second argument must be user | role | channel!'));
+            return message.channel.send(this.Embed.generic('Second argument must be user | role | channel!'));
         } else if(id.length < 17 || id.length > 19) {
-            return message.channel.send(Embed.missing_args.call(this, `Invalid ${type} ID or mention!`));
+            return message.channel.send(this.Embed.generic(`Invalid ${type} ID or mention!`));
         } 
 
         const command = KhafraClient.Commands.get(commandName.toLowerCase());
         if(!command) {
-            return message.channel.send(Embed.fail('No command to enable!'));
+            return message.channel.send(this.Embed.fail('No command to enable!'));
         } else if(blacklistedFolders.includes(command.settings.folder)) {
-            return message.channel.send(Embed.fail(`Cannot re-enable commands in ${blacklistedFolders.join(' and ')} folders!`));
+            return message.channel.send(this.Embed.fail(`Cannot re-enable commands in ${blacklistedFolders.join(' and ')} folders!`));
         }
 
         let item: Role | TextChannel | NewsChannel | User;
         if(type === 'role') {
             item = await message.guild.roles.fetch(id);
             if(!(item instanceof Role) || item.managed || item.deleted) {
-                return message.channel.send(Embed.fail('Invalid Role!'));
+                return message.channel.send(this.Embed.fail('Invalid Role!'));
             }
         } else if(type === 'user') {
             try {
                 item = await message.client.users.fetch(id);
             } catch {
-                return message.channel.send(Embed.fail('Invalid User!'));
+                return message.channel.send(this.Embed.fail('Invalid User!'));
             }
         } else if(type === 'channel') {
             try {
                 const channel = await message.client.channels.fetch(id);
                 if(channel.type !== 'text' && channel.type !== 'news') {
-                    return message.channel.send(Embed.fail('Only text and news channels allowed!'));
+                    return message.channel.send(this.Embed.fail('Only text and news channels allowed!'));
                 }
                 item = channel as TextChannel | NewsChannel;
             } catch {
-                return message.channel.send(Embed.fail('Invalid Channel!'));
+                return message.channel.send(this.Embed.fail('Invalid Channel!'));
             }
         }
 
@@ -89,11 +88,11 @@ export default class extends Command {
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
-            return message.channel.send(Embed.success(`
+            return message.channel.send(this.Embed.success(`
             Command ${command.settings.name} is no longer whitelisted ${item instanceof Role || item instanceof User ? 'for' : 'in'} ${item}!
             `));
         } else {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
     }
 }

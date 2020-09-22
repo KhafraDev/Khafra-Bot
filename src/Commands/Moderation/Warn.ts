@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message, GuildMember } from "discord.js";
-import Embed from "../../Structures/Embed";
+
 import { pool } from "../../Structures/Database/Mongo";
 import { Warnings } from "../../lib/types/Collections";
 
@@ -23,14 +23,12 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        } else if(isNaN(+args[1])) {
-            return message.channel.send(Embed.fail('Second argument must be a number!'));
+        if(isNaN(+args[1])) {
+            return message.channel.send(this.Embed.fail('Second argument must be a number!'));
         }
 
         if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No guild member mentioned and no user ID provided.
             `));
         }
@@ -39,11 +37,11 @@ export default class extends Command {
         try {
             member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
-            return message.channel.send(Embed.fail('Invalid ID provided or member mentioned!'));
+            return message.channel.send(this.Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         if(!member.kickable) {
-            return message.channel.send(Embed.fail(`I can't warn ${member}!`));
+            return message.channel.send(this.Embed.fail(`I can't warn ${member}!`));
         }
 
         const client = await pool.moderation.connect();
@@ -71,11 +69,11 @@ export default class extends Command {
 
             if(memberWarnings.points >= warningLimit) {
                 await member.kick(`Khafra-Bot: exceeded ${warningLimit} warning points.`);
-                return message.channel.send(Embed.success(`
+                return message.channel.send(this.Embed.success(`
                 ${member} reached ${warningLimit} warnings and they have been automatically kicked!
                 `));
             } else {
-                return message.channel.send(Embed.success(`
+                return message.channel.send(this.Embed.success(`
                 ${member} was warned and given ${args[1]} points. 
                 If they reach ${warningLimit} points they will be kicked! 
                 They currently have ${memberWarnings.points} points.

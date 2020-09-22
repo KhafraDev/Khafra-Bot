@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
-import Embed from '../../Structures/Embed';
+
 import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler';
 import { SpotifyResult } from '../../lib/Backend/Spotify/types/Spotify';
 
@@ -28,9 +28,7 @@ export default class extends Command {
         ).pop();
 
         if(!presence && args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 
-                'If you are not listening to any songs, a search query must be provided!')
-            );
+            return message.channel.send(this.Embed.fail('If you are not listening to any songs, a search query must be provided!'));
         }
 
         let res: SpotifyResult;
@@ -41,14 +39,14 @@ export default class extends Command {
                     : args.join(' ')
             );
         } catch {
-            return message.channel.send(Embed.fail('An unexpected error occurred!'));
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(res.tracks.items.length === 0) {
-            return message.channel.send(Embed.fail('No songs found!'));
+            return message.channel.send(this.Embed.fail('No songs found!'));
         }
 
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         ${res.tracks.items.map(item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`).join('\n')}
         `);
 

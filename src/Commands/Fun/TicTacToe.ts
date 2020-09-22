@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { TicTacToe } from "../../lib/Backend/TicTacToe";
 
 export default class extends Command {
@@ -25,11 +24,11 @@ export default class extends Command {
             : message.mentions.members.first();
 
         if(opponent?.user.bot && opponent?.id !== message.guild?.me.id) {
-            return message.channel.send(Embed.fail('You can\'t play against another bot!'));
+            return message.channel.send(this.Embed.fail('You can\'t play against another bot!'));
         }
 
         const g = new TicTacToe(); // game
-        const m = await message.channel.send(Embed.success(`
+        const m = await message.channel.send(this.Embed.success(`
         \`\`\`${g.format()}\`\`\`
         `)); // message to edit
         if(!m) {
@@ -55,13 +54,13 @@ export default class extends Command {
                 if(!opponent) { // no opponent, so have bot go
                     const botTurn = g.go(); // bot goes
                     if(!botTurn) { // valid bot turn
-                        return m.edit(Embed.success(`
+                        return m.edit(this.Embed.success(`
                         \`\`\`${g.format()}\`\`\`
                         `));
                     } else { // something went wrong, or the bot won
                         const embed = 'winner' in botTurn
-                            ? Embed.success(`\`\`\`${g.format()}\`\`\``)
-                            : Embed.fail(`\`\`\`${g.format()}\`\`\``);
+                            ? this.Embed.success(`\`\`\`${g.format()}\`\`\``)
+                            : this.Embed.fail(`\`\`\`${g.format()}\`\`\``);
                         embed.setTitle('winner' in botTurn ? botTurn.winner + ' won!' : botTurn.error);
                         
                         if('winner' in botTurn) {
@@ -71,14 +70,14 @@ export default class extends Command {
                         return m.edit(embed);
                     }
                 } else {
-                    return m.edit(Embed.success(`
+                    return m.edit(this.Embed.success(`
                     \`\`\`${g.format()}\`\`\`
                     `));
                 }
             } else {
                 const embed = 'winner' in playerTurn
-                    ? Embed.success(`\`\`\`${g.format()}\`\`\``)
-                    : Embed.fail(`\`\`\`${g.format()}\`\`\``);
+                    ? this.Embed.success(`\`\`\`${g.format()}\`\`\``)
+                    : this.Embed.fail(`\`\`\`${g.format()}\`\`\``);
                 embed.setTitle('winner' in playerTurn ? playerTurn.winner + ' won!' : playerTurn.error);
                 
                 if('winner' in playerTurn) {

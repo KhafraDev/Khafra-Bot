@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
+
 import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
@@ -24,9 +24,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
-        } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(this.Embed.missing_perms.call(this, true));
         }
 
         const points = !isNaN(+args[0]) ? +args[0] : 20;
@@ -42,11 +40,11 @@ export default class extends Command {
         );
 
         if(updated.modifiedCount > 0 || updated.upsertedCount > 0) {
-            return message.channel.send(Embed.success(`
+            return message.channel.send(this.Embed.success(`
             Limit was updated! It will now take ${args[0]} warning points for a user to be kicked from a guild automatically!
             `));
         } else {
-            return message.channel.send(Embed.fail('Limit wasn\'t updated. Are you sure it changed?'));
+            return message.channel.send(this.Embed.fail('Limit wasn\'t updated. Are you sure it changed?'));
         }
     }
 }

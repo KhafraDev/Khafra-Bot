@@ -4,12 +4,15 @@ import {
     TextChannel,
     Snowflake,
     Channel,
+    MessageEmbed,
 } from 'discord.js';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Logger } from './Logger';
 
-const { botOwner }: { botOwner: string[] | string } = JSON.parse(readFileSync(join(__dirname, '../../config.json')).toString());
+const { embed, botOwner }: { embed: { fail: string, success: string }, botOwner: string[] | string } = JSON.parse(
+    readFileSync(join(__dirname, '../../config.json')).toString()
+);
 
 export class Command {
     logger = new Logger('Command');
@@ -18,7 +21,7 @@ export class Command {
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
 
-    settings: {
+    settings?: {
         /** Command name */
         name: string,
         /** Folder where command exists */
@@ -36,7 +39,7 @@ export class Command {
     constructor(
         help: string[],
         permissions: PermissionString[],
-        settings: {
+        settings?: {
             name: string,
             folder: string,
             args: [number, number?],
@@ -87,5 +90,67 @@ export class Command {
 
     init(_: Message, __?: string[]): unknown {
         throw new Error('init called on Command with function');
+    }
+
+    get Embed() {
+        const Embed = new MessageEmbed();
+
+        return {
+            fail: (reason?: string) => {
+                Embed.setColor(embed.fail);
+                reason && Embed.setDescription(reason);
+                
+                return Embed;
+            },
+        
+            /**
+             * An embed for a command being successfully executed!
+             */
+            success: (reason?: string) => {
+                Embed.setColor(embed.success);    
+                reason && Embed.setDescription(reason);
+                
+                return Embed;
+            },
+    
+            /**
+             * An embed for missing permissions!
+             */
+            missing_perms: (admin?: boolean, perms?: PermissionString[]) => {
+                return Embed.setColor(embed.fail).setDescription(`
+                One of us doesn't have the needed permissions!
+        
+                Both of us must have \`\`${perms?.join(', ') ?? this.permissions.join(', ')}\`\` permissions to use this command!
+                ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
+                `);
+            },
+    
+            /**
+             * A generic help embed useful for most situations.
+             * @this {Command}
+             */
+            generic: (reason?: string) => {
+                const [min, max] = this.settings.args;
+                const r = reason ?? `Missing ${min} minimum argument${min === 1 ? '' : 's'} (${max} maximum).`;
+                
+                return Embed.setColor(embed.fail).setDescription(`
+                ${r}
+
+                Aliases: ${this.settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
+                Permissions: ${this.permissions.map(p => `\`\`${p}\`\``).join(', ')}
+
+                Example Usage:
+                ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name}${e.length > 0 ? e : ''}\`\``).join('\n')}
+                `)
+                .addFields(
+                    { name: '**Guild Only:**', value: this.settings.guildOnly ? 'Yes' : 'No', inline: true },
+                    { name: '**Owner Only:**', value: this.settings.ownerOnly ? 'Yes' : 'No', inline: true }
+                );
+            }
+        }
+    }
+
+    static get Embed() {
+        return new Command([], []).Embed;
     }
 }

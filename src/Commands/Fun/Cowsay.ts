@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { readFile } from 'fs';
 
 const start = `
@@ -24,10 +23,6 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         const types = [
             'beavis',   'bong',   'bud-frogs',   'bunny',   'cheese',
             'cowering', 'cowsay', 'cowth-vader', 'darth-vader-koala',
@@ -42,11 +37,9 @@ export default class extends Command {
         ];
 
         if(args[0].toLowerCase() === 'list') {
-            return message.channel.send(Embed.success(`
+            return message.channel.send(this.Embed.success(`
             ${types.map(t => '``' + t + '``').join(', ')}
             `));
-        } else if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
         }
 
         const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');
@@ -69,13 +62,13 @@ export default class extends Command {
         const i = types.includes(args[0].toLowerCase()) ? args[0].toLowerCase() : 'cowsay';
         readFile(__dirname + '/Cowsay/' + i + '.txt', (err, data) => {
             if(err) {
-                return message.channel.send(Embed.fail('An unexpected error occurred!'));
+                return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
             }
 
             const buffer = data.toString();
             const formatted = `\`\`\`${start}${split.join('\n')}\n${buffer}\`\`\``;
             if(formatted.length > 2048) {
-                return message.channel.send(Embed.fail('Cowsay message is too long!'));
+                return message.channel.send(this.Embed.fail('Cowsay message is too long!'));
             }
     
             return message.channel.send(formatted);

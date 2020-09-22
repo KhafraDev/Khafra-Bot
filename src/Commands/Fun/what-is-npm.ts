@@ -2,7 +2,7 @@ import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import fetch from 'node-fetch';
-import Embed from "../../Structures/Embed";
+
 import { join } from 'path';
 
 // if list has been updated.
@@ -30,7 +30,7 @@ export default class extends Command {
         if(!updated) {
             const res = await fetch('https://raw.githubusercontent.com/npm/npm-expansions/master/expansions.txt');
             if(!res.ok) {
-                return message.channel.send(Embed.fail(`
+                return message.channel.send(this.Embed.fail(`
                 An unexpected error occurred! Received status ${res.status} with text ${res.statusText}. Contact the bot owner to fix!
                 `));
             }
@@ -53,6 +53,6 @@ export default class extends Command {
             .split('\n')
             .filter(l => l.trim().length > 0);
 
-        return message.channel.send(Embed.success('``' + data[Math.random() * data.length << 0] + '``'));
+        return message.channel.send(this.Embed.success('``' + data[Math.random() * data.length << 0] + '``'));
     }
 }

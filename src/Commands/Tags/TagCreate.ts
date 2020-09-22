@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
@@ -22,10 +21,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 2));
-        }
-
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
@@ -47,11 +42,11 @@ export default class extends Command {
         );
 
         if(!q || q.ok === 0 || q.value || q.lastErrorObject?.updatedExisting) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Tag couldn't be created because ${q.lastErrorObject?.updatedExisting ? 'it already exists' : 'an unknown error occurred'}.
             `));
         }
 
-        return message.channel.send(Embed.success('Added tag!'));
+        return message.channel.send(this.Embed.success('Added tag!'));
     }
 }

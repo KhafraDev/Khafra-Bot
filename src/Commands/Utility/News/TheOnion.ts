@@ -1,7 +1,7 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import { pool } from "../../../Structures/Database/Mongo";
-import Embed from "../../../Structures/Embed";
+
 import { articlesFromSitemap } from "../../../lib/Backend/TheOnion/TheOnion";
 import { Onion } from "../../../lib/types/Collections";
 
@@ -27,7 +27,7 @@ export default class extends Command {
     
     async init(message: Message) {
         if(fetching) {
-            return message.channel.send(Embed.fail('Articles are being fetched for the first time. Please wait a few minutes!'));
+            return message.channel.send(this.Embed.success('Articles are being fetched for the first time. Please wait a few minutes!'));
         }
 
         const client = await pool.commands.connect();
@@ -48,6 +48,6 @@ export default class extends Command {
         }
 
         const random = await collection.aggregate([ { $sample: { size: 1 } } ]).toArray() as Onion[];
-        return message.channel.send(Embed.success(`[${random[0].title}](${random[0].href})`));
+        return message.channel.send(this.Embed.success(`[${random[0].title}](${random[0].href})`));
     }
 }

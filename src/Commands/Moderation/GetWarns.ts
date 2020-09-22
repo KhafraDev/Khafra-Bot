@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { pool } from "../../Structures/Database/Mongo";
 import { Warnings } from "../../lib/types/Collections";
 
@@ -24,7 +23,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(message.mentions.members.size > 2) {
-            return message.channel.send(Embed.fail('Too many people mentioned!'));
+            return message.channel.send(this.Embed.fail('Too many people mentioned!'));
         }
 
         const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
@@ -45,16 +44,14 @@ export default class extends Command {
 
         const result = await collection.findOne({ id: message.guild.id }) as Warnings;
         if(!result) {
-            return message.channel.send(Embed.fail('No user\'s have been warned!'));
+            return message.channel.send(this.Embed.fail('No user\'s have been warned!'));
         }
 
         if(!(fetchedMember.id in result.users)) {
-            return message.channel.send(Embed.success(`
-            ${fetchedMember} has no warnings!
-            `));
+            return message.channel.send(this.Embed.success(`${fetchedMember} has no warnings!`));
         } else {
             const user = result.users[fetchedMember.id];
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .setDescription(`
                 ${fetchedMember} warnings:
                 Total active points: ${user.points % (result.limit ?? 20)} (${result.limit ?? '20'} is an automatic kick).

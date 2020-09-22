@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, User } from 'discord.js';
-import Embed from '../../Structures/Embed';
+
 
 export default class extends Command {
     constructor() {
@@ -22,9 +22,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
-        } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(this.Embed.missing_perms());
         }
 
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
@@ -32,14 +30,11 @@ export default class extends Command {
         try {
             user = await message.client.users.fetch(id);
             await message.guild.members.unban(user, reason?.join(' '));
-        } catch(e) {
-            return message.channel.send(Embed.fail(`
-            Invalid User!
-            \`\`${e}\`\`
-            `));
+        } catch {
+            return message.channel.send(this.Embed.fail('Invalid User!'));
         }
 
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         **Successfully** unbanned ${user}${reason.join(' ').length ? ' for \`\`' + reason.join(' ') + '\`\`' : ''}!
         `);
 

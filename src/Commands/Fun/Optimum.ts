@@ -1,5 +1,4 @@
 import { Command } from '../../Structures/Command';
-import Embed from '../../Structures/Embed';
 import { Message } from 'discord.js';
 
 export default class extends Command {
@@ -20,7 +19,7 @@ export default class extends Command {
     }
 
     init(message: Message) {
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`
             Reviews by *real* people:

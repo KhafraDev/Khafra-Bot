@@ -215,3 +215,7 @@
 * ``emoji`` command now works with Guild emojis and the emoji section of the ``server`` command has been removed.
 * ``message`` event has once again been re-written to include better logic and updated code for guild settings.
 * Inhibitors are now much easier to use and use less resources. Some commands can no longer be disabled or enabled.
+* Embed is now part of the ``Command`` class and ``Embed.missing_args`` has been re-named to ``Embed.generic``.
+* ``tsconfig`` is even more strict now.
+* Method Proxy arguments now have a type.
+* Cleaned up ``messageReactionAdd``/``messageReactionRemove`` events.
