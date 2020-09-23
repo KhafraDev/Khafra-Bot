@@ -1,8 +1,4 @@
-function* chunk(arr: string[], n: number) {
-    for(let i = 0; i < arr.length; i += n) {
-        yield arr.slice(i, i + n);
-    }
-}
+import { chunk } from '../Utility/Array';
 
 export class TicTacToe {
     turn: 'X' | 'O' = 'X';
@@ -17,8 +13,7 @@ export class TicTacToe {
         8: ' ',
         9: ' '
     };
-    board: string[][] = Array(9).fill(' ');
-
+    
     /**
      * Sets the player's turn
      */
@@ -115,7 +110,7 @@ export class TicTacToe {
 
     format() {
         const spots = Array.from(chunk(Object.values(this.box), 3));
-        const empty = Array.from(chunk(Array(9).fill(' '), 3))
+        const empty = Array.from(chunk(Array<string>(9).fill(' '), 3))
             .map(e => e.join(''))
             .join('|');
         

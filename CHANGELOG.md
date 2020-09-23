@@ -219,3 +219,6 @@
 * ``tsconfig`` is even more strict now.
 * Method Proxy arguments now have a type.
 * Cleaned up ``messageReactionAdd``/``messageReactionRemove`` events.
+* ``Array.fill`` now infers types correctly, although I don't believe the reasoning it doesn't very valid. :/
+* ``chunk`` and ``shuffle`` array functions have been moved to Utility functions.
+* Removed useless parameter in ``TicTacToe`` game handler. 

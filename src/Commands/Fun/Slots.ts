@@ -1,16 +1,8 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
+import { shuffle } from '../../lib/Utility/Array';
 
 const fruits = ['🍎', '🍊','🍌', '🍉', '🍇', '🍑'];
-
-const shuffle = () => {
-    const a = Array.from(fruits); // clone array
-    for(let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
 
 const delay = () => new Promise(r => setTimeout(r, 500));
 
@@ -32,7 +24,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const [a, b, c]: string[][] = [ shuffle(), shuffle(), shuffle() ];
+        const [a, b, c] = [ shuffle([...fruits]), shuffle([...fruits]), shuffle([...fruits]) ];
         const embed = this.Embed.success(`
         ${a[0]} | ${b[0]} | ${c[0]}
         ${a[1]} | ${b[1]} | ${c[1]}

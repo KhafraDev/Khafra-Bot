@@ -140,7 +140,7 @@ export class Command {
                 Permissions: ${this.permissions.map(p => `\`\`${p}\`\``).join(', ')}
 
                 Example Usage:
-                ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name}${e.length > 0 ? e : ''}\`\``).join('\n')}
+                ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
                 `)
                 .addFields(
                     { name: '**Guild Only:**', value: this.settings.guildOnly ? 'Yes' : 'No', inline: true },

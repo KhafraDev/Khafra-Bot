@@ -1,8 +1,4 @@
-function* chunk(arr: number[], n: number) {
-    for(let i = 0; i < arr.length; i += n) {
-        yield arr.slice(i, i + n);
-    }
-}
+import { chunk } from '../Utility/Array';
 
 const yo: { [key: number]: string } = {
     '10': ':zero:',
@@ -19,7 +15,7 @@ const yo: { [key: number]: string } = {
 }
 
 export const Board = () => {
-    const board = Array.from(chunk(Array(100).fill(0), 10));
+    const board = Array.from(chunk(Array<number>(100).fill(0), 10));
 
     for(let i = 0; i < 10;) {
         const x = Math.random() * 10 << 0;

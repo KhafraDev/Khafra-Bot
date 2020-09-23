@@ -1,14 +1,7 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import { trivia } from "../../../lib/Backend/Trivia/Trivia";
-
-const shuffle = <T>(a: T[]): T[] => {
-    for(let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-}
+import { shuffle } from '../../../lib/Utility/Array';
 
 const unbase64 = (base64: string) => Buffer.from(base64, 'base64').toString();
 
