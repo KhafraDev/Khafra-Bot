@@ -24,7 +24,7 @@ export default class implements Event {
             try {
                 await reaction.fetch();
             } catch(e) {
-                this.logger.log(e.toString());
+                this.logger.log(e);
                 return;
             }
         }

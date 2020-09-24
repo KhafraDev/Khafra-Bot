@@ -222,3 +222,5 @@
 * ``Array.fill`` now infers types correctly, although I don't believe the reasoning it doesn't very valid. :/
 * ``chunk`` and ``shuffle`` array functions have been moved to Utility functions.
 * Removed useless parameter in ``TicTacToe`` game handler. 
+* Add in boost tracking to join/leave/ban messages.
+* Logger can now handle any type of data passed to it.

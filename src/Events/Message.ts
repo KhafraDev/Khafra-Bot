@@ -11,7 +11,6 @@ import { Logger } from "../Structures/Logger";
 import KhafraClient from "../Bot/KhafraBot";
 import { readFileSync } from "fs";
 import { join } from "path";
-import { inspect } from "util";
 import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 
@@ -141,7 +140,7 @@ export default class implements Event {
             try {
                 await message.member.roles[action](role.id);
             } catch(e) {
-                this.logger.log(inspect(e));
+                this.logger.log(e);
                 return message.channel.send(Embed.fail('An unexpected error occurred!'));
             }
 

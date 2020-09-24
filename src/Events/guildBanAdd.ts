@@ -3,7 +3,6 @@ import { ClientEvents, Guild, User, TextChannel, Permissions } from "discord.js"
 import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger";
-import { inspect } from "util";
 import { Command } from '../Structures/Command';
 
 const Embed = Command.Embed;
@@ -36,7 +35,7 @@ export default class implements Event {
             // TextChannel logic is handled where the user sets the channel
             channel = await guild.client.channels.fetch(server.welcomeChannel) as TextChannel;
         } catch(e) {
-            this.logger.log(inspect(e));
+            this.logger.log(e);
             return;
         }
 

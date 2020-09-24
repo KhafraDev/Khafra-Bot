@@ -1,8 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
 
-import { inspect } from 'util';
-
 export default class extends Command {
     constructor() {
         super(
@@ -46,7 +44,7 @@ export default class extends Command {
         try {
             await member.kick(args.slice(1).join(' '));
         } catch(e) {
-            this.logger.log(inspect(e));
+            this.logger.log(e);
             return message.channel.send(this.Embed.fail(`
             An unexpected error occurred! This error has been logged and will be fixed if needed.
             `));

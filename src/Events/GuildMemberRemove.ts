@@ -3,7 +3,6 @@ import { ClientEvents, GuildMember, TextChannel, Permissions } from "discord.js"
 import { pool } from "../Structures/Database/Mongo";
 import { formatDate } from "../lib/Utility/Date";
 import { Logger } from "../Structures/Logger";
-import { inspect } from "util";
 import { GuildSettings } from "../lib/types/Collections";
 import { Command } from '../Structures/Command';
 
@@ -45,7 +44,7 @@ export default class implements Event {
             // TextChannel logic is handled where the user sets the channel
             channel = await member.guild.client.channels.fetch(server.welcomeChannel) as TextChannel;
         } catch(e) {
-            this.logger.log(inspect(e));
+            this.logger.log(e);
             return;
         }
 

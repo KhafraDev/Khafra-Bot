@@ -2,9 +2,7 @@ import { Command } from "../../Structures/Command";
 import { 
     Message, TextChannel, Permissions
 } from "discord.js";
-
 import { pool } from "../../Structures/Database/Mongo";
-import { inspect } from "util";
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -41,7 +39,7 @@ export default class extends Command {
         try {
             channel = message.mentions.channels.first() ?? await message.client.channels.fetch(args[0]) as TextChannel;
         } catch(e) {
-            this.logger.log(inspect(e));
+            this.logger.log(e);
             return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
