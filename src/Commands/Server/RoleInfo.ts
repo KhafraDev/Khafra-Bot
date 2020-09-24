@@ -49,7 +49,8 @@ export default class extends Command {
             .addField('**Created:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', role.createdAt), true)
             .addField('**Mentionable:**', role.mentionable ? 'Yes' : 'No', true)
             .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
-            .addField('**Position:**', role.position, true);
+            .addField('**Position:**', role.position, true)
+            .addField('**Managed:**', role.managed ? 'Yes' : 'No');
 
         return message.channel.send(embed);
     }

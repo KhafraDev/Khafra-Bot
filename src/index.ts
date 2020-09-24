@@ -27,6 +27,7 @@ const client = new KhafraClient({
     .on('messageReactionRemove', (reaction, user) => KhafraClient.Events.get('messageReactionRemove').init(reaction, user))
     .on('guildMemberAdd', member => KhafraClient.Events.get('guildMemberAdd').init(member))
     .on('guildMemberRemove', member => KhafraClient.Events.get('guildMemberRemove').init(member))
+    .on('guildMemberUpdate', (o, n) => KhafraClient.Events.get('guildMemberUpdate').init(o, n))
     .on('rateLimit', data => {
         logger.log(`
         Timeout: ${data.timeout} 
@@ -35,6 +36,6 @@ const client = new KhafraClient({
         | Route: ${data.route} 
         | Path: ${data.path}
         `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
-    })
+    });
 
 client.init();
