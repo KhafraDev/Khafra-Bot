@@ -42,9 +42,7 @@ export default class extends Command {
         } 
 
         const command = KhafraClient.Commands.get(commandName.toLowerCase());
-        if(!command) {
-            return message.channel.send(this.Embed.fail('No command to enable!'));
-        } else if(blacklistedFolders.includes(command.settings.folder)) {
+        if(blacklistedFolders.includes(command?.settings.folder)) {
             return message.channel.send(this.Embed.fail(`Cannot enable commands in ${blacklistedFolders.join(' and ')} folders!`));
         }
 
@@ -80,16 +78,16 @@ export default class extends Command {
             { 
                 $addToSet: {
                     enabled: {
-                        command: command.settings.name,
-                        aliases: command.settings.aliases,
+                        command: command?.settings.name ?? commandName.toLowerCase(),
+                        aliases: command?.settings.aliases ?? null,
                         type,
                         id: item.id
                     }
                 },
                 $pull: {
                     disabled: {
-                        command: command.settings.name,
-                        aliases: command.settings.aliases,
+                        command: command?.settings.name ?? commandName.toLowerCase(),
+                        aliases: command?.settings.aliases ?? null,
                         type,
                         id: item.id
                     }
@@ -100,7 +98,7 @@ export default class extends Command {
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
             return message.channel.send(this.Embed.success(`
-            Command ${command.settings.name} has been enabled ${item instanceof Role || item instanceof User ? 'for' : 'in'} ${item}!
+            Command ${command?.settings.name ?? commandName.toLowerCase()} has been enabled ${item instanceof Role || item instanceof User ? 'for' : 'in'} ${item}!
             `));
         } else {
             return message.channel.send(this.Embed.fail('An unexpected error occurred!'));

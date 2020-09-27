@@ -47,9 +47,7 @@ export default class extends Command {
         } 
 
         const command = type === 'guild' ? KhafraClient.Commands.get(mentionOrID.toString()) : KhafraClient.Commands.get(commandName.toLowerCase());
-        if(!command) {
-            return message.channel.send(this.Embed.fail('No command to disable!'));
-        } else if(blacklistedFolders.includes(command.settings.folder)) {
+        if(blacklistedFolders.includes(command?.settings.folder)) {
             return message.channel.send(this.Embed.fail(`Cannot deny commands in ${blacklistedFolders.join(' and ')} folders!`));
         }
 
@@ -86,8 +84,8 @@ export default class extends Command {
             { id: message.guild.id },
             { $addToSet: {
                 disabled: {
-                    command: command.settings.name,
-                    aliases: command.settings.aliases,
+                    command: command?.settings.name ?? commandName.toLowerCase(),
+                    aliases: command?.settings.aliases ?? null,
                     type,
                     id: item.id
                 }
@@ -97,7 +95,7 @@ export default class extends Command {
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
             return message.channel.send(this.Embed.success(`
-            Command ${command.settings.name} has been disabled ${item instanceof Role || item instanceof User ? 'for' : 'in'} ${item}!
+            Command ${command?.settings.name ?? commandName} has been disabled ${item instanceof Role || item instanceof User ? 'for' : 'in'} ${item}!
             `));
         } else {
             return message.channel.send(this.Embed.fail('An unexpected error occurred!'));

@@ -224,3 +224,5 @@
 * Removed useless parameter in ``TicTacToe`` game handler. 
 * Add in boost tracking to join/leave/ban messages.
 * Logger can now handle any type of data passed to it.
+* Enable/disable work for custom commands.
+* Message event now incorporates ``guildOnly``, ``ownerOnly``, and actually checks the prefix. :/

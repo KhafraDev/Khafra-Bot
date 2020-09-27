@@ -49,14 +49,33 @@ export default class implements Event {
         const collection =  isDM ? null : client.db('khafrabot').collection('settings');
         const guild =       isDM ? null : await collection.findOne({ id: message.guild.id }) as GuildSettings;
 
-        // number of characters to slice off command name. 
-        const prefixLength = selfMentioned ? 0 : isDM ? defaultPrefix.length : (guild?.prefix?.length ?? defaultPrefix.length);
-        const command = KhafraClient.Commands.get(commandName.slice(prefixLength))
-                        ?? guild?.commandRole?.filter(c => c.command === commandName.slice(prefixLength)) 
+        const prefix = selfMentioned ? null : isDM ? defaultPrefix : (guild?.prefix ?? defaultPrefix);
+        if(!selfMentioned && !commandName.startsWith(prefix)) { // when mentioned, command has no prefix
+            return;
+        }
+
+        // get a built-in command or try getting a custom guild command
+        const command = KhafraClient.Commands.get(commandName.slice(prefix?.length ?? 0))
+                        ?? guild?.commandRole?.filter(c => c.command === commandName.slice(prefix?.length ?? 0)) 
                         
         if(!command || (Array.isArray(command) && command.length === 0)) { // no built in or custom command
             return;
-        }
+        } else if(command instanceof Command && message.channel.type === 'dm') { // custom commands can't be in DMs
+            const reason = command.settings.guildOnly === true
+                ? 'in guilds!'
+                : command.settings.ownerOnly === true
+                    ? 'for the owner!'
+                    : null;
+
+            if(reason) {
+                // sending a message to a user can fail depending on their settings.
+                try { 
+                    return message.author.send(Embed.fail(`\`\`${command.settings.name}\`\` is only available ${reason}!`));
+                } catch {
+                    return; // whatever, doesn't bother us
+                }
+            }
+        } 
 
         this.logger.log(`
         Command: ${Array.isArray(command) ? `Custom: ${command[0].command}` : command.settings.name} 
@@ -82,8 +101,36 @@ export default class implements Event {
             `));
         }
 
+        const name = command instanceof Command ? command.settings.name.toLowerCase() : command[0].command.toLowerCase();
+        if(message.guild) { // commands can only be enabled/disabled in guilds.
+            // get all "enabled" commands in the guild (if there are any)
+            const enabledForType =  guild?.enabled?.filter(en => en.command === name || en.aliases?.includes(name)) ?? [];
+            const disabled = guild?.disabled?.some(di => 
+                (di.command === name || di.aliases?.indexOf(name) > -1) &&
+                (di.type === 'guild' ||
+                (di.type === 'user' && message.author.id === di.id) || 
+                (di.type === 'role' && message.member?.roles.cache.has(di.id)) ||
+                (di.type === 'channel' && message.channel.id === di.id))
+            ) ?? false;
+
+            if(message.guild && enabledForType.length !== 0) {
+                const enabled = enabledForType.some(en => // name/aliases don't need to be checked
+                    (en.type === 'user' && en.id === message.author.id) ||
+                    (en.type === 'role' && message.member.roles.cache.has(en.id)) ||
+                    (en.type === 'channel' && en.id === message.channel.id)
+                );
+                
+                if(enabled === false) { 
+                    // if a command is enabled, only that group type can use it
+                    // if this check is explicitly false, the person cannot use it
+                    return;
+                }
+            } else if(disabled) { // not enabled for user and is disabled
+                return;
+            }
+        }
+
         if(command instanceof Command) {
-            const name = command.settings.name.toLowerCase();
             const [min, max] = command.settings.args;
             if(min > args.length || args.length > max) {
                 return message.channel.send(Embed.fail(`
@@ -94,26 +141,6 @@ export default class implements Event {
                 `));
             }
 
-            const enabled =  guild?.enabled?.some(en => 
-                (en.command === name || en.aliases?.indexOf(name) > -1) &&
-                ((en.type === 'user' && message.author.id === en.id) || 
-                (en.type === 'role' && message.member?.roles.cache.has(en.id)) ||
-                (en.type === 'channel' && message.channel.id === en.id))
-            ) ?? true;
-            const disabled = guild?.disabled?.some(di => 
-                (di.command === name || di.aliases?.indexOf(name) > -1) &&
-                (di.type === 'guild' ||
-                (di.type === 'user' && message.author.id === di.id) || 
-                (di.type === 'role' && message.member?.roles.cache.has(di.id)) ||
-                (di.type === 'channel' && message.channel.id === di.id))
-            ) ?? false;
-
-            if(!enabled && guild?.enabled?.filter(en => en.command === name || en.aliases?.indexOf(name) > -1).length > 0) {
-                return;
-            } else if(!enabled && disabled) { // not enabled for user and is disabled
-                return;
-            }
-
             return command.init(message, args);
         }
 
@@ -121,7 +148,7 @@ export default class implements Event {
         // and the command isn't in dms
         // and command is a guaranteed custom command
 
-        const custom = command.filter(e => e.command === commandName.slice(prefixLength));
+        const custom = command.filter(e => e.command === commandName.slice(prefix?.length ?? 0));
         if(custom.length > 0) {
             const current = custom.shift();
             const role = await message.guild.roles.fetch(current.role);

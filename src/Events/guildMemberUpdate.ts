@@ -21,12 +21,7 @@ export default class implements Event {
     async init(oldMember: GuildMember, newMember: GuildMember) {
         this.logger.log(`${inspect(oldMember)}\n${inspect(newMember)}\n\n\n`); // temporary until I confirm it works
 
-        const oldRoles = oldMember.roles.cache.filter(r => r.managed);
-        const newRoles = newMember.roles.cache.filter(r => r.managed);
-
-        if(oldRoles.size === newRoles.size) {
-            return;
-        } else if((!oldMember.premiumSince && !newMember.premiumSince) || oldMember.premiumSince && newMember.premiumSince) { // both either have or don't have
+        if((!oldMember.premiumSince && !newMember.premiumSince) || oldMember.premiumSince && newMember.premiumSince) { // both either have or don't have
             return;
         }
 
@@ -51,11 +46,11 @@ export default class implements Event {
             return;
         }
 
-        if(oldRoles.size > newRoles.size && oldMember.premiumSince && !newMember.premiumSince) { // lost role
+        if(oldMember.premiumSince && !newMember.premiumSince) { // lost role
             return channel.send(Embed.fail(`
             ${newMember} is no longer boosting the server! 😨
             `));
-        } else if(oldRoles.size < newRoles.size && !oldMember.premiumSince && newMember.premiumSince) { // gained role
+        } else if(!oldMember.premiumSince && newMember.premiumSince) { // gained role
             return channel.send(Embed.success(`
             ${newMember} just boosted the server! 🥳
             `));

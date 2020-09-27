@@ -4,11 +4,7 @@
   "description": "MeepCraft stuff",
   "main": "MeepCraft",
   "types": "types/Meep.d.ts",
-  "dependencies": {
-    "node-fetch": "2.6.1"
-  },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
     "typescript": "3.4.3"
   },
   "repository": {

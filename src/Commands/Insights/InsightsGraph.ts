@@ -90,10 +90,8 @@ export default class extends Command {
         
         execFile('python', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
             if(err) {
-                return message.channel.send(this.Embed.fail(`
-                An unexpected error occurred!
-                \`\`${err.toString()}\`\`
-                `));
+                this.logger.log(err);
+                return message.channel.send(this.Embed.fail(`An unexpected error occurred!`));
             }
 
             const embed = this.Embed.success()

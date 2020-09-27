@@ -4,6 +4,7 @@ build
 *.js
 !scripts/*.js
 !ecosystem.config.js
+src/**/Image
 
 # Logs
 logs
