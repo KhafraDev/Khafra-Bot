@@ -1,5 +1,5 @@
-import { readFileSync } from "fs";
-import { join } from "path";
+import fetch from 'node-fetch';
+import AdmZip from 'adm-zip';
 
 export const titles = {
     'Genesis': 'gen',
@@ -101,9 +101,12 @@ export const titles = {
 
 export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'gi');
 
-export const parseBible = () => {
-    // always get correct path
-    const bible = readFileSync(join(process.cwd(), 'src/lib/Backend/Bible/Bible/kjvdat.txt')).toString();
+export const parseBible = async () => {
+    const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
+    const buffer = await res.buffer();
+    
+    const zip = new AdmZip(buffer);
+    const bible = zip.getEntries().shift().getData().toString('utf-8');
 
     const lines = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse

@@ -6,7 +6,7 @@ import { parse } from 'url';
 import HttpsProxyAgent from 'https-proxy-agent';
 
 const opts = Object.assign(
-    parse('http://us5082.nordvpn.com'),
+    parse('http://us5057.nordvpn.com'),
     { headers: { 'Proxy-Authorization': auth } }
 );
 

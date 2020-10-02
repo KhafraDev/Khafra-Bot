@@ -47,9 +47,10 @@ export default class extends Command {
             updated = true;
         }
 
-        const file = await readFile(join(__dirname, 'npm', 'npm.txt'));
+        const file = await readFile(join(__dirname, 'npm', 'npm.txt'), {
+            encoding: 'utf-8'
+        });
         const data = file
-            .toString()
             .split('\n')
             .filter(l => l.trim().length > 0);
 

@@ -11,7 +11,7 @@ import { join } from 'path';
 import { Logger } from './Logger';
 
 const { embed, botOwner }: { embed: { fail: string, success: string }, botOwner: string[] | string } = JSON.parse(
-    readFileSync(join(__dirname, '../../config.json')).toString()
+    readFileSync(join(__dirname, '../../config.json'), { encoding: 'utf-8' })
 );
 
 export class Command {

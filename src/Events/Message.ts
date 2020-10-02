@@ -15,7 +15,7 @@ import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 
 const { prefix: defaultPrefix }: { prefix: string } = JSON.parse(
-    readFileSync(join(__dirname, '../../config.json')).toString()
+    readFileSync(join(__dirname, '../../config.json'), { encoding: 'utf-8' })
 );
 
 const Embed = Command.Embed;

@@ -33,7 +33,7 @@ export default class extends Command {
             const collection = client.db('khafrabot').collection('bible');
             const exists = await collection.findOne({}) as BibleExcerpt;
             if(!exists) {
-                const parsed = parseBible();
+                const parsed = await parseBible();
                 await collection.insertMany(parsed);
                 updated = true;
             }

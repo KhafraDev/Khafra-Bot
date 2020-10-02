@@ -7,7 +7,7 @@ export default function loadEnv() {
        throw new Error('.env: No .env file found at the root of the repo!');
     }
 
-    const buffer = readFileSync(path).toString().split(/\n\r|\n|\r/g);
+    const buffer = readFileSync(path, { encoding: 'utf-8' }).split(/\n\r|\n|\r/g);
     for(const line of buffer) {
         const [env, val] = line.trim().split('=');
         Object.defineProperty(process.env, env, {

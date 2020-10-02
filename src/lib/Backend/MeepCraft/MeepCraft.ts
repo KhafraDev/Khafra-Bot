@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import { join } from "path";
-import { readFileSync } from "fs";
+import { readFile } from "fs/promises";
 import { MeepMember } from "./types/Meep";
 
 let updated = false;
@@ -36,7 +36,9 @@ export const checkDB = async () => {
 
     if(!await collection.findOne({})) {
         // not great practice but only needs to be done once, ever
-        const file = readFileSync(join(process.cwd(), 'src/lib/Backend/MeepCraft/meep.json')).toString().split('\n');
+        const file = (await readFile(join(process.cwd(), 'src/lib/Backend/MeepCraft/meep.json'), { 
+            encoding: 'utf-8'
+        })).split('\n');
         const docs = file
             .map(f => JSON.parse(f))
             .map(q => {

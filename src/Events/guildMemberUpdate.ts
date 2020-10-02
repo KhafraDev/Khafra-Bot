@@ -19,11 +19,11 @@ export default class implements Event {
     logger = new Logger(this.name);
 
     async init(oldMember: GuildMember, newMember: GuildMember) {
-        this.logger.log(`${inspect(oldMember)}\n${inspect(newMember)}\n\n\n`); // temporary until I confirm it works
-
         if((!oldMember.premiumSince && !newMember.premiumSince) || oldMember.premiumSince && newMember.premiumSince) { // both either have or don't have
             return;
         }
+
+        this.logger.log(`${inspect(oldMember)}\n${inspect(newMember)}\n\n\n`); // temporary until I confirm it works
 
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');

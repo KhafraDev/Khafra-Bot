@@ -226,3 +226,10 @@
 * Logger can now handle any type of data passed to it.
 * Enable/disable work for custom commands.
 * Message event now incorporates ``guildOnly``, ``ownerOnly``, and actually checks the prefix. :/
+* Requests in the ``meep`` command will be timed out after 30 seconds, preventing a pretty nasty bug.
+* Replace sync ``fs`` methods with ``async`` where applicable. No performance difference since they were used only when they would be used once.
+* ``fs#readFile(Sync)`` now uses the correct encoding to return a string rather than a buffer.
+* Add in ``hangman`` command.
+* No longer store KJV Bible locally.
+* Remove ``copy`` script because it's no longer needed.
+* Fixed ``build`` script not removing the ``build`` directory on linux.

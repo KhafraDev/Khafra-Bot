@@ -1,7 +1,9 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import { readFile } from 'fs';
+import { readFile } from 'fs/promises';
+import { join } from "path";
 
+const dir = join(process.cwd(), 'src/Commands/Fun/Cowsay');
 const start = `
  ________________________________________
 `;
@@ -22,7 +24,7 @@ export default class extends Command {
         );
     }
 
-    init(message: Message, args: string[]) {
+    async init(message: Message, args: string[]) {
         const types = [
             'beavis',   'bong',   'bud-frogs',   'bunny',   'cheese',
             'cowering', 'cowsay', 'cowth-vader', 'darth-vader-koala',
@@ -60,18 +62,15 @@ export default class extends Command {
         }
 
         const i = types.includes(args[0].toLowerCase()) ? args[0].toLowerCase() : 'cowsay';
-        readFile(__dirname + '/Cowsay/' + i + '.txt', (err, data) => {
-            if(err) {
-                return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
-            }
-
-            const buffer = data.toString();
-            const formatted = `\`\`\`${start}${split.join('\n')}\n${buffer}\`\`\``;
-            if(formatted.length > 2048) {
-                return message.channel.send(this.Embed.fail('Cowsay message is too long!'));
-            }
-    
-            return message.channel.send(formatted);
+        const data = await readFile(join(dir, `${i}.txt`), {
+            encoding: 'utf-8'
         });
+            
+        const formatted = `\`\`\`${start}${split.join('\n')}\n${data}\`\`\``;
+        if(formatted.length > 2048) {
+            return message.channel.send(this.Embed.fail('Cowsay message is too long!'));
+        }
+
+        return message.channel.send(formatted);
     }
 }
