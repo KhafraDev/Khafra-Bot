@@ -7,8 +7,8 @@ import { execFile } from "child_process";
 import { pool } from "../../Structures/Database/Mongo";
 import { Insights } from "../../lib/types/Collections";
 
-const outDir = join(process.cwd(), 'build')
-const outPath = join(process.cwd(), outDir, 'lib/Images/');
+const outDir = join(process.cwd(), 'build/src')
+const outPath = join(outDir, 'lib/Images/');
 const pyPath = join(process.cwd(), 'src/lib/Backend/Py/InsightsGraph.py');
 let updated = false;
 

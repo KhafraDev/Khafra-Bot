@@ -6,13 +6,9 @@ import {
     Channel,
     MessageEmbed,
 } from 'discord.js';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { Logger } from './Logger';
 
-const { embed, botOwner }: { embed: { fail: string, success: string }, botOwner: string[] | string } = JSON.parse(
-    readFileSync(join(__dirname, '../../config.json'), { encoding: 'utf-8' })
-);
+import { embed, botOwner } from '../../config.json';
 
 export class Command {
     logger = new Logger('Command');

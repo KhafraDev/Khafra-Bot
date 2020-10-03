@@ -16,7 +16,7 @@ class KhafraClient extends Client {
     /**
      * Load commands
      */
-    async loadCommands(dir = 'build/Commands') {
+    async loadCommands(dir = 'build/src/Commands') {
         for(const path of readdirSync(dir)) {
             const curr = join(dir, path);
             if(statSync(curr).isDirectory()) {
@@ -35,7 +35,7 @@ class KhafraClient extends Client {
         return KhafraClient.Commands;
     }
 
-    async loadEvents(dir = 'build/Events') {
+    async loadEvents(dir = 'build/src/Events') {
         for(const event of readdirSync(dir)) {
             const { default: e } = await import(join(process.cwd(), dir, event));
             const build = new e() as Event;

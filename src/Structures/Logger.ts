@@ -3,7 +3,7 @@ import { mkdirSync, createWriteStream, WriteStream } from 'fs';
 import { formatDate } from '../lib/Utility/Date';
 import { inspect } from 'util';
 
-const logPath = join(process.cwd(), 'build/lib/Logger');
+const logPath = join(process.cwd(), 'build/src/lib/Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories
 
 export class Logger {
@@ -12,9 +12,12 @@ export class Logger {
 
     constructor(name: string) {
         this.name = name;
-        this.stream = createWriteStream(join(logPath, this.name + '.log'), { flags: 'a' });
+        this.stream = createWriteStream(join(logPath, this.name + '.log'), { 
+            flags: 'a',
+            encoding: 'utf-8' 
+        });
 
-        this.stream.write(`[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] Initialized ${this.name}.\n`);
+        // this.stream.write(`[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] Initialized ${this.name}.\n`);
     }
 
     log(data: any) {

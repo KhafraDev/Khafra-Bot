@@ -23,6 +23,8 @@ export default class implements Event {
             return;
         }
 
+        const oldRoles = oldMember.roles.cache.filter(r => r.managed).size;
+        const newRoles = newMember.roles.cache.filter(r => r.managed).size;
         this.logger.log(`${inspect(oldMember)}\n${inspect(newMember)}\n\n\n`); // temporary until I confirm it works
 
         const client = await pool.settings.connect();
@@ -46,13 +48,17 @@ export default class implements Event {
             return;
         }
 
-        if(oldMember.premiumSince && !newMember.premiumSince) { // lost role
+        if(oldRoles > newRoles) { // lost role
             return channel.send(Embed.fail(`
             ${newMember} is no longer boosting the server! 😨
             `));
-        } else if(!oldMember.premiumSince && newMember.premiumSince) { // gained role
+        } else if(newRoles > oldRoles) { // gained role
             return channel.send(Embed.success(`
             ${newMember} just boosted the server! 🥳
+            `));
+        } else { // other servers?
+            return channel.send(Embed.success(`
+            ${!oldMember.premiumSince && newMember.premiumSince ? `${newMember} boosted a server.` : `${newMember} stopped boosting a server.`}
             `));
         }
     }

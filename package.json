@@ -26,7 +26,7 @@
   "scripts": {
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
-    "dev:run": "node build/index",
+    "dev:run": "node build/src/index",
     "prod:run": "pm2 start ecosystem.config.js --env production"
   },
   "repository": {

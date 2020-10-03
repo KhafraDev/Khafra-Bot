@@ -233,3 +233,4 @@
 * No longer store KJV Bible locally.
 * Remove ``copy`` script because it's no longer needed.
 * Fixed ``build`` script not removing the ``build`` directory on linux.
+* Import JSON using native TypeScript abilities now that it works.

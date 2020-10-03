@@ -9,14 +9,10 @@ import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger";
 import KhafraClient from "../Bot/KhafraBot";
-import { readFileSync } from "fs";
-import { join } from "path";
 import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 
-const { prefix: defaultPrefix }: { prefix: string } = JSON.parse(
-    readFileSync(join(__dirname, '../../config.json'), { encoding: 'utf-8' })
-);
+import { prefix as defaultPrefix } from '../../config.json';
 
 const Embed = Command.Embed;
 
