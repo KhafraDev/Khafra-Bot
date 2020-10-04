@@ -13,6 +13,7 @@ import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 
 import { prefix as defaultPrefix } from '../../config.json';
+import { trim } from "../lib/Utility/Template";
 
 const Embed = Command.Embed;
 
@@ -73,13 +74,13 @@ export default class implements Event {
             }
         } 
 
-        this.logger.log(`
+        this.logger.log(trim`
         Command: ${Array.isArray(command) ? `Custom: ${command[0].command}` : command.settings.name} 
         | Author: ${message.author.id} 
         | URL: ${message.url} 
         | Guild: ${message.guild?.id ?? 'DMs'} 
         | Input: ${message.content}
-        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
+        `);
 
         cooldownGuild.set(message.guild?.id ?? message.channel.id); // set cooldowns for guild/DM channel
         cooldownUsers.set(message.author.id); // set cooldowns for Users

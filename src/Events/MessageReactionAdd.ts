@@ -10,6 +10,7 @@ import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger";
 import { Command } from '../Structures/Command';
+import { trim } from "../lib/Utility/Template";
 
 const Embed = Command.Embed;
 
@@ -84,12 +85,12 @@ export default class implements Event {
             r.message === reaction.message.id && r.emoji === reaction.emoji.name
         ).shift();
         
-        this.logger.log(`
+        this.logger.log(trim`
             Action: ${this.name}
             | URL: ${reaction.message.url} 
             | Guild: ${reaction.message.guild.id} 
             | ${!member.manageable ? 'Failed: Not manageable' : `Role: ${filtered.role ?? 'None'}`}
-        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
+        `);
 
         if(guild && !member.manageable) {
             // valid react role but member isn't manageable

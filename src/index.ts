@@ -5,6 +5,7 @@ import './Structures/Proxy/React';
 import KhafraClient from './Bot/KhafraBot';
 import loadEnv from './lib/Utility/load.env';
 import { Logger } from './Structures/Logger';
+import { trim } from './lib/Utility/Template';
 loadEnv();
 
 const logger = new Logger('RateLimit');
@@ -29,13 +30,13 @@ const client = new KhafraClient({
     .on('guildMemberRemove', member => KhafraClient.Events.get('guildMemberRemove').init(member))
     .on('guildMemberUpdate', (o, n) => KhafraClient.Events.get('guildMemberUpdate').init(o, n))
     .on('rateLimit', data => {
-        logger.log(`
+        logger.log(trim`
         Timeout: ${data.timeout} 
         | Limit: ${data.limit} 
         | HTTP Method: ${data.method} 
         | Route: ${data.route} 
         | Path: ${data.path}
-        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
+        `);
     });
 
 client.init();

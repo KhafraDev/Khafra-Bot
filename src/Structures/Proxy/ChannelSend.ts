@@ -5,6 +5,7 @@ import {
     NewsChannel
 } from "discord.js";
 import { Logger } from "../Logger";
+import { trim } from "../../lib/Utility/Template";
 
 const logger = new Logger('ChannelSend Proxy');
 
@@ -16,12 +17,12 @@ TextChannel.prototype.send = new Proxy(TextChannel.prototype.send, {
             const m = await target.call(thisArg, ...args) as Message;
             return m;
         } catch(e) {
-            logger.log(`
+            logger.log(trim`
             Channel Type: "${thisArg.type}"
             | Channel ID: "${thisArg.id}"
             | User ID: "${thisArg instanceof DMChannel ? thisArg.recipient.id : 'Not DMs'}"
             | Error: "${e.toString()}"
-            `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
+            `);
             return null;
         }
     }
