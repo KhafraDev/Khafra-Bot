@@ -20,10 +20,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms.call(this));
-        }
-
         if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
             return message.channel.send(this.Embed.fail(`
             No guild member mentioned and no user ID provided.

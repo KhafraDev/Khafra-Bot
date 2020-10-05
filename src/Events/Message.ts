@@ -138,6 +138,10 @@ export default class implements Event {
                 `));
             }
 
+            if(!command.userHasPerms(message, command.permissions)) {
+                return message.channel.send(Embed.missing_perms(false, command.permissions));
+            }
+
             return command.init(message, args);
         }
 

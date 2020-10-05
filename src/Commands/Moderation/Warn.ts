@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message, GuildMember } from "discord.js";
-
 import { pool } from "../../Structures/Database/Mongo";
 import { Warnings } from "../../lib/types/Collections";
 
