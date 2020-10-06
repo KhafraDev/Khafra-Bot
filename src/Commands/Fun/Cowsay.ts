@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { readFile } from 'fs/promises';
 import { join } from "path";
 
-const dir = join(process.cwd(), 'src/Commands/Fun/Cowsay');
+const dir = join(process.cwd(), 'assets/Cowsay');
 const start = `
  ________________________________________
 `;
