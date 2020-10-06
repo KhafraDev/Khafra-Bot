@@ -1,6 +1,6 @@
 import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
-import { trivia } from "../../../lib/Backend/Trivia/Trivia";
+import { Trivia, categories } from "../../../lib/Backend/Trivia/Trivia";
 
 export default class extends Command {
     constructor() {
@@ -20,11 +20,11 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const list = await trivia.fetchList();
+        const list = categories.length > 0 ? categories : await Trivia.fetchList();
         if(list) {
             const embed = this.Embed.success()
                 .setTitle('Trivia Categories')
-                .setDescription(`${list.trivia_categories.map(a => `\`\`${a.id}\`\`: ${a.name}`).join('\n')}`)
+                .setDescription(`${list.map(a => `\`\`${a.id}\`\`: ${a.name}`).join('\n')}`)
 
             return message.channel.send(embed);
         } else {

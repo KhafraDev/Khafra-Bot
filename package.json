@@ -2,7 +2,7 @@
   "name": "khafra-bot",
   "version": "1.0.6",
   "description": "Discord Bot",
-  "main": "build/index.js",
+  "main": "build/src/index.js",
   "dependencies": {
     "@types/adm-zip": "^0.4.33",
     "adm-zip": "^0.4.16",

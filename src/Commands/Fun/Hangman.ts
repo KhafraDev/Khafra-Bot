@@ -28,7 +28,7 @@ const hide = (word: string, guesses: string[]) => {
 
 const games: string[] = [];
 const removeGame = (id: string) => {
-    if(games.includes(id)) {
+    if(games.includes(id) || games.indexOf(id) !== -1) {
         games.splice(games.indexOf(id), 1);
     }
 }

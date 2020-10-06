@@ -47,6 +47,7 @@ export class Command {
         this.help = help;
         this.permissions = this.permissions.concat(permissions);
         this.settings = settings;
+        this.settings && (this.settings.aliases = this.settings.aliases ?? []);
     }
 
     hasPermissions(message: Message, channel?: Channel, permissions?: PermissionString[]) {

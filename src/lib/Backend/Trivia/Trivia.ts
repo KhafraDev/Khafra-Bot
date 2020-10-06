@@ -1,48 +1,63 @@
 import fetch from 'node-fetch';
-import { TriviaList, TriviaQuestions } from './types/Trivia';
+import { Question } from './types/Trivia';
 
-class Trivia {
-    listCache: TriviaList;
-    categoryRegex: RegExp;
+const shuffle = <T>(a: T[]): T[] => {
+    for(let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
 
-    async fetchList() {
-        if(this.listCache) {
-            return Promise.resolve(this.listCache);
+export const categories: { id: number, name: string }[] = [];
+// push questions to existing array (if exists already)
+// or set the questions to a new array.
+// Proxy is amazing. 
+export const questions = new Proxy({} as { [key: number]: Question[] }, {
+    set: (target, prop: number, value) => {
+        if(prop in target) {
+            target[prop].push(...value);
+        } else {
+            target[prop] = [...value];
+        }
+
+        return true;
+    }
+});
+export let categoryRegex: RegExp = null;
+
+export const Trivia = {
+    fetchList: async () => {
+        if(categories.length > 0) {
+            return categories;
         }
 
         const res = await fetch('https://opentdb.com/api_category.php');
 
         if(res.status === 200) {
-            this.listCache = await res.json() as TriviaList;
-            this.categoryRegex = new RegExp(this.listCache.trivia_categories.map(c => c.name).join('|'), 'gi');
+            categories.push(...(await res.json()).trivia_categories);
+            categoryRegex = new RegExp(categories.map(c => c.name).join('|'), 'gi');
         }
 
-        return this.listCache;
-    }
+        return categories;
+    },
 
-    async fetchQuestions(amount: number, category: number | string, difficulty: string) {
-        if(typeof category === 'string') {
-            const list = await this.fetchList();
-            category = list.trivia_categories
-                .filter(c => c.id === +category || c.name.toLowerCase() === category)
-                .pop()
-                .id;
+    fetchQuestions: async (amount: number, category: number, difficulty: 'easy' | 'medium' | 'hard') => {
+        if(category in questions && questions[category].length >= amount) {
+            return shuffle(questions[category]).splice(0, amount);
         }
 
-        const base = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&encode=base64`;
+        const base = `https://opentdb.com/api.php?amount=50&category=${category}&difficulty=${difficulty}`;
         const res = await fetch(base);
 
         if(res.status === 200) {
-            const json = await res.json() as TriviaQuestions;
+            const json = await res.json();
             if(json.response_code === 0) {
-                return json;
+                questions[category] = json.results;
+                return shuffle(questions[category]).splice(0, amount);
             } else {
                 return null;
             }
         }
     }
 }
-
-const trivia = new Trivia();
-
-export { trivia };
