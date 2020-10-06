@@ -87,7 +87,6 @@ export default class extends Command {
         collector.on('collect', async (m: Message) => {
             if(!sent || sent?.deleted) {
                 collector.stop();
-                removeGame(message.author.id);
                 return;
             }
 
@@ -107,11 +106,9 @@ export default class extends Command {
         
             if(new RegExp(hide(word, guesses), 'i').test(word) || right) {
                 embed.setTitle('You guessed the word!');
-                removeGame(message.author.id);
                 collector.stop();
             } else if(wrong >= 6) {
                 embed.setTitle(`You lost! The word was "${word}"!`);
-                removeGame(message.author.id);
                 collector.stop();
             }
             
@@ -119,9 +116,9 @@ export default class extends Command {
                 await sent.edit(embed);
             } catch {
                 collector.stop();
-                removeGame(message.author.id);
-                return;
             }
         });
+
+        collector.on('end', () => removeGame(message.author.id));
     }
 }
