@@ -1,5 +1,4 @@
 import { Command } from '../Structures/Command';
-
 import { Client, ClientOptions, ClientEvents } from 'discord.js';
 import { join } from 'path';
 import { readdirSync, statSync } from 'fs';

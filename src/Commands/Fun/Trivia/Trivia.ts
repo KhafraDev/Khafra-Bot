@@ -52,6 +52,11 @@ export default class extends Command {
         }
 
         const questions = await Trivia.fetchQuestions(+q > 10 ? 10 : +q, cid.shift().id, difficulty as diff);
+        if(!questions || !Array.isArray(questions) || questions.length === 0) {
+            return message.channel.send(this.Embed.fail(`
+            An error occurred fetching questions! This is not a problem with the bot, but the API used.
+            `));
+        }
         
         const guesses: { [key: number]: string[] } = {}
         const winner: { [key: number]: GuildMember } = {};

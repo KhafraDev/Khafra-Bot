@@ -6,9 +6,15 @@ import KhafraClient from './Bot/KhafraBot';
 import loadEnv from './lib/Utility/load.env';
 import { Logger } from './Structures/Logger';
 import { trim } from './lib/Utility/Template';
+import { ClientEvents } from 'discord.js';
 loadEnv();
 
 const logger = new Logger('RateLimit');
+
+const emitted = (name: keyof ClientEvents) => {
+    return (...args: ClientEvents[keyof ClientEvents]) => 
+        KhafraClient.Events.get(name)?.init(...args);
+}
 
 const client = new KhafraClient({
     disableMentions: 'everyone',
@@ -22,13 +28,13 @@ const client = new KhafraClient({
         intents: [ 'GUILDS', 'GUILD_MEMBERS', 'GUILD_PRESENCES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES' ]
     }
 })
-    .on('ready', () => KhafraClient.Events.get('ready').init())
-    .on('message', message => KhafraClient.Events.get('message').init(message))
-    .on('messageReactionAdd', (reaction, user) => KhafraClient.Events.get('messageReactionAdd').init(reaction, user))
-    .on('messageReactionRemove', (reaction, user) => KhafraClient.Events.get('messageReactionRemove').init(reaction, user))
-    .on('guildMemberAdd', member => KhafraClient.Events.get('guildMemberAdd').init(member))
-    .on('guildMemberRemove', member => KhafraClient.Events.get('guildMemberRemove').init(member))
-    .on('guildMemberUpdate', (o, n) => KhafraClient.Events.get('guildMemberUpdate').init(o, n))
+    .on('ready',                 emitted('ready'))
+    .on('message',               emitted('message'))
+    .on('messageReactionAdd',    emitted('messageReactionAdd'))
+    .on('messageReactionRemove', emitted('messageReactionRemove'))
+    .on('guildMemberAdd',        emitted('guildMemberAdd'))
+    .on('guildMemberRemove',     emitted('guildMemberRemove'))
+    .on('guildMemberUpdate',     emitted('guildMemberUpdate'))
     .on('rateLimit', data => {
         logger.log(trim`
         Timeout: ${data.timeout} 
