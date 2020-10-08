@@ -29,14 +29,18 @@ export default class extends Command {
         }
 
         const embed = this.Embed.success(`
-        ${command.help[0]}
+        The \`\`${command.settings.name}\`\` command:
 
-        Examples:
-        ${command.help.slice(1).map(ex => `\`\`${command.settings.name}${ex.length > 0 ? ' ' + ex : ''}\`\``).join('\n')}
+        Aliases: ${command.settings.aliases?.map(a => `\`\`${a}\`\``).join(', ')}
+        Permissions: ${command.permissions.map(p => `\`\`${p}\`\``).join(', ')}
 
-        Aliases:
-        \`\`${command.settings.aliases?.length > 0 ? command.settings.aliases.join(', ') : 'None'}\`\`
-        `);
+        Example Usage:
+        ${command.help.slice(1).map((e: string) => `\`\`${command.settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
+        `)
+        .addFields(
+            { name: '**Guild Only:**', value: command.settings.guildOnly ? 'Yes' : 'No', inline: true },
+            { name: '**Owner Only:**', value: command.settings.ownerOnly ? 'Yes' : 'No', inline: true }
+        );
 
         return message.channel.send(embed);
     }

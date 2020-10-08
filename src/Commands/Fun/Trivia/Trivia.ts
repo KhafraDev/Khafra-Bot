@@ -2,8 +2,8 @@ import { Command } from "../../../Structures/Command";
 import { Message, GuildMember } from "discord.js";
 import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia";
 import { shuffle } from '../../../lib/Utility/Array';
+import { pool } from "../../../Structures/Database/Mongo";
 
-type diff = 'easy' | 'medium' | 'hard';
 const games: { [key: string]: string } = {};
 
 export default class extends Command {
@@ -34,32 +34,34 @@ export default class extends Command {
         }
 
         const category = Number.isInteger(+args[0])
-            ? categories.filter(d => d.id === +args[0]).shift()?.name
-            : args.join(' ').match(categoryRegex)?.shift();
-                    
-        const cid = category ? categories.filter(e => e.name.toLowerCase() === category.toLowerCase()) : [];
-        if(category?.length === 0 || cid.length === 0) {
-            return message.channel.send(this.Embed.generic('Invalid category provided! Use the ``triviacategory`` command!'));
+            ? categories.filter(d => d.id === +args[0])
+            : categories.filter(d => d.name.toLowerCase() === args.join(' ').match(categoryRegex)?.shift().toLowerCase());
+
+        if(!category || category.length === 0) {
+            return message.channel.send(this.Embed.generic('No category found! Use the ``trivialist`` command for a valid list!'));
         }
 
-        const [difficulty, q] = args.slice(Number.isInteger(+args[0]) ? 1 : category.split(' ').length);
-        if(!difficulty || !['easy', 'medium', 'hard'].includes(difficulty.toLowerCase())) {
+        const [difficulty, q] = args.slice(Number.isInteger(+args[0]) ? 1 : category[0].name.split(' ').length);
+        if(!['easy', 'medium', 'hard'].includes(difficulty?.toLowerCase())) {
             return message.channel.send(this.Embed.generic('Invalid difficulty provided!'));
+        } else if(!Number.isInteger(+q) || +q > 10) {
+            return message.channel.send(this.Embed.generic('Invalid amount of questions! Ten questions is the max per game.'));
         }
+        
+        const client = await pool.commands.connect();
+        const collection = client.db('khafrabot').collection('trivia');
+        const questions = await collection.aggregate([ 
+            { $match: { category: category[0].name, difficulty } },
+            { $sample: { size: parseInt(q) } } 
+        ]).toArray();
 
-        if(isNaN(+q) || !Number.isInteger(+q)) {
-            return message.channel.send(this.Embed.generic('Invalid amount of questions!'));
-        }
-
-        const questions = await Trivia.fetchQuestions(+q > 10 ? 10 : +q, cid.shift().id, difficulty as diff);
-        if(!questions || !Array.isArray(questions) || questions.length === 0) {
-            return message.channel.send(this.Embed.fail(`
-            An error occurred fetching questions! This is not a problem with the bot, but the API used.
-            `));
+        if(!questions || questions.length === 0) {
+            return message.channel.send(this.Embed.fail('No questions found. 😦'));
         }
         
         const guesses: { [key: number]: string[] } = {}
-        const winner: { [key: number]: GuildMember } = {};
+        const winner: GuildMember[] = [];
+
         let msg: Message = null;
         games[message.guild.id] = message.channel.id;
 
@@ -97,12 +99,13 @@ export default class extends Command {
             // it instantly skips over the second question. - Pseudo
             await new Promise(r => setTimeout(r, 1000));
             const collector = message.channel.createMessageCollector(filter, {
-                time: 30000
+                time: 30000,
+                max: 1
             });
 
             await new Promise(r => {
                 collector.on('collect', (m: Message) => {
-                    winner[index] = m.member;
+                    winner.push(m.member);
                     collector.stop();
                 });
 
@@ -111,12 +114,20 @@ export default class extends Command {
         }
 
         delete games[message.guild.id];
-        const won = Object.values(winner).sort((a, b) =>
-            Object.values(winner).filter(v => v.id === a.id).length - Object.values(winner).filter(v => v.id === b.id).length
-        ).pop();
-
+        const won = winner.reduce((o, n) => {
+            n.id in o ? (o[n.id]['n'] += 1) : (o[n.id] = { n: 1, m: n });
+            return o;
+        }, {} as { [key: string]: { n: number, m: GuildMember } });
+    
         if(!msg.deleted) {
-            return msg.edit(this.Embed.success(`${won ?? 'No one'} won the game!`));
+            if(Object.values(won).length === 0) {
+                return msg.edit(this.Embed.success(`No one guessed any questions correctly.`));
+            }
+
+            const w = Object.values(won).shift();
+            return msg.edit(this.Embed.success(`
+            ${w.m} won the game with ${w.n} correct answer(s)!
+            `));
         }
     }
 }

@@ -239,5 +239,8 @@
     * Fixed a bug where a person could input a non-integer number of questions.
     * Questions are cached, and 50 of them will always be fetched from the API. Should help performance over multiple games.
     * Fixed a bug where you couldn't use the number of a category to start a game.
+    * Questions are now stored in the database, saving time retrieving questions and no longer relies on API stability/reliability.
+    * Bot owner can fetch all questions using the ``triviafetch`` command.
 * Move ``Cowsay`` templates to a dedicated folders for bot assets.
 * Elegant event handler.
+* Help command is now useful.

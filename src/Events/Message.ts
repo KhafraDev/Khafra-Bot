@@ -128,6 +128,10 @@ export default class implements Event {
         }
 
         if(command instanceof Command) {
+            if(command.settings.ownerOnly === true && !command.isBotOwner(message.author.id)) {
+                return message.channel.send(Embed.fail('Only a bow owner can run this command!'));
+            }
+
             const [min, max] = command.settings.args;
             if(min > args.length || args.length > max) {
                 return message.channel.send(Embed.fail(`
