@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command';
 import { Message, GuildMember } from 'discord.js';
-
 import ms from 'ms';
+import KhafraClient from '../../Bot/KhafraBot';
 
 export default class extends Command {
     constructor() {
@@ -58,10 +58,12 @@ export default class extends Command {
             return message.channel.send(this.Embed.fail(`${member} isn't bannable!`));
         }
 
-        return message.channel.send(this.Embed.success(`
+        await message.channel.send(this.Embed.success(`
         ${member} has been banned from the server!
 
         ${realTime} days worth of messages have been cleared from them.
         `));
+
+        return KhafraClient.Events.get('guildBanAdd').init(message.guild, member.user);
     }
 }

@@ -1,6 +1,5 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-
 import { pool } from "../../Structures/Database/Mongo";
 
 export default class extends Command {
@@ -27,7 +26,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.missing_perms.call(this, true));
         }
 
-        const points = !isNaN(+args[0]) ? +args[0] : 20;
+        const points = !isNaN(+args[0]) && Number.isSafeInteger(+args[0]) ? +args[0] : 20;
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
 

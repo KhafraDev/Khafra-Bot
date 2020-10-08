@@ -22,8 +22,8 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(isNaN(+args[1])) {
-            return message.channel.send(this.Embed.fail('Second argument must be a number!'));
+        if(isNaN(+args[1]) || !Number.isSafeInteger(+args[1])) {
+            return message.channel.send(this.Embed.fail('Second argument must be a valid integer!'));
         }
 
         if(!/(<@!)?\d{17,19}>?/.test(args[0])) {

@@ -26,9 +26,9 @@ export default class extends Command {
         }
         
         const toDelete = +args.shift() + 1;
-        if(Number.isNaN(toDelete)) {
+        if(Number.isNaN(toDelete) || !Number.isSafeInteger(toDelete)) {
             return message.channel.send(this.Embed.fail(`
-            Received: ${toDelete}, this command requires a number!
+            Received: ${toDelete}, this command requires a valid integer!
 
             Example: \`\`${this.settings.name} 100\`\`
             `));

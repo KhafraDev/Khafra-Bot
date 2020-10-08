@@ -63,7 +63,7 @@ export default class extends Command {
             return message.channel.send(embed);
         }
 
-        const days = args.length > 0 && !isNaN(+args[0]) ? +args[0] : 5;
+        const days = args.length > 0 && !isNaN(+args[0]) && Number.isSafeInteger(+args[0]) ? +args[0] : 5;
 
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');

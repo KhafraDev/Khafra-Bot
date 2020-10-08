@@ -37,7 +37,7 @@ export default class extends Command {
 
         const f = (msg: Message) => 
             (msg.author.id === message.author.id || msg.author.id === opponent?.id)
-            && !isNaN(+msg.content) && +msg.content > 0 && +msg.content <= 9;
+            && !isNaN(+msg.content) && Number.isSafeInteger(+msg.content) && +msg.content > 0 && +msg.content <= 9;
 
         const c = message.channel.createMessageCollector(f, { time: 120000 });
 
