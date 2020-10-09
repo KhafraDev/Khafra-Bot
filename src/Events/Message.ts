@@ -52,7 +52,7 @@ export default class implements Event {
         }
 
         // get a built-in command or try getting a custom guild command
-        const command = KhafraClient.Commands.get(commandName.slice(prefix?.length ?? 0))
+        const command = KhafraClient.Commands.get(commandName.toLowerCase().slice(prefix?.length ?? 0))
                         ?? guild?.commandRole?.filter(c => c.command === commandName.slice(prefix?.length ?? 0)) 
                         
         if(!command || (Array.isArray(command) && command.length === 0)) { // no built in or custom command

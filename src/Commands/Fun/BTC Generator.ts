@@ -7,21 +7,22 @@ export default class extends Command {
         super(
             [
                 'Generate free BTC!',
-                '1000 3D9zJxaESUJB2s79LNVLHRgKoADQtAJ6aq',
+                '1000',
             ],
             [ /* No extra perms needed */ ],
             {
                 name: 'btc-generator',
                 folder: 'Fun',
                 aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ],
-                args: [2, 2]
+                args: [1, 1]
             }
         );
     }
 
     async init(message: Message, args: string[]) {
+        const btc = !isNaN(+args[0]) ? +args[0] : 1000;
         const embed = this.Embed.success()
-            .setTitle(`Generating ${!isNaN(+args[0]) ? args[0] : '1,000'} BTC!`)
+            .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
         const msg = await message.channel.send(embed);
@@ -35,8 +36,7 @@ export default class extends Command {
             }
 
             const embed = this.Embed.success()
-                .setTitle(`Generated ${isNaN(+args[0]) ? args[0] : '1000'} BTC!`)
-                .setDescription('Sending the BTC to ' + args[1] + ' now!');
+                .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
             return msg.edit(embed);
         }, Math.random() * (10000 - 2500 + 1) + 2500 << 0);

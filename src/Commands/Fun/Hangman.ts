@@ -3,6 +3,7 @@ import { Message } from "discord.js";
 import { join } from "path";
 import { readdirSync } from "fs";
 import { readFile } from "fs/promises";
+import { realShuffle } from "../../lib/Utility/Array";
 
 const base = join(process.cwd(), 'assets/Hangman');
 const lists = readdirSync(base).map(f => f.replace('.txt', ''));
@@ -66,7 +67,7 @@ export default class extends Command {
             encoding: 'utf-8'
         });
         const split = text.split(/\n\r|\n|\r/g).filter(l => !l.startsWith('#') && l.length > 0);
-        const word = split[Math.floor(Math.random() * split.length)];
+        const word = (await realShuffle(split)).shift();
 
         const sent = await message.channel.send(
             this.Embed.success(hide(word, guesses)).setImage(assets[wrong])
