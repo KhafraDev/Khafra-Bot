@@ -3,7 +3,9 @@ import { Message, GuildMember } from "discord.js";
 import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia";
 import { shuffle } from '../../../lib/Utility/Array';
 import { pool } from "../../../Structures/Database/Mongo";
+import { XmlEntities } from 'html-entities';
 
+const entities = new XmlEntities();
 const games: { [key: string]: string } = {};
 
 export default class extends Command {
@@ -71,12 +73,12 @@ export default class extends Command {
                 return;
             }
             
-            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]);
+            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]).map(e => entities.decode(e));
             const index = questions.indexOf(question);
             const embed = this.Embed.success()
                 .setTitle(`${question.category} - ${question.difficulty}`)
                 .setDescription(`
-                \`\`${question.question}\`\`
+                \`\`${entities.decode(question.question)}\`\`
                 Answers:
                 ${answers.map((a, i) => `**${i + 1}:** ${a}`).join('\n')}
                 `);
