@@ -3,9 +3,9 @@ import { Message, GuildMember } from "discord.js";
 import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia";
 import { shuffle } from '../../../lib/Utility/Array';
 import { pool } from "../../../Structures/Database/Mongo";
-import { XmlEntities } from 'html-entities';
+import { AllHtmlEntities } from 'html-entities';
 
-const entities = new XmlEntities();
+const entities = new AllHtmlEntities();
 const games: { [key: string]: string } = {};
 
 export default class extends Command {
