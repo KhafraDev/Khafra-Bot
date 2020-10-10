@@ -245,3 +245,4 @@
 * Elegant event handler.
 * Help command is now useful.
 * Added ``realShuffle`` array utility method that uses a better prng (newly added ``crypto#randomInt``). 
+* Add ``crypto`` command.
