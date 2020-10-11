@@ -207,7 +207,7 @@
 * ``TextChannel | DMChannel | NewsChannel`` send methods will no longer throw errors on rejections. These methods are Proxied, modifying the prototype to return null and log the error if one occurs. No changes have to be made because it has the same type/return signatures already.
 * ``Message#react`` will no longer throw errors similar to ``<Channel>.send``.
 * ``clear`` command will now filter messages older than 2 weeks automatically.
-* Get welcome/leave messages when a user joins, leaves, is kicked, or banned from a guild.
+* Get welcome/leave messages when a user joins, leaves, or is kicked from a guild.
 * Fix multiple issues and replaced bad code when trying to get the correct mentioned user.
 * ``user`` command can now fetch information from any Discord account, not just guild members. The old command is under the new name ``member``.
 * Catch bad inputs earlier on.
@@ -222,7 +222,7 @@
 * ``Array.fill`` now infers types correctly, although I don't believe the reasoning it doesn't very valid. :/
 * ``chunk`` and ``shuffle`` array functions have been moved to Utility functions.
 * Removed useless parameter in ``TicTacToe`` game handler. 
-* Add in boost tracking to join/leave/ban messages.
+* Add in boost tracking to join/leave messages.
 * Logger can now handle any type of data passed to it.
 * Enable/disable work for custom commands.
 * Message event now incorporates ``guildOnly``, ``ownerOnly``, and actually checks the prefix. :/
@@ -246,3 +246,5 @@
 * Help command is now useful.
 * Added ``realShuffle`` array utility method that uses a better prng (newly added ``crypto#randomInt``). 
 * Add ``crypto`` command.
+* Fix ``Message#react`` Proxy.
+* Ban command has been re-worked.

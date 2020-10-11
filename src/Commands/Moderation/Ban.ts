@@ -1,7 +1,6 @@
 import { Command } from '../../Structures/Command';
-import { Message, GuildMember } from 'discord.js';
+import { Message } from 'discord.js';
 import ms from 'ms';
-import KhafraClient from '../../Bot/KhafraBot';
 
 export default class extends Command {
     constructor() {
@@ -17,7 +16,7 @@ export default class extends Command {
                 name: 'ban', 
                 folder: 'Moderation',
                 aliases: [ 'bna' ],
-                args: [2],
+                args: [1],
                 guildOnly: true
             }
         );
@@ -28,42 +27,28 @@ export default class extends Command {
             return message.channel.send(this.Embed.missing_perms.call(this));
         }
 
-        const [ userType, time, ...reason ] = args;
-        // days of messages to clear
-        const realTime = Math.round((ms(time) ?? 0) / 86400000);
-        const realReason = realTime === 0 ? [time].concat(reason) : reason;
+        const id = !isNaN(+args[0]) 
+            ? args[0]
+            : message.mentions.users.filter(u => u.id !== message.guild.me.id).first()?.id;
+        const clear = Math.round((ms(args[1] ?? '7d') ?? ms('7d')) / 86400000); // defaults to 7d worth of messages clearing
 
-        if(!/(<@!)?\d{17,19}>?/.test(userType)) {
-            return message.channel.send(this.Embed.fail(`
-            No guild member mentioned and no user ID provided.
-            `));
-        } else if(realTime > 7) {
-            // max 7 days or an error will be thrown
-            return message.channel.send(this.Embed.fail('Only 7 days of messages can be cleared max!'));
-        }
-
-        let member: GuildMember;
-        try {
-            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
-        } catch {
-            return message.channel.send(this.Embed.fail('Invalid ID provided or member mentioned!'));
+        if(!id) {
+            return message.channel.send(this.Embed.generic(
+                'Invalid user mentioned or ID provided in the first argument!'
+            ));
         }
 
         try {
-            await message.guild.members.ban(member.user, {
-                reason: realReason.length > 0 ? realReason.join(' ') : null,
-                days: realTime
+            await message.guild.members.ban(id, {
+                days: parseInt(clear.toString()),
+                reason: args.slice(ms(args[1]) ? 2 : 1).join(' ')
             });
         } catch {
-            return message.channel.send(this.Embed.fail(`${member} isn't bannable!`));
+            return message.channel.send(this.Embed.fail(`${id} isn't bannable!`));
         }
 
-        await message.channel.send(this.Embed.success(`
-        ${member} has been banned from the server!
-
-        ${realTime} days worth of messages have been cleared from them.
+        return message.channel.send(this.Embed.success(`
+        ${id} has been banned from the guild and ${clear} days worth of messages have been removed.
         `));
-
-        return KhafraClient.Events.get('guildBanAdd').init(message.guild, member.user);
     }
 }

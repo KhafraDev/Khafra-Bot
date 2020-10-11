@@ -1,13 +1,13 @@
-import { Message, MessageReaction, EmojiResolvable } from "discord.js";
+import { Message, EmojiResolvable } from "discord.js";
 import { Logger } from "../Logger";
 import { trim } from "../../lib/Utility/Template";
 
 const logger = new Logger('React Proxy');
 
 Message.prototype.react = new Proxy(Message.prototype.react, {
-    async apply(target, thisArg: Message, args: EmojiResolvable) {
+    async apply(target, thisArg: Message, args: EmojiResolvable[]) {
         try {
-            const m: MessageReaction = await target.call(thisArg, args);
+            const m = await target.call(thisArg, args[0]);
             return m;
         } catch(e) {
             logger.log(trim`
