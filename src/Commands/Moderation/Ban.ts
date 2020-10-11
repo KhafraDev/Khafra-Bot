@@ -1,6 +1,7 @@
 import { Command } from '../../Structures/Command';
 import { Message } from 'discord.js';
 import ms from 'ms';
+import { isValidNumber } from '../../lib/Utility/Valid/Number';
 
 export default class extends Command {
     constructor() {
@@ -28,7 +29,7 @@ export default class extends Command {
         }
 
         const user = message.mentions.users.filter(u => u.id !== message.guild.me.id).first();
-        const id = !isNaN(+args[0]) 
+        const id = isValidNumber(+args[0])
             ? args[0]
             : user?.id;
         const clear = Math.round((ms(args[1] ?? '7d') ?? ms('7d')) / 86400000); // defaults to 7d worth of messages clearing
@@ -69,11 +70,10 @@ export default class extends Command {
 
         try {
             await message.guild.members.ban(id, {
-                days: parseInt(clear.toString()),
+                days: isValidNumber(clear) ? parseInt(clear.toString()) : 7,
                 reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
             });
-        } catch(e) {
-            console.log(e);
+        } catch {
             return message.channel.send(this.Embed.fail(`${user ?? id} isn't bannable!`));
         }
 

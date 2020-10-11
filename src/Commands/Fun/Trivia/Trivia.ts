@@ -4,6 +4,7 @@ import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/T
 import { shuffle } from '../../../lib/Utility/Array';
 import { pool } from "../../../Structures/Database/Mongo";
 import { AllHtmlEntities } from 'html-entities';
+import { isValidNumber } from "../../../lib/Utility/Valid/Number";
 
 const entities = new AllHtmlEntities();
 const games: { [key: string]: string } = {};
@@ -35,7 +36,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const category = Number.isInteger(+args[0])
+        const category = isValidNumber(+args[0])
             ? categories.filter(d => d.id === +args[0])
             : categories.filter(d => d.name.toLowerCase() === args.join(' ').match(categoryRegex)?.shift().toLowerCase());
 
@@ -43,7 +44,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.generic('No category found! Use the ``trivialist`` command for a valid list!'));
         }
 
-        const [difficulty, q] = args.slice(Number.isInteger(+args[0]) ? 1 : category[0].name.split(' ').length);
+        const [difficulty, q] = args.slice(isValidNumber(+args[0]) ? 1 : category[0].name.split(' ').length);
         if(!['easy', 'medium', 'hard'].includes(difficulty?.toLowerCase())) {
             return message.channel.send(this.Embed.generic('Invalid difficulty provided!'));
         } else if(!Number.isInteger(+q) || +q > 10) {

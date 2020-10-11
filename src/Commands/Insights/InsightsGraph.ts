@@ -30,7 +30,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message) {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
@@ -63,8 +63,6 @@ export default class extends Command {
             return message.channel.send(embed);
         }
 
-        const days = args.length > 0 && !isNaN(+args[0]) && Number.isSafeInteger(+args[0]) ? +args[0] : 5;
-
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
 
@@ -76,7 +74,7 @@ export default class extends Command {
 
         const mapped = Object.entries(guild.daily)
             .reverse()
-            .slice(0, days <= 100 ? days : 10)
+            .slice(0, 7)
             .reduce((a, [k, v]) => {
                 return a[0].push(k), a[1].push((v as { joined: number }).joined), a;
             }, [[], []]);

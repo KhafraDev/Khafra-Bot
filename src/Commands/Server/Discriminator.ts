@@ -1,5 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message, Collection, GuildMember } from "discord.js";
+import { isValidNumber } from "../../lib/Utility/Valid/Number";
 
 
 export default class extends Command {
@@ -21,7 +22,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(Number.isNaN(+args[0]) || !Number.isSafeInteger(+args[0])) {
+        if(!isValidNumber(+args[0])) {
             return message.channel.send(this.Embed.generic('Argument isn\'t a valid integer!'));
         }
 

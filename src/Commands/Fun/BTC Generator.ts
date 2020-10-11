@@ -1,5 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
+import { isValidNumber } from "../../lib/Utility/Valid/Number";
 
 
 export default class extends Command {
@@ -20,7 +21,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const btc = !isNaN(+args[0]) ? +args[0] : 1000;
+        const btc = isValidNumber(+args[0]) ? +args[0] : 1000;
         const embed = this.Embed.success()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');

@@ -1,5 +1,6 @@
 import { Command } from '../../Structures/Command';
 import { Message, TextChannel, NewsChannel } from 'discord.js';
+import { isValidNumber } from '../../lib/Utility/Valid/Number';
 
 
 export default class extends Command {
@@ -26,7 +27,7 @@ export default class extends Command {
         }
         
         const toDelete = +args.shift() + 1;
-        if(Number.isNaN(toDelete) || !Number.isSafeInteger(toDelete)) {
+        if(!isValidNumber(toDelete)) {
             return message.channel.send(this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 
