@@ -3,7 +3,7 @@ import { mkdirSync, createWriteStream, WriteStream } from 'fs';
 import { formatDate } from '../lib/Utility/Date';
 import { inspect } from 'util';
 
-const logPath = join(process.cwd(), 'build/src/lib/Logger');
+const logPath = join(process.cwd(), 'assets/Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories
 
 export class Logger {

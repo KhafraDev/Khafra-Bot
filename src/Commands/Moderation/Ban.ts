@@ -27,28 +27,58 @@ export default class extends Command {
             return message.channel.send(this.Embed.missing_perms.call(this));
         }
 
+        const user = message.mentions.users.filter(u => u.id !== message.guild.me.id).first();
         const id = !isNaN(+args[0]) 
             ? args[0]
-            : message.mentions.users.filter(u => u.id !== message.guild.me.id).first()?.id;
+            : user?.id;
         const clear = Math.round((ms(args[1] ?? '7d') ?? ms('7d')) / 86400000); // defaults to 7d worth of messages clearing
 
         if(!id) {
             return message.channel.send(this.Embed.generic(
                 'Invalid user mentioned or ID provided in the first argument!'
             ));
+        } else if(user) {
+            const member = message.guild.member(user);
+            if(member && !member.bannable) {
+                return message.channel.send(this.Embed.fail(`:( ${user} isn't bannable!`));
+            }
+        }
+
+        const msg = await message.channel.send(this.Embed.success(`
+        Are you sure you want to ban ${user ?? id}?
+
+        Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
+        `));
+
+        if(!msg) {
+            return;
+        }
+
+        const filter = (m: Message) => m.author.id === message.author.id &&
+                                       ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content?.toLowerCase());
+        const m = await message.channel.awaitMessages(filter, {
+            max: 1,
+            time: 20000
+        });
+
+        if(m.size === 0) {
+            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${user ?? id}!`));
+        } else if(['no', 'n', 'cancel', 'stop'].includes(m.first()?.content?.toLowerCase())) {
+            return msg.edit(this.Embed.fail('Command was canceled!'));
         }
 
         try {
             await message.guild.members.ban(id, {
                 days: parseInt(clear.toString()),
-                reason: args.slice(ms(args[1]) ? 2 : 1).join(' ')
+                reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
             });
-        } catch {
-            return message.channel.send(this.Embed.fail(`${id} isn't bannable!`));
+        } catch(e) {
+            console.log(e);
+            return message.channel.send(this.Embed.fail(`${user ?? id} isn't bannable!`));
         }
 
         return message.channel.send(this.Embed.success(`
-        ${id} has been banned from the guild and ${clear} days worth of messages have been removed.
+        ${user ?? id} has been banned from the guild and ${clear} days worth of messages have been removed.
         `));
     }
 }
