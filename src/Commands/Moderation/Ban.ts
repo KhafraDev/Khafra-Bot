@@ -29,7 +29,7 @@ export default class extends Command {
         }
 
         const user = message.mentions.users.filter(u => u.id !== message.guild.me.id).first();
-        const id = isValidNumber(+args[0])
+        const id = isValidNumber(+args[0], { allowUnsafe: true })
             ? args[0]
             : user?.id;
         const clear = Math.round((ms(args[1] ?? '7d') ?? ms('7d')) / 86400000); // defaults to 7d worth of messages clearing

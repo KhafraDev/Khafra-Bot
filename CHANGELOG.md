@@ -248,3 +248,4 @@
 * Add ``crypto`` command.
 * Fix ``Message#react`` Proxy.
 * Ban command has been re-worked.
+* Add in utility function for checking invalid numbers (Infinity, NaN, floats, unsafe integers, negatives).
