@@ -60,10 +60,10 @@ export const getMember = async (idOrName: string | number) => {
     }
 
     const collection = pool.db('khafrabot').collection('meepcraft');
-    return await collection.find(
+    return await collection.find<MeepMember>(
         { $or: [
             { username: idOrName },
             { id: idOrName }
         ] }
-    ).collation({ locale: 'en', strength: 2 }).toArray() as MeepMember[];
+    ).collation({ locale: 'en', strength: 2 }).toArray();
 }

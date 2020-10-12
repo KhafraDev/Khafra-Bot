@@ -29,7 +29,7 @@ export default class implements Event {
 
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');
-        const guild = await collection.findOne({ id: oldMember.guild.id }) as GuildSettings;
+        const guild = await collection.findOne<GuildSettings>({ id: oldMember.guild.id });
 
         if(!guild?.welcomeChannel) {
             return;

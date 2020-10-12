@@ -27,7 +27,7 @@ export default class extends Command {
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
-        const user = await collection.findOne({ id: message.author.id }) as PocketUser;
+        const user = await collection.findOne<PocketUser>({ id: message.author.id });
         if(!user) {
             return message.channel.send(this.Embed.fail(`
             You haven't set-up Pocket integration!

@@ -1,8 +1,8 @@
 import { Command } from "../../Structures/Command";
 import { join } from "path";
 import { Message } from "discord.js";
-import { mkdir, stat } from "fs/promises";
-import { Stats } from 'fs';
+import { stat } from "fs/promises";
+import { Stats, mkdirSync } from 'fs';
 import { execFile } from "child_process";
 import { pool } from "../../Structures/Database/Mongo";
 import { Insights } from "../../lib/types/Collections";
@@ -10,14 +10,14 @@ import { Insights } from "../../lib/types/Collections";
 const outDir = join(process.cwd(), 'build/src')
 const outPath = join(outDir, 'lib/Images/');
 const pyPath = join(process.cwd(), 'src/lib/Backend/Py/InsightsGraph.py');
-let updated = false;
+mkdirSync(outPath, { recursive: true });
 
 export default class extends Command {
     constructor() {
         super(
             [
                 'Insights: get a graph of the people who have joined today! The mis-matched colors are Discord\'s fault, I can\'t do anything about them!',
-                '10', ''
+                ''
             ],
             [ /* No extra perms needed */ ],
             {
@@ -35,11 +35,6 @@ export default class extends Command {
             && !this.isBotOwner(message.author.id)
         ) {
             return message.channel.send(this.Embed.missing_perms.call(this, true));
-        }
-
-        if(!updated) {
-            await mkdir(outPath, { recursive: true });
-            updated = true;
         }
 
         const filePath = join(outPath, message.guild.id + '.jpg');
@@ -66,9 +61,9 @@ export default class extends Command {
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
 
-        const guild = await collection.findOne({ id: message.guild.id }) as Insights;
+        const guild = await collection.findOne<Insights>({ id: message.guild.id });
 
-        if(!guild) {
+        if(!guild || Object.keys(guild?.daily ?? {}).length < 2) {
             return message.channel.send(this.Embed.fail('No insights available - yet!'));
         }
 
@@ -76,7 +71,8 @@ export default class extends Command {
             .reverse()
             .slice(0, 7)
             .reduce((a, [k, v]) => {
-                return a[0].push(k), a[1].push((v as { joined: number }).joined), a;
+                a[0].push(k.slice(0, -5)), a[1].push(v.joined)
+                return a;
             }, [[], []]);
 
         /* 

@@ -1,6 +1,9 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../../Structures/Command";
 import { Message } from "discord.js";
 import crypto from 'crypto';
+import { promisify } from 'util';
+
+const randInt = <(min: number, max: number) => Promise<number>> promisify(crypto.randomInt);
 
 export default class extends Command {
     constructor() {
@@ -43,14 +46,10 @@ export default class extends Command {
             ));
         }
 
-        crypto.randomInt(min, max, (err, num) => {
-            if(err) {
-                return message.channel.send(this.Embed.fail(err.toString()));
-            }
-
-            return message.channel.send(this.Embed.success(`
-            Your number is \`\`${num}\`\`!
-            `));
-        });
+        const num = await randInt(min, max);
+       
+        return message.channel.send(this.Embed.success(`
+        Your number is \`\`${num}\`\`!
+        `));
     }
 }

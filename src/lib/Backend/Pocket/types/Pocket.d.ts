@@ -25,14 +25,12 @@ export type PocketArticle = {
     listen_duration_estimate: number
 }
 
-type PocketList = {
-    [key: string]: PocketArticle 
-}
-
 export type PocketGetResults = {
     status: number,
     complete: number,
-    list: PocketList[],
+    list: {
+        [key: string]: PocketArticle
+    },
     error: string | null,
     search_meta: { search_type: string },
     since: number

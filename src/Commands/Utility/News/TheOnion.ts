@@ -38,7 +38,7 @@ export default class extends Command {
             if(!exists) {
                 message.channel.startTyping();
                 fetching = true;
-                const items = await articlesFromSitemap() as Onion[];
+                const items = await articlesFromSitemap();
                 await collection.insertMany(items);
                 fetching = false;
                 message.channel.stopTyping(true);
@@ -47,7 +47,7 @@ export default class extends Command {
             updated = true;
         }
 
-        const random = await collection.aggregate([ { $sample: { size: 1 } } ]).toArray() as Onion[];
+        const random = await collection.aggregate<Onion>([ { $sample: { size: 1 } } ]).toArray();
         return message.channel.send(this.Embed.success(`[${random[0].title}](${random[0].href})`));
     }
 }

@@ -31,7 +31,7 @@ export default class extends Command {
         if(!updated) {
             const client = await pool.commands.connect();
             const collection = client.db('khafrabot').collection('bible');
-            const exists = await collection.findOne({}) as BibleExcerpt;
+            const exists = await collection.findOne<BibleExcerpt>({});
             if(!exists) {
                 const parsed = await parseBible();
                 await collection.insertMany(parsed);
@@ -69,11 +69,11 @@ export default class extends Command {
 
         if(args.length !== 0) {
             const short = Object.entries(titles).filter(([k]) => k === toUpperCase(book[0]));
-            const item = await collection.findOne({
+            const item = await collection.findOne<BibleExcerpt>({
                 book: toUpperCase(short[0][1]),
                 chapter: +chapter,
                 verse: +verse
-            }) as BibleExcerpt;
+            });
 
             if(!item) {
                 return message.channel.send(this.Embed.fail('No verse found!'));
@@ -84,7 +84,7 @@ export default class extends Command {
 
             return message.channel.send(embed);
         } else {
-            const random = await collection.aggregate([ { $sample: { size: 1 } } ]).toArray() as BibleExcerpt[];
+            const random = await collection.aggregate<BibleExcerpt>([ { $sample: { size: 1 } } ]).toArray();
             const long = Object.entries(titles).filter(([, v]) => v.toLowerCase() === random[0].book.toLowerCase());
             const embed = this.Embed.success(random[0].content)
                 .setTitle(`${long[0][0]} ${random[0].chapter}:${random[0].verse}`);

@@ -64,7 +64,7 @@ export default class implements Event {
         const member = await reaction.message.guild.members.fetch(user.id); 
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');
-        const guild = await collection.findOne({
+        const guild = await collection.findOne<GuildSettings>({
             $and: [
                 { id: reaction.message.guild.id },
                 { 'roleReacts.message': {
@@ -74,7 +74,7 @@ export default class implements Event {
                     $eq: reaction.emoji.name
                 } }
             ]
-        }) as GuildSettings;
+        });
             
         if(!guild) { // no react role found
             return;

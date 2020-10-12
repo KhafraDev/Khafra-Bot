@@ -42,10 +42,10 @@ export default class extends Command {
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const tag = await collection.findOne({
+        const tag = await collection.findOne<Tags>({
             id: message.guild.id,
             name: tagCmdOrName
-        }) as Tags;
+        });
 
         if(!tag) {
             return message.channel.send(this.Embed.fail(`

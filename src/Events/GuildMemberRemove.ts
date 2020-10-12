@@ -34,7 +34,7 @@ export default class implements Event {
             { upsert: true }
         );
 
-        const server = await settingsCollection.findOne({ id: member.guild.id }) as GuildSettings;
+        const server = await settingsCollection.findOne<GuildSettings>({ id: member.guild.id });
         if(!server.welcomeChannel) {
             return;
         }

@@ -41,7 +41,7 @@ export default class extends Command {
 
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
-        const value = await collection.findOne({ id: message.guild.id }) as Insights;
+        const value = await collection.findOne<Insights>({ id: message.guild.id });
         if(!value) {
             return message.channel.send(this.Embed.fail('No insights available - yet!'));
         } else if(Object.keys(value).length < 2) {

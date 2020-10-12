@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../../Structures/Command';
 import { Message } from 'discord.js';
 
 export default class extends Command {

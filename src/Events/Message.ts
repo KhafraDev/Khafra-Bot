@@ -44,7 +44,7 @@ export default class implements Event {
     
         const client =      isDM ? null : await pool.settings.connect();
         const collection =  isDM ? null : client.db('khafrabot').collection('settings');
-        const guild =       isDM ? null : await collection.findOne({ id: message.guild.id }) as GuildSettings;
+        const guild =       isDM ? null : await collection.findOne<GuildSettings>({ id: message.guild.id });
 
         const prefix = selfMentioned ? null : isDM ? defaultPrefix : (guild?.prefix ?? defaultPrefix);
         if(!selfMentioned && !commandName.startsWith(prefix)) { // when mentioned, command has no prefix
