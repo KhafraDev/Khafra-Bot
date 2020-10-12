@@ -45,7 +45,7 @@ const cryptoUpdate = async () => {
 
         if(res.ok) {
             const json = (await res.json() as CoinGeckoRes[]).map(cc => ({ [cc.id]: cc }));
-            if(json === []) {
+            if(json.length === 0) {
                 break;
             }
             Object.assign(cache, ...json); // overwrites old values
