@@ -2,7 +2,7 @@ import { chunk } from '../Utility/Array';
 
 export class TicTacToe {
     turn: 'X' | 'O' = 'X';
-    box: { [key: number]: 'X' | 'O' | ' ' } = {
+    box: Record<string, 'X' | 'O' | ' ' > = {
         1: ' ',
         2: ' ',
         3: ' ',

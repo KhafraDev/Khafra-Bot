@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 
-const months: { [key: number]: string } = {
+const months: Record<number, string> = {
     1: 'january',
     2: 'february',
     3: 'march',
@@ -19,7 +19,7 @@ const sitemap = () => {
     const year = new Date().getFullYear();
     const month = Object.keys(months).indexOf(new Date().getMonth() + 1 + '') + 1;
 
-    const map: { [key: number]: string[] } = {};
+    const map: Record<string, string[]> = {};
      
     for(let i = 2002; i < year + 1; i++) { // years
         map[i] = Array.from(
@@ -32,7 +32,7 @@ const sitemap = () => {
 }
 
 const sitemapURLsFromHTML = async () => {
-    const parsed: { [key: string]: string[] } = {};
+    const parsed: Record<string, string[]> = {};
 
     for(const [year, urls] of Object.entries(sitemap())) {
         for(const url of urls) {

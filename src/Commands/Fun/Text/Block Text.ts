@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command';
 import { Message } from 'discord.js';
 
-const letters: { [key: string]: string } = {
+const letters: Record<string, string> = {
     a: '🇦', b: '🇧', c: '🇨', d: '🇩',
     e: '🇪', f: '🇫', g: '🇬', h: '🇭',
     i: '🇮', j: '🇯', k: '🇰', l: '🇱',

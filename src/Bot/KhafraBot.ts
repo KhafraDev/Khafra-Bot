@@ -1,7 +1,7 @@
 import { Command } from '../Structures/Command';
 import { Client, ClientOptions, ClientEvents } from 'discord.js';
-import { join } from 'path';
-import { readdirSync, statSync } from 'fs';
+import { resolve } from 'path';
+import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event';
 
 class KhafraClient extends Client {
@@ -12,35 +12,53 @@ class KhafraClient extends Client {
         super(args);
     }
 
-    /**
-     * Load commands
-     */
-    async loadCommands(dir = 'build/src/Commands') {
-        for(const path of readdirSync(dir)) {
-            const curr = join(dir, path);
-            if(statSync(curr).isDirectory()) {
-                this.loadCommands(curr);
-            } else {
-                if(curr.endsWith('.js')) {
-                    const { default: c } = await import(join(process.cwd(), curr));
-                    const build = new c() as Command;
-
-                    KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
-                    (build.settings.aliases ?? []).forEach(alias => KhafraClient.Commands.set(alias, build));
+    load = async (dir: string) => {
+        const ini = await readdir(dir);
+        const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
+    
+        while(ini.length !== 0) {        
+            for(const d of ini) {
+                const path = resolve(dir, d);
+                ini.splice(ini.indexOf(d), 1); // remove from array
+                const stats = await stat(path);
+    
+                if(stats.isDirectory()) {
+                    ini.push(...(await readdir(path)).map(f => resolve(path, f)));
+                } else if(stats.isFile() && d.endsWith('.js')) {
+                    f.push(path);
                 }
             }
         }
+    
+        return f;
+    }
 
+    /**
+     * Load commands
+     */
+    async loadCommands() {
+        const commands = await this.load('build/src/Commands');
+        for(const command of commands) {
+            const { default: c } = await import(command);
+            const build = new c() as Command;
+
+            KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
+            build.settings.aliases?.forEach(alias => KhafraClient.Commands.set(alias, build));
+        }
+
+        console.log(`Loaded ${commands.length} commands!`);
         return KhafraClient.Commands;
     }
 
-    async loadEvents(dir = 'build/src/Events') {
-        for(const event of readdirSync(dir)) {
-            const { default: e } = await import(join(process.cwd(), dir, event));
+    async loadEvents() {
+        const events = await this.load('build/src/Events');
+        for(const event of events) {
+            const { default: e } = await import(event);
             const build = new e() as Event;
             KhafraClient.Events.set(build.name, build);
         }
 
+        console.log(`Loaded ${events.length} events!`);
         return KhafraClient.Events;
     }
 

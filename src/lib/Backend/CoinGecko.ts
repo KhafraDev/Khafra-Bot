@@ -33,7 +33,7 @@ interface CoinGeckoRes {
     last_updated: Date
 }
 
-const cache: { [key: string]: CoinGeckoRes } = {};
+const cache: Record<string, CoinGeckoRes> = {};
 
 const cryptoUpdate = async () => {
     for(let i = 1;;i++) {

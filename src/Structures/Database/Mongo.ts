@@ -1,8 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-type MongoPool = {
-    [key: string]: MongoDB
-}
+type MongoPool = Record<string, MongoDB>;
 
 const anonymousURL = 'mongodb://localhost:27017/';
 const authURL = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:27017/`;

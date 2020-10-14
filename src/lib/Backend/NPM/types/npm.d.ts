@@ -1,20 +1,18 @@
+type KeyString = Record<string, string>;
+
 interface Package {
     _id: string,
     _rev: string,
     name: string,
     description: string,
-    'dist-tags': {
-        [key: string]: string
-    },
+    'dist-tags': KeyString,
     versions: {
         [key: string]: {
             name: string
             version: string
             description: string
             main?: string
-            scripts: {
-                [key: string]: string
-            }
+            scripts: KeyString
             repository: {
                 type: string
                 url: string
@@ -28,12 +26,8 @@ interface Package {
                 url: string
             }
             homepage: string
-            devDependencies: {
-                [key: string]: string
-            }
-            dependencies: {
-                [key: string]: string
-            }
+            devDependencies: KeyString
+            dependencies: KeyString
             gitHead?: string
             _id: string
             _shasum?: string
@@ -60,9 +54,7 @@ interface Package {
         name: string
         email: string
     }[],
-    time: {
-        [key: string]: string
-    },
+    time: KeyString,
     homepage: string,
     keywords: string[],
     repository: {
@@ -77,9 +69,7 @@ interface Package {
     },
     license: string,
     readmeFilename: string,
-    users: {
-        [key: string]: boolean
-    }
+    users: Record<string, boolean>
 }
 
 interface NPMError {

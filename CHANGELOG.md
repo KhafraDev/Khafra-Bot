@@ -249,3 +249,6 @@
 * Fix ``Message#react`` Proxy.
 * Ban command has been re-worked.
 * Add in utility function for checking invalid numbers (Infinity, NaN, floats, unsafe integers, negatives).
+* Replace ``html-entities`` with ``entities``. 
+* Use built in ``Record`` type instead of ``{ [key: ...]: ... }``.
+* New command loader that removes sync ``fs`` methods and does not recursively call itself.

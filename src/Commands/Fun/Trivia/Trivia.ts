@@ -3,11 +3,10 @@ import { Message, GuildMember } from "discord.js";
 import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia";
 import { shuffle } from '../../../lib/Utility/Array';
 import { pool } from "../../../Structures/Database/Mongo";
-import { AllHtmlEntities } from 'html-entities';
+import { decode } from 'entities';
 import { isValidNumber } from "../../../lib/Utility/Valid/Number";
 
-const entities = new AllHtmlEntities();
-const games: { [key: string]: string } = {};
+const games: Record<string, string> = {};
 
 export default class extends Command {
     constructor() {
@@ -62,7 +61,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.fail('No questions found. 😦'));
         }
         
-        const guesses: { [key: number]: string[] } = {}
+        const guesses: Record<string, string[]> = {}
         const winner: GuildMember[] = [];
 
         let msg: Message = null;
@@ -74,12 +73,12 @@ export default class extends Command {
                 return;
             }
             
-            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]).map(e => entities.decode(e));
+            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]).map(e => decode(e, 1));
             const index = questions.indexOf(question);
             const embed = this.Embed.success()
                 .setTitle(`${question.category} - ${question.difficulty}`)
                 .setDescription(`
-                \`\`${entities.decode(question.question)}\`\`
+                \`\`${decode(question.question, 1)}\`\`
                 Answers:
                 ${answers.map((a, i) => `**${i + 1}:** ${a}`).join('\n')}
                 `);
@@ -120,7 +119,7 @@ export default class extends Command {
         const won = winner.reduce((o, n) => {
             n.id in o ? (o[n.id]['n'] += 1) : (o[n.id] = { n: 1, m: n });
             return o;
-        }, {} as { [key: string]: { n: number, m: GuildMember } });
+        }, {} as Record<string, { n: number, m: GuildMember }>);
     
         if(!msg.deleted) {
             if(Object.values(won).length === 0) {

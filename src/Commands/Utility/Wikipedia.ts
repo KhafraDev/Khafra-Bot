@@ -1,10 +1,8 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
 import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia";
-import { AllHtmlEntities } from "html-entities";
+import { decode } from 'entities';
 import { WikipediaSearch } from "../../lib/Backend/Wikipedia/types/Wikipedia";
-
-const all = new AllHtmlEntities();
 
 export default class extends Command {
     constructor() {
@@ -46,7 +44,7 @@ export default class extends Command {
             `)
                 .setTitle(wiki.title)
                 .setThumbnail(wiki.originalimage?.source ?? wiki.thumbnail?.source ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Khafra.jpg/800px-Khafra.jpg')
-                .setTimestamp(new Date(wiki.timestamp ?? Date.now()))
+                .setTimestamp(wiki.timestamp ?? Date.now())
                 .setFooter('Last updated');
 
             return message.channel.send(embed);
@@ -57,7 +55,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.fail(`No results found!`));
         }
 
-        const embed = this.Embed.success(all.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048)))
+        const embed = this.Embed.success(decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048), 1))
             .setTitle(wiki.pages[0].title)
             .setThumbnail(wiki.pages[0].thumbnail?.url ? 'https:' + wiki.pages[0].thumbnail?.url : null);
 

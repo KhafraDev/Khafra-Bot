@@ -21,7 +21,7 @@ type Localizations = {
     id: number,
     name: {
         default: string,
-        localizations: { [key: string]: string }
+        localizations: Record<string, string>
     },
     is_primary: boolean
 }

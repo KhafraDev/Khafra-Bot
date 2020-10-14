@@ -27,9 +27,7 @@ export interface WikipediaError {
         max: number
         highmax: number
     }
-    messageTranslations: {
-        [key: string]: string
-    }
+    messageTranslations: Record<string, string>
     httpCode: number
     httpReason: string
 }

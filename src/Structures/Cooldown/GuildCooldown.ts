@@ -1,5 +1,5 @@
 export class GuildCooldown {
-    cache: Map<string, { [key: string]: number }> = new Map();
+    cache: Map<string, Record<string, number>> = new Map();
     MAX: number;
     formatted: string;
 

@@ -1,6 +1,6 @@
 import { chunk } from '../Utility/Array';
 
-const yo: { [key: number]: string } = {
+const yo: Record<string, string> = {
     '10': ':zero:',
     '9': 'bomb',
     '0': 'zero',

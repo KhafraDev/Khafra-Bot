@@ -24,7 +24,7 @@ export interface Warnings {
     _id: ObjectId
     id: string,
     limit?: number
-    users:{
+    users: {
         [key: string]: {
             points: number
             reasons:{
