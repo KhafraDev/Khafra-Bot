@@ -1,6 +1,6 @@
 import { Command } from "../../Structures/Command";
 import { Message } from "discord.js";
-import KhafraClient from "../../Bot/KhafraBot";
+import { KhafraClient } from "../../Bot/KhafraBot";
 
 export default class extends Command {
     constructor() {

@@ -8,7 +8,7 @@ import { Sanitize } from "../lib/Utility/SanitizeCommand";
 import { pool } from "../Structures/Database/Mongo";
 import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger";
-import KhafraClient from "../Bot/KhafraBot";
+import { KhafraClient } from "../Bot/KhafraBot";
 import { Command } from "../Structures/Command";
 import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
 

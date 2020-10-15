@@ -2,8 +2,8 @@ import './lib/Utility/Rejections';
 import './Structures/Proxy/ChannelSend';
 import './Structures/Proxy/React';
 
-import KhafraClient from './Bot/KhafraBot';
-import loadEnv from './lib/Utility/load.env';
+import { KhafraClient } from './Bot/KhafraBot';
+import { loadEnv } from './lib/Utility/load.env';
 import { Logger } from './Structures/Logger';
 import { trim } from './lib/Utility/Template';
 import { ClientEvents } from 'discord.js';

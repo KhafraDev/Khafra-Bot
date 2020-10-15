@@ -252,3 +252,5 @@
 * Replace ``html-entities`` with ``entities``. 
 * Use built in ``Record`` type instead of ``{ [key: ...]: ... }``.
 * New command loader that removes sync ``fs`` methods and does not recursively call itself.
+* Environmental variables are no longer enumerable on ``process.env`` and fixes bad new line regex.
+* Remove last ``export default`` syntax other than in commands. 

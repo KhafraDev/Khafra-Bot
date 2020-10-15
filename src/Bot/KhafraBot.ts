@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event';
 
-class KhafraClient extends Client {
+export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
 
@@ -71,5 +71,3 @@ class KhafraClient extends Client {
         await this.login(process.env.TOKEN);
     }
 }
-
-export default KhafraClient;
