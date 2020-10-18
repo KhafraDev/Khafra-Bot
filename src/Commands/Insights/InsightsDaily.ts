@@ -29,7 +29,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         }
 
         const days = args.length === 1 ? Math.floor((ms(args[0]) / 86400000)) : 5;

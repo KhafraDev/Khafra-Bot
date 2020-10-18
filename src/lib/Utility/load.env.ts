@@ -17,8 +17,8 @@ export const loadEnv = async () => {
     // keys aren't assigned to the process.env object
     // which means env variables set by user aren't enumerable
     process.env = new Proxy(process.env, {
-        get: (_ /* process.env */, p /* prop */) => {
-            return p in kvPair ? kvPair[p] : undefined;
+        get: (env /* process.env */, p /* prop */) => {
+            return p in kvPair ? kvPair[p] : env[p as string];
         }
     });
 

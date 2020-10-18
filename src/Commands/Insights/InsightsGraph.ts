@@ -34,7 +34,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         }
 
         const filePath = join(outPath, message.guild.id + '.jpg');

@@ -25,7 +25,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms.call(this));
+            return message.channel.send(this.Embed.missing_perms());
         }
 
         const user = message.mentions.users.filter(u => u.id !== message.guild.me.id).first();

@@ -14,5 +14,17 @@ export const trim = (...s: [TemplateStringsArray, ...(string | number)[]]) => {
         str += s[0][i-1] + (s[i] ?? '');
     }
     str += s[0].slice(s.length - 1).join('');
-    return str.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim();
+    return str.split(/\r\n|\n/g).map(e => e.trim()).join(' ').trim();
+}
+
+/**
+ * Strip leading indents from a multi-lined template literal.
+ */
+export const stripIndents = (...s: [TemplateStringsArray, ...(string | number)[]]) => {
+    let str = '';
+    for(let i = 1; i < s.length; i++) {
+        str += s[0][i-1] + (s[i] ?? '');
+    }
+    str += s[0].slice(s.length - 1).join('');
+    return str.split(/\r\n|\n/g).map(e => e.trimStart()).join('\n').trim();
 }

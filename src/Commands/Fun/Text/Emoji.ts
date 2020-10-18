@@ -20,7 +20,7 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms.call(this));
+            return message.channel.send(this.Embed.missing_perms());
         }
 
         const guildEmojis   = args.slice(0, 5).join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g) ?? [];

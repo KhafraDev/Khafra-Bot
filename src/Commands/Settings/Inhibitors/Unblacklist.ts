@@ -27,7 +27,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         } 
 
         const [ f, type, mentionOrID, commandName ] = args;

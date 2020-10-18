@@ -1,3 +1,3 @@
-export interface HastebinPost {
+export type HastebinPost = {
     key: string
 }

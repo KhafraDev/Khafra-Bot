@@ -1,6 +1,5 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../../Structures/Command";
 import { Message, TextChannel, PermissionString } from "discord.js";
-
 import { parse } from "twemoji-parser";
 
 export default class extends Command {
@@ -26,7 +25,7 @@ Option 2: No."`
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         }
 
         let channel: TextChannel = message.mentions.channels.first();

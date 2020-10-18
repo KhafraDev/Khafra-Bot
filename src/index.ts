@@ -1,6 +1,7 @@
 import './lib/Utility/Rejections';
 import './Structures/Proxy/ChannelSend';
 import './Structures/Proxy/React';
+import './Structures/Proxy/Edit';
 
 import { KhafraClient } from './Bot/KhafraBot';
 import { loadEnv } from './lib/Utility/load.env';

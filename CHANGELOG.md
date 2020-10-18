@@ -254,3 +254,6 @@
 * New command loader that removes sync ``fs`` methods and does not recursively call itself.
 * Environmental variables are no longer enumerable on ``process.env`` and fixes bad new line regex.
 * Remove last ``export default`` syntax other than in commands. 
+* Add in ``awards`` command which calculates the hypothetical cost of all the awards on a reddit post.
+* Fixed commands still using the old embed structure.
+* Add in ``strawpoll`` command. This command is awesome.
