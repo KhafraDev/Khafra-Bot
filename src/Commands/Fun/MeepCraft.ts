@@ -1,14 +1,54 @@
 import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { agent } from '../../lib/Utility/Proxy.js';
-import fetch from 'node-fetch';
-import { Agent } from "https";
-import AbortController from 'node-abort-controller';
-import { AbortSignal } from "node-fetch/externals";
+import { request } from 'http';
+import { get, RequestOptions } from 'https';
+
+const auth = 'Basic ' + Buffer.from(
+    process.env.PROXY_USERNAME + ':' + process.env.PROXY_PASSWORD
+).toString('base64');
 
 const latest = {
     fetched: 0,
     results: -1,
+}
+
+/** 
+ * (Mostly) Stolen from
+ * @see https://stackoverflow.com/a/49611762
+ */
+const fetchMeepOnline = () => {
+    return new Promise<string>((res, rej) => {
+        request({
+            host: 'us5057.nordvpn.com',         // IP address of proxy server
+            port: 80,                           // port of proxy server
+            method: 'CONNECT',
+            path: 'forum.meepcraft.com:443',    // some destination, add 443 port for https!
+            headers: {
+                'Proxy-Authorization': auth
+            },
+        })
+        .on('connect', (resp, socket) => {
+            if(resp.statusCode === 200) {        // connected to proxy server
+                const req = get({
+                    host: 'forum.meepcraft.com',
+                    socket: socket,             // using a tunnel
+                    agent: false,      
+                    path: '/game/query.php'     // specify path to get from server
+                } as RequestOptions, resp => {
+                    const chunks = Array<Uint8Array>();
+                    resp.on('data', c => chunks.push(c));
+                    resp.on('end', () => res(Buffer.concat(chunks).toString('utf-8')));
+                });
+
+                setTimeout(() => {
+                    req.abort();
+                    rej('Request aborted!');
+                }, 30000);
+            }
+        })
+        .on('error', rej)
+        .end();
+    });
 }
 
 export default class extends Command {
@@ -37,32 +77,16 @@ export default class extends Command {
 
             return message.channel.send(embed);
         }
-        
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 30000);
 
         let players: { playersOnline: number };
         try {
-            const res = await fetch('https://forum.meepcraft.com/game/query.php', {
-                // Love when the only available package for proxying connections
-                // hasn't been properly updated in years. 
-                // https://github.com/TooTallNate/node-https-proxy-agent/issues/108
-                agent: agent as unknown as Agent,
-                signal: controller.signal as AbortSignal
-            });
-            players = await res.json();
+            const res = await fetchMeepOnline();
+            players = JSON.parse(res);
         } catch(e) {
-            if(controller.signal.aborted === true) {
-                return message.channel.send(this.Embed.fail(`
-                Request was aborted. Likely caused by the proxy which is being used currently.
-                `));
-            }
-
             this.logger.log(e);
             return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        clearTimeout(timeout); // so it doesn't abort after the request succeeded!
         latest.fetched = Date.now();
         latest.results = players.playersOnline;
 
