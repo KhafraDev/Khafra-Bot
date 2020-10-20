@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../Structures/Command.js';
 import { Message, TextChannel, NewsChannel } from 'discord.js';
-import { isValidNumber } from '../../lib/Utility/Valid/Number';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 
 export default class extends Command {

@@ -1,9 +1,9 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 import { join } from "path";
 import { readdirSync } from "fs";
 import { readFile } from "fs/promises";
-import { realShuffle } from "../../lib/Utility/Array";
+import { realShuffle } from "../../lib/Utility/Array.js";
 
 const base = join(process.cwd(), 'assets/Hangman');
 const lists = readdirSync(base).map(f => f.replace('.txt', ''));

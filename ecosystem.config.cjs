@@ -4,7 +4,7 @@ const { join } = require('path');
 module.exports = {
   	apps : [{
     	name: 'Khafra-Bot',
-    	script: join(process.cwd(), 'build/src/index.js'),
+    	script: join(process.cwd(), 'build/index.js'),
 
     	// Options reference: https://pm2.keymetrics.io/docs/usage/application-declaration/
     	// args: 'one two',

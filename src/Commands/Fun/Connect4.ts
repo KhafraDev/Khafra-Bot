@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, User, MessageReaction } from "discord.js";
-import { Connect4 } from "../../lib/Backend/Connect4/Connect4";
+import { Connect4 } from "../../lib/Backend/Connect4/Connect4.js";
 
 const turns = {
     1: '1️⃣', 

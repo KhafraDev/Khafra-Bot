@@ -1,9 +1,9 @@
-import { Event } from "../Structures/Event";
+import { Event } from "../Structures/Event.js";
 import { ClientEvents, GuildMember, TextChannel, Permissions } from "discord.js";
-import { pool } from "../Structures/Database/Mongo";
+import { pool } from "../Structures/Database/Mongo.js";
 import { GuildSettings } from "../lib/types/Collections";
-import { Logger } from "../Structures/Logger";
-import { Command } from '../Structures/Command';
+import { Logger } from "../Structures/Logger.js";
+import { Command } from '../Structures/Command.js';
 import { inspect } from "util";
 
 const Embed = Command.Embed;

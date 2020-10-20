@@ -1,4 +1,4 @@
-import { chunk } from '../Utility/Array';
+import { chunk } from '../Utility/Array.js';
 
 const yo: Record<string, string> = {
     '10': ':zero:',

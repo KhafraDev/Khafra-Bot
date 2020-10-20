@@ -1,4 +1,4 @@
-import { Event } from "../Structures/Event";
+import { Event } from "../Structures/Event.js";
 import { 
     MessageReaction, 
     User, 
@@ -6,11 +6,11 @@ import {
     ClientEvents, 
     Permissions
 } from "discord.js";
-import { pool } from "../Structures/Database/Mongo";
+import { pool } from "../Structures/Database/Mongo.js";
 import { GuildSettings } from "../lib/types/Collections";
-import { Logger } from "../Structures/Logger";
-import { Command } from '../Structures/Command';
-import { trim } from "../lib/Utility/Template";
+import { Logger } from "../Structures/Logger.js";
+import { Command } from '../Structures/Command.js';
+import { trim } from "../lib/Utility/Template.js";
 
 const Embed = Command.Embed;
 

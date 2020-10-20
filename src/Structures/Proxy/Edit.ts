@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
-import { Logger } from "../Logger";
-import { trim } from "../../lib/Utility/Template";
+import { Logger } from "../Logger.js";
+import { trim } from "../../lib/Utility/Template.js";
 
 const logger = new Logger('Edit Proxy');
 
@@ -12,7 +12,6 @@ Message.prototype.edit = new Proxy(Message.prototype.edit, {
             const m = await target.call(thisArg, ...args);
             return m;
         } catch(e) {
-            console.log(e);
             logger.log(trim`
             Message Type: "${thisArg.type}"
             | Message ID: "${thisArg.id}"

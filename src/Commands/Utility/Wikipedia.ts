@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia";
-import { decode } from 'entities';
+import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia.js";
+import entities from 'entities'; // cjs module
 import { WikipediaSearch } from "../../lib/Backend/Wikipedia/types/Wikipedia";
 
 export default class extends Command {
@@ -55,7 +55,7 @@ export default class extends Command {
             return message.channel.send(this.Embed.fail(`No results found!`));
         }
 
-        const embed = this.Embed.success(decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048), 1))
+        const embed = this.Embed.success(entities.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048), 1))
             .setTitle(wiki.pages[0].title)
             .setThumbnail(wiki.pages[0].thumbnail?.url ? 'https:' + wiki.pages[0].thumbnail?.url : null);
 

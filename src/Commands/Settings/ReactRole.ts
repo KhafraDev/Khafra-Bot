@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { 
     Message, 
     Channel, 
@@ -6,8 +6,8 @@ import {
     TextChannel, 
     MessageMentions 
 } from "discord.js";
-import { parse } from "twemoji-parser";
-import { pool } from "../../Structures/Database/Mongo";
+import twemoji from "twemoji-parser"; // cjs module
+import { pool } from "../../Structures/Database/Mongo.js";
 
 export default class extends Command {
     constructor() {
@@ -44,7 +44,7 @@ export default class extends Command {
         } 
 
         /*** Emoji that will give role */
-        const e = parse(emoji).shift()?.text;
+        const e = twemoji.parse(emoji).shift()?.text;
         if(e === undefined) {
             return message.channel.send(this.Embed.generic());
         }

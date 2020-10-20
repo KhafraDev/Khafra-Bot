@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { shuffle } from '../../lib/Utility/Array';
+import { shuffle } from '../../lib/Utility/Array.js';
 
 const fruits = ['🍎', '🍊','🍌', '🍉', '🍇', '🍑'];
 

@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { agent } from '../../lib/Utility/Proxy';
+import { agent } from '../../lib/Utility/Proxy.js';
 import fetch from 'node-fetch';
 import { Agent } from "https";
 import AbortController from 'node-abort-controller';

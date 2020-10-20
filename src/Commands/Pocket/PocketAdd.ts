@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 
-import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+import { pool } from "../../Structures/Database/Mongo.js";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
 import { PocketAddResults } from "../../lib/Backend/Pocket/types/Pocket";
 import { URL } from "url";
 import { PocketUser } from "../../lib/types/Collections";

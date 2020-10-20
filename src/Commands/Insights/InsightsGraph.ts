@@ -1,10 +1,10 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { join } from "path";
 import { Message } from "discord.js";
 import { stat } from "fs/promises";
 import { Stats, mkdirSync } from 'fs';
 import { execFile } from "child_process";
-import { pool } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Insights } from "../../lib/types/Collections";
 
 const outDir = join(process.cwd(), 'build/src')

@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo";
-import { titleRegex, titles, parseBible } from "../../lib/Backend/Bible/Bible";
+import { pool } from "../../Structures/Database/Mongo.js";
+import { titleRegex, titles, parseBible } from "../../lib/Backend/Bible/Bible.js";
 
 import { BibleExcerpt } from "../../lib/types/Collections";
 

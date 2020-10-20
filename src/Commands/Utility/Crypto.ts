@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
-import { getCurrency, setCryptoInterval } from "../../lib/Backend/CoinGecko";
+import { Command } from "../../Structures/Command.js";
+import { getCurrency, setCryptoInterval } from "../../lib/Backend/CoinGecko.js";
 import { Message } from "discord.js";
-import { formatDate } from "../../lib/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date.js";
 
 setCryptoInterval(60 * 1000 * 5); // 5 minutes
 

@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { mkdirSync, createWriteStream, WriteStream } from 'fs';
-import { formatDate } from '../lib/Utility/Date';
+import { formatDate } from '../lib/Utility/Date.js';
 import { inspect } from 'util';
 
 const logPath = join(process.cwd(), 'assets/Logger');

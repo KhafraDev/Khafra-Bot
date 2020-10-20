@@ -1,10 +1,10 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message, GuildMember } from "discord.js";
-import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia";
-import { shuffle } from '../../../lib/Utility/Array';
-import { pool } from "../../../Structures/Database/Mongo";
-import { decode } from 'entities';
-import { isValidNumber } from "../../../lib/Utility/Valid/Number";
+import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia.js";
+import { shuffle } from '../../../lib/Utility/Array.js';
+import { pool } from "../../../Structures/Database/Mongo.js";
+import entities from 'entities'; // cjs module
+import { isValidNumber } from "../../../lib/Utility/Valid/Number.js";
 
 const games: Record<string, string> = {};
 
@@ -73,12 +73,12 @@ export default class extends Command {
                 return;
             }
             
-            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]).map(e => decode(e, 1));
+            const answers = shuffle([question.correct_answer, ...question.incorrect_answers]).map(e => entities.decode(e, 1));
             const index = questions.indexOf(question);
             const embed = this.Embed.success()
                 .setTitle(`${question.category} - ${question.difficulty}`)
                 .setDescription(`
-                \`\`${decode(question.question, 1)}\`\`
+                \`\`${entities.decode(question.question, 1)}\`\`
                 Answers:
                 ${answers.map((a, i) => `**${i + 1}:** ${a}`).join('\n')}
                 `);

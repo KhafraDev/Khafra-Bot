@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../Structures/Command.js';
 import { Message, GuildMember, Activity } from 'discord.js';
-import { formatDate } from '../../lib/Utility/Date';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];

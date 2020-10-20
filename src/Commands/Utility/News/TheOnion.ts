@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message } from "discord.js";
-import { pool } from "../../../Structures/Database/Mongo";
+import { pool } from "../../../Structures/Database/Mongo.js";
 
-import { articlesFromSitemap } from "../../../lib/Backend/TheOnion/TheOnion";
+import { articlesFromSitemap } from "../../../lib/Backend/TheOnion/TheOnion.js";
 import { Onion } from "../../../lib/types/Collections";
 
 let fetching = false;

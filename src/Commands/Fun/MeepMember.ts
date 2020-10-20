@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { getMember } from "../../lib/Backend/MeepCraft/MeepCraft";
+import { getMember } from "../../lib/Backend/MeepCraft/MeepCraft.js";
 import { parse } from "url";
 
 export default class extends Command {

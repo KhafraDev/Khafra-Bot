@@ -1,22 +1,21 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import ms from 'ms';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Ban a member from the guild.',
-                '@user 3d for a good reason',
-                '@user 0 bye!',
-                '239566240987742220 7d'
+                'Softban a member (bans and instantly unbans them, clearing recent messages).',
+                '@user for a good reason',
+                '@user bye!',
+                '239566240987742220'
             ],
             [ 'BAN_MEMBERS' ],
             {
-                name: 'ban', 
+                name: 'softban', 
                 folder: 'Moderation',
-                aliases: [ 'bna' ],
+                aliases: [ 'softbna' ],
                 args: [1],
                 guildOnly: true
             }
@@ -32,7 +31,6 @@ export default class extends Command {
         const id = isValidNumber(+args[0], { allowUnsafe: true })
             ? args[0]
             : user?.id;
-        const clear = Math.round((ms(args[1] ?? '7d') ?? ms('7d')) / 86400000); // defaults to 7d worth of messages clearing
 
         if(!id) {
             return message.channel.send(this.Embed.generic(
@@ -46,7 +44,7 @@ export default class extends Command {
         }
 
         const msg = await message.channel.send(this.Embed.success(`
-        Are you sure you want to ban ${user ?? id}?
+        Are you sure you want to softban ${user ?? id}?
 
         Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
         `));
@@ -70,15 +68,16 @@ export default class extends Command {
 
         try {
             await message.guild.members.ban(id, {
-                days: isValidNumber(clear) ? parseInt(clear.toString()) : 7,
-                reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
+                days: 7,
+                reason: args.slice(1).join(' ')
             });
+            await message.guild.members.unban(id, 'Khafra-Bot softbanned.');
         } catch {
             return message.channel.send(this.Embed.fail(`${user ?? id} isn't bannable!`));
         }
 
         return message.channel.send(this.Embed.success(`
-        ${user ?? id} has been banned from the guild and ${clear} days worth of messages have been removed.
+        ${user ?? id} has been softbanned from the guild, 7 days worth of messages from them have been cleared.
         `));
     }
 }

@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message, TextChannel, PermissionString } from "discord.js";
-import { parse } from "twemoji-parser";
+import twemoji from "twemoji-parser"; // cjs module
 
 export default class extends Command {
     constructor() {
@@ -60,7 +60,7 @@ Option 2: No."`
             return message.channel.send(this.Embed.fail('Invalid emojis given!'));
         }
 
-        const emojis = parse(toBeParsed).map(({ text }) => text);
+        const emojis = twemoji.parse(toBeParsed).map(({ text }) => text);
         if(emojis.length < 2) {
             return message.channel.send(this.Embed.fail('A poll must have at least 2 options to choose from!'));
         } else if(emojis.length > 5) {

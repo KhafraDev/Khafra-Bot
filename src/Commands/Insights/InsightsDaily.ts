@@ -1,9 +1,9 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Insights } from "../../lib/types/Collections";
 import ms from "ms";
-import { formatDate } from "../../lib/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date.js";
 
 type valueof<T> = T[keyof T];
 

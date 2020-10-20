@@ -1,12 +1,12 @@
-import './lib/Utility/Rejections';
-import './Structures/Proxy/ChannelSend';
-import './Structures/Proxy/React';
-import './Structures/Proxy/Edit';
+import './lib/Utility/Rejections.js';
+import './Structures/Proxy/ChannelSend.js';
+import './Structures/Proxy/React.js';
+import './Structures/Proxy/Edit.js';
 
-import { KhafraClient } from './Bot/KhafraBot';
-import { loadEnv } from './lib/Utility/load.env';
-import { Logger } from './Structures/Logger';
-import { trim } from './lib/Utility/Template';
+import { KhafraClient } from './Bot/KhafraBot.js';
+import { loadEnv } from './lib/Utility/load.env.js';
+import { Logger } from './Structures/Logger.js';
+import { trim } from './lib/Utility/Template.js';
 import { ClientEvents } from 'discord.js';
 loadEnv();
 

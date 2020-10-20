@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message } from "discord.js";
-import { parse } from "twemoji-parser";
+import twemoji from "twemoji-parser"; // cjs module
 
 export default class extends Command {
     constructor() {
@@ -26,7 +26,7 @@ export default class extends Command {
         const guildEmojis   = args.slice(0, 5).join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g) ?? [];
         const unicodeEmojis = args.slice(0, 5).join(' ').replace(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g, '');
 
-        const unicodeParsed = parse(unicodeEmojis, {
+        const unicodeParsed = twemoji.parse(unicodeEmojis, {
             assetType: 'png'
         }).map(({ url }) => url);
         

@@ -1,10 +1,10 @@
-import { MongoClient } from "mongodb";
+import Mongo from "mongodb"; // cjs module
 import { join } from "path";
 import { readFile } from "fs/promises";
 import { MeepMember } from "./types/Meep";
 
 let updated = false;
-let pool: MongoClient = null;
+let pool: Mongo.MongoClient = null;
 
 /**
  * Check Meep database and insert documents if needed
@@ -14,7 +14,7 @@ export const checkDB = async () => {
         return true;
     }
 
-    const client = await MongoClient.connect('mongodb://localhost:27017/', {
+    const client = await Mongo.MongoClient.connect('mongodb://localhost:27017/', {
         useNewUrlParser: true,
         useUnifiedTopology: true
     });

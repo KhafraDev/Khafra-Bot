@@ -1,4 +1,4 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message } from "discord.js";
 import crypto from 'crypto';
 import { promisify } from 'util';

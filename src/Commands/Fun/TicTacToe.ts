@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { TicTacToe } from "../../lib/Backend/TicTacToe";
-import { isValidNumber } from "../../lib/Utility/Valid/Number";
+import { TicTacToe } from "../../lib/Backend/TicTacToe.js";
+import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
 
 export default class extends Command {
     constructor() {

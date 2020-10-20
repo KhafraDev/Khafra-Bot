@@ -1,19 +1,21 @@
-import { Event } from "../Structures/Event";
+import { Event } from "../Structures/Event.js";
 import { 
     Message, 
     ClientEvents,
     Role
 } from "discord.js";
-import { Sanitize } from "../lib/Utility/SanitizeCommand";
-import { pool } from "../Structures/Database/Mongo";
+import { Sanitize } from "../lib/Utility/SanitizeCommand.js";
+import { pool } from "../Structures/Database/Mongo.js";
 import { GuildSettings } from "../lib/types/Collections";
-import { Logger } from "../Structures/Logger";
-import { KhafraClient } from "../Bot/KhafraBot";
-import { Command } from "../Structures/Command";
-import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
+import { Logger } from "../Structures/Logger.js";
+import { KhafraClient } from "../Bot/KhafraBot.js";
+import { Command } from "../Structures/Command.js";
+import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown.js";
+import { trim } from "../lib/Utility/Template.js";
 
-import { prefix as defaultPrefix } from '../../config.json';
-import { trim } from "../lib/Utility/Template";
+import { createRequire } from 'module';
+const req = createRequire(import.meta.url);
+const { prefix: defaultPrefix } = req('../../config.json');
 
 const Embed = Command.Embed;
 
@@ -138,7 +140,8 @@ export default class implements Event {
                 Incorrect number of arguments provided.
                 
                 The command requires ${min} minimum arguments and ${max ?? 'no'} max.
-                Use \`\`help ${name}\`\` for example usage!
+                Example(s):
+                ${command.help.slice(1).map(c => `\`\`${prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
                 `));
             }
 

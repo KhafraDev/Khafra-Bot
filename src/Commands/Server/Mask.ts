@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, TextChannel } from "discord.js";
 import { URL } from "url";
 

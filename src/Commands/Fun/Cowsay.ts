@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 import { readFile } from 'fs/promises';
 import { join } from "path";

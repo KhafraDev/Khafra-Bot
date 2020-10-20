@@ -1,8 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 import { DiscordDiscoverResults } from "../../lib/Backend/Discord Discover/types/DiscordDiscover";
-
-import { DiscordDiscover } from "../../lib/Backend/Discord Discover/DiscordDiscover";
+import { DiscordDiscover } from "../../lib/Backend/Discord Discover/DiscordDiscover.js";
 
 export default class extends Command {
     constructor() {
@@ -16,7 +15,7 @@ export default class extends Command {
                 name: 'discover',
                 folder: 'Server',
                 args: [1],
-                aliases: [ 'search' ]
+                aliases: [ 'search', 'discovery' ]
             }
         );
     }

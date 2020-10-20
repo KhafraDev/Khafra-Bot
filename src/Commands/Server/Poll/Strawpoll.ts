@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message } from "discord.js";
-import { stripIndents } from "../../../lib/Utility/Template";
+import { stripIndents } from "../../../lib/Utility/Template.js";
 import fetch, { Response } from "node-fetch";
 
 const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;

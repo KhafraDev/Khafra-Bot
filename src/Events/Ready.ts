@@ -1,6 +1,6 @@
-import { Event } from "../Structures/Event";
+import { Event } from "../Structures/Event.js";
 import { ClientEvents } from "discord.js";
-import { formatDate } from "../lib/Utility/Date";
+import { formatDate } from "../lib/Utility/Date.js";
 
 export default class implements Event {
     name: keyof ClientEvents = 'ready';

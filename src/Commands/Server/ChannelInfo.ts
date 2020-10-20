@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../Structures/Command.js';
 import { Message, TextChannel, VoiceChannel, Channel, NewsChannel } from 'discord.js';
-import { formatDate } from '../../lib/Utility/Date';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 export default class extends Command {
     constructor() {

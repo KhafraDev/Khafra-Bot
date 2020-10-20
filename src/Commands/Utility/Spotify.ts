@@ -1,7 +1,7 @@
-import { Command } from '../../Structures/Command';
+import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 
-import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler';
+import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler.js';
 import { SpotifyResult } from '../../lib/Backend/Spotify/types/Spotify';
 
 export default class extends Command {

@@ -6,9 +6,11 @@ import {
     Channel,
     MessageEmbed,
 } from 'discord.js';
-import { Logger } from './Logger';
+import { Logger } from './Logger.js';
 
-import { embed, botOwner } from '../../config.json';
+import { createRequire } from 'module';
+const req = createRequire(import.meta.url);
+const { embed, botOwner } = req('../../config.json');
 
 export class Command {
     logger = new Logger('Command');

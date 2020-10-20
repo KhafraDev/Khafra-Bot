@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message, Role, TextChannel, NewsChannel, User, Guild } from "discord.js";
-import { pool } from "../../../Structures/Database/Mongo";
-import { KhafraClient } from "../../../Bot/KhafraBot";
+import { pool } from "../../../Structures/Database/Mongo.js";
+import { KhafraClient } from "../../../Bot/KhafraBot.js";
 
 const blacklistedFolders = [ 'Settings', 'Moderation' ];
 

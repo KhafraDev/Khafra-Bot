@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import fetch from 'node-fetch';

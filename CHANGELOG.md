@@ -257,3 +257,6 @@
 * Add in ``awards`` command which calculates the hypothetical cost of all the awards on a reddit post.
 * Fixed commands still using the old embed structure.
 * Add in ``strawpoll`` command. This command is awesome.
+* Add in ``softban`` command.
+* Add in ``discordjs`` docs command.
+* Typescript now transpiles to ESNext, letting us use all the new keywords!

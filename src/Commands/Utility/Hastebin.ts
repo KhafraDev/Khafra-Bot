@@ -1,5 +1,5 @@
-import { Command } from "../../Structures/Command";
-import { hasteServers, paste } from "../../lib/Backend/Hastebin/Hastebin";
+import { Command } from "../../Structures/Command.js";
+import { hasteServers, paste } from "../../lib/Backend/Hastebin/Hastebin.js";
 import { Message } from "discord.js";
 import { URL } from "url";
 

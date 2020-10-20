@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { reddit } from "../../lib/Backend/BadMeme/BadMeme";
+import { reddit } from "../../lib/Backend/BadMeme/BadMeme.js";
 import { RedditChildren, RedditNotFound } from "../../lib/Backend/BadMeme/types/BadMeme";
 import { Response } from "node-fetch";
 

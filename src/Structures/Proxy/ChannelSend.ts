@@ -4,8 +4,8 @@ import {
     DMChannel,
     NewsChannel
 } from "discord.js";
-import { Logger } from "../Logger";
-import { trim } from "../../lib/Utility/Template";
+import { Logger } from "../Logger.js";
+import { trim } from "../../lib/Utility/Template.js";
 
 const logger = new Logger('ChannelSend Proxy');
 

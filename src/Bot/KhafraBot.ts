@@ -1,8 +1,11 @@
-import { Command } from '../Structures/Command';
+import { Command } from '../Structures/Command.js';
 import { Client, ClientOptions, ClientEvents } from 'discord.js';
 import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
-import { Event } from '../Structures/Event';
+import { Event } from '../Structures/Event.js';
+import { type } from 'os';
+
+const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -37,9 +40,9 @@ export class KhafraClient extends Client {
      * Load commands
      */
     async loadCommands() {
-        const commands = await this.load('build/src/Commands');
+        const commands = await this.load('build/Commands');
         for(const command of commands) {
-            const { default: c } = await import(command);
+            const { default: c } = await import(absPath(command));
             const build = new c() as Command;
 
             KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
@@ -51,9 +54,9 @@ export class KhafraClient extends Client {
     }
 
     async loadEvents() {
-        const events = await this.load('build/src/Events');
+        const events = await this.load('build/Events');
         for(const event of events) {
-            const { default: e } = await import(event);
+            const { default: e } = await import(absPath(event));
             const build = new e() as Event;
             KhafraClient.Events.set(build.name, build);
         }

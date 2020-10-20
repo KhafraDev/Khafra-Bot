@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command";
+import { Command } from "../../../Structures/Command.js";
 import { Message } from "discord.js";
-import { Trivia } from "../../../lib/Backend/Trivia/Trivia";
-import { pool } from "../../../Structures/Database/Mongo";
+import { Trivia } from "../../../lib/Backend/Trivia/Trivia.js";
+import { pool } from "../../../Structures/Database/Mongo.js";
 import { Question } from "../../../lib/Backend/Trivia/types/Trivia";
 import { inspect } from "util";
 

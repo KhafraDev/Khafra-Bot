@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
-import { pool } from "../../Structures/Database/Mongo";
+import { Command } from "../../Structures/Command.js";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Message, MessageReaction, User } from "discord.js";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
 
 export default class extends Command {
     constructor() {

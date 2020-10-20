@@ -1,4 +1,4 @@
-import { chunk } from '../../Utility/Array';
+import { chunk } from '../../Utility/Array.js';
 
 class Connect4 {
     /**
