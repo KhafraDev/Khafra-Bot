@@ -261,3 +261,5 @@
 * Add in ``discordjs`` docs command.
 * Typescript now transpiles to ESNext, letting us use all the new keywords!
 * Remove ``https-proxy-agent`` and ``node-abort-controller`` in favor of native functions. 
+* Add in ``trump`` and ``trumpkey`` commands.
+* Remove ``meepmember`` command.

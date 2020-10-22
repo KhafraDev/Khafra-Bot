@@ -47,3 +47,5 @@ const client = new KhafraClient({
     });
 
 client.init();
+
+export { client };
