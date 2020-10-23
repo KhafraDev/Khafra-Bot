@@ -9,6 +9,7 @@ import parse5, {
 } from 'parse5';
 import { randomInt } from 'crypto';
 import { promisify } from "util";
+import { cooldown } from '../../../Structures/Cooldown/CommandCooldown.js';
 
 const randInt: (max: number) => Promise<number> = promisify(randomInt);
 
@@ -81,6 +82,8 @@ const key = (u: string) => {
 }
 
 export default class extends Command {
+    cooldown = cooldown(1, 60000);
+    
     constructor() {
         super(
             [
@@ -120,7 +123,12 @@ export default class extends Command {
         const e = () => item[i] 
             ? new MessageEmbed()
                 .setColor(key(item[i].image))
-                .setDescription(`${item[i].date} ${item[i].text}`) 
+                .setDescription(`
+                ${item[i].date} ${item[i].text}
+
+                React with ▶️ to go to the next atrocity, or ◀️ to go to the previous.
+                Bot might not react to your message due to Discord's terrible rate-limits.
+                `) 
                 .setFooter(`Page ${i+1} of ${item.length}`)
             : null;
 
@@ -129,8 +137,10 @@ export default class extends Command {
             return;
         }
 
-        await m.react('▶️');
-        await m.react('◀️');
+        if(this.cooldown(message.guild.id)) {
+            await m.react('▶️');
+            await m.react('◀️');
+        }
 
         const filter = (r: MessageReaction, u: User) => ['▶️', '◀️'].includes(r.emoji.name) && u.id === message.author.id;
         const collector = m.createReactionCollector(filter, { max: item.length * 2 });

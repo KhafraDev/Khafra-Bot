@@ -14,6 +14,8 @@ const { embed, botOwner } = req('../../config.json');
 
 export class Command {
     logger = new Logger('Command');
+    cooldown?: (id: string) => boolean
+
     /*** Description and example usage. */
     help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
