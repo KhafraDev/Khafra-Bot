@@ -10,17 +10,17 @@ import { GuildSettings } from "../lib/types/Collections";
 import { Logger } from "../Structures/Logger.js";
 import { KhafraClient } from "../Bot/KhafraBot.js";
 import { Command } from "../Structures/Command.js";
-import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown.js";
 import { trim } from "../lib/Utility/Template.js";
-
 import { createRequire } from 'module';
+import { cooldown } from "../Structures/Cooldown/CommandCooldown.js";
+
 const req = createRequire(import.meta.url);
 const { prefix: defaultPrefix } = req('../../config.json');
 
 const Embed = Command.Embed;
 
-const cooldownGuild = new GuildCooldown();
-const cooldownUsers = new GuildCooldown(7);
+const _cooldownGuild = cooldown(15, 60000);
+const _cooldownUsers = cooldown( 6, 60000);
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
@@ -84,17 +84,15 @@ export default class implements Event {
         | Input: ${message.content}
         `);
 
-        cooldownGuild.set(message.guild?.id ?? message.channel.id); // set cooldowns for guild/DM channel
-        cooldownUsers.set(message.author.id); // set cooldowns for Users
-        if(cooldownGuild.limited(message.guild?.id ?? message.channel.id)) {
+        if(!_cooldownGuild(message.guild?.id ?? message.channel.id)) {
             return message.channel.send(Embed.fail(`
-            ${message.channel.type === 'dm' ? 'DMs' : 'Guilds'} are limited to ${cooldownGuild.MAX} commands a minute.
+            ${message.channel.type === 'dm' ? 'DMs' : 'Guilds'} are limited to 15 commands a minute.
 
             Please refrain from spamming the bot.
             `));
-        } else if(command && cooldownUsers.limited(message.author.id)) {
+        } else if(!_cooldownUsers(message.author.id)) {
             return message.channel.send(Embed.fail(`
-            Users are limited to ${cooldownUsers.MAX} commands a minute.
+            Users are limited to 6 commands a minute.
 
             Please refrain from spamming the bot.
             `));

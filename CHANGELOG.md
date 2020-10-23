@@ -266,3 +266,5 @@
 * DMs bot owner when the bot comes online.
 * Fix "unknown member" error in ``messageReactionRemove`` and ``messageReactionAdd`` events.
 * Fix fetch error when Coingecko has issues.
+* Users are now limited to 6 commands a minute (instead of 7).
+* New cooldown functionality that is much better. Old times are removed every 10 minutes or when a user uses a command or a command is used in a guild. Plus, code is much nicer and can be used anywhere in 2 steps. 
