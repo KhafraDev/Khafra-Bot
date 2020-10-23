@@ -263,3 +263,6 @@
 * Remove ``https-proxy-agent`` and ``node-abort-controller`` in favor of native functions. 
 * Add in ``trump`` and ``trumpkey`` commands.
 * Remove ``meepmember`` command.
+* DMs bot owner when the bot comes online.
+* Fix "unknown member" error in ``messageReactionRemove`` and ``messageReactionAdd`` events.
+* Fix fetch error when Coingecko has issues.

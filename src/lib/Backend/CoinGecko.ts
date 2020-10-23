@@ -37,11 +37,16 @@ const cache: Record<string, CoinGeckoRes> = {};
 
 const cryptoUpdate = async () => {
     for(let i = 1;;i++) {
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${i}&sparkline=false`, {
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
+        let res;
+        try {
+            res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${i}&sparkline=false`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+        } catch {
+            break;
+        }
 
         if(res.ok) {
             const json = (await res.json() as CoinGeckoRes[]).map(cc => ({ [cc.id]: cc }));

@@ -29,7 +29,8 @@ export default class extends Command {
         let json;
         try {
             const res = await fetch(URL.href.replace('.json', '') + '.json');
-            json = await res.json();
+            const j = await res.json();
+            json = j;
         } catch {
             return message.channel.send(this.Embed.fail('Bad URL, try another one.'));
         }

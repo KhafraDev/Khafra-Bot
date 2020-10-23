@@ -4,7 +4,8 @@ import {
     User, 
     PartialUser, 
     ClientEvents, 
-    Permissions
+    Permissions,
+    GuildMember
 } from "discord.js";
 import { pool } from "../Structures/Database/Mongo.js";
 import { GuildSettings } from "../lib/types/Collections";
@@ -62,7 +63,13 @@ export default class implements Event {
         }
     
         // member MUST be fetched or they will never be manageable!
-        const member = await reaction.message.guild.members.fetch(user.id); 
+        let member: GuildMember;
+        try { 
+            member = await reaction.message.guild.members.fetch(user.id); 
+        } catch {
+            return;
+        }
+        
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');
         const guild = await collection.findOne<GuildSettings>({
