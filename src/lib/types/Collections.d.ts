@@ -27,7 +27,7 @@ export interface Warnings {
     users: {
         [key: string]: {
             points: number
-            reasons: string
+            reason: string
             timestamp: number
         }[]
     }

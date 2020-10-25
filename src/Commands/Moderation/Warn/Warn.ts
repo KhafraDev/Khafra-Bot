@@ -82,9 +82,9 @@ export default class extends Command {
         ) as FindAndModifyWriteOpResultObject<Warnings>;
 
         // value is null when the doc is inserted for the first time
-        const total = (warns.value?.users[member.id].reduce((p, c) => p + c.points, 0) ?? 0); //+ Number(args[1]);
+        const total = (warns.value?.users?.[member.id]?.reduce((p, c) => p + c.points, 0) ?? 0) + Number(args[1]);
         const limit = warns.value?.limit ?? 20;
-        const shouldKick = Number(args[1]) + (total % 20) >= limit;
+        const shouldKick = total >= limit;
 
         if(shouldKick) {
             try {
@@ -95,14 +95,24 @@ export default class extends Command {
                 `));
             }
 
+            await collection.findOneAndUpdate(
+                { id: message.guild.id },
+                {
+                    $unset: {
+                        [`users.${member.id}`]: ''
+                    }
+                },
+                { returnOriginal: true, upsert: true }
+            );
+
             return message.channel.send(this.Embed.fail(`
-            Kicked ${member} from the server for reaching the max number of warnings (${total + Number(args[1])}/${limit})!
+            Kicked ${member} from the server for reaching the max number of warnings (${total}/${limit})!
             `));
         } else {
             return message.channel.send(this.Embed.success(`
             ${member} has been given ${args[1]} warning points.
 
-            They now have ${(total + Number(args[1])) % 20}/${limit} warning points before they will be automatically kicked.
+            They now have ${total}/${limit} warning points before they will be automatically kicked.
             `));
         }
     }
