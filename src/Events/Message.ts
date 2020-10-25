@@ -11,8 +11,7 @@ import { Command } from "../Structures/Command.js";
 import { trim } from "../lib/Utility/Template.js";
 import { cooldown } from "../Structures/Cooldown/CommandCooldown.js";
 
-const req = createRequire(import.meta.url);
-const { prefix: defaultPrefix } = req('../../config.json');
+const { prefix: defaultPrefix } = createRequire(import.meta.url)('../../config.json');
 
 const _cooldownGuild = cooldown(15, 60000);
 const _cooldownUsers = cooldown( 6, 60000);

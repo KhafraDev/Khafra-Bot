@@ -17,7 +17,7 @@ export default class extends Command {
                 '[Channel or Channel ID] [@Role or Role ID] [Emoji] [Message Content]',
                 '#react_for_role @I_Reacted 👑 Hello, react to this message for a role! :-)'
             ],
-            [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
+            [ 'MANAGE_ROLES', 'ADD_REACTIONS' ],
             {
                 name: 'messagereact',
                 folder: 'Settings',

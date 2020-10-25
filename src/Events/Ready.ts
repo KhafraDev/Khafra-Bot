@@ -4,8 +4,7 @@ import { formatDate } from "../lib/Utility/Date.js";
 import { client } from "../index.js";
 
 import { createRequire } from 'module';
-const req = createRequire(import.meta.url);
-const { botOwner } = req('../../config.json');
+const { botOwner } = createRequire(import.meta.url)('../../config.json');
 
 export default class implements Event {
     name: keyof ClientEvents = 'ready';

@@ -23,15 +23,13 @@ export interface Insights {
 export interface Warnings {
     _id: ObjectId
     id: string,
-    limit?: number
+    limit: number
     users: {
         [key: string]: {
             points: number
-            reasons:{
-                points: number
-                message: string
-            }[]
-        }
+            reasons: string
+            timestamp: number
+        }[]
     }
 }
 

@@ -22,9 +22,7 @@ Option 2: No."`
     }
 
     async init(message: Message, args: string[]) {
-        if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
-            && !this.isBotOwner(message.author.id)
-        ) {
+        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) && !this.isBotOwner(message.author.id)) {
             return message.channel.send(this.Embed.missing_perms(true));
         }
 

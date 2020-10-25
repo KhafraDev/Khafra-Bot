@@ -9,8 +9,7 @@ import {
 import { Logger } from './Logger.js';
 
 import { createRequire } from 'module';
-const req = createRequire(import.meta.url);
-const { embed, botOwner } = req('../../config.json');
+const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
 
 export class Command {
     logger = new Logger('Command');
