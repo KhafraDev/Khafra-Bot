@@ -1,7 +1,9 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, Role, MessageMentions } from "discord.js";
+import { Command } from "../../../Structures/Command.js";
+import { Message, Role, SnowflakeUtil } from "discord.js";
+import { formatDate } from "../../../lib/Utility/Date.js";
 
-import { formatDate } from "../../lib/Utility/Date.js";
+const epoch = new Date('January 1, 2015 GMT-0');
+const zeroBinary = ''.padEnd(64, '0');
 
 export default class extends Command {
     constructor() {
@@ -23,11 +25,21 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!/[A-z0-9]/.test(args[0])) {
-            return message.channel.send(this.Embed.generic());
+        const id = message.mentions.roles.size > 0
+            ? message.mentions.roles.first().id
+            : args[0];
+
+        const snowflake = SnowflakeUtil.deconstruct(id);
+        if( 
+            snowflake.date.getTime() === epoch.getTime()
+            || snowflake.binary === zeroBinary
+            || snowflake.timestamp > Date.now()
+            || snowflake.timestamp === epoch.getTime() // just in case
+        ) {
+            return message.channel.send(this.Embed.generic('Invalid role ID!'));
         }
 
-        const role = MessageMentions.ROLES_PATTERN.test(args[0]) 
+        const role = message.mentions.roles.size > 0
             ? message.mentions.roles.first() 
             : await message.guild.roles.fetch(args[0]);
 

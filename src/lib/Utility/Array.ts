@@ -15,12 +15,12 @@ export const shuffle = <T>(a: T[]): T[] => {
     return a;
 }
 
-const randIntAsync = promisify(randomInt);
+const randIntAsync = promisify<number, number>(randomInt);
 
 export const realShuffle = async <T>(a: T[]): Promise<T[]> => {
     const c = Array.from(a); // don't modify OG array.
     for(let i = c.length - 1; i > 0; i--) {
-        const j = await randIntAsync(i + 2) as number; // min defaults to 0, allow i+1 to be chosen
+        const j = await randIntAsync(i + 2); // min defaults to 0, allow i+1 to be chosen
         [c[i], c[j]] = [c[j], c[i]];
     }
     return c;

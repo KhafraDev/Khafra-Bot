@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
+import { Command } from "../../../Structures/Command.js";
 import { Message, User, Activity, SnowflakeUtil } from "discord.js";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { formatDate } from "../../../lib/Utility/Date.js";
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];

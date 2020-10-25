@@ -43,9 +43,10 @@ export default class extends Command {
             (p: number, c: Record<string, number>) => p + (c.coin_price * c.count), 0
         );
         const price = (coins * (1.99 / 500)).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        const number = post.all_awardings.reduce((p: number, c: { count: number; }) => p + c.count, 0);
 
         return message.channel.send(this.Embed.success(`
-        Post has been awarded \`\`${post.all_awardings.length}\`\` times, totaling around \`\`${price}\`\` USD.
+        Post has been awarded \`\`${number}\`\` times, totaling around \`\`${price}\`\` USD.
         `));
     }
 }

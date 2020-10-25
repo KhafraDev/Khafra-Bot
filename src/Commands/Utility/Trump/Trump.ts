@@ -35,10 +35,10 @@ const getLi = (html: string) => {
     return li as (DTE & DTPN)[];
 }
 
-const cache = await new Promise<{ image: string, text: string, date: string }[]>(async (res, rej) => {
+export const refreshCache = async () => {
     const resp = await fetch('https://www.mcsweeneys.net/articles/the-complete-listing-so-far-atrocities-1-940');
     if(!resp.ok) {
-        return rej(`Received status ${resp.status} (${resp.statusText})!`);
+        return Promise.reject(`Received status ${resp.status} (${resp.statusText})!`);
     }
     const html = await resp.text();
     const li = getLi(html);
@@ -53,12 +53,14 @@ const cache = await new Promise<{ image: string, text: string, date: string }[]>
         ).slice(1).join('').trim());
     const dates = li.map(i => ((i.childNodes as DTPN[]).filter(n => n.nodeName === 'b')[0].childNodes[0] as DTTN).value)
 
-    return res(Array.from({ length: images.length }, (_, k) => ({
+    return Array.from({ length: images.length }, (_, k) => ({
         image: images[k],
         text: text[k],
         date: dates[k]
-    })));
-});
+    }));
+}
+
+export const cache = await refreshCache();
 
 const key = (u: string) => {
     u = u.toLowerCase();

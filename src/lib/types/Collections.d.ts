@@ -86,8 +86,3 @@ export interface Tags {
         now: number
     }[]
 }
-
-export interface Onion {
-    href: string,
-    title: string
-}
