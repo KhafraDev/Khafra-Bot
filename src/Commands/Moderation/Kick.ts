@@ -1,5 +1,6 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, GuildMember } from 'discord.js';
+import { Message } from 'discord.js';
+import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -20,17 +21,21 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
-            return message.channel.send(this.Embed.fail(`
-            No guild member mentioned and no user ID provided.
-            `));
+        const idOrUser = getMentions(message, args, { type: 'members' });
+        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
+            return message.channel.send(this.Embed.generic('Invalid user ID!'));
         }
+ 
+        let member = typeof idOrUser === 'string'
+            ? message.guild.members.fetch(idOrUser)
+            : idOrUser;
 
-        let member: GuildMember;
-        try {
-            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
-        } catch {
-            return message.channel.send(this.Embed.fail('Invalid ID provided or member mentioned!'));
+        if(member instanceof Promise) {
+            try {
+                member = await member;
+            } catch {
+                return message.channel.send(this.Embed.fail('Member couldn\'t be fetched!'));
+            }
         }
 
         if(!member.kickable) {

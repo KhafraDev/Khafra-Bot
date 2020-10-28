@@ -1,10 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, SnowflakeUtil } from 'discord.js';
+import { Message, User } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { Warnings } from '../../../lib/types/Collections.js';
-
-const epoch = new Date('January 1, 2015 GMT-0');
-const zeroBinary = ''.padEnd(64, '0');
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -28,55 +26,36 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         let member;
         if(!super.userHasPerms(message, [ 'KICK_MEMBERS' ])) {
-            member = message.member;
+            member = message.member.id;
         } else {
-            const id = message.mentions.members.size > 0
-                ? message.mentions.members.first().id
-                : args[0]
-
-            if(args.length !== 0) {
-                const snowflake = SnowflakeUtil.deconstruct(id);
-                if( 
-                    snowflake.date.getTime() === epoch.getTime()
-                    || snowflake.binary === zeroBinary
-                    || snowflake.timestamp > Date.now()
-                    || snowflake.timestamp === epoch.getTime() // just in case
-                ) {
-                    return message.channel.send(this.Embed.generic('Invalid member ID!'));
-                }
-            }
-
-            try {
-                if(message.mentions.members.size > 0) {
-                    member = message.mentions.members.first();
-                } else if(args.length === 0) {
-                    member = message.member;
-                } else {
-                    member = await message.guild.members.fetch(id);
-                }
-            } catch {
+            const idOrUser = getMentions(message, args);
+            if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
                 return message.channel.send(this.Embed.generic('Invalid user ID!'));
+            } else if(idOrUser instanceof User) {
+                member = idOrUser.id;
             }
         }
 
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
         const warns = await collection.findOne<Warnings>({ id: message.guild.id });
-        if(!warns?.users || !(member.id in warns.users) || !Array.isArray(warns.users[member.id])) {
-            return message.channel.send(this.Embed.success(`
-            ${member} has 0 warnings!
-            `));
-        } else {
-            const warnings = warns.users[member.id]
-                .reverse()
-                .slice(0, 10)
-                .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100)}\`\``)
-                .join('\n');
+        const memberStr = message.guild.member(member) ?? member;
 
+        if(!warns?.users || !(member in warns.users) || !Array.isArray(warns.users[member])) {
             return message.channel.send(this.Embed.success(`
-            ${member}'s last ${warns.users[member.id].slice(0, 10).length} warnings!
-            ${warnings}
+            ${memberStr} has 0 warnings!
             `));
-        }
+        } 
+
+        const warnings = warns.users[member]
+            .reverse()
+            .slice(0, 10)
+            .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100)}\`\``)
+            .join('\n');
+
+        return message.channel.send(this.Embed.success(`
+        ${memberStr}'s last ${warns.users[member].reverse().slice(0, 10).length} warnings!
+        ${warnings}
+        `));
     }
 }

@@ -7,7 +7,7 @@ A Discord bot with a lot of commands.
 # Environment
 * Khafra-Bot has been tested on both Windows 10 and Ubuntu. 
 * Khafra-Bot will always support new features and will not support old (or sometimes LTS) versions of Node.
-* The bot currently supports v14.1.0 or above and not v15.0.0. v15 will work, but some commands will be broken.
+* The bot currently supports v14.1.0 or above, although the latest version of Node is recommended.
 
 # Privacy
 ```md
@@ -18,7 +18,7 @@ When using Khafra-Bot some information about you and the command used will be te
 These logs are temporary and only stored when using the bot (whether that is reacting for a role or using a command).
 Read through the terms of service for bot developers at https://discord.com/developers/docs/legal (collecting logs falls under section 2-A).
 ```
-Excerpted from [here](https://discord.com/channels/677271830838640680/705894525473784303/748361427328303175)
+Excerpted from [here](https://discord.com/channels/677271830838640680/705894525473784303/748361427328303175).
 
 # Setup
 1. Install dependencies using ``npm i``.

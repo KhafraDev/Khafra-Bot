@@ -1,16 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { 
     Message, 
-    SnowflakeUtil, 
+    Channel, 
     TextChannel, 
     NewsChannel, 
     VoiceChannel, 
-    Channel 
 } from 'discord.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-
-const epoch = new Date('January 1, 2015 GMT-0');
-const zeroBinary = ''.padEnd(64, '0');
 
 // TypeScript is based
 const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
@@ -36,31 +33,17 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let id: string;
-        if(message.mentions.channels.size > 0) {
-            id = message.mentions.channels.first().id;
-        } else if(/<?#?\d{17,19}>?/.test(args[0])) {
-            id = args[0].match(/<?#?\d{17,19}>?/)[0];
-        } else {
-            id = message.channel.id;
+        let idOrChannel = getMentions(message, args, { type: 'channels' });
+        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
+            idOrChannel = message.channel; 
         }
 
-        const snowflake = SnowflakeUtil.deconstruct(id);
-        if( 
-            snowflake.date.getTime() === epoch.getTime()
-            || snowflake.binary === zeroBinary
-            || snowflake.timestamp > Date.now()
-            || snowflake.timestamp === epoch.getTime() // just in case
-        ) {
-            return message.channel.send(this.Embed.generic('Invalid channel ID!'));
-        }
-
-        let channel;
-        try {
-            channel = message.guild.channels.cache.filter(c => c.id === id).first()
-                      ?? await message.client.channels.fetch(id);
-        } catch {
-            return message.channel.send(this.Embed.generic('Invalid channel!'));
+        const channel = message.guild.channels.resolve(idOrChannel);
+        if(!channel) {
+            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
+            return message.channel.send(this.Embed.fail(`
+            Channel isn't fetched or the ID is incorrect.
+            `));
         }
 
         const embed = this.Embed.success()

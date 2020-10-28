@@ -1,6 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Activity, SnowflakeUtil } from 'discord.js';
+import { Message, Activity, GuildMember } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -19,9 +20,6 @@ const formatPresence = (activities: Activity[]) => {
 
     return push.join('\n');
 }
-
-const epoch = new Date('January 1, 2015 GMT-0');
-const zeroBinary = ''.padEnd(64, '0');
 
 export default class extends Command {
     constructor() {
@@ -42,33 +40,21 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const id = message.mentions.members.size > 0
-            ? message.mentions.members.first().id
-            : args[0]
-
-        if(args.length !== 0) {
-            const snowflake = SnowflakeUtil.deconstruct(id);
-            if( 
-                snowflake.date.getTime() === epoch.getTime()
-                || snowflake.binary === zeroBinary
-                || snowflake.timestamp > Date.now()
-                || snowflake.timestamp === epoch.getTime() // just in case
-            ) {
-                return message.channel.send(this.Embed.generic('Invalid member ID!'));
-            }
+        let idOrMember = getMentions(message, args, { type: 'members' });
+        if(!idOrMember || (typeof idOrMember === 'string' && !validSnowflake(idOrMember))) {
+            idOrMember = message.member;
         }
 
-        let member;
-        try {
-            if(message.mentions.members.size > 0) {
-                member = message.mentions.members.first();
-            } else if(args.length === 0) {
-                member = message.member;
-            } else {
-                member = await message.guild.members.fetch(id);
+        let member: GuildMember | Promise<GuildMember> = typeof idOrMember === 'string'
+            ? message.guild.members.fetch(idOrMember)
+            : idOrMember;
+
+        if(member instanceof Promise) {
+            try {
+                member = await member;
+            } catch {
+                return message.channel.send(this.Embed.fail('Invalid user ID!'));
             }
-        } catch {
-            return message.channel.send(this.Embed.generic('Invalid user ID!'));
         }
 
         // max role length = 84 characters
