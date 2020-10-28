@@ -54,6 +54,6 @@ export default class extends Command {
             .split('\n')
             .filter(l => l.trim().length > 0);
 
-        return message.channel.send(this.Embed.success('``' + data[Math.random() * data.length << 0] + '``'));
+        return message.channel.send(this.Embed.success('``' + data[Math.floor(Math.random() * data.length)] + '``'));
     }
 }

@@ -40,6 +40,6 @@ export default class extends Command {
                 .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
             return msg.edit(embed);
-        }, Math.random() * (10000 - 2500 + 1) + 2500 << 0);
+        }, Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
     }
 }

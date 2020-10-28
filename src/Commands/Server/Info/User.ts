@@ -1,6 +1,7 @@
 import { Command } from "../../../Structures/Command.js";
 import { Message, User, Activity, SnowflakeUtil } from "discord.js";
 import { formatDate } from "../../../lib/Utility/Date.js";
+import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -38,13 +39,18 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let user: User;
-        try {
-            user = args.length === 0 
-                ? message.author 
-                : await message.client.users.fetch(args[0].replace(/[^\d]/g, ''));
-        } catch {
-            return message.channel.send(this.Embed.fail('No user found!'));
+        const idOrUser = getMentions(message, args);
+        let user;
+        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
+            user = message.author;
+        } else if(idOrUser instanceof User) {
+            user = idOrUser;
+        } else {
+            try {
+                user = await message.client.users.fetch(idOrUser);
+            } catch {
+                return message.channel.send(this.Embed.generic('Invalid user ID!'));
+            }
         }
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
@@ -55,7 +61,6 @@ export default class extends Command {
             .addField('**Discriminator:**', user.discriminator, true)
             .addField('**Bot:**', user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
             .addField('**Flags:**', !user.flags || user.flags.bitfield === 0 ? 'Unknown' : user.flags?.toArray().join(', '), true)
-            .addField('**Locale:**', user.locale ?? 'Unknown', true)
             .addField('**Created:**', formatDate('MMM. Do, YYYY hh:mm:ssA t', snowflake.date), true);
 
         return message.channel.send(embed);

@@ -70,7 +70,7 @@ export class TicTacToe {
         }
         
         while(true) {
-            const random = Math.random() * (9 - 1 + 1) + 1 << 0;
+            const random = Math.floor(Math.random() * (9 - 1 + 1) + 1);
             if(this.box[random] === ' ') {
                 this.box[random] = 'O';
                 if(this.checkWinner()) {

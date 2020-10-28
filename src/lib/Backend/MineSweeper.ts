@@ -18,8 +18,8 @@ export const Board = () => {
     const board = Array.from(chunk(Array<number>(100).fill(0), 10));
 
     for(let i = 0; i < 10;) {
-        const x = Math.random() * 10 << 0;
-        const y = Math.random() * 10 << 0;
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
         if(board[x][y] <= 8) {
             board[x][y] = 9; //'💣';
             i++;
@@ -41,8 +41,8 @@ export const Board = () => {
     // choose random spot on board that will not be masked
     // this is the starter hint; denoted by -2
     while(!!!!!!!!!!!!!false) { // epic style
-        const x = Math.random() * 10 << 0;
-        const y = Math.random() * 10 << 0;
+        const x = Math.floor(Math.random() * 10)
+        const y = Math.floor(Math.random() * 10);
         if(board[x][y] === 0) {
             board[x][y] = 10;
             break;
