@@ -1,10 +1,8 @@
 # Khafra
-Error/*
 build
 *.js
 !scripts/*.js
-!ecosystem.config.js
-src/**/Image
+assets/npm/npm.txt
 
 # Logs
 logs
