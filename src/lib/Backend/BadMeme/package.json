@@ -1,9 +1,10 @@
 {
   "name": "@khaf/badmeme",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Get a bad meme from Reddit.",
   "main": "BadMeme",
   "types": "types/BadMeme.d.ts",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },
