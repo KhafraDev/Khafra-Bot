@@ -50,6 +50,12 @@ export const reddit = async (subreddit = 'dankmemes', nsfw = false, rr = false):
     }
 
     json.data.children.forEach(v => {
+        if(v.data.thumbnail === 'self' || 
+           !/(.gif|.png|.jpeg|.jpg)$/.test(v.data.url)
+        ) {
+            return;
+        }
+
         if(v.data.over_18) {
             p.nsfw.push(v);
         } else {
