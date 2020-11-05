@@ -21,10 +21,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms());
-        }
-
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
         let user: User;
         try {

@@ -1,14 +1,16 @@
-import './lib/Utility/Rejections.js';
-import './Structures/Proxy/ChannelSend.js';
-import './Structures/Proxy/React.js';
-import './Structures/Proxy/Edit.js';
-
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { loadEnv } from './lib/Utility/load.env.js';
 import { Logger } from './Structures/Logger.js';
 import { trim } from './lib/Utility/Template.js';
 import { ClientEvents } from 'discord.js';
+
 loadEnv();
+
+import './lib/Backend/Kongregate.js';
+import './lib/Utility/Rejections.js';
+import './Structures/Proxy/ChannelSend.js';
+import './Structures/Proxy/React.js';
+import './Structures/Proxy/Edit.js';
 
 const logger = new Logger('RateLimit');
 

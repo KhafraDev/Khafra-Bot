@@ -20,10 +20,6 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms());
-        } 
-
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 

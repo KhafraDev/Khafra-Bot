@@ -37,6 +37,10 @@ NYTIMES=[NYTimes API Key]
 HERE_WEATHER=[Weather API]
 THEGUARDIAN=[TheGuardian API Key]
 GOOGLE_API=[Google API Key]
+__KONG_USERNAME=[Guest Username]
+__KONG_PASSWORD=[Guest Password]
+__KONG_USER_VARS_SIG=[User Vars Sig]
+__KONG_WEBHOOK=[Discord Webhook URL]
 ```
 If you don't want a certain module, errors should be handled if no API key/credentials are used. The only required entry is the bot's token.
 

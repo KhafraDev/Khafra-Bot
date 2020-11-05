@@ -2,6 +2,10 @@ import { Command } from "../../Structures/Command.js";
 import { Message, TextChannel } from "discord.js";
 import { readFile } from 'fs/promises';
 import { join } from "path";
+import { randomInt } from 'crypto';
+import { promisify } from 'util';
+
+const rand: (m: number) => Promise<number> = promisify(randomInt);
 
 // "jokes"
 const file = await readFile(join(process.cwd(), 'assets/yomama.txt'), 'utf-8');
@@ -28,7 +32,7 @@ export default class extends Command {
 
     async init(message: Message) {
         const all = (message.channel as TextChannel).nsfw ? [...jokes.nsfw, ...jokes.sfw] : [...jokes.sfw];
-        const epicfunnyjoke = all[Math.floor(Math.random() * all.length)];
+        const epicfunnyjoke = all[await rand(all.length)];
         return message.channel.send(this.Embed.success(epicfunnyjoke));
     }
 }

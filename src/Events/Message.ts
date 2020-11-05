@@ -112,6 +112,10 @@ export default class implements Event {
             return message.channel.send(this.Embed.fail(`
             \`\`${command.settings.name}\`\` is only available to the bot owner!
             `));
+        } else if(command.settings.guildOnly && isDM) {
+            return message.channel.send(this.Embed.fail(`
+            \`\`${command.settings.name}\`\` is only available in guilds!
+            `));
         } else {
             const [min, max] = command.settings.args;
             if(min > args.length || args.length > max) {

@@ -22,10 +22,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(this.Embed.missing_perms());
-        }
-        
         const toDelete = +args.shift() + 1;
         if(!isValidNumber(toDelete)) {
             return message.channel.send(this.Embed.fail(`

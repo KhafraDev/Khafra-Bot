@@ -1,6 +1,5 @@
-import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { existsSync } from 'fs'; // sync is bad except for checking file existence 
+import { existsSync, readFileSync } from 'fs'; // sync is bad except for checking file existence 
 
 export const loadEnv = async () => {
     const path = join(process.cwd(), '.env');
@@ -8,7 +7,7 @@ export const loadEnv = async () => {
        throw new Error('.env: No .env file found at the root of the repo!');
     }
 
-    const file = (await readFile(path, { encoding: 'utf-8' })).split(/\r\n|\n/g);
+    const file = readFileSync(path, { encoding: 'utf-8' }).split(/\r\n|\n/g);
     const kvPair = Object.assign({}, ...file.map(e => {
         const [k, v] = e.split('=');
         return { [k]: v };
@@ -22,9 +21,5 @@ export const loadEnv = async () => {
         }
     });
 
-    for(const key in process.env) {
-        if(key in kvPair) {
-            throw new Error(`${key} was assigned to process.env!`);
-        }
-    }
+    return Promise.resolve();
 }

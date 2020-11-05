@@ -7,6 +7,18 @@ const dir = join(process.cwd(), 'assets/Cowsay');
 const start = `
  ________________________________________
 `;
+const types = [
+    'beavis',   'bong',   'bud-frogs',   'bunny',   'cheese',
+    'cowering', 'cowsay', 'cowth-vader', 'darth-vader-koala',
+    'demon',    'dragon', 'dragon-and-cow', 'elephant',
+    'elephant-in-snake',  'flaming-sheep', 'ghostbusters',
+    'head-in', 'hello-kitty', 'kiss', 'kitty', 'koala',
+    'luke-skywalker-koala', 'mech-and-cow', 'meow', 'milk',
+    'moofasa', 'mutilated', 'ren', 'satanic', 'scowleton', 
+    'sheep', 'small-cow', 'sodomized', 'squirrel', 'stegosaurus',
+    'stimpy', 'super-milker', 'surgery', 'turkey', 'turtle',
+    'tux', 'www'
+];
 
 export default class extends Command {
     constructor() {
@@ -25,19 +37,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const types = [
-            'beavis',   'bong',   'bud-frogs',   'bunny',   'cheese',
-            'cowering', 'cowsay', 'cowth-vader', 'darth-vader-koala',
-            'demon',    'dragon', 'dragon-and-cow', 'elephant',
-            'elephant-in-snake',  'flaming-sheep', 'ghostbusters',
-            'head-in', 'hello-kitty', 'kiss', 'kitty', 'koala',
-            'luke-skywalker-koala', 'mech-and-cow', 'meow', 'milk',
-            'moofasa', 'mutilated', 'ren', 'satanic', 'scowleton', 
-            'sheep', 'small-cow', 'sodomized', 'squirrel', 'stegosaurus',
-            'stimpy', 'super-milker', 'surgery', 'turkey', 'turtle',
-            'tux', 'www'
-        ];
-
         if(args[0].toLowerCase() === 'list') {
             return message.channel.send(this.Embed.success(`
             ${types.map(t => '``' + t + '``').join(', ')}
@@ -45,10 +44,14 @@ export default class extends Command {
         }
 
         const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');
+        if(sentence.trim().length === 0) {
+            return message.channel.send(this.Embed.fail('Empty message after type.'));
+        }
 
         const split = sentence
             .match(/.{1,38}/g)                                              // split every 38 characters
-            .map((value, index, arr) => {
+            // just to make sure this doesn't happen again
+            ?.map((value, index, arr) => {
                 if(index === 0) {                                           // first item in array
                     return '/ ' + value.trim().padEnd(38, ' ') + ' \\';
                 } else if(index === arr.length - 1) {                       // last item in array
@@ -57,7 +60,9 @@ export default class extends Command {
                 return '| ' + value.trim().padEnd(38, ' ') + ' |';          // all others
             });
 
-        if(split.length === 1) {
+        if(!split) {
+            return message.channel.send(this.Embed.fail('Couldn\'t format message!'));
+        } else if(split.length === 1) {
             split.push('\\ ' + ''.padEnd(38, ' ') + ' /');
         }
 
