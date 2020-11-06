@@ -9,6 +9,7 @@ import {
 import { Logger } from './Logger.js';
 
 import { createRequire } from 'module';
+import { GuildSettings } from '../lib/types/Collections.js';
 const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
 
 export class Command {
@@ -88,7 +89,7 @@ export class Command {
         return Array.isArray(botOwner) ? botOwner.indexOf(id) > -1 : botOwner === id;
     }
 
-    init(_: Message, __?: string[]): unknown {
+    init(_: Message, __: string[], ___?: GuildSettings): unknown {
         throw new Error('init called on Command with function');
     }
 

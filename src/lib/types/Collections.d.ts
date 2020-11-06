@@ -56,18 +56,21 @@ export interface GuildSettings {
         command: string
         message?: string
     }[]
-    enabled?: {
-        command: string
-        aliases?: string[]
-        type: 'role' | 'guild' | 'user' | 'channel'
-        id?: string
-    }[],
-    disabled?: {
-        command: string
-        aliases?: string[]
-        type: 'role' | 'guild' | 'user' | 'channel'
-        id?: string
-    }[],
+    disabledChannel?: {
+        main: string
+        names: string[]
+        id: string
+    }[]
+    disabledRole?: {
+        main: string
+        names: string[]
+        id: string
+    }[]
+    disabledUser?: {
+        main: string
+        names: string[]
+        id: string
+    }[]
     welcomeChannel?: string
 }
 

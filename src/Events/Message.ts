@@ -153,30 +153,28 @@ export default class implements Event {
             } 
         }
 
-        if(message.guild) { // commands can only be enabled/disabled in guilds.
-            // get all "enabled" commands in the guild (if there are any)
-            const enabledForType =  guild?.enabled?.filter(en => en.command === fName || en.aliases?.includes(fName)) ?? [];
-            const disabled = guild?.disabled?.some(di => 
-                (di.command === fName || di.aliases?.indexOf(fName) > -1) &&
-                (di.type === 'guild' ||
-                (di.type === 'user' && message.author.id === di.id) || 
-                (di.type === 'role' && message.member?.roles.cache.has(di.id)) ||
-                (di.type === 'channel' && message.channel.id === di.id))
-            ) ?? false;
+        if(message.guild && ![ 'Settings', 'Moderation' ].includes(command.settings.folder)) { // commands can only be enabled/disabled in guilds.
+            const disabledChannel = guild?.disabledChannel?.some(c => 
+                c.id === message.channel.id && // in this channel
+                (c.names.includes('*') || c.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledChannel) {
+                return;
+            }
 
-            if(message.guild && enabledForType.length !== 0) {
-                const enabled = enabledForType.some(en => // name/aliases don't need to be checked
-                    (en.type === 'user' && en.id === message.author.id) ||
-                    (en.type === 'role' && message.member.roles.cache.has(en.id)) ||
-                    (en.type === 'channel' && en.id === message.channel.id)
-                );
-                
-                if(enabled === false) { 
-                    // if a command is enabled, only that group type can use it
-                    // if this check is explicitly false, the person cannot use it
-                    return;
-                }
-            } else if(disabled) { // not enabled for user and is disabled
+            const disabledRole = guild?.disabledRole?.some(r => 
+                message.member.roles.cache.has(r.id) &&
+                (r.names.includes('*') || r.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledRole) {
+                return;
+            } 
+
+            const disabledUser = guild?.disabledUser?.some(u => 
+                message.author.id === u.id &&
+                (u.names.includes('*') || u.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledUser) {
                 return;
             }
         }
@@ -185,6 +183,6 @@ export default class implements Event {
             return message.channel.send(this.Embed.missing_perms(false, command.permissions));
         }
 
-        return command.init(message, args);
+        return command.init(message, args, guild);
     }
 }
