@@ -33,6 +33,8 @@ export default class extends Command {
                 return message.channel.send(this.Embed.generic('Invalid user ID!'));
             } else if(idOrUser instanceof GuildMember) {
                 member = idOrUser.id;
+            } else {
+                member = idOrUser;
             }
         }
 
@@ -50,11 +52,12 @@ export default class extends Command {
         const warnings = warns.users[member]
             .reverse()
             .slice(0, 10)
-            .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100)}\`\``)
+            .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100) || 'N/A'}\`\``)
             .join('\n');
 
         return message.channel.send(this.Embed.success(`
         ${memberStr}'s last ${warns.users[member].reverse().slice(0, 10).length} warnings!
+        Total points: \`\`${warns.users[member].reduce((p, c) => p + c.points, 0)}\`\`
         ${warnings}
         `));
     }

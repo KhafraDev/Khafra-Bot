@@ -26,7 +26,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         const idOrUser = getMentions(message, args);
-        if(!isValidNumber(+args[1])) {
+        if(!isValidNumber(+args[1], { allowNegative: true })) {
             return message.channel.send(this.Embed.generic('Invalid **number** of points!'));
         } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
             return message.channel.send(this.Embed.generic('Invalid user ID!'));

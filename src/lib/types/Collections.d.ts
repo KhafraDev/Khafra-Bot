@@ -71,6 +71,10 @@ export interface GuildSettings {
         names: string[]
         id: string
     }[]
+    disabledGuild?: {
+        main: string
+        names: string[]
+    }[]
     welcomeChannel?: string
 }
 

@@ -35,7 +35,7 @@ export default class implements Event {
         );
 
         const server = await settingsCollection.findOne<GuildSettings>({ id: member.guild.id });
-        if(!server.welcomeChannel) {
+        if(!server?.welcomeChannel) {
             return;
         }
 

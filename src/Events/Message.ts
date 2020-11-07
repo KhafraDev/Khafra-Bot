@@ -154,29 +154,28 @@ export default class implements Event {
         }
 
         if(message.guild && ![ 'Settings', 'Moderation' ].includes(command.settings.folder)) { // commands can only be enabled/disabled in guilds.
+            const disabledGuild = guild?.disabledGuild?.some(g =>
+                g.names.includes('*') || g.names.includes(command.settings.name.toLowerCase())  
+            );
+            if(disabledGuild) return;
+
             const disabledChannel = guild?.disabledChannel?.some(c => 
                 c.id === message.channel.id && // in this channel
                 (c.names.includes('*') || c.names.includes(command.settings.name.toLowerCase())) // * = all commands
             );
-            if(disabledChannel) {
-                return;
-            }
+            if(disabledChannel) return;
 
             const disabledRole = guild?.disabledRole?.some(r => 
                 message.member.roles.cache.has(r.id) &&
                 (r.names.includes('*') || r.names.includes(command.settings.name.toLowerCase())) // * = all commands
             );
-            if(disabledRole) {
-                return;
-            } 
+            if(disabledRole) return;
 
             const disabledUser = guild?.disabledUser?.some(u => 
                 message.author.id === u.id &&
                 (u.names.includes('*') || u.names.includes(command.settings.name.toLowerCase())) // * = all commands
             );
-            if(disabledUser) {
-                return;
-            }
+            if(disabledUser) return;
         }
 
         if(!command.userHasPerms(message, command.permissions)) {

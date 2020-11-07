@@ -15,7 +15,7 @@ export default class extends Command {
                 '#general',
                 '#general badmeme',
                 '503024525076725775',
-                '503024525076725775'
+                '503024525076725775 badmeme'
             ],
             [ /* No extra perms needed */ ],
             {

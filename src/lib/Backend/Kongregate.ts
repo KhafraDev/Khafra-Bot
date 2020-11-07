@@ -2,10 +2,9 @@ const getEnv = () => {
     const {
         __KONG_USERNAME,
         __KONG_PASSWORD,
-        __KONG_USER_VARS_SIG,
         __KONG_WEBHOOK
     } = process.env;
-    return { __KONG_USERNAME, __KONG_PASSWORD, __KONG_USER_VARS_SIG, __KONG_WEBHOOK }
+    return { __KONG_USERNAME, __KONG_PASSWORD, __KONG_WEBHOOK }
 }
 
 import ws from 'ws';
@@ -50,7 +49,7 @@ const svid = (a?: string) => {
         return ('x' === m ? c : c & 3 | 8).toString(16);
     });
     
-    return 'string' == typeof a || 'number' == typeof a ? b + ':' + a : b;
+    return typeof a === 'string' || typeof a === 'number' ? b + ':' + a : b;
 }
 
 const WebSocket = new ws(`wss://chat-proxy.kongregate.com/?sid=${svid()}&svid=${svid()}&wsr=false&wss=false&ca=0&wc=0&bc=0&tc=0&sr=0&ss=0&pb=true`);
@@ -64,11 +63,7 @@ let sentFirstStreamFeature = false;
 WebSocket.on('message', (m: string) => {   
     const part = parse5.parseFragment(m) as DTPN;
     const node = part.childNodes[0] as DTE;
-    const { 
-        __KONG_USERNAME: username, 
-        __KONG_PASSWORD: password, 
-        __KONG_USER_VARS_SIG: user_vars_sig,
-    } = getEnv();
+    const { __KONG_USERNAME: username, __KONG_PASSWORD: password } = getEnv();
 
     if(!node) {
         return;
@@ -108,7 +103,7 @@ WebSocket.on('message', (m: string) => {
 
             WebSocket.send(`<iq type='get' id='${svid()}' xmlns='${NS.CLIENT}'><query xmlns='kongregate:iq:msg'><msg opcode='room.rq'>${game}</msg></query></iq>`);
         } else if(node.attrs.some(a => a.name === 'from' && a.value === 'admin@of1.kongregate.com/server')) { // m.includes(`from="admin@of1.kongregate.com/server"`)
-            WebSocket.send(`<presence from='${username.toLowerCase()}@of1.kongregate.com/xiff' to='320578-synergism-2@conference.of1.kongregate.com/${username}' xmlns='${NS.CLIENT}'><x xmlns='${NS.MUC}'><history seconds='60'/></x><status>[&quot;${user_vars_sig}&quot;,&quot;[]&quot;,{}]</status></presence>`);
+            WebSocket.send(`<presence from='${username.toLowerCase()}@of1.kongregate.com/xiff' to='320578-synergism-2@conference.of1.kongregate.com/${username}' xmlns='${NS.CLIENT}'><x xmlns='${NS.MUC}'><history seconds='60'/></x><status>[&quot;null&quot;,&quot;[]&quot;,{}]</status></presence>`);
         }
     } else {
         const frag = parse5.parseFragment(m) as DTPN;
@@ -188,10 +183,7 @@ const handleMessage = async () => {
 }
 
 export const changeRooms = (newRoom = 3) => {
-    const {
-        __KONG_USERNAME: username,
-        __KONG_USER_VARS_SIG: user_vars_sig
-    } = getEnv();
+    const { __KONG_USERNAME: username } = getEnv();
 
     const leave = trim`
     <presence 
@@ -213,7 +205,7 @@ export const changeRooms = (newRoom = 3) => {
             <history seconds='60'/>
         </x>
         <status>
-            [&quot;${user_vars_sig}&quot;,&quot;[\&quot;${username}\&quot;,\&quot;\&quot;,1,\&quot;cdn4:/assets/avatars/defaults/slimyghost.png?i10c=img.resize(width:16)\&quot;,\&quot;Synergism\&quot;,\&quot;/games/Platonic/synergism\&quot;,[],[]]&quot;,{&quot;special_chat_vars&quot;:&quot;{}&quot;}]
+            [&quot;null&quot;,&quot;[\&quot;${username}\&quot;,\&quot;\&quot;,1,\&quot;cdn4:/assets/avatars/defaults/slimyghost.png?i10c=img.resize(width:16)\&quot;,\&quot;Synergism\&quot;,\&quot;/games/Platonic/synergism\&quot;,[],[]]&quot;,{&quot;special_chat_vars&quot;:&quot;{}&quot;}]
         </status>
     </presence>
     `;
