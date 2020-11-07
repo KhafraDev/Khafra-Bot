@@ -8,11 +8,14 @@ const formatPresence = (activities: Activity[]) => {
     for(const activity of activities) {
         switch(activity.type) {
             case 'CUSTOM_STATUS':
-                push.push(`${activity.emoji ?? ' '}\`\`${activity.state}\`\``); break;
+                push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
+                break;
             case 'LISTENING':
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); break;
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
+                break;
             case 'PLAYING':
-                push.push(`Playing *${activity.name}*.`); break;
+                push.push(`Playing *${activity.name}*.`); 
+                break;
             default:
                 console.log(activity);
         }

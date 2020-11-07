@@ -17,6 +17,7 @@ import { parse, URL } from 'url';
 import { MessageEmbed } from 'discord.js';
 import fetch from 'node-fetch';
 import { trim } from "../Utility/Template.js";
+import { inspect } from 'util';
 
 export const userCache = new Map<string, string>();
 
@@ -131,6 +132,10 @@ WebSocket.on('message', (m: string) => {
             const text = ((frag.childNodes[0] as DTE).childNodes as DTTN[]).filter(t => t.nodeName === '#text').shift()?.value;
             const from = (frag.childNodes[0] as DTE).attrs.filter(a => a.name === 'from')?.shift().value.split('/').pop();
             if(typeof text === 'string') {
+                if(text.startsWith(':sticker')) {
+                    inspect(frag, null, Number.MAX_SAFE_INTEGER, true);
+                }
+                
                 const valid = text.split(/\s+/g).every(e => { // if any urls are presents, don't send text
                     try {
                         new URL(e);
@@ -162,7 +167,18 @@ const handleMessage = async () => {
         const user = userCache.get(from);
         const embed = new MessageEmbed()
             .setColor('#ffe449')
-            .setDescription(`${from} - ${text.slice(0, 2000)}`);
+
+        if(/^:sticker-\d+-(.*?):/.test(text)) {
+            try {
+                const image = JSON.parse(text.replace(/^:sticker-\d+-(.*?):/, ''));
+                embed.setDescription(`${from} - sticker from ${image.stickerPackName}`);
+                embed.setImage(`https://cdn1.kongcdn.com/assets/dynamic/stickers/${image.stickerId}/${image.stickerVariant}.png?width=72`);
+            } catch {
+                embed.setDescription(`${from} - ${text}`);
+            }
+        } else {
+            embed.setDescription(`${from} - ${text}`);
+        }
 
         if(typeof user !== 'undefined') {
             embed.setThumbnail(user);
