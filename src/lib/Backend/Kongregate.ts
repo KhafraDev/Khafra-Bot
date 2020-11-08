@@ -17,7 +17,6 @@ import { parse, URL } from 'url';
 import { MessageEmbed } from 'discord.js';
 import fetch from 'node-fetch';
 import { trim } from "../Utility/Template.js";
-import { inspect } from 'util';
 
 export const userCache = new Map<string, string>();
 
@@ -112,7 +111,7 @@ WebSocket.on('message', (m: string) => {
             return;
         } else if(frag.childNodes[0].nodeName === 'presence') {
             if((frag.childNodes[0] as DTE).attrs.some(a => a.name === 'from')) {
-                const from = (((frag.childNodes[0] as DTPN).childNodes[0] as DTPN).childNodes[0] as DTTN).value;
+                const from = (((frag.childNodes[0] as DTPN)?.childNodes?.[0] as DTPN)?.childNodes?.[0] as DTTN).value;
                 if(!from) {
                     return;
                 }
@@ -125,17 +124,13 @@ WebSocket.on('message', (m: string) => {
                 const parsed = parse(avatarURL.replace(/cdn(\d):/, (_, b) => `https://cdn${b}.kongcdn.com`));
                 const userStr = user.replace(/\\/g, '');
                 if(!userCache.has(userStr)) {
-                    userCache.set(userStr, parsed.pathname?.slice(1));
+                    userCache.set(userStr, parsed.href?.slice(1, -1));
                 }
             } 
         } else if(frag.childNodes[0].nodeName === 'message') {
             const text = ((frag.childNodes[0] as DTE).childNodes as DTTN[]).filter(t => t.nodeName === '#text').shift()?.value;
             const from = (frag.childNodes[0] as DTE).attrs.filter(a => a.name === 'from')?.shift().value.split('/').pop();
-            if(typeof text === 'string') {
-                if(text.startsWith(':sticker')) {
-                    inspect(frag, null, Number.MAX_SAFE_INTEGER, true);
-                }
-                
+            if(typeof text === 'string') {                
                 const valid = text.split(/\s+/g).every(e => { // if any urls are presents, don't send text
                     try {
                         new URL(e);
