@@ -258,7 +258,6 @@
 * Fixed commands still using the old embed structure.
 * Add in ``strawpoll`` command. This command is awesome.
 * Add in ``softban`` command.
-* Add in ``discordjs`` docs command.
 * Typescript now transpiles to ESNext, letting us use all the new keywords!
 * Remove ``https-proxy-agent`` and ``node-abort-controller`` in favor of native functions. 
 * Add in ``trump`` and ``trumpkey`` commands.
@@ -270,3 +269,15 @@
 * New cooldown functionality that is much better. Old times are removed every 10 minutes or when a user uses a command or a command is used in a guild. Plus, code is much nicer and can be used anywhere in 2 steps. 
 * ``messageReactionAdd`` and ``messageReactionRemove`` events will make significantly less API calls, preventing rate-limiting in certain cases.
 * ``message`` event has been cleaned up, no functionality changes but is now much more manageable.
+* Add in Kongregate chat relay. Not customizable and many values are hardcoded in.
+* Add in ``kongroom`` command for the bot owner to change the chatroom the bot is currently in.
+* Add ``lock``, ``ratelimit``, and ``yomama`` commands.
+* Remove usage of deprecated ``URL#parse``.
+* Fix ``guildMemberAdd`` and ``guildMemberRemove`` events if a guild had no database entry.
+* Blacklist command has been split into four separate parts.
+* Fix issue in ``cowsay`` command when a type was supplied without text.
+* Add in refresh ability in ``whatisnpm`` command to refresh the cache.
+* Add in ``nim`` command.
+* Add in DuckDuckGo's ``bangs`` into a command.
+* Add in debug commands.
+* Fix ``hastebin`` command not working with new lines. Doing so, I realized there was some really bad logic in the message event for handling the prefix, and was also able to remove (one of?) the ugliest piece(s) of code remaining in the bot.

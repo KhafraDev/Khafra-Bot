@@ -1,7 +1,11 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
-import { changeRooms } from '../../lib/Backend/Kongregate.js';
+
+let changeRooms: (num?: number) => void;
+if(process.argv[process.argv.length-1] !== '--dev') {
+    ({ changeRooms } = await import('../../lib/Backend/Kongregate.js'));
+}
 
 export default class extends Command {
     constructor() {
@@ -23,6 +27,8 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         if(!isValidNumber(+args[0])) {
             return message.channel.send(this.Embed.generic());
+        } else if(!changeRooms) {
+            return message.channel.send(this.Embed.fail('Function wasn\'t imported.'));
         }
 
         changeRooms(+args[0]);

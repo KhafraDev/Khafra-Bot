@@ -13,7 +13,7 @@ import parse5, {
     DefaultTreeElement as DTE,
     DefaultTreeTextNode as DTTN
 } from 'parse5';
-import { parse, URL } from 'url';
+import { URL } from 'url';
 import { MessageEmbed } from 'discord.js';
 import fetch from 'node-fetch';
 import { trim } from "../Utility/Template.js";
@@ -116,15 +116,26 @@ WebSocket.on('message', (m: string) => {
                     return;
                 }
 
-                const [, user,,, avatarURL] = from.split(',').map((j: string) => j.replace(/"|\[|\]/g, '')).filter((e: string) => e.length > 0);
-                if(typeof user !== 'string' || typeof avatarURL !== 'string') {
+                const data = from.match(/,"\[(.*?)\]",/);
+                if(!data?.[1]) {
                     return;
                 }
 
-                const parsed = parse(avatarURL.replace(/cdn(\d):/, (_, b) => `https://cdn${b}.kongcdn.com`));
-                const userStr = user.replace(/\\/g, '');
-                if(!userCache.has(userStr)) {
-                    userCache.set(userStr, parsed.href?.slice(1, -1));
+                let user: string, avatarURL: URL;
+                try {
+                    const [username,,,partialAvatar]: string[] = JSON.parse(`[${data[1].replace(/\\/g, '')}]`);
+                    avatarURL = new URL(partialAvatar.replace(/cdn(\d):/, (_, b) => `https://cdn${b}.kongcdn.com`));
+                    user = username;
+                } catch {
+                    return;
+                }
+
+                if(typeof user !== 'string') {
+                    return;
+                }
+
+                if(!userCache.has(user)) {
+                    userCache.set(user, avatarURL.href);
                 }
             } 
         } else if(frag.childNodes[0].nodeName === 'message') {

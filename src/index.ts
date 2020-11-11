@@ -6,7 +6,10 @@ import { ClientEvents } from 'discord.js';
 
 loadEnv();
 
-import './lib/Backend/Kongregate.js';
+if(process.argv[process.argv.length-1] !== '--dev') {
+    await import('./lib/Backend/Kongregate.js');
+}
+
 import './lib/Utility/Rejections.js';
 import './Structures/Proxy/ChannelSend.js';
 import './Structures/Proxy/React.js';

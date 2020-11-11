@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { parse } from 'url';
+import { URL } from 'url';
 import fetch from 'node-fetch';
 
 export default class extends Command {
@@ -21,14 +21,27 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const URL = parse(args[0]);
-        if(!URL.hostname?.endsWith('reddit.com')) {
-            return message.channel.send(this.Embed.fail(`Not a reddit post. Nice try.`));
+        let url;
+        try {
+            url = new URL(args[0]);
+        } catch {
+            return message.channel.send(this.Embed.fail('Invalid URL!'));
+        }
+
+        if(
+            url.origin !== 'https://www.reddit.com' ||
+            !/^\/r\/(.*)\//.test(url.pathname) ||
+            [...url.searchParams.keys()].length !== 0
+        ) {
+            return message.channel.send(this.Embed.fail(`
+            Not a valid reddit URL!
+            Make sure it's from \`\`https://www.reddit.com\`\` and has no search params (everything after a "?").
+            `));
         }
         
         let json;
         try {
-            const res = await fetch(URL.href.replace('.json', '') + '.json');
+            const res = await fetch(url.href.replace(/.json$/, '') + '.json');
             const j = await res.json();
             json = j;
         } catch {

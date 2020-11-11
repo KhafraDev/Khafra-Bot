@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs'; // sync is bad except for checking file existence 
 
-export const loadEnv = async () => {
+export const loadEnv = () => {
     const path = join(process.cwd(), '.env');
     if(!existsSync(path)) {
        throw new Error('.env: No .env file found at the root of the repo!');
@@ -20,6 +20,4 @@ export const loadEnv = async () => {
             return p in kvPair ? kvPair[p] : env[p as string];
         }
     });
-
-    return Promise.resolve();
 }
