@@ -1,190 +1,187 @@
-import { Event } from "../Structures/Event";
-import { 
-    Message, 
-    ClientEvents,
-    Role
-} from "discord.js";
-import KhafraClient from "../Bot/KhafraBot";
-import { Sanitize } from "../lib/Utility/SanitizeCommand";
-import { pool } from "../Structures/Database/Mongo";
+import { Message, ClientEvents, Role } from "discord.js";
+import { createRequire } from 'module';
+
+import { Event } from "../Structures/Event.js";
+import { Sanitize } from "../lib/Utility/SanitizeCommand.js";
+import { pool } from "../Structures/Database/Mongo.js";
 import { GuildSettings } from "../lib/types/Collections";
-import { Logger } from "../Structures/Logger";
-import { GuildCooldown } from "../Structures/Cooldown/GuildCooldown";
-import Embed from "../Structures/Embed";
-import { readFileSync } from "fs";
-import { join } from "path";
-import { compareTwoStrings } from "../lib/Utility/CompareStrings";
+import { Logger } from "../Structures/Logger.js";
+import { KhafraClient } from "../Bot/KhafraBot.js";
+import { Command } from "../Structures/Command.js";
+import { trim } from "../lib/Utility/Template.js";
+import { cooldown } from "../Structures/Cooldown/CommandCooldown.js";
 
-const { prefix: defaultPrefix, id }: { prefix: string, id: string } = JSON.parse(
-    readFileSync(join(__dirname, '../../config.json')).toString()
-);
+const { prefix: defaultPrefix } = createRequire(import.meta.url)('../../config.json');
 
-const cooldownGuild = new GuildCooldown();
-const cooldownUsers = new GuildCooldown(5);
-const cooldownCustom = new GuildCooldown(5);
+const _cooldownGuild = cooldown(15, 60000);
+const _cooldownUsers = cooldown( 6, 60000);
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
     logger = new Logger('Message');
+    Embed = Command.Embed;
 
     async init(message: Message) {
-        const isDM = message.channel.type === 'dm';
-        // Sanitize checks:
-        //  * Author is a bot
-        //  * If there is a guild, if it's available
-        //  * If the message is partial or is a system message.
-        //  * If bot has perms in text channel (DMs aren't checked)
         if(!Sanitize(message)) {
             return;
         }
     
         const split = message.content.split(/\s+/g);
-        const selfMentioned = new RegExp(`<@!?${message.guild?.me.id ?? id}>`).test(split[0]);
-        const [commandName, ...args] = selfMentioned
-            ? split.slice(1)
-            : split;
+        const selfMentioned = new RegExp(`<@!?${message.client.user.id}>`).test(split[0]); // bot mentioned first argument
+        const [name, ...args] = selfMentioned ? split.slice(1) : split;
+        const isDM = message.channel.type === 'dm';
 
-        if(!commandName) {
+        if(!name) {
+            return;
+        } else if(selfMentioned && !KhafraClient.Commands.has(name) && isDM) { // when mentioned, there is no prefix
+            return;
+        } else if(isDM && (!message.content.startsWith(defaultPrefix) && !selfMentioned)) { // dm, doesn't start with prefix, not mentioned
             return;
         }
     
         const client =      isDM ? null : await pool.settings.connect();
         const collection =  isDM ? null : client.db('khafrabot').collection('settings');
-        const guild =       isDM ? null : await collection.findOne({ id: message.guild.id }) as GuildSettings;
+        const guild =       isDM ? null : await collection.findOne<GuildSettings>({ id: message.guild.id });
 
-        /** Guild prefix, defaults to ``!`` */
-        const prefix = guild?.prefix ?? defaultPrefix;
-        /** Name of the command with the prefix stripped */
-        const name = commandName.toLowerCase().slice(selfMentioned ? 0 : prefix.length);
-        const command = KhafraClient.Commands.get(name);
+        const prefix: string = selfMentioned ? '' : (guild?.prefix ?? defaultPrefix);
+        const fName = name.toLowerCase().slice(prefix.length);
+        if(!selfMentioned && !name.startsWith(prefix)) { // when mentioned, command has no prefix
+            return;
+        }
 
-        if(name.length === 0) {
+        /**
+         * Handle command roles, or a custom command that gives the user
+         * a role. Set-up by an admin in the server.
+         */
+        const Custom = guild?.commandRole?.filter(c => c.command === fName);
+        if(Array.isArray(Custom) && Custom.length !== 0) {
+            const my = message.guild.me.roles.cache.sort((a, b) => b.rawPosition - a.rawPosition).first().rawPosition;
+            if(!message.guild.me.permissionsIn(message.channel).has('MANAGE_ROLES')) {
+                return message.channel.send(this.Embed.fail(`
+                I am lacking permissions to update user roles! 
+
+                Ask your server's staff to update my permissions if you'd like to use custom commands.
+                `));
+            }
+
+            const { role, command, message: m } = Custom.shift();
+            if(!message.guild.roles.cache.has(role)) {
+                return;
+            } else if(!message.member.manageable) {
+                return message.channel.send(this.Embed.fail(`I cannot manage your roles!`));
+            }
+
+            const roleCache = message.guild.roles.cache.get(role) ?? await message.guild.roles.fetch(role);
+            if(!(roleCache instanceof Role) || roleCache.deleted || roleCache.managed) {
+                return message.channel.send(this.Embed.fail(`Role couldn't be fetched!`));
+            } else if(roleCache.rawPosition >= my) {
+                return message.channel.send(this.Embed.fail(`
+                I cannot add or remove this role as it is equal to or higher than my highest role in the hierarchy.
+                `));
+            }
+
+            const action = message.member.roles.cache.has(role) ? 'remove' : 'add';
+            const ccMessage = action === 'add' 
+                ? (m?.replace('{user}', message.member.toString()) ?? `I have given you ${roleCache}!`)
+                : `I have taken away ${roleCache}.`;
+
+            try {
+                await message.member.roles[action](role);
+            } catch(e) {
+                this.logger.log(e);
+                return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            }
+
+            this.logger.log(trim`
+            Command: ${command} 
+            | Author: ${message.author.id} 
+            | URL: ${message.url} 
+            | Guild: ${message.guild.id} 
+            `);
+
+            return message.channel.send(this.Embed.success(ccMessage));
+        }
+
+        /**
+         * Handle command settings and "quirks", making sure command is valid in the environment it's used in.
+         */
+        const command = KhafraClient.Commands.get(fName);                        
+        if(!command) { // no built in or custom command
             return;
-        } if(commandName.indexOf(prefix) !== 0 && !selfMentioned) {
-            return;
-        } else if(command) {
+        } else if(command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
+            return message.channel.send(this.Embed.fail(`
+            \`\`${command.settings.name}\`\` is only available to the bot owner!
+            `));
+        } else if(command.settings.guildOnly && isDM) {
+            return message.channel.send(this.Embed.fail(`
+            \`\`${command.settings.name}\`\` is only available in guilds!
+            `));
+        } else {
             const [min, max] = command.settings.args;
             if(min > args.length || args.length > max) {
-                return message.channel.send(Embed.fail(`
+                return message.channel.send(this.Embed.fail(`
                 Incorrect number of arguments provided.
                 
-                The command requires ${command.settings.args[0]} minimum arguments and ${command.settings.args[1] ?? 'no'} max.
-                Use \`\`help ${command.settings.name}\`\` for example usage!
+                The command requires ${min} minimum arguments and ${max ?? 'no'} max.
+                Example(s):
+                ${command.help.slice(1).map(c => `\`\`${prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
                 `));
             }
         }
 
-        this.logger.log(`
-        Command: ${command?.settings?.name ?? 'Not valid'} 
+        this.logger.log(trim`
+        Command: ${command.settings.name} 
         | Author: ${message.author.id} 
         | URL: ${message.url} 
         | Guild: ${message.guild?.id ?? 'DMs'} 
         | Input: ${message.content}
-        `.split(/\n\r|\n|\r/g).map(e => e.trim()).join(' ').trim());
+        `);
 
-        cooldownGuild.set(message.guild?.id ?? message.channel.id); // set cooldowns for guild/DM channel
-        command && cooldownUsers.set(message.author.id); // set cooldowns for Users
-        if(cooldownGuild.limited(message.guild?.id ?? message.channel.id)) {
-            return message.channel.send(Embed.fail(`
-            ${message.channel.type === 'dm' ? 'DMs' : 'Guilds'} are limited to ${cooldownGuild.MAX} commands a minute.
+        if(!_cooldownUsers(message.author.id)) {
+            return message.channel.send(this.Embed.fail(`
+            Users are limited to 6 commands a minute.
 
             Please refrain from spamming the bot.
             `));
-        } else if(command && cooldownUsers.limited(message.author.id)) {
-            return message.channel.send(Embed.fail(`
-            Users are limited to ${cooldownUsers.MAX} commands a minute.
-
-            Please refrain from spamming the bot.
-            `));
+        } else if(message.channel.type !== 'dm') {
+            if(!_cooldownGuild(message.guild.id)) {
+                return message.channel.send(this.Embed.fail(`
+                Guilds are limited to 15 commands a minute.
+    
+                Please refrain from spamming the bot.
+                `));
+            } 
         }
 
-        if(command?.settings.guildOnly && message.channel.type === 'dm') { // command is guild only but used in DMs
-            return message.channel.send(Embed.fail('Command only works in Guilds!'));
+        if(message.guild && ![ 'Settings', 'Moderation' ].includes(command.settings.folder)) { // commands can only be enabled/disabled in guilds.
+            const disabledGuild = guild?.disabledGuild?.some(g =>
+                g.names.includes('*') || g.names.includes(command.settings.name.toLowerCase())  
+            );
+            if(disabledGuild) return;
+
+            const disabledChannel = guild?.disabledChannel?.some(c => 
+                c.id === message.channel.id && // in this channel
+                (c.names.includes('*') || c.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledChannel) return;
+
+            const disabledRole = guild?.disabledRole?.some(r => 
+                message.member.roles.cache.has(r.id) &&
+                (r.names.includes('*') || r.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledRole) return;
+
+            const disabledUser = guild?.disabledUser?.some(u => 
+                message.author.id === u.id &&
+                (u.names.includes('*') || u.names.includes(command.settings.name.toLowerCase())) // * = all commands
+            );
+            if(disabledUser) return;
         }
 
-        if(guild) {
-            const custom =   guild.commandRole?.filter(cc => cc.command === name);
-            const enabled =  guild.enabled?.filter(en => en.command === name || en.aliases?.indexOf(name) > -1);
-            const disabled = guild.disabled?.filter(di => di.command === name || di.aliases?.indexOf(name) > -1);
-
-            if(enabled?.length > 0) {
-                // can't be enabled for the entire guild because it already is by default.
-                if(!enabled.some(t =>
-                       t.type === 'user' && message.author.id === t.id
-                    || t.type === 'role' && message.member.roles.cache.has(t.id)
-                    || t.type === 'channel' && message.channel.id === t.id 
-                )) {
-                    return;
-                }
-            }
-
-            if(disabled?.length > 0) {
-                if(disabled.some(t => 
-                       t.type === 'guild'
-                    || t.type === 'user' && message.author.id === t.id
-                    || t.type === 'role' && message.member.roles.cache.has(t.id)
-                    || t.type === 'channel' && message.channel.id === t.id    
-                )) {
-                    return;
-                }
-            }
-
-            // user used a custom command!
-            // undefined > 0 === false
-            if(custom?.length > 0) {
-                if(cooldownCustom.set(message.author.id).limited(message.author.id)) {
-                    return message.channel.send(Embed.fail(`
-                    Users are limited to ${cooldownCustom.MAX} custom commands a minute.
-
-                    Please refrain from spamming the bot.
-                    `));
-                } else if(!message.member.manageable) { // bot doesn't have perms to give member role
-                    return message.channel.send(Embed.fail(`I do not have sufficient perms to manage ${message.member}!`));
-                }
-
-                const role = await message.guild.roles.fetch(custom[0].role);
-                // RoleManager can return Role | null | RoleManager
-                // check if it's a role, not deleted, and not managed by a third party.
-                if(!(role instanceof Role) || role.deleted || role.managed) {
-                    return;
-                }
-
-                const action = message.member.roles.cache.has(role.id) ? 'remove' : 'add';
-                const ccMessage = action === 'add' 
-                    ? (custom[0].message?.replace('{user}', message.member.toString()) ?? `I have given you ${role}!`)
-                    : `I have taken away ${role}.`;
-
-                try {
-                    await Promise.allSettled([
-                        message.member.roles[action](role),
-                        message.channel.send(Embed[action === 'add' ? 'success' : 'fail'](ccMessage))
-                    ]);
-                } catch(e) {
-                    this.logger.log(`Custom commands: ${e.toString()}`);
-                } 
-
-                return;
-            }
+        if(!command.userHasPerms(message, command.permissions)) {
+            return message.channel.send(this.Embed.missing_perms(false, command.permissions));
         }
 
-        if(!command) { // already checked custom commands
-            if(selfMentioned) {
-                // we want all aliases included
-                const allCommands = new Set(KhafraClient.Commands.keys());
-                const diff = Array.from(allCommands)
-                    .map(c => ({ name: c, diff: compareTwoStrings(commandName, c) }))
-                    .sort((a, b) => b.diff - a.diff);
-
-                if(diff[0].diff < .1) {
-                    return message.channel.send(Embed.fail('No command close to that name was even remotely found.'));
-                }
-
-                return message.channel.send(Embed.fail(`No command found! Did you mean ${diff[0].name}?`));
-            }
-
-            return;
-        }
-
-        return command.init(message, args);
+        return command.init(message, args, guild);
     }
 }

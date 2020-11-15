@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+
+import { pool } from "../../Structures/Database/Mongo.js";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
 import { PocketGetResults, PocketArticle } from "../../lib/Backend/Pocket/types/Pocket";
 import { PocketUser } from "../../lib/types/Collections";
 
@@ -26,9 +26,9 @@ export default class extends Command {
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
-        const user = await collection.findOne({ id: message.author.id }) as PocketUser;
+        const user = await collection.findOne<PocketUser>({ id: message.author.id });
         if(!user) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             You haven't set-up Pocket integration!
 
             Try using the \`\`pocket\`\` command for more information.
@@ -39,19 +39,15 @@ export default class extends Command {
         try {
             const pocket = new Pocket(user);
             latest = await pocket.getList();
-        } catch(e) {
-            return message.channel.send(Embed.fail(`
-            An unexpected error occurred!
-            
-            \`\`\`${(e as Error).toString()}\`\`\`
-            `));
+        } catch {
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const formatted = (Object.values(latest.list) as unknown as PocketArticle[]) // TypeScript isn't intelligent
+        const formatted = (Object.values<PocketArticle>(latest.list))
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
         
-        const embed = Embed.success(formatted)
+        const embed = this.Embed.success(formatted)
             .setAuthor(message.author.username + '\'s latest saves', message.author.displayAvatarURL(), 'https://getpocket.com/')
 
         return message.channel.send(embed);

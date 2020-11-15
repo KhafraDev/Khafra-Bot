@@ -1,6 +1,5 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
@@ -15,13 +14,13 @@ export default class extends Command {
                 folder: 'Server',
                 args: [0, 0],
                 guildOnly: true,
-                aliases: [ 'member' ]
+                aliases: [ 'membercount' ]
             }
         );
     }
 
     init(message: Message) {
-        return message.channel.send(Embed.success(`
+        return message.channel.send(this.Embed.success(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
         `));
     }

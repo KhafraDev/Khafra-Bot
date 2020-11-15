@@ -4,21 +4,24 @@ import {
     TextChannel,
     Snowflake,
     Channel,
+    MessageEmbed,
 } from 'discord.js';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { Logger } from './Logger';
+import { Logger } from './Logger.js';
 
-const { botOwner }: { botOwner: string[] | string } = JSON.parse(readFileSync(join(__dirname, '../../config.json')).toString());
+import { createRequire } from 'module';
+import { GuildSettings } from '../lib/types/Collections.js';
+const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
 
 export class Command {
     logger = new Logger('Command');
+    cooldown?: (id: string) => boolean
+
     /*** Description and example usage. */
     help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
 
-    settings: {
+    settings?: {
         /** Command name */
         name: string,
         /** Folder where command exists */
@@ -36,7 +39,7 @@ export class Command {
     constructor(
         help: string[],
         permissions: PermissionString[],
-        settings: {
+        settings?: {
             name: string,
             folder: string,
             args: [number, number?],
@@ -48,6 +51,7 @@ export class Command {
         this.help = help;
         this.permissions = this.permissions.concat(permissions);
         this.settings = settings;
+        this.settings && (this.settings.aliases = this.settings.aliases ?? []);
     }
 
     hasPermissions(message: Message, channel?: Channel, permissions?: PermissionString[]) {
@@ -85,7 +89,69 @@ export class Command {
         return Array.isArray(botOwner) ? botOwner.indexOf(id) > -1 : botOwner === id;
     }
 
-    init(_: Message, __?: string[]): unknown {
+    init(_: Message, __: string[], ___?: GuildSettings): unknown {
         throw new Error('init called on Command with function');
+    }
+
+    get Embed() {
+        const Embed = new MessageEmbed();
+
+        return {
+            fail: (reason?: string) => {
+                Embed.setColor(embed.fail);
+                reason && Embed.setDescription(reason);
+                
+                return Embed;
+            },
+        
+            /**
+             * An embed for a command being successfully executed!
+             */
+            success: (reason?: string) => {
+                Embed.setColor(embed.success);    
+                reason && Embed.setDescription(reason);
+                
+                return Embed;
+            },
+    
+            /**
+             * An embed for missing permissions!
+             */
+            missing_perms: (admin?: boolean, perms?: PermissionString[]) => {
+                return Embed.setColor(embed.fail).setDescription(`
+                One of us doesn't have the needed permissions!
+        
+                Both of us must have \`\`${perms?.join(', ') ?? this.permissions.join(', ')}\`\` permissions to use this command!
+                ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
+                `);
+            },
+    
+            /**
+             * A generic help embed useful for most situations.
+             * @this {Command}
+             */
+            generic: (reason?: string) => {
+                const [min, max] = this.settings.args;
+                const r = reason ?? `Missing ${min} minimum argument${min === 1 ? '' : 's'} (${max} maximum).`;
+                
+                return Embed.setColor(embed.fail).setDescription(`
+                ${r}
+
+                Aliases: ${this.settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
+                Permissions: ${this.permissions.map(p => `\`\`${p}\`\``).join(', ')}
+
+                Example Usage:
+                ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
+                `)
+                .addFields(
+                    { name: '**Guild Only:**', value: this.settings.guildOnly ? 'Yes' : 'No', inline: true },
+                    { name: '**Owner Only:**', value: this.settings.ownerOnly ? 'Yes' : 'No', inline: true }
+                );
+            }
+        }
+    }
+
+    static get Embed() {
+        return new Command([], []).Embed;
     }
 }

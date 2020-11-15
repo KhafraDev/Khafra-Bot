@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "outDir": "./",
+        "allowJs": true,
+        "target": "ESNext",
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "lib": [
+            "ES2020"
+        ],
+        "esModuleInterop": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitAny": true
+    },
+    "include": [
+        "DiscordDiscover.ts"
+    ],
+    "exclude": []
+}

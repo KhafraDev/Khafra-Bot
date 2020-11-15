@@ -1,6 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, Collection, GuildMember } from "discord.js";
-import Embed from "../../Structures/Embed";
+import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
+
 
 export default class extends Command {
     constructor() {
@@ -21,15 +22,15 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1 || Number.isNaN(+args[0])) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+        if(!isValidNumber(+args[0])) {
+            return message.channel.send(this.Embed.generic('Argument isn\'t a valid integer!'));
         }
 
         let members: Collection<string, GuildMember>;
         try {
             members = await message.guild.members.fetch();
         } catch {
-            return message.channel.send(Embed.fail('An error occurred fetching members!'));
+            return message.channel.send(this.Embed.fail('An error occurred fetching members!'));
         }
 
         const discrims = members
@@ -40,11 +41,11 @@ export default class extends Command {
         try {
             cached = await message.guild.members.fetch({ user: discrims.map(member => member.id) });
         } catch {
-            return message.channel.send(Embed.fail('An error occurred caching users!'));
+            return message.channel.send(this.Embed.fail('An error occurred fetching users!'));
         }
 
         const formatted = Array.from(cached.values()).map(member => `\`\`${member.user.tag}\`\``);
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setDescription(`
             Found **${formatted.length}** user${formatted.length === 1 ? '' : 's'}!
             ${formatted.join(', ')}

@@ -23,15 +23,13 @@ export interface Insights {
 export interface Warnings {
     _id: ObjectId
     id: string,
-    limit?: number
-    users:{
+    limit: number
+    users: {
         [key: string]: {
             points: number
-            reasons:{
-                points: number
-                message: string
-            }[]
-        }
+            reason: string
+            timestamp: number
+        }[]
     }
 }
 
@@ -58,18 +56,26 @@ export interface GuildSettings {
         command: string
         message?: string
     }[]
-    enabled?: {
-        command: string
-        aliases?: string[]
-        type: 'role' | 'guild' | 'user' | 'channel'
-        id?: string
-    }[],
-    disabled?: {
-        command: string
-        aliases?: string[]
-        type: 'role' | 'guild' | 'user' | 'channel'
-        id?: string
+    disabledChannel?: {
+        main: string
+        names: string[]
+        id: string
     }[]
+    disabledRole?: {
+        main: string
+        names: string[]
+        id: string
+    }[]
+    disabledUser?: {
+        main: string
+        names: string[]
+        id: string
+    }[]
+    disabledGuild?: {
+        main: string
+        names: string[]
+    }[]
+    welcomeChannel?: string
 }
 
 export interface Tags {
@@ -84,9 +90,4 @@ export interface Tags {
         new: string
         now: number
     }[]
-}
-
-export interface Onion {
-    href: string,
-    title: string
 }

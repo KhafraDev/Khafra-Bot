@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command';
-import { Message, GuildMember } from 'discord.js';
-import Embed from '../../Structures/Embed';
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -21,43 +21,36 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
-        } else if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+        const idOrUser = getMentions(message, args, { type: 'members' });
+        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
+            return message.channel.send(this.Embed.generic('Invalid user ID!'));
         }
+ 
+        let member = typeof idOrUser === 'string'
+            ? message.guild.members.fetch(idOrUser)
+            : idOrUser;
 
-        const mentions = message.mentions.members;
-        let member: GuildMember;
-        // only 1 member mentioned and the mention isn't the bot itself.
-        if(
-            (mentions.size === 1 && mentions.first().id === message.guild.me.id)
-            || (mentions.size === 0 && !isNaN(+args[0]) && args[0].length >= 17 && args[0].length <= 19)
-        ) {
+        if(member instanceof Promise) {
             try {
-                member = await message.guild.members.fetch(args[0]);
-            } catch(e) {
-                this.logger.log(e.toString());
-                return message.channel.send(Embed.fail('Member couldn\'t be fetched!'));
+                member = await member;
+            } catch {
+                return message.channel.send(this.Embed.fail('Member couldn\'t be fetched!'));
             }
-        } else if(mentions.size > 1) { // @KhafraBot#0001 kick @user#0001 blah - @Mod#0001
-            member = mentions.first().id === message.guild.me.id ? mentions.first(2).pop() : mentions.first();
         }
 
-        if(!(member instanceof GuildMember)) {
-            return message.channel.send(Embed.fail('Member couldn\'t be fetched!'));
-        } else if(!member.kickable) {
-            return message.channel.send(Embed.fail(`${member} is not kickable!`));
+        if(!member.kickable) {
+            return message.channel.send(this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`));
         }
 
         try {
             await member.kick(args.slice(1).join(' '));
-            return message.channel.send(Embed.success(`Successfully kicked ${member}!`));
         } catch(e) {
-            return message.channel.send(Embed.fail(`
-            An unexpected error occurred!
-            \`\`${e}\`\`
+            this.logger.log(e);
+            return message.channel.send(this.Embed.fail(`
+            An unexpected error occurred! This error has been logged and will be fixed if needed.
             `));
         }
+
+        return message.channel.send(this.Embed.fail(`Kicked ${member} from the server!`));
     }
 }

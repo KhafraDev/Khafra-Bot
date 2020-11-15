@@ -1,48 +1,44 @@
 import fetch from 'node-fetch';
-import { TriviaList, TriviaQuestions } from './types/Trivia';
+import { Question } from './types/Trivia';
 
-class Trivia {
-    listCache: TriviaList;
-    categoryRegex: RegExp;
+export const categories: { id: number, name: string }[] = [];
+export let categoryRegex: RegExp = null;
 
-    async fetchList() {
-        if(this.listCache) {
-            return Promise.resolve(this.listCache);
+export const Trivia = {
+    fetchList: async () => {
+        if(categories.length > 0) {
+            return categories;
         }
 
         const res = await fetch('https://opentdb.com/api_category.php');
 
         if(res.status === 200) {
-            this.listCache = await res.json() as TriviaList;
-            this.categoryRegex = new RegExp(this.listCache.trivia_categories.map(c => c.name).join('|'), 'gi');
+            categories.push(...(await res.json()).trivia_categories);
+            categoryRegex = new RegExp(categories.map(c => c.name).join('|'), 'gi');
         }
 
-        return this.listCache;
-    }
+        return categories;
+    },
 
-    async fetchQuestions(amount: number, category: number | string, difficulty: string) {
-        if(typeof category === 'string') {
-            const list = await this.fetchList();
-            category = list.trivia_categories
-                .filter(c => c.id === +category || c.name.toLowerCase() === category)
-                .pop()
-                .id;
+    fetchAllQuestions: async () => {
+        const questions: Question[] = [];
+        const token = await (await fetch('https://opentdb.com/api_token.php?command=request')).json();
+
+        if(token.response_code !== 0) {
+            throw token;
         }
 
-        const base = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&encode=base64`;
-        const res = await fetch(base);
+        while(true) {
+            const res = await fetch(`https://opentdb.com/api.php?amount=50&token=${token.token}`);
+            const json = await res.json();
 
-        if(res.status === 200) {
-            const json = await res.json() as TriviaQuestions;
             if(json.response_code === 0) {
-                return json;
+                questions.push(...json.results);
             } else {
-                return null;
+                break;
             }
         }
+        
+        return questions;
     }
 }
-
-const trivia = new Trivia();
-
-export { trivia };

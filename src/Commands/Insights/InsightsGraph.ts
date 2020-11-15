@@ -1,24 +1,23 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { join } from "path";
 import { Message } from "discord.js";
-import { mkdir, stat } from "fs/promises";
-import { readFileSync, Stats } from 'fs';
+import { stat } from "fs/promises";
+import { Stats, mkdirSync } from 'fs';
 import { execFile } from "child_process";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Insights } from "../../lib/types/Collections";
 
-const { outDir } = JSON.parse(readFileSync(join(process.cwd(), 'tsconfig.json')).toString()).compilerOptions;
-const outPath = join(process.cwd(), outDir, 'lib/Images/');
+const outDir = join(process.cwd(), 'build/src')
+const outPath = join(outDir, 'lib/Images/');
 const pyPath = join(process.cwd(), 'src/lib/Backend/Py/InsightsGraph.py');
-let updated = false;
+mkdirSync(outPath, { recursive: true });
 
 export default class extends Command {
     constructor() {
         super(
             [
                 'Insights: get a graph of the people who have joined today! The mis-matched colors are Discord\'s fault, I can\'t do anything about them!',
-                '10', ''
+                ''
             ],
             [ /* No extra perms needed */ ],
             {
@@ -31,16 +30,11 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message) {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
-        }
-
-        if(!updated) {
-            await mkdir(outPath, { recursive: true });
-            updated = true;
+            return message.channel.send(this.Embed.missing_perms(true));
         }
 
         const filePath = join(outPath, message.guild.id + '.jpg');
@@ -55,7 +49,7 @@ export default class extends Command {
         } catch {} 
 
         if(stats && (Date.now() - stats.mtimeMs) / 1000 / 60 < 15) {
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .attachFiles([ filePath ])
                 .setImage(`attachment://${message.guild.id}.jpg`)
                 .setFooter('Last updated')
@@ -64,22 +58,21 @@ export default class extends Command {
             return message.channel.send(embed);
         }
 
-        const days = args.length > 0 && !isNaN(+args[0]) ? +args[0] : 5;
-
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
 
-        const guild = await collection.findOne({ id: message.guild.id }) as Insights;
+        const guild = await collection.findOne<Insights>({ id: message.guild.id });
 
-        if(!guild) {
-            return message.channel.send(Embed.fail('No insights available - yet!'));
+        if(!guild || Object.keys(guild?.daily ?? {}).length < 2) {
+            return message.channel.send(this.Embed.fail('No insights available - yet!'));
         }
 
         const mapped = Object.entries(guild.daily)
             .reverse()
-            .slice(0, days <= 100 ? days : 10)
+            .slice(0, 7)
             .reduce((a, [k, v]) => {
-                return a[0].push(k), a[1].push((v as { joined: number }).joined), a;
+                a[0].push(k.slice(0, -5)), a[1].push(v.joined)
+                return a;
             }, [[], []]);
 
         /* 
@@ -91,13 +84,11 @@ export default class extends Command {
         
         execFile('python', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
             if(err) {
-                return message.channel.send(Embed.fail(`
-                An unexpected error occurred!
-                \`\`${err.toString()}\`\`
-                `));
+                this.logger.log(err);
+                return message.channel.send(this.Embed.fail(`An unexpected error occurred!`));
             }
 
-            const embed = Embed.success()
+            const embed = this.Embed.success()
                 .attachFiles([ filePath ])
                 .setImage(`attachment://${message.guild.id}.jpg`)
                 

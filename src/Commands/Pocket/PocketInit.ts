@@ -1,8 +1,7 @@
-import { Command } from "../../Structures/Command";
-import { pool } from "../../Structures/Database/Mongo";
+import { Command } from "../../Structures/Command.js";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Message, MessageReaction, User } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
 
 export default class extends Command {
     constructor() {
@@ -21,10 +20,6 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
-        } 
-
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
@@ -33,15 +28,11 @@ export default class extends Command {
 
         try {
             await pocket.requestCode()
-        } catch(e) {
-            return message.channel.send(Embed.fail(`
-            An unexpected error occurred!
-            
-            \`\`\`${(e as Error).toString()}\`\`\`
-            `));
+        } catch {
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const embed = Embed.success(`
+        const embed = this.Embed.success(`
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
@@ -50,10 +41,11 @@ export default class extends Command {
         .setTitle('Pocket');
 
         const msg = await message.channel.send(embed);
-        try {
-            await msg.react('✅');
-            msg.react('❌');
-        } catch {} // if it fails, user can add them.
+        if(!msg) {
+            return;
+        }
+        await msg.react('✅');
+        msg.react('❌');
 
         const filter = (reaction: MessageReaction, user: User) => ['✅', '❌'].includes(reaction.emoji.name) && user.id === message.author.id;
         const collector = msg.createReactionCollector(filter, { time: 120000, max: 1 });
@@ -63,13 +55,13 @@ export default class extends Command {
             collector.stop();
 
             if(emoji === '❌') {
-                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized.'));
             }
 
             try {
                 await pocket.accessToken();
             } catch {
-                return msg.edit(Embed.fail('Khafra-Bot wasn\'t authorized.'));
+                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized.'));
             }
 
             const entry = Object.assign(pocket.toObject(), {
@@ -83,9 +75,9 @@ export default class extends Command {
             );
     
             if(value.result.ok) {
-                return msg.edit(Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
+                return msg.edit(this.Embed.success('Your Pocket account has been connected to Khafra-Bot!'))
             } else {
-                return msg.edit(Embed.fail('An unexpected error occurred!'));
+                return msg.edit(this.Embed.fail('An unexpected error occurred!'));
             }
         });
 

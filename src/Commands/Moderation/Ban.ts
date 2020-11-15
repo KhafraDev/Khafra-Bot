@@ -1,7 +1,8 @@
-import { Command } from '../../Structures/Command';
-import { Message, User } from 'discord.js';
-import Embed from '../../Structures/Embed';
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 export default class extends Command {
     constructor() {
@@ -17,64 +18,65 @@ export default class extends Command {
                 name: 'ban', 
                 folder: 'Moderation',
                 aliases: [ 'bna' ],
-                args: [2],
+                args: [1],
                 guildOnly: true
             }
         );
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.hasPermissions(message)) {
-            return message.channel.send(Embed.missing_perms.call(this));
-        } else if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 2));
-        }
-
-        const [ userType, time, ...reason ] = args;
-        // days of messages to clear
-        const realTime = Math.round((ms(time) ?? 0) / 86400000);
-        const realReason = realTime === 0 ? [time].concat(reason) : reason;
-
-        if(!/<?@?!?\d{17,19}>?/.test(userType)) {
-            return message.channel.send(Embed.missing_args.call(this, 2, 'Invalid User ID or mention!'));
-        } else if(realTime > 7) {
-            // max 7 days or an error will be thrown
-            return message.channel.send(Embed.missing_args.call(this, 2, 'Only 7 days of messages can be cleared max!'));
-        }
-
-        const mentions = message.mentions.members;
-        let user: User;
-        // only 1 member mentioned and the mention isn't the bot itself.
-        if(
-            (mentions.size === 1 && mentions.first().id === message.guild.me.id)
-            || (mentions.size === 0 && !isNaN(+userType) && userType.length >= 17 && userType.length <= 19)
-        ) {
-            try {
-                user = await message.client.users.fetch(userType.replace(/[^0-9]/g, ''));
-            } catch(e) {
-                this.logger.log(e.toString());
-                return message.channel.send(Embed.fail('No user found!'));
+        const idOrUser = getMentions(message, args);
+        if(!idOrUser) {
+            return message.channel.send(this.Embed.generic('Invalid member ID!'))
+        } else if(typeof idOrUser === 'string') {
+            if(!validSnowflake(idOrUser) || !idOrUser) {
+                return message.channel.send(this.Embed.generic('Invalid user ID!'));
             }
-        } else if(mentions.size > 1) { // @KhafraBot#0001 kick @user#0001 blah - @Mod#0001
-            user = mentions.first().id === message.guild.me.id ? mentions.first(2).pop().user : mentions.first().user;
+        } else {
+            const member = message.guild.member(idOrUser);
+            if(member && !member.bannable) {
+                return message.channel.send(this.Embed.fail(`:( ${idOrUser} isn't bannable!`));
+            }
         }
-        
-        if(!(user instanceof User)) {
-            return message.channel.send(Embed.fail('No user found!'));
+
+        const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
+
+        const msg = await message.channel.send(this.Embed.success(`
+        Are you sure you want to ban ${idOrUser}?
+
+        Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
+        `));
+
+        if(!msg) {
+            return;
+        }
+
+        const filter = (m: Message) => 
+            m.author.id === message.author.id &&
+            ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content?.toLowerCase());
+
+        const m = await message.channel.awaitMessages(filter, {
+            max: 1,
+            time: 20000
+        });
+
+        if(m.size === 0) {
+            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${idOrUser}!`));
+        } else if(['no', 'n', 'cancel', 'stop'].includes(m.first()?.content?.toLowerCase())) {
+            return msg.edit(this.Embed.fail('Command was canceled!'));
         }
 
         try {
-            await message.guild.members.ban(user, {
-                reason: realReason.length > 0 ? realReason.join(' ') : null,
-                days: realTime
+            await message.guild.members.ban(idOrUser, {
+                days: isValidNumber(clear) ? clear : 7,
+                reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
             });
-            return message.channel.send(Embed.success(`
-            ${user} has been banned for \`\`${realReason.length ? realReason.join(' ').slice(0, 100) : 'No reason given'}\`\`.
-
-            ${realTime} days worth of messages have been cleared from them.
-            `));
         } catch {
-            return message.channel.send(Embed.fail(`${user} isn't bannable!`));
+            return message.channel.send(this.Embed.fail(`${idOrUser} isn't bannable!`));
         }
+
+        return message.channel.send(this.Embed.success(`
+        ${idOrUser} has been banned from the guild and ${clear} days worth of messages have been removed.
+        `));
     }
 }

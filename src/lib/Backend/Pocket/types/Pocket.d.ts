@@ -25,14 +25,10 @@ export type PocketArticle = {
     listen_duration_estimate: number
 }
 
-type PocketList = {
-    [key: string]: PocketArticle 
-}
-
 export type PocketGetResults = {
     status: number,
     complete: number,
-    list: PocketList[],
+    list: Record<string, PocketArticle>
     error: string | null,
     search_meta: { search_type: string },
     since: number
@@ -65,7 +61,7 @@ export type PocketAddResults = {
         used_fallback: string,
         lang: string,
         time_first_parsed: string,
-        authors: { [key: string]: [Object] },
+        authors: Record<string, Object[]>,
         top_image_url: string,
         resolved_normal_url: string,
         domain_metadata: {
@@ -78,6 +74,4 @@ export type PocketAddResults = {
     status: 1
 }
 
-export interface PocketRateLimit {
-    [key: string]: number
-}
+export type PocketRateLimit = Record<string, number>

@@ -1,8 +1,6 @@
-import { MongoClient } from 'mongodb';
+import Mongo from 'mongodb'; // cjs module
 
-type MongoPool = {
-    [key: string]: MongoDB
-}
+type MongoPool = Record<string, MongoDB>;
 
 const anonymousURL = 'mongodb://localhost:27017/';
 const authURL = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:27017/`;
@@ -19,14 +17,14 @@ const pool: MongoPool = Object.assign(
 );
 
 class MongoDB {
-    client: MongoClient
+    client: Mongo.MongoClient
 
     async connect() {
         if(this.client) {
             return Promise.resolve(this.client);
         }
 
-        const anonymousClient = await MongoClient.connect(anonymousURL, {
+        const anonymousClient = await Mongo.MongoClient.connect(anonymousURL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
@@ -42,7 +40,7 @@ class MongoDB {
                 throw new Error('No db auth given but admin user exists!');
             }
 
-            this.client = await MongoClient.connect(authURL, {
+            this.client = await Mongo.MongoClient.connect(authURL, {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             });
@@ -54,7 +52,7 @@ class MongoDB {
             });
 
             if(test.ok === 1) {
-                this.client = await MongoClient.connect(authURL, {
+                this.client = await Mongo.MongoClient.connect(authURL, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true
                 });

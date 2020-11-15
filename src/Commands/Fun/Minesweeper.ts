@@ -1,7 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { Board } from "../../lib/Backend/MineSweeper";
-import Embed from "../../Structures/Embed";
+import { Board } from "../../lib/Backend/MineSweeper.js";
 
 export default class extends Command {
     constructor() {
@@ -21,6 +20,6 @@ export default class extends Command {
 
     init(message: Message) {
         const board = Board();
-        return message.channel.send(Embed.success(board));
+        return message.channel.send(this.Embed.success(board));
     }
 }

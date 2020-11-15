@@ -1,7 +1,7 @@
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import { HastebinPost } from './types/Hastebin';
 
-export const hasteServers = {
+export const hasteServers: Record<string, string> = {
     'hastebin': 'https://hastebin.com/documents',
     'nomsy'   : 'https://paste.nomsy.net/documents'
 }
@@ -9,20 +9,19 @@ export const hasteServers = {
 export const paste = async (paste: string, server = 'https://hastebin.com/documents') => {
     const srv = Object.entries(hasteServers).filter(([n, u]) => n === server.toLowerCase() || u === server.toLowerCase());
 
-    if(srv.length === 0) {
-        return {
-            error: 'No server with that name found!'
-        }
+    let res: Response;
+    try {
+        res = await fetch(srv.shift().pop(), {
+            method: 'POST',
+            body: paste
+        });
+    } catch(e) {
+        return Promise.reject(e.toString());
     }
-
-    const res = await fetch(srv.shift().pop(), {
-        method: 'POST',
-        body: paste
-    });
 
     if(res.ok) {
         return res.json() as Promise<HastebinPost>;
     } else {
-        return res;
+        return Promise.reject(`Received ${res.status} (${res.statusText}).`);
     }
 }

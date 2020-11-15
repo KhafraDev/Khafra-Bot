@@ -1,9 +1,8 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Tags } from "../../lib/types/Collections";
-import KhafraClient from "../../Bot/KhafraBot";
-import Embed from "../../Structures/Embed";
+import { KhafraClient } from "../../Bot/KhafraBot.js";
 
 export default class extends Command {
     constructor() {
@@ -24,10 +23,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         const TagLike = Array.from(KhafraClient.Commands.values())
             .filter(c => c.settings.name.indexOf('tag') === 0);
         
@@ -47,17 +42,17 @@ export default class extends Command {
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const tag = await collection.findOne({
+        const tag = await collection.findOne<Tags>({
             id: message.guild.id,
             name: tagCmdOrName
-        }) as Tags;
+        });
 
         if(!tag) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             No tag found! Create it with \`\`tag create ${tagCmdOrName.slice(0, 25)} My very own tag!\`\`!
             `));
         }
 
-        return message.channel.send(Embed.success(tag.content));
+        return message.channel.send(this.Embed.success(tag.content));
     }
 }

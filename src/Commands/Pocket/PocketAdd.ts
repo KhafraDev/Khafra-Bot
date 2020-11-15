@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket";
+
+import { pool } from "../../Structures/Database/Mongo.js";
+import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
 import { PocketAddResults } from "../../lib/Backend/Pocket/types/Pocket";
 import { URL } from "url";
 import { PocketUser } from "../../lib/types/Collections";
@@ -24,16 +24,12 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        }
-
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 
-        const user = await collection.findOne({ id: message.author.id }) as PocketUser;
+        const user = await collection.findOne<PocketUser>({ id: message.author.id });
         if(!user) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             You haven't set-up Pocket integration!
 
             Try using the \`\`pocket\`\` command for more information.
@@ -44,7 +40,7 @@ export default class extends Command {
         try {
             url = new URL(args[0]);
         } catch {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(this.Embed.generic());
         }
 
         let added: PocketAddResults;
@@ -52,14 +48,11 @@ export default class extends Command {
             const pocket = new Pocket(user);
             added = await pocket.add(url.toString(), args.length > 1 ? args.slice(1).join(' ') : null)
         } catch(e) {
-            return message.channel.send(Embed.fail(`
-            An unexpected error occurred!
+            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
             
-            \`\`\`${(e as Error).toString()}\`\`\`
-            `));
         }
 
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setTitle(added.item.title)
             .setAuthor(
                 added.item.domain_metadata.name ?? message.author.username, 

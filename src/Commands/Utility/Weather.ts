@@ -1,8 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { weather } from "../../lib/Backend/HereWeather/HereWeather";
-import { formatDate } from "../../lib/Utility/Date";
+import { weather } from "../../lib/Backend/HereWeather/HereWeather.js";
+import { formatDate } from "../../lib/Utility/Date.js";
 
 const ctof = (celcius: string | number) => {
     return (+celcius * (9/5) + 32).toFixed(2);
@@ -26,25 +25,21 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.channel.send(Embed.fail('No location provided! Use the ``help`` command for example usage!'));
-        }
-
         const results = await weather(args.join(' '));
         if('status' in results) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             An unexpected error occurred! Received status ${results.status} with text ${results.statusText}. Contact the bot owner to fix!
             `));
         } else if(results.Type) {
-            return message.channel.send(Embed.fail(results.Type));
+            return message.channel.send(this.Embed.fail(results.Type));
         }
 
         const first = results.observations.location?.[0].observation?.[0];
         if(first === undefined) {
-            return message.channel.send(Embed.fail('No location found!'));
+            return message.channel.send(this.Embed.fail('No location found!'));
         }
 
-        const embed = Embed.success(first.description)
+        const embed = this.Embed.success(first.description)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .addField('**Temperature:**', `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)

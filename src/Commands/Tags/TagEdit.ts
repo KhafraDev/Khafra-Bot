@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
+
+import { pool } from "../../Structures/Database/Mongo.js";
 
 export default class extends Command {
     constructor() {
@@ -22,10 +22,6 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 2));
-        }
-
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
@@ -43,11 +39,11 @@ export default class extends Command {
         );
 
         if(u.modifiedCount === 0) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Tag wasn't edited. This can happen if you don't own the tag or if the tag is from another guild.
             `));
         }
 
-        return message.channel.send(Embed.success('Edited the tag!'));
+        return message.channel.send(this.Embed.success('Edited the tag!'));
     }
 }

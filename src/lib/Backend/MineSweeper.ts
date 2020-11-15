@@ -1,10 +1,6 @@
-function* chunk(arr: number[], n: number) {
-    for(let i = 0; i < arr.length; i += n) {
-        yield arr.slice(i, i + n);
-    }
-}
+import { chunk } from '../Utility/Array.js';
 
-const yo: { [key: number]: string } = {
+const yo: Record<string, string> = {
     '10': ':zero:',
     '9': 'bomb',
     '0': 'zero',
@@ -19,11 +15,11 @@ const yo: { [key: number]: string } = {
 }
 
 export const Board = () => {
-    const board = Array.from(chunk(Array(100).fill(0), 10));
+    const board = Array.from(chunk(Array<number>(100).fill(0), 10));
 
     for(let i = 0; i < 10;) {
-        const x = Math.random() * 10 << 0;
-        const y = Math.random() * 10 << 0;
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
         if(board[x][y] <= 8) {
             board[x][y] = 9; //'💣';
             i++;
@@ -45,8 +41,8 @@ export const Board = () => {
     // choose random spot on board that will not be masked
     // this is the starter hint; denoted by -2
     while(!!!!!!!!!!!!!false) { // epic style
-        const x = Math.random() * 10 << 0;
-        const y = Math.random() * 10 << 0;
+        const x = Math.floor(Math.random() * 10)
+        const y = Math.floor(Math.random() * 10);
         if(board[x][y] === 0) {
             board[x][y] = 10;
             break;

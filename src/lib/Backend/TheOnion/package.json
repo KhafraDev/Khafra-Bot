@@ -1,8 +1,9 @@
 {
   "name": "@khaf/theonion",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Scrape TheOnion since there's no available API.",
   "main": "TheOnion",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },

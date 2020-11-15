@@ -1,6 +1,5 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, GuildEmoji } from "discord.js";
-import Embed from "../../Structures/Embed";
 
 export default class extends Command {
     constructor() {
@@ -21,15 +20,13 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length !== 1) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
-        } else if(!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid Emoji provided!'));
+        if(!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
+            return message.channel.send(this.Embed.fail('Invalid Emoji provided!'));
         }
 
         const [,, name, id] = args[0].match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/);
         if(!name || !id) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid guild emoji provided!'));
+            return message.channel.send(this.Embed.fail('Invalid guild emoji provided!'));
         }
                
         let emoji: GuildEmoji;
@@ -40,13 +37,13 @@ export default class extends Command {
                 { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
             );
         } catch(e) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             An error occurred creating this emoji!
             \`\`${e.toString()}\`\`
             `));
         }
 
-        return message.channel.send(Embed.success(`
+        return message.channel.send(this.Embed.success(`
         Created emoji ${emoji} with name ${name}.
         `));
     }

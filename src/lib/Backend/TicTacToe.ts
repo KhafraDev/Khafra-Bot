@@ -1,12 +1,21 @@
-function* chunk(arr: string[], n: number) {
-    for(let i = 0; i < arr.length; i += n) {
-        yield arr.slice(i, i + n);
-    }
-}
+const blank = `
+   |   |
+ {0} | {1} | {2}
+   |   |
+-----------
+   |   |
+ {3} | {4} | {5}
+   |   |
+-----------
+   |   |
+ {6} | {7} | {8}
+   |   |
+`;
 
 export class TicTacToe {
-    turn: 'X' | 'O' = 'X';
-    box: { [key: number]: 'X' | 'O' | ' ' } = {
+    turn = 'X';
+    winner: string = null;
+    box: Record<number, string> = {
         1: ' ',
         2: ' ',
         3: ' ',
@@ -17,8 +26,7 @@ export class TicTacToe {
         8: ' ',
         9: ' '
     };
-    board: string[][] = Array(9).fill(' ');
-
+    
     /**
      * Sets the player's turn
      */
@@ -70,16 +78,18 @@ export class TicTacToe {
                 (this.box[a] === 'O' && this.box[b] === 'O')) &&
                 this.box[c] === ' '
             )  {
-                return this.go(c);
+                this.go(c);
+                return;
             }
         }
         
         while(true) {
-            const random = Math.random() * (9 - 1 + 1) + 1 << 0;
+            const random = Math.floor(Math.random() * (9 - 1 + 1) + 1);
             if(this.box[random] === ' ') {
                 this.box[random] = 'O';
                 if(this.checkWinner()) {
-                    return { winner: this.turn };
+                    this.winner = this.turn;
+                    return; // have void return
                 }
 
                 return this.setTurn();
@@ -91,41 +101,33 @@ export class TicTacToe {
      * Go at a certain box, 1-9, or leave empty for bot to go
      * @param at box to go at (1-9).
      */
-    go(at?: number): { error: string } | { winner: string } | void {
+    go(at?: number) {
         if(at) {
             if(at < 1 || at > 9) {
-                return { error: 'Invalid position!' };
+                return false;
             } else if(this.box[at] !== ' ') {
-                return { error: 'Box taken!' };
+                return false;
             }
 
             this.box[at] = this.turn;
             if(this.checkWinner()) {
-                return { winner: this.turn };
+                this.winner = this.turn;
+                return true;
             }
-            return this.setTurn();
+            this.setTurn();
+            return true;
         } else {
             if(Object.values(this.box).every(b => b !== ' ')) {
-                return { error: 'No boxes left!' };
+                return false;
             }
 
-            return this.botGo();
+            this.botGo();
+            return true;
         }
     }
 
     format() {
-        const spots = Array.from(chunk(Object.values(this.box), 3));
-        const empty = Array.from(chunk(Array(9).fill(' '), 3))
-            .map(e => e.join(''))
-            .join('|');
-        
-        const board = spots.map(row => {
-            return `
-${empty}
- ${row.map(s => s).join(' | ')} 
-${empty}
------------`
-        });
-        return board.join('').split('\n').slice(0, -1).join('\n')
+        const spots = Object.values(this.box);
+        return blank.replace(/{(\d)}/g, (_, b) => spots[+b]);
     }
 }

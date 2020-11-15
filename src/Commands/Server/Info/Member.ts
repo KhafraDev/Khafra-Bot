@@ -1,0 +1,87 @@
+import { Command } from '../../../Structures/Command.js';
+import { Message, Activity, GuildMember } from 'discord.js';
+import { formatDate } from '../../../lib/Utility/Date.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+
+const formatPresence = (activities: Activity[]) => {
+    const push: string[] = [];
+    for(const activity of activities) {
+        switch(activity.type) {
+            case 'CUSTOM_STATUS':
+                push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
+                break;
+            case 'LISTENING':
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
+                break;
+            case 'PLAYING':
+                push.push(`Playing *${activity.name}*.`); 
+                break;
+            default:
+                console.log(activity);
+        }
+    }
+
+    return push.join('\n');
+}
+
+export default class extends Command {
+    constructor() {
+        super(
+            [
+                'Get info about a user.',
+                '@Khafra#0001', '267774648622645249'
+            ],
+            [ /* No extra perms needed */ ],
+            {
+                name: 'member',
+                folder: 'Server',
+                aliases: [ 'memberinfo', 'whois' ],
+                args: [0, 1],
+                guildOnly: true
+            }
+        );
+    }
+
+    async init(message: Message, args: string[]) {
+        let idOrMember = getMentions(message, args, { type: 'members' });
+        if(!idOrMember || (typeof idOrMember === 'string' && !validSnowflake(idOrMember))) {
+            idOrMember = message.member;
+        }
+
+        let member: GuildMember | Promise<GuildMember> = typeof idOrMember === 'string'
+            ? message.guild.members.fetch(idOrMember)
+            : idOrMember;
+
+        if(member instanceof Promise) {
+            try {
+                member = await member;
+            } catch {
+                return message.channel.send(this.Embed.fail('Invalid user ID!'));
+            }
+        }
+
+        // max role length = 84 characters
+        const embed = this.Embed.success()
+            .setAuthor(member.displayName, member.user.displayAvatarURL())
+            .setDescription(`
+            ${member} on *${member.guild.name}*.
+            ${formatPresence(member.presence.activities)}
+            
+            Roles:
+            ${member.roles.cache.filter(r => r.name !== '@everyone').array()?.slice(0, 20).join(', ')}
+            `)
+            .setThumbnail(member.user.displayAvatarURL())
+            .addFields(
+                { name: '**Role Color:**', value: member.displayHexColor, inline: true },
+                { name: '**Joined Guild:**', value: formatDate('MMM. Do, YYYY hh:mm:ssA t', member.joinedAt), inline: false },
+                { 
+                    name: '**Boosting Since:**', 
+                    value: member.premiumSince ? formatDate('MMM. Do, YYYY hh:mm:ssA t', member.premiumSince) : 'Not boosting', 
+                    inline: true 
+                },
+            )
+            .setFooter('For general user info use the **user** command!');
+        
+        return message.channel.send(embed);
+    }
+}

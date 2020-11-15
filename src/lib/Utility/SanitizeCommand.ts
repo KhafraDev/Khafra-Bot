@@ -15,13 +15,19 @@ const basic = new Permissions([
  * @param message 
  */
 export const Sanitize = (message: Message) => {
-    if(message.author.bot) {
+    if(message.webhookID) { // author is null in webhook messages
+        return false;
+    } else if(message.author.bot) {
+        return false;
+    } else if(message.type !== 'DEFAULT') {
         return false;
     } else if(message.guild && !message.guild.available) {
         return false;
     } else if(message.system) {
         return false;
     } else if(message.partial) {
+        return false;
+    } else if(message.tts) {
         return false;
     }
 

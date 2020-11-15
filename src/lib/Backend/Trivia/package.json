@@ -1,6 +1,6 @@
 {
   "name": "@khaf/trivia",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Get trivia questions and categories.",
   "main": "Trivia",
   "types": "types/Trivia.d.ts",

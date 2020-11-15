@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, GuildMember } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
+
+import { pool } from "../../Structures/Database/Mongo.js";
 
 export default class extends Command {
     constructor() {
@@ -23,20 +23,23 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(args.length < 2) {
-            return message.channel.send(Embed.missing_args.call(this, 2));
-        } if(message.mentions.members.size === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 2, 'A guild member must be mentioned!'));
+        if(message.mentions.members.size === 0) {
+            return message.channel.send(this.Embed.fail('A guild member must be mentioned!'));
         } else if(message.mentions.members.size > 2) {
-            return message.channel.send(Embed.fail('Too many people mentioned!'));
+            return message.channel.send(this.Embed.fail('Too many people mentioned!'));
+        }
+
+        if(!/(<@!)?\d{17,19}>?/.test(args[0])) {
+            return message.channel.send(this.Embed.fail(`
+            No guild member mentioned and no user ID provided.
+            `));
         }
 
         let member: GuildMember;
         try {
-            const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
-            member = (selfMentioned ? message.mentions.members.last() : message.mentions.members.first()) ?? await message.guild.members.fetch(args[1]);
+            member = await message.guild.members.fetch(args[0].replace(/[^\d]/g, ''));
         } catch {
-            return message.channel.send(Embed.fail('A user must be mentioned or an ID must be provided after the tag\'s name!'));
+            return message.channel.send(this.Embed.fail('Invalid ID provided or member mentioned!'));
         }
 
         const client = await pool.tags.connect();
@@ -63,11 +66,11 @@ export default class extends Command {
         );
 
         if(u.modifiedCount === 0) {
-            return message.channel.send(Embed.fail(`
+            return message.channel.send(this.Embed.fail(`
             Tag hasn't changed ownership. This can happen if you don't own the tag or if the tag is from another guild.
             `));
         }
 
-        return message.channel.send(Embed.success(`Gave the tag to ${member}!`));
+        return message.channel.send(this.Embed.success(`Gave the tag to ${member}!`));
     }
 }

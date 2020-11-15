@@ -1,10 +1,9 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo";
-import Embed from "../../Structures/Embed";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Insights } from "../../lib/types/Collections";
 import ms from "ms";
-import { formatDate } from "../../lib/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date.js";
 
 type valueof<T> = T[keyof T];
 
@@ -30,23 +29,23 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(Embed.missing_perms.call(this, true));
+            return message.channel.send(this.Embed.missing_perms(true));
         }
 
         const days = args.length === 1 ? Math.floor((ms(args[0]) / 86400000)) : 5;
         if(!days) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'Invalid number of days provided!'));
+            return message.channel.send(this.Embed.fail('Invalid number of days provided!'));
         } else if(days < 2 || days > 7) {
-            return message.channel.send(Embed.missing_args.call(this, 1, 'Only numbers between 2 and 7, please!'));
+            return message.channel.send(this.Embed.fail('Only numbers between 2 and 7, please!'));
         }
 
         const client = await pool.insights.connect();
         const collection = client.db('khafrabot').collection('insights');
-        const value = await collection.findOne({ id: message.guild.id }) as Insights;
+        const value = await collection.findOne<Insights>({ id: message.guild.id });
         if(!value) {
-            return message.channel.send(Embed.fail('No insights available - yet!'));
+            return message.channel.send(this.Embed.fail('No insights available - yet!'));
         } else if(Object.keys(value).length < 2) {
-            return message.channel.send(Embed.fail('Only one day tracked so far. Wait until tomorrow!'));
+            return message.channel.send(this.Embed.fail('Only one day tracked so far. Wait until tomorrow!'));
         }
 
         // last date is today
@@ -71,7 +70,7 @@ export default class extends Command {
             .map((d, i) => `\`\`${keys[i]}\`\`: ${d.joined} joins | ${d.left} left | ${d.change?.toFixed(2) ?? 0}% ${d.change > 0 ? 'increase' : 'decrease'}`)
             .join('\n');
 
-        const embed = Embed.success(formatted)
+        const embed = this.Embed.success(formatted)
             .setTitle(`Insights over ${days} days.`);
 
         return message.channel.send(embed);

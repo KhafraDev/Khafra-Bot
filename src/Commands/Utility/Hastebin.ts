@@ -1,8 +1,11 @@
-import { Command } from "../../Structures/Command";
-import { hasteServers, paste } from "../../lib/Backend/Hastebin/Hastebin";
+import { Command } from "../../Structures/Command.js";
+import { hasteServers, paste } from "../../lib/Backend/Hastebin/Hastebin.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
 import { URL } from "url";
+import { GuildSettings } from "../../lib/types/Collections.js";
+import { createRequire } from 'module';
+
+const { prefix: defPrefix } = createRequire(import.meta.url)('../../../config.json')
 
 export default class extends Command {
     constructor() {
@@ -23,30 +26,24 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+    async init(message: Message, _: string[], settings: GuildSettings) {
+        // args replaces all whitespace characters, including new lines.
+        // to prevent this, we re-format the message's content.
+        const prefix: string = settings?.prefix ?? defPrefix;
+        // this is always valid because it uses the command's name
+        const command = message.content.split(/\s+/g)[0].slice(prefix.length).toLowerCase();
+        const content = message.content.replace(new RegExp(`^${prefix}${command} `, 'i'), '');
+
+        let res;
+        try {
+            res = await paste(content, hasteServers[command]);
+        } catch(e) {
+            return message.channel.send(this.Embed.fail(e.message ?? 'An error occurred!'));
         }
 
-        // if command has a separate server in it
-        // ie. !hastebin nomsy hello! -> hello!
-        //     !hastebin hello!       -> hello!
-        const [server, content] = Object.keys(hasteServers).indexOf(args[0].toLowerCase()) > -1 
-            ? [args[0], args.slice(1).join(' ')]
-            : ['hastebin', args.join(' ')];
-
-        const res = await paste(content, server);
-        if('error' in res) {
-            return message.channel.send(Embed.fail(res.error));
-        } else if('status' in res) {
-            return message.channel.send(Embed.fail(`
-            Received status ${res.status} (${res.statusText}).
-            Try a different server!
-            `));
-        }
-
-        const srv = Object.entries(hasteServers).filter(([n, u]) => n === server || u === server);
-        const url = new URL(srv.shift().pop()).origin;
-        return message.channel.send(Embed.success(`${url}/${res.key}`));
+        return message.channel.send(this.Embed.success(`
+        ${content.length} characters posted!
+        ${new URL(hasteServers[command]).origin}/${res.key}
+        `));
     }
 }

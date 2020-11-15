@@ -1,9 +1,8 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message, User } from "discord.js";
-import Embed from "../../Structures/Embed";
-import { pool } from "../../Structures/Database/Mongo";
+import { pool } from "../../Structures/Database/Mongo.js";
 import { Tags } from "../../lib/types/Collections";
-import { formatDate } from "../../lib/Backend/Guardian/Utility/Date";
+import { formatDate } from "../../lib/Utility/Date.js";
 
 export default class extends Command {
     constructor() {
@@ -25,19 +24,19 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length === 0) {
-            return message.channel.send(Embed.missing_args.call(this, 1));
+            return message.channel.send(this.Embed.generic());
         }
 
         const client = await pool.tags.connect();
         const collection = client.db('khafrabot').collection('tags');
 
-        const tag = await collection.findOne({
+        const tag = await collection.findOne<Tags>({
             id: message.guild.id,
             name: args[0]
-        }) as Tags;
+        });
         
         if(!tag) {
-            return message.channel.send(Embed.fail('No tag with that name exists!'));
+            return message.channel.send(this.Embed.fail('No tag with that name exists!'));
         }
 
         let user: User | 'Not found.';
@@ -48,7 +47,7 @@ export default class extends Command {
         }
 
         const transfer = `${tag.history?.[0].old} ➡️ ${tag.history?.[0].new} (${formatDate('DD-MM-YYYY, hh:mm:ssA', tag.history?.[0].now)})`;
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setDescription(`
             Tag has changed ownership **${tag.history?.length ?? 0}** time(s).
             Latest transfer:

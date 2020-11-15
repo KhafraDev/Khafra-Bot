@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command";
+import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
-import Embed from "../../Structures/Embed";
+
 
 export default class extends Command {
     constructor() {
@@ -19,7 +19,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const embed = Embed.success()
+        const embed = this.Embed.success()
             .setAuthor('GetPocket', null, 'https://app.getpocket.com/')
             .setDescription(`
             Connect your Pocket account to Khafra-Bot to get updates on the latest news.

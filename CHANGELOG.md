@@ -201,3 +201,83 @@
 * ``badmeme`` now fetches the max amount of posts (100), and the cache now stores less, more relevant data. It will also reject on bad data.
 * ``insightsdaily`` has been re-written. Now allows a user-inputted amount of days to check and requires ``VIEW_GUILD_INSIGHTS`` permission rather than ``ADMINISTRATOR``.
 * Bump ``node-fetch`` to v2.6.1.
+
+# v1.0.6 - Handling the Unhandled & Bug Fixes & Additions
+* Handle unhandled rejections without memory leaks.
+* ``TextChannel | DMChannel | NewsChannel`` send methods will no longer throw errors on rejections. These methods are Proxied, modifying the prototype to return null and log the error if one occurs. No changes have to be made because it has the same type/return signatures already.
+* ``Message#react`` will no longer throw errors similar to ``<Channel>.send``.
+* ``clear`` command will now filter messages older than 2 weeks automatically.
+* Get welcome/leave messages when a user joins, leaves, or is kicked from a guild.
+* Fix multiple issues and replaced bad code when trying to get the correct mentioned user.
+* ``user`` command can now fetch information from any Discord account, not just guild members. The old command is under the new name ``member``.
+* Catch bad inputs earlier on.
+* Add ``discover`` command.
+* ``emoji`` command now works with Guild emojis and the emoji section of the ``server`` command has been removed.
+* ``message`` event has once again been re-written to include better logic and updated code for guild settings.
+* Inhibitors are now much easier to use and use less resources. Some commands can no longer be disabled or enabled.
+* Embed is now part of the ``Command`` class and ``Embed.missing_args`` has been re-named to ``Embed.generic``.
+* ``tsconfig`` is even more strict now.
+* Method Proxy arguments now have a type.
+* Cleaned up ``messageReactionAdd``/``messageReactionRemove`` events.
+* ``Array.fill`` now infers types correctly, although I don't believe the reasoning it doesn't very valid. :/
+* ``chunk`` and ``shuffle`` array functions have been moved to Utility functions.
+* Removed useless parameter in ``TicTacToe`` game handler. 
+* Add in boost tracking to join/leave messages.
+* Logger can now handle any type of data passed to it.
+* Enable/disable work for custom commands.
+* Message event now incorporates ``guildOnly``, ``ownerOnly``, and actually checks the prefix. :/
+* Requests in the ``meep`` command will be timed out after 30 seconds, preventing a pretty nasty bug.
+* Replace sync ``fs`` methods with ``async`` where applicable. No performance difference since they were used only when they would be used once.
+* ``fs#readFile(Sync)`` now uses the correct encoding to return a string rather than a buffer.
+* Add in ``hangman`` command.
+* No longer store KJV Bible locally.
+* Remove ``copy`` script because it's no longer needed.
+* Fixed ``build`` script not removing the ``build`` directory on linux.
+* Import JSON using native TypeScript abilities now that it works.
+* Trivia command has been re-written.
+    * Fixes a bug where if two people answer a question in close proximity of time and the next question has the same answer, it won't be instantly answered.
+    * Fixed a bug where a person could input a non-integer number of questions.
+    * Questions are cached, and 50 of them will always be fetched from the API. Should help performance over multiple games.
+    * Fixed a bug where you couldn't use the number of a category to start a game.
+    * Questions are now stored in the database, saving time retrieving questions and no longer relies on API stability/reliability.
+    * Bot owner can fetch all questions using the ``triviafetch`` command.
+* Move ``Cowsay`` templates to a dedicated folders for bot assets.
+* Elegant event handler.
+* Help command is now useful.
+* Added ``realShuffle`` array utility method that uses a better prng (newly added ``crypto#randomInt``). 
+* Add ``crypto`` command.
+* Fix ``Message#react`` Proxy.
+* Ban command has been re-worked.
+* Add in utility function for checking invalid numbers (Infinity, NaN, floats, unsafe integers, negatives).
+* Replace ``html-entities`` with ``entities``. 
+* Use built in ``Record`` type instead of ``{ [key: ...]: ... }``.
+* New command loader that removes sync ``fs`` methods and does not recursively call itself.
+* Environmental variables are no longer enumerable on ``process.env`` and fixes bad new line regex.
+* Remove last ``export default`` syntax other than in commands. 
+* Add in ``awards`` command which calculates the hypothetical cost of all the awards on a reddit post.
+* Fixed commands still using the old embed structure.
+* Add in ``strawpoll`` command. This command is awesome.
+* Add in ``softban`` command.
+* Typescript now transpiles to ESNext, letting us use all the new keywords!
+* Remove ``https-proxy-agent`` and ``node-abort-controller`` in favor of native functions. 
+* Add in ``trump`` and ``trumpkey`` commands.
+* Remove ``meepmember`` command.
+* DMs bot owner when the bot comes online.
+* Fix "unknown member" error in ``messageReactionRemove`` and ``messageReactionAdd`` events.
+* Fix fetch error when Coingecko has issues.
+* Users are now limited to 6 commands a minute (instead of 7).
+* New cooldown functionality that is much better. Old times are removed every 10 minutes or when a user uses a command or a command is used in a guild. Plus, code is much nicer and can be used anywhere in 2 steps. 
+* ``messageReactionAdd`` and ``messageReactionRemove`` events will make significantly less API calls, preventing rate-limiting in certain cases.
+* ``message`` event has been cleaned up, no functionality changes but is now much more manageable.
+* Add in Kongregate chat relay. Not customizable and many values are hardcoded in.
+* Add in ``kongroom`` command for the bot owner to change the chatroom the bot is currently in.
+* Add ``lock``, ``ratelimit``, and ``yomama`` commands.
+* Remove usage of deprecated ``URL#parse``.
+* Fix ``guildMemberAdd`` and ``guildMemberRemove`` events if a guild had no database entry.
+* Blacklist command has been split into four separate parts.
+* Fix issue in ``cowsay`` command when a type was supplied without text.
+* Add in refresh ability in ``whatisnpm`` command to refresh the cache.
+* Add in ``nim`` command.
+* Add in DuckDuckGo's ``bangs`` into a command.
+* Add in debug commands.
+* Fix ``hastebin`` command not working with new lines. Doing so, I realized there was some really bad logic in the message event for handling the prefix, and was also able to remove (one of?) the ugliest piece(s) of code remaining in the bot.
