@@ -281,3 +281,9 @@
 * Add in DuckDuckGo's ``bangs`` into a command.
 * Add in debug commands.
 * Fix ``hastebin`` command not working with new lines. Doing so, I realized there was some really bad logic in the message event for handling the prefix, and was also able to remove (one of?) the ugliest piece(s) of code remaining in the bot.
+
+# v1.0.7
+* Add in ``avatar`` command.
+* Add in Google ``translate`` command.
+* Add in ``thispersondoesnotexist`` command (alias: ``tpdne``).
+* Removed ``synergismsave`` command.
