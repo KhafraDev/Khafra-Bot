@@ -19,7 +19,7 @@ const latest = {
 const fetchMeepOnline = () => {
     return new Promise<string>((res, rej) => {
         request({
-            host: 'us5057.nordvpn.com',         // IP address of proxy server
+            host: 'us5042.nordvpn.com',         // IP address of proxy server
             port: 80,                           // port of proxy server
             method: 'CONNECT',
             path: 'forum.meepcraft.com:443',    // some destination, add 443 port for https!

@@ -1,9 +1,9 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, TextChannel } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { FindAndModifyWriteOpResultObject } from 'mongodb';
-import { Warnings } from '../../../lib/types/Collections.js';
+import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
@@ -24,7 +24,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args);
         if(!isValidNumber(+args[1], { allowNegative: true })) {
             return message.channel.send(this.Embed.generic('Invalid **number** of points!'));
@@ -90,15 +90,33 @@ export default class extends Command {
                 { returnOriginal: true, upsert: true }
             );
 
-            return message.channel.send(this.Embed.fail(`
+            await message.channel.send(this.Embed.fail(`
             Kicked ${member} from the server for reaching the max number of warnings (${total}/${limit})!
             `));
         } else {
-            return message.channel.send(this.Embed.success(`
+            await message.channel.send(this.Embed.success(`
             ${member} has been given ${args[1]} warning points.
 
             They now have ${total}/${limit} warning points before they will be automatically kicked.
             `));
+        }
+
+        if(typeof settings?.modActionLogChannel === 'string') {
+            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
+            if(channel?.type !== 'text') {
+                return;
+            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
+                return;
+            }
+
+            const reason = args.slice(2).join(' ');
+            return channel.send(this.Embed.success(`
+            **Offender:** ${idOrUser}
+            **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+            **Staff:** ${message.member}
+            **Points:** ${args[1]} warning points given.
+            **Kicked:** ${shouldKick ? 'Yes' : 'No'} (${total}/${limit} total points).
+            `).setTitle('Member Warned'));
         }
     }
 }

@@ -76,6 +76,7 @@ export interface GuildSettings {
         names: string[]
     }[]
     welcomeChannel?: string
+    modActionLogChannel?: string
 }
 
 export interface Tags {
