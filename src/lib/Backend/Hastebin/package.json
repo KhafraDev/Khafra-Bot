@@ -1,9 +1,10 @@
 {
   "name": "@khaf/hastebin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Paste to Hastebin, or a server using Hastebin server.",
   "main": "Hastebin",
   "types": "types/Hastebin.d.ts",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },

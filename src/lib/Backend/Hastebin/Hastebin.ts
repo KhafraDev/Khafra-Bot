@@ -1,27 +1,78 @@
-import fetch, { Response } from 'node-fetch';
-import { HastebinPost } from './types/Hastebin';
+import fetch, { Response, RequestInit } from 'node-fetch';
+import { URL } from 'url';
 
-export const hasteServers: Record<string, string> = {
-    'hastebin': 'https://hastebin.com/documents',
-    'nomsy'   : 'https://paste.nomsy.net/documents'
+interface PasteServer {
+    url: string
+    alias: string[]
+    /**
+     * Format for request body
+     * @example `text={{text}}`
+     */
+    format: string
+    req?: Partial<RequestInit>
+    text?: boolean
 }
 
-export const paste = async (paste: string, server = 'https://hastebin.com/documents') => {
-    const srv = Object.entries(hasteServers).filter(([n, u]) => n === server.toLowerCase() || u === server.toLowerCase());
+export const hasteServers: PasteServer[] = [
+    {
+        url: 'https://hastebin.com/documents',
+        alias: ['hastebin'],
+        format: `{{text}}`
+    },
+    {
+        url: 'https://paste.nomsy.net/documents',
+        alias: ['nomsy'],
+        format: `{{text}}`
+    },
+    {
+        url: 'https://hatebin.com/index.php',
+        alias: ['hatebin'],
+        format: `text={{enctext}}`,
+        text: true,
+        req: {
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded'
+            }
+        }
+    }
+];
+
+export const Paste = async (server: string, text: string) => {
+    server = server.toLowerCase();
+    const supported = hasteServers.some(s => s.url === server || s.alias.includes(server));
+    if(!supported) {
+        return Promise.reject('Server not supported');
+    }
+
+    const pasteServer = hasteServers.filter(s => 
+        s.url === server || s.alias.includes(server)
+    ).shift()!;
+    const paste = pasteServer.format.replace(/{{(enc)?text}}/, c => 
+        c.includes('enc') ? encodeURIComponent(text) : text
+    );
 
     let res: Response;
     try {
-        res = await fetch(srv.shift().pop(), {
-            method: 'POST',
+        res = await fetch(pasteServer.url, {
+            method: pasteServer.req?.method ?? 'POST',
+            headers: pasteServer.req?.headers ?? {},
             body: paste
         });
     } catch(e) {
-        return Promise.reject(e.toString());
+        return Promise.reject(e);
     }
 
-    if(res.ok) {
-        return res.json() as Promise<HastebinPost>;
-    } else {
-        return Promise.reject(`Received ${res.status} (${res.statusText}).`);
+    const { origin } = new URL(pasteServer.url);
+    if(!res.ok) {
+        return Promise.reject('Response wasn\'t ok.');
     }
+
+    let key;
+    try {
+        key = pasteServer.text ? await res.text() : await res.json();
+    } catch(e) {
+        return Promise.reject(e);
+    }
+
+    return `${origin}/${typeof key === 'object' ? key.key : key.trim()}`;
 }

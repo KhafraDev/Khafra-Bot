@@ -22,15 +22,15 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         let res: RedditChildren;
         try {
-            res = await reddit(args[0] ?? 'dankmemes', message.channel.type === 'dm' ? true : message.channel.nsfw);
+            res = await reddit(
+                args[0] ?? 'dankmemes', 
+                message.channel.type === 'dm' ? true : message.channel.nsfw
+            );
         } catch(e) {
-            return message.channel.send(this.Embed.fail(e.message ?? 'An unexpected error occurred!'));
-        }
-
-        if(!res) {
-            return message.channel.send(this.Embed.fail(
-                'No images found! NSFW images will only work if the channel is marked ``nsfw``!'
-            ));
+            return message.channel.send(this.Embed.fail(`
+            ${e.toString()}
+            NSFW images will only work if the channel is marked \`\`nsfw\`\`!
+            `));
         }
 
         const embed = this.Embed.success()
