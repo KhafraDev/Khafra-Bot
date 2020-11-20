@@ -1,7 +1,12 @@
 import fetch from "node-fetch";
 import { INPMPackage } from "./types/npm";
 
-export const npm = (package_name: string) => {
-    return fetch('https://registry.npmjs.com/' + encodeURIComponent(package_name))
-        .then(res => res.json() as Promise<INPMPackage>);
+export const npm = async (package_name: string) => {
+    try {
+        const res = await fetch('https://registry.npmjs.com/' + encodeURIComponent(package_name));
+        const json = await res.json() as INPMPackage;
+        return json;
+    } catch(e) {
+        return Promise.reject(e);
+    }
 }

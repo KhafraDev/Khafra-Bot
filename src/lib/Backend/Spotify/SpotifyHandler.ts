@@ -6,14 +6,14 @@ class Spotify {
     private id = process.env.SPOTIFY_ID;
     private secret = process.env.SPOTIFY_SECRET;
 
-    token: { 
+    token?: { 
         access_token: string;
         token_type: string; 
         expires_in: number;
         scope?: string;
     };
 
-    expires_in: number;
+    expires_in?: number;
 
     async search(query: string) {
         const token = await this.getTokenHeader();
@@ -50,11 +50,11 @@ class Spotify {
             await this.setToken();
         }
 
-        return { Authorization: `Bearer ${this.token.access_token}` };
+        return { Authorization: `Bearer ${this.token!.access_token}` };
     }
 
     get expired() {
-        return this.token && new Date().getTime() >= this.expires_in
+        return this.token && new Date().getTime() >= this.expires_in!
             ? true
             : false;
     }

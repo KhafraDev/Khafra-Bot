@@ -13,9 +13,9 @@ const limits: PocketRateLimit = {
 class Pocket {
     consumer_key = process.env.POCKET_CONSUMER_KEY;
 
-    redirect_uri: string;
-    request_token: string;
-    access_token: string;
+    redirect_uri?: string;
+    request_token?: string;
+    access_token?: string;
     username?: string;
 
     constructor(user?: { request_token: string, access_token: string, username: string }) {

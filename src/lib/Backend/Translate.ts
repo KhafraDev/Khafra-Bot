@@ -7,10 +7,9 @@ import fetch from "node-fetch";
 import { URLSearchParams } from "url";
 
 const token = (a: string) => {
-	let arb_1 = 406644, arb_2 = 3293161072,
-		jd = '.', $b = '+-a^+6', Zb = '+-3^+b+-f';
+	const arb_1 = 406644, arb_2 = 3293161072,
+	      jd = '.', $b = '+-a^+6', Zb = '+-3^+b+-f', e = [];
 
-    let e = [];
     for(let f = 0, g = 0; g < a.length; g++) {
         let m = a.charCodeAt(g);
         if(m < 128) {
@@ -42,13 +41,11 @@ const token = (a: string) => {
 }
 
 const arb_fn = (p_1: number, p_2: string) => {
-	let a = "a";
-	let plus = "+";
 	for (let c = 0; c < p_2.length - 2; c += 3) {
-		let d = p_2.charAt(c + 2);
-		let e = d >= a ? d.charCodeAt(0) - 87 : Number(d);
-    	let f = p_2.charAt(c + 1) === plus ? p_1 >>> e : p_1 << e;
-    	p_1 = p_2.charAt(c) === plus ? (p_1 + f) & 4294967295 : p_1 ^ f;
+		const d = p_2.charAt(c + 2);
+		const e = d >= 'a' ? d.charCodeAt(0) - 87 : Number(d);
+    	const f = p_2.charAt(c + 1) === '+' ? p_1 >>> e : p_1 << e;
+    	p_1 = p_2.charAt(c) === '+' ? (p_1 + f) & 4294967295 : p_1 ^ f;
   	}
   	return p_1;
 }

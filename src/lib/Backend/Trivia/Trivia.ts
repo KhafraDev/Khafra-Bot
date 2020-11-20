@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { Question } from './types/Trivia';
 
 export const categories: { id: number, name: string }[] = [];
-export let categoryRegex: RegExp = null;
+export let categoryRegex: RegExp | null = null;
 
 export const Trivia = {
     fetchList: async () => {

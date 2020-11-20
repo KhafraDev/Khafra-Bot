@@ -106,7 +106,7 @@ export const parseBible = async () => {
     const buffer = await res.buffer();
     
     const zip = new AdmZip(buffer);
-    const bible = zip.getEntries().shift().getData().toString('utf-8');
+    const bible = zip.getEntries().shift()!.getData().toString('utf-8');
 
     const lines = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse

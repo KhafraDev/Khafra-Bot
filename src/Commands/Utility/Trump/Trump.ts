@@ -145,7 +145,7 @@ export default class extends Command {
         }
 
         const filter = (r: MessageReaction, u: User) => ['▶️', '◀️'].includes(r.emoji.name) && u.id === message.author.id;
-        const collector = m.createReactionCollector(filter, { max: item.length * 2 });
+        const collector = m.createReactionCollector(filter, { max: item.length * 2, time: 60000 });
         collector.on('collect', async reaction => {
             if(!m || m.deleted) {
                 return collector.stop();
@@ -168,7 +168,5 @@ export default class extends Command {
                 return m.reactions.removeAll();
             } catch {}
         });
-
-        setTimeout(() => collector.stop(), 60000);
     }
 }
