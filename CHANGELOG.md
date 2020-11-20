@@ -287,3 +287,6 @@
 * Add in Google ``translate`` command.
 * Add in ``thispersondoesnotexist`` command (alias: ``tpdne``).
 * Removed ``synergismsave`` command.
+* ``loadEnv`` function removed since it wasn't needed.
+* Allow multiple = signs for env variables.
+* Fix ``NewsChannel#send`` not being proxied and catching errors.

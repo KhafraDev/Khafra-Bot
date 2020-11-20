@@ -29,4 +29,4 @@ TextChannel.prototype.send = new Proxy(TextChannel.prototype.send, {
 });
 
 DMChannel.prototype.send = TextChannel.prototype.send;
-NewsChannel.prototype.send = NewsChannel.prototype.send;
+NewsChannel.prototype.send = TextChannel.prototype.send;

@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 let changeRooms: (num?: number) => void;
-if(process.argv[process.argv.length-1] !== '--dev') {
+if(process.env.__KONG_USERNAME && process.env.__KONG_PASSWORD) {
     ({ changeRooms } = await import('../../lib/Backend/Kongregate.js'));
 }
 
