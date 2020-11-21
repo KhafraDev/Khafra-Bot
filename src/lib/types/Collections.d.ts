@@ -77,6 +77,10 @@ export interface GuildSettings {
     }[]
     welcomeChannel?: string
     modActionLogChannel?: string
+    rules?: {
+        channel: string
+        rules: { index: number, rule: string }[] 
+    }
 }
 
 export interface Tags {

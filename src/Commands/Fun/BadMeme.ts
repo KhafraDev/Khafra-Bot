@@ -1,7 +1,7 @@
 import { Command } from "../../Structures/Command.js";
 import { Message } from "discord.js";
 import { reddit } from "../../lib/Backend/BadMeme/BadMeme.js";
-import { RedditChildren } from "../../lib/Backend/BadMeme/types/BadMeme";
+import { RedditPostMin } from "../../lib/Backend/BadMeme/types/BadMeme";
 
 export default class extends Command {
     constructor() {
@@ -20,7 +20,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let res: RedditChildren;
+        let res: RedditPostMin;
         try {
             res = await reddit(
                 args[0] ?? 'dankmemes', 
@@ -33,9 +33,6 @@ export default class extends Command {
             `));
         }
 
-        const embed = this.Embed.success()
-            .setImage(res.data.url);
-
-        return message.channel.send(embed);
+        return message.channel.send(this.Embed.success().setImage(res.url));
     }
 }

@@ -54,7 +54,7 @@ export default class extends Command {
 
         const filter = (m: Message) => 
             m.author.id === message.author.id &&
-            ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content?.toLowerCase());
+            ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content.toLowerCase());
 
         const m = await message.channel.awaitMessages(filter, {
             max: 1,

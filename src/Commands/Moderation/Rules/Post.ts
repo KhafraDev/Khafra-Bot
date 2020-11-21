@@ -1,0 +1,62 @@
+import { Command } from '../../../Structures/Command.js';
+import { 
+    Message, 
+    TextChannel, 
+    Channel, 
+    NewsChannel 
+} from 'discord.js';
+import { GuildSettings } from '../../../lib/types/Collections.js';
+
+const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
+const delay = (): Promise<void> => new Promise(r => setTimeout(r, 5000));
+
+export default class extends Command {
+    constructor() {
+        super(
+            [
+                'Set the rules to the server.',
+                ''
+            ],
+            [ /* No extra perms needed */ ],
+            {
+                name: 'post',
+                aliases: [ 'postrules', 'postrule' ],
+                folder: 'Rules',
+                args: [0, 0],
+                guildOnly: true
+            }
+        );
+    }
+
+    async init(message: Message, _: string[], settings: GuildSettings) {
+        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
+            && !this.isBotOwner(message.author.id)
+        ) {
+            return message.channel.send(this.Embed.missing_perms(true));
+        } else if(!settings || !('rules' in settings) || !settings.rules.rules?.length) {
+            return message.channel.send(this.Embed.fail(`
+            Guild has no rules.
+
+            Use the \`\`rules\`\` command to get started!
+            `));
+        }
+
+        const channel = message.guild.channels.cache.get(settings.rules.channel) as TextChannel;
+        if(!channel || !isText(channel)) {
+            return message.channel.send(this.Embed.fail(`Channel ${channel ?? settings.rules.channel} is invalid!`));
+        } else if(!channel.permissionsFor(message.guild.me).has(['EMBED_LINKS', 'SEND_MESSAGES'])) {
+            return message.channel.send(this.Embed.fail(`Missing permissions to either use embeds or send messages!`));
+        }
+
+        await message.channel.send(this.Embed.success(`
+        Posting ${settings.rules.rules.length} rules in intervals of 5 seconds.
+        `));
+
+        for(const rule of settings.rules.rules) {
+            await channel.send(this.Embed.success(`
+            ${rule.rule}
+            `).setTitle(`Rule ${rule.index}`));
+            await delay();
+        }
+    }
+}

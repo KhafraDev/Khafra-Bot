@@ -152,3 +152,10 @@ export interface RedditNew {
         children: RedditChildren[]
     };
 }
+
+export interface RedditPostMin {
+    over_18: boolean
+    thumbnail: string,
+    url: string,
+    id: string   
+}

@@ -290,3 +290,5 @@
 * ``loadEnv`` function removed since it wasn't needed.
 * Allow multiple = signs for env variables.
 * Fix ``NewsChannel#send`` not being proxied and catching errors.
+* Add rule board.
+* Reduce memory the badmeme cache uses by only caching properties used.

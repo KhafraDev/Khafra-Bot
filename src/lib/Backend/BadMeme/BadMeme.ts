@@ -1,8 +1,8 @@
 import fetch from 'node-fetch';
-import { RedditChildren, RedditNew, RedditNotFound } from './types/BadMeme';
+import { RedditNew, RedditNotFound, RedditPostMin } from './types/BadMeme';
 
 interface RedditCache {
-    posts: RedditChildren[],
+    posts: RedditPostMin[],
     updated: number
 }
 
@@ -23,7 +23,12 @@ const retrieve = async (subreddit: string): Promise<RedditCache> => {
         } else {
             const posts = json.data.children;
             cache.set(subreddit, {
-                posts,
+                posts: posts.map(p => ({
+                    over_18: p.data.over_18,
+                    thumbnail: p.data.thumbnail,
+                    url: p.data.url,
+                    id: p.data.id
+                })),
                 updated: Date.now()
             });
             return cache.get(subreddit)!;
@@ -42,16 +47,16 @@ export const reddit = async (subreddit = 'dankmemes', allowNSFW = false) => {
     }
 
     const filtered = posts.posts.filter(p => 
-        (allowNSFW ? true : !p.data.over_18) &&
-        p.data.thumbnail !== 'self' &&
-        /(.gif|.png|.jpeg|.jpg)$/.test(p.data.url)
+        (allowNSFW ? true : !p.over_18) &&
+        p.thumbnail !== 'self' &&
+        /(.gif|.png|.jpeg|.jpg)$/.test(p.url)
     );
 
     const first = filtered.shift();
     if(!first) return Promise.reject('No posts found!');
     
     cache.set(subreddit.toLowerCase(), {
-        posts: posts.posts.filter(p => p.data.id !== first.data.id),
+        posts: posts.posts.filter(p => p.id !== first.id),
         updated: Date.now()
     });
     return first;
