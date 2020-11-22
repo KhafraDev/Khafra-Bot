@@ -27,7 +27,7 @@ export default class extends Command {
         try {
             res = await guardian(args, new Date(args[0]));
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         let desc = '';
@@ -44,6 +44,6 @@ export default class extends Command {
             .setDescription(desc)
             .setTitle('Results')
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

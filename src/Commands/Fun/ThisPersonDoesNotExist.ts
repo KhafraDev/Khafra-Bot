@@ -28,7 +28,7 @@ export default class extends Command {
             const res = await fetch('https://thispersondoesnotexist.com/image');
             buf = await res.buffer();
         } catch {
-            return message.channel.send(this.Embed.fail(
+            return message.reply(this.Embed.fail(
                 'An error occurred getting a person!'
             ));
         }
@@ -39,6 +39,6 @@ export default class extends Command {
             .attachFiles([ attach ])
             .setImage('attachment://tpdne.jpeg');
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

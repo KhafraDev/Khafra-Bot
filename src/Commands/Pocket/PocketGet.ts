@@ -28,7 +28,7 @@ export default class extends Command {
 
         const user = await collection.findOne<PocketUser>({ id: message.author.id });
         if(!user) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             You haven't set-up Pocket integration!
 
             Try using the \`\`pocket\`\` command for more information.
@@ -40,7 +40,7 @@ export default class extends Command {
             const pocket = new Pocket(user);
             latest = await pocket.getList();
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const formatted = (Object.values<PocketArticle>(latest.list))
@@ -50,6 +50,6 @@ export default class extends Command {
         const embed = this.Embed.success(formatted)
             .setAuthor(message.author.username + '\'s latest saves', message.author.displayAvatarURL(), 'https://getpocket.com/')
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

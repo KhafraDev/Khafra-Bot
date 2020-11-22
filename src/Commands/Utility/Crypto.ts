@@ -26,7 +26,7 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         const currency = getCurrency(args.join(' '));
         if(!currency) {
-            return message.channel.send(this.Embed.fail('No crypto found!'));
+            return message.reply(this.Embed.fail('No crypto found!'));
         }
 
         const embed = this.Embed.success()
@@ -54,6 +54,6 @@ export default class extends Command {
                 { name: '**% Change 24H:**',  value: currency.price_change_percentage_24h + '%', inline: true }
             );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

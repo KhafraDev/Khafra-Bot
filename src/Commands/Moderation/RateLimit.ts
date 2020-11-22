@@ -40,18 +40,18 @@ export default class extends Command {
         }
 
         if(!idOrChannel) { // just to be safe, shouldn't be possible
-            return message.channel.send(this.Embed.generic('Invalid Channel!'));
+            return message.reply(this.Embed.generic('Invalid Channel!'));
         }
 
         const secs = (args.length === 2 ? ms(args[1]) : ms('0')) / 1000;
         const text = idOrChannel as GuildChannel;
         if(!isText(text)) {
-            return message.channel.send(this.Embed.generic('No text channel found!'));
+            return message.reply(this.Embed.generic('No text channel found!'));
         } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {
             // maybe better fail message?
-            return message.channel.send(this.Embed.missing_perms());
+            return message.reply(this.Embed.missing_perms());
         } else if(isNaN(secs) || secs > MAX) {
-            return message.channel.send(this.Embed.fail('Invalid number of seconds (max is 6H)!'));
+            return message.reply(this.Embed.fail('Invalid number of seconds (max is 6H)!'));
         }
 
         try {
@@ -60,12 +60,12 @@ export default class extends Command {
                 `Khafra-Bot: ${secs}s. rate-limit set by ${message.author.tag} (${message.author.id})`
             );
         } catch {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An error occurred setting a slow-mode!
             `));
         }
 
-        await message.channel.send(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         Slow-mode set in ${text} for ${secs} seconds!
         `));
 

@@ -50,21 +50,21 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(games.includes(message.guild.id)) {
-            return message.channel.send(this.Embed.fail('Game already happening in this guild!'));
+            return message.reply(this.Embed.fail('Game already happening in this guild!'));
         }
 
         const opponent: GuildMember | string = getMentions(message, args, { type: 'members' });
         if(!opponent || typeof opponent === 'string') {
-            return message.channel.send(this.Embed.generic('No member mentioned!'));
+            return message.reply(this.Embed.generic('No member mentioned!'));
         } else if(opponent.user.bot) {
-            return message.channel.send(this.Embed.fail('Can\'t play against a bot!'));
+            return message.reply(this.Embed.fail('Can\'t play against a bot!'));
         }
         
         let turn = message.author.id;
         games.push(message.guild.id);
         const game = gen();
 
-        const m = await message.channel.send(this.Embed.success(`
+        const m = await message.reply(this.Embed.success(`
         ${message.member} vs. ${opponent}
 
         ${game.map(a => a.length === 0 ? '0' : `${a.join(' ')} (${a.length})`).join('\n')}

@@ -26,11 +26,11 @@ export default class extends Command {
             results = await DiscordDiscover(args.join(' '));
         } catch(e) {
             this.logger.log(`${this.settings.name}: ${e}`);
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(results.hits.length === 0) {
-            return message.channel.send(this.Embed.fail('No results found!'));
+            return message.reply(this.Embed.fail('No results found!'));
         }
 
         const guild = results.hits.shift();
@@ -49,6 +49,6 @@ export default class extends Command {
                 { name: '**Vanity URL:**',    value: guild.vanity_url_code ?? 'None',  inline: true }
             );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

@@ -33,9 +33,9 @@ export default class extends Command {
             .map(e => e.url);
 
         if(unicodeParsed.length === 0 && guildParsed.length === 0) {
-            return message.channel.send(this.Embed.fail('No guild or unicode emojis provided!'));
+            return message.reply(this.Embed.fail('No guild or unicode emojis provided!'));
         }
 
-        return message.channel.send([...unicodeParsed, ...guildParsed].join('\n'));
+        return message.reply([...unicodeParsed, ...guildParsed].join('\n'));
     }
 }

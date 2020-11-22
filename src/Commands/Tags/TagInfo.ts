@@ -24,7 +24,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length === 0) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         }
 
         const client = await pool.tags.connect();
@@ -36,7 +36,7 @@ export default class extends Command {
         });
         
         if(!tag) {
-            return message.channel.send(this.Embed.fail('No tag with that name exists!'));
+            return message.reply(this.Embed.fail('No tag with that name exists!'));
         }
 
         let user: User | 'Not found.';
@@ -58,6 +58,6 @@ export default class extends Command {
             .setFooter('Created:')
             .setTimestamp(tag.created);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

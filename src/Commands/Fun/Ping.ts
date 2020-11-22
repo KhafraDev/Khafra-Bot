@@ -18,7 +18,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const m = await message.channel.send(this.Embed.success('Pinging...!'));
+        const m = await message.reply(this.Embed.success('Pinging...!'));
         if(!m) {
             return;
         }

@@ -24,7 +24,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!('randomInt' in crypto)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             The \`\`node\`\` version the bot is running on is too old!
             `));
         }
@@ -40,7 +40,7 @@ export default class extends Command {
             max < min ||                   // min is greater than max
             !Number.isSafeInteger(min) || !Number.isSafeInteger(max)
         ) {
-            return message.channel.send(this.Embed.generic(
+            return message.reply(this.Embed.generic(
                 'Invalid number(s) provided! Numbers ``cannot equal`` one another ' + 
                 'and the difference between the two ``cannot be greater`` than 281,474,976,710,655!'
             ));
@@ -48,7 +48,7 @@ export default class extends Command {
 
         const num = await randInt(min, max);
        
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Your number is \`\`${num}\`\`!
         `));
     }

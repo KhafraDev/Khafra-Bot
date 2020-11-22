@@ -8,6 +8,16 @@ export interface BibleExcerpt {
     content: string
 }
 
+export interface QuranExcerpt {
+    _id: ObjectId
+    title: string
+    verses: {
+        book: number
+        verse: number
+        content: string
+    }[]
+}
+
 export interface Insights {
     _id: ObjectId
     id: string

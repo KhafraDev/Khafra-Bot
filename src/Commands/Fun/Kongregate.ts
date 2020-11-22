@@ -26,13 +26,13 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!isValidNumber(+args[0])) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         } else if(!changeRooms) {
-            return message.channel.send(this.Embed.fail('Function wasn\'t imported.'));
+            return message.reply(this.Embed.fail('Function wasn\'t imported.'));
         }
 
         changeRooms(+args[0]);
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Relay bot is now in chatroom #${args[0]}!
         `));
     }

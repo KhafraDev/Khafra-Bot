@@ -28,10 +28,10 @@ export default class extends Command {
             await message.guild.members.unban(user, reason?.join(' '));
         } catch(e) {
             console.log(e);
-            return message.channel.send(this.Embed.fail('Invalid User!'));
+            return message.reply(this.Embed.fail('Invalid User!'));
         }
 
-        await message.channel.send(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         **Successfully** unbanned ${user}${reason.join(' ').length ? ' for \`\`' + reason.join(' ') + '\`\`' : ''}!
         `));
 

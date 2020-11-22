@@ -20,12 +20,12 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(message.attachments.size === 0) {
-            return message.channel.send(this.Embed.generic('No image attached!'));
+            return message.reply(this.Embed.generic('No image attached!'));
         }
 
         const file = message.attachments.first();
         if(!/(.png|.jpe?g|.webp|.gif)$/.test(file.url)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Only \`\`png\`\`, \`\`jpg\`\`, \`\`webp\`\`, or \`\`gif\`\` file types allowed.
             `));
         }
@@ -37,9 +37,9 @@ export default class extends Command {
                 { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
             );
         } catch {
-            return message.channel.send(this.Embed.fail('An error occurred adding this emoji.'));
+            return message.reply(this.Embed.fail('An error occurred adding this emoji.'));
         }
 
-        return message.channel.send(this.Embed.success(`Added ${e} to the emojis!`));
+        return message.reply(this.Embed.success(`Added ${e} to the emojis!`));
     }
 }

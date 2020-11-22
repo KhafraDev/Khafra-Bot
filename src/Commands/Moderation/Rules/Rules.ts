@@ -38,16 +38,16 @@ export default class extends Command {
             const num = +args[0];
             const rule = settings?.rules?.rules?.filter(r => r.index === num).shift();
             if(!isValidNumber(+args[0]) || !rule) {
-                return message.channel.send(this.Embed.fail(
+                return message.reply(this.Embed.fail(
                     args.length === 1
                     ? `Rule #${args[0]} doesn't exist!`
                     : `You don't have permission to add rules!`
                 ));
             }
 
-            return message.channel.send(this.Embed.success(rule.rule).setTitle(`Rule ${rule.index}`));
+            return message.reply(this.Embed.success(rule.rule).setTitle(`Rule ${rule.index}`));
         } else if(settings && 'rules' in settings && settings.rules.rules?.length > 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Rules already exist in this guild!
 
             Use \`\`clearrules\`\` (\`\`help clearrules\`\` for examples) to remove all rules.
@@ -55,7 +55,7 @@ export default class extends Command {
             `));
         }
 
-        const msg = await message.channel.send(this.Embed.success(`
+        const msg = await message.reply(this.Embed.success(`
         **Rule Board:**
         Steps:
             1. Enter the channel or channel id to post the rules to (once reading this).

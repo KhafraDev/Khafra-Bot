@@ -31,7 +31,7 @@ export default class extends Command {
         ${a[2]} | ${b[2]} | ${c[2]}
         `);
 
-        const sent = await message.channel.send(embed);
+        const sent = await message.reply(embed);
         if(!sent) {
             return;
         }

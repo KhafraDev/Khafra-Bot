@@ -56,7 +56,7 @@ export default class extends Command {
             try {
                 member = await member;
             } catch {
-                return message.channel.send(this.Embed.fail('Invalid user ID!'));
+                return message.reply(this.Embed.fail('Invalid user ID!'));
             }
         }
 
@@ -82,6 +82,6 @@ export default class extends Command {
             )
             .setFooter('For general user info use the **user** command!');
         
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

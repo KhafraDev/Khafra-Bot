@@ -75,7 +75,7 @@ export default class extends Command {
                 .setTimestamp(latest.fetched)
                 .setFooter('Last checked at');
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         }
 
         let players: { playersOnline: number };
@@ -84,7 +84,7 @@ export default class extends Command {
             players = JSON.parse(res);
         } catch(e) {
             this.logger.log(e);
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         latest.fetched = Date.now();
@@ -92,6 +92,6 @@ export default class extends Command {
 
         const sentence = `There ${players.playersOnline === 1 ? 'is ``1`` player': 'are ``' + players.playersOnline + '`` players'}`
         const embed = this.Embed.success(`${sentence} on Meepcraft right now!`);
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

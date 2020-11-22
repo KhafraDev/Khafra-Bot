@@ -24,7 +24,7 @@ export default class extends Command {
     async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args, { type: 'members' });
         if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.channel.send(this.Embed.generic('Invalid user ID!'));
+            return message.reply(this.Embed.generic('Invalid user ID!'));
         }
  
         let member = typeof idOrUser === 'string'
@@ -35,12 +35,12 @@ export default class extends Command {
             try {
                 member = await member;
             } catch {
-                return message.channel.send(this.Embed.fail('Member couldn\'t be fetched!'));
+                return message.reply(this.Embed.fail('Member couldn\'t be fetched!'));
             }
         }
 
         if(!member.kickable) {
-            return message.channel.send(this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`));
+            return message.reply(this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`));
         }
 
         try {
@@ -48,12 +48,12 @@ export default class extends Command {
             Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).
             `);
         } catch {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred!
             `));
         }
 
-        await message.channel.send(this.Embed.fail(`Kicked ${member} from the server!`));
+        await message.reply(this.Embed.fail(`Kicked ${member} from the server!`));
 
         if(typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;

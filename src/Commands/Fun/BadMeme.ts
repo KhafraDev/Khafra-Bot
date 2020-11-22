@@ -27,12 +27,12 @@ export default class extends Command {
                 message.channel.type === 'dm' ? true : message.channel.nsfw
             );
         } catch(e) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             ${e.toString()}
             NSFW images will only work if the channel is marked \`\`nsfw\`\`!
             `));
         }
 
-        return message.channel.send(this.Embed.success().setImage(res.url));
+        return message.reply(this.Embed.success().setImage(res.url));
     }
 }

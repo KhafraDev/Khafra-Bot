@@ -27,9 +27,9 @@ export default class extends Command {
     async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args);
         if(!isValidNumber(+args[1], { allowNegative: true })) {
-            return message.channel.send(this.Embed.generic('Invalid **number** of points!'));
+            return message.reply(this.Embed.generic('Invalid **number** of points!'));
         } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.channel.send(this.Embed.generic('Invalid user ID!'));
+            return message.reply(this.Embed.generic('Invalid user ID!'));
         }
 
         let member = message.guild.member(idOrUser) ?? message.guild.members.fetch(idOrUser);
@@ -37,14 +37,14 @@ export default class extends Command {
             try {
                 member = await member;
             } catch {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 ${member} couldn't be fetched!
                 `));
             }
         }
 
         if(!member.kickable) {
-            return message.channel.send(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
+            return message.reply(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
         }
 
         const client = await pool.moderation.connect();
@@ -75,7 +75,7 @@ export default class extends Command {
             try {
                 await member.kick(`Khafra-Bot exceeded ${limit} warning points!`);
             } catch {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 An error occurred trying to kick ${member}.
                 `));
             }
@@ -90,11 +90,11 @@ export default class extends Command {
                 { returnOriginal: true, upsert: true }
             );
 
-            await message.channel.send(this.Embed.fail(`
+            await message.reply(this.Embed.fail(`
             Kicked ${member} from the server for reaching the max number of warnings (${total}/${limit})!
             `));
         } else {
-            await message.channel.send(this.Embed.success(`
+            await message.reply(this.Embed.success(`
             ${member} has been given ${args[1]} warning points.
 
             They now have ${total}/${limit} warning points before they will be automatically kicked.

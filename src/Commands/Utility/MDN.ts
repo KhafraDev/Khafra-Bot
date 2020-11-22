@@ -26,7 +26,7 @@ export default class extends Command {
         try {
             results = await mdn(args.join(' '));
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const best = results.documents
@@ -41,6 +41,6 @@ export default class extends Command {
             .setFooter('Requested by ' + message.author.tag)
             .setTimestamp()
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

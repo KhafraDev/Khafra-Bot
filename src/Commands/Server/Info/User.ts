@@ -49,7 +49,7 @@ export default class extends Command {
             try {
                 user = await message.client.users.fetch(idOrUser);
             } catch {
-                return message.channel.send(this.Embed.generic('Invalid user ID!'));
+                return message.reply(this.Embed.generic('Invalid user ID!'));
             }
         }
 
@@ -63,6 +63,6 @@ export default class extends Command {
             .addField('**Flags:**', !user.flags || user.flags.bitfield === 0 ? 'Unknown' : user.flags?.toArray().join(', '), true)
             .addField('**Created:**', formatDate('MMM. Do, YYYY hh:mm:ssA t', snowflake.date), true);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

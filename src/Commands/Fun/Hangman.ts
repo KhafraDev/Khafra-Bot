@@ -52,7 +52,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(games.includes(message.author.id)) {
-            return message.channel.send(this.Embed.fail('You are already in a game!'));
+            return message.reply(this.Embed.fail('You are already in a game!'));
         }
 
         const guesses: string[] = [];
@@ -69,7 +69,7 @@ export default class extends Command {
         const split = text.split(/\n\r|\n|\r/g).filter(l => !l.startsWith('#') && l.length > 0);
         const word = (await realShuffle(split)).shift();
 
-        const sent = await message.channel.send(
+        const sent = await message.reply(
             this.Embed.success(hide(word, guesses)).setImage(assets[wrong])
         );
 

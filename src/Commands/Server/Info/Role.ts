@@ -25,7 +25,7 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         const idOrRole = getMentions(message, args, { type: 'roles' });
         if(!idOrRole || (typeof idOrRole === 'string' && !validSnowflake(idOrRole))) {
-            return message.channel.send(this.Embed.generic('Invalid role ID!'));
+            return message.reply(this.Embed.generic('Invalid role ID!'));
         }
 
         const role = message.mentions.roles.size > 0
@@ -33,9 +33,9 @@ export default class extends Command {
             : await message.guild.roles.fetch(args[0]);
 
         if(!(role instanceof Role)) {
-            return message.channel.send(this.Embed.fail('No role found!'));
+            return message.reply(this.Embed.fail('No role found!'));
         } else if(role.deleted) {
-            return message.channel.send(this.Embed.fail('Role has been deleted.'));
+            return message.reply(this.Embed.fail('Role has been deleted.'));
         }
 
         const embed = this.Embed.success()
@@ -53,6 +53,6 @@ export default class extends Command {
             .addField('**Position:**', role.position, true)
             .addField('**Managed:**', role.managed ? 'Yes' : 'No');
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

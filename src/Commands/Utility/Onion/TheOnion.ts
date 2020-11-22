@@ -23,7 +23,7 @@ export default class extends Command {
     
     async init(message: Message) {
         if(updating) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Articles are being fetched for the first time or are being updated.
 
             Please give it a few minutes and try again!
@@ -35,12 +35,12 @@ export default class extends Command {
 
         const random = await collection.aggregate<OnionArticle>([ { $sample: { size: 1 } } ]).next();
         if(!random) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No Onion articles in database, please ask my owner to run \`\`theonionfetch\`\`!
             `));
         }
         
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         [${random.title}](${random.href})
         `).setTimestamp(random.date));
     }

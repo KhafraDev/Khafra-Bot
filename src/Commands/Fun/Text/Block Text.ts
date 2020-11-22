@@ -34,6 +34,6 @@ export default class extends Command {
             .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')
             .slice(0, 2048);
 
-        return message.channel.send(this.Embed.success(blocks));
+        return message.reply(this.Embed.success(blocks));
     }
 }

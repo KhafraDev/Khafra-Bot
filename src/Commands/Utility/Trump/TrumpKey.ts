@@ -18,7 +18,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia
         🔵 – Public Statements / Tweets

@@ -28,6 +28,6 @@ export default class extends Command {
             For all trivia commands try the list command: \`\`list trivia\`\`!
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

@@ -20,7 +20,7 @@ export default class extends Command {
     }
 
     init(message: Message) {
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
         `));
     }

@@ -26,7 +26,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         } 
 
         let idOrChannel = getMentions(message, args, { type: 'channels' });
@@ -37,7 +37,7 @@ export default class extends Command {
         const channel = message.guild.channels.resolve(idOrChannel);
         if(!channel) {
             this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));
         }
@@ -54,7 +54,7 @@ export default class extends Command {
             { upsert: true }
         );
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Set public mod-logging channel to ${channel}!
         `));
     }

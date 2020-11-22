@@ -29,7 +29,7 @@ export default class extends Command {
         try {
             await pocket.requestCode()
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const embed = this.Embed.success(`
@@ -40,7 +40,7 @@ export default class extends Command {
         `)
         .setTitle('Pocket');
 
-        const msg = await message.channel.send(embed);
+        const msg = await message.reply(embed);
         if(!msg) {
             return;
         }

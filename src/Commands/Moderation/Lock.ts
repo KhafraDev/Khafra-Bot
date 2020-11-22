@@ -40,16 +40,16 @@ export default class extends Command {
         }
 
         if(!idOrChannel) {
-            return message.channel.send(this.Embed.generic('Invalid Channel!'));
+            return message.reply(this.Embed.generic('Invalid Channel!'));
         }
 
         const everyone = message.guild.roles.everyone;
         const text = idOrChannel as GuildChannel;
         if(!isText(text)) {
-            return message.channel.send(this.Embed.generic('No channel found!'));
+            return message.reply(this.Embed.generic('No channel found!'));
         } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {
             // maybe better fail message?
-            return message.channel.send(this.Embed.missing_perms());
+            return message.reply(this.Embed.missing_perms());
         }
 
         const opts: OverwriteData = {
@@ -69,12 +69,12 @@ export default class extends Command {
                 `${text.id} ${lockState} by ${message.author.tag} (${message.author.id})`
             );
         } catch {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An error occurred creating permission overwrites in ${text}!
             `));
         }
 
-        await message.channel.send(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         ${text} has been ${lockState} for ${everyone}!
         `));
 

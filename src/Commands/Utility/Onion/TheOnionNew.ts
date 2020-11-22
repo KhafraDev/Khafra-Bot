@@ -36,7 +36,7 @@ export default class extends Command {
 
             message.channel.stopTyping();
             updating = false;
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             Fetched and inserted ${articles.articles.length} articles into the collection.
             There were ${articles.errors.length} error(s).
             `));
@@ -44,7 +44,7 @@ export default class extends Command {
 
         const last = await collection.find().sort({ $natural: -1 }).limit(1).next();
         if(last && !('date' in last)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             This option is only available in the newer collection format.
 
             Run this command with any argument to reformat the collection.
@@ -69,7 +69,7 @@ export default class extends Command {
         await collection.insertMany(articles.articles);
         message.channel.stopTyping();
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Fetched and inserted ${articles.articles.length} articles into the collection.
         There were ${articles.errors.length} error(s).
         `));

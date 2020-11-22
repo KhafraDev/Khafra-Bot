@@ -25,14 +25,14 @@ export default class extends Command {
 
     async init(message: Message) {
         if(!exists) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Ask the bot owner to use the \`\`npmnew\`\` command to use this command!
             `));
         }
 
         const file = await readFile(npmPath, 'utf-8');
         const lines = file.split(/\r\n|\n/g);
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         \`\`${lines[Math.floor(Math.random() * lines.length)]}\`\`
         `));
     }

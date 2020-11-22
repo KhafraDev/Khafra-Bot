@@ -23,7 +23,7 @@ export default class extends Command {
         const old = cache.length;
         cache.length = 0; // removes all items from array
         cache.push(...await refreshCache());
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Successfully refreshed the cache.
         ${cache.length - old} atrocities added!
         `));

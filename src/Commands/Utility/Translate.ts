@@ -29,16 +29,16 @@ export default class extends Command {
         if(args[1] === from) args.splice(1, 1);
 
         if(args.length === 0) {
-            return message.channel.send(this.Embed.fail('Nothing to translate!'));
+            return message.reply(this.Embed.fail('Nothing to translate!'));
         }
 
         let tr;
         try {
             tr = await translate(args.join(' '), { to, from });
         } catch(e) {
-            return message.channel.send(this.Embed.fail(e.message));
+            return message.reply(this.Embed.fail(e.message));
         }
 
-        return message.channel.send(this.Embed.success(tr));
+        return message.reply(this.Embed.success(tr));
     }
 }

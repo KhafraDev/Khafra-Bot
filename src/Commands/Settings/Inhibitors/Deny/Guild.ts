@@ -29,7 +29,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         } 
 
         let command: string[];
@@ -37,18 +37,18 @@ export default class extends Command {
             command = ['*'];
         } else {
             if(!KhafraClient.Commands.has(args[0].toLowerCase())) {
-                return message.channel.send(this.Embed.fail('No command with that name found!'));
+                return message.reply(this.Embed.fail('No command with that name found!'));
             }
 
             const cmd = KhafraClient.Commands.get(args[0].toLowerCase());
             if(c.includes(cmd.settings.folder)) {
-                return message.channel.send(this.Embed.fail('Can\'t disable commands in this category!'));
+                return message.reply(this.Embed.fail('Can\'t disable commands in this category!'));
             }
             command = [].concat(cmd.settings.name, ...(cmd.settings.aliases ?? []));
         }
 
         if(settings?.disabledGuild?.some(c => c.names.includes(command[0]))) {
-            return message.channel.send(this.Embed.fail(`Command is already disabled in this guild!`));
+            return message.reply(this.Embed.fail(`Command is already disabled in this guild!`));
         }
 
         const client = await pool.settings.connect();
@@ -68,11 +68,11 @@ export default class extends Command {
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             Command ${command[0]} has been disabled in the guild!
             `));
         } else {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
     }
 }

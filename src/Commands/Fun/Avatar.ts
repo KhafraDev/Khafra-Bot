@@ -29,7 +29,7 @@ export default class extends Command {
             try {
                 user = await message.client.users.fetch(idOrUser);
             } catch {
-                return message.channel.send(this.Embed.generic('Invalid user ID!'));
+                return message.reply(this.Embed.generic('Invalid user ID!'));
             }
         }
 
@@ -39,6 +39,6 @@ export default class extends Command {
             dynamic: true
         });
         
-        return message.channel.send(this.Embed.success(`${user}'s avatar`).setImage(avatar));
+        return message.reply(this.Embed.success(`${user}'s avatar`).setImage(avatar));
     }
 }

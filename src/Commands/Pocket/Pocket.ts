@@ -28,6 +28,6 @@ export default class extends Command {
             \`\`pocketinit\`\` - Start the process of authorizing your Pocket account.
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

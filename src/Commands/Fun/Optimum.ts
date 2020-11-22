@@ -33,6 +33,6 @@ export default class extends Command {
             [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

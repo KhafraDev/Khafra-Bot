@@ -31,16 +31,16 @@ export default class extends Command {
         if((!super.hasPermissions(message) || !super.userHasPerms(message, [ 'ADMINISTRATOR' ]))
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         }
 
         const [ messageID, channel, role, emoji ] = args;
         if(!/\d{17,19}/.test(messageID)) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         } else if(!/<?#?\d{17,19}>?/.test(channel)) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         } else if(!/<?@?&?\d{17,19}>?/.test(role)) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         } 
 
         /** Channel where message is. */
@@ -49,7 +49,7 @@ export default class extends Command {
             const id = channel.replace(/[^0-9]/g, '');
             c = await message.client.channels.fetch(id);
         } catch {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No channel could be found!
             \`\`${channel}\`\`
             `));
@@ -57,13 +57,13 @@ export default class extends Command {
 
         const perms = this.permissions.concat('ADD_REACTIONS');
         if(c.type !== 'text') { // only text channels allowed
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Only available for text channels.
             `));
         } else if(!super.hasPermissions(message, c, perms)) { // has permissions in channel
-            return message.channel.send(this.Embed.missing_perms(true, perms));
+            return message.reply(this.Embed.missing_perms(true, perms));
         } else if(c.deleted) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Congrats! I have no idea how you got this to happen, but the channel is deleted.
             `));
         }
@@ -71,7 +71,7 @@ export default class extends Command {
         /*** Emoji that will give role */
         const e = twemoji.parse(emoji).shift()?.text;
         if(e === undefined) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         }
 
         /** Role to give on reaction */
@@ -80,13 +80,13 @@ export default class extends Command {
             : await message.guild.roles.fetch(role);
 
         if(!r || !(r instanceof Role)) {
-            return message.channel.send(this.Embed.fail('No role found!'));
+            return message.reply(this.Embed.fail('No role found!'));
         } else if(r.deleted) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Congrats! I have no idea how you got this to happen, but the role is deleted.
             `));
         } else if(r.managed) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Role is managed by another party.
             `));
         }
@@ -95,7 +95,7 @@ export default class extends Command {
         try {
             m = await (c as TextChannel).messages.fetch(messageID);
         } catch {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No message with id ${messageID} found in ${c}!
             `));
         }   
@@ -120,12 +120,12 @@ export default class extends Command {
         );
 
         if(inserted.modifiedCount === 1 || inserted.upsertedCount === 1) {
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             Listening for ${e} reactions on ${m.url} (${c}). 
             When reacted, ${r} will be given to the user.
             `));
         } else {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Already listening to this message, or an unexpected error occurred!
             `));
         }

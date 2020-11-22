@@ -32,9 +32,9 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         } else if(!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
@@ -43,12 +43,12 @@ export default class extends Command {
 
         const channel = message.guild.channels.cache.get(settings.rules.channel) as TextChannel;
         if(!channel || !isText(channel)) {
-            return message.channel.send(this.Embed.fail(`Channel ${channel ?? settings.rules.channel} is invalid!`));
+            return message.reply(this.Embed.fail(`Channel ${channel ?? settings.rules.channel} is invalid!`));
         } else if(!channel.permissionsFor(message.guild.me).has(['EMBED_LINKS', 'SEND_MESSAGES'])) {
-            return message.channel.send(this.Embed.fail(`Missing permissions to either use embeds or send messages!`));
+            return message.reply(this.Embed.fail(`Missing permissions to either use embeds or send messages!`));
         }
 
-        await message.channel.send(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         Posting ${settings.rules.rules.length} rules in intervals of 5 seconds.
         `));
 

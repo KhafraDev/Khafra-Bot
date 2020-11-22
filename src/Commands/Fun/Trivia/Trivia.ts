@@ -27,12 +27,12 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(message.guild.id in games) {
-            return message.channel.send(this.Embed.fail(`A game is already going on in this guild!`));
+            return message.reply(this.Embed.fail(`A game is already going on in this guild!`));
         }
 
         const list = await Trivia.fetchList();
         if(!list) {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const category = isValidNumber(+args[0])
@@ -40,14 +40,14 @@ export default class extends Command {
             : categories.filter(d => d.name.toLowerCase() === args.join(' ').match(categoryRegex)?.shift().toLowerCase());
 
         if(!category || category.length === 0) {
-            return message.channel.send(this.Embed.generic('No category found! Use the ``trivialist`` command for a valid list!'));
+            return message.reply(this.Embed.generic('No category found! Use the ``trivialist`` command for a valid list!'));
         }
 
         const [difficulty, q] = args.slice(isValidNumber(+args[0]) ? 1 : category[0].name.split(' ').length);
         if(!['easy', 'medium', 'hard'].includes(difficulty?.toLowerCase())) {
-            return message.channel.send(this.Embed.generic('Invalid difficulty provided!'));
+            return message.reply(this.Embed.generic('Invalid difficulty provided!'));
         } else if(!Number.isInteger(+q) || +q > 10) {
-            return message.channel.send(this.Embed.generic('Invalid amount of questions! Ten questions is the max per game.'));
+            return message.reply(this.Embed.generic('Invalid amount of questions! Ten questions is the max per game.'));
         }
         
         const client = await pool.commands.connect();
@@ -58,7 +58,7 @@ export default class extends Command {
         ]).toArray();
 
         if(!questions || questions.length === 0) {
-            return message.channel.send(this.Embed.fail('No questions found. 😦'));
+            return message.reply(this.Embed.fail('No questions found. 😦'));
         }
         
         const guesses: Record<string, string[]> = {}
@@ -83,7 +83,7 @@ export default class extends Command {
                 ${answers.map((a, i) => `**${i + 1}:** ${a}`).join('\n')}
                 `);
 
-            msg = msg ? await msg.edit(embed) : await message.channel.send(embed);
+            msg = msg ? await msg.edit(embed) : await message.reply(embed);
 
             const filter = (m: Message) =>  {
                 if(guesses[index]?.includes(m.author.id)) {

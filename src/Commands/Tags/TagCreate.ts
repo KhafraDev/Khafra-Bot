@@ -42,11 +42,11 @@ export default class extends Command {
         );
 
         if(!q || q.ok === 0 || q.value || q.lastErrorObject?.updatedExisting) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Tag couldn't be created because ${q.lastErrorObject?.updatedExisting ? 'it already exists' : 'an unknown error occurred'}.
             `));
         }
 
-        return message.channel.send(this.Embed.success('Added tag!'));
+        return message.reply(this.Embed.success('Added tag!'));
     }
 }

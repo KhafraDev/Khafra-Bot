@@ -103,7 +103,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!message.guild.me.permissionsIn(message.channel).has('MANAGE_MESSAGES')) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             I don't have permission to manage messages!
             `));
         }
@@ -113,12 +113,12 @@ export default class extends Command {
             : cache.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
             
         if(!item || item.length === 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Wow! No atrocities on that day.
             `));
         } else if(item.length === 1) {
             const { text, date, image } = item.shift();
-            return message.channel.send(new MessageEmbed().setColor(key(image)).setDescription(`${date} ${text}`));
+            return message.reply(new MessageEmbed().setColor(key(image)).setDescription(`${date} ${text}`));
         }
 
         let i = 0;
@@ -134,7 +134,7 @@ export default class extends Command {
                 .setFooter(`Page ${i+1} of ${item.length}`)
             : null;
 
-        const m = await message.channel.send(e());
+        const m = await message.reply(e());
         if(!m) {
             return;
         }

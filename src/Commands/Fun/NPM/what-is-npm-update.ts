@@ -33,11 +33,11 @@ export default class extends Command {
         try {
             res = await fetch('https://raw.githubusercontent.com/npm/npm-expansions/master/expansions.txt');
         } catch {
-            return message.channel.send(this.Embed.fail(`An error occurred fetching the file!`));
+            return message.reply(this.Embed.fail(`An error occurred fetching the file!`));
         }
 
         if(!res.ok) {
-            return message.channel.send(this.Embed.fail(`An error occurred fetching the file!`));
+            return message.reply(this.Embed.fail(`An error occurred fetching the file!`));
         }
 
         const text = await res.text();
@@ -47,6 +47,6 @@ export default class extends Command {
 
         await writeFile(join(npmPath, 'npm.txt'), lines.join('\n').trim());
         exists = true;
-        return message.channel.send(this.Embed.success(`Added ${lines.length} NPM expansions.`));
+        return message.reply(this.Embed.success(`Added ${lines.length} NPM expansions.`));
     }
 }

@@ -20,6 +20,6 @@ export default class extends Command {
 
     init(message: Message) {
         const board = Board();
-        return message.channel.send(this.Embed.success(board));
+        return message.reply(this.Embed.success(board));
     }
 }

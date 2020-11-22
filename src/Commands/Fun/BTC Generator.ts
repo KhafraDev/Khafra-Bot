@@ -26,7 +26,7 @@ export default class extends Command {
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
-        const msg = await message.channel.send(embed);
+        const msg = await message.reply(embed);
         if(!msg) {
             return;
         }

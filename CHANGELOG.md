@@ -292,3 +292,6 @@
 * Fix ``NewsChannel#send`` not being proxied and catching errors.
 * Add rule board.
 * Reduce memory the badmeme cache uses by only caching properties used.
+* Move to ``monbrey/discord.js#inline_replies`` until Discord.js v13 is released.
+* Uses new reply ability in most cases.
+* Add in ``quran`` command.

@@ -26,9 +26,9 @@ export default class extends Command {
                 .setTitle('Trivia Categories')
                 .setDescription(`${list.map(a => `\`\`${a.id}\`\`: ${a.name}`).join('\n')}`)
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         } else {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
     }
 }

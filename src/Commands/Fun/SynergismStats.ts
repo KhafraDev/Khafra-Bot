@@ -22,7 +22,7 @@ export default class extends Command {
     async init(message: Message) {
         const stats = await Kongregate();
         if('status' in stats) {
-            return message.channel.send(this.Embed.fail(`Received status ${stats.status} (${stats.statusText})!`));
+            return message.reply(this.Embed.fail(`Received status ${stats.status} (${stats.statusText})!`));
         }
 
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
@@ -34,6 +34,6 @@ export default class extends Command {
             Synergism averages **${average}**/5 ⭐ from **${ratings}** ratings! 
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

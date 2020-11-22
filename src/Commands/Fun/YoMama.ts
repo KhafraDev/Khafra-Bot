@@ -33,6 +33,6 @@ export default class extends Command {
     async init(message: Message) {
         const all = (message.channel as TextChannel).nsfw ? [...jokes.nsfw, ...jokes.sfw] : [...jokes.sfw];
         const epicfunnyjoke = all[await rand(all.length)];
-        return message.channel.send(this.Embed.success(epicfunnyjoke));
+        return message.reply(this.Embed.success(epicfunnyjoke));
     }
 }

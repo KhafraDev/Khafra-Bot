@@ -57,7 +57,7 @@ export default class implements Event {
         if(Array.isArray(Custom) && Custom.length !== 0) {
             const my = message.guild.me.roles.cache.sort((a, b) => b.rawPosition - a.rawPosition).first().rawPosition;
             if(!message.guild.me.permissionsIn(message.channel).has('MANAGE_ROLES')) {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 I am lacking permissions to update user roles! 
 
                 Ask your server's staff to update my permissions if you'd like to use custom commands.
@@ -68,14 +68,14 @@ export default class implements Event {
             if(!message.guild.roles.cache.has(role)) {
                 return;
             } else if(!message.member.manageable) {
-                return message.channel.send(this.Embed.fail(`I cannot manage your roles!`));
+                return message.reply(this.Embed.fail(`I cannot manage your roles!`));
             }
 
             const roleCache = message.guild.roles.cache.get(role) ?? await message.guild.roles.fetch(role);
             if(!(roleCache instanceof Role) || roleCache.deleted || roleCache.managed) {
-                return message.channel.send(this.Embed.fail(`Role couldn't be fetched!`));
+                return message.reply(this.Embed.fail(`Role couldn't be fetched!`));
             } else if(roleCache.rawPosition >= my) {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 I cannot add or remove this role as it is equal to or higher than my highest role in the hierarchy.
                 `));
             }
@@ -89,7 +89,7 @@ export default class implements Event {
                 await message.member.roles[action](role);
             } catch(e) {
                 this.logger.log(e);
-                return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+                return message.reply(this.Embed.fail('An unexpected error occurred!'));
             }
 
             this.logger.log(trim`
@@ -99,7 +99,7 @@ export default class implements Event {
             | Guild: ${message.guild.id} 
             `);
 
-            return message.channel.send(this.Embed.success(ccMessage));
+            return message.reply(this.Embed.success(ccMessage));
         }
 
         /**
@@ -109,17 +109,17 @@ export default class implements Event {
         if(!command) { // no built in or custom command
             return;
         } else if(command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             \`\`${command.settings.name}\`\` is only available to the bot owner!
             `));
         } else if(command.settings.guildOnly && isDM) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             \`\`${command.settings.name}\`\` is only available in guilds!
             `));
         } else {
             const [min, max] = command.settings.args;
             if(min > args.length || args.length > max) {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 Incorrect number of arguments provided.
                 
                 The command requires ${min} minimum arguments and ${max ?? 'no'} max.
@@ -138,14 +138,14 @@ export default class implements Event {
         `);
 
         if(!_cooldownUsers(message.author.id)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Users are limited to 6 commands a minute.
 
             Please refrain from spamming the bot.
             `));
         } else if(message.channel.type !== 'dm') {
             if(!_cooldownGuild(message.guild.id)) {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 Guilds are limited to 15 commands a minute.
     
                 Please refrain from spamming the bot.
@@ -179,7 +179,7 @@ export default class implements Event {
         }
 
         if(!command.userHasPerms(message, command.permissions)) {
-            return message.channel.send(this.Embed.missing_perms(false, command.permissions));
+            return message.reply(this.Embed.missing_perms(false, command.permissions));
         }
 
         return command.init(message, args, guild);

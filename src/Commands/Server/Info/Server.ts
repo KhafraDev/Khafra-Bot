@@ -42,6 +42,6 @@ export default class extends Command {
                 { name: '**Created:**', value: formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), inline: false }
             );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

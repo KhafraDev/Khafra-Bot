@@ -25,9 +25,9 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         } else if(!settings || !('rules' in settings) || settings.rules.rules?.length) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
@@ -43,7 +43,7 @@ export default class extends Command {
             } }
         );
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Cleared ${settings.rules.rules.length} rules!
         `));
     }

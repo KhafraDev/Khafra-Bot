@@ -27,16 +27,16 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         const results = await weather(args.join(' '));
         if('status' in results) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred! Received status ${results.status} with text ${results.statusText}. Contact the bot owner to fix!
             `));
         } else if(results.Type) {
-            return message.channel.send(this.Embed.fail(results.Type));
+            return message.reply(this.Embed.fail(results.Type));
         }
 
         const first = results.observations.location?.[0].observation?.[0];
         if(first === undefined) {
-            return message.channel.send(this.Embed.fail('No location found!'));
+            return message.reply(this.Embed.fail('No location found!'));
         }
 
         const embed = this.Embed.success(first.description)
@@ -50,6 +50,6 @@ export default class extends Command {
             .addField('**Coordinates:**', `(${first.latitude}, ${first.longitude})`, true)
             .setFooter(`Last updated ${formatDate('MMMM Do, YYYY hh:mm:ss A t', first.utcTime)}\n© 2020 HERE`)
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

@@ -41,25 +41,25 @@ export default class extends Command {
         try {
             results = await YouTube(args);
         } catch(e) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred!
             \`\`${e.toString()}\`\`
             `));
         }
 
         if('error' in results) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             ${results.error.code}: ${results.error.message}
             `));
         } else if(results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No results found!
             `));
         }
 
         const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
-        const m = await message.channel.send(embeds[0]);
+        const m = await message.reply(embeds[0]);
         if(!m) {
             return;
         }

@@ -48,11 +48,11 @@ export default class extends Command {
         });
 
         if(!tag) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No tag found! Create it with \`\`tag create ${tagCmdOrName.slice(0, 25)} My very own tag!\`\`!
             `));
         }
 
-        return message.channel.send(this.Embed.success(tag.content));
+        return message.reply(this.Embed.success(tag.content));
     }
 }

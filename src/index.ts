@@ -3,6 +3,7 @@ import './lib/Utility/Rejections.js';
 import './Structures/Proxy/ChannelSend.js';
 import './Structures/Proxy/React.js';
 import './Structures/Proxy/Edit.js';
+import './Structures/Proxy/Reply.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { Logger } from './Structures/Logger.js';

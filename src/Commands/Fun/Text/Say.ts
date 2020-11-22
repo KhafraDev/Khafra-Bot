@@ -26,6 +26,6 @@ export default class extends Command {
             \`\`${args.join(' ').slice(0, 1900)}\`\`
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

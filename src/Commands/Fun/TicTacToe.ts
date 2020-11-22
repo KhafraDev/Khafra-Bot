@@ -27,11 +27,11 @@ export default class extends Command {
             : message.mentions.members.first();
 
         if(opponent.user.bot && opponent.id !== message.guild.me.id) {
-            return message.channel.send(this.Embed.fail('You can\'t play against another bot!'));
+            return message.reply(this.Embed.fail('You can\'t play against another bot!'));
         }
 
         const g = new TicTacToe(); // game
-        const m = await message.channel.send(this.Embed.success(`\`\`\`${g.format()}\`\`\``));
+        const m = await message.reply(this.Embed.success(`\`\`\`${g.format()}\`\`\``));
         if(!m) {
             return;
         }

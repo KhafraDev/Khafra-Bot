@@ -30,7 +30,7 @@ export default class extends Command {
         } else {
             const idOrUser = getMentions(message, args, { type: 'members' });
             if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-                return message.channel.send(this.Embed.generic('Invalid user ID!'));
+                return message.reply(this.Embed.generic('Invalid user ID!'));
             } else if(idOrUser instanceof GuildMember) {
                 member = idOrUser.id;
             } else {
@@ -44,7 +44,7 @@ export default class extends Command {
         const memberStr = message.guild.member(member) ?? member ?? args[0];
 
         if(!warns?.users || !(member in warns.users) || !Array.isArray(warns.users[member])) {
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             ${memberStr} has 0 warnings!
             `));
         } 
@@ -55,7 +55,7 @@ export default class extends Command {
             .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100) || 'N/A'}\`\``)
             .join('\n');
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         ${memberStr}'s last ${warns.users[member].reverse().slice(0, 10).length} warnings!
         Total points: \`\`${warns.users[member].reduce((p, c) => p + c.points, 0)}\`\`
         ${warnings}

@@ -28,18 +28,18 @@ export default class extends Command {
         const collection = client.db('khafrabot').collection('trivia');
         if(await collection.findOne({})) {
             message.channel.stopTyping();
-            return message.channel.send(this.Embed.fail('Trivia questions already exist in database. '));
+            return message.reply(this.Embed.fail('Trivia questions already exist in database. '));
         }
 
         let questions: Question[] = [];
         try {
             questions = await Trivia.fetchAllQuestions();
         } catch(e) {
-            return message.channel.send(this.Embed.fail(inspect(e)));
+            return message.reply(this.Embed.fail(inspect(e)));
         }
 
         message.channel.stopTyping();
         const inserted = await collection.insertMany(questions);
-        return message.channel.send(this.Embed.success(`Added ${inserted.insertedCount.toLocaleString()} questions!`));
+        return message.reply(this.Embed.success(`Added ${inserted.insertedCount.toLocaleString()} questions!`));
     }
 }

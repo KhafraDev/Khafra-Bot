@@ -31,9 +31,9 @@ export default class extends Command {
 
     async init(message: Message) {
         if(message.mentions.members.size === 0) {
-            return message.channel.send(this.Embed.fail('No opponent to play against!'));
+            return message.reply(this.Embed.fail('No opponent to play against!'));
         } else if(message.mentions.members.size > 2) {
-            return message.channel.send(this.Embed.fail('Too many people mentioned!'));
+            return message.reply(this.Embed.fail('Too many people mentioned!'));
         }
 
         const selfMentioned = new RegExp(`<@!?${message.guild.me.id}>`).test(message.content.split(/\s+/g).shift());
@@ -49,7 +49,7 @@ export default class extends Command {
             ${game.format()}
             `);
 
-        const game_msg = await message.channel.send(embed);
+        const game_msg = await message.reply(embed);
         if(!game_msg) {
             return;
         }

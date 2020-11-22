@@ -22,7 +22,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length === 0) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         }
 
         let wiki = await Wikipedia(args.join(' '));
@@ -31,7 +31,7 @@ export default class extends Command {
         }
         
         if('error' in wiki) { // WikipediaError
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Received status ${wiki.httpCode} (${wiki.httpReason}).
             `));
         } 
@@ -47,18 +47,18 @@ export default class extends Command {
                 .setTimestamp(wiki.timestamp ?? Date.now())
                 .setFooter('Last updated');
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         }
         
         wiki = wiki as WikipediaSearch; // can't be WikipediaArticleNotFound
         if(wiki.pages.length === 0) {
-            return message.channel.send(this.Embed.fail(`No results found!`));
+            return message.reply(this.Embed.fail(`No results found!`));
         }
 
         const embed = this.Embed.success(entities.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048), 1))
             .setTitle(wiki.pages[0].title)
             .setThumbnail(wiki.pages[0].thumbnail?.url ? 'https:' + wiki.pages[0].thumbnail?.url : null);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

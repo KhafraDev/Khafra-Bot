@@ -38,14 +38,14 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args[0].toLowerCase() === 'list') {
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             ${types.map(t => '``' + t + '``').join(', ')}
             `));
         }
 
         const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');
         if(sentence.trim().length === 0) {
-            return message.channel.send(this.Embed.fail('Empty message after type.'));
+            return message.reply(this.Embed.fail('Empty message after type.'));
         }
 
         const split = sentence
@@ -61,7 +61,7 @@ export default class extends Command {
             });
 
         if(!split) {
-            return message.channel.send(this.Embed.fail('Couldn\'t format message!'));
+            return message.reply(this.Embed.fail('Couldn\'t format message!'));
         } else if(split.length === 1) {
             split.push('\\ ' + ''.padEnd(38, ' ') + ' /');
         }
@@ -73,9 +73,9 @@ export default class extends Command {
             
         const formatted = `\`\`\`${start}${split.join('\n')}\n${data}\`\`\``;
         if(formatted.length > 2048) {
-            return message.channel.send(this.Embed.fail('Cowsay message is too long!'));
+            return message.reply(this.Embed.fail('Cowsay message is too long!'));
         }
 
-        return message.channel.send(formatted);
+        return message.reply(formatted);
     }
 }

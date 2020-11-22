@@ -23,11 +23,11 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         }
 
         if(args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Only non-alphanumeric characters are allowed!
             `));
         }
@@ -44,11 +44,11 @@ export default class extends Command {
         );
 
         if(updated.upsertedCount === 1 || updated.modifiedCount === 1) {
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             Changed prefix to \`\`${args[0]}\`\`!
             `));
         } else {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred!
             `));
         }

@@ -41,7 +41,7 @@ export default class extends Command {
         const channel = message.guild.channels.resolve(idOrChannel);
         if(!channel) {
             this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));
         }
@@ -76,6 +76,6 @@ export default class extends Command {
             .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
         }
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

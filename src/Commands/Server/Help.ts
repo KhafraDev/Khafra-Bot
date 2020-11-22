@@ -32,7 +32,7 @@ export default class extends Command {
                 .slice(0, 5);
             
             if(all.every(c => c[1] === 0)) {
-                return message.channel.send(this.Embed.success(`
+                return message.reply(this.Embed.success(`
                 [Khafra-Bot](https://github.com/khafradev/khafra-bot)
 
                 Khafra-Bot has a system of sorting commands by \`\`folder\`\`, or a tag that identifies what their function is.
@@ -42,7 +42,7 @@ export default class extends Command {
                 ${folders.map(f => `\`\`${f}\`\``).join(', ')}
                 `));
             } else {
-                return message.channel.send(this.Embed.success(`
+                return message.reply(this.Embed.success(`
                 No command with that name was found, however some commands may have a similar name. 
                 Did you mean: 
                 ${all.map(n => `\`\`${n[0]}\`\` (${(+n[1] * 100).toFixed(2)}% similarity)`).join('\n')}?
@@ -53,7 +53,7 @@ export default class extends Command {
                 return !v.settings.aliases?.includes(n) && v.settings.folder.toLowerCase() === name;
             }).map(l => l[0]);
 
-            return message.channel.send(this.Embed.success(`
+            return message.reply(this.Embed.success(`
             ${name.charAt(0).toUpperCase() + name.slice(1).toLowerCase()} Commands (${cmdsOfFolder.length})
             ${cmdsOfFolder.map(n => `\`\`${n}\`\``).join(', ')}
 
@@ -78,6 +78,6 @@ export default class extends Command {
             { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
         );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

@@ -41,13 +41,13 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!Array.isArray(json)) {
-            return message.channel.send(this.Embed.fail('Bangs failed to load.'));
+            return message.reply(this.Embed.fail('Bangs failed to load.'));
         }
 
         const search = args[0].toLowerCase();
         const item = json.filter(b => b.t === search || b.s.toLowerCase() === search);
         if(item.length === 0) {
-            return message.channel.send(this.Embed.fail('No bang found!'));
+            return message.reply(this.Embed.fail('No bang found!'));
         }
 
         const first = item.shift();
@@ -56,7 +56,7 @@ export default class extends Command {
             ? u.origin
             : first.u.replace('{{{s}}}', encodeURIComponent(args.slice(1).join(' ')));
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         ${first.sc} - ${first.s}
         [Click Here](https://duckduckgo.com/l/?uddg=${encodeURIComponent(formatted)})
         `));

@@ -37,10 +37,10 @@ export default class extends Command {
         try {
             res = await Paste(command, content);
         } catch(e) {
-            return message.channel.send(this.Embed.fail(e.message ?? 'An error occurred!'));
+            return message.reply(this.Embed.fail(e.message ?? 'An error occurred!'));
         }
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         ${content.length} characters posted!
         ${res}
         `));

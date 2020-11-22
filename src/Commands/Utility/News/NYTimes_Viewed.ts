@@ -25,7 +25,7 @@ export default class extends Command {
         try {
             res = await nytimes.viewed();
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const description: string[] = [];
@@ -43,6 +43,6 @@ export default class extends Command {
             .setDescription(description.join(''))
             .setTitle(`Top ${description.length} articles today!`);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }
