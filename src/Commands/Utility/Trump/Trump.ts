@@ -36,7 +36,13 @@ const getLi = (html: string) => {
 }
 
 export const refreshCache = async () => {
-    const resp = await fetch('https://www.mcsweeneys.net/articles/the-complete-listing-so-far-atrocities-1-940');
+    let resp;
+    try {
+        resp = await fetch('https://www.mcsweeneys.net/articles/the-complete-listing-so-far-atrocities-1-940');
+    } catch(e) {
+        return Promise.reject(e);
+    }
+
     if(!resp.ok) {
         return Promise.reject(`Received status ${resp.status} (${resp.statusText})!`);
     }
@@ -60,7 +66,11 @@ export const refreshCache = async () => {
     }));
 }
 
-export const cache = await refreshCache();
+export let cache: { image: string, text: string, date: string }[] = [];
+try {
+    const items = await refreshCache();
+    cache.push(...items);
+} catch {}
 
 const key = (u: string) => {
     u = u.toLowerCase();
@@ -106,6 +116,8 @@ export default class extends Command {
             return message.reply(this.Embed.fail(`
             I don't have permission to manage messages!
             `));
+        } else if(cache.length === 0) {
+            return message.channel.send(this.Embed.fail(`An error occurred refreshing cache on bot startup.`));
         }
         
         const item = args.length === 0 

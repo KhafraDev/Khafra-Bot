@@ -20,9 +20,19 @@ export default class extends Command {
     }
 
     async init(message: Message) {
+        let items;
+        try {
+            items = await refreshCache();
+        } catch(e) {
+            return message.reply(this.Embed.fail(`
+            An error occurred!
+            \`\`${e.toString()}\`\`
+            `));
+        }
+
         const old = cache.length;
         cache.length = 0; // removes all items from array
-        cache.push(...await refreshCache());
+        cache.push(...items);
         return message.reply(this.Embed.success(`
         Successfully refreshed the cache.
         ${cache.length - old} atrocities added!
