@@ -1,13 +1,11 @@
 import { Command } from '../../../Structures/Command.js';
 import { 
     Message, 
-    TextChannel, 
-    Channel, 
-    NewsChannel 
+    TextChannel
 } from 'discord.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
-const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
 const delay = (): Promise<void> => new Promise(r => setTimeout(r, 5000));
 
 export default class extends Command {

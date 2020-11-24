@@ -3,14 +3,13 @@ import {
     Message, 
     Channel, 
     TextChannel, 
-    NewsChannel, 
     VoiceChannel, 
 } from 'discord.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 // TypeScript is based
-const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
 const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c.type === 'voice';
 
 export default class extends Command {

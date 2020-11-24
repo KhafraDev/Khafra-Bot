@@ -2,15 +2,12 @@ import { Command } from '../../Structures/Command.js';
 import { 
     Message, 
     GuildChannel, 
-    Channel, 
     TextChannel, 
-    NewsChannel,
     OverwriteData
 } from 'discord.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
-
-const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
+import { isText } from '../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {

@@ -295,3 +295,5 @@
 * Move to ``monbrey/discord.js#inline_replies`` until Discord.js v13 is released.
 * Uses new reply ability in most cases.
 * Add in ``quran`` command.
+* Export ``isText`` helper function to utility file.
+* Rewrite ``poll`` command.
