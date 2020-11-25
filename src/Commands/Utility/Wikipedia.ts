@@ -11,7 +11,7 @@ export default class extends Command {
                 'Search Wikipedia for an article!',
                 'Jupiter', 'Green Day'
             ],
-            [ /* No extra perms needed */ ], {
+			{
                 name: 'wikipedia',
                 folder: 'Utility',
                 args: [1],

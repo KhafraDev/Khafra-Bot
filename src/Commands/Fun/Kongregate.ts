@@ -14,7 +14,6 @@ export default class extends Command {
                 'Change the Chatroom the Kongregate Relay is currently in.',
                 '3', '2', '1'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'kongroom',
                 folder: 'Fun',

@@ -38,8 +38,7 @@ export default class extends Command {
                 'The ancient game of Nim!',
                 '@Khafra#0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'nim',
                 folder: 'Fun',
                 args: [1, 1],

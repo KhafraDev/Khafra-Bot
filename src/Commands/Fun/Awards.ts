@@ -10,7 +10,6 @@ export default class extends Command {
                 'Calculate how much people have spent on Reddit awards for a post.',
                 'https://www.reddit.com/r/pics/comments/jcjf3d/wouldbe_president_joe_biden_wrote_this_letter_to/'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'award',
                 folder: 'Fun',

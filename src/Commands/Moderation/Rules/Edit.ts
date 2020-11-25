@@ -15,8 +15,7 @@ export default class extends Command {
                 '[number] [new content]',
                 '6 After 3 warnings you will be kicked now, rather than the old 4 points.'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'edit',
                 aliases: [ 'editrules', 'editrule' ],
                 folder: 'Rules',

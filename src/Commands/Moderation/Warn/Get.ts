@@ -12,8 +12,7 @@ export default class extends Command {
                 '267774648622645249',
                 '@Khafra#0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'getwarn',
                 aliases: [ 'getwarns', 'warnings', 'warning', 'warns' ],
                 folder: 'Moderation',
@@ -24,41 +23,46 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let member;
+        let member, memberStr;
         if(!super.userHasPerms(message, [ 'KICK_MEMBERS' ])) {
             member = message.member.id;
+            memberStr = member;
         } else {
             const idOrUser = getMentions(message, args, { type: 'members' });
             if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
                 return message.reply(this.Embed.generic('Invalid user ID!'));
             } else if(idOrUser instanceof GuildMember) {
                 member = idOrUser.id;
+                memberStr = idOrUser;
             } else {
-                member = idOrUser;
+                member = memberStr = idOrUser;
             }
         }
 
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
         const warns = await collection.findOne<Warnings>({ id: message.guild.id });
-        const memberStr = message.guild.member(member) ?? member ?? args[0];
 
-        if(!warns?.users || !(member in warns.users) || !Array.isArray(warns.users[member])) {
-            return message.reply(this.Embed.success(`
-            ${memberStr} has 0 warnings!
-            `));
+        if(
+            !warns?.users || 
+            !(member in warns.users) || 
+            !Array.isArray(warns.users[member].warns) ||
+            warns.users[member].warns.length === 0
+        ) {
+            return message.reply(this.Embed.success(`${memberStr} has no warnings!`));
         } 
 
-        const warnings = warns.users[member]
-            .reverse()
-            .slice(0, 10)
-            .map(w => `${w.points} points: \`\`${w.reason.slice(0, 100) || 'N/A'}\`\``)
-            .join('\n');
+        const user = warns.users[member];
+        const total = user.active + user.inactive;
 
         return message.reply(this.Embed.success(`
-        ${memberStr}'s last ${warns.users[member].reverse().slice(0, 10).length} warnings!
-        Total points: \`\`${warns.users[member].reduce((p, c) => p + c.points, 0)}\`\`
-        ${warnings}
-        `));
+        ${memberStr} has ${total} warning points (${user.active} active, ${user.inactive} inactive).
+        ${user.warns
+            .slice(-5)
+            .reverse()
+            .map(w => `${w.points} for ${w.reason.length ? `\`\`${w      .reason}\`\`` : 'N/A'}`)
+            .join('\n')
+        }
+        `).setFooter(`👟 AutoKick: ${warns.limit} points.`));
     }
 }

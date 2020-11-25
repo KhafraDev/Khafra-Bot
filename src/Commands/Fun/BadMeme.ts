@@ -10,8 +10,7 @@ export default class extends Command {
                 'Get a bad meme! Idea from NotSoBot.',
                 'thesimppolice', ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'badmeme',
                 folder: 'Fun',
                 args: [0, 1]

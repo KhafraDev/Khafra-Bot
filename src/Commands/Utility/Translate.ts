@@ -9,8 +9,7 @@ export default class extends Command {
                 'Translate something to and from different languages using Google Translate!',
                 '[to?="en"] [from?="auto detect"] [text to translate]'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'translate',
                 folder: 'Utility',
                 args: [2],

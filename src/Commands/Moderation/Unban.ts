@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, User, TextChannel } from 'discord.js';
+import { Message, User, TextChannel, Permissions } from 'discord.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 
 export default class extends Command {
@@ -10,12 +10,12 @@ export default class extends Command {
                 '1234567891234567 for apologizing',
                 '9876543217654321'
             ],
-            [ 'BAN_MEMBERS' ],
-            {
+			{
                 name: 'unban',
                 folder: 'Moderation',
                 args: [1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
             }
         );
     }

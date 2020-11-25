@@ -28,8 +28,7 @@ export default class extends Command {
                 'Get basic info about any user on Discord.',
                 '@Khafra#0001', '165930518360227842'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'user',
                 folder: 'Server',
                 args: [0, 1],

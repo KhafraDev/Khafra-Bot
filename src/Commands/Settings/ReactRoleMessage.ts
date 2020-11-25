@@ -4,7 +4,8 @@ import {
     Role,  
     TextChannel, 
     Channel,
-    MessageMentions
+    MessageMentions,
+    Permissions
 } from 'discord.js';
 import twemoji from "twemoji-parser"; // cjs module
 import { pool } from '../../Structures/Database/Mongo.js';
@@ -17,12 +18,16 @@ export default class extends Command {
                 '[Message ID] [Channel or Channel ID] [@Role or Role ID] [Emoji]',
                 '739301857226129528 #react_for_role @I_Reacted 👑'
             ],
-            [ 'READ_MESSAGE_HISTORY', 'MANAGE_ROLES', 'ADD_REACTIONS' ],
-            {
+			{
                 name: 'messagereactmessage',
                 folder: 'Settings',
                 args: [4, 4],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ 
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY, 
+                    Permissions.FLAGS.MANAGE_ROLES, 
+                    Permissions.FLAGS.ADD_REACTIONS 
+                ]
             }
         );
     }
@@ -55,7 +60,7 @@ export default class extends Command {
             `));
         }
 
-        const perms = this.permissions.concat('ADD_REACTIONS');
+        const perms = this.permissions.concat(Permissions.FLAGS.ADD_REACTIONS);
         if(c.type !== 'text') { // only text channels allowed
             return message.reply(this.Embed.fail(`
             Only available for text channels.

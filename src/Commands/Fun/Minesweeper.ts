@@ -9,8 +9,7 @@ export default class extends Command {
                 'Play a game of MineSweeper!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'minesweeper',
                 folder: 'Fun',
                 args: [0, 0]

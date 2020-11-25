@@ -18,7 +18,6 @@ export default class extends Command {
                 'Emojify some text.',
                 'Have a great day!', 'You suck.'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'blocksay',
                 folder: 'Fun',

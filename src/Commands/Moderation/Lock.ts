@@ -3,7 +3,8 @@ import {
     Message, 
     GuildChannel, 
     TextChannel, 
-    OverwriteData
+    OverwriteData,
+    Permissions
 } from 'discord.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
@@ -18,12 +19,12 @@ export default class extends Command {
                 '543940496683434014',
                 ''
             ],
-            [ 'MANAGE_CHANNELS' ],
-            {
+			{
                 name: 'lock', 
                 folder: 'Moderation',
                 args: [0, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
             }
         );
     }

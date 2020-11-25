@@ -9,8 +9,7 @@ export default class extends Command {
                 'Tags: create a tag.',
                 'hello Hello, everyone!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagscreate',
                 folder: 'Tags',
                 args: [2],

@@ -9,8 +9,7 @@ export default class extends Command {
                 'Pocket: Connect your Pocket account to Khafra-Bot!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'pocket',
                 folder: 'Pocket',
                 args: [0, 0]

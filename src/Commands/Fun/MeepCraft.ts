@@ -58,8 +58,7 @@ export default class extends Command {
                 'Get the number of users playing MeepCraft right now.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'meepcraft',
                 folder: 'Fun',
                 aliases: [ 'meep' ],

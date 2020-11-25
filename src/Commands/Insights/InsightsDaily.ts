@@ -14,8 +14,7 @@ export default class extends Command {
                 'Insights: Get stats between multiple days!',
                 '', '3d'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'insights',
                 folder: 'Insights',
                 aliases: [ 'insightdaily', 'insightsdaily', 'insight' ],

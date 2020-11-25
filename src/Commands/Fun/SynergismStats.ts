@@ -9,8 +9,7 @@ export default class extends Command {
                 'Get play stats about Synergism!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'synergismstats',
                 folder: 'Fun',
                 args: [0, 0],

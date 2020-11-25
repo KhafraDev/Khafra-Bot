@@ -9,8 +9,7 @@ export default class extends Command {
                 'Get info about the server!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'server',
                 folder: 'Server',
                 aliases: [ 'serverinfo', 'guildinfo' ],

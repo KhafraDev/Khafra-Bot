@@ -13,7 +13,6 @@ export default class extends Command {
                 'Slots.',
                 ''
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'slots',
                 folder: 'Fun',

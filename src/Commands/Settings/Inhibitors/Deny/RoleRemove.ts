@@ -17,8 +17,7 @@ export default class extends Command {
                 '769345383293255750',
                 '769345383293255750 badmeme'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'undisablerole',
                 folder: 'Settings',
                 args: [1, 2],

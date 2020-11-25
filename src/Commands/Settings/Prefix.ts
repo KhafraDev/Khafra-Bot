@@ -9,8 +9,7 @@ export default class extends Command {
                 'GuildSettings: Change the prefix for the current guild.',
                 '>>', '!!', '?'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'prefix',
                 folder: 'Settings',
                 args: [1, 1],

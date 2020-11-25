@@ -15,8 +15,7 @@ export default class extends Command {
                 'Nomsy who knew Heroku CDN was trash? Not hastebin.',
                 'hastebin Hello, world!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'hastebin',
                 folder: 'Utility',
                 args: [1],

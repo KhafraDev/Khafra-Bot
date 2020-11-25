@@ -11,8 +11,7 @@ export default class extends Command {
                 'give @role',
                 'freerole @FreeRole {user}, have a free role!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'giverole',
                 folder: 'Settings',
                 args: [2],

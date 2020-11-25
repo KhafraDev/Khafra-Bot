@@ -10,8 +10,7 @@ export default class extends Command {
                 'Search for Discord guilds.',
                 'Synergism', 'MineCraft'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'discover',
                 folder: 'Server',
                 args: [1],

@@ -297,3 +297,5 @@
 * Add in ``quran`` command.
 * Export ``isText`` helper function to utility file.
 * Rewrite ``poll`` command.
+* Permissions now require FLAGS to be used (or the corresponding number).
+* ``Command.permissions`` have been moved to ``Command.settings.permissions``.

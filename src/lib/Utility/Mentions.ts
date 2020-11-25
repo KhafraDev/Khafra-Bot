@@ -17,7 +17,7 @@ type MentionsOpts = {
 export const getMentions = (
     { mentions }: Message,
     args: string[],
-    { index = 0, type = 'users' }: MentionsOpts = {}
+			{ index = 0, type = 'users' }: MentionsOpts = {}
 ) => {
     const um = mentions[type];
     if(Array.isArray(args) && args.length > 0) {

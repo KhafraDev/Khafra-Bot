@@ -11,8 +11,7 @@ export default class extends Command {
                 '#channel',
                 '772957951941673000'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'actionchannel',
                 aliases: [ 'modlog', 'modlogs' ],
                 folder: 'Moderation',

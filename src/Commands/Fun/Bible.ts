@@ -18,8 +18,7 @@ export default class extends Command {
                 'Get a King James Bible verse.',
                 'Nahum 3:7', 'Proverbs 25:19'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'bible',
                 folder: 'Fun',
                 args: [0, 2]

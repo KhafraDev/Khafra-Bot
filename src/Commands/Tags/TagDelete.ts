@@ -9,8 +9,7 @@ export default class extends Command {
                 'Tags: delete a tag you own.',
                 'hello', 'mytag'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsdelete',
                 folder: 'Tags',
                 args: [1, 1],

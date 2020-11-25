@@ -12,8 +12,7 @@ export default class extends Command {
                 '2008-01-01 obama presidency',
                 'trump presidency'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theguardian',
                 folder: 'News',
                 args: [1],

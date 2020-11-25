@@ -14,8 +14,7 @@ export default class extends Command {
                 'Pocket: add an article, video, or image to your saved items!',
                 'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films The 21st Century’s 100 greatest films'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'pocketadd',
                 folder: 'Pocket',
                 args: [1]

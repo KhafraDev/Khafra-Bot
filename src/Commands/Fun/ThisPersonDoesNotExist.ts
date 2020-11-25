@@ -9,8 +9,7 @@ export default class extends Command {
                 'This person does not exist!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'thispersondoesnotexist',
                 folder: 'Fun',
                 args: [0, 0],

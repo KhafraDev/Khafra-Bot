@@ -17,8 +17,7 @@ export default class extends Command {
                 '503024525076725775',
                 '503024525076725775 badmeme'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'disablechannel',
                 folder: 'Settings',
                 args: [1, 2],

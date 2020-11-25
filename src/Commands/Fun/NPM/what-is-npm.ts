@@ -13,8 +13,7 @@ export default class extends Command {
                 'What does "NPM" stand for?',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'whatisnpm',
                 folder: 'Fun',
                 args: [0, 0],

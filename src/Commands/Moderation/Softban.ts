@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, TextChannel } from 'discord.js';
+import { Message, TextChannel, Permissions } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import ms from 'ms';
 import { validSnowflake, getMentions } from '../../lib/Utility/Mentions.js';
@@ -14,13 +14,13 @@ export default class extends Command {
                 '@user bye!',
                 '239566240987742220'
             ],
-            [ 'BAN_MEMBERS' ],
-            {
+			{
                 name: 'softban', 
                 folder: 'Moderation',
                 aliases: [ 'softbna' ],
                 args: [1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
             }
         );
     }

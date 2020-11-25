@@ -1,8 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, TextChannel } from 'discord.js';
+import { Message, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
-import { FindAndModifyWriteOpResultObject } from 'mongodb';
 import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
@@ -14,22 +13,26 @@ export default class extends Command {
                 '@user 5 for trolling',
                 '1234567891234567 5'
             ],
-            [ 'KICK_MEMBERS' ],
-            {
+			{
                 name: 'warn',
                 folder: 'Moderation',
                 args: [2],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
             }
         );
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args);
-        if(!isValidNumber(+args[1], { allowNegative: true })) {
-            return message.reply(this.Embed.generic('Invalid **number** of points!'));
+        if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
+            return message.reply(this.Embed.fail(`
+            Invalid number of points given.
+
+            To remove warnings, use \`\`clearwarning\`\` (\`\`help clearwarning\`\` for example usage).
+            `));
         } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.reply(this.Embed.generic('Invalid user ID!'));
+            return message.reply(this.Embed.fail('Invalid user ID!'));
         }
 
         let member = message.guild.member(idOrUser) ?? message.guild.members.fetch(idOrUser);
@@ -49,55 +52,67 @@ export default class extends Command {
 
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
-        const warns = await collection.findOneAndUpdate(
-            { id: message.guild.id },
-            {
-                $push: {
-                    [`users.${member.id}`]: {
-                        points: Number(args[1]),
-                        reason: args.slice(2).join(' '),
-                        timestamp: Date.now()
-                    }
-                },
-                $setOnInsert: {
-                    limit: 20
-                }
-            },
-            { returnOriginal: true, upsert: true }
-        ) as FindAndModifyWriteOpResultObject<Warnings>;
+        const warns = await collection.findOne<Warnings>({ 
+            id: message.guild.id 
+        });
 
-        // value is null when the doc is inserted for the first time
-        const total = (warns.value?.users?.[member.id]?.reduce((p, c) => p + c.points, 0) ?? 0) + Number(args[1]);
-        const limit = warns.value?.limit ?? 20;
-        const shouldKick = total >= limit;
+        const user = warns?.users?.[member.id];
+        const active = (user?.active ?? 0) + Number(args[1]);
+        const limit = (warns?.limit ?? 20);
+
+        const shouldKick = active >= limit;
+
+        /** Points now active for user */
+        const nowActive = active % limit;
+        /** Points now inactive for user */
+        const nowInactive = shouldKick
+            ? active - nowActive
+            : (user?.inactive ?? 0);
+
+        if(!warns) {
+            await collection.insertOne({
+                id: message.guild.id,
+                limit: 20,
+                users: {
+                    [member.id]: {
+                        active: nowActive,
+                        inactive: (user?.inactive ?? 0) + nowInactive,
+                        warns: [{
+                            reason: args.slice(2).join(' '),
+                            points: Number(args[1])
+                        }]
+                    }
+                }
+            });
+        } else { // collection for guild does exist
+            const w = (user?.warns ?? []).concat({ reason: args.slice(2).join(' '), points: Number(args[1]) });
+            await collection.updateOne(
+                { id: message.guild.id },
+                {
+                    $set: {
+                        [`users.${member.id}`]: {
+                            active: nowActive,
+                            inactive: (user?.inactive ?? 0) + nowInactive,
+                            warns: w
+                        }
+                    }
+                }
+            );
+        }
 
         if(shouldKick) {
             try {
-                await member.kick(`Khafra-Bot exceeded ${limit} warning points!`);
+                await member.kick(`Khafra-Bot: exceeded warning limit; kicked automatically.`);
             } catch {
-                return message.reply(this.Embed.fail(`
-                An error occurred trying to kick ${member}.
-                `));
+                return message.channel.send(this.Embed.fail(`Couldn't kick ${member}.`));
             }
 
-            await collection.findOneAndUpdate(
-                { id: message.guild.id },
-                {
-                    $unset: {
-                        [`users.${member.id}`]: ''
-                    }
-                },
-                { returnOriginal: true, upsert: true }
-            );
-
-            await message.reply(this.Embed.fail(`
-            Kicked ${member} from the server for reaching the max number of warnings (${total}/${limit})!
+            return message.reply(this.Embed.success(`
+            ${member} was automatically kicked from the server for reaching ${limit} warning points.
             `));
         } else {
             await message.reply(this.Embed.success(`
-            ${member} has been given ${args[1]} warning points.
-
-            They now have ${total}/${limit} warning points before they will be automatically kicked.
+            Gave ${member} ${Number(args[1])} warning points.
             `));
         }
 
@@ -115,7 +130,7 @@ export default class extends Command {
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             **Points:** ${args[1]} warning points given.
-            **Kicked:** ${shouldKick ? 'Yes' : 'No'} (${total}/${limit} total points).
+            **Kicked:** ${shouldKick ? 'Yes' : 'No'} (${active}/${limit} total points).
             `).setTitle('Member Warned'));
         }
     }

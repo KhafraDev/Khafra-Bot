@@ -10,8 +10,7 @@ export default class extends Command {
                 'Clear all rules from the server.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'removeall', // clear is already a command
                 aliases: [ 'deleteall', 'clearrules', 'clearrule', 'clearrule', 'clearrules' ],
                 folder: 'Rules',

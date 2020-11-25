@@ -5,12 +5,12 @@ import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
 import { isText } from "../../../lib/types/Discord.js.js";
 
 const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
-const basic = new Permissions([ 
-    'SEND_MESSAGES', 
-    'ADD_REACTIONS', 
-    'VIEW_CHANNEL', 
-    'EMBED_LINKS' 
-]);
+const basic = [ 
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.ADD_REACTIONS,
+    Permissions.FLAGS.VIEW_CHANNEL,
+    Permissions.FLAGS.EMBED_LINKS
+];
 
 export default class extends Command {
     constructor() {
@@ -19,12 +19,12 @@ export default class extends Command {
                 'Create a poll in a channel.', 
                 '705894525473784303'
             ],
-            [ 'ADD_REACTIONS' ],
-            {
+			{
                 name: 'poll',
                 folder: 'Server',
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }
         );
     }
@@ -50,7 +50,7 @@ export default class extends Command {
         } else if(!isText(channel)) {
             return message.channel.send(this.Embed.fail(`Polls can only be sent to text or news channels.`));
         } else if(!channel.permissionsFor(message.guild.me).has(basic)) {
-            return message.channel.send(this.Embed.missing_perms(false, basic.toArray()));
+            return message.channel.send(this.Embed.missing_perms(false, basic));
         }
 
         await message.channel.send(this.Embed.success(`

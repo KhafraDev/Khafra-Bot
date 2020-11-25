@@ -21,8 +21,7 @@ export default class extends Command {
                 'The most funny and epic jokes on the planet: Yo Mama jokes!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'yomama',
                 folder: 'Fun',
                 args: [0, 0]

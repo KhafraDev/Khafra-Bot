@@ -26,8 +26,7 @@ export default class extends Command {
                 'Search for YouTube videos!',
                 'Epic Minecraft Challenge (2012)'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'youtube',
                 folder: 'Utility',
                 args: [1],

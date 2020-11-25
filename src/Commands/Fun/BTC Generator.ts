@@ -10,8 +10,7 @@ export default class extends Command {
                 'Generate free BTC!',
                 '1000',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'btc-generator',
                 folder: 'Fun',
                 aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ],

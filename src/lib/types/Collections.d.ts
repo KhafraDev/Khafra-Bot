@@ -36,10 +36,13 @@ export interface Warnings {
     limit: number
     users: {
         [key: string]: {
-            points: number
-            reason: string
-            timestamp: number
-        }[]
+            active: number,
+            inactive: number,
+            warns: {
+                reason: string,
+                points: number
+            }[]
+        }
     }
 }
 

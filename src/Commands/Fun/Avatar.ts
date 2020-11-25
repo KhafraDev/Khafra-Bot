@@ -9,8 +9,7 @@ export default class extends Command {
                 'Get someone\'s avatar!',
                 '', '@Khafra#0001', '267774648622645249'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'avatar',
                 folder: 'Fun',
                 args: [0, 1]

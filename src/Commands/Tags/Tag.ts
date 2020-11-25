@@ -11,8 +11,7 @@ export default class extends Command {
                 'Tags: retrieve a tag or perform an action with one (edit, delete, etc.)!',
                 'first', 'delete first', 'edit first This is actually the second tag.'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tags',
                 folder: 'Tags',
                 args: [1],

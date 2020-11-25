@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command.js";
-import { Message, User, MessageReaction } from "discord.js";
+import { Message, User, MessageReaction, Permissions } from "discord.js";
 import { Connect4 } from "../../lib/Backend/Connect4/Connect4.js";
 
 const turns = {
@@ -19,12 +19,12 @@ export default class extends Command {
                 'Play a game of Connect 4!',
                 '@Khafra#0001'
             ],
-            [ 'ADD_REACTIONS' ],
-            { 
+			{ 
                 name: 'connect4', 
                 folder: 'Fun',
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             },
         );
     }

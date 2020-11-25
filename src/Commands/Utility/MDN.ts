@@ -12,8 +12,7 @@ export default class extends Command {
                 'Array.prototype.slice',
                 'Number toLocaleString'
             ],
-            [ /* No extra perms needed */],
-            {
+			{
                 name: 'mdn',
                 folder: 'Utility',
                 args: [1],

@@ -16,8 +16,7 @@ export default class extends Command {
                 'The Quran.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'quran',
                 folder: 'Fun',
                 args: [0]

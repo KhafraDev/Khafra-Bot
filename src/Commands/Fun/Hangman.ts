@@ -41,8 +41,7 @@ export default class extends Command {
                 'Play a game of Hangman!',
                 'presidents', ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'hangman',
                 folder: 'Fun',
                 args: [0, 1]

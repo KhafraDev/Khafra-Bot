@@ -12,8 +12,7 @@ export default class extends Command {
                 '[number]',
                 '6'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'remove',
                 aliases: [ 'removerules', 'removerule', 'delete', 'deleterule', 'deleterules' ],
                 folder: 'Rules',

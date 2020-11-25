@@ -102,8 +102,7 @@ export default class extends Command {
                 'Get atrocities committed by Trump on a given day (or a random day)!',
                 'October 12, 2020',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trump',
                 folder: 'Utility',
                 args: [0, 3] // 0 = random, 3 = February 10, 2017

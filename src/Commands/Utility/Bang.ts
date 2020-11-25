@@ -29,8 +29,7 @@ export default class extends Command {
                 + 'https://duckduckgo.com/bangs',
                 'wiki Khafra', 'g This is a Google search'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'bang',
                 folder: 'Utility',
                 args: [1],

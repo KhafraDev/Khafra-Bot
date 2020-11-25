@@ -13,8 +13,7 @@ export default class extends Command {
                 'Boston - More Than a Feeling',
                 ''
             ],
-            [ /* No extra perms needed */],
-            {
+			{
                 name: 'spotify',
                 folder: 'Utility',
                 args: [0]

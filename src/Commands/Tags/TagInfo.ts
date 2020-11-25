@@ -11,8 +11,7 @@ export default class extends Command {
                 'Tags: get info on a tag.',
                 'first', 'second', 'mytagname'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsinfo',
                 folder: 'Tags',
                 args: [1, 1],

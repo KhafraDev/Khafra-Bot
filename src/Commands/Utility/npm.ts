@@ -10,8 +10,7 @@ export default class extends Command {
                 'Search NPM\'s registry for a package',
                 'node-fetch latest', 'typescript'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'npm',
                 folder: 'Utility',
                 aliases: [ 'npmjs' ],

@@ -11,8 +11,7 @@ export default class extends Command {
                 'Play a game of TicTacToe!',
                 '', '@Khafra#0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tictactoe',
                 folder: 'Fun',
                 args: [0, 1],

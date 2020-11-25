@@ -11,8 +11,7 @@ export default class extends Command {
                 'hello @Khafra#0001',
                 'hello 541430134230482967'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsgive',
                 folder: 'Tags',
                 args: [2, 2],

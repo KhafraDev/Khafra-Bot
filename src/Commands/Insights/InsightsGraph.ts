@@ -19,8 +19,7 @@ export default class extends Command {
                 'Insights: get a graph of the people who have joined today! The mis-matched colors are Discord\'s fault, I can\'t do anything about them!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'insightsgraph',
                 folder: 'Insights',
                 aliases: [ 'insightgraph' ],

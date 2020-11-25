@@ -12,8 +12,7 @@ export default class extends Command {
                 'Generate a random number avoiding modulo bias!',
                 '100 250', '500'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'randomnum',
                 aliases: ['randnum', 'randomint', 'randint'],
                 folder: 'Fun',

@@ -31,8 +31,7 @@ export default class extends Command {
                 'Get info about a user.',
                 '@Khafra#0001', '267774648622645249'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'member',
                 folder: 'Server',
                 aliases: [ 'memberinfo', 'whois' ],

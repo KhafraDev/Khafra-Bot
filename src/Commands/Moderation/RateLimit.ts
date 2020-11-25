@@ -3,7 +3,8 @@ import {
     Message, 
     GuildChannel, 
     Channel, 
-    TextChannel
+    TextChannel,
+    Permissions
 } from 'discord.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
@@ -20,13 +21,13 @@ export default class extends Command {
                 '#general 6h',
                 '543940496683434014 15s',
             ],
-            [ 'MANAGE_CHANNELS' ],
-            {
+			{
                 name: 'ratelimit', 
                 folder: 'Moderation',
                 aliases: [ 'slowmode', 'slow-mode', 'rl' ],
                 args: [1, 2],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
             }
         );
     }

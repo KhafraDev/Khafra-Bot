@@ -17,8 +17,7 @@ export default class extends Command {
                 'Set the welcome channel for messages when a user leaves, joins, or is kicked from the guild!',
                 '#general', '705896428287033375'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'welcome',
                 folder: 'Settings',
                 args: [1, 1],

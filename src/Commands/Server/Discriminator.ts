@@ -10,8 +10,7 @@ export default class extends Command {
                 'Get all users with a certain discriminator!',
                 '1337', '0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'discrim',
                 folder: 'Server',
                 aliases: [ 'discriminator' ],

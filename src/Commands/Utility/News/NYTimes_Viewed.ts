@@ -11,8 +11,7 @@ export default class extends Command {
                 'NYTimes: get the most viewed articles from today.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'nytimes',
                 folder: 'News',
                 args: [0, 0]

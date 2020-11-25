@@ -15,8 +15,7 @@ export default class extends Command {
                 'Trivia: start a game of trivia! For help, use the ``triviahelp`` command.',
                 '23 hard 5', 'history hard 5', 'entertainment: japanese anime & manga easy 5'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trivia',
                 folder: 'Trivia',
                 guildOnly: true,

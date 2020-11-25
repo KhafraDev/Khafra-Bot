@@ -11,8 +11,7 @@ export default class extends Command {
                 'Fetch a random article from TheOnion!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theonion',
                 folder: 'News',
                 args: [0, 0],

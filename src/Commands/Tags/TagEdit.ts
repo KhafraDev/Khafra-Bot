@@ -10,8 +10,7 @@ export default class extends Command {
                 'Tags: edit a tag you own.',
                 'hello Goodbye!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsedit',
                 folder: 'Tags',
                 args: [2],

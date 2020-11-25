@@ -13,8 +13,7 @@ export default class extends Command {
                 '#rules',
                 '705894556205580499'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'change',
                 aliases: [ 'changechannel', 'rulechannel' ],
                 folder: 'Rules',

@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the categories of atrocities committed by Trump!',
                 '',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trumpkey',
                 folder: 'Utility',
                 args: [0, 3]

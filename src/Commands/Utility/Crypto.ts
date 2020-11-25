@@ -13,8 +13,7 @@ export default class extends Command {
                 'Get information about different CryptoCurrencies!',
                 'btc', 'bitcoin', 'BAT'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'crypto',
                 folder: 'Utility',
                 args: [1],

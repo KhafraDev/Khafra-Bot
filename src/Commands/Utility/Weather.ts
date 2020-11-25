@@ -15,8 +15,7 @@ export default class extends Command {
                 'Berlin, Germany',
                 'Tunisia'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'weather',
                 folder: 'Utility',
                 args: [1]

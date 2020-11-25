@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command.js";
-import { Message, GuildEmoji } from "discord.js";
+import { Message, GuildEmoji, Permissions } from "discord.js";
 
 export default class extends Command {
     constructor() {
@@ -9,12 +9,12 @@ export default class extends Command {
                 '[guild emoji]',
                 '<:smithcube:731943728436084787>'
             ],
-            [ 'MANAGE_EMOJIS' ],
-            {
+			{
                 name: 'steal',
                 folder: 'Server',
                 args: [1, 1],
-                guildOnly: true 
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS ]
             }
         );
     }

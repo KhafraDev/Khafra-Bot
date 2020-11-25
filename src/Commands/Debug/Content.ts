@@ -7,11 +7,10 @@ export default class extends Command {
             [
                 'Get the content of a message stringified (guild emojis, etc.).',
                 '<guildemoji:1294020340213912>', 'testing stuff?'
-            ], 
-            [ /* No extra perms needed */ ],
+            ],
             {
                 name: 'debug:content',
-                folder: 'Fun',
+                folder: 'Debug',
                 args: [1]
             }
         );

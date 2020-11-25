@@ -15,8 +15,7 @@ export default class extends Command {
                 'Set the rules to the server.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'post',
                 aliases: [ 'postrules', 'postrule' ],
                 folder: 'Rules',

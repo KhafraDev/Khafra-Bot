@@ -1,5 +1,5 @@
 import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Message, Permissions } from "discord.js";
 import twemoji from "twemoji-parser"; // cjs module
 
 export default class extends Command {
@@ -9,11 +9,11 @@ export default class extends Command {
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙', '<:Jack:579367928722489346>'
             ],
-            [ 'ATTACH_FILES' ],
-            {
+			{
                 name: 'emoji',
                 folder: 'Fun',
-                args: [1, 5]
+                args: [1, 5],
+                permissions: [ Permissions.FLAGS.ATTACH_FILES ]
             }
         );
     }

@@ -8,8 +8,7 @@ export default class extends Command {
                 'See reviews for the worst ISP in the U.S.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'optimum',
                 folder: 'Fun',
                 aliases: [ 'altice' ],

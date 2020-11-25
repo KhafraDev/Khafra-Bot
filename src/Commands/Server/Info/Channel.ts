@@ -20,8 +20,7 @@ export default class extends Command {
                 '#general',
                 '705896160673661041'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'channel',
                 folder: 'Server',
                 aliases: [ 'chan', 'channelinfo' ],

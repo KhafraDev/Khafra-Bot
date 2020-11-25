@@ -15,8 +15,7 @@ export default class extends Command {
                 '[number] [content]',
                 '6 Rule 6 is now this, the old rule 6 is now 7 and so on.'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'add',
                 aliases: [ 'addrules', 'addrule' ],
                 folder: 'Rules',

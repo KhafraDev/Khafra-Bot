@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, GuildMember, TextChannel } from 'discord.js';
+import { Message, GuildMember, TextChannel, Permissions } from 'discord.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 
@@ -11,12 +11,12 @@ export default class extends Command {
                 '@user for trolling',
                 '1234567891234567'
             ],
-            [ 'KICK_MEMBERS' ],
-            {
+			{
                 name: 'kick',
                 folder: 'Moderation',
                 args: [1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
             }
         );
     }

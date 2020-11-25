@@ -1,5 +1,5 @@
 import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Message, Permissions } from "discord.js";
 import { stripIndents } from "../../../lib/Utility/Template.js";
 import fetch, { Response } from "node-fetch";
 
@@ -12,13 +12,13 @@ export default class extends Command {
                 'Create a Strawpoll!', 
                 ''
             ],
-            [ 'ADD_REACTIONS' ],
-            {
+			{
                 name: 'strawpoll',
                 aliases: [ 'createstrawpoll', 'newstrawpoll' ],
                 folder: 'Server',
                 args: [0, 0],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }
         );
     }

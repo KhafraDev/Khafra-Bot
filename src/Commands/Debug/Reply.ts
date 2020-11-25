@@ -8,10 +8,9 @@ export default class extends Command {
                 'Have the bot reply to the user.',
                 ''
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'debug:reply',
-                folder: 'Fun',
+                folder: 'Debug',
                 args: [0, 0]
             }
         );

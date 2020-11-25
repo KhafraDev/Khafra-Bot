@@ -13,8 +13,7 @@ export default class extends Command {
                 'Pocket: retrieve your saved items!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'pocketget',
                 folder: 'Pocket',
                 args: [0, 0]

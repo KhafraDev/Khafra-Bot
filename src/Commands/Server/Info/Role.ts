@@ -11,8 +11,7 @@ export default class extends Command {
                 '1234567891234567',
                 '@role'
             ],
-            [ /* No extra perms needed */],
-            {
+			{
                 name: 'role',
                 folder: 'Server',
                 aliases: [ 'roleinfo' ],

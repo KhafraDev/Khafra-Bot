@@ -17,8 +17,7 @@ export default class extends Command {
                 'Update npm sayings.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'npmnew',
                 folder: 'Fun',
                 args: [0, 0],

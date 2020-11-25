@@ -9,8 +9,7 @@ export default class extends Command {
                 'Refresh the atrocities committed by Trump!',
                 '',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trumprefresh',
                 folder: 'Utility',
                 args: [0, 0],

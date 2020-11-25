@@ -88,8 +88,7 @@ export default class extends Command {
                 'Visit a useless site!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theuselessweb',
                 folder: 'Fun',
                 args: [0, 0],

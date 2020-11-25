@@ -12,8 +12,7 @@ export default class extends Command {
                 'Clear The Onion article collection and refetch.',
                 '', 'force'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theonionnew',
                 folder: 'News',
                 args: [0, 1],

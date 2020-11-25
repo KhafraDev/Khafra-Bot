@@ -8,8 +8,7 @@ export default class extends Command {
                 'TriviaHelp: get help with trivia commands!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'triviahelp',
                 folder: 'Trivia',
                 args: [0, 0]

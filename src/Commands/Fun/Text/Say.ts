@@ -8,7 +8,6 @@ export default class extends Command {
                 'Have KhafraBot say something!',
                 'Have a great day!', 'You suck.'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'say',
                 folder: 'Fun',

@@ -10,8 +10,7 @@ export default class extends Command {
                 'Display examples and description of a command!',
                 'say', '', 'Fun'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'help',
                 folder: 'Server',
                 aliases: [ 'commandlist', 'list' ],

@@ -1,5 +1,5 @@
 import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Message, Permissions } from "discord.js";
 
 export default class extends Command {
     constructor() {
@@ -8,12 +8,12 @@ export default class extends Command {
                 'Add an emoji to the server!',
                 'my_emoji [image attachment]'
             ],
-            [ 'MANAGE_EMOJIS' ],
-            {
+			{
                 name: 'addemoji',
                 folder: 'Server',
                 args: [1, 1],
-                guildOnly: true 
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS ]
             }
         );
     }
@@ -34,7 +34,7 @@ export default class extends Command {
         try {
             e = await message.guild.emojis.create(
                 file.url, args[0],
-                { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
+			{ reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
             );
         } catch {
             return message.reply(this.Embed.fail('An error occurred adding this emoji.'));

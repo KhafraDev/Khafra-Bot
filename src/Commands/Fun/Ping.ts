@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the bot\'s ping!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'ping',
                 folder: 'Fun',
                 args: [0, 0]

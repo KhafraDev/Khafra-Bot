@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the number of members in a guild!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'members',
                 folder: 'Server',
                 args: [0, 0],

@@ -12,8 +12,7 @@ export default class extends Command {
                 'Fetch all the Trivia questions and insert them into the database.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'triviafetch',
                 folder: 'Trivia',
                 ownerOnly: true,

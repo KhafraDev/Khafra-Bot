@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, TextChannel, NewsChannel } from 'discord.js';
+import { Message, TextChannel, NewsChannel, Permissions } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 
@@ -10,13 +10,13 @@ export default class extends Command {
                 'Clear messages from a given channel.',
                 '100', '53'
             ], 
-            [ 'MANAGE_MESSAGES' ],
             {
                 name: 'clear',
                 folder: 'Moderation',
                 aliases: [ 'bulkdelete' ],
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_MESSAGES ]
             }
         );
     }

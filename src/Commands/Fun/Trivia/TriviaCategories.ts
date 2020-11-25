@@ -9,8 +9,7 @@ export default class extends Command {
                 'Trivia: list the trivia categories you can choose from.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trivialist',
                 folder: 'Trivia',
                 aliases: [ 'triviacategory', 'triviacategories' ],

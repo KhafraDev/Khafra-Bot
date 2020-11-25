@@ -1,74 +1,73 @@
 import { 
     Message, 
     PermissionString,
-    TextChannel,
     Snowflake,
-    Channel,
     MessageEmbed,
+    Permissions,
+    BitFieldResolvable,
+    Channel
 } from 'discord.js';
 import { Logger } from './Logger.js';
-
 import { createRequire } from 'module';
 import { GuildSettings } from '../lib/types/Collections.js';
+import { isText } from '../lib/types/Discord.js.js';
 const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
 
-export class Command {
+interface ICommand {
+    logger: Logger
+    cooldown?: (id: string) => boolean // typeof cooldown isn't the returned function
+    help: string[]
+    permissions: number[]
+    settings: {
+        name: string
+        folder: string
+        args: [number, number?]
+        permissions?: number[]
+        aliases?: string[]
+        guildOnly?: boolean
+        ownerOnly?: boolean
+    }
+}
+
+export class Command implements ICommand {
     logger = new Logger('Command');
     cooldown?: (id: string) => boolean
 
     /*** Description and example usage. */
     help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    permissions: PermissionString[] = [ 'SEND_MESSAGES', 'EMBED_LINKS', 'VIEW_CHANNEL', 'READ_MESSAGE_HISTORY' ];
-
-    settings?: {
-        /** Command name */
-        name: string,
-        /** Folder where command exists */
-        folder: string,
-        /** Required number of arguments */
-        args: [number, number?];
-        /** Command aliases */
-        aliases?: string[],
-        /** If command only works in guilds */
-        guildOnly?: boolean,
-        /** If command is only available to bot owner */
-        ownerOnly?: boolean
-    };
+    permissions = [ 
+        Permissions.FLAGS.SEND_MESSAGES,
+        Permissions.FLAGS.EMBED_LINKS,
+        Permissions.FLAGS.VIEW_CHANNEL, 
+        Permissions.FLAGS.READ_MESSAGE_HISTORY 
+    ];
+    settings: ICommand['settings'];
     
     constructor(
         help: string[],
-        permissions: PermissionString[],
-        settings?: {
-            name: string,
-            folder: string,
-            args: [number, number?],
-            aliases?: string[],
-            guildOnly?: boolean,
-            ownerOnly?: boolean
-        } 
+        settings: ICommand['settings']
     ) {
         this.help = help;
-        this.permissions = this.permissions.concat(permissions);
+        this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
-        this.settings && (this.settings.aliases = this.settings.aliases ?? []);
+        this.settings.aliases = this.settings.aliases ?? [];
     }
 
-    hasPermissions(message: Message, channel?: Channel, permissions?: PermissionString[]) {
-        if(channel?.type === 'dm' || message.channel.type === 'dm') {
+    hasPermissions(message: Message, channel: Channel = message.channel, permissions = this.permissions) {
+        if(!isText(channel)) {
             return true;
         }
 
-        const memberPerms           = message.member.permissions;
-        const botPerms              = message.guild.me.permissions;
-        const botChannelPerms       = ((channel ?? message.channel) as TextChannel).permissionsFor(message.guild.me);
-        const memberChannelPerms    = ((channel ?? message.channel) as TextChannel).permissionsFor(message.member);
+        const memberPerms        = message.member.permissions;
+        const botPerms           = message.guild.me.permissions;
+        const botChannelPerms    = channel.permissionsFor(message.guild.me);
+        const memberChannelPerms = channel.permissionsFor(message.member);
         
-        const check = permissions ?? this.permissions;
-        return    memberPerms.has(check)         // message author perms
-               && botPerms.has(check)            // perms for bot in guild
-               && botChannelPerms.has(check)     // bot perms in channel
-               && memberChannelPerms.has(check); // member perms in channel
+        return memberPerms.has(permissions)            // message author perms
+               && botPerms.has(permissions)            // perms for bot in guild
+               && botChannelPerms.has(permissions)     // bot perms in channel
+               && memberChannelPerms.has(permissions); // member perms in channel
     }
 
     /**
@@ -76,8 +75,8 @@ export class Command {
      * @param message Message from API
      * @param perms Array of permissions the user must have
      */
-    userHasPerms(message: Message, perms: PermissionString[]) {
-        if(message.channel.type === 'dm') {
+    userHasPerms(message: Message, perms: BitFieldResolvable<PermissionString>) {
+        if(!isText(message.channel)) {
             return true;
         }
         
@@ -86,7 +85,7 @@ export class Command {
     }
 
     isBotOwner(id: Snowflake) {
-        return Array.isArray(botOwner) ? botOwner.indexOf(id) > -1 : botOwner === id;
+        return Array.isArray(botOwner) ? botOwner.includes(id) : botOwner === id;
     }
 
     init(_: Message, __: string[], ___?: GuildSettings): unknown {
@@ -117,11 +116,16 @@ export class Command {
             /**
              * An embed for missing permissions!
              */
-            missing_perms: (admin?: boolean, perms?: PermissionString[]) => {
+            missing_perms: (admin?: boolean, perms?: number[]) => {
+                const entries: [string, number][] = Object.entries(Permissions.FLAGS);
+                const permStr = (perms ?? this.permissions)
+                    .map(p => entries.filter(e => e[1] === p).shift()[0])
+                    .join(', ');
+
                 return Embed.setColor(embed.fail).setDescription(`
                 One of us doesn't have the needed permissions!
         
-                Both of us must have \`\`${perms?.join(', ') ?? this.permissions.join(', ')}\`\` permissions to use this command!
+                Both of us must have \`\`${permStr}\`\` permissions to use this command!
                 ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
                 `);
             },
@@ -152,6 +156,10 @@ export class Command {
     }
 
     static get Embed() {
-        return new Command([], []).Embed;
+        return new Command([], {
+            name: '',
+            folder: '',
+            args: [-1, -1],
+        }).Embed;
     }
 }

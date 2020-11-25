@@ -13,8 +13,7 @@ export default class extends Command {
                 '100',
                 '20 [default is 20]'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'warnlimit',
                 aliases: [ 'limit', 'setwarn' ],
                 folder: 'Moderation',
@@ -46,7 +45,6 @@ export default class extends Command {
         ) as FindAndModifyWriteOpResultObject<Warnings>;
 
         const old = warns.value?.limit ?? 0;
-
         return message.reply(this.Embed.success(`
         Changed the warning limit! It was ${old} points (0 being not added) and it is now ${args[0]} points.
         `));
