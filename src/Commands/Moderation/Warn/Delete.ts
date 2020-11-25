@@ -3,6 +3,8 @@ import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { GuildSettings } from '../../../lib/types/Collections.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -22,7 +24,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args);
         if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
             return message.reply(this.Embed.fail(`
@@ -58,8 +60,23 @@ export default class extends Command {
             `));
         }
 
-        return message.reply(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         Removed ${points} active warning points from ${idOrUser}!
         `));
+
+        if(typeof settings?.modActionLogChannel === 'string') {
+            const channel = message.guild.channels.cache.get(settings.modActionLogChannel);
+            if(!isText(channel)) {
+                return;
+            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
+                return;
+            }
+
+            return channel.send(this.Embed.success(`
+            **User:** ${idOrUser}
+            **Staff:** ${message.member}
+            **Removed:** ${points} active warning points.
+            `).setTitle('Removed Active Warnings'));
+        }
     }
 }

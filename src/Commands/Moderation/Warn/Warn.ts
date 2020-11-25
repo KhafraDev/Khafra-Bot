@@ -1,9 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, TextChannel, Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -117,8 +118,8 @@ export default class extends Command {
         }
 
         if(typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            const channel = message.guild.channels.cache.get(settings.modActionLogChannel);
+            if(!isText(channel)) {
                 return;
             } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
                 return;
