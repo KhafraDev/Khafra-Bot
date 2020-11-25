@@ -43,8 +43,8 @@ export default class extends Command {
             } else {
                 return message.reply(this.Embed.success(`
                 No command with that name was found, however some commands may have a similar name. 
-                Did you mean: 
-                ${all.map(n => `\`\`${n[0]}\`\` (${(+n[1] * 100).toFixed(2)}% similarity)`).join('\n')}?
+                Commands with similar names: 
+                ${all.map(n => `\`\`${n[0]}\`\` (${(+n[1] * 100).toFixed(2)}% similarity)`).join('\n')}
                 `));
             }
         } else if(isFolder) {
@@ -67,7 +67,7 @@ export default class extends Command {
         \`\`\`${help[0]}\`\`\`
 
         Aliases: ${settings.aliases?.map(a => `\`\`${a}\`\``).join(', ')}
-        Permissions: ${permissions.map(p => `\`\`${p}\`\``).join(', ')}
+        Permissions: ${Command.permsFromBitField(permissions)}
 
         Example(s):
         ${help.slice(1).map(c => `\`\`${settings.name} ${c || '​'}\`\``.trim()).join('\n')}

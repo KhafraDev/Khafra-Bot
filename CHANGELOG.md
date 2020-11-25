@@ -299,3 +299,8 @@
 * Rewrite ``poll`` command.
 * Permissions now require FLAGS to be used (or the corresponding number).
 * ``Command.permissions`` have been moved to ``Command.settings.permissions``.
+* Added static ``Command.permsFromBitField`` function for converting bitfield array to their string representations.
+* Warning system has been updated to allow more customization (including deleting warnings now!).
+    1. Disallows negative warning points to be given.
+    2. Allows removing active warning points.
+    3. Warnings are split into 2 categories: active & inactive. Active points will cause a member to be kicked when reaching the guild's limit.

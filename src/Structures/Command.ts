@@ -11,7 +11,9 @@ import { Logger } from './Logger.js';
 import { createRequire } from 'module';
 import { GuildSettings } from '../lib/types/Collections.js';
 import { isText } from '../lib/types/Discord.js.js';
+
 const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
+const entries: [string, number][] = Object.entries(Permissions.FLAGS);
 
 interface ICommand {
     logger: Logger
@@ -117,10 +119,7 @@ export class Command implements ICommand {
              * An embed for missing permissions!
              */
             missing_perms: (admin?: boolean, perms?: number[]) => {
-                const entries: [string, number][] = Object.entries(Permissions.FLAGS);
-                const permStr = (perms ?? this.permissions)
-                    .map(p => entries.filter(e => e[1] === p).shift()[0])
-                    .join(', ');
+                const permStr = Command.permsFromBitField(perms ?? this.permissions);
 
                 return Embed.setColor(embed.fail).setDescription(`
                 One of us doesn't have the needed permissions!
@@ -142,7 +141,7 @@ export class Command implements ICommand {
                 ${r}
 
                 Aliases: ${this.settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
-                Permissions: ${this.permissions.map(p => `\`\`${p}\`\``).join(', ')}
+                Permissions: ${Command.permsFromBitField(this.permissions)}
 
                 Example Usage:
                 ${this.help.slice(1).map((e: string) => `\`\`${this.settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
@@ -153,6 +152,14 @@ export class Command implements ICommand {
                 );
             }
         }
+    }
+
+    static permsFromBitField(perms: number[]) {
+        const permStr = perms
+            .map(p => `\`\`${entries.filter(e => e[1] === p).shift()[0]}\`\``)
+            .join(', ');
+            
+        return permStr;
     }
 
     static get Embed() {
