@@ -48,12 +48,12 @@ export default class extends Command {
             Channel isn't fetched or the ID is incorrect.
             `));
         } else if(!isText(channel)) {
-            return message.channel.send(this.Embed.fail(`Polls can only be sent to text or news channels.`));
+            return message.reply(this.Embed.fail(`Polls can only be sent to text or news channels.`));
         } else if(!channel.permissionsFor(message.guild.me).has(basic)) {
-            return message.channel.send(this.Embed.missing_perms(false, basic));
+            return message.reply(this.Embed.missing_perms(false, basic));
         }
 
-        await message.channel.send(this.Embed.success(`
+        await message.reply(this.Embed.success(`
         Setting up a poll now!
 
         Enter all of the options in separate messages in the form \`\`[emoji] [text]\`\` to get started.

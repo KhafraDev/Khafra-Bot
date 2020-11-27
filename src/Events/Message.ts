@@ -1,4 +1,4 @@
-import { Message, ClientEvents, Role } from "discord.js";
+import { Message, ClientEvents, Role, Permissions } from "discord.js";
 import { createRequire } from 'module';
 
 import { Event } from "../Structures/Event.js";
@@ -153,29 +153,27 @@ export default class implements Event {
             } 
         }
 
-        if(message.guild && ![ 'Settings', 'Moderation' ].includes(command.settings.folder)) { // commands can only be enabled/disabled in guilds.
-            const disabledGuild = guild?.disabledGuild?.some(g =>
-                g.names.includes('*') || g.names.includes(command.settings.name.toLowerCase())  
-            );
-            if(disabledGuild) return;
+        if(message.guild) {
+            if(
+                guild?.disabledGuild?.length &&
+                !message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+            ) {
+                if(guild.disabledGuild.includes(command.settings.name)) {
+                    return message.reply(this.Embed.fail('Command is disabled in this guild.'));
+                }
+            }
 
-            const disabledChannel = guild?.disabledChannel?.some(c => 
-                c.id === message.channel.id && // in this channel
-                (c.names.includes('*') || c.names.includes(command.settings.name.toLowerCase())) // * = all commands
-            );
-            if(disabledChannel) return;
+            if(
+                guild?.enabledGuild?.length &&
+                !message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+            ) {
+                const channels = guild.enabledGuild.filter(c => c.type === 'channel');
+                if(channels.length !== 0 && !channels.some(e => message.channel.id === e.id)) return;
 
-            const disabledRole = guild?.disabledRole?.some(r => 
-                message.member.roles.cache.has(r.id) &&
-                (r.names.includes('*') || r.names.includes(command.settings.name.toLowerCase())) // * = all commands
-            );
-            if(disabledRole) return;
-
-            const disabledUser = guild?.disabledUser?.some(u => 
-                message.author.id === u.id &&
-                (u.names.includes('*') || u.names.includes(command.settings.name.toLowerCase())) // * = all commands
-            );
-            if(disabledUser) return;
+                const roles = guild.enabledGuild.filter(r => r.type === 'role');
+                const roleCache = message.member.roles.cache;
+                if(roles.length !== 0 && !roles.some(e => roleCache.has(e.id))) return;
+            }
         }
 
         if(!command.userHasPerms(message, command.permissions)) {

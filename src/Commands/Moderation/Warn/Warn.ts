@@ -105,7 +105,7 @@ export default class extends Command {
             try {
                 await member.kick(`Khafra-Bot: exceeded warning limit; kicked automatically.`);
             } catch {
-                return message.channel.send(this.Embed.fail(`Couldn't kick ${member}.`));
+                return message.reply(this.Embed.fail(`Couldn't kick ${member}.`));
             }
 
             return message.reply(this.Embed.success(`

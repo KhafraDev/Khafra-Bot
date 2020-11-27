@@ -116,7 +116,7 @@ export default class extends Command {
             I don't have permission to manage messages!
             `));
         } else if(cache.length === 0) {
-            return message.channel.send(this.Embed.fail(`An error occurred refreshing cache on bot startup.`));
+            return message.reply(this.Embed.fail(`An error occurred refreshing cache on bot startup.`));
         }
         
         const item = args.length === 0 

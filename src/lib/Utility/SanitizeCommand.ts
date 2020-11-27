@@ -2,6 +2,7 @@ import {
     Message, 
     Permissions
 } from "discord.js";
+import { isText } from "../types/Discord.js.js";
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -31,7 +32,7 @@ export const Sanitize = (message: Message) => {
         return false;
     }
 
-    if(message.channel.type === 'text' || message.channel.type === 'news') {
+    if(isText(message.channel)) {
         const perms = message.guild.me.permissions;
         const channelPerms = message.channel.permissionsFor(message.guild.me);
         if(perms.has(Permissions.FLAGS.ADMINISTRATOR)) { // Admin perms = has all perms.
