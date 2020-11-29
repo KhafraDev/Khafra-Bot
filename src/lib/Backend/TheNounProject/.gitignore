@@ -1,9 +1,5 @@
 # Khafra
-build
 *.js
-!scripts/*.js
-assets/npm/npm.txt
-FEATURES.md
 
 # Logs
 logs

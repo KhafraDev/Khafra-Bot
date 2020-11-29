@@ -124,7 +124,7 @@ export class Command implements ICommand {
                 return Embed.setColor(embed.fail).setDescription(`
                 One of us doesn't have the needed permissions!
         
-                Both of us must have \`\`${permStr}\`\` permissions to use this command!
+                Both of us must have ${permStr} permissions to use this command!
                 ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
                 `);
             },

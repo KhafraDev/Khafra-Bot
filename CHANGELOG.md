@@ -304,3 +304,7 @@
     1. Disallows negative warning points to be given.
     2. Allows removing active warning points.
     3. Warnings are split into 2 categories: active & inactive. Active points will cause a member to be kicked when reaching the guild's limit.
+* Add in ``thenounproject`` command.
+* Add in ``talkobamatome`` command.
+* Add in ``howmanypeopleareinspacerightnow`` command (``spacern`` or ``hmpaisrn``).
+* Add in ``thisworddoesnotexist`` command (``twdne``).
