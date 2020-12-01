@@ -6,6 +6,7 @@ import { Event } from '../Structures/Event.js';
 import { type } from 'os';
 
 const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
+const factory = <CE extends Command | Event>(c: new () => CE): CE => new c();
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -42,8 +43,7 @@ export class KhafraClient extends Client {
     async loadCommands() {
         const commands = await this.load('build/Commands');
         for(const command of commands) {
-            const { default: c } = await import(absPath(command));
-            const build = new c() as Command;
+            const build = factory<Command>((await import(absPath(command))).default);
 
             KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
             build.settings.aliases?.forEach(alias => KhafraClient.Commands.set(alias, build));
@@ -56,8 +56,7 @@ export class KhafraClient extends Client {
     async loadEvents() {
         const events = await this.load('build/Events');
         for(const event of events) {
-            const { default: e } = await import(absPath(event));
-            const build = new e() as Event;
+            const build = factory<Event>((await import(absPath(event))).default);
             KhafraClient.Events.set(build.name, build);
         }
 

@@ -31,9 +31,9 @@ interface ICommand {
     }
 }
 
-export class Command implements ICommand {
+export abstract class Command implements ICommand {
     logger = new Logger('Command');
-    cooldown?: (id: string) => boolean
+    cooldown?: (id: string) => boolean;
 
     /*** Description and example usage. */
     help: string[];
@@ -55,6 +55,8 @@ export class Command implements ICommand {
         this.settings = settings;
         this.settings.aliases = this.settings.aliases ?? [];
     }
+
+    abstract init(message: Message, args?: string[], settings?: GuildSettings | null): Promise<any>;
 
     hasPermissions(message: Message, channel: Channel = message.channel, permissions = this.permissions) {
         if(!isText(channel)) {
@@ -88,10 +90,6 @@ export class Command implements ICommand {
 
     isBotOwner(id: Snowflake) {
         return Array.isArray(botOwner) ? botOwner.includes(id) : botOwner === id;
-    }
-
-    init(_: Message, __: string[], ___?: GuildSettings): unknown {
-        throw new Error('init called on Command with function');
     }
 
     get Embed() {
@@ -163,10 +161,6 @@ export class Command implements ICommand {
     }
 
     static get Embed() {
-        return new Command([], {
-            name: '',
-            folder: '',
-            args: [-1, -1],
-        }).Embed;
+        return Command.prototype.Embed;
     }
 }

@@ -11,13 +11,13 @@ export default class extends Command {
         super(
             [
                 'Remove active warning points.',
-                '1', '5'
+                '@GoodPerson#0001 1', '379675571451592706 5'
             ],
 			{
                 name: 'unwarn',
                 folder: 'Moderation',
                 args: [2, 2],
-                aliases: [ 'deletewarn', 'removewarn' ],
+                aliases: [ 'deletewarn', 'removewarn', 'clearwarning' ],
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
             }
@@ -29,8 +29,6 @@ export default class extends Command {
         if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
             return message.reply(this.Embed.fail(`
             Invalid number of points given.
-
-            To remove warnings, use \`\`clearwarning\`\` (\`\`help clearwarning\`\` for example usage).
             `));
         } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
             return message.reply(this.Embed.fail('Invalid user ID!'));
