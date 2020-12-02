@@ -308,3 +308,4 @@
 * Add in ``talkobamatome`` command.
 * Add in ``howmanypeopleareinspacerightnow`` command (``spacern`` or ``hmpaisrn``).
 * Add in ``thisworddoesnotexist`` command (``twdne``).
+* Add in ``nobodylive`` command.
