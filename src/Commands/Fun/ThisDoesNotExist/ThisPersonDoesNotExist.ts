@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command.js";
+import { Command } from "../../../Structures/Command.js";
 import { Message, MessageAttachment } from "discord.js";
 import fetch from "node-fetch";
 
@@ -26,10 +26,12 @@ export default class extends Command {
         try {
             const res = await fetch('https://thispersondoesnotexist.com/image');
             buf = await res.buffer();
-        } catch {
-            return message.reply(this.Embed.fail(
-                'An error occurred getting a person!'
-            ));
+        } catch(e) {
+            if(e.name === 'FetchError') {
+                return message.reply(this.Embed.fail('Server had a problem!'));
+            }
+            
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         // so we can use a buffer, attachFiles doesn't allow one by itself

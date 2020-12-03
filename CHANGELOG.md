@@ -285,7 +285,6 @@
 # v1.0.7
 * Add in ``avatar`` command.
 * Add in Google ``translate`` command.
-* Add in ``thispersondoesnotexist`` command (alias: ``tpdne``).
 * Removed ``synergismsave`` command.
 * ``loadEnv`` function removed since it wasn't needed.
 * Allow multiple = signs for env variables.
@@ -307,5 +306,10 @@
 * Add in ``thenounproject`` command.
 * Add in ``talkobamatome`` command.
 * Add in ``howmanypeopleareinspacerightnow`` command (``spacern`` or ``hmpaisrn``).
-* Add in ``thisworddoesnotexist`` command (``twdne``).
 * Add in ``nobodylive`` command.
+* Add in ``thispersondoesnotexist`` command (alias: ``tpdne``).
+* Add in ``thisworddoesnotexist`` command (``twdne``).
+* Add in ``thisartworkdoesnotexist`` command.
+* Add in ``thiscatdoesnotexist`` command.
+* Add in ``thishorsedoesnotexist`` command.
+* Add in ``cartoonize`` command (one of my favorites).
