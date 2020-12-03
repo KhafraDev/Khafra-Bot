@@ -36,7 +36,7 @@ export default class extends Command {
             return message.reply(this.Embed.fail('Invalid user ID!'));
         }
 
-        let member = message.guild.member(idOrUser) ?? message.guild.members.fetch(idOrUser);
+        let member = message.guild.members.resolve(idOrUser) ?? message.guild.members.fetch(idOrUser);
         if(member instanceof Promise) {
             try {
                 member = await member;

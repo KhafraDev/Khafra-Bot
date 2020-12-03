@@ -291,7 +291,7 @@
 * Fix ``NewsChannel#send`` not being proxied and catching errors.
 * Add rule board.
 * Reduce memory the badmeme cache uses by only caching properties used.
-* Move to ``monbrey/discord.js#inline_replies`` until Discord.js v13 is released.
+* Move to ``monbrey/discord.js#inline-replies`` until Discord.js v13 is released.
 * Uses new reply ability in most cases.
 * Add in ``quran`` command.
 * Export ``isText`` helper function to utility file.
@@ -313,3 +313,4 @@
 * Add in ``thiscatdoesnotexist`` command.
 * Add in ``thishorsedoesnotexist`` command.
 * Add in ``cartoonize`` command (one of my favorites).
+* Replace ``Guild#member`` with ``GuildMemberManager#resolve``.

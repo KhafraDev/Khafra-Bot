@@ -34,7 +34,7 @@ export default class extends Command {
                 return message.reply(this.Embed.generic('Invalid user ID!'));
             }
         } else {
-            const member = message.guild.member(idOrUser);
+            const member = message.guild.members.resolve(idOrUser);
             if(member && !member.bannable) {
                 return message.reply(this.Embed.fail(`:( ${idOrUser} isn't bannable!`));
             }
