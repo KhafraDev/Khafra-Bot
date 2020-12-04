@@ -314,3 +314,4 @@
 * Add in ``thishorsedoesnotexist`` command.
 * Add in ``cartoonize`` command (one of my favorites).
 * Replace ``Guild#member`` with ``GuildMemberManager#resolve``.
+* Add in ``cheese`` command.
