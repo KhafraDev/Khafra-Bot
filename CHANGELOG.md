@@ -315,3 +315,6 @@
 * Add in ``cartoonize`` command (one of my favorites).
 * Replace ``Guild#member`` with ``GuildMemberManager#resolve``.
 * Add in ``cheese`` command.
+* Add in ``define`` command.
+* Add in ``kanye`` command.
+* Add in ``tronald`` command.
