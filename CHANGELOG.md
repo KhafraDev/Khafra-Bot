@@ -318,3 +318,7 @@
 * Add in ``define`` command.
 * Add in ``kanye`` command.
 * Add in ``tronald`` command.
+* Add in ``quotes`` command.
+* Add in ``xkcd`` command.
+* Natively import json using ``--experimental-json-modules`` flag.
+* PM2 launch command updated since it doesn't support ESM.

@@ -1,5 +1,4 @@
 import { Message, ClientEvents, Role, Permissions } from "discord.js";
-import { createRequire } from 'module';
 
 import { Event } from "../Structures/Event.js";
 import { Sanitize } from "../lib/Utility/SanitizeCommand.js";
@@ -10,8 +9,9 @@ import { KhafraClient } from "../Bot/KhafraBot.js";
 import { Command } from "../Structures/Command.js";
 import { trim } from "../lib/Utility/Template.js";
 import { cooldown } from "../Structures/Cooldown/CommandCooldown.js";
+import config from '../../config.json';
 
-const { prefix: defaultPrefix } = createRequire(import.meta.url)('../../config.json');
+const { prefix: defaultPrefix } = config;
 
 const _cooldownGuild = cooldown(15, 60000);
 const _cooldownUsers = cooldown( 6, 60000);

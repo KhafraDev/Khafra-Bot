@@ -41,7 +41,7 @@ export class KhafraClient extends Client {
      * Load commands
      */
     async loadCommands() {
-        const commands = await this.load('build/Commands');
+        const commands = await this.load('build/src/Commands');
         for(const command of commands) {
             const build = factory<Command>((await import(absPath(command))).default);
 
@@ -54,7 +54,7 @@ export class KhafraClient extends Client {
     }
 
     async loadEvents() {
-        const events = await this.load('build/Events');
+        const events = await this.load('build/src/Events');
         for(const event of events) {
             const build = factory<Event>((await import(absPath(event))).default);
             KhafraClient.Events.set(build.name, build);

@@ -8,11 +8,11 @@ import {
     Channel
 } from 'discord.js';
 import { Logger } from './Logger.js';
-import { createRequire } from 'module';
 import { GuildSettings } from '../lib/types/Collections.js';
 import { isText } from '../lib/types/Discord.js.js';
+import config from '../../config.json';
 
-const { embed, botOwner } = createRequire(import.meta.url)('../../config.json');
+const { embed, botOwner } = config;
 const entries: [string, number][] = Object.entries(Permissions.FLAGS);
 
 interface ICommand {

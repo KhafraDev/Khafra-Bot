@@ -2,9 +2,9 @@ import { Event } from "../Structures/Event.js";
 import { ClientEvents, MessageEmbed } from "discord.js";
 import { formatDate } from "../lib/Utility/Date.js";
 import { client } from "../index.js";
+import config from '../../config.json';
 
-import { createRequire } from 'module';
-const { botOwner } = createRequire(import.meta.url)('../../config.json');
+const { botOwner } = config;
 
 export default class implements Event {
     name: keyof ClientEvents = 'ready';

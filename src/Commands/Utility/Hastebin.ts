@@ -2,9 +2,9 @@ import { Command } from "../../Structures/Command.js";
 import { hasteServers, Paste } from "../../lib/Backend/Hastebin/Hastebin.js";
 import { Message } from "discord.js";
 import { GuildSettings } from "../../lib/types/Collections.js";
-import { createRequire } from 'module';
+import config from '../../../config.json';
 
-const { prefix: defPrefix } = createRequire(import.meta.url)('../../../config.json');
+const { prefix: defPrefix } = config;
 
 export default class extends Command {
     constructor() {

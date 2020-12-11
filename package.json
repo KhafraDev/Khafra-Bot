@@ -2,7 +2,7 @@
   "name": "khafra-bot",
   "version": "1.0.7",
   "description": "Discord Bot",
-  "main": "build/index.js",
+  "main": "build/src/index.js",
   "type": "module",
   "dependencies": {
     "adm-zip": "^0.4.16",
@@ -29,8 +29,7 @@
   "scripts": {
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
-    "dev:run": "node build/index --dev",
-    "prod:run": "pm2 start ecosystem.config.cjs --env production"
+    "dev:run": "node --experimental-json-modules build/src/index"
   },
   "repository": {
     "type": "git",

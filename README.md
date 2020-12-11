@@ -49,6 +49,4 @@ All values are required, as there is no guarantee that there is error handling f
 5. Install Python requirements with `[sudo] pip[3] install -r requirements.txt`
 6. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-7. Run the bot
-* Dev: ``npm run dev:build`` which will delete any old files and re-transpile it.
-* Prod: ``npm run prod:build`` which transpiles the code, overwriting old files, but does not delete any.
+7. Run the bot with ``pm2 start npm -- run dev:run`` since PM2 is trash.
