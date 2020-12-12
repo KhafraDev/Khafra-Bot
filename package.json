@@ -29,7 +29,8 @@
   "scripts": {
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
-    "dev:run": "node --experimental-json-modules build/src/index"
+    "dev:run": "node --experimental-json-modules build/src/index",
+    "prod:run": "pm2 start npm --name KhafraBot --restart-delay 300000 -- run dev:run"
   },
   "repository": {
     "type": "git",

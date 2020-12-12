@@ -49,4 +49,6 @@ All values are required, as there is no guarantee that there is error handling f
 5. Install Python requirements with `[sudo] pip[3] install -r requirements.txt`
 6. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-7. Run the bot with ``pm2 start npm -- run dev:run`` since PM2 is trash.
+7. Run the bot:
+    - Windows: ``npm run dev:run``
+    - Linux/Mac(?): ``npm run prod:run``

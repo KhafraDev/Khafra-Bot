@@ -322,3 +322,5 @@
 * Add in ``xkcd`` command.
 * Natively import json using ``--experimental-json-modules`` flag.
 * PM2 launch command updated since it doesn't support ESM.
+* Add in ``washyourlyrics`` command.
+* Add in ``chatarr`` command.

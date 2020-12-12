@@ -22,10 +22,9 @@ export default class extends Command {
         // It's likely that discord caches the response, as if you just set
         // this url as the image (in MessageEmbed#setImage) it'll be the
         // same every time. This uses way more resources but it's the only way. :(
-        let buf: Buffer;
+        let res;
         try {
-            const res = await fetch('https://thispersondoesnotexist.com/image');
-            buf = await res.buffer();
+            res = await fetch('https://thispersondoesnotexist.com/image');
         } catch(e) {
             if(e.name === 'FetchError') {
                 return message.reply(this.Embed.fail('Server had a problem!'));
@@ -35,7 +34,7 @@ export default class extends Command {
         }
 
         // so we can use a buffer, attachFiles doesn't allow one by itself
-        const attach = new MessageAttachment(buf, 'tpdne.jpeg');
+        const attach = new MessageAttachment(res.body, 'tpdne.jpeg');
         const embed = this.Embed.success()
             .attachFiles([ attach ])
             .setImage('attachment://tpdne.jpeg');

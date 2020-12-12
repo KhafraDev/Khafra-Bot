@@ -19,10 +19,9 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        let buf: Buffer;
+        let res;
         try {
-            const res = await fetch('https://thiscatdoesnotexist.com');
-            buf = await res.buffer();
+            res = await fetch('https://thiscatdoesnotexist.com');
         } catch(e) {
             if(e.name === 'FetchError') {
                 return message.reply(this.Embed.fail('Server had a problem!'));
@@ -31,7 +30,7 @@ export default class extends Command {
             return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const attach = new MessageAttachment(buf, 'tcdne.jpeg');
+        const attach = new MessageAttachment(res.body, 'tcdne.jpeg');
         const embed = this.Embed.success()
             .attachFiles([ attach ])
             .setImage('attachment://tcdne.jpeg');
