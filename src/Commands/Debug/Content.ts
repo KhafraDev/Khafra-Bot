@@ -17,8 +17,8 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        return message.reply(this.Embed.success(`
-        \`\`\`${message.content}\`\`\`
-        `));
+        return message.reply(message.content, {
+            embed: this.Embed.success(`\`\`\`${message.content}\`\`\``),
+        });
     }
 }

@@ -22,7 +22,7 @@ const emitted = (name: keyof ClientEvents) => {
 }
 
 const client = new KhafraClient({
-    disableMentions: 'everyone',
+    allowedMentions: { parse: [ 'users', 'roles' ], repliedUser: true },
     presence: {
         status: 'online'
     },

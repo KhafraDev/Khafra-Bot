@@ -44,7 +44,7 @@ export default class extends Command {
             \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared and your input message has also been deleted.\`\`
             `);
 
-        return message.reply(embed)
-            .then(m => m?.delete({ timeout: 5000 }))
+        const m = await message.reply(embed);
+        if(m) setTimeout(() => m.delete().catch(() => {}), 5000);
     }
 }
