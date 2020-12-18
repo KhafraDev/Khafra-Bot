@@ -2,11 +2,13 @@ import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { cache, chatarrFetch } from '../../../lib/Backend/Chatarr.js';
 
+await chatarrFetch().catch(() => {});
+
 export default class extends Command {
     constructor() {
         super(
             [
-                'NYTimes: get the most viewed articles from today.',
+                'Fetch an aggregated list of world news provided by chatarr.com!',
                 ''
             ],
 			{
@@ -19,15 +21,18 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!cache.c) {
+        if(!Array.isArray(cache.c) || cache.c.length === 0) {
             await chatarrFetch();
             return message.reply(this.Embed.fail(`
-            Articles couldn't be fetched, or haven't yet. Please wait a few minutes before attempting to use this command again. :)
+            Failed to fetch articles on start-up.
+
+            This may take up to 5 minutes if no errors persist.
             `));
         }
 
-        return message.reply(this.Embed.success(cache.c
-            .map(a => `[${a.title}](${a.href}) - ${a.time}`)
+        return message.reply(this.Embed.success(
+            cache.c
+            .map((a, i) => `[${i+1}] - [${a.title}](${a.href})`)
             .join('\n')
             .slice(0, 2048)
         ));
