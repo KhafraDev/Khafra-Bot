@@ -326,3 +326,6 @@
 * Add in ``chatarr`` command.
 * Add in ``colorize`` command.
 * Add in ``forgotify`` command.
+* Add in ``bored`` command.
+* Add in ``500px`` command.
+* Add in ``longestpoem`` command.

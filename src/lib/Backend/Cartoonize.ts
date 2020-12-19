@@ -37,17 +37,15 @@ const getA = (html: string) => {
  * @throws {TypeError | AssertionError | FetchError}
  */
 export const cartoonize = async (attachment: MessageAttachment) => {
-    const mime = lookup(attachment.name);
+    const mime = lookup(attachment.name) + '';
     deepStrictEqual(typeof mime !== 'boolean', true);
 
     const res = await fetch(attachment.proxyURL);
     deepStrictEqual(res.status, 200);
-    const buffer = await res.buffer();
     const form = new FormData();
-    form.append('image', buffer, {
+    form.append('image', res.body, {
         filename: attachment.name,
-        contentType: mime as string,
-        knownLength: buffer.byteLength
+        contentType: mime
     });
 
     const cartoonizeRes = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
