@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Kongregate } from "../../lib/Backend/SynergismStats.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Kongregate } from '../../lib/Backend/SynergismStats.js';
 
 export default class extends Command {
     constructor() {

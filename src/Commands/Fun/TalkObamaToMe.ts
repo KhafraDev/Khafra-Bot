@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { Command } from "../../Structures/Command.js";
+import { Command } from '../../Structures/Command.js';
 import { talkObamaToMe } from '../../lib/Backend/TalkObamaToMe.js';
 
 export default class extends Command {

@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 
-import { GuardianResponse } from "../../../lib/Backend/Guardian/types/Guardian";
-import { guardian } from "../../../lib/Backend/Guardian/Guardian.js";
+import { GuardianResponse } from '../../../lib/Backend/Guardian/types/Guardian';
+import { guardian } from '../../../lib/Backend/Guardian/Guardian.js';
 
 export default class extends Command {
     constructor() {

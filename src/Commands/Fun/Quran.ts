@@ -1,10 +1,10 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { parseQuran } from "../../lib/Backend/Quran/Quran.js";
-import { QuranExcerpt } from "../../lib/types/Collections";
-import { promisify } from "util";
-import { randomInt } from "crypto";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { parseQuran } from '../../lib/Backend/Quran/Quran.js';
+import { QuranExcerpt } from '../../lib/types/Collections';
+import { promisify } from 'util';
+import { randomInt } from 'crypto';
 
 const randInt: (max: number) => Promise<number> = promisify(randomInt);
 let updated = false;

@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { refreshCache, cache } from "./Trump.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { refreshCache, cache } from './Trump.js';
 
 export default class extends Command {    
     constructor() {

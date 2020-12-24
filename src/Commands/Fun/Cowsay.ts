@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 import { readFile } from 'fs/promises';
-import { join } from "path";
+import { join } from 'path';
 
 const dir = join(process.cwd(), 'assets/Cowsay');
 const start = `

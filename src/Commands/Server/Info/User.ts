@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, User, Activity, SnowflakeUtil } from "discord.js";
-import { formatDate } from "../../../lib/Utility/Date.js";
-import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, User, Activity, SnowflakeUtil } from 'discord.js';
+import { formatDate } from '../../../lib/Utility/Date.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];

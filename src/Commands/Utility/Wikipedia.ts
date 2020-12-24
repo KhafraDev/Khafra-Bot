@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Wikipedia } from "../../lib/Backend/Wikipedia/Wikipedia.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Wikipedia } from '../../lib/Backend/Wikipedia/Wikipedia.js';
 import entities from 'entities'; // cjs module
-import { WikipediaSearch } from "../../lib/Backend/Wikipedia/types/Wikipedia";
+import { WikipediaSearch } from '../../lib/Backend/Wikipedia/types/Wikipedia';
 
 export default class extends Command {
     constructor() {

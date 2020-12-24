@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Command } from "../../../Structures/Command.js";
-import { thisWordDoesNotExist } from "../../../lib/Backend/ThisWordDoesNotExist.js";
+import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
+import { thisWordDoesNotExist } from '../../../lib/Backend/ThisWordDoesNotExist.js';
 
 export default class extends Command {
     constructor() {

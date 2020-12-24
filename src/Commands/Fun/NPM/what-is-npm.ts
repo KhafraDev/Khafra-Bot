@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { exists } from "./what-is-npm-update.js";
+import { exists } from './what-is-npm-update.js';
 
 const npmPath = join(process.cwd(), 'assets', 'npm', 'npm.txt');
 

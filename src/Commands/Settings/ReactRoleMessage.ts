@@ -7,7 +7,7 @@ import {
     MessageMentions,
     Permissions
 } from 'discord.js';
-import twemoji from "twemoji-parser"; // cjs module
+import twemoji from 'twemoji-parser'; // cjs module
 import { pool } from '../../Structures/Database/Mongo.js';
 
 export default class extends Command {

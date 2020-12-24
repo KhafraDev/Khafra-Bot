@@ -1,9 +1,9 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Trivia } from "../../../lib/Backend/Trivia/Trivia.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { Question } from "../../../lib/Backend/Trivia/types/Trivia";
-import { inspect } from "util";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Trivia } from '../../../lib/Backend/Trivia/Trivia.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { Question } from '../../../lib/Backend/Trivia/types/Trivia';
+import { inspect } from 'util';
 
 export default class extends Command {
     constructor() {

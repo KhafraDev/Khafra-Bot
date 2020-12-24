@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { MDNSearch } from "./types/MDN";
+import fetch from 'node-fetch';
+import { MDNSearch } from './types/MDN';
 
 /**
  * Search MDN

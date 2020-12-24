@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, Role } from "discord.js";
-import { formatDate } from "../../../lib/Utility/Date.js";
-import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, Role } from 'discord.js';
+import { formatDate } from '../../../lib/Utility/Date.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {

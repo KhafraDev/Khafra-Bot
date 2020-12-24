@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { DiscordDiscoverResults } from "../../lib/Backend/Discord Discover/types/DiscordDiscover";
-import { DiscordDiscover } from "../../lib/Backend/Discord Discover/DiscordDiscover.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { DiscordDiscoverResults } from '../../lib/Backend/Discord Discover/types/DiscordDiscover';
+import { DiscordDiscover } from '../../lib/Backend/Discord Discover/DiscordDiscover.js';
 
 export default class extends Command {
     constructor() {

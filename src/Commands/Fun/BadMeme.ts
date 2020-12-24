@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { reddit } from "../../lib/Backend/BadMeme/BadMeme.js";
-import { RedditPostMin } from "../../lib/Backend/BadMeme/types/BadMeme";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { reddit } from '../../lib/Backend/BadMeme/BadMeme.js';
+import { RedditPostMin } from '../../lib/Backend/BadMeme/types/BadMeme';
 
 export default class extends Command {
     constructor() {

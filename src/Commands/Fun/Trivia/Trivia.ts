@@ -1,10 +1,10 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, GuildMember } from "discord.js";
-import { Trivia, categoryRegex, categories } from "../../../lib/Backend/Trivia/Trivia.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, GuildMember } from 'discord.js';
+import { Trivia, categoryRegex, categories } from '../../../lib/Backend/Trivia/Trivia.js';
 import { shuffle } from '../../../lib/Utility/Array.js';
-import { pool } from "../../../Structures/Database/Mongo.js";
+import { pool } from '../../../Structures/Database/Mongo.js';
 import entities from 'entities'; // cjs module
-import { isValidNumber } from "../../../lib/Utility/Valid/Number.js";
+import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 
 const games: Record<string, string> = {};
 

@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { INPMPackage } from "./types/npm";
+import fetch from 'node-fetch';
+import { INPMPackage } from './types/npm';
 
 export const npm = async (package_name: string) => {
     try {

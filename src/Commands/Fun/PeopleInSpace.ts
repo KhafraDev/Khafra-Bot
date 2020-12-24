@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { Command } from "../../Structures/Command.js";
+import { Command } from '../../Structures/Command.js';
 import { fetchPeopleInSpace } from '../../lib/Backend/PeopleInSpace.js';
 
 export default class extends Command {

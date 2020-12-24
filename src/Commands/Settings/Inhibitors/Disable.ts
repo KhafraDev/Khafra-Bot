@@ -1,8 +1,8 @@
-import { Message } from "discord.js";
-import { Command } from "../../../Structures/Command.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { KhafraClient } from "../../../Bot/KhafraBot.js";
-import { GuildSettings } from "../../../lib/types/Collections.js";
+import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { KhafraClient } from '../../../Bot/KhafraBot.js';
+import { GuildSettings } from '../../../lib/types/Collections.js';
 
 const toUpper = (s: string) => `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
 

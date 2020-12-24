@@ -1,14 +1,14 @@
-import { Message, ClientEvents, Role, Permissions } from "discord.js";
+import { Message, ClientEvents, Role, Permissions } from 'discord.js';
 
-import { Event } from "../Structures/Event.js";
-import { Sanitize } from "../lib/Utility/SanitizeCommand.js";
-import { pool } from "../Structures/Database/Mongo.js";
-import { GuildSettings } from "../lib/types/Collections";
-import { Logger } from "../Structures/Logger.js";
-import { KhafraClient } from "../Bot/KhafraBot.js";
-import { Command } from "../Structures/Command.js";
-import { trim } from "../lib/Utility/Template.js";
-import { cooldown } from "../Structures/Cooldown/CommandCooldown.js";
+import { Event } from '../Structures/Event.js';
+import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
+import { pool } from '../Structures/Database/Mongo.js';
+import { GuildSettings } from '../lib/types/Collections';
+import { Logger } from '../Structures/Logger.js';
+import { KhafraClient } from '../Bot/KhafraBot.js';
+import { Command } from '../Structures/Command.js';
+import { trim } from '../lib/Utility/Template.js';
+import { cooldown } from '../Structures/Cooldown/CommandCooldown.js';
 import config from '../../config.json';
 
 const { prefix: defaultPrefix } = config;

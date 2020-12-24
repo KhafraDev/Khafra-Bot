@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Command } from "../../Structures/Command.js";
-import { cartoonize } from "../../lib/Backend/Cartoonize.js";
+import { Message } from 'discord.js';
+import { Command } from '../../Structures/Command.js';
+import { cartoonize } from '../../lib/Backend/Cartoonize.js';
 import { cooldown } from '../../Structures/Cooldown/CommandCooldown.js';
 
 export default class extends Command {

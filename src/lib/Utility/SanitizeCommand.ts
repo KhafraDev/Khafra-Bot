@@ -2,7 +2,7 @@ import {
     Message, 
     Permissions
 } from "discord.js";
-import { isText } from "../types/Discord.js.js";
+import { isText } from '../types/Discord.js.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',

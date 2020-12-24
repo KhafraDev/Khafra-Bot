@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, TextChannel } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, TextChannel } from 'discord.js';
 import { readFile } from 'fs/promises';
-import { join } from "path";
+import { join } from 'path';
 import { randomInt } from 'crypto';
 import { promisify } from 'util';
 

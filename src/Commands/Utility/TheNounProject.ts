@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, MessageReaction, User } from "discord.js";
-import { theNounProjectSearch } from "../../lib/Backend/TheNounProject/TheNounProject.js";
-import { NounSearch } from "../../lib/Backend/TheNounProject/types/Noun.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, MessageReaction, User } from 'discord.js';
+import { theNounProjectSearch } from '../../lib/Backend/TheNounProject/TheNounProject.js';
+import { NounSearch } from '../../lib/Backend/TheNounProject/types/Noun.js';
 
 export default class extends Command {
     constructor() {

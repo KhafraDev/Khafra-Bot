@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import fetch from "node-fetch";
-import { URL } from "url";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import fetch from 'node-fetch';
+import { URL } from 'url';
 
 type Bang = {
     sc: string,

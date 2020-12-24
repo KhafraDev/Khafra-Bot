@@ -1,10 +1,10 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
-import { PocketGetResults, PocketArticle } from "../../lib/Backend/Pocket/types/Pocket";
-import { PocketUser } from "../../lib/types/Collections";
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Pocket } from '../../lib/Backend/Pocket/Pocket.js';
+import { PocketGetResults, PocketArticle } from '../../lib/Backend/Pocket/types/Pocket';
+import { PocketUser } from '../../lib/types/Collections';
 
 export default class extends Command {
     constructor() {

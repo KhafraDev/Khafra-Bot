@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, MessageReaction, User, MessageEmbed } from "discord.js";
-import { YouTubeSearchResults, YouTubeError } from "../../lib/Backend/YouTube/types/YouTube";
-import { YouTube } from "../../lib/Backend/YouTube/YouTube.js";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, MessageReaction, User, MessageEmbed } from 'discord.js';
+import { YouTubeSearchResults, YouTubeError } from '../../lib/Backend/YouTube/types/YouTube';
+import { YouTube } from '../../lib/Backend/YouTube/YouTube.js';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 function* format(items: YouTubeSearchResults, embed: (reason?: string) => MessageEmbed) {
     for(let i = 0; i < items.items.length; i++) {

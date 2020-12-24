@@ -3,8 +3,8 @@
  * Only uses the URL logic (params, base url) to get a valid response.
  */
 
-import fetch from "node-fetch";
-import { URLSearchParams } from "url";
+import fetch from 'node-fetch';
+import { URLSearchParams } from 'url';
 
 const token = (a: string) => {
 	const arb_1 = 406644, arb_2 = 3293161072,

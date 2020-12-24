@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Trivia, categories } from "../../../lib/Backend/Trivia/Trivia.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Trivia, categories } from '../../../lib/Backend/Trivia/Trivia.js';
 
 export default class extends Command {
     constructor() {

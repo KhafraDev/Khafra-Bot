@@ -1,9 +1,9 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { join } from "path";
-import { existsSync } from "fs";
-import { promisify } from "util";
-import { randomInt } from "crypto";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { promisify } from 'util';
+import { randomInt } from 'crypto';
 
 const rand: (a: number, b?: number) => Promise<number> = promisify(randomInt);
 

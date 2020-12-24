@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { KhafraClient } from "../../Bot/KhafraBot.js";
-import { compareTwoStrings } from "../../lib/Utility/CompareStrings.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
+import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
 
 export default class extends Command {
     constructor() {

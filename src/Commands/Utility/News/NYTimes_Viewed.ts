@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { nytimes } from "../../../lib/Backend/NYTimes/NYTimes.js";
-import { ViewedArticle } from "../../../lib/Backend/NYTimes/types/NYTimes";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { nytimes } from '../../../lib/Backend/NYTimes/NYTimes.js';
+import { ViewedArticle } from '../../../lib/Backend/NYTimes/types/NYTimes';
 
 
 export default class extends Command {

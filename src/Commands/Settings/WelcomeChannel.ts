@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
+import { Command } from '../../Structures/Command.js';
 import { 
     Message, TextChannel, Permissions
 } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
+import { pool } from '../../Structures/Database/Mongo.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',

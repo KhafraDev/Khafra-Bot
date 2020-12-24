@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { formatDate } from "../../lib/Utility/Date.js";
-import { npm } from "../../lib/Backend/NPM/npmHandler.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { formatDate } from '../../lib/Utility/Date.js';
+import { npm } from '../../lib/Backend/NPM/npmHandler.js';
 
 export default class extends Command {
     constructor() {

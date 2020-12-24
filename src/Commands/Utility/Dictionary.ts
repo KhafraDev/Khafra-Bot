@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Command } from "../../Structures/Command.js";
-import { owlbotio } from "../../lib/Backend/OwlBotIO.js";
+import { Message } from 'discord.js';
+import { Command } from '../../Structures/Command.js';
+import { owlbotio } from '../../lib/Backend/OwlBotIO.js';
 
 export default class extends Command {
     constructor() {

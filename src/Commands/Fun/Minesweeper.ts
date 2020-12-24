@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Board } from "../../lib/Backend/MineSweeper.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Board } from '../../lib/Backend/MineSweeper.js';
 
 export default class extends Command {
     constructor() {

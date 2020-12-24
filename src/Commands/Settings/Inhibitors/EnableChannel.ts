@@ -1,9 +1,9 @@
-import { Message } from "discord.js";
-import { Command } from "../../../Structures/Command.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { GuildSettings } from "../../../lib/types/Collections.js";
-import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
-import { isText } from "../../../lib/types/Discord.js.js";
+import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { GuildSettings } from '../../../lib/types/Collections.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {

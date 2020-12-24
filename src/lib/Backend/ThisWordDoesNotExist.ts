@@ -1,5 +1,5 @@
-import fetch from "node-fetch";
-import { deepStrictEqual } from "assert";
+import fetch from 'node-fetch';
+import { deepStrictEqual } from 'assert';
 
 interface NonexistentWord {
     word: {

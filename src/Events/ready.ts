@@ -1,7 +1,7 @@
-import { Event } from "../Structures/Event.js";
-import { ClientEvents, MessageEmbed } from "discord.js";
-import { formatDate } from "../lib/Utility/Date.js";
-import { client } from "../index.js";
+import { Event } from '../Structures/Event.js';
+import { ClientEvents, MessageEmbed } from 'discord.js';
+import { formatDate } from '../lib/Utility/Date.js';
+import { client } from '../index.js';
 import config from '../../config.json';
 
 const { botOwner } = config;

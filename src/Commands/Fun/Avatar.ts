@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, User } from "discord.js";
-import { getMentions, validSnowflake } from "../../lib/Utility/Mentions.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, User } from 'discord.js';
+import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {

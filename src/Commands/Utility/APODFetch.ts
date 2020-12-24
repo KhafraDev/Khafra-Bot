@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { APOD_BULK_FETCH, APOD_SAVE, APOD_CLEAR_BAD } from "../../lib/Backend/NASA.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { APOD_BULK_FETCH, APOD_SAVE, APOD_CLEAR_BAD } from '../../lib/Backend/NASA.js';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {

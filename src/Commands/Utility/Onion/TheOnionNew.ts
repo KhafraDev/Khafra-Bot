@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { getArticles, OnionArticle, months } from "../../../lib/Backend/TheOnion/TheOnion.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { getArticles, OnionArticle, months } from '../../../lib/Backend/TheOnion/TheOnion.js';
 
 export let updating = false;
 

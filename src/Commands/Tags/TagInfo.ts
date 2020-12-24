@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, User } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Tags } from "../../lib/types/Collections";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, User } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Tags } from '../../lib/types/Collections';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 export default class extends Command {
     constructor() {

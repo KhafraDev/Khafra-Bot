@@ -1,4 +1,4 @@
-import { Command } from "../../Structures/Command.js";
+import { Command } from '../../Structures/Command.js';
 import { 
     Message, 
     Channel, 
@@ -7,8 +7,8 @@ import {
     MessageMentions, 
     Permissions
 } from "discord.js";
-import twemoji from "twemoji-parser"; // cjs module
-import { pool } from "../../Structures/Database/Mongo.js";
+import twemoji from 'twemoji-parser'; // cjs module
+import { pool } from '../../Structures/Database/Mongo.js';
 
 export default class extends Command {
     constructor() {

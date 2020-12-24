@@ -1,5 +1,5 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, MessageEmbed, MessageReaction, User } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import fetch from 'node-fetch';
 import parse5, { 
     DefaultTreeParentNode as DTPN, 
@@ -8,7 +8,7 @@ import parse5, {
     DefaultTreeTextNode as DTTN
 } from 'parse5';
 import { randomInt } from 'crypto';
-import { promisify } from "util";
+import { promisify } from 'util';
 import { cooldown } from '../../../Structures/Cooldown/CommandCooldown.js';
 
 const randInt: (max: number) => Promise<number> = promisify(randomInt);

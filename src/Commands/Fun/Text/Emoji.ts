@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, Permissions } from "discord.js";
-import twemoji from "twemoji-parser"; // cjs module
+import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import twemoji from 'twemoji-parser'; // cjs module
 
 export default class extends Command {
     constructor() {

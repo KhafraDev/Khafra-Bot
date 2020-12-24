@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Command } from "../../Structures/Command.js";
-import { openLibrary } from "../../lib/Backend/Openlibrary.js";
+import { Message } from 'discord.js';
+import { Command } from '../../Structures/Command.js';
+import { openLibrary } from '../../lib/Backend/Openlibrary.js';
 
 export default class extends Command {
     constructor() {

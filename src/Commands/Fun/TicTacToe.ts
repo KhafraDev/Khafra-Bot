@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { TicTacToe } from "../../lib/Backend/TicTacToe.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { TicTacToe } from '../../lib/Backend/TicTacToe.js';
 
 const inRange = (num: number, min: number, max: number) => num >= min && num <= max;
 

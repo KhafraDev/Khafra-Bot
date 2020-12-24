@@ -1,4 +1,4 @@
-import { Message, SnowflakeUtil } from "discord.js";
+import { Message, SnowflakeUtil } from 'discord.js';
 
 const REGEX: Record<string, [RegExp, number]> = {
     users: [/(<@!)?(\d{17,19})>?/, 2],

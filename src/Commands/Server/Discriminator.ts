@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, Collection, GuildMember } from "discord.js";
-import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, Collection, GuildMember } from 'discord.js';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 
 export default class extends Command {

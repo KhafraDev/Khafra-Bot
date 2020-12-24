@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { weather } from "../../lib/Backend/HereWeather/HereWeather.js";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { weather } from '../../lib/Backend/HereWeather/HereWeather.js';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 const ctof = (celcius: string | number) => {
     return (+celcius * (9/5) + 32).toFixed(2);

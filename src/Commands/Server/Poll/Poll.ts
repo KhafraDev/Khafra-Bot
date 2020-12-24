@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, Permissions } from "discord.js";
-import twemoji from "twemoji-parser"; // cjs module
-import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
-import { isText } from "../../../lib/types/Discord.js.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import twemoji from 'twemoji-parser'; // cjs module
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
 const basic = [ 

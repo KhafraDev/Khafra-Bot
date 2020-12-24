@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { mdn } from "../../lib/Backend/MDN/MDNHandler.js";
-import { compareTwoStrings } from "../../lib/Utility/CompareStrings.js";
-import { MDNSearch } from "../../lib/Backend/MDN/types/MDN";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { mdn } from '../../lib/Backend/MDN/MDNHandler.js';
+import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
+import { MDNSearch } from '../../lib/Backend/MDN/types/MDN';
 
 export default class extends Command {
     constructor() {

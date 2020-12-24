@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { OnionArticle } from "../../../lib/Backend/TheOnion/TheOnion.js";
-import { updating } from "./TheOnionNew.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { OnionArticle } from '../../../lib/Backend/TheOnion/TheOnion.js';
+import { updating } from './TheOnionNew.js';
 
 export default class extends Command {
     constructor() {

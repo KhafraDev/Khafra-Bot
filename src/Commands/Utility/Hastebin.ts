@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { hasteServers, Paste } from "../../lib/Backend/Hastebin/Hastebin.js";
-import { Message } from "discord.js";
-import { GuildSettings } from "../../lib/types/Collections.js";
+import { Command } from '../../Structures/Command.js';
+import { hasteServers, Paste } from '../../lib/Backend/Hastebin/Hastebin.js';
+import { Message } from 'discord.js';
+import { GuildSettings } from '../../lib/types/Collections.js';
 import config from '../../../config.json';
 
 const { prefix: defPrefix } = config;

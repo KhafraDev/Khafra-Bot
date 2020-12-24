@@ -1,9 +1,9 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import fetch from "node-fetch";
-import { existsSync } from "fs";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { writeFile, mkdir } from 'fs/promises';
+import { join } from 'path';
+import fetch from 'node-fetch';
+import { existsSync } from 'fs';
 
 const npmPath = join(process.cwd(), 'assets', 'npm');
 await mkdir(npmPath, { recursive: true });

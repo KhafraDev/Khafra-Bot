@@ -14,10 +14,10 @@ Nim is a very strategic game to play on paper because of these two fundamental g
 2. but the lines you remove each turn must be from the same stack. 
 */
 
-import { Command } from "../../Structures/Command.js";
-import { Message, GuildMember } from "discord.js";
-import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
-import { getMentions } from "../../lib/Utility/Mentions.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, GuildMember } from 'discord.js';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 
 const gen = () => {
     const game = [

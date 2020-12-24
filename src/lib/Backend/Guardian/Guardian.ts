@@ -1,7 +1,7 @@
-import { URLSearchParams } from "url";
-import { formatDate } from "../../Utility/Date.js";
-import fetch from "node-fetch";
-import { GuardianResponse } from "./types/Guardian";
+import { URLSearchParams } from 'url';
+import { formatDate } from '../../Utility/Date.js';
+import fetch from 'node-fetch';
+import { GuardianResponse } from './types/Guardian';
 import { types } from 'util';
 
 /**

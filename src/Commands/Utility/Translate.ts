@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { langs, translate } from "../../lib/Backend/Translate.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { langs, translate } from '../../lib/Backend/Translate.js';
 
 export default class extends Command {
     constructor() {

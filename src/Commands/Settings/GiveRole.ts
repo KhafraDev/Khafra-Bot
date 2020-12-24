@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, Role, MessageMentions } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { KhafraClient } from "../../Bot/KhafraBot.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, Role, MessageMentions } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 export default class extends Command {
     constructor() {

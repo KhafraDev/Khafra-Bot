@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Command } from "../../Structures/Command.js";
-import { nobodyLive } from "../../lib/Backend/NobodyLive.js";
+import { Message } from 'discord.js';
+import { Command } from '../../Structures/Command.js';
+import { nobodyLive } from '../../lib/Backend/NobodyLive.js';
 
 export default class extends Command {
     constructor() {
