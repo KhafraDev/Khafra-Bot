@@ -1,5 +1,5 @@
 import fetch, { Headers } from 'node-fetch';
-import { PocketGetResults, PocketRateLimit } from './types/Pocket';
+import type { PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
     'x-limit-user-limit':     -1,   // Current rate limit enforced per user

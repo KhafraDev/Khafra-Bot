@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, MessageAttachment } from "discord.js";
-import fetch from "node-fetch";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { thisDoesNotExist } from '../../../lib/Backend/ThisDoesNotExist.js';
 
 export default class extends Command {
     constructor() {
@@ -19,22 +19,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        let res;
-        try {
-            res = await fetch('https://thiscatdoesnotexist.com');
-        } catch(e) {
-            if(e.name === 'FetchError') {
-                return message.reply(this.Embed.fail('Server had a problem!'));
-            }
-            
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
-        }
-
-        const attach = new MessageAttachment(res.body, 'tcdne.jpeg');
-        const embed = this.Embed.success()
-            .attachFiles([ attach ])
-            .setImage('attachment://tcdne.jpeg');
-
+        const embed = await thisDoesNotExist('cat');
         return message.reply(embed);
     }
 }
