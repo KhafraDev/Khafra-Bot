@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import { promisify } from 'util';
 
 const randInt = <(min: number, max: number) => Promise<number>> promisify(crypto.randomInt);
+const MAX_DIFF = 2 ** 48 - 1;
 
 export default class extends Command {
     constructor() {
@@ -33,7 +34,7 @@ export default class extends Command {
         const min = +minStr;
 
         if(
-            max - min > 281474976710655 || // difference set by function; difference can't be greater than this
+            max - min > MAX_DIFF ||        // difference set by function; difference can't be greater than this
             min < 0 || max < 0 ||          // negative numbers aren't allowed
             min === max ||                 // no range
             max < min ||                   // min is greater than max
@@ -41,7 +42,7 @@ export default class extends Command {
         ) {
             return message.reply(this.Embed.generic(
                 'Invalid number(s) provided! Numbers ``cannot equal`` one another ' + 
-                'and the difference between the two ``cannot be greater`` than 281,474,976,710,655!'
+                'and the difference between the two ``cannot be greater`` than 281,474,976,710,655 (2^48-1)!'
             ));
         }
 

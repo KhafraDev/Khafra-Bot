@@ -4,12 +4,11 @@ import { xKCDFormatted } from '../../../lib/Backend/xKCD.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { promisify } from 'util';
 import { randomInt } from 'crypto';
+import xkcd from '../../../../assets/xkcd.json';
 
 const rand: (a: number, b?: number) => Promise<number> = promisify(randomInt);
 
-export const cache = {
-    xkcd: (await import('../../../../assets/xkcd.json')).default
-}
+export const cache = { xkcd }
 
 export default class extends Command {
     constructor() {
@@ -32,8 +31,8 @@ export default class extends Command {
 
         if(args.length > 0) {
             if(isValidNumber(+s)) {
-                comic = cache.xkcd.find(c => c.num === +s)
-                    ?? cache.xkcd.find(c => c.safe_title.toLowerCase() === s); 
+                comic = cache.xkcd.find(c => c.num === +s) ?? 
+                        cache.xkcd.find(c => c.safe_title.toLowerCase() === s); 
             } else {
                 comic = cache.xkcd.find(c => c.safe_title.toLowerCase() === s);
             }
