@@ -12,6 +12,7 @@ import { Logger } from '../Structures/Logger.js';
 import { Command } from '../Structures/Command.js';
 import { trim } from '../lib/Utility/Template.js';
 import { client as Client } from '../index.js';
+import { isDM } from '../lib/types/Discord.js.js';
 
 const Embed = Command.Embed;
 const cache: Map<string, number> = new Map();
@@ -30,7 +31,7 @@ export default class implements Event {
         // but not the client user. Message#member and Message#author can be null
 
         // dm channel or guild isn't available
-        if(reaction.message.channel.type === 'dm' || !reaction.message.guild.available) {
+        if(isDM(reaction.message.channel) || !reaction.message.guild.available) {
             return;
         }
     

@@ -368,3 +368,4 @@
 * Add in ``boilthefrog`` command.
 * Add in ``killedbygoogle`` command.
 * Add in ``bellingcat`` command.
+* Add in ``piglatin`` command.

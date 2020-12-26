@@ -10,11 +10,19 @@ import { Command } from '../Structures/Command.js';
 import { trim } from '../lib/Utility/Template.js';
 import { cooldown } from '../Structures/Cooldown/CommandCooldown.js';
 import config from '../../config.json';
+import { client } from '../index.js';
+import { isDM } from '../lib/types/Discord.js.js';
 
 const { prefix: defaultPrefix } = config;
 
 const _cooldownGuild = cooldown(15, 60000);
 const _cooldownUsers = cooldown( 6, 60000);
+// rather than instantiating a new RegExp on every command use, it'll be cached
+// this event can't fire until the ready event, so it's guaranteed to be defined.
+const mentioned = (() => {
+    let regex: RegExp | null = null;
+    return () => regex ?? (regex = new RegExp(`<@!?${client.user.id}>`));
+})();
 
 export default class implements Event {
     name: keyof ClientEvents = 'message';
@@ -22,32 +30,23 @@ export default class implements Event {
     Embed = Command.Embed;
 
     async init(message: Message) {
-        if(!Sanitize(message)) {
-            return;
-        }
-    
+        if(!Sanitize(message)) return;
+
         const split = message.content.split(/\s+/g);
-        const selfMentioned = new RegExp(`<@!?${message.client.user.id}>`).test(split[0]); // bot mentioned first argument
+        const selfMentioned = mentioned().test(split[0]); // bot mentioned first argument
         const [name, ...args] = selfMentioned ? split.slice(1) : split;
-        const isDM = message.channel.type === 'dm';
 
-        if(!name) {
-            return;
-        } else if(selfMentioned && !KhafraClient.Commands.has(name) && isDM) { // when mentioned, there is no prefix
-            return;
-        } else if(isDM && (!message.content.startsWith(defaultPrefix) && !selfMentioned)) { // dm, doesn't start with prefix, not mentioned
-            return;
-        }
+        if(!name) return;
     
-        const client =      isDM ? null : await pool.settings.connect();
-        const collection =  isDM ? null : client.db('khafrabot').collection('settings');
-        const guild =       isDM ? null : await collection.findOne<GuildSettings>({ id: message.guild.id });
+        const client =      isDM(message.channel) ? null : await pool.settings.connect();
+        const collection =  isDM(message.channel) ? null : client.db('khafrabot').collection('settings');
+        const guild =       isDM(message.channel) ? null : await collection.findOne<GuildSettings>({ id: message.guild.id });
 
-        const prefix: string = selfMentioned ? '' : (guild?.prefix ?? defaultPrefix);
+        const prefix = selfMentioned ? '' : (guild?.prefix ?? defaultPrefix);
         const fName = name.toLowerCase().slice(prefix.length);
-        if(!selfMentioned && !name.startsWith(prefix)) { // when mentioned, command has no prefix
-            return;
-        }
+        if(!name.startsWith(prefix)) return; // 'hello'.startsWith('') = true
+        if(!KhafraClient.Commands.has(fName)) return;
+        const command = KhafraClient.Commands.get(fName);
 
         /**
          * Handle command roles, or a custom command that gives the user
@@ -101,34 +100,30 @@ export default class implements Event {
 
             return message.reply(this.Embed.success(ccMessage));
         }
-
-        /**
-         * Handle command settings and "quirks", making sure command is valid in the environment it's used in.
-         */
-        const command = KhafraClient.Commands.get(fName);                        
+                  
         if(!command) { // no built in or custom command
             return;
         } else if(command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
             return message.reply(this.Embed.fail(`
             \`\`${command.settings.name}\`\` is only available to the bot owner!
             `));
-        } else if(command.settings.guildOnly && isDM) {
+        } else if(command.settings.guildOnly && isDM(message.channel)) {
             return message.reply(this.Embed.fail(`
             \`\`${command.settings.name}\`\` is only available in guilds!
             `));
-        } else {
-            const [min, max] = command.settings.args;
-            if(min > args.length || args.length > max) {
-                return message.reply(this.Embed.fail(`
-                Incorrect number of arguments provided.
-                
-                The command requires ${min} minimum arguments and ${max ?? 'no'} max.
-                Example(s):
-                ${command.help.slice(1).map(c => `\`\`${prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
-                `));
-            }
-        }
+        } 
 
+        const [min, max] = command.settings.args;
+        if(min > args.length || args.length > max) {
+            return message.reply(this.Embed.fail(`
+            Incorrect number of arguments provided.
+            
+            The command requires ${min} minimum arguments and ${max ?? 'no'} max.
+            Example(s):
+            ${command.help.slice(1).map(c => `\`\`${prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
+            `));
+        }
+        
         this.logger.log(trim`
         Command: ${command.settings.name} 
         | Author: ${message.author.id} 

@@ -2,7 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { cache, chatarrFetch } from '../../../lib/Backend/Chatarr.js';
 
-await chatarrFetch().catch(() => {});
+await chatarrFetch();
 
 export default class extends Command {
     constructor() {
@@ -21,8 +21,8 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!Array.isArray(cache.c) || cache.c.length === 0) {
-            await chatarrFetch();
+        const articles = [...cache.values()];
+        if(articles.length === 0) {
             return message.reply(this.Embed.fail(`
             Failed to fetch articles on start-up.
 
@@ -31,7 +31,7 @@ export default class extends Command {
         }
 
         return message.reply(this.Embed.success(
-            cache.c
+            articles
             .map((a, i) => `[${i+1}] - [${a.title}](${a.href})`)
             .join('\n')
             .slice(0, 2048)

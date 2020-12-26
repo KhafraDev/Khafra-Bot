@@ -2,6 +2,7 @@ import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { reddit } from '../../lib/Backend/BadMeme/BadMeme.js';
 import { RedditPostMin } from '../../lib/Backend/BadMeme/types/BadMeme';
+import { isDM } from '../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -23,7 +24,7 @@ export default class extends Command {
         try {
             res = await reddit(
                 args[0] ?? 'dankmemes', 
-                message.channel.type === 'dm' ? true : message.channel.nsfw
+                isDM(message.channel) ? true : message.channel.nsfw
             );
         } catch(e) {
             return message.reply(this.Embed.fail(`
