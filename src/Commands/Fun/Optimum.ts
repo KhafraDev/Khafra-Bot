@@ -8,8 +8,7 @@ export default class extends Command {
                 'See reviews for the worst ISP in the U.S.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'optimum',
                 folder: 'Fun',
                 aliases: [ 'altice' ],
@@ -33,6 +32,6 @@ export default class extends Command {
             [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
 
 export default class extends Command {
     constructor() {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Tags: create a tag.',
                 'hello Hello, everyone!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagscreate',
                 folder: 'Tags',
                 args: [2],
@@ -42,11 +41,11 @@ export default class extends Command {
         );
 
         if(!q || q.ok === 0 || q.value || q.lastErrorObject?.updatedExisting) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Tag couldn't be created because ${q.lastErrorObject?.updatedExisting ? 'it already exists' : 'an unknown error occurred'}.
             `));
         }
 
-        return message.channel.send(this.Embed.success('Added tag!'));
+        return message.reply(this.Embed.success('Added tag!'));
     }
 }

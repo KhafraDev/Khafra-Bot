@@ -1,5 +1,5 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {
@@ -8,8 +8,7 @@ export default class extends Command {
                 'TriviaHelp: get help with trivia commands!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'triviahelp',
                 folder: 'Trivia',
                 args: [0, 0]
@@ -28,6 +27,6 @@ export default class extends Command {
             For all trivia commands try the list command: \`\`list trivia\`\`!
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

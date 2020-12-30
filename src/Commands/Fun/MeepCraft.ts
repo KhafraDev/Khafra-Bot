@@ -1,5 +1,5 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 import { request } from 'http';
 import { get, RequestOptions } from 'https';
 
@@ -19,7 +19,7 @@ const latest = {
 const fetchMeepOnline = () => {
     return new Promise<string>((res, rej) => {
         request({
-            host: 'us5057.nordvpn.com',         // IP address of proxy server
+            host: 'us5042.nordvpn.com',         // IP address of proxy server
             port: 80,                           // port of proxy server
             method: 'CONNECT',
             path: 'forum.meepcraft.com:443',    // some destination, add 443 port for https!
@@ -58,8 +58,7 @@ export default class extends Command {
                 'Get the number of users playing MeepCraft right now.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'meepcraft',
                 folder: 'Fun',
                 aliases: [ 'meep' ],
@@ -75,7 +74,7 @@ export default class extends Command {
                 .setTimestamp(latest.fetched)
                 .setFooter('Last checked at');
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         }
 
         let players: { playersOnline: number };
@@ -84,7 +83,7 @@ export default class extends Command {
             players = JSON.parse(res);
         } catch(e) {
             this.logger.log(e);
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         latest.fetched = Date.now();
@@ -92,6 +91,6 @@ export default class extends Command {
 
         const sentence = `There ${players.playersOnline === 1 ? 'is ``1`` player': 'are ``' + players.playersOnline + '`` players'}`
         const embed = this.Embed.success(`${sentence} on Meepcraft right now!`);
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

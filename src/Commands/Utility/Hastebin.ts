@@ -1,11 +1,10 @@
-import { Command } from "../../Structures/Command.js";
-import { hasteServers, paste } from "../../lib/Backend/Hastebin/Hastebin.js";
-import { Message } from "discord.js";
-import { URL } from "url";
-import { GuildSettings } from "../../lib/types/Collections.js";
-import { createRequire } from 'module';
+import { Command } from '../../Structures/Command.js';
+import { hasteServers, Paste } from '../../lib/Backend/Hastebin/Hastebin.js';
+import { Message } from 'discord.js';
+import { GuildSettings } from '../../lib/types/Collections.js';
+import config from '../../../config.json';
 
-const { prefix: defPrefix } = createRequire(import.meta.url)('../../../config.json')
+const { prefix: defPrefix } = config;
 
 export default class extends Command {
     constructor() {
@@ -14,14 +13,13 @@ export default class extends Command {
                 'Upload a paste to Hastebin, Hatebin, or Nomsy!',
                 'hatebin const bot = KhafraClient;',
                 'Nomsy who knew Heroku CDN was trash? Not hastebin.',
-                'Hello, world!'
+                'hastebin Hello, world!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'hastebin',
                 folder: 'Utility',
                 args: [1],
-                aliases: Object.keys(hasteServers).slice(1) // dynamic aliases :o
+                aliases: hasteServers.map(s => s.alias).flat()
             }
         );
     }
@@ -36,14 +34,14 @@ export default class extends Command {
 
         let res;
         try {
-            res = await paste(content, hasteServers[command]);
+            res = await Paste(command, content);
         } catch(e) {
-            return message.channel.send(this.Embed.fail(e.message ?? 'An error occurred!'));
+            return message.reply(this.Embed.fail(e.message ?? 'An error occurred!'));
         }
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         ${content.length} characters posted!
-        ${new URL(hasteServers[command]).origin}/${res.key}
+        ${res}
         `));
     }
 }

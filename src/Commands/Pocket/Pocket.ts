@@ -1,5 +1,5 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
 
 export default class extends Command {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Pocket: Connect your Pocket account to Khafra-Bot!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'pocket',
                 folder: 'Pocket',
                 args: [0, 0]
@@ -28,6 +27,6 @@ export default class extends Command {
             \`\`pocketinit\`\` - Start the process of authorizing your Pocket account.
             `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

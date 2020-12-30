@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { TicTacToe } from "../../lib/Backend/TicTacToe.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { TicTacToe } from '../../lib/Backend/TicTacToe.js';
 
 const inRange = (num: number, min: number, max: number) => num >= min && num <= max;
 
@@ -11,8 +11,7 @@ export default class extends Command {
                 'Play a game of TicTacToe!',
                 '', '@Khafra#0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tictactoe',
                 folder: 'Fun',
                 args: [0, 1],
@@ -27,11 +26,11 @@ export default class extends Command {
             : message.mentions.members.first();
 
         if(opponent.user.bot && opponent.id !== message.guild.me.id) {
-            return message.channel.send(this.Embed.fail('You can\'t play against another bot!'));
+            return message.reply(this.Embed.fail('You can\'t play against another bot!'));
         }
 
         const g = new TicTacToe(); // game
-        const m = await message.channel.send(this.Embed.success(`\`\`\`${g.format()}\`\`\``));
+        const m = await message.reply(this.Embed.success(`\`\`\`${g.format()}\`\`\``));
         if(!m) {
             return;
         }

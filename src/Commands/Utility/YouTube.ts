@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, MessageReaction, User, MessageEmbed } from "discord.js";
-import { YouTubeSearchResults, YouTubeError } from "../../lib/Backend/YouTube/types/YouTube";
-import { YouTube } from "../../lib/Backend/YouTube/YouTube.js";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, MessageReaction, User, MessageEmbed } from 'discord.js';
+import { YouTubeSearchResults, YouTubeError } from '../../lib/Backend/YouTube/types/YouTube';
+import { YouTube } from '../../lib/Backend/YouTube/YouTube.js';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 function* format(items: YouTubeSearchResults, embed: (reason?: string) => MessageEmbed) {
     for(let i = 0; i < items.items.length; i++) {
@@ -26,8 +26,7 @@ export default class extends Command {
                 'Search for YouTube videos!',
                 'Epic Minecraft Challenge (2012)'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'youtube',
                 folder: 'Utility',
                 args: [1],
@@ -41,25 +40,25 @@ export default class extends Command {
         try {
             results = await YouTube(args);
         } catch(e) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred!
             \`\`${e.toString()}\`\`
             `));
         }
 
         if('error' in results) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             ${results.error.code}: ${results.error.message}
             `));
         } else if(results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No results found!
             `));
         }
 
         const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
-        const m = await message.channel.send(embeds[0]);
+        const m = await message.reply(embeds[0]);
         if(!m) {
             return;
         }

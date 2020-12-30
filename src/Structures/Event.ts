@@ -1,4 +1,4 @@
-import { ClientEvents } from "discord.js";
+import { ClientEvents } from 'discord.js';
 
 type valueof<T> = T[keyof T];
 

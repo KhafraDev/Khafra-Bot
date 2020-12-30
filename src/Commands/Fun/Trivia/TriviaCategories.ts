@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Trivia, categories } from "../../../lib/Backend/Trivia/Trivia.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Trivia, categories } from '../../../lib/Backend/Trivia/Trivia.js';
 
 export default class extends Command {
     constructor() {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Trivia: list the trivia categories you can choose from.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trivialist',
                 folder: 'Trivia',
                 aliases: [ 'triviacategory', 'triviacategories' ],
@@ -26,9 +25,9 @@ export default class extends Command {
                 .setTitle('Trivia Categories')
                 .setDescription(`${list.map(a => `\`\`${a.id}\`\`: ${a.name}`).join('\n')}`)
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         } else {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
     }
 }

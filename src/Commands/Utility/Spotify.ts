@@ -13,8 +13,7 @@ export default class extends Command {
                 'Boston - More Than a Feeling',
                 ''
             ],
-            [ /* No extra perms needed */],
-            {
+			{
                 name: 'spotify',
                 folder: 'Utility',
                 args: [0]
@@ -28,7 +27,7 @@ export default class extends Command {
         ).pop();
 
         if(!presence && args.length < 1) {
-            return message.channel.send(this.Embed.fail('If you are not listening to any songs, a search query must be provided!'));
+            return message.reply(this.Embed.fail('If you are not listening to any songs, a search query must be provided!'));
         }
 
         let res: SpotifyResult;
@@ -39,17 +38,17 @@ export default class extends Command {
                     : args.join(' ')
             );
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(res.tracks.items.length === 0) {
-            return message.channel.send(this.Embed.fail('No songs found!'));
+            return message.reply(this.Embed.fail('No songs found!'));
         }
 
         const embed = this.Embed.success(`
         ${res.tracks.items.map(item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`).join('\n')}
         `);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

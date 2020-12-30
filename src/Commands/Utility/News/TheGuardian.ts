@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 
-import { GuardianResponse } from "../../../lib/Backend/Guardian/types/Guardian";
-import { guardian } from "../../../lib/Backend/Guardian/Guardian.js";
+import { GuardianResponse } from '../../../lib/Backend/Guardian/types/Guardian';
+import { guardian } from '../../../lib/Backend/Guardian/Guardian.js';
 
 export default class extends Command {
     constructor() {
@@ -12,8 +12,7 @@ export default class extends Command {
                 '2008-01-01 obama presidency',
                 'trump presidency'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theguardian',
                 folder: 'News',
                 args: [1],
@@ -27,7 +26,7 @@ export default class extends Command {
         try {
             res = await guardian(args, new Date(args[0]));
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         let desc = '';
@@ -44,6 +43,6 @@ export default class extends Command {
             .setDescription(desc)
             .setTitle('Results')
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

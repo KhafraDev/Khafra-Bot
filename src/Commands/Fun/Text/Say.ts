@@ -8,7 +8,6 @@ export default class extends Command {
                 'Have KhafraBot say something!',
                 'Have a great day!', 'You suck.'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'say',
                 folder: 'Fun',
@@ -20,12 +19,9 @@ export default class extends Command {
 
     init(message: Message, args: string[]) {
         const embed = this.Embed.success()
-            .setTimestamp()
-            .setDescription(`
-            ${message.author} says:
-            \`\`${args.join(' ').slice(0, 1900)}\`\`
-            `);
+            .setAuthor(message.author.username, message.author.displayAvatarURL())
+            .setDescription(args.join(' '));
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

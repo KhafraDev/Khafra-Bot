@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, TextChannel, NewsChannel } from 'discord.js';
+import { Message, TextChannel, NewsChannel, Permissions } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 
@@ -10,13 +10,13 @@ export default class extends Command {
                 'Clear messages from a given channel.',
                 '100', '53'
             ], 
-            [ 'MANAGE_MESSAGES' ],
             {
                 name: 'clear',
                 folder: 'Moderation',
                 aliases: [ 'bulkdelete' ],
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.MANAGE_MESSAGES ]
             }
         );
     }
@@ -24,7 +24,7 @@ export default class extends Command {
     async init(message: Message, args: string[]) {
         const toDelete = +args.shift() + 1;
         if(!isValidNumber(toDelete)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 
             Example: \`\`${this.settings.name} 100\`\`
@@ -44,7 +44,7 @@ export default class extends Command {
             \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared and your input message has also been deleted.\`\`
             `);
 
-        return message.channel.send(embed)
-            .then(m => m.delete({ timeout: 5000 }))
+        const m = await message.reply(embed);
+        if(m) setTimeout(() => m.delete().catch(() => {}), 5000);
     }
 }

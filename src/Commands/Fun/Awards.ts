@@ -10,7 +10,6 @@ export default class extends Command {
                 'Calculate how much people have spent on Reddit awards for a post.',
                 'https://www.reddit.com/r/pics/comments/jcjf3d/wouldbe_president_joe_biden_wrote_this_letter_to/'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'award',
                 folder: 'Fun',
@@ -25,7 +24,7 @@ export default class extends Command {
         try {
             url = new URL(args[0]);
         } catch {
-            return message.channel.send(this.Embed.fail('Invalid URL!'));
+            return message.reply(this.Embed.fail('Invalid URL!'));
         }
 
         if(
@@ -33,7 +32,7 @@ export default class extends Command {
             !/^\/r\/(.*)\//.test(url.pathname) ||
             [...url.searchParams.keys()].length !== 0
         ) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Not a valid reddit URL!
             Make sure it's from \`\`https://www.reddit.com\`\` and has no search params (everything after a "?").
             `));
@@ -45,12 +44,12 @@ export default class extends Command {
             const j = await res.json();
             json = j;
         } catch {
-            return message.channel.send(this.Embed.fail('Bad URL, try another one.'));
+            return message.reply(this.Embed.fail('Bad URL, try another one.'));
         }
 
         const post = json[0]?.data?.children?.[0]?.data;
         if(!post) {
-            return message.channel.send(this.Embed.fail('Bad URL, try another one.'));
+            return message.reply(this.Embed.fail('Bad URL, try another one.'));
         }
         const coins = post.all_awardings.reduce(
             (p: number, c: Record<string, number>) => p + (c.coin_price * c.count), 0
@@ -58,7 +57,7 @@ export default class extends Command {
         const price = (coins * (1.99 / 500)).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         const number = post.all_awardings.reduce((p: number, c: { count: number; }) => p + c.count, 0);
 
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Post has been awarded \`\`${number}\`\` times, totaling around \`\`${price}\`\` USD.
         `));
     }

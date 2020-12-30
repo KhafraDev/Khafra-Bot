@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { formatDate } from "../../lib/Utility/Date.js";
-import { npm } from "../../lib/Backend/NPM/npmHandler.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { formatDate } from '../../lib/Utility/Date.js';
+import { npm } from '../../lib/Backend/NPM/npmHandler.js';
 
 export default class extends Command {
     constructor() {
@@ -10,8 +10,7 @@ export default class extends Command {
                 'Search NPM\'s registry for a package',
                 'node-fetch latest', 'typescript'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'npm',
                 folder: 'Utility',
                 aliases: [ 'npmjs' ],
@@ -25,16 +24,16 @@ export default class extends Command {
         try {
             _package = await npm(args[0]);
         } catch(e) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred!
             ${e.message ? '``' + e.message + '``' : ''}
             `));
         }
 
         if('code' in _package) {
-            return message.channel.send(this.Embed.fail('No package with that name was found!'));
+            return message.reply(this.Embed.fail('No package with that name was found!'));
         } else if('error' in _package) {
-            return message.channel.send(this.Embed.fail(`Received error \`\`${_package.error}\`\`.`));
+            return message.reply(this.Embed.fail(`Received error \`\`${_package.error}\`\`.`));
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
@@ -52,6 +51,6 @@ export default class extends Command {
             .addField('**Homepage:**', _package.homepage ?? 'None', true)
             .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

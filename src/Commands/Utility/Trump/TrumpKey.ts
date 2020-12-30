@@ -1,5 +1,5 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {
@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the categories of atrocities committed by Trump!',
                 '',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trumpkey',
                 folder: 'Utility',
                 args: [0, 3]
@@ -18,7 +17,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia
         🔵 – Public Statements / Tweets

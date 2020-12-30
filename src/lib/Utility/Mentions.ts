@@ -1,4 +1,4 @@
-import { Message, SnowflakeUtil } from "discord.js";
+import { Message, SnowflakeUtil } from 'discord.js';
 
 const REGEX: Record<string, [RegExp, number]> = {
     users: [/(<@!)?(\d{17,19})>?/, 2],
@@ -17,7 +17,7 @@ type MentionsOpts = {
 export const getMentions = (
     { mentions }: Message,
     args: string[],
-    { index = 0, type = 'users' }: MentionsOpts = {}
+	{ index = 0, type = 'users' }: MentionsOpts = {}
 ) => {
     const um = mentions[type];
     if(Array.isArray(args) && args.length > 0) {

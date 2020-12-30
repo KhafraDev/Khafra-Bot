@@ -1,9 +1,9 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { titleRegex, titles, parseBible } from "../../lib/Backend/Bible/Bible.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { titleRegex, titles, parseBible } from '../../lib/Backend/Bible/Bible.js';
 
-import { BibleExcerpt } from "../../lib/types/Collections";
+import { BibleExcerpt } from '../../lib/types/Collections';
 
 let updated = false;
 
@@ -18,8 +18,7 @@ export default class extends Command {
                 'Get a King James Bible verse.',
                 'Nahum 3:7', 'Proverbs 25:19'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'bible',
                 folder: 'Fun',
                 args: [0, 2]
@@ -41,27 +40,27 @@ export default class extends Command {
 
         // list all books available to the bot
         if(args[0]?.toLowerCase() === 'list') {
-            return message.channel.send(this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', ')));
+            return message.reply(this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', ')));
         }
 
         const book = args.join(' ').match(titleRegex);
         // no chapters found and there are arguments
         // representing misuse of the command
         if((!book || book.length === 0) && args.length !== 0) { 
-            return message.channel.send(this.Embed.fail('No chapters found!'));
+            return message.reply(this.Embed.fail('No chapters found!'));
         }
 
         // last valid argument
         const last = args.length === 0 ? null : args.slice(book[0].split(' ').length).shift();
         if(last && !/\d+:\d+/.test(last)) { // last exists and follows format `number(s):number(s)`
-            return message.channel.send(this.Embed.fail('Invalid format!'));
+            return message.reply(this.Embed.fail('Invalid format!'));
         }
 
         const [chapter, verse] = last ? last.split(':') : [null, null];
         // if there's no chapter or verse and there are arguments
         // !NaN === true; +null === NaN; +'string' === NaN
         if((!+chapter || !+verse) && args.length !== 0) {
-            return message.channel.send(this.Embed.fail('Missing chapter or verse!'));
+            return message.reply(this.Embed.fail('Missing chapter or verse!'));
         }
 
         const client = await pool.commands.connect();
@@ -76,20 +75,20 @@ export default class extends Command {
             });
 
             if(!item) {
-                return message.channel.send(this.Embed.fail('No verse found!'));
+                return message.reply(this.Embed.fail('No verse found!'));
             }
 
             const embed = this.Embed.success(item.content)
                 .setTitle(`${toUpperCase(book[0])} ${item.chapter}:${item.verse}`);
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         } else {
             const random = await collection.aggregate<BibleExcerpt>([ { $sample: { size: 1 } } ]).toArray();
             const long = Object.entries(titles).filter(([, v]) => v.toLowerCase() === random[0].book.toLowerCase());
             const embed = this.Embed.success(random[0].content)
                 .setTitle(`${long[0][0]} ${random[0].chapter}:${random[0].verse}`);
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         }
     }
 }

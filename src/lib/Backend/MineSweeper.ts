@@ -40,7 +40,7 @@ export const Board = () => {
 
     // choose random spot on board that will not be masked
     // this is the starter hint; denoted by -2
-    while(!!!!!!!!!!!!!false) { // epic style
+    while(!board.flat().some(a => a === 10)) {
         const x = Math.floor(Math.random() * 10)
         const y = Math.floor(Math.random() * 10);
         if(board[x][y] === 0) {

@@ -1,68 +1,72 @@
 import fetch from 'node-fetch';
-import { RedditNew, RedditChildren, RedditNotFound } from './types/BadMeme';
+import { RedditNew, RedditNotFound, RedditPostMin } from './types/BadMeme';
 
-const cached: Map<string, {
-    nsfw: RedditChildren[],
-    sfw: RedditChildren[]
-}> = new Map();
+interface RedditCache {
+    posts: RedditPostMin[],
+    updated: number
+}
 
-const nsfwSubreddits: string[] = [];
+const cache = new Map<string, RedditCache>();
 
-export const reddit = async (subreddit = 'dankmemes', nsfw = false, rr = false): Promise<RedditChildren> => {
+const retrieve = async (subreddit: string): Promise<RedditCache> => {
     subreddit = subreddit.toLowerCase();
-    if(!nsfw && nsfwSubreddits.includes(subreddit)) {
-        return null;
+    if(cache.has(subreddit)) {
+        return cache.get(subreddit)!;
     }
 
-    const posts = cached.get(subreddit);
-    if(!nsfw) { // not allowing nsfw content
-        if(posts?.sfw.length > 0) { // sfw posts are cached
-            const first = posts.sfw.shift();
-            posts.sfw.splice(posts.sfw.indexOf(first), 1);
-            cached.set(subreddit, posts);
-            return first;
-        } else if(rr) {
-            return null;
-        }
-    } else {
-        const all = [...(posts?.nsfw ?? []), ...(posts?.sfw ?? [])];
-        if(all.length > 0) {
-            const random = all[Math.floor(Math.random() * all.length)];
-            posts[random.data.over_18 ? 'nsfw' : 'sfw'].splice(posts[random.data.over_18 ? 'nsfw' : 'sfw'].indexOf(random), 1);
-            cached.set(subreddit, posts);
-            return random;
-        } else if(rr) {
-            return null;
-        }
-    }
+    try {
+        const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=100`);
+        const json = await res.json() as RedditNew | RedditNotFound;
 
-    const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=100`);
-    const json = await res.json() as RedditNew | RedditNotFound;
-    if('error' in json) {
-        return Promise.reject(json);
-    } else if(json.data.children.every(p => p.data.over_18)) {
-        nsfwSubreddits.push(subreddit);
-    }
-
-    const p = { 
-        nsfw: posts?.nsfw ? [...posts.nsfw] : Array<RedditChildren>(), 
-        sfw: posts?.sfw ? [...posts.sfw] : Array<RedditChildren>() 
-    }
-
-    json.data.children.forEach(v => {
-        if(v.data.thumbnail === 'self' || 
-           !/(.gif|.png|.jpeg|.jpg)$/.test(v.data.url)
-        ) {
-            return;
-        }
-
-        if(v.data.over_18) {
-            p.nsfw.push(v);
+        if('error' in json) {
+            return Promise.reject(json.message);
         } else {
-            p.sfw.push(v);
+            const posts = json.data.children;
+            cache.set(subreddit, {
+                posts: posts.map(p => ({
+                    over_18: p.data.over_18,
+                    thumbnail: p.data.thumbnail,
+                    url: p.data.url,
+                    id: p.data.id
+                })),
+                updated: Date.now()
+            });
+            return cache.get(subreddit)!;
+        }
+    } catch(e) {
+        return Promise.reject(e.toString());
+    }
+}
+
+export const reddit = async (subreddit = 'dankmemes', allowNSFW = false) => {
+    let posts: RedditCache;
+    try {
+        posts = await retrieve(subreddit);
+    } catch(e) {
+        return Promise.reject(e);
+    }
+
+    const filtered = posts.posts.filter(p => 
+        (allowNSFW ? true : !p.over_18) &&
+        p.thumbnail !== 'self' &&
+        /(.gif|.png|.jpeg|.jpg)$/.test(p.url)
+    );
+
+    const first = filtered.shift();
+    if(!first) return Promise.reject('No posts found!');
+    
+    cache.set(subreddit.toLowerCase(), {
+        posts: posts.posts.filter(p => p.id !== first.id),
+        updated: Date.now()
+    });
+    return first;
+}
+
+setInterval(() => {
+    const now = Date.now();
+    cache.forEach((v, k) => {
+        if(now - v.updated > 60 * 1000 * 10) { // 10 mins || 600,000 ms
+            cache.delete(k);
         }
     });
-
-    cached.set(subreddit, p);
-    return reddit(subreddit, nsfw, true);
-}
+}, 60 * 1000 * 10);

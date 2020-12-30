@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { DiscordDiscoverResults } from "../../lib/Backend/Discord Discover/types/DiscordDiscover";
-import { DiscordDiscover } from "../../lib/Backend/Discord Discover/DiscordDiscover.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { DiscordDiscoverResults } from '../../lib/Backend/Discord Discover/types/DiscordDiscover';
+import { DiscordDiscover } from '../../lib/Backend/Discord Discover/DiscordDiscover.js';
 
 export default class extends Command {
     constructor() {
@@ -10,8 +10,7 @@ export default class extends Command {
                 'Search for Discord guilds.',
                 'Synergism', 'MineCraft'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'discover',
                 folder: 'Server',
                 args: [1],
@@ -26,11 +25,11 @@ export default class extends Command {
             results = await DiscordDiscover(args.join(' '));
         } catch(e) {
             this.logger.log(`${this.settings.name}: ${e}`);
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         if(results.hits.length === 0) {
-            return message.channel.send(this.Embed.fail('No results found!'));
+            return message.reply(this.Embed.fail('No results found!'));
         }
 
         const guild = results.hits.shift();
@@ -49,6 +48,6 @@ export default class extends Command {
                 { name: '**Vanity URL:**',    value: guild.vanity_url_code ?? 'None',  inline: true }
             );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

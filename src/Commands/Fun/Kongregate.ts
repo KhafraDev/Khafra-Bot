@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 let changeRooms: (num?: number) => void;
-if(process.argv[process.argv.length-1] !== '--dev') {
+if(process.env.__KONG_USERNAME && process.env.__KONG_PASSWORD) {
     ({ changeRooms } = await import('../../lib/Backend/Kongregate.js'));
 }
 
@@ -14,7 +14,6 @@ export default class extends Command {
                 'Change the Chatroom the Kongregate Relay is currently in.',
                 '3', '2', '1'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'kongroom',
                 folder: 'Fun',
@@ -26,13 +25,13 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!isValidNumber(+args[0])) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         } else if(!changeRooms) {
-            return message.channel.send(this.Embed.fail('Function wasn\'t imported.'));
+            return message.reply(this.Embed.fail('Function wasn\'t imported.'));
         }
 
         changeRooms(+args[0]);
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Relay bot is now in chatroom #${args[0]}!
         `));
     }

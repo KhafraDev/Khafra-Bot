@@ -2,7 +2,7 @@ import fetch from 'node-fetch';
 import { ViewedArticle } from './types/NYTimes';
 
 const cache = {
-    viewed: null as ViewedArticle
+    viewed: null as ViewedArticle | null
 }
 
 export const nytimes = {

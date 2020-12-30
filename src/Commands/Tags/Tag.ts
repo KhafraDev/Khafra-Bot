@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Tags } from "../../lib/types/Collections";
-import { KhafraClient } from "../../Bot/KhafraBot.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Tags } from '../../lib/types/Collections';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 export default class extends Command {
     constructor() {
@@ -11,8 +11,7 @@ export default class extends Command {
                 'Tags: retrieve a tag or perform an action with one (edit, delete, etc.)!',
                 'first', 'delete first', 'edit first This is actually the second tag.'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tags',
                 folder: 'Tags',
                 args: [1],
@@ -48,11 +47,11 @@ export default class extends Command {
         });
 
         if(!tag) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No tag found! Create it with \`\`tag create ${tagCmdOrName.slice(0, 25)} My very own tag!\`\`!
             `));
         }
 
-        return message.channel.send(this.Embed.success(tag.content));
+        return message.reply(this.Embed.success(tag.content));
     }
 }

@@ -1,9 +1,10 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
 import crypto from 'crypto';
 import { promisify } from 'util';
 
 const randInt = <(min: number, max: number) => Promise<number>> promisify(crypto.randomInt);
+const MAX_DIFF = 2 ** 48 - 1;
 
 export default class extends Command {
     constructor() {
@@ -12,8 +13,7 @@ export default class extends Command {
                 'Generate a random number avoiding modulo bias!',
                 '100 250', '500'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'randomnum',
                 aliases: ['randnum', 'randomint', 'randint'],
                 folder: 'Fun',
@@ -24,7 +24,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!('randomInt' in crypto)) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             The \`\`node\`\` version the bot is running on is too old!
             `));
         }
@@ -34,21 +34,21 @@ export default class extends Command {
         const min = +minStr;
 
         if(
-            max - min > 281474976710655 || // difference set by function; difference can't be greater than this
+            max - min > MAX_DIFF ||        // difference set by function; difference can't be greater than this
             min < 0 || max < 0 ||          // negative numbers aren't allowed
             min === max ||                 // no range
             max < min ||                   // min is greater than max
             !Number.isSafeInteger(min) || !Number.isSafeInteger(max)
         ) {
-            return message.channel.send(this.Embed.generic(
+            return message.reply(this.Embed.generic(
                 'Invalid number(s) provided! Numbers ``cannot equal`` one another ' + 
-                'and the difference between the two ``cannot be greater`` than 281,474,976,710,655!'
+                'and the difference between the two ``cannot be greater`` than 281,474,976,710,655 (2^48-1)!'
             ));
         }
 
         const num = await randInt(min, max);
        
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Your number is \`\`${num}\`\`!
         `));
     }

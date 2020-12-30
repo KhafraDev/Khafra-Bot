@@ -1,5 +1,5 @@
 import fetch, { Headers } from 'node-fetch';
-import { PocketGetResults, PocketRateLimit } from './types/Pocket';
+import type { PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
     'x-limit-user-limit':     -1,   // Current rate limit enforced per user
@@ -13,9 +13,9 @@ const limits: PocketRateLimit = {
 class Pocket {
     consumer_key = process.env.POCKET_CONSUMER_KEY;
 
-    redirect_uri: string;
-    request_token: string;
-    access_token: string;
+    redirect_uri?: string;
+    request_token?: string;
+    access_token?: string;
     username?: string;
 
     constructor(user?: { request_token: string, access_token: string, username: string }) {

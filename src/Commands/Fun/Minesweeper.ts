@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { Board } from "../../lib/Backend/MineSweeper.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { Board } from '../../lib/Backend/MineSweeper.js';
 
 export default class extends Command {
     constructor() {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Play a game of MineSweeper!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'minesweeper',
                 folder: 'Fun',
                 args: [0, 0]
@@ -20,6 +19,6 @@ export default class extends Command {
 
     init(message: Message) {
         const board = Board();
-        return message.channel.send(this.Embed.success(board));
+        return message.reply(this.Embed.success(board));
     }
 }

@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Message, MessageReaction, User } from "discord.js";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
+import { Command } from '../../Structures/Command.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Message, MessageReaction, User, Permissions } from 'discord.js';
+import { Pocket } from '../../lib/Backend/Pocket/Pocket.js';
 
 export default class extends Command {
     constructor() {
@@ -10,11 +10,11 @@ export default class extends Command {
                 'Pocket: Start the process of authorizing your Pocket account.',
                 ''
             ],
-            [ 'ADD_REACTIONS', 'MANAGE_EMOJIS' ],
-            {
+			{
                 name: 'pocketinit',
                 folder: 'Pocket',
-                args: [0, 0]
+                args: [0, 0],
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS ]
             }
         );
     }
@@ -29,7 +29,7 @@ export default class extends Command {
         try {
             await pocket.requestCode()
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const embed = this.Embed.success(`
@@ -40,7 +40,7 @@ export default class extends Command {
         `)
         .setTitle('Pocket');
 
-        const msg = await message.channel.send(embed);
+        const msg = await message.reply(embed);
         if(!msg) {
             return;
         }

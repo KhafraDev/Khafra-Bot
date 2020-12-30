@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, TextChannel } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, TextChannel } from 'discord.js';
 import { readFile } from 'fs/promises';
-import { join } from "path";
+import { join } from 'path';
 import { randomInt } from 'crypto';
 import { promisify } from 'util';
 
@@ -21,8 +21,7 @@ export default class extends Command {
                 'The most funny and epic jokes on the planet: Yo Mama jokes!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'yomama',
                 folder: 'Fun',
                 args: [0, 0]
@@ -33,6 +32,6 @@ export default class extends Command {
     async init(message: Message) {
         const all = (message.channel as TextChannel).nsfw ? [...jokes.nsfw, ...jokes.sfw] : [...jokes.sfw];
         const epicfunnyjoke = all[await rand(all.length)];
-        return message.channel.send(this.Embed.success(epicfunnyjoke));
+        return message.reply(this.Embed.success(epicfunnyjoke));
     }
 }

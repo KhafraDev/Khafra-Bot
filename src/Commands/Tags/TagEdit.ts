@@ -1,7 +1,7 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
-import { pool } from "../../Structures/Database/Mongo.js";
+import { pool } from '../../Structures/Database/Mongo.js';
 
 export default class extends Command {
     constructor() {
@@ -10,8 +10,7 @@ export default class extends Command {
                 'Tags: edit a tag you own.',
                 'hello Goodbye!'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsedit',
                 folder: 'Tags',
                 args: [2],
@@ -39,11 +38,11 @@ export default class extends Command {
         );
 
         if(u.modifiedCount === 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Tag wasn't edited. This can happen if you don't own the tag or if the tag is from another guild.
             `));
         }
 
-        return message.channel.send(this.Embed.success('Edited the tag!'));
+        return message.reply(this.Embed.success('Edited the tag!'));
     }
 }

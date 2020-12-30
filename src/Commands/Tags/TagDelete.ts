@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
 
 export default class extends Command {
     constructor() {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Tags: delete a tag you own.',
                 'hello', 'mytag'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsdelete',
                 folder: 'Tags',
                 args: [1, 1],
@@ -31,11 +30,11 @@ export default class extends Command {
         });
 
         if(!d || d.lastErrorObject?.n === 0 || !d.value) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Tag wasn't deleted. This can happen if you don't own the tag or if the tag is from another guild.
             `));
         }
 
-        return message.channel.send(this.Embed.success('Deleted the tag! Re-create it with ``tags create``!'));
+        return message.reply(this.Embed.success('Deleted the tag! Re-create it with ``tags create``!'));
     }
 }

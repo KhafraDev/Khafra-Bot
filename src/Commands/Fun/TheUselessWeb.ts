@@ -88,8 +88,7 @@ export default class extends Command {
                 'Visit a useless site!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theuselessweb',
                 folder: 'Fun',
                 args: [0, 0],
@@ -100,6 +99,6 @@ export default class extends Command {
 
     async init(message: Message) {
         const random = list[Math.floor(Math.random() * list.length)];
-        return message.channel.send(this.Embed.success(random));
+        return message.reply(this.Embed.success(random));
     }
 }

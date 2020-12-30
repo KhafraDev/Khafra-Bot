@@ -1,5 +1,5 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {
@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the number of members in a guild!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'members',
                 folder: 'Server',
                 args: [0, 0],
@@ -20,7 +19,7 @@ export default class extends Command {
     }
 
     init(message: Message) {
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
         `));
     }

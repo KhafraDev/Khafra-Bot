@@ -1,11 +1,11 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Pocket } from "../../lib/Backend/Pocket/Pocket.js";
-import { PocketAddResults } from "../../lib/Backend/Pocket/types/Pocket";
-import { URL } from "url";
-import { PocketUser } from "../../lib/types/Collections";
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Pocket } from '../../lib/Backend/Pocket/Pocket.js';
+import { PocketAddResults } from '../../lib/Backend/Pocket/types/Pocket';
+import { URL } from 'url';
+import { PocketUser } from '../../lib/types/Collections';
 
 export default class extends Command {
     constructor() {
@@ -14,8 +14,7 @@ export default class extends Command {
                 'Pocket: add an article, video, or image to your saved items!',
                 'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films The 21st Century’s 100 greatest films'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'pocketadd',
                 folder: 'Pocket',
                 args: [1]
@@ -29,7 +28,7 @@ export default class extends Command {
 
         const user = await collection.findOne<PocketUser>({ id: message.author.id });
         if(!user) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             You haven't set-up Pocket integration!
 
             Try using the \`\`pocket\`\` command for more information.
@@ -40,7 +39,7 @@ export default class extends Command {
         try {
             url = new URL(args[0]);
         } catch {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         }
 
         let added: PocketAddResults;
@@ -48,7 +47,7 @@ export default class extends Command {
             const pocket = new Pocket(user);
             added = await pocket.add(url.toString(), args.length > 1 ? args.slice(1).join(' ') : null)
         } catch(e) {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
             
         }
 
@@ -66,6 +65,6 @@ export default class extends Command {
             .setTimestamp(new Date(added.item.date_published))
             .setFooter('Published');
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

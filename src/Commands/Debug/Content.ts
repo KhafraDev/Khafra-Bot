@@ -7,19 +7,18 @@ export default class extends Command {
             [
                 'Get the content of a message stringified (guild emojis, etc.).',
                 '<guildemoji:1294020340213912>', 'testing stuff?'
-            ], 
-            [ /* No extra perms needed */ ],
+            ],
             {
                 name: 'debug:content',
-                folder: 'Fun',
+                folder: 'Debug',
                 args: [1]
             }
         );
     }
 
     async init(message: Message) {
-        return message.channel.send(this.Embed.success(`
-        \`\`\`${message.content}\`\`\`
-        `));
+        return message.reply(message.content, {
+            embed: this.Embed.success(`\`\`\`${message.content}\`\`\``),
+        });
     }
 }

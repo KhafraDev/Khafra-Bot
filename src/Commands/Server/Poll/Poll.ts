@@ -1,75 +1,92 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, TextChannel, PermissionString } from "discord.js";
-import twemoji from "twemoji-parser"; // cjs module
+import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import twemoji from 'twemoji-parser'; // cjs module
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { isText } from '../../../lib/types/Discord.js.js';
+
+const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
+const basic = [ 
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.ADD_REACTIONS,
+    Permissions.FLAGS.VIEW_CHANNEL,
+    Permissions.FLAGS.EMBED_LINKS
+];
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Poll', 
-                `705894525473784303 👍 👎
-"Option 1: Yes
-Option 2: No."`
+                'Create a poll in a channel.', 
+                '705894525473784303'
             ],
-            [ 'ADD_REACTIONS' ],
-            {
+			{
                 name: 'poll',
                 folder: 'Server',
-                args: [4],
-                guildOnly: true
+                args: [1, 1],
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }
         );
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) && !this.isBotOwner(message.author.id)) {
-            return message.channel.send(this.Embed.missing_perms(true));
+        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) 
+           && !this.isBotOwner(message.author.id)
+        ) {
+            return message.reply(this.Embed.missing_perms(true));
         }
 
-        let channel: TextChannel = message.mentions.channels.first();
-        try {
-            if(!channel) {
-                channel = await message.client.channels.fetch(args[0]) as TextChannel;
-            }
-        } catch {
-            return message.channel.send(this.Embed.fail('Invalid channel ID!'));
+        let idOrChannel = getMentions(message, args, { type: 'channels' });
+        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
+            idOrChannel = message.channel; 
         }
 
-        const perms = message.guild.me.permissionsIn(channel);
-        const required = [ 'SEND_MESSAGES', 'ADD_REACTIONS', 'VIEW_CHANNEL', 'EMBED_LINKS' ] as PermissionString[];
-        
-        if(channel.type !== 'text') {
-            return message.channel.send(this.Embed.fail('Channel must be a text channel!'));
-        } else if(!perms.has(required)) {
-            return message.channel.send(this.Embed.fail(`
-            One of us doesn't have the needed permissions!
-    
-            Both of us must have \`\`${required.join(', ')}\`\` permissions in ${channel} to use this command!
+        const channel = message.guild.channels.resolve(idOrChannel);
+        if(!channel) {
+            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
+            return message.reply(this.Embed.fail(`
+            Channel isn't fetched or the ID is incorrect.
             `));
+        } else if(!isText(channel)) {
+            return message.reply(this.Embed.fail(`Polls can only be sent to text or news channels.`));
+        } else if(!channel.permissionsFor(message.guild.me).has(basic)) {
+            return message.reply(this.Embed.missing_perms(false, basic));
         }
 
-        const msg = args.join(' ').match(/(?<=").*?(?=")/gs); // match text inside of quotes and not the quotes
-        if(!msg || msg.length !== 1) {
-            return message.channel.send(this.Embed.fail('Invalid poll message!'));
-        }
+        await message.reply(this.Embed.success(`
+        Setting up a poll now!
 
-        const toBeParsed = args.slice(1).join(' ').match(/^(.*?)"/)?.[1].trim();
-        if(!toBeParsed) {
-            return message.channel.send(this.Embed.fail('Invalid emojis given!'));
-        }
+        Enter all of the options in separate messages in the form \`\`[emoji] [text]\`\` to get started.
+        Once you're done, post \`\`stop\`\` (it will stop after 5 options automatically).
+        `));
+        
+        const lines: { emoji: string, text: string }[] = [];
+        const filter = (m: Message) => twemoji.parse(m.content).length !== 0 
+                                       || m.content.split(/\s+/).length <= 1;
+        const collector = message.channel.createMessageCollector(filter, { max: 5, time: 60 * 1000 * 3 });
+        collector.on('collect', (m: Message) => {
+            if(m.content.toLowerCase() === 'stop') {
+                return collector.stop('1');
+            }
 
-        const emojis = twemoji.parse(toBeParsed).map(({ text }) => text);
-        if(emojis.length < 2) {
-            return message.channel.send(this.Embed.fail('A poll must have at least 2 options to choose from!'));
-        } else if(emojis.length > 5) {
-            return message.channel.send(this.Embed.fail('A poll can have a max of 5 options!'));
-        }
+            const parsed = twemoji.parse(m.content);
+            const text = m.content.replace(new RegExp(`^${parsed[0].text}`), '');
+            
+            lines.push({ 
+                emoji: text === m.content ? emojis[Math.floor(Math.random() * emojis.length)] : parsed[0].text,
+                text
+            });
+        })
+        collector.on('end', async () => {
+            if(lines.length === 0) return;
 
-        const embed = this.Embed.success(msg.shift());
-        const sent = await channel.send(embed);
+            const m = await channel.send(this.Embed.success(
+                lines.map(l => `${l.emoji}: ${l.text}`).join('\n')
+            ));
 
-        for(const emoji of emojis) {
-            await sent.react(emoji);
-        }
+            for(const { emoji } of lines) {
+                await m.react(emoji);
+            }
+        });
     }
 }

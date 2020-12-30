@@ -1,7 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
-
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 export default class extends Command {
     constructor() {
@@ -10,8 +9,7 @@ export default class extends Command {
                 'Generate free BTC!',
                 '1000',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'btc-generator',
                 folder: 'Fun',
                 aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ],
@@ -26,7 +24,7 @@ export default class extends Command {
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
-        const msg = await message.channel.send(embed);
+        const msg = await message.reply(embed);
         if(!msg) {
             return;
         }

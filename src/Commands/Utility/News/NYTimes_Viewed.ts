@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { nytimes } from "../../../lib/Backend/NYTimes/NYTimes.js";
-import { ViewedArticle } from "../../../lib/Backend/NYTimes/types/NYTimes";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { nytimes } from '../../../lib/Backend/NYTimes/NYTimes.js';
+import { ViewedArticle } from '../../../lib/Backend/NYTimes/types/NYTimes';
 
 
 export default class extends Command {
@@ -11,8 +11,7 @@ export default class extends Command {
                 'NYTimes: get the most viewed articles from today.',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'nytimes',
                 folder: 'News',
                 args: [0, 0]
@@ -25,7 +24,7 @@ export default class extends Command {
         try {
             res = await nytimes.viewed();
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const description: string[] = [];
@@ -43,6 +42,6 @@ export default class extends Command {
             .setDescription(description.join(''))
             .setTitle(`Top ${description.length} articles today!`);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

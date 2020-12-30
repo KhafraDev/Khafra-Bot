@@ -13,8 +13,7 @@ export default class extends Command {
                 '100',
                 '20 [default is 20]'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'warnlimit',
                 aliases: [ 'limit', 'setwarn' ],
                 folder: 'Moderation',
@@ -28,9 +27,9 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         } else if(!isValidNumber(Number(args[0]))) {
-            return message.channel.send(this.Embed.generic('Invalid **number** set for number of warning points!'));
+            return message.reply(this.Embed.generic('Invalid **number** set for number of warning points!'));
         }
 
         const client = await pool.moderation.connect();
@@ -46,8 +45,7 @@ export default class extends Command {
         ) as FindAndModifyWriteOpResultObject<Warnings>;
 
         const old = warns.value?.limit ?? 0;
-
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         Changed the warning limit! It was ${old} points (0 being not added) and it is now ${args[0]} points.
         `));
     }

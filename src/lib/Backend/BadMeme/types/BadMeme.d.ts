@@ -152,4 +152,10 @@ export interface RedditNew {
         children: RedditChildren[]
     };
 }
-export declare const reddit: (subreddit?: string) => Promise<RedditNotFound | RedditNew>;
+
+export interface RedditPostMin {
+    over_18: boolean
+    thumbnail: string,
+    url: string,
+    id: string   
+}

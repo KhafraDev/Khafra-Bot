@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { Snowflake } from 'discord.js';
 
 export interface BibleExcerpt {
     _id: ObjectId
@@ -6,6 +7,16 @@ export interface BibleExcerpt {
     chapter: number
     verse: number
     content: string
+}
+
+export interface QuranExcerpt {
+    _id: ObjectId
+    title: string
+    verses: {
+        book: number
+        verse: number
+        content: string
+    }[]
 }
 
 export interface Insights {
@@ -26,10 +37,13 @@ export interface Warnings {
     limit: number
     users: {
         [key: string]: {
-            points: number
-            reason: string
-            timestamp: number
-        }[]
+            active: number,
+            inactive: number,
+            warns: {
+                reason: string,
+                points: number
+            }[]
+        }
     }
 }
 
@@ -56,26 +70,17 @@ export interface GuildSettings {
         command: string
         message?: string
     }[]
-    disabledChannel?: {
-        main: string
-        names: string[]
-        id: string
-    }[]
-    disabledRole?: {
-        main: string
-        names: string[]
-        id: string
-    }[]
-    disabledUser?: {
-        main: string
-        names: string[]
-        id: string
-    }[]
-    disabledGuild?: {
-        main: string
-        names: string[]
+    disabledGuild?: string[]
+    enabledGuild?: {
+        type: 'channel' | 'role',
+        id: Snowflake
     }[]
     welcomeChannel?: string
+    modActionLogChannel?: string
+    rules?: {
+        channel: string
+        rules: { index: number, rule: string }[] 
+    }
 }
 
 export interface Tags {

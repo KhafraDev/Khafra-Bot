@@ -1,9 +1,9 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { join } from "path";
-import { readdirSync } from "fs";
-import { readFile } from "fs/promises";
-import { realShuffle } from "../../lib/Utility/Array.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { join } from 'path';
+import { readdirSync } from 'fs';
+import { readFile } from 'fs/promises';
+import { realShuffle } from '../../lib/Utility/Array.js';
 
 const base = join(process.cwd(), 'assets/Hangman');
 const lists = readdirSync(base).map(f => f.replace('.txt', ''));
@@ -41,8 +41,7 @@ export default class extends Command {
                 'Play a game of Hangman!',
                 'presidents', ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'hangman',
                 folder: 'Fun',
                 args: [0, 1]
@@ -52,7 +51,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(games.includes(message.author.id)) {
-            return message.channel.send(this.Embed.fail('You are already in a game!'));
+            return message.reply(this.Embed.fail('You are already in a game!'));
         }
 
         const guesses: string[] = [];
@@ -69,7 +68,7 @@ export default class extends Command {
         const split = text.split(/\n\r|\n|\r/g).filter(l => !l.startsWith('#') && l.length > 0);
         const word = (await realShuffle(split)).shift();
 
-        const sent = await message.channel.send(
+        const sent = await message.reply(
             this.Embed.success(hide(word, guesses)).setImage(assets[wrong])
         );
 

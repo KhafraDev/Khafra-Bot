@@ -1,8 +1,8 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { pool } from "../../../Structures/Database/Mongo.js";
-import { OnionArticle } from "../../../lib/Backend/TheOnion/TheOnion.js";
-import { updating } from "./TheOnionNew.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { pool } from '../../../Structures/Database/Mongo.js';
+import { OnionArticle } from '../../../lib/Backend/TheOnion/TheOnion.js';
+import { updating } from './TheOnionNew.js';
 
 export default class extends Command {
     constructor() {
@@ -11,8 +11,7 @@ export default class extends Command {
                 'Fetch a random article from TheOnion!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'theonion',
                 folder: 'News',
                 args: [0, 0],
@@ -23,7 +22,7 @@ export default class extends Command {
     
     async init(message: Message) {
         if(updating) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Articles are being fetched for the first time or are being updated.
 
             Please give it a few minutes and try again!
@@ -35,12 +34,12 @@ export default class extends Command {
 
         const random = await collection.aggregate<OnionArticle>([ { $sample: { size: 1 } } ]).next();
         if(!random) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             No Onion articles in database, please ask my owner to run \`\`theonionfetch\`\`!
             `));
         }
         
-        return message.channel.send(this.Embed.success(`
+        return message.reply(this.Embed.success(`
         [${random.title}](${random.href})
         `).setTimestamp(random.date));
     }

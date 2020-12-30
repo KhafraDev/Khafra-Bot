@@ -1,7 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { reddit } from "../../lib/Backend/BadMeme/BadMeme.js";
-import { RedditChildren } from "../../lib/Backend/BadMeme/types/BadMeme";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { reddit } from '../../lib/Backend/BadMeme/BadMeme.js';
+import { RedditPostMin } from '../../lib/Backend/BadMeme/types/BadMeme';
+import { isDM } from '../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -10,8 +11,7 @@ export default class extends Command {
                 'Get a bad meme! Idea from NotSoBot.',
                 'thesimppolice', ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'badmeme',
                 folder: 'Fun',
                 args: [0, 1]
@@ -20,22 +20,19 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let res: RedditChildren;
+        let res: RedditPostMin;
         try {
-            res = await reddit(args[0] ?? 'dankmemes', message.channel.type === 'dm' ? true : message.channel.nsfw);
+            res = await reddit(
+                args[0] ?? 'dankmemes', 
+                isDM(message.channel) ? true : message.channel.nsfw
+            );
         } catch(e) {
-            return message.channel.send(this.Embed.fail(e.message ?? 'An unexpected error occurred!'));
+            return message.reply(this.Embed.fail(`
+            ${e.toString()}
+            NSFW images will only work if the channel is marked \`\`nsfw\`\`!
+            `));
         }
 
-        if(!res) {
-            return message.channel.send(this.Embed.fail(
-                'No images found! NSFW images will only work if the channel is marked ``nsfw``!'
-            ));
-        }
-
-        const embed = this.Embed.success()
-            .setImage(res.data.url);
-
-        return message.channel.send(embed);
+        return message.reply(this.Embed.success().setImage(res.url));
     }
 }

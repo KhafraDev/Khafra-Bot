@@ -1,6 +1,6 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, Collection, GuildMember } from "discord.js";
-import { isValidNumber } from "../../lib/Utility/Valid/Number.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, Collection, GuildMember } from 'discord.js';
+import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 
 
 export default class extends Command {
@@ -10,8 +10,7 @@ export default class extends Command {
                 'Get all users with a certain discriminator!',
                 '1337', '0001'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'discrim',
                 folder: 'Server',
                 aliases: [ 'discriminator' ],
@@ -23,14 +22,14 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!isValidNumber(+args[0])) {
-            return message.channel.send(this.Embed.generic('Argument isn\'t a valid integer!'));
+            return message.reply(this.Embed.generic('Argument isn\'t a valid integer!'));
         }
 
         let members: Collection<string, GuildMember>;
         try {
             members = await message.guild.members.fetch();
         } catch {
-            return message.channel.send(this.Embed.fail('An error occurred fetching members!'));
+            return message.reply(this.Embed.fail('An error occurred fetching members!'));
         }
 
         const discrims = members
@@ -41,7 +40,7 @@ export default class extends Command {
         try {
             cached = await message.guild.members.fetch({ user: discrims.map(member => member.id) });
         } catch {
-            return message.channel.send(this.Embed.fail('An error occurred fetching users!'));
+            return message.reply(this.Embed.fail('An error occurred fetching users!'));
         }
 
         const formatted = Array.from(cached.values()).map(member => `\`\`${member.user.tag}\`\``);
@@ -53,6 +52,6 @@ export default class extends Command {
             .setFooter('Requested by ' + message.author.tag, message.author.displayAvatarURL())
             .setTimestamp();
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

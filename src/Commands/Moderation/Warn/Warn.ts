@@ -1,10 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
-import { FindAndModifyWriteOpResultObject } from 'mongodb';
-import { Warnings } from '../../../lib/types/Collections.js';
+import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -14,91 +14,125 @@ export default class extends Command {
                 '@user 5 for trolling',
                 '1234567891234567 5'
             ],
-            [ 'KICK_MEMBERS' ],
-            {
+			{
                 name: 'warn',
                 folder: 'Moderation',
                 args: [2],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
             }
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, args: string[], settings: GuildSettings) {
         const idOrUser = getMentions(message, args);
-        if(!isValidNumber(+args[1], { allowNegative: true })) {
-            return message.channel.send(this.Embed.generic('Invalid **number** of points!'));
+        if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
+            return message.reply(this.Embed.fail(`
+            Invalid number of points given.
+
+            To remove warnings, use \`\`clearwarning\`\` (\`\`help clearwarning\`\` for example usage).
+            `));
         } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.channel.send(this.Embed.generic('Invalid user ID!'));
+            return message.reply(this.Embed.fail('Invalid user ID!'));
         }
 
-        let member = message.guild.member(idOrUser) ?? message.guild.members.fetch(idOrUser);
+        let member = message.guild.members.resolve(idOrUser) ?? message.guild.members.fetch(idOrUser);
         if(member instanceof Promise) {
             try {
                 member = await member;
             } catch {
-                return message.channel.send(this.Embed.fail(`
+                return message.reply(this.Embed.fail(`
                 ${member} couldn't be fetched!
                 `));
             }
         }
 
         if(!member.kickable) {
-            return message.channel.send(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
+            return message.reply(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
         }
 
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
-        const warns = await collection.findOneAndUpdate(
-            { id: message.guild.id },
-            {
-                $push: {
-                    [`users.${member.id}`]: {
-                        points: Number(args[1]),
-                        reason: args.slice(2).join(' '),
-                        timestamp: Date.now()
-                    }
-                },
-                $setOnInsert: {
-                    limit: 20
-                }
-            },
-            { returnOriginal: true, upsert: true }
-        ) as FindAndModifyWriteOpResultObject<Warnings>;
+        const warns = await collection.findOne<Warnings>({ 
+            id: message.guild.id 
+        });
 
-        // value is null when the doc is inserted for the first time
-        const total = (warns.value?.users?.[member.id]?.reduce((p, c) => p + c.points, 0) ?? 0) + Number(args[1]);
-        const limit = warns.value?.limit ?? 20;
-        const shouldKick = total >= limit;
+        const user = warns?.users?.[member.id];
+        const active = (user?.active ?? 0) + Number(args[1]);
+        const limit = (warns?.limit ?? 20);
+
+        const shouldKick = active >= limit;
+
+        /** Points now active for user */
+        const nowActive = active % limit;
+        /** Points now inactive for user */
+        const nowInactive = shouldKick
+            ? active - nowActive
+            : (user?.inactive ?? 0);
+
+        if(!warns) {
+            await collection.insertOne({
+                id: message.guild.id,
+                limit: 20,
+                users: {
+                    [member.id]: {
+                        active: nowActive,
+                        inactive: (user?.inactive ?? 0) + nowInactive,
+                        warns: [{
+                            reason: args.slice(2).join(' '),
+                            points: Number(args[1])
+                        }]
+                    }
+                }
+            });
+        } else { // collection for guild does exist
+            const w = (user?.warns ?? []).concat({ reason: args.slice(2).join(' '), points: Number(args[1]) });
+            await collection.updateOne(
+                { id: message.guild.id },
+                {
+                    $set: {
+                        [`users.${member.id}`]: {
+                            active: nowActive,
+                            inactive: (user?.inactive ?? 0) + nowInactive,
+                            warns: w
+                        }
+                    }
+                }
+            );
+        }
 
         if(shouldKick) {
             try {
-                await member.kick(`Khafra-Bot exceeded ${limit} warning points!`);
+                await member.kick(`Khafra-Bot: exceeded warning limit; kicked automatically.`);
             } catch {
-                return message.channel.send(this.Embed.fail(`
-                An error occurred trying to kick ${member}.
-                `));
+                return message.reply(this.Embed.fail(`Couldn't kick ${member}.`));
             }
 
-            await collection.findOneAndUpdate(
-                { id: message.guild.id },
-                {
-                    $unset: {
-                        [`users.${member.id}`]: ''
-                    }
-                },
-                { returnOriginal: true, upsert: true }
-            );
-
-            return message.channel.send(this.Embed.fail(`
-            Kicked ${member} from the server for reaching the max number of warnings (${total}/${limit})!
+            return message.reply(this.Embed.success(`
+            ${member} was automatically kicked from the server for reaching ${limit} warning points.
             `));
         } else {
-            return message.channel.send(this.Embed.success(`
-            ${member} has been given ${args[1]} warning points.
-
-            They now have ${total}/${limit} warning points before they will be automatically kicked.
+            await message.reply(this.Embed.success(`
+            Gave ${member} ${Number(args[1])} warning points.
             `));
+        }
+
+        if(typeof settings?.modActionLogChannel === 'string') {
+            const channel = message.guild.channels.cache.get(settings.modActionLogChannel);
+            if(!isText(channel)) {
+                return;
+            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
+                return;
+            }
+
+            const reason = args.slice(2).join(' ');
+            return channel.send(this.Embed.success(`
+            **Offender:** ${idOrUser}
+            **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+            **Staff:** ${message.member}
+            **Points:** ${args[1]} warning points given.
+            **Kicked:** ${shouldKick ? 'Yes' : 'No'} (${active}/${limit} total points).
+            `).setTitle('Member Warned'));
         }
     }
 }

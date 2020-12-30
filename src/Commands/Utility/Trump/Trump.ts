@@ -1,5 +1,5 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, MessageEmbed, MessageReaction, User } from "discord.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
 import fetch from 'node-fetch';
 import parse5, { 
     DefaultTreeParentNode as DTPN, 
@@ -8,7 +8,7 @@ import parse5, {
     DefaultTreeTextNode as DTTN
 } from 'parse5';
 import { randomInt } from 'crypto';
-import { promisify } from "util";
+import { promisify } from 'util';
 import { cooldown } from '../../../Structures/Cooldown/CommandCooldown.js';
 
 const randInt: (max: number) => Promise<number> = promisify(randomInt);
@@ -36,7 +36,13 @@ const getLi = (html: string) => {
 }
 
 export const refreshCache = async () => {
-    const resp = await fetch('https://www.mcsweeneys.net/articles/the-complete-listing-so-far-atrocities-1-940');
+    let resp;
+    try {
+        resp = await fetch('https://www.mcsweeneys.net/articles/the-complete-listing-so-far-atrocities-1-940');
+    } catch(e) {
+        return Promise.reject(e);
+    }
+
     if(!resp.ok) {
         return Promise.reject(`Received status ${resp.status} (${resp.statusText})!`);
     }
@@ -60,7 +66,11 @@ export const refreshCache = async () => {
     }));
 }
 
-export const cache = await refreshCache();
+export let cache: { image: string, text: string, date: string }[] = [];
+try {
+    const items = await refreshCache();
+    cache.push(...items);
+} catch {}
 
 const key = (u: string) => {
     u = u.toLowerCase();
@@ -92,8 +102,7 @@ export default class extends Command {
                 'Get atrocities committed by Trump on a given day (or a random day)!',
                 'October 12, 2020',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trump',
                 folder: 'Utility',
                 args: [0, 3] // 0 = random, 3 = February 10, 2017
@@ -103,9 +112,11 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(!message.guild.me.permissionsIn(message.channel).has('MANAGE_MESSAGES')) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             I don't have permission to manage messages!
             `));
+        } else if(cache.length === 0) {
+            return message.reply(this.Embed.fail(`An error occurred refreshing cache on bot startup.`));
         }
         
         const item = args.length === 0 
@@ -113,12 +124,12 @@ export default class extends Command {
             : cache.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
             
         if(!item || item.length === 0) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Wow! No atrocities on that day.
             `));
         } else if(item.length === 1) {
             const { text, date, image } = item.shift();
-            return message.channel.send(new MessageEmbed().setColor(key(image)).setDescription(`${date} ${text}`));
+            return message.reply(new MessageEmbed().setColor(key(image)).setDescription(`${date} ${text}`));
         }
 
         let i = 0;
@@ -134,7 +145,7 @@ export default class extends Command {
                 .setFooter(`Page ${i+1} of ${item.length}`)
             : null;
 
-        const m = await message.channel.send(e());
+        const m = await message.reply(e());
         if(!m) {
             return;
         }
@@ -145,7 +156,7 @@ export default class extends Command {
         }
 
         const filter = (r: MessageReaction, u: User) => ['▶️', '◀️'].includes(r.emoji.name) && u.id === message.author.id;
-        const collector = m.createReactionCollector(filter, { max: item.length * 2 });
+        const collector = m.createReactionCollector(filter, { max: item.length * 2, time: 60000 });
         collector.on('collect', async reaction => {
             if(!m || m.deleted) {
                 return collector.stop();
@@ -168,7 +179,5 @@ export default class extends Command {
                 return m.reactions.removeAll();
             } catch {}
         });
-
-        setTimeout(() => collector.stop(), 60000);
     }
 }

@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { refreshCache, cache } from "./Trump.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { refreshCache, cache } from './Trump.js';
 
 export default class extends Command {    
     constructor() {
@@ -9,8 +9,7 @@ export default class extends Command {
                 'Refresh the atrocities committed by Trump!',
                 '',
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'trumprefresh',
                 folder: 'Utility',
                 args: [0, 0],
@@ -20,10 +19,20 @@ export default class extends Command {
     }
 
     async init(message: Message) {
+        let items;
+        try {
+            items = await refreshCache();
+        } catch(e) {
+            return message.reply(this.Embed.fail(`
+            An error occurred!
+            \`\`${e.toString()}\`\`
+            `));
+        }
+
         const old = cache.length;
         cache.length = 0; // removes all items from array
-        cache.push(...await refreshCache());
-        return message.channel.send(this.Embed.success(`
+        cache.push(...items);
+        return message.reply(this.Embed.success(`
         Successfully refreshed the cache.
         ${cache.length - old} atrocities added!
         `));

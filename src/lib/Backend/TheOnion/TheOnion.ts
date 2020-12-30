@@ -90,7 +90,7 @@ export const getArticles = async (s?: string[]) => {
                     if(el.attrs.every(a => a.name !== 'itemprop')) {
                         const [d, m, y] = url.split('/').reverse();
                         const item = {
-                            href: el.attrs.filter(a => a.name === 'href').shift().value,
+                            href: el.attrs.filter(a => a.name === 'href').shift()!.value,
                             title: (el.childNodes[0] as DTTN).value,
                             date: new Date(`${m} ${d}, ${y} GMT-0`)
                         }

@@ -13,7 +13,6 @@ export default class extends Command {
                 'Slots.',
                 ''
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'slots',
                 folder: 'Fun',
@@ -31,7 +30,7 @@ export default class extends Command {
         ${a[2]} | ${b[2]} | ${c[2]}
         `);
 
-        const sent = await message.channel.send(embed);
+        const sent = await message.reply(embed);
         if(!sent) {
             return;
         }

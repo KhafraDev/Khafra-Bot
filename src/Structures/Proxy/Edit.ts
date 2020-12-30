@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
-import { Logger } from "../Logger.js";
-import { trim } from "../../lib/Utility/Template.js";
+import { Message } from 'discord.js';
+import { Logger } from '../Logger.js';
+import { trim } from '../../lib/Utility/Template.js';
 
 const logger = new Logger('Edit Proxy');
 

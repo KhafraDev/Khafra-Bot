@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message, User } from "discord.js";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Tags } from "../../lib/types/Collections";
-import { formatDate } from "../../lib/Utility/Date.js";
+import { Command } from '../../Structures/Command.js';
+import { Message, User } from 'discord.js';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Tags } from '../../lib/types/Collections';
+import { formatDate } from '../../lib/Utility/Date.js';
 
 export default class extends Command {
     constructor() {
@@ -11,8 +11,7 @@ export default class extends Command {
                 'Tags: get info on a tag.',
                 'first', 'second', 'mytagname'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'tagsinfo',
                 folder: 'Tags',
                 args: [1, 1],
@@ -24,7 +23,7 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         if(args.length === 0) {
-            return message.channel.send(this.Embed.generic());
+            return message.reply(this.Embed.generic());
         }
 
         const client = await pool.tags.connect();
@@ -36,7 +35,7 @@ export default class extends Command {
         });
         
         if(!tag) {
-            return message.channel.send(this.Embed.fail('No tag with that name exists!'));
+            return message.reply(this.Embed.fail('No tag with that name exists!'));
         }
 
         let user: User | 'Not found.';
@@ -58,6 +57,6 @@ export default class extends Command {
             .setFooter('Created:')
             .setTimestamp(tag.created);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

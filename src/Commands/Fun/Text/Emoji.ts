@@ -1,6 +1,6 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import twemoji from "twemoji-parser"; // cjs module
+import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import twemoji from 'twemoji-parser'; // cjs module
 
 export default class extends Command {
     constructor() {
@@ -9,11 +9,11 @@ export default class extends Command {
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙', '<:Jack:579367928722489346>'
             ],
-            [ 'ATTACH_FILES' ],
-            {
+			{
                 name: 'emoji',
                 folder: 'Fun',
-                args: [1, 5]
+                args: [1, 5],
+                permissions: [ Permissions.FLAGS.ATTACH_FILES ]
             }
         );
     }
@@ -33,9 +33,9 @@ export default class extends Command {
             .map(e => e.url);
 
         if(unicodeParsed.length === 0 && guildParsed.length === 0) {
-            return message.channel.send(this.Embed.fail('No guild or unicode emojis provided!'));
+            return message.reply(this.Embed.fail('No guild or unicode emojis provided!'));
         }
 
-        return message.channel.send([...unicodeParsed, ...guildParsed].join('\n'));
+        return message.reply([...unicodeParsed, ...guildParsed].join('\n'));
     }
 }

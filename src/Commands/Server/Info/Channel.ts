@@ -3,14 +3,13 @@ import {
     Message, 
     Channel, 
     TextChannel, 
-    NewsChannel, 
     VoiceChannel, 
 } from 'discord.js';
 import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 
 // TypeScript is based
-const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => c.type === 'text' || c.type === 'news';
 const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c.type === 'voice';
 
 export default class extends Command {
@@ -21,8 +20,7 @@ export default class extends Command {
                 '#general',
                 '705896160673661041'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'channel',
                 folder: 'Server',
                 aliases: [ 'chan', 'channelinfo' ],
@@ -41,7 +39,7 @@ export default class extends Command {
         const channel = message.guild.channels.resolve(idOrChannel);
         if(!channel) {
             this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));
         }
@@ -76,6 +74,6 @@ export default class extends Command {
             .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
         }
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

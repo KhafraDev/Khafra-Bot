@@ -1,19 +1,18 @@
-import { KhafraClient } from './Bot/KhafraBot.js';
-import { loadEnv } from './lib/Utility/load.env.js';
-import { Logger } from './Structures/Logger.js';
-import { trim } from './lib/Utility/Template.js';
-import { ClientEvents } from 'discord.js';
-
-loadEnv();
-
-if(process.argv[process.argv.length-1] !== '--dev') {
-    await import('./lib/Backend/Kongregate.js');
-}
-
+import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
 import './Structures/Proxy/ChannelSend.js';
 import './Structures/Proxy/React.js';
 import './Structures/Proxy/Edit.js';
+import './Structures/Proxy/Reply.js';
+
+import { KhafraClient } from './Bot/KhafraBot.js';
+import { Logger } from './Structures/Logger.js';
+import { trim } from './lib/Utility/Template.js';
+import { ClientEvents } from 'discord.js';
+
+if(process.env.__KONG_USERNAME && process.env.__KONG_PASSWORD) {
+    await import('./lib/Backend/Kongregate.js');
+}
 
 const logger = new Logger('RateLimit');
 
@@ -23,7 +22,7 @@ const emitted = (name: keyof ClientEvents) => {
 }
 
 const client = new KhafraClient({
-    disableMentions: 'everyone',
+    allowedMentions: { parse: [ 'users', 'roles' ], repliedUser: true },
     presence: {
         status: 'online'
     },

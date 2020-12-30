@@ -1,31 +1,42 @@
-# v1.0.0
+# Previous Versions
+
+<details><summary><b>v1.0.0</b></summary>
+
 * Initial Release
 * Guild settings in progress.
 * Few commands.
 * Bot structure is relatively close to finished.
 * Prefix support.
+</details>
 
-# v1.0.0~beta1
+<details><summary><b>v1.0.0~beta1</b></summary>
+
 * Added custom reacts to GuildSettings.
 * Embeds are derived from common characteristics.
 * Build scripts are now available for ease of access.
 * Intelligently caches GuildSettings.
 * Lots of logic and parsing errors were fixed.
+</details>
 
-# v1.0.0~beta2
+<details><summary><b>v1.0.0~beta2</b></summary>
+
 * Cleanup on some commands and functions.
 * GuildSettings: react to a message for a role. New message, old message, guild emoji, unicode emoji. Tweak this setting to your liking.
 * Include typings for twemoji-parser.
 * Remove inferred return types, add in other types.
+</details>
 
-# v1.0.0~beta3
+<details><summary><b>v1.0.0~beta3</b></summary>
+
 * Ban now accepts a mention or a user's ID.
 * Fixed a few permission issues.
 * Better way of getting a user's avatar.
 * Default permissions for commands are automatically added.
 * GuildSettings: react roles are now stable, and many issues have been resolved.
+</details>
 
-# v1.0.0~beta4
+<details><summary><b>v1.0.0~beta4</b></summary>
+
 * Split events into separate files.
 * Add in a cooldown for commands.
 * Removing a reaction from a react role will now remove the role.
@@ -35,8 +46,10 @@
 * Add ``mdn`` command for searching Mozilla Development Network easily.
 * Add ``npm`` command for searching npmjs.com.
 * Functional date formatter without external dependencies.
+</details>
 
-# v1.0.0~beta5
+<details><summary><b>v1.0.0~beta5</b></summary>
+
 * Add in Spotify command.
 * Use ``node-fetch`` for http requests. 
 * Remove as many ``any`` types as possible.
@@ -45,8 +58,10 @@
 * Fixed randomreacts not working.
 * Remove member from random reacts.
 * Remove a role react.
+</details>
 
-# v1.0.0~beta6
+<details><summary><b>v1.0.0~beta6</b></summary>
+
 * Spotify command now defaults to the current song playing if no query is provided.
 * Add in a ``role`` command, similar to user/server/channel lookup.
 * Remove ``formatEmbed`` method from all commands that implemented it.
@@ -58,8 +73,10 @@
 * Add in ``tictactoe`` command. For now you can only play against the bot.
 * Add in ``help`` command for a description and example(s) of usage.
 * Add in ``meepcraft`` command to get the number of players on MeepCraft. Routes request through a proxy.
+</details>
 
-# v1.0.0~beta7
+<details><summary><b>v1.0.0~beta7</b></summary>
+
 * Add in ability to ``blacklist`` commands for a user, channel, or entirety of the guild.
 * Add in ability to ``whitelist`` commands for a user or channel.
 * Add in different ``cowsay`` types.
@@ -71,8 +88,10 @@
 * ``tictactoe`` command will intelligently pick spots now.
 * ``tictactoe`` will no longer freeze if it's a draw.
 * Fixed issue where bot would give cooldowns if a valid command used a different prefix. For example: `+help` would issue a cooldown on the `help` command if the prefix was `!`.
+</details>
 
-# v1.0.0~beta8
+<details><summary><b>v1.0.0~beta8</b></summary>
+
 * Added ``pocketadd`` to add articles, videos, or images to your Pocket list!
 * ``pocketinit`` is now faster.
 * Rename .i.ts files to .d.ts so they aren't transpiled.
@@ -86,8 +105,10 @@
 * Add in ``insights``, which are similar to Discord's insights.
 * Replace global ``isNaN`` with ``Number.isNaN``.
 * Add in ``trivia``, ``triviahelp``, and ``trivialist`` commands.
+</details>
 
-# v1.0.0~beta9
+<details><summary><b>v1.0.0~beta9</b></summary>
+
 * Fixed ``Trivia`` types being compiled.
 * MDN command now uses an official search API which I detail [here](https://github.com/Anish-Shobith/mdn-api/issues/2#issuecomment-671545742).
 * Fix regressions where ``Number.isNaN`` was used rather than global ``isNaN``.
@@ -100,8 +121,10 @@
 * Embeds are now easier.
 * Add in ``whatisnpm`` command.
 * ``help`` command now lists aliases.
+</details>
 
-# v1.0.0
+<details><summary><b>v1.0.0</b></summary>
+
 * Add in ``connect4`` command.
 * ``npm`` will no longer crash when invalid packages are queried.
 * Commands now work in DMs that aren't marked guild only.
@@ -125,8 +148,10 @@
 * Replace string to day function in ``ban`` with ``ms``, which happens to be installed already.
 * Add in ``enable``, ``disable``, ``unenable``, and ``undisable`` commands. 
 * Added typings for all database collections.
+</details>
 
-# v1.0.1
+<details><summary><b>v1.0.1</b></summary>
+
 * Remove most casts to ``any|any[]``. Must be kept in ``Proxy`` helper since its types are trash.
 * Remove incorrect types in new Settings commands.
 * Remove casts in MessageReaction events that no longer need to be inferred.
@@ -134,8 +159,10 @@
 * MineSweeper helper will no longer mix ``number`` and ``string`` types.
 * Enable ``noImplicitAny`` by default!
 * ``TicTacToe`` command has been rewritten and can now be played against the bot or another user! This also fixed a bug when the bot would check for the best spot to go.
+</details>
 
-# v1.0.2
+<details><summary><b>v1.0.2</b></summary>
+
 * Add in [config](./config.json) file to configure bot owner and embed colors.
 * Fix an issue in the ``Message`` event that would throw an error.
 * Add in ``theonion`` command.
@@ -145,8 +172,10 @@
 * Added a logger for future debugging of issues. Deleted on ``npm run dev:build``.
 * Added ``pm2`` configuration and edited production run script to use it.
 * Add in ``steal`` command to take an emoji from another server and create one on the current server.
+</details>
 
-# v1.0.3 - Structure changes.
+<details><summary><b>v1.0.3 - Structure Changes</b></summary>
+
 * Add in ``synergismstats`` command.
 * ``channelinfo`` now works on VoiceChannels and NewsChannels.
 * Add in basic rate-limiting in ``MessageReactionAdd`` and ``MessageReactionRemove`` events to prevent spam.
@@ -165,8 +194,10 @@
 * Fixed a crash in DMs when using ``userinfo``.
 * Re-worked Date formatting Utility function. Improved readability and the code is structured better to not rely on so many hard-coded values (for example: string lengths).
 * ``Proxy`` util removes last ``as any`` declaration.
+</details>
 
-# v1.0.4
+<details><summary><b>v1.0.4</b></summary>
+
 * Fix concatenation ordering bug in ``Date`` when formatting months.
 * Add ``meepmember`` command.
 * Fix ``emoji`` command returning no response when no emojis are provided.
@@ -190,8 +221,10 @@
 * React roles are now logged.
 * Remove ``rollingstones`` command.
 * Add in a minimum and optional max arguments settings per command.
+</details>
 
-# v1.0.5 - Bug Fixes & Structure changes.
+<details><summary><b>v1.0.5 - Bug Fixes & Structure changes</b></summary>
+
 * Bot can be mentioned instead of using the prefix. Does not affect commands that rely on mentions.
 * If no command is found, Khafra-Bot will suggest a replacement if any commands are similar. Only happens when the command is initialized by mentioning it, to prevent annoyances if another bot with the same prefix is in the server.
 * Added bot intents.
@@ -201,8 +234,10 @@
 * ``badmeme`` now fetches the max amount of posts (100), and the cache now stores less, more relevant data. It will also reject on bad data.
 * ``insightsdaily`` has been re-written. Now allows a user-inputted amount of days to check and requires ``VIEW_GUILD_INSIGHTS`` permission rather than ``ADMINISTRATOR``.
 * Bump ``node-fetch`` to v2.6.1.
+</details>
 
-# v1.0.6 - Handling the Unhandled & Bug Fixes & Additions
+<details><summary><b>v1.0.6 - Handling the Unhandled & Bug Fixes & Additions</b></summary>
+
 * Handle unhandled rejections without memory leaks.
 * ``TextChannel | DMChannel | NewsChannel`` send methods will no longer throw errors on rejections. These methods are Proxied, modifying the prototype to return null and log the error if one occurs. No changes have to be made because it has the same type/return signatures already.
 * ``Message#react`` will no longer throw errors similar to ``<Channel>.send``.
@@ -281,3 +316,56 @@
 * Add in DuckDuckGo's ``bangs`` into a command.
 * Add in debug commands.
 * Fix ``hastebin`` command not working with new lines. Doing so, I realized there was some really bad logic in the message event for handling the prefix, and was also able to remove (one of?) the ugliest piece(s) of code remaining in the bot.
+</details>
+
+# v1.0.7
+* Add in ``avatar`` command.
+* Add in Google ``translate`` command.
+* Removed ``synergismsave`` command.
+* ``loadEnv`` function removed since it wasn't needed.
+* Allow multiple = signs for env variables.
+* Fix ``NewsChannel#send`` not being proxied and catching errors.
+* Add rule board.
+* Reduce memory the badmeme cache uses by only caching properties used.
+* Uses new reply ability in most cases.
+* Add in ``quran`` command.
+* Export ``isText`` helper function to utility file.
+* Rewrite ``poll`` command.
+* Permissions now require FLAGS to be used (or the corresponding number).
+* ``Command.permissions`` have been moved to ``Command.settings.permissions``.
+* Added static ``Command.permsFromBitField`` function for converting bitfield array to their string representations.
+* Warning system has been updated to allow more customization (including deleting warnings now!).
+    1. Disallows negative warning points to be given.
+    2. Allows removing active warning points.
+    3. Warnings are split into 2 categories: active & inactive. Active points will cause a member to be kicked when reaching the guild's limit.
+* Add in ``thenounproject`` command.
+* Add in ``talkobamatome`` command.
+* Add in ``howmanypeopleareinspacerightnow`` command (``spacern`` or ``hmpaisrn``).
+* Add in ``nobodylive`` command.
+* Add in ``thispersondoesnotexist`` command (alias: ``tpdne``).
+* Add in ``thisworddoesnotexist`` command (``twdne``).
+* Add in ``thisartworkdoesnotexist`` command.
+* Add in ``thiscatdoesnotexist`` command.
+* Add in ``thishorsedoesnotexist`` command.
+* Add in ``thisfuckeduphomerdoesnotexist`` command (``tfuhdne``).
+* Add in ``cartoonize`` command (one of my favorites).
+* Replace ``Guild#member`` with ``GuildMemberManager#resolve``.
+* Add in ``cheese`` command.
+* Add in ``define`` command.
+* Add in ``kanye`` command.
+* Add in ``tronald`` command.
+* Add in ``quotes`` command.
+* Add in ``xkcd`` command.
+* Natively import json using ``--experimental-json-modules`` flag.
+* PM2 launch command updated since it doesn't support ESM.
+* Add in ``washyourlyrics`` command.
+* Add in ``chatarr`` command.
+* Add in ``colorize`` command.
+* Add in ``forgotify`` command.
+* Add in ``bored`` command.
+* Add in ``500px`` command.
+* Add in ``longestpoem`` command.
+* Add in ``boilthefrog`` command.
+* Add in ``killedbygoogle`` command.
+* Add in ``bellingcat`` command.
+* Add in ``piglatin`` command.

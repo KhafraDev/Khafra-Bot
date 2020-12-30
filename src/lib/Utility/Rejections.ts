@@ -1,4 +1,4 @@
-import { Logger } from "../../Structures/Logger.js"
+import { Logger } from '../../Structures/Logger.js'
 
 const logger = new Logger('unhandledRejection');
 

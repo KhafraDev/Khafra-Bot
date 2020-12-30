@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message, User, Activity, SnowflakeUtil } from "discord.js";
-import { formatDate } from "../../../lib/Utility/Date.js";
-import { getMentions, validSnowflake } from "../../../lib/Utility/Mentions.js";
+import { Command } from '../../../Structures/Command.js';
+import { Message, User, Activity, SnowflakeUtil } from 'discord.js';
+import { formatDate } from '../../../lib/Utility/Date.js';
+import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -28,8 +28,7 @@ export default class extends Command {
                 'Get basic info about any user on Discord.',
                 '@Khafra#0001', '165930518360227842'
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'user',
                 folder: 'Server',
                 args: [0, 1],
@@ -49,7 +48,7 @@ export default class extends Command {
             try {
                 user = await message.client.users.fetch(idOrUser);
             } catch {
-                return message.channel.send(this.Embed.generic('Invalid user ID!'));
+                return message.reply(this.Embed.generic('Invalid user ID!'));
             }
         }
 
@@ -63,6 +62,6 @@ export default class extends Command {
             .addField('**Flags:**', !user.flags || user.flags.bitfield === 0 ? 'Unknown' : user.flags?.toArray().join(', '), true)
             .addField('**Created:**', formatDate('MMM. Do, YYYY hh:mm:ssA t', snowflake.date), true);
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

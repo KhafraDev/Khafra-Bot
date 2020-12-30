@@ -1,8 +1,8 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
-import { mdn } from "../../lib/Backend/MDN/MDNHandler.js";
-import { compareTwoStrings } from "../../lib/Utility/CompareStrings.js";
-import { MDNSearch } from "../../lib/Backend/MDN/types/MDN";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
+import { mdn } from '../../lib/Backend/MDN/MDNHandler.js';
+import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
+import { MDNSearch } from '../../lib/Backend/MDN/types/MDN';
 
 export default class extends Command {
     constructor() {
@@ -12,8 +12,7 @@ export default class extends Command {
                 'Array.prototype.slice',
                 'Number toLocaleString'
             ],
-            [ /* No extra perms needed */],
-            {
+			{
                 name: 'mdn',
                 folder: 'Utility',
                 args: [1],
@@ -26,7 +25,7 @@ export default class extends Command {
         try {
             results = await mdn(args.join(' '));
         } catch {
-            return message.channel.send(this.Embed.fail('An unexpected error occurred!'));
+            return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
         const best = results.documents
@@ -41,6 +40,6 @@ export default class extends Command {
             .setFooter('Requested by ' + message.author.tag)
             .setTimestamp()
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

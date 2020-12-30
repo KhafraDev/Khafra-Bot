@@ -16,7 +16,7 @@ import parse5, {
 import { URL } from 'url';
 import { MessageEmbed } from 'discord.js';
 import fetch from 'node-fetch';
-import { trim } from "../Utility/Template.js";
+import { trim } from '../Utility/Template.js';
 
 export const userCache = new Map<string, string>();
 

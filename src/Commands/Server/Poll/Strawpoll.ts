@@ -1,7 +1,7 @@
-import { Command } from "../../../Structures/Command.js";
-import { Message } from "discord.js";
-import { stripIndents } from "../../../lib/Utility/Template.js";
-import fetch, { Response } from "node-fetch";
+import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import { stripIndents } from '../../../lib/Utility/Template.js';
+import fetch, { Response } from 'node-fetch';
 
 const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;
 
@@ -12,23 +12,23 @@ export default class extends Command {
                 'Create a Strawpoll!', 
                 ''
             ],
-            [ 'ADD_REACTIONS' ],
-            {
+			{
                 name: 'strawpoll',
                 aliases: [ 'createstrawpoll', 'newstrawpoll' ],
                 folder: 'Server',
                 args: [0, 0],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }
         );
     }
 
     async init(message: Message) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) && !this.isBotOwner(message.author.id)) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         }
 
-        const msg = await message.channel.send(this.Embed.success(`
+        const msg = await message.reply(this.Embed.success(`
         Welcome to the Strawpoll creator. Due to the number of configurable options, this is a lengthy process.
 
         To start off, enter the \`\`title\`\` of the poll and the \`\`answers\`\`, all on different lines (press \`\`Shift+Enter\`\` to go to a new line).
@@ -109,7 +109,7 @@ export default class extends Command {
         });
 
         if(!res.ok) {
-            return message.channel.send(this.Embed.fail(`
+            return message.reply(this.Embed.fail(`
             An unexpected error occurred! Received status ${res.status} (${res.statusText})!
             `));
         }

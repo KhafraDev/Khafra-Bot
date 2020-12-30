@@ -1,5 +1,5 @@
 # Khafra-Bot
-A Discord bot with a lot of commands.
+A Discord.js framework and bot that is extendable and fast. 
 
 # Commercial Usage
 * Khafra-Bot does not sell access to any content or features.
@@ -40,13 +40,15 @@ GOOGLE_API=[Google API Key]
 __KONG_USERNAME=[Guest Username]
 __KONG_PASSWORD=[Guest Password]
 __KONG_WEBHOOK=[Discord Webhook URL]
+OWLBOTIO=[Owlbot.io free API token]
+NASA=[Optional NASA key, data is already saved.]
 ```
-If you don't want a certain module, errors should be handled if no API key/credentials are used. The only required entry is the bot's token.
+All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
 4. Install Python 3 (tested on 3.8.2).
 5. Install Python requirements with `[sudo] pip[3] install -r requirements.txt`
 6. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-7. Run the bot
-* Dev: ``npm run dev:build`` which will delete any old files and re-transpile it.
-* Prod: ``npm run prod:build`` which transpiles the code, overwriting old files, but does not delete any.
+7. Run the bot:
+    - Windows: ``npm run dev:run``
+    - Linux/Mac(?): ``npm run prod:run``

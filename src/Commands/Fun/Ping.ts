@@ -1,5 +1,5 @@
-import { Command } from "../../Structures/Command.js";
-import { Message } from "discord.js";
+import { Command } from '../../Structures/Command.js';
+import { Message } from 'discord.js';
 
 export default class extends Command {
     constructor() {
@@ -8,8 +8,7 @@ export default class extends Command {
                 'Get the bot\'s ping!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'ping',
                 folder: 'Fun',
                 args: [0, 0]
@@ -18,7 +17,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const m = await message.channel.send(this.Embed.success('Pinging...!'));
+        const m = await message.reply(this.Embed.success('Pinging...!'));
         if(!m) {
             return;
         }

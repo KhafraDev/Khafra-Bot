@@ -9,8 +9,7 @@ export default class extends Command {
                 'Get info about the server!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'server',
                 folder: 'Server',
                 aliases: [ 'serverinfo', 'guildinfo' ],
@@ -42,6 +41,6 @@ export default class extends Command {
                 { name: '**Created:**', value: formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), inline: false }
             );
 
-        return message.channel.send(embed);
+        return message.reply(embed);
     }
 }

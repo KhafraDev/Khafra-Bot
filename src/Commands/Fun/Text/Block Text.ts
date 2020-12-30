@@ -18,7 +18,6 @@ export default class extends Command {
                 'Emojify some text.',
                 'Have a great day!', 'You suck.'
             ], 
-            [ /* No extra perms needed */ ],
             {
                 name: 'blocksay',
                 folder: 'Fun',
@@ -34,6 +33,6 @@ export default class extends Command {
             .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')
             .slice(0, 2048);
 
-        return message.channel.send(this.Embed.success(blocks));
+        return message.reply(this.Embed.success(blocks));
     }
 }

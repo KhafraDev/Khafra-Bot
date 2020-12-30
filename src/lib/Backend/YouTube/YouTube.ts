@@ -7,7 +7,7 @@ export const YouTube = async (q: string[]) => {
     params.append('part', 'snippet');
     params.append('q', encodeURIComponent(q.join(' ').replace(/\s+/, '+')));
     params.append('type', 'video');
-    params.append('key', process.env.GOOGLE_API);
+    params.append('key', process.env.GOOGLE_API!);
 
     const res = await fetch('https://www.googleapis.com/youtube/v3/search?' + params.toString());
     

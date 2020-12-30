@@ -1,11 +1,11 @@
-import { Command } from "../../Structures/Command.js";
-import { join } from "path";
-import { Message } from "discord.js";
-import { stat } from "fs/promises";
+import { Command } from '../../Structures/Command.js';
+import { join } from 'path';
+import { Message } from 'discord.js';
+import { stat } from 'fs/promises';
 import { Stats, mkdirSync } from 'fs';
-import { execFile } from "child_process";
-import { pool } from "../../Structures/Database/Mongo.js";
-import { Insights } from "../../lib/types/Collections";
+import { execFile } from 'child_process';
+import { pool } from '../../Structures/Database/Mongo.js';
+import { Insights } from '../../lib/types/Collections';
 
 const outDir = join(process.cwd(), 'build/src')
 const outPath = join(outDir, 'lib/Images/');
@@ -19,8 +19,7 @@ export default class extends Command {
                 'Insights: get a graph of the people who have joined today! The mis-matched colors are Discord\'s fault, I can\'t do anything about them!',
                 ''
             ],
-            [ /* No extra perms needed */ ],
-            {
+			{
                 name: 'insightsgraph',
                 folder: 'Insights',
                 aliases: [ 'insightgraph' ],
@@ -34,7 +33,7 @@ export default class extends Command {
         if(!super.userHasPerms(message, [ 'VIEW_GUILD_INSIGHTS' ])
             && !this.isBotOwner(message.author.id)
         ) {
-            return message.channel.send(this.Embed.missing_perms(true));
+            return message.reply(this.Embed.missing_perms(true));
         }
 
         const filePath = join(outPath, message.guild.id + '.jpg');
@@ -55,7 +54,7 @@ export default class extends Command {
                 .setFooter('Last updated')
                 .setTimestamp(stats.mtimeMs)
 
-            return message.channel.send(embed);
+            return message.reply(embed);
         }
 
         const client = await pool.insights.connect();
@@ -64,7 +63,7 @@ export default class extends Command {
         const guild = await collection.findOne<Insights>({ id: message.guild.id });
 
         if(!guild || Object.keys(guild?.daily ?? {}).length < 2) {
-            return message.channel.send(this.Embed.fail('No insights available - yet!'));
+            return message.reply(this.Embed.fail('No insights available - yet!'));
         }
 
         const mapped = Object.entries(guild.daily)
@@ -85,14 +84,14 @@ export default class extends Command {
         execFile('python', [pyPath, mapped[0].join(','), mapped[1].join(','), message.guild.id, outPath], err => {
             if(err) {
                 this.logger.log(err);
-                return message.channel.send(this.Embed.fail(`An unexpected error occurred!`));
+                return message.reply(this.Embed.fail(`An unexpected error occurred!`));
             }
 
             const embed = this.Embed.success()
                 .attachFiles([ filePath ])
                 .setImage(`attachment://${message.guild.id}.jpg`)
                 
-            return message.channel.send(embed);
+            return message.reply(embed);
         });
     }
 }
