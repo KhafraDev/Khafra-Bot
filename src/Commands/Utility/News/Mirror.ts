@@ -1,31 +1,35 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IMirrorCo {
     title: string
-    description: string
     link: string
     guid: string
+    description: string
     pubDate: string
+    category: string
+    'media:thumbnail': string
+    enclosure: string
+    'media:content': string
+    'media:keywords': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IMirrorCo>();
+rss.cache('http://www.mirror.co.uk/news/world-news/rss.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://www.mirror.co.uk',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'mirror',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +46,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Mirror', 'https://i.imgur.com/wuINM4z.png');
         return message.reply(embed);
     }
 }

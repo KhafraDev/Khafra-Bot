@@ -22,8 +22,7 @@ export default class extends Command {
         let word;
         try {
             word = await thisWordDoesNotExist();
-        } catch(e) {
-            console.log(e);
+        } catch {
             return message.reply(this.Embed.fail('Received bad response from server!'));    
         }
 

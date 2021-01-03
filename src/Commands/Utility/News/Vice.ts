@@ -1,31 +1,34 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IVice {
     title: string
-    description: string
     link: string
-    guid: string
     pubDate: string
+    description: string
+    'content:encoded': string
+    guid: string
+    enclosure: string
+    'dc:creator': string[]
+    category: string[]
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IVice>();
+rss.cache('https://www.vice.com/en/rss?locale=en_us');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://vice.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'vice',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +45,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Vice', 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c0/Vice_logo.svg/220px-Vice_logo.svg.png');
         return message.reply(embed);
     }
 }

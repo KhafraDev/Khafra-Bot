@@ -1,31 +1,33 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
-    title: string
-    description: string
-    link: string
+interface IBusinessInsider {
     guid: string
+    title: string
+    link: string
     pubDate: string
+    'dc:creator': string
+    description: string
+    'media:thumbnail': string
+    'media:credit': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IBusinessInsider>();
+rss.cache('https://www.businessinsider.com/rss?op=1');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://businessinsider.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'businessinsider',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +44,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Business Insider', 'https://i.imgur.com/sXMsOj0.png');
         return message.reply(embed);
     }
 }

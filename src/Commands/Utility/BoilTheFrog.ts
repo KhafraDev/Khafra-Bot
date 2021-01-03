@@ -62,7 +62,6 @@ export default class extends Command {
         );
         collector.on('collect', async r => {
             if(r.emoji.name === '➡️') {
-                console.log(seams.path);
                 if(seams.path.length > 0) {
                     const e = await randomSong(seams.path.shift(), this.Embed.success());
                     return m.edit(e);

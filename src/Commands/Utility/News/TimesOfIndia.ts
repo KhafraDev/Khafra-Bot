@@ -1,9 +1,9 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ITimesOfIndia {
     title: string
     description: string
     link: string
@@ -11,21 +11,21 @@ interface IBBC {
     pubDate: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ITimesOfIndia>();
+rss.cache('https://timesofindia.indiatimes.com/rssfeeds/296589292.cms');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://timesofindia.indiatimes.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'timesofindia',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'indiatimes' ]
             }
         );
     }
@@ -42,7 +42,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Times of India', 'https://lawprofessors.typepad.com/.a/6a00d8341bfae553ef01b8d1594773970c-800wi');
         return message.reply(embed);
     }
 }

@@ -1,31 +1,32 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface INPR {
     title: string
     description: string
+    pubDate: string
     link: string
     guid: string
-    pubDate: string
+    'content:encoded': string
+    'dc:creator': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<INPR>();
+rss.cache('https://feeds.npr.org/1004/rss.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://npr.org',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'npr',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +43,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('NPR', 'https://media.npr.org/assets/img/2019/06/17/nprlogo_rgb_whiteborder_custom-7c06f2837fb5d2e65e44de702968d1fdce0ce748-s800-c85.png');
         return message.reply(embed);
     }
 }

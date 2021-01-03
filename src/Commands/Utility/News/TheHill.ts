@@ -1,31 +1,31 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ITheHill {
     title: string
-    description: string
     link: string
-    guid: string
+    description: string
     pubDate: string
+    'dc:creator': string
+    guid: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ITheHill>();
+rss.cache('http://thehill.com/rss/syndicator/19109');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://thehill.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'thehill',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +42,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('The Hill', 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png');
         return message.reply(embed);
     }
 }

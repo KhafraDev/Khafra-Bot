@@ -1,31 +1,36 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IEIRinfo {
     title: string
-    description: string
     link: string
-    guid: string
+    comments: string
     pubDate: string
+    'dc:creator': string
+    category: string
+    guid: string
+    description: string
+    'wfw:commentRss': string
+    'slash:comments': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IEIRinfo>();
+rss.cache('https://www.e-ir.info/feed/');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://e-ir.info',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'eir',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'e-ir', 'e-irinfo' ]
             }
         );
     }
@@ -42,7 +47,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('E-IR', 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png');
         return message.reply(embed);
     }
 }

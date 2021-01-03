@@ -1,31 +1,35 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IHeavy {
     title: string
-    description: string
     link: string
-    guid: string
+    'dc:creator': string
     pubDate: string
+    category: string[]
+    guid: string
+    description: string
+    'post-id': number
+    'media:thumbnail': string,
+    'media:content': { 'media:title': string }[]
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IHeavy>();
+rss.cache('https://heavy.com/feed/');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://heavy.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'heavy',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +46,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Heavy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png');
         return message.reply(embed);
     }
 }

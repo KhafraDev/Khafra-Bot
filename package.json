@@ -8,6 +8,7 @@
     "adm-zip": "^0.4.16",
     "discord.js": "github:discordjs/discord.js",
     "entities": "^2.1.0",
+    "fast-xml-parser": "^3.17.6",
     "mongodb": "^3.6.2",
     "ms": "^2.1.2",
     "node-fetch": "^2.6.1",

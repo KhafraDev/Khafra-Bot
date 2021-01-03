@@ -26,8 +26,7 @@ export default class extends Command {
         try {
             user = await message.client.users.fetch(id);
             await message.guild.members.unban(user, reason?.join(' '));
-        } catch(e) {
-            console.log(e);
+        } catch {
             return message.reply(this.Embed.fail('Invalid User!'));
         }
 

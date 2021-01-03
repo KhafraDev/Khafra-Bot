@@ -1,31 +1,34 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IWSJ {
     title: string
-    description: string
     link: string
-    guid: string
+    description: string
+    'content:encoded': string
     pubDate: string
+    guid: string
+    category: string
+    'wsj:articletype': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IWSJ>();
+rss.cache('https://feeds.a.dj.com/rss/RSSWorldNews.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://wsj.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'wsj',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'wallstreetjournal' ]
             }
         );
     }
@@ -42,7 +45,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('WSJ', 'http://si.wsj.net/img/WSJ_Logo_black_social.gif');
         return message.reply(embed);
     }
 }

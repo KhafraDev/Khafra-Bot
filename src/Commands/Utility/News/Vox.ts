@@ -1,31 +1,32 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IVox {
+    published: string
+    updated: string
     title: string
-    description: string
+    content: string
     link: string
-    guid: string
-    pubDate: string
+    id: string
+    author: { name: string }
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IVox>();
+rss.cache('https://www.vox.com/rss/index.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://vox.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'vox',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -38,11 +39,11 @@ export default class extends Command {
         const posts = [...rss.results.values()];
         const embed = this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
+                .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.id})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg');
         return message.reply(embed);
     }
 }

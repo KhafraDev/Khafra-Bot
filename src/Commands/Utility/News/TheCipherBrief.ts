@@ -1,31 +1,36 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ICipherBrief {
     title: string
-    description: string
     link: string
-    guid: string
+    comments: string
     pubDate: string
+    'dc:creator': string
+    category: string
+    guid: string
+    description: string
+    'wfw:commentRss': string
+    'slash:comments': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ICipherBrief>();
+rss.cache('https://www.thecipherbrief.com/feed');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://thecipherbrief.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'thecipherbrief',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'cipherbrief' ]
             }
         );
     }
@@ -42,7 +47,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('The Cipher Brief', 'https://www.thecipherbrief.com/wp-content/uploads/2017/07/cropped-logo-768x228.png');
         return message.reply(embed);
     }
 }

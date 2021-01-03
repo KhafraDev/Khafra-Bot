@@ -1,31 +1,32 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ISpaceNews {
     title: string
-    description: string
     link: string
+    description: string
+    enclosure: string
     guid: string
     pubDate: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ISpaceNews>();
+rss.cache('https://www.space.com/feeds/all');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://space.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'space',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'spacenews' ]
             }
         );
     }
@@ -42,7 +43,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Space News', 'https://vectorlogoseek.com/wp-content/uploads/2019/05/space-com-vector-logo.png');
         return message.reply(embed);
     }
 }

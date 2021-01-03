@@ -1,31 +1,31 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IESPN {
     title: string
     description: string
+    image: string
     link: string
-    guid: string
     pubDate: string
+    guid: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IESPN>();
+rss.cache('https://www.espn.com/espn/rss/news');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://espn.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'espn',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +42,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('ESPN', 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg');
         return message.reply(embed);
     }
 }

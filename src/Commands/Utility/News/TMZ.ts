@@ -1,31 +1,32 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ITMZ {
     title: string
-    description: string
     link: string
     guid: string
-    pubDate: string
+    mobileURL: string
+    description: string
+    'dc:creator': string
+    'dc:date': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ITMZ>();
+rss.cache('https://www.tmz.com/rss.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://tmz.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'tmz',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +43,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('TMZ', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png');
         return message.reply(embed);
     }
 }

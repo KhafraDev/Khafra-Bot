@@ -1,31 +1,35 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface ISkyNews {
     title: string
-    description: string
     link: string
-    guid: string
+    description: string
     pubDate: string
+    guid: string
+    enclosure: string
+    'media:description': string
+    'media:thumbnail': string
+    'media:content': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<ISkyNews>();
+rss.cache('http://feeds.skynews.com/feeds/rss/world.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://news.sky.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'sky',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'skynews' ]
             }
         );
     }
@@ -42,7 +46,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Sky News', 'https://news.sky.com/resources/sky-news-logo.png?v=1?bypass-service-worker');
         return message.reply(embed);
     }
 }

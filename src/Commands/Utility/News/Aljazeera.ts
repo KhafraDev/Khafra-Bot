@@ -1,31 +1,31 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IAljazeera {
+    link: string
     title: string
     description: string
-    link: string
-    guid: string
     pubDate: string
+    category: string
+    guid: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IAljazeera>();
+rss.cache('http://www.aljazeera.com/xml/rss/all.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://aljazeera.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'aljazeera',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +42,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Aljazeera', 'https://i.imgur.com/I1X7ygr.png');
         return message.reply(embed);
     }
 }

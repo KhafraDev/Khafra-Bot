@@ -1,31 +1,33 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IABCNews {
+    'media:keywords': string
     title: string
-    description: string
     link: string
     guid: string
     pubDate: string
+    description: string
+    category: string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IABCNews>();
+rss.cache('https://abcnews.go.com/abcnews/internationalheadlines');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://abcnews.go.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'abc',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'abcnews' ]
             }
         );
     }
@@ -42,7 +44,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('ABC News', 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png');
         return message.reply(embed);
     }
 }

@@ -1,31 +1,36 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface INYTimes {
     title: string
-    description: string
     link: string
     guid: string
+    'atom:link': string
+    description: string
+    'dc:creator': string
     pubDate: string
+    category: string[]
+    'media:content': string
+    'media:credit': string
+    'media:description': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<INYTimes>();
+rss.cache('https://rss.nytimes.com/services/xml/rss/nyt/World.xml');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://nytimes.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'nytimes',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'belling' ]
+                args: [0, 0]
             }
         );
     }
@@ -42,7 +47,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('NYTimes', 'https://i.imgur.com/GmhBcJs.png');
         return message.reply(embed);
     }
 }

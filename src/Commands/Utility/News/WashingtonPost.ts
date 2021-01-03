@@ -2,34 +2,34 @@ import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
+import { URL } from 'url';
 
-interface ITheGuardian {
+interface IWashingtonPost {
     title: string
     link: string
-    description: string
-    category: string[]
     pubDate: string
-    guid: string
-    'media:content': { 'media:credit': string }[]
     'dc:creator': string
-    'dc:date': string
+    description: string
+    'media:group': string
+    guid: string
+    'wp:arc_uuid': string
 }
 
-const rss = new RSSReader<ITheGuardian>();
-rss.cache('https://www.theguardian.com/world/rss');
+const rss = new RSSReader<IWashingtonPost>();
+rss.save = 8;
+rss.cache('http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://theguardian.com',
+                'Fetch latest articles from https://washingtonpost.com',
                 ''
             ],
             {
-                name: 'guardian',
+                name: 'washingtonpost',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'theguardian' ]
+                args: [0, 0]
             }
         );
     }
@@ -39,14 +39,20 @@ export default class extends Command {
             return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const posts = [...rss.results.values()];
+        const posts = [...rss.results.values()].map(p => {
+            const u = new URL(p.link);
+            u.search = '';
+            p.link = u.toString();
+            return p;
+        });
+
         const embed = this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg');
+            .setAuthor('The Washington Post', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/1200px-The_Logo_of_The_Washington_Post_Newspaper.svg.png');
         return message.reply(embed);
     }
 }

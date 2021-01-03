@@ -1,31 +1,35 @@
-import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
 
-interface IBBC {
+interface IFoxNews {
+    guid: string
+    link: string
+    'media:group': string
+    'media:thumbnail': string
+    category: string
     title: string
     description: string
-    link: string
-    guid: string
     pubDate: string
+    'feedburner:origLink': string
 }
 
-const rss = new RSSReader<IBBC>();
-rss.cache('https://www.bellingcat.com/category/news/feed');
+const rss = new RSSReader<IFoxNews>();
+rss.cache('http://feeds.foxnews.com/foxnews/world');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com',
+                'Fetch latest articles from https://foxnews.com',
                 ''
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: 'fox',
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: [ 'foxnews' ]
             }
         );
     }
@@ -42,7 +46,7 @@ export default class extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor('Fox News', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png');
         return message.reply(embed);
     }
 }

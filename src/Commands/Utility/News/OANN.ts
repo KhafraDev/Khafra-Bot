@@ -2,34 +2,35 @@ import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decode } from 'entities';
+import { URL } from 'url';
 
-interface ITheGuardian {
+interface IOANN {
     title: string
     link: string
-    description: string
-    category: string[]
-    pubDate: string
-    guid: string
-    'media:content': { 'media:credit': string }[]
+    comments: string
     'dc:creator': string
-    'dc:date': string
+    pubDate: string
+    category: string
+    guid: string
+    description: string
+    'wfw:commentRss': string
+    'slash:comments': number
 }
 
-const rss = new RSSReader<ITheGuardian>();
-rss.cache('https://www.theguardian.com/world/rss');
+const rss = new RSSReader<IOANN>();
+rss.cache('https://feeds.feedburner.com/breitbart');
 
 export default class extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://theguardian.com',
+                'Fetch latest articles from https://oann.com',
                 ''
             ],
             {
-                name: 'guardian',
+                name: 'oann',
                 folder: 'News',
-                args: [0, 0],
-                aliases: [ 'theguardian' ]
+                args: [0, 0]
             }
         );
     }
@@ -39,14 +40,19 @@ export default class extends Command {
             return message.reply(this.Embed.fail('An unexpected error occurred!'));
         }
 
-        const posts = [...rss.results.values()];
+        const posts = [...rss.results.values()].map(p => {
+            const u = new URL(p.link);
+            u.hash = u.search = '';
+            p.link = u.toString();
+            return p;
+        });
         const embed = this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg');
+            .setAuthor('OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg');
         return message.reply(embed);
     }
 }
