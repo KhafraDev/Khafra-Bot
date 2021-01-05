@@ -66,9 +66,7 @@ export default class extends Command {
         }
 
         const i = types.includes(args[0].toLowerCase()) ? args[0].toLowerCase() : 'cowsay';
-        const data = await readFile(join(dir, `${i}.txt`), {
-            encoding: 'utf-8'
-        });
+        const data = await readFile(join(dir, `${i}.txt`), 'utf-8');
             
         const formatted = `\`\`\`${start}${split.join('\n')}\n${data}\`\`\``;
         if(formatted.length > 2048) {

@@ -62,9 +62,7 @@ export default class extends Command {
             ? lists[Math.floor(Math.random() * lists.length)]
             : args[0].toLowerCase();
 
-        const text = await readFile(join(base, `${key}.txt`), {
-            encoding: 'utf-8'
-        });
+        const text = await readFile(join(base, `${key}.txt`), 'utf-8');
         const split = text.split(/\n\r|\n|\r/g).filter(l => !l.startsWith('#') && l.length > 0);
         const word = (await realShuffle(split)).shift();
 
