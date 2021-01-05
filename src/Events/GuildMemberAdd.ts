@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { ClientEvents, GuildMember, TextChannel, Permissions } from 'discord.js';
+import { GuildMember, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { GuildSettings } from '../lib/types/Collections';
@@ -14,11 +14,11 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class implements Event {
-    name: keyof ClientEvents = 'guildMemberAdd';
+export default class extends Event<'guildMemberAdd'> {
+    name = 'guildMemberAdd' as const;
     logger = new Logger(this.name);
 
-    async init(member: GuildMember) {        
+    async init(member: GuildMember) {  
         const date = formatDate('MM-DD-YYYY', new Date());
         const client = await pool.insights.connect();
 

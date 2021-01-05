@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { ClientEvents, GuildMember, TextChannel, Permissions } from 'discord.js';
+import { GuildMember, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { Logger } from '../Structures/Logger.js';
@@ -14,8 +14,8 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class implements Event {
-    name: keyof ClientEvents = 'guildMemberRemove';
+export default class extends Event<'guildMemberRemove'> {
+    name = 'guildMemberRemove' as const;
     logger = new Logger(this.name);
 
     async init(member: GuildMember) {

@@ -6,11 +6,11 @@ import { Event } from '../Structures/Event.js';
 import { type } from 'os';
 
 const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
-const factory = <CE extends Command | Event>(c: new () => CE): CE => new c();
+const factory = <CE extends Command | Event<keyof ClientEvents>>(c: new () => CE): CE => new c();
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
-    static Events: Map<keyof ClientEvents, Event> = new Map();
+    static Events: Map<keyof ClientEvents, Event<keyof ClientEvents>> = new Map();
 
     constructor(args: ClientOptions) {
         super(args);
@@ -56,7 +56,7 @@ export class KhafraClient extends Client {
     async loadEvents() {
         const events = await this.load('build/src/Events');
         for(const event of events) {
-            const build = factory<Event>((await import(absPath(event))).default);
+            const build = factory<Event<keyof ClientEvents>>((await import(absPath(event))).default);
             KhafraClient.Events.set(build.name, build);
         }
 

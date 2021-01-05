@@ -1,5 +1,4 @@
-import { Message, ClientEvents, Role, Permissions } from 'discord.js';
-
+import { Message, Role, Permissions } from 'discord.js';
 import { Event } from '../Structures/Event.js';
 import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
 import { pool } from '../Structures/Database/Mongo.js';
@@ -24,8 +23,8 @@ const mentioned = (() => {
     return () => regex ?? (regex = new RegExp(`<@!?${client.user.id}>`));
 })();
 
-export default class implements Event {
-    name: keyof ClientEvents = 'message';
+export default class extends Event<'message'> {
+    name = 'message' as const;
     logger = new Logger('Message');
     Embed = Command.Embed;
 

@@ -1,10 +1,6 @@
 import { ClientEvents } from 'discord.js';
 
-type valueof<T> = T[keyof T];
-
-interface Event {
-    name: keyof ClientEvents;
-    init(...args: valueof<ClientEvents>): unknown;
+export abstract class Event<T extends keyof ClientEvents> {
+    abstract name: T;
+    abstract init(...args: ClientEvents[T]): Promise<any>;
 }
-
-export { Event };

@@ -3,7 +3,6 @@ import {
     MessageReaction, 
     User, 
     PartialUser, 
-    ClientEvents, 
     Permissions 
 } from "discord.js";
 import { pool } from '../Structures/Database/Mongo.js';
@@ -22,8 +21,8 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class implements Event {
-    name: keyof ClientEvents = 'messageReactionRemove';
+export default class extends Event<'messageReactionRemove'> {
+    name = 'messageReactionRemove' as const;
     logger = new Logger(this.name);
 
     async init(reaction: MessageReaction, user: User | PartialUser) {
