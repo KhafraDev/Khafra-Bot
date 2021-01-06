@@ -87,7 +87,7 @@ export default class extends Command {
 
     async init(message: Message) {
         if(cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
-            const sentence = cache.players ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
+            const sentence = cache.players === 1 ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
             const embed = this.Embed.success(`There ${sentence} on Meepcraft right now!`);
             return message.reply(embed);
         }
@@ -106,7 +106,7 @@ export default class extends Command {
         cache.time = Date.now();
         cache.players = players.playersOnline;
 
-        const sentence = cache.players ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
+        const sentence = cache.players === 1 ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
         const embed = this.Embed.success(`There ${sentence} on Meepcraft right now!`);
         return message.reply(embed);
     }
