@@ -30,7 +30,15 @@ const client = new KhafraClient({
     messageSweepInterval: 1800, // defaults to never..
     partials: [ 'REACTION', 'MESSAGE', 'USER' ],
     ws: {
-        intents: [ 'GUILDS', 'GUILD_MEMBERS', 'GUILD_PRESENCES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES' ]
+        intents: [ 
+            'DIRECT_MESSAGES',
+            'GUILDS', 
+            'GUILD_EMOJIS',
+            'GUILD_MEMBERS', 
+            'GUILD_MESSAGES', 
+            'GUILD_MESSAGE_REACTIONS',
+            'GUILD_PRESENCES' 
+        ]
     }
 })
     .on('ready',                 emitted('ready'))
