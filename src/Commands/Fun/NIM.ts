@@ -15,9 +15,9 @@ Nim is a very strategic game to play on paper because of these two fundamental g
 */
 
 import { Command } from '../../Structures/Command.js';
-import { Message, GuildMember } from 'discord.js';
+import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../lib/Utility/Mentions.js';
 
 const gen = () => {
     const game = [
@@ -47,14 +47,14 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message) {
         if(games.includes(message.guild.id)) {
             return message.reply(this.Embed.fail('Game already happening in this guild!'));
         }
 
-        const opponent: GuildMember | string = getMentions(message, args, { type: 'members' });
-        if(!opponent || typeof opponent === 'string') {
-            return message.reply(this.Embed.generic('No member mentioned!'));
+        const opponent = await _getMentions(message, 'members');
+        if(!opponent) {
+            return message.reply(this.Embed.generic('No member mentioned and/or an invalid ❄️ was used!'));
         } else if(opponent.user.bot) {
             return message.reply(this.Embed.fail('Can\'t play against a bot!'));
         }

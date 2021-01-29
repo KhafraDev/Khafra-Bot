@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, User } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { Message } from 'discord.js';
+import { _getMentions } from '../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -17,19 +17,10 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const idOrUser = getMentions(message, args);
-        let user;
-        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            user = message.author;
-        } else if(idOrUser instanceof User) {
-            user = idOrUser;
-        } else {
-            try {
-                user = await message.client.users.fetch(idOrUser);
-            } catch {
-                return message.reply(this.Embed.generic('Invalid user ID!'));
-            }
+    async init(message: Message) {
+        const user = await _getMentions(message, 'users');
+        if (!user) {
+            return message.reply(this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!'));
         }
 
         const avatar = user.displayAvatarURL({

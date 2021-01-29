@@ -1,7 +1,8 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../lib/Utility/Mentions.js';
+import { isText } from '../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -21,21 +22,16 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
             return message.reply(this.Embed.missing_perms(true));
         } 
 
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
-        if(!channel) {
-            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
+        const channel = await _getMentions(message, 'channels') ?? message.channel;
+        if(!channel || !isText(channel)) {
+            this.logger.log(`Channel: ${channel}`);
             return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));
