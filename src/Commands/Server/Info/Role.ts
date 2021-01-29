@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Role } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { _getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -22,7 +22,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const role = await _getMentions(message, 'roles');
+        const role = await getMentions(message, 'roles');
 
         if(!(role instanceof Role)) {
             return message.reply(this.Embed.fail('No role found!'));

@@ -21,31 +21,9 @@ const REGEX: Record<MessageMentionTypes, [RegExp, number]> = {
     roles: [/<?@?&?(\d{17,19})>?/, 1]
 }
 const epoch = new Date('January 1, 2015 GMT-0');
-const zeroBinary = ''.padEnd(64, '0');
+const zeroBinary = '0'.repeat(64);
 
-type MentionsOpts = {
-    index?: number,
-    type?: MessageMentionTypes
-}
-
-export const getMentions = (
-    { mentions }: Message,
-    args: string[],
-	{ index = 0, type = 'users' }: MentionsOpts = {}
-) => {
-    const um = mentions[type];
-    if(Array.isArray(args) && args.length > 0) {
-        const reg = REGEX[type];
-        if(reg[0].test(args[index])) {
-            const id = args[index].match(reg[0])[reg[1]];
-            // absolutely horrible
-            // https://github.com/microsoft/TypeScript/issues/33591
-            return (um.find as (u: any) => any)((u: { id: string; }) => u.id === id) ?? id;
-        }
-    }
-}
-
-export const _getMentions = async <T extends MessageMentionTypes>(
+export const getMentions = async <T extends MessageMentionTypes>(
     { mentions, content, guild }: Message,
 	type: T
 ): Promise<MentionReturns[T]> => {

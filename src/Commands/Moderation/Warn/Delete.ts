@@ -1,10 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 
 export default class extends Command {
     constructor() {
@@ -25,17 +25,14 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const idOrUser = getMentions(message, args);
-        if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
-            return message.reply(this.Embed.fail(`
-            Invalid number of points given.
-            `));
-        } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.reply(this.Embed.fail('Invalid user ID!'));
-        }
-
-        const member = typeof idOrUser === 'string' ? idOrUser : idOrUser.id;
+        const member = await getMentions(message, 'members');
         const points = Number(args[1]);
+
+        if (!member) {
+            return message.reply(this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!'));
+        } else if (!isValidNumber(points, { allowNegative: false }) || points === 0) {
+            return message.reply(this.Embed.fail('You\'re trying to remove an invalid number of points!'));
+        }
 
         const client = await pool.moderation.connect();
         const collection = client.db('khafrabot').collection('moderation');
@@ -59,7 +56,7 @@ export default class extends Command {
         }
 
         await message.reply(this.Embed.success(`
-        Removed ${points} active warning points from ${idOrUser}!
+        Removed ${points} active warning points from ${member}!
         `));
 
         if(typeof settings?.modActionLogChannel === 'string') {
@@ -71,7 +68,7 @@ export default class extends Command {
             }
 
             return channel.send(this.Embed.success(`
-            **User:** ${idOrUser}
+            **User:** ${member}
             **Staff:** ${message.member}
             **Removed:** ${points} active warning points.
             `).setTitle('Removed Active Warnings'));

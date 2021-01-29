@@ -1,11 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { 
-    Message, 
-    TextChannel, 
-    NewsChannel 
-} from 'discord.js';
+import { Message, GuildChannel } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { validSnowflake, getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { isText } from '../../../lib/types/Discord.js.js';
@@ -64,8 +60,9 @@ export default class extends Command {
 
         Make sure the rules are already written down - you will have 5 minutes to enter all of them.
         `));
+        
         if(!msg) return;
-        let channel: TextChannel | NewsChannel | undefined;
+        let channel: GuildChannel;
         let i = 1;
         const rules: { index: number, rule: string }[] = [];
 
@@ -76,7 +73,7 @@ export default class extends Command {
                 && rules.length < 20, // can add more later
             { time: 60 * 1000 * 5 }
         );
-        collector.on('collect', (m: Message) => {
+        collector.on('collect', async (m: Message) => {
             if(!msg || msg?.deleted) {
                 return collector.stop();
             } else if(m.content.toLowerCase() === 'stop') {
@@ -84,17 +81,16 @@ export default class extends Command {
             }
 
             if(!channel) {
-                const mention = getMentions(m, m.content.split(/\s+/g), { type: 'channels' });
-                if(!mention) return;
-                if(typeof mention === 'string' && message.guild.channels.cache.has(mention)) {
-                    const guildChannel = message.guild.channels.cache.get(mention);
-                    if(!isText(guildChannel)) return;
-                    channel = guildChannel;
-                } else if(mention instanceof NewsChannel || mention instanceof TextChannel) {
-                    channel = mention;
-                }
+                channel = await getMentions(Object.assign(message, { 
+                    // so you may be wondering, "wtf is this?"
+                    // getMentions currently doesn't accept an index and auto slices
+                    // either 1 or 2 args from this (detected by a @khafra-bot regex)
+                    // so we put the "LOL" as a buffer to save the original content.
+                    content: `LOL ${message.content}` 
+                }), 'channels');
 
-                if(!channel) return;
+                if (!channel || !isText(channel)) return;
+
                 return msg.edit(this.Embed.success(`
                 **Rule Board:** ${channel}
                 The first step is now done, continue to enter rules until all of them have been posted in order.

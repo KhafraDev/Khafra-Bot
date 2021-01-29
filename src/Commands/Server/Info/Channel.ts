@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, TextChannel } from 'discord.js';
-import { _getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { isText, isVoice } from '../../../lib/types/Discord.js.js';
 
@@ -23,7 +23,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const channel = await _getMentions(message, 'channels');
+        const channel = await getMentions(message, 'channels');
         if(!channel) {
             return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.

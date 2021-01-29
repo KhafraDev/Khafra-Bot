@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -21,20 +21,14 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, _args: string[], settings: GuildSettings) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id)
         ) {
             return message.reply(this.Embed.missing_perms(true));
         }
 
-        let role = getMentions(message, args, { type: 'roles' });
-        if(!role || (typeof role === 'string' && !validSnowflake(role))) {
-            return message.reply(this.Embed.generic());
-        } else if(typeof role === 'string' && message.guild.roles.cache.has(role)) {
-            role = message.guild.roles.cache.get(role);
-        }
-
+        const role = await getMentions(message, 'roles');
         if(!role) {
             return message.reply(this.Embed.fail('Invalid Role!'));
         } else if(role.deleted) { // might as well

@@ -4,7 +4,7 @@ import {
     TextChannel,
     Permissions
 } from 'discord.js';
-import { _getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { isExplicitText } from '../../lib/types/Discord.js.js';
@@ -31,7 +31,7 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const text = await _getMentions(message, 'channels') ?? message.channel;
+        const text = await getMentions(message, 'channels') ?? message.channel;
         const secs = (args.length === 2 ? ms(args[1]) : ms('0')) / 1000;
 
         if(!isExplicitText(text)) {

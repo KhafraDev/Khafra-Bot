@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import twemoji from 'twemoji-parser'; // cjs module
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 
 const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
@@ -29,21 +29,15 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message) {
         if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) 
            && !this.isBotOwner(message.author.id)
         ) {
             return message.reply(this.Embed.missing_perms(true));
         }
 
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
+        const channel = await getMentions(message, 'channels') ?? message.channel;
         if(!channel) {
-            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
             return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));

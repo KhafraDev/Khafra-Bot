@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
@@ -25,29 +25,18 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const idOrUser = getMentions(message, args);
         if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
             return message.reply(this.Embed.fail(`
             Invalid number of points given.
 
             To remove warnings, use \`\`clearwarning\`\` (\`\`help clearwarning\`\` for example usage).
             `));
-        } else if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.reply(this.Embed.fail('Invalid user ID!'));
-        }
+        } 
 
-        let member = message.guild.members.resolve(idOrUser) ?? message.guild.members.fetch(idOrUser);
-        if(member instanceof Promise) {
-            try {
-                member = await member;
-            } catch {
-                return message.reply(this.Embed.fail(`
-                ${member} couldn't be fetched!
-                `));
-            }
-        }
-
-        if(!member.kickable) {
+        const member = await getMentions(message, 'members');
+        if (!member) {
+            return message.reply(this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!'));
+        } else if (!member.kickable) {
             return message.reply(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
         }
 
@@ -127,7 +116,7 @@ export default class extends Command {
 
             const reason = args.slice(2).join(' ');
             return channel.send(this.Embed.success(`
-            **Offender:** ${idOrUser}
+            **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             **Points:** ${args[1]} warning points given.

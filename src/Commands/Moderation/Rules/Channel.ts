@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { _getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 
@@ -36,7 +36,7 @@ export default class extends Command {
             `));
         }
 
-        const channel = await _getMentions(message, 'channels');
+        const channel = await getMentions(message, 'channels');
         if(!isText(channel)) {
             return message.reply(this.Embed.fail(`Not a text channel.`));
         }

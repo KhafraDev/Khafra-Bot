@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
-import { _getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isText } from '../../lib/types/Discord.js.js';
 
 export default class extends Command {
@@ -29,7 +29,7 @@ export default class extends Command {
             return message.reply(this.Embed.missing_perms(true));
         } 
 
-        const channel = await _getMentions(message, 'channels') ?? message.channel;
+        const channel = await getMentions(message, 'channels') ?? message.channel;
         if(!channel || !isText(channel)) {
             this.logger.log(`Channel: ${channel}`);
             return message.reply(this.Embed.fail(`

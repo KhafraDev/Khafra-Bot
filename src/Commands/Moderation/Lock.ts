@@ -5,7 +5,7 @@ import {
     OverwriteData,
     Permissions
 } from 'discord.js';
-import { _getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { isText } from '../../lib/types/Discord.js.js';
 
@@ -29,7 +29,7 @@ export default class extends Command {
     }
 
     async init(message: Message, _args: string[], settings: GuildSettings) {
-        const text = await _getMentions(message, 'channels') ?? message.channel;
+        const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 
         if(!isText(text)) {

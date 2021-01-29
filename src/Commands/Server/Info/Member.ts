@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { _getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -42,7 +42,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const member = await _getMentions(message, 'members') ?? message.member;
+        const member = await getMentions(message, 'members') ?? message.member;
 
         // max role length = 84 characters
         const embed = this.Embed.success()

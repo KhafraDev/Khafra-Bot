@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity, SnowflakeUtil } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { _getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -38,7 +38,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const user = await _getMentions(message, 'users') ?? message.author;
+        const user = await getMentions(message, 'users') ?? message.author;
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
         const embed = this.Embed.success(formatPresence(user.presence.activities))

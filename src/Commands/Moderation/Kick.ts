@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, GuildMember, TextChannel, Permissions } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { Message, TextChannel, Permissions } from 'discord.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 
 export default class extends Command {
@@ -22,29 +22,16 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const idOrUser = getMentions(message, args, { type: 'members' });
-        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.reply(this.Embed.generic('Invalid user ID!'));
-        }
- 
-        let member = typeof idOrUser === 'string'
-            ? message.guild.members.fetch(idOrUser)
-            : idOrUser;
+        const member = await getMentions(message, 'members');
 
-        if(member instanceof Promise) {
-            try {
-                member = await member;
-            } catch {
-                return message.reply(this.Embed.fail('Member couldn\'t be fetched!'));
-            }
-        }
-
-        if(!member.kickable) {
+        if (!member) {
+            return message.reply(this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!'));
+        } else if (!member.kickable) {
             return message.reply(this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`));
         }
 
         try {
-            await (member as GuildMember).kick(`
+            await member.kick(`
             Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).
             `);
         } catch {
@@ -65,7 +52,7 @@ export default class extends Command {
 
             const reason = args.slice(1).join(' ');
             return channel.send(this.Embed.success(`
-            **Offender:** ${idOrUser}
+            **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             `).setTitle('Member Kicked'));

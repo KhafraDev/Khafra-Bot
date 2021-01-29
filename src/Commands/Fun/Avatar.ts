@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { _getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -18,7 +18,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const user = await _getMentions(message, 'users');
+        const user = await getMentions(message, 'users');
         if (!user) {
             return message.reply(this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!'));
         }
