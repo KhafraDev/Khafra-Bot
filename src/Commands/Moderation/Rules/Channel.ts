@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 
@@ -23,7 +23,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, _args: string[], settings: GuildSettings) {
         if((!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
             && !this.isBotOwner(message.author.id))
         ) {
@@ -36,17 +36,8 @@ export default class extends Command {
             `));
         }
 
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            return message.reply(this.Embed.fail(`Invalid channel ID provided!`));
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
-        if(!channel) {
-            return message.reply(this.Embed.fail(`
-            Channel isn't fetched or the ID is incorrect.
-            `));
-        } else if(!isText(channel)) {
+        const channel = await _getMentions(message, 'channels');
+        if(!isText(channel)) {
             return message.reply(this.Embed.fail(`Not a text channel.`));
         }
 

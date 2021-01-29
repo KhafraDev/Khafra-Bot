@@ -1,12 +1,11 @@
 import { Command } from '../../Structures/Command.js';
 import { 
     Message, 
-    GuildChannel, 
     TextChannel, 
     OverwriteData,
     Permissions
 } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { isText } from '../../lib/types/Discord.js.js';
 
@@ -29,20 +28,10 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        } else if(typeof idOrChannel === 'string' && message.guild.channels.cache.has(idOrChannel)) {
-            idOrChannel = message.guild.channels.cache.get(idOrChannel);
-        }
-
-        if(!idOrChannel) {
-            return message.reply(this.Embed.generic('Invalid Channel!'));
-        }
-
+    async init(message: Message, _args: string[], settings: GuildSettings) {
+        const text = await _getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
-        const text = idOrChannel as GuildChannel;
+
         if(!isText(text)) {
             return message.reply(this.Embed.generic('No channel found!'));
         } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {

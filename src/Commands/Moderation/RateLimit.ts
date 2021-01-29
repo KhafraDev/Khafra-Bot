@@ -1,16 +1,14 @@
 import { Command } from '../../Structures/Command.js';
 import { 
     Message, 
-    GuildChannel, 
-    Channel, 
     TextChannel,
     Permissions
 } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
 import { GuildSettings } from '../../lib/types/Collections.js';
+import { isExplicitText } from '../../lib/types/Discord.js.js';
 
-const isText = <T extends Channel>(c: T): c is T & TextChannel => c.type === 'text';
 const MAX = ms('6h');
 
 export default class extends Command {
@@ -33,20 +31,10 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        } else if(typeof idOrChannel === 'string') {
-            idOrChannel = message.guild.channels.cache.get(idOrChannel);
-        }
-
-        if(!idOrChannel) { // just to be safe, shouldn't be possible
-            return message.reply(this.Embed.generic('Invalid Channel!'));
-        }
-
+        const text = await _getMentions(message, 'channels') ?? message.channel;
         const secs = (args.length === 2 ? ms(args[1]) : ms('0')) / 1000;
-        const text = idOrChannel as GuildChannel;
-        if(!isText(text)) {
+
+        if(!isExplicitText(text)) {
             return message.reply(this.Embed.generic('No text channel found!'));
         } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {
             // maybe better fail message?

@@ -1,16 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { 
-    Message, 
-    Channel, 
-    TextChannel, 
-    VoiceChannel, 
-} from 'discord.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { Message, TextChannel } from 'discord.js';
+import { _getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { isText } from '../../../lib/types/Discord.js.js';
-
-// TypeScript is based
-const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c.type === 'voice';
+import { isText, isVoice } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -30,15 +22,9 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
+    async init(message: Message) {
+        const channel = await _getMentions(message, 'channels');
         if(!channel) {
-            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
             return message.reply(this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
             `));
