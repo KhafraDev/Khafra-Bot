@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, TextChannel } from 'discord.js';
+import { Message } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { isText, isVoice } from '../../../lib/types/Discord.js.js';
+import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
 
 export default class extends Command {
     constructor() {
@@ -50,7 +50,7 @@ export default class extends Command {
                     { name: '**Position:**', value: channel.position, inline: true },
                 );
 
-                if(channel instanceof TextChannel) {
+                if(isExplicitText(channel)) {
                     embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
                 }
         } else if(isVoice(channel)) {

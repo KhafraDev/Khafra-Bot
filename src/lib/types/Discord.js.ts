@@ -7,8 +7,7 @@ import {
 } from 'discord.js';
 
 export const isText = <T extends Channel>(c: T): c is T & (TextChannel | NewsChannel) => 
-    typeof c !== null &&
-    (c.type === 'text' || c.type === 'news');
-export const isDM = <T extends Channel>(c: T): c is T & DMChannel => c.type === 'dm';
-export const isExplicitText = <T extends Channel>(c: T): c is T & TextChannel => c.type === 'text';
-export const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c.type === 'voice';
+    c instanceof TextChannel || c instanceof NewsChannel;
+export const isDM = <T extends Channel>(c: T): c is T & DMChannel => c instanceof DMChannel
+export const isExplicitText = <T extends Channel>(c: T): c is T & TextChannel => c instanceof TextChannel;
+export const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c instanceof VoiceChannel;

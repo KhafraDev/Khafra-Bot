@@ -6,6 +6,7 @@ import {
 } from "discord.js";
 import { Logger } from '../Logger.js';
 import { trim } from '../../lib/Utility/Template.js';
+import { isDM } from "../../lib/types/Discord.js.js";
 
 const logger = new Logger('ChannelSend Proxy');
 
@@ -17,7 +18,7 @@ TextChannel.prototype.send = new Proxy(TextChannel.prototype.send, {
             logger.log(trim`
             Channel Type: "${thisArg.type}"
             | Channel ID: "${thisArg.id}"
-            | User ID: "${thisArg instanceof DMChannel ? thisArg.recipient.id : 'Not DMs'}"
+            | User ID: "${isDM(thisArg) ? thisArg.recipient.id : 'Not DMs'}"
             | Error: "${e.toString()}"
             `);
             return null;
