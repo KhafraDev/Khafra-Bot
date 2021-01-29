@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, User, Activity, SnowflakeUtil } from 'discord.js';
+import { Message, Activity, SnowflakeUtil } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../../lib/Utility/Mentions.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -37,20 +37,8 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const idOrUser = getMentions(message, args);
-        let user;
-        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            user = message.author;
-        } else if(idOrUser instanceof User) {
-            user = idOrUser;
-        } else {
-            try {
-                user = await message.client.users.fetch(idOrUser);
-            } catch {
-                return message.reply(this.Embed.generic('Invalid user ID!'));
-            }
-        }
+    async init(message: Message) {
+        const user = await _getMentions(message, 'users') ?? message.author;
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
         const embed = this.Embed.success(formatPresence(user.presence.activities))

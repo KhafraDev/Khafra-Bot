@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Role } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { _getMentions } from '../../../lib/Utility/Mentions.js';
 
 export default class extends Command {
     constructor() {
@@ -21,15 +21,8 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const idOrRole = getMentions(message, args, { type: 'roles' });
-        if(!idOrRole || (typeof idOrRole === 'string' && !validSnowflake(idOrRole))) {
-            return message.reply(this.Embed.generic('Invalid role ID!'));
-        }
-
-        const role = message.mentions.roles.size > 0
-            ? message.mentions.roles.first() 
-            : await message.guild.roles.fetch(args[0]);
+    async init(message: Message) {
+        const role = await _getMentions(message, 'roles');
 
         if(!(role instanceof Role)) {
             return message.reply(this.Embed.fail('No role found!'));
