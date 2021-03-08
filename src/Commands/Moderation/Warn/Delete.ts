@@ -5,8 +5,11 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
+import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -29,9 +32,11 @@ export default class extends Command {
         const points = Number(args[1]);
 
         if (!member) {
-            return message.reply(this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!'));
+            return this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!');
         } else if (!isValidNumber(points, { allowNegative: false }) || points === 0) {
-            return message.reply(this.Embed.fail('You\'re trying to remove an invalid number of points!'));
+            return this.Embed.fail('You\'re trying to remove an invalid number of points!');
+        } else if (!hierarchy(message.member, member)) {
+            return this.Embed.fail(`You cannot remove warning points from ${member}!`);
         }
 
         const client = await pool.moderation.connect();
@@ -49,23 +54,22 @@ export default class extends Command {
             }
         );
 
-        if(!found.lastErrorObject?.updatedExisting || found.value === null) {
-            return message.reply(this.Embed.fail(`
+        if (!found.lastErrorObject?.updatedExisting || found.value === null) {
+            return this.Embed.fail(`
             User doesn't have enough active warning points to have ${points} removed from them.
-            `));
+            `);
         }
 
         await message.reply(this.Embed.success(`
         Removed ${points} active warning points from ${member}!
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel);
-            if(!isText(channel)) {
+            if (!isText(channel))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
+            else if (!hasPerms(channel, message.guild.me, [ 'SEND_MESSAGES', 'EMBED_LINKS' ]))
                 return;
-            }
 
             return channel.send(this.Embed.success(`
             **User:** ${member}

@@ -1,10 +1,10 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-
 import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler.js';
-import { SpotifyResult } from '../../lib/Backend/Spotify/types/Spotify';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -26,29 +26,22 @@ export default class extends Command {
             activity.type === 'LISTENING' && activity.name === 'Spotify'
         ).pop();
 
-        if(!presence && args.length < 1) {
-            return message.reply(this.Embed.fail('If you are not listening to any songs, a search query must be provided!'));
+        if (!presence && args.length < 1) {
+            return this.Embed.fail('If you are not listening to any songs, a search query must be provided!');
         }
 
-        let res: SpotifyResult;
-        try {
-            res = await spotify.search(
-                presence && args.length === 0
-                    ? `${presence.details}${presence.state ? ' - ' + presence.state : ''}`
-                    : args.join(' ')
-            );
-        } catch {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+        const res = await spotify.search(
+            presence && args.length === 0
+                ? `${presence.details}${presence.state ? ' - ' + presence.state : ''}`
+                : args.join(' ')
+        );
+
+        if (res.tracks.items.length === 0) {
+            return this.Embed.fail('No songs found!');
         }
 
-        if(res.tracks.items.length === 0) {
-            return message.reply(this.Embed.fail('No songs found!'));
-        }
-
-        const embed = this.Embed.success(`
+        return this.Embed.success(`
         ${res.tracks.items.map(item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`).join('\n')}
         `);
-
-        return message.reply(embed);
     }
 }

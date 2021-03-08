@@ -2,11 +2,13 @@ import { Command } from '../../Structures/Command.js';
 import { getCurrency, setCryptoInterval } from '../../lib/Backend/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 setCryptoInterval(60 * 1000 * 5); // 5 minutes
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -22,13 +24,13 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(_message: Message, args: string[]) {
         const currency = getCurrency(args.join(' '));
-        if(!currency) {
-            return message.reply(this.Embed.fail('No crypto found!'));
+        if (!currency) {
+            return this.Embed.fail('No crypto found!');
         }
 
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)
@@ -52,7 +54,5 @@ export default class extends Command {
                 { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
                 { name: '**% Change 24H:**',  value: currency.price_change_percentage_24h + '%', inline: true }
             );
-
-        return message.reply(embed);
     }
 }

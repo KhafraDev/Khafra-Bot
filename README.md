@@ -33,18 +33,20 @@ SPOTIFY_SECRET=[Spotify Secret]
 POCKET_CONSUMER_KEY=[Pocket API Key]
 HERE_WEATHER=[Weather API]
 GOOGLE_API=[Google API Key]
-__KONG_USERNAME=[Guest Username]
-__KONG_PASSWORD=[Guest Password]
-__KONG_WEBHOOK=[Discord Webhook URL]
 OWLBOTIO=[Owlbot.io free API token]
 NASA=[Optional NASA key, data is already saved.]
+TWITTER_API=
+TWITTER_API_SECRET=
+POSTGRES_USER=
+POSTGRES_PASS=
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
-4. Install Python 3 (tested on 3.8.2).
-5. Install Python requirements with `[sudo] pip[3] install -r requirements.txt`
-6. Edit the [config](./config.json) file.
+4. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-7. Run the bot:
+5. Install MongoDB and Postgres. Google instructions for your operating system.
+6. Create a new user account in Postgres with the same name as specified in the `.env` file.
+7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
+8. Run the bot:
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``

@@ -1,13 +1,14 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get info about the server!',
-                ''
+                'Get info about the server!'
             ],
 			{
                 name: 'server',
@@ -20,7 +21,7 @@ export default class extends Command {
     }
 
     init(message: Message) {        
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
             .setThumbnail(message.guild.bannerURL())
@@ -40,7 +41,5 @@ export default class extends Command {
                 { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },
                 { name: '**Created:**', value: formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), inline: false }
             );
-
-        return message.reply(embed);
     }
 }

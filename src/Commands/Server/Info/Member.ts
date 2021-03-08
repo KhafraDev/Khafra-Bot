@@ -2,10 +2,11 @@ import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
-    for(const activity of activities) {
+    for (const activity of activities) {
         switch(activity.type) {
             case 'CUSTOM_STATUS':
                 push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
@@ -24,7 +25,8 @@ const formatPresence = (activities: Activity[]) => {
     return push.join('\n');
 }
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -45,7 +47,7 @@ export default class extends Command {
         const member = await getMentions(message, 'members') ?? message.member;
 
         // max role length = 84 characters
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`
             ${member} on *${member.guild.name}*.
@@ -65,7 +67,5 @@ export default class extends Command {
                 },
             )
             .setFooter('For general user info use the **user** command!');
-        
-        return message.reply(embed);
     }
 }

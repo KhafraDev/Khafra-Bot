@@ -1,5 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const letters: Record<string, string> = {
     a: '🇦', b: '🇧', c: '🇨', d: '🇩',
@@ -11,7 +12,8 @@ const letters: Record<string, string> = {
     y: '🇾', z: '🇿'
 }
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -27,12 +29,12 @@ export default class extends Command {
         );
     }
 
-    init(message: Message, args: string[]) {        
+    init(_message: Message, args: string[]) {        
         const blocks = args
             .join(' ')
             .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')
             .slice(0, 2048);
 
-        return message.reply(this.Embed.success(blocks));
+        return this.Embed.success(blocks);
     }
 }

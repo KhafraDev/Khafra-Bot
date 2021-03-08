@@ -1,7 +1,7 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
-import { decode } from 'entities';
+import { decodeXML } from 'entities';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IBreitbart {
     title: string
@@ -26,12 +26,12 @@ interface IBreitbart {
 const rss = new RSSReader<IBreitbart>();
 rss.cache('https://feeds.feedburner.com/breitbart');
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://breitbart.com',
-                ''
+                'Fetch latest articles from https://breitbart.com'
             ],
             {
                 name: 'breitbart',
@@ -41,19 +41,19 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        if(rss.results.size === 0) {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
         const embed = this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Breitbart', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Breitbart_News.svg/1200px-Breitbart_News.svg.png');
-        return message.reply(embed);
+        return embed;
     }
 }

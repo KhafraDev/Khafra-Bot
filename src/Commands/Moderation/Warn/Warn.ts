@@ -5,8 +5,11 @@ import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { Warnings, GuildSettings } from '../../../lib/types/Collections.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -25,19 +28,21 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        if(!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
-            return message.reply(this.Embed.fail(`
+        if (!isValidNumber(+args[1], { allowNegative: false }) || +args[1] === 0) {
+            return this.Embed.fail(`
             Invalid number of points given.
 
             To remove warnings, use \`\`clearwarning\`\` (\`\`help clearwarning\`\` for example usage).
-            `));
+            `);
         } 
 
         const member = await getMentions(message, 'members');
         if (!member) {
-            return message.reply(this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!'));
+            return this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!');
         } else if (!member.kickable) {
-            return message.reply(this.Embed.fail(`I can't warn someone I don't have permission to kick!`));
+            return this.Embed.fail(`I can't warn someone I don't have permission to kick!`);
+        } else if (!hierarchy(message.member, member)) {
+            return this.Embed.fail(`You cannot warn ${member}!`);
         }
 
         const client = await pool.moderation.connect();
@@ -59,7 +64,7 @@ export default class extends Command {
             ? active - nowActive
             : (user?.inactive ?? 0);
 
-        if(!warns) {
+        if (!warns) {
             await collection.insertOne({
                 id: message.guild.id,
                 limit: 20,
@@ -90,27 +95,25 @@ export default class extends Command {
             );
         }
 
-        if(shouldKick) {
+        if (shouldKick) {
             try {
                 await member.kick(`Khafra-Bot: exceeded warning limit; kicked automatically.`);
             } catch {
-                return message.reply(this.Embed.fail(`Couldn't kick ${member}.`));
+                return this.Embed.fail(`Couldn't kick ${member}.`);
             }
 
-            return message.reply(this.Embed.success(`
+            return this.Embed.success(`
             ${member} was automatically kicked from the server for reaching ${limit} warning points.
-            `));
+            `);
         } else {
             await message.reply(this.Embed.success(`
             Gave ${member} ${Number(args[1])} warning points.
             `));
         }
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel);
-            if(!isText(channel)) {
-                return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
                 return;
             }
 

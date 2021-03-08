@@ -29,7 +29,7 @@ const fetchEntries = async () => {
     const ids = await fetchTop();
     const stories: story[] = [];
 
-    for(const id of ids) {
+    for (const id of ids) {
         const r = await fetch(art.replace('{id}', `${id}`));
         const j = await r.json() as story;
         stories.push(j);
@@ -42,7 +42,7 @@ const fetchEntries = async () => {
 const safeFetchHN = async () => fetchEntries().catch(() => {});
 
 export const fetchHN = async () => {
-    if(interval) return interval;
+    if (interval) return interval;
 
     await safeFetchHN();
     interval = setInterval(safeFetchHN, 60 * 1000 * 10);

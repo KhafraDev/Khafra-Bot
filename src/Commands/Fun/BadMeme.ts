@@ -1,38 +1,33 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { reddit } from '../../lib/Backend/BadMeme/BadMeme.js';
-import { RedditPostMin } from '../../lib/Backend/BadMeme/types/BadMeme';
+import { badmeme } from '../../lib/Backend/BadMeme/BadMeme.js';
 import { isDM } from '../../lib/types/Discord.js.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
                 'Get a bad meme! Idea from NotSoBot.',
-                'thesimppolice', ''
+                'pewdiepiesubmissions', ''
             ],
 			{
                 name: 'badmeme',
                 folder: 'Fun',
-                args: [0, 1]
+                args: [0, 1],
             }
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let res: RedditPostMin;
-        try {
-            res = await reddit(
-                args[0] ?? 'dankmemes', 
-                isDM(message.channel) ? true : message.channel.nsfw
-            );
-        } catch(e) {
-            return message.reply(this.Embed.fail(`
-            ${e.toString()}
-            NSFW images will only work if the channel is marked \`\`nsfw\`\`!
-            `));
-        }
-
-        return message.reply(this.Embed.success().setImage(res.url));
+    async init(message: Message, args: string[]) {        
+        const res = await badmeme(args[0], isDM(message.channel) || message.channel.nsfw);
+        if (!res)
+            return this.Embed.fail(`
+            No image posts found in this subreddit.
+            
+            If the channel isn't set to NSFW, adult subreddits won't work!
+            `);
+        return res.url;
     }
 }

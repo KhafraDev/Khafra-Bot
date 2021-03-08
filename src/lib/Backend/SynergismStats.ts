@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import { fetch } from '../../Structures/Fetcher.js';
 
 interface KongregateMetrics {
     gameplays_count: number
@@ -19,16 +19,13 @@ const cache = {
 }
 
 export const Kongregate = async () => {
-    if((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
+    if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
         return cache.res;
     }
 
-    const res = await fetch('http://www.kongregate.com/games/Platonic/synergism/metrics.json');
-    if(!res.ok) {
-        return res;
-    }
+    const json = await fetch('http://www.kongregate.com/games/Platonic/synergism/metrics.json')
+        .json<KongregateMetrics>();
 
-    const json = await res.json() as KongregateMetrics;
     cache.res = json;
     cache.lastFetched = Date.now();
     return cache.res;

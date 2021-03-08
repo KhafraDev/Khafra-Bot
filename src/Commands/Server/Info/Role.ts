@@ -2,8 +2,10 @@ import { Command } from '../../../Structures/Command.js';
 import { Message, Role } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -24,13 +26,13 @@ export default class extends Command {
     async init(message: Message) {
         const role = await getMentions(message, 'roles');
 
-        if(!(role instanceof Role)) {
-            return message.reply(this.Embed.fail('No role found!'));
-        } else if(role.deleted) {
-            return message.reply(this.Embed.fail('Role has been deleted.'));
+        if (!(role instanceof Role)) {
+            return this.Embed.fail('No role found!');
+        } else if (role.deleted) {
+            return this.Embed.fail('Role has been deleted.');
         }
 
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(`
             ${role}
             
@@ -44,7 +46,5 @@ export default class extends Command {
             .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
             .addField('**Position:**', role.position, true)
             .addField('**Managed:**', role.managed ? 'Yes' : 'No');
-
-        return message.reply(embed);
     }
 }

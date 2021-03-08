@@ -6,11 +6,10 @@ import { Event } from '../Structures/Event.js';
 import { type } from 'os';
 
 const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
-const factory = <CE extends Command | Event<keyof ClientEvents>>(c: new () => CE): CE => new c();
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
-    static Events: Map<keyof ClientEvents, Event<keyof ClientEvents>> = new Map();
+    static Events: Map<keyof ClientEvents, Event> = new Map();
 
     constructor(args: ClientOptions) {
         super(args);
@@ -21,14 +20,14 @@ export class KhafraClient extends Client {
         const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
     
         while(ini.length !== 0) {        
-            for(const d of ini) {
+            for (const d of ini) {
                 const path = resolve(dir, d);
                 ini.splice(ini.indexOf(d), 1); // remove from array
                 const stats = await stat(path);
     
-                if(stats.isDirectory()) {
+                if (stats.isDirectory()) {
                     ini.push(...(await readdir(path)).map(f => resolve(path, f)));
-                } else if(stats.isFile() && d.endsWith('.js')) {
+                } else if (stats.isFile() && d.endsWith('.js')) {
                     f.push(path);
                 }
             }
@@ -42,12 +41,8 @@ export class KhafraClient extends Client {
      */
     async loadCommands() {
         const commands = await this.load('build/src/Commands');
-        for(const command of commands) {
-            const build = factory<Command>((await import(absPath(command))).default);
-
-            KhafraClient.Commands.set(build.settings.name.toLowerCase(), build);
-            build.settings.aliases?.forEach(alias => KhafraClient.Commands.set(alias, build));
-        }
+        const importPromise = commands.map<Promise<Command>>(command => import(absPath(command)));
+        await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${commands.length} commands!`);
         return KhafraClient.Commands;
@@ -55,10 +50,8 @@ export class KhafraClient extends Client {
 
     async loadEvents() {
         const events = await this.load('build/src/Events');
-        for(const event of events) {
-            const build = factory<Event<keyof ClientEvents>>((await import(absPath(event))).default);
-            KhafraClient.Events.set(build.name, build);
-        }
+        const importPromise = events.map<Promise<Event>>(event => import(absPath(event)));
+        await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${events.length} events!`);
         return KhafraClient.Events;
@@ -68,8 +61,10 @@ export class KhafraClient extends Client {
      * Initialize the bot.
      */
     async init() {
+        const start = Date.now();
         await this.loadEvents();
         await this.loadCommands();
         await this.login(process.env.TOKEN);
+        console.log(`Started in ${((Date.now() - start) / 1000).toFixed(2)} seconds!`);
     }
 }

@@ -7,7 +7,7 @@ type MessageMentionTypes =
     | 'members' 
     | 'channels';
 
-const REGEX: Record<MessageMentionTypes, RegExp> = {
+const REGEX = {
     users: /(<@!)?(\d{17,19})>?/,
     members: /(<@!)?(\d{17,19})>?/,
     channels: /<?#?(\d{17,19})>?/, 
@@ -60,7 +60,7 @@ export async function getMentions(
 
 export const validSnowflake = (id: string) => {
     const snowflake = SnowflakeUtil.deconstruct(id);
-    if( 
+    if ( 
         snowflake.date.getTime() === epoch.getTime()
         || snowflake.binary === zeroBinary
         || snowflake.timestamp >= Date.now()

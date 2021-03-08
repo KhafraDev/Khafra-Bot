@@ -1,17 +1,21 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
+import { URL } from 'url';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
                 'Add an emoji to the server!',
-                'my_emoji [image attachment]'
+                'my_emoji [image attachment]',
+                'amogus https://cdn.discordapp.com/emojis/812093828978311219.png?v=1'
             ],
 			{
                 name: 'addemoji',
                 folder: 'Server',
-                args: [1, 1],
+                args: [1, 2],
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.MANAGE_EMOJIS ]
             }
@@ -19,27 +23,24 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(message.attachments.size === 0) {
-            return message.reply(this.Embed.generic('No image attached!'));
-        }
+        const fileFromArgs = args.length === 2
+            ? args.pop()
+            : message.attachments.first();
 
-        const file = message.attachments.first();
-        if(!/(.png|.jpe?g|.webp|.gif)$/.test(file.url)) {
-            return message.reply(this.Embed.fail(`
-            Only \`\`png\`\`, \`\`jpg\`\`, \`\`webp\`\`, or \`\`gif\`\` file types allowed.
-            `));
-        }
+        if (!fileFromArgs) 
+            return this.Embed.generic(this, 'No attachment was included and no image link was provided!');
 
-        let e;
-        try {
-            e = await message.guild.emojis.create(
-                file.url, args[0],
-			{ reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
-            );
-        } catch {
-            return message.reply(this.Embed.fail('An error occurred adding this emoji.'));
-        }
+        const file = new URL(typeof fileFromArgs === 'string' ? fileFromArgs : fileFromArgs.url);
 
-        return message.reply(this.Embed.success(`Added ${e} to the emojis!`));
+        if (!/(.png|.jpe?g|.webp|.gif)/.test(file.href))
+            return this.Embed.fail('Not a valid image/gif link!');
+
+        const e = await message.guild.emojis.create(
+            file.toString(),
+            args[0],
+            { reason: `${message.author.id} (${message.author.tag}) requested.` }
+        );
+
+        return this.Embed.success(`Added ${e} to the guild emojis!`);
     }
 }

@@ -19,7 +19,7 @@ class Pocket {
     username?: string;
 
     constructor(user?: { request_token: string, access_token: string, username: string }) {
-        if(user) {
+        if (user) {
             this.request_token = user.request_token;
             this.access_token = user.access_token;
             this.username = user.username;
@@ -34,7 +34,7 @@ class Pocket {
      */
     async requestCode() {
         const rateLimited = checkRateLimits();
-        if(rateLimited) {
+        if (rateLimited) {
             throw new Error(
                 `Rate-limited: 
                 * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -56,7 +56,7 @@ class Pocket {
         });
 
         setRateLimits(res.headers);
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error(
                 res.headers.get('X-Error-Code') + ': ' +
                 res.headers.get('X-Error')
@@ -78,7 +78,7 @@ class Pocket {
 
     async accessToken() {
         const rateLimited = checkRateLimits();
-        if(rateLimited) {
+        if (rateLimited) {
             throw new Error(
                 `Rate-limited: 
                 * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -100,7 +100,7 @@ class Pocket {
         });
     
         setRateLimits(res.headers);
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error(
                 res.headers.get('X-Error-Code') + ': ' +
                 res.headers.get('X-Error')
@@ -115,7 +115,7 @@ class Pocket {
 
     async getList(): Promise<PocketGetResults> {
         const rateLimited = checkRateLimits();
-        if(rateLimited) {
+        if (rateLimited) {
             throw new Error(
                 `Rate-limited: 
                 * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -140,7 +140,7 @@ class Pocket {
         });
     
         setRateLimits(res.headers);
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error(
                 res.headers.get('X-Error-Code') + ': ' +
                 res.headers.get('X-Error')
@@ -152,7 +152,7 @@ class Pocket {
 
     async add(url: string, title?: string) {
         const rateLimited = checkRateLimits();
-        if(rateLimited) {
+        if (rateLimited) {
             throw new Error(
                 `Rate-limited: 
                 * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -177,7 +177,7 @@ class Pocket {
         });
     
         setRateLimits(res.headers);
-        if(!res.ok) {
+        if (!res.ok) {
             throw new Error(
                 res.headers.get('X-Error-Code') + ': ' +
                 res.headers.get('X-Error')
@@ -198,17 +198,17 @@ class Pocket {
 
 const setRateLimits = (headers: Headers) => {
     const keys = Object.keys(limits).map(k => k.toLowerCase());
-    for(const [header, value] of headers) {
-        if(keys.includes(header.toLowerCase())) {
+    for (const [header, value] of headers) {
+        if (keys.includes(header.toLowerCase())) {
             limits[header.toLowerCase()] = +value;
         }
     }
 }
 
 const checkRateLimits = () => {
-    if(limits['x-limit-key-remaining'] === 0) {
+    if (limits['x-limit-key-remaining'] === 0) {
         return true;
-    } else if(limits['x-limit-user-remaining'] === 0) {
+    } else if (limits['x-limit-user-remaining'] === 0) {
         return true;
     }
 

@@ -372,7 +372,8 @@
 * Add in ``piglatin`` command.
 </details>
 
-# v1.0.8 - The News Update
+<details><summary><b># v1.0.8 - The News Update (Early 2021)</b></summary>
+
 * Add a fully fledged RSS feed parser.
 * Add in ``abcnews`` command.
 * Add in ``aljazeera`` command.
@@ -423,9 +424,39 @@
 * Add in ``washingtonpost`` command.
 * Add in ``wsj`` command.
 * Add in ``yahoo`` news command.
-
 * Removed ``chatarr`` command.
-
 * Update ``bellingcat`` command to use new RSS feed parser.
 * Update ``nytimes`` command to use new RSS feed parser.
 * Update ``theguardian`` command to use the new RSS feed parser.
+
+</details>
+
+# v1.0.8 - Part 2, New Bot
+
+## Commands
+* Add `twitdl` command to get the links to media in tweets.
+* Add `garrison` command to show awareness to mental illness.
+* Replace `trump` scraper with JSON.
+* Fix type error in `poll` command.
+* `lock` command now syncs permissions with the category channel when unlocking.
+* Normalized `blacklist` and `whitelist` commands.
+* Remove `insightsdaily` and `insightsgraph` command for a more informative `insights` table.
+* Better logic in the `hangman` command.
+* Allow emojis in `addemoji` to be added with an image link and an attachment now.
+* Add `forceban` command that allows banning multiple people without confirmation.
+* Massively improve the `emoji` command.
+* Remove `quote`, `kanye`, `boredapi`, `cheese`, `connect4`, `nim`, `what-is-npm`, `slots`, `trivia`, `tictactoe`, `xkcd`, `discover`, `discriminator`, `whitelist (all)`, `giverole`, `reactrole`, `tags (all)`, `bang`, `boilthefrog`, old `theonion`, and `500px` commands.
+
+## Structure
+* Commands will now return with an embed to reply to the user with. This reduces a ton of repetitive code and allows for cleaner error handling without proxying the methods or using try/catch.
+* Decouple methods from multiple areas (mostly separate permission checks and Embed from the `Command` class).
+* Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.
+* Remove commands that are low quality and/or not up to standards.
+* Guild settings will now be automatically inputted into the database when the bot joins a guild. Likewise, guild settings are removed from the database when the bot leaves a guild.
+* Added hierarchy checks for `ban` (partially), `kick`, `warn`, and `deletewarn` commands.
+* Update `discord.js` to master.
+* Remove deprecated `entities.decode` method from RSS commands.
+* Removed `export default` from commands, add `RegisterCommand` class decorator to register commands instead.
+* Partially transition databases to Postgres.
+* Add in `fetch` util for cleaner, functional code.
+* Remove `kongregate` chat forwarder. 

@@ -1,14 +1,16 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Clear all rules from the server.',
-                ''
+                'Clear all rules from the server.'
             ],
 			{
                 name: 'removeall', // clear is already a command
@@ -21,16 +23,14 @@ export default class extends Command {
     }
 
     async init(message: Message, _args: string[], settings: GuildSettings) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        } else if(!settings || !('rules' in settings) || settings.rules.rules?.length) {
-            return message.reply(this.Embed.fail(`
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
+        } else if (!settings || !('rules' in settings) || settings.rules.rules?.length) {
+            return this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
-            `));
+            `);
         }
 
         const client = await pool.settings.connect();
@@ -42,8 +42,8 @@ export default class extends Command {
             } }
         );
 
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         Cleared ${settings.rules.rules.length} rules!
-        `));
+        `);
     }
 }

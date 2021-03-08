@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import { fetch } from '../../Structures/Fetcher.js';
 
 interface CoinGeckoRes {
     id: string,
@@ -36,31 +36,26 @@ interface CoinGeckoRes {
 const cache: Record<string, CoinGeckoRes> = {};
 
 const cryptoUpdate = async () => {
-    for(let i = 1;;i++) {
-        let res;
+    for (let i = 1;;i++) {
         try {
-            res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${i}&sparkline=false`, {
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
+            const j = await fetch()
+                .get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${i}&sparkline=false`)
+                .header('Accept', 'application/json')
+                .json<CoinGeckoRes[]>();
+
+            if (j.length === 0)
+                break;
+
+            Object.assign(cache, ...j);
         } catch {
             break;
-        }
-
-        if(res.ok) {
-            const json = (await res.json() as CoinGeckoRes[]).map(cc => ({ [cc.id]: cc }));
-            if(json.length === 0) {
-                break;
-            }
-            Object.assign(cache, ...json); // overwrites old values
         }
     }
 }
 
 export const getCurrency = (name: string): CoinGeckoRes => {
     name = name.toLowerCase();
-    if(name in cache) {
+    if (name in cache) {
         return cache[name];
     }
 
@@ -72,7 +67,7 @@ export const getCurrency = (name: string): CoinGeckoRes => {
 
 let interval: NodeJS.Timeout;
 export const setCryptoInterval = async (ms: number) => {
-    if(Object.keys(cache).length === 0) {
+    if (Object.keys(cache).length === 0) {
         await cryptoUpdate();
     }
 

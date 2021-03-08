@@ -1,17 +1,19 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, GuildChannel } from 'discord.js';
+import { Message, GuildChannel, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { validSnowflake, getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Set the rules to the server.',
-                ''
+                'Set the rules to the server.'
             ],
 			{
                 name: 'rules',
@@ -24,28 +26,28 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        if((!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id))
+        if (
+            !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)
             || args.length === 1
         ) {
             const num = +args[0];
             const rule = settings?.rules?.rules?.filter(r => r.index === num).shift();
-            if(!isValidNumber(+args[0]) || !rule) {
-                return message.reply(this.Embed.fail(
+            if (!isValidNumber(+args[0]) || !rule) {
+                return this.Embed.fail(
                     args.length === 1
                     ? `Rule #${args[0]} doesn't exist!`
                     : `You don't have permission to add rules!`
-                ));
+                );
             }
 
-            return message.reply(this.Embed.success(rule.rule).setTitle(`Rule ${rule.index}`));
-        } else if(settings && 'rules' in settings && settings.rules.rules?.length > 0) {
-            return message.reply(this.Embed.fail(`
+            return this.Embed.success(rule.rule).setTitle(`Rule ${rule.index}`);
+        } else if (settings && 'rules' in settings && settings.rules.rules?.length > 0) {
+            return this.Embed.fail(`
             Rules already exist in this guild!
 
             Use \`\`clearrules\`\` (\`\`help clearrules\`\` for examples) to remove all rules.
             Use \`\`addrule\`\` (\`\`help addrule\`\` for examples) to add a rule.
-            `));
+            `);
         }
 
         const msg = await message.reply(this.Embed.success(`
@@ -61,7 +63,6 @@ export default class extends Command {
         Make sure the rules are already written down - you will have 5 minutes to enter all of them.
         `));
         
-        if(!msg) return;
         let channel: GuildChannel;
         let i = 1;
         const rules: { index: number, rule: string }[] = [];
@@ -74,13 +75,14 @@ export default class extends Command {
             { time: 60 * 1000 * 5 }
         );
         collector.on('collect', async (m: Message) => {
-            if(!msg || msg?.deleted) {
+            if (!msg || msg?.deleted) {
                 return collector.stop();
-            } else if(m.content.toLowerCase() === 'stop') {
+            } else if (m.content.toLowerCase() === 'stop') {
                 return collector.stop('1');
             }
 
-            if(!channel) {
+            if (!channel) {
+                // TODO: fix
                 channel = await getMentions(Object.assign(message, { 
                     // so you may be wondering, "wtf is this?"
                     // getMentions currently doesn't accept an index and auto slices
@@ -103,8 +105,7 @@ export default class extends Command {
             rules.push({ index: i++, rule: m.content });
         });
         collector.on('end', async (_, r) => {
-            if(!msg) return;
-            if(r === '1') { // stopped by user
+            if (r === '1') { // stopped by user
                 const client = await pool.settings.connect();
                 const collection = client.db('khafrabot').collection('settings');
                 await collection.updateOne(

@@ -1,12 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get the categories of atrocities committed by Trump!',
-                '',
+                'Get the categories of atrocities committed by Trump!'
             ],
 			{
                 name: 'trumpkey',
@@ -16,8 +16,8 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        return message.reply(this.Embed.success(`
+    async init() {
+        return this.Embed.success(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia
         🔵 – Public Statements / Tweets
@@ -26,6 +26,6 @@ export default class extends Command {
         🐷 – Trump Family Business Dealings
         🟠 – Policy
         🟢 – Environment
-        `));
+        `);
     }
 }

@@ -16,7 +16,7 @@ export const washYourLyrics = async (
         })
     });
 
-    if(!res.ok) {
+    if (!res.ok) {
         return Promise.reject(await res.json());
     }
 

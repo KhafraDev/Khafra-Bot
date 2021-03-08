@@ -5,15 +5,15 @@ export const isValidNumber = (num: number, {
     allowUnsafe   = false,
     allowNaN      = false
 } = {}) => {
-    if(!allowInfinity && !Number.isFinite(num)) {
+    if (!allowInfinity && !Number.isFinite(num)) {
         return false;
-    } else if(!allowNegative && num < 0) {
+    } else if (!allowNegative && num < 0) {
         return false;
-    } else if(!allowInfinity && !allowFloats && !Number.isInteger(num)) {
+    } else if (!allowInfinity && !allowFloats && !Number.isInteger(num)) {
         return false;
-    } else if(!allowInfinity && !allowUnsafe && !Number.isSafeInteger(num)) {
+    } else if (!allowInfinity && !allowUnsafe && !Number.isSafeInteger(num)) {
         return false;
-    } else if(!allowNaN && Number.isNaN(num)) {
+    } else if (!allowNaN && Number.isNaN(num)) {
         return false;
     }
 

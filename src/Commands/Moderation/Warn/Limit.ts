@@ -1,11 +1,14 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { FindAndModifyWriteOpResultObject } from 'mongodb';
 import { Warnings } from '../../../lib/types/Collections.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -24,12 +27,10 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        } else if(!isValidNumber(Number(args[0]))) {
-            return message.reply(this.Embed.generic('Invalid **number** set for number of warning points!'));
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
+        } else if (!isValidNumber(Number(args[0]))) {
+            return this.Embed.generic(this, 'Invalid **number** set for number of warning points!');
         }
 
         const client = await pool.moderation.connect();
@@ -45,8 +46,8 @@ export default class extends Command {
         ) as FindAndModifyWriteOpResultObject<Warnings>;
 
         const old = warns.value?.limit ?? 0;
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         Changed the warning limit! It was ${old} points (0 being not added) and it is now ${args[0]} points.
-        `));
+        `);
     }
 }

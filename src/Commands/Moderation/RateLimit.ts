@@ -8,10 +8,13 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { isExplicitText } from '../../lib/types/Discord.js.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const MAX = ms('6h');
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -34,13 +37,13 @@ export default class extends Command {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const secs = (args.length === 2 ? ms(args[1]) : ms('0')) / 1000;
 
-        if(!isExplicitText(text)) {
-            return message.reply(this.Embed.generic('No text channel found!'));
-        } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {
+        if (!isExplicitText(text)) {
+            return this.Embed.generic(this, 'No text channel found!');
+        } else if (!hasPerms(text, message.guild.me, this.permissions)) {
             // maybe better fail message?
-            return message.reply(this.Embed.missing_perms());
-        } else if(isNaN(secs) || secs > MAX) {
-            return message.reply(this.Embed.fail('Invalid number of seconds (max is 6H)!'));
+            return this.Embed.missing_perms();
+        } else if (isNaN(secs) || secs > MAX) {
+            return this.Embed.fail('Invalid number of seconds (max is 6H)!');
         }
 
         try {
@@ -49,22 +52,20 @@ export default class extends Command {
                 `Khafra-Bot: ${secs}s. rate-limit set by ${message.author.tag} (${message.author.id})`
             );
         } catch {
-            return message.reply(this.Embed.fail(`
+            return this.Embed.fail(`
             An error occurred setting a slow-mode!
-            `));
+            `);
         }
 
         await message.reply(this.Embed.success(`
         Slow-mode set in ${text} for ${secs} seconds!
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             return channel.send(this.Embed.success(`
             **Channel:** ${text} (${text.id}).

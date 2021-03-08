@@ -1,8 +1,10 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { openLibrary } from '../../lib/Backend/Openlibrary.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -14,27 +16,19 @@ export default class extends Command {
                 name: 'openlibrary',
                 folder: 'Utility',
                 args: [1],
-                aliases: [ 'library', 'book', 'books' ]
+                aliases: [ 'library', 'book', 'books' ],
+                errors: {
+                    AssertionError: 'No results found!'
+                }
             }
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let books;
-        try {
-            books = await openLibrary(args.join(' '));
-        } catch(e) {
-            if(e.name === 'FetchError') {
-                return message.reply(this.Embed.fail('Server had an issue processing the request.'));
-            } else if(e.name === 'AssertionError') {
-                return message.reply(this.Embed.fail('Server didn\'t give us a celebrity.'));
-            }
+    async init(_message: Message, args: string[]) {
+        const books = await openLibrary(args.join(' '));
 
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
-        }
-
-        if(books.numFound === 0 || books.docs.length === 0) {
-            return message.reply(this.Embed.fail('No books found on OpenLibrary!'));
+        if (books.numFound === 0 || books.docs.length === 0) {
+            return this.Embed.fail('No books found on OpenLibrary!');
         }
 
         const book = books.docs.shift();
@@ -54,6 +48,6 @@ export default class extends Command {
         `);
         embed.description = embed.description.replace(/^(\s*\r?\n){2,}/gm, '\n');
 
-        return message.reply(embed);
+        return embed;
     }
 }

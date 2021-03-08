@@ -3,8 +3,10 @@ import { Message } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -24,10 +26,10 @@ export default class extends Command {
 
     async init(message: Message) {
         const channel = await getMentions(message, 'channels');
-        if(!channel) {
-            return message.reply(this.Embed.fail(`
+        if (!channel) {
+            return this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
-            `));
+            `);
         }
 
         const embed = this.Embed.success()
@@ -37,8 +39,8 @@ export default class extends Command {
             )
             .setFooter(`Created ${formatDate('MMM. Do, YYYY hh:mm:ssA t', channel.createdTimestamp)}`);
 
-        if(isText(channel)) {
-                embed
+        if (isText(channel)) {
+            embed
                 .setDescription(`
                 ${channel}
                 ${channel.topic ? `\`\`\`${channel.topic}\`\`\`` : ''}
@@ -50,16 +52,16 @@ export default class extends Command {
                     { name: '**Position:**', value: channel.position, inline: true },
                 );
 
-                if(isExplicitText(channel)) {
-                    embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
-                }
-        } else if(isVoice(channel)) {
+            if (isExplicitText(channel)) {
+                embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
+            }
+        } else if (isVoice(channel)) {
             embed
-            .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
-            .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
-            .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
+                .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
+                .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
+                .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
         }
 
-        return message.reply(embed);
+        return embed;
     }
 }

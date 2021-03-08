@@ -4,7 +4,7 @@ import { existsSync, readFileSync } from 'fs';
 type Env = { [key: string]: string };
 
 const path = join(process.cwd(), '.env');
-if(!existsSync(path)) {
+if (!existsSync(path)) {
     throw new Error('.env: No .env file found at the root of the repo!');
 }
 

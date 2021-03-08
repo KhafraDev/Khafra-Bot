@@ -1,7 +1,7 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
-import { decode } from 'entities';
+import { decodeXML } from 'entities';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IMirrorCo {
     title: string
@@ -19,12 +19,12 @@ interface IMirrorCo {
 const rss = new RSSReader<IMirrorCo>();
 rss.cache('http://www.mirror.co.uk/news/world-news/rss.xml');
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.mirror.co.uk',
-                ''
+                'Fetch latest articles from https://www.mirror.co.uk'
             ],
             {
                 name: 'mirror',
@@ -34,19 +34,19 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        if(rss.results.size === 0) {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
         const embed = this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Mirror', 'https://i.imgur.com/wuINM4z.png');
-        return message.reply(embed);
+        return embed;
     }
 }

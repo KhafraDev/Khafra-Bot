@@ -1,13 +1,14 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { cache, fetchHN } from '../../../lib/Backend/HackerNews.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
+    middleware = [ fetchHN ];
     constructor() {
         super(
             [
                 'Fetch top articles from https://news.ycombinator.com/',
-                ''
             ],
             {
                 name: 'hackernews',
@@ -18,20 +19,17 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        if(cache.size === 0) {
-            await fetchHN();
-            if(cache.size === 0) {
-                return message.reply(this.Embed.fail('Failed to fetch the articles!'));
-            }
+    async init() {
+        if (cache.size === 0) {
+            return this.Embed.fail('Failed to fetch the articles!');
         }
 
         const stories = [...cache.values()];
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         ${stories
             .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
             .join('\n')
         }
-        `));
+        `);
     }
 }

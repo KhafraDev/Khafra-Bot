@@ -1,8 +1,6 @@
 import { parse, validate } from 'fast-xml-parser';
-import fetch from 'node-fetch';
-import { promisify } from 'util';
-
-const delay = promisify(setTimeout);
+import { fetch } from '../../Structures/Fetcher.js';
+import { delay } from './Constants/OneLiners.js';
 
 interface RSSJSON<T extends any> {
     rss: {
@@ -33,15 +31,21 @@ export class RSSReader<T extends any> {
     public timeout = 60 * 1000 * 60;
     public save = 10;
 
+    public afterSave: null | (() => any) = null;
+
+    constructor(loadFunction?: (() => any)) {
+        this.afterSave = loadFunction;
+    }
+
     /**
      * Very rarely, a network/server side error will occur. This function retries requests
      * up to 10 times before giving up.
      * @param url {string} RSS feed to fetch
      */
     forceFetch = async (url: string) => {
-        for(let i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) {
             try {
-                const res = await fetch(url);
+                const res = await fetch(url).send();
                 return res;
             } catch {
                 await delay(1000);
@@ -53,7 +57,7 @@ export class RSSReader<T extends any> {
         const r = await this.forceFetch(url);
         const xml = await r.text();
 
-        if(!validate(xml)) return;
+        if (!validate(xml)) return;
         this.results.clear();
 
         const j = parse(xml) as RSSJSON<T> | AtomJSON<T>;
@@ -61,13 +65,17 @@ export class RSSReader<T extends any> {
             ? j.rss.channel.item // RSS feed
             : j.feed.entry;      // Atom feed
 
-        for(const item of i.slice(0, this.save)) {
+        for (const item of i.slice(0, this.save)) {
             this.results.set(this.results.size, item);
+        }
+
+        if (typeof this.afterSave === 'function') {
+            this.afterSave();
         }
     }
 
     cache = async (url: string) => {
-        if(this.interval) return this.interval;
+        if (this.interval) return this.interval;
 
         await this.parse(url).catch(() => {});
         this.interval = setInterval(

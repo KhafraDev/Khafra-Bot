@@ -13,7 +13,7 @@ export const cooldown = (max: number, ms: number) => {
     setInterval(() => { // clear out old entries
         m.forEach((v, k) => {
             const f = v.filter(d => Date.now() - d < ms);
-            if(f.length === 0) {
+            if (f.length === 0) {
                 m.delete(k);
             } else {
                 m.set(k, f);
@@ -23,12 +23,12 @@ export const cooldown = (max: number, ms: number) => {
 
     return (id: string) => {
         const now = Date.now();
-        if(!m.has(id)) {
+        if (!m.has(id)) {
             m.set(id, [now]);
             return true;
         } else {
             const i = m.get(id).filter(d => now - d < ms);
-            if(i.length >= max) {
+            if (i.length >= max) {
                 return false;
             } else {
                 m.set(id, [...i, now]);

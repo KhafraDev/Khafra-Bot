@@ -4,8 +4,11 @@ import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -28,7 +31,7 @@ export default class extends Command {
     async init(message: Message, args: string[], settings: GuildSettings) {
         const member = await getMentions(message, 'users');
         if (!member) {
-            return message.reply(this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!'));
+            return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
@@ -38,9 +41,7 @@ export default class extends Command {
 
         Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
         `));
-
-        if(!msg) return;
-
+        
         const filter = (m: Message) => 
             m.author.id === message.author.id &&
             ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content.toLowerCase())
@@ -51,9 +52,9 @@ export default class extends Command {
             time: 20000
         });
 
-        if(m.size === 0) {
+        if (m.size === 0) {
             return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${member}!`));
-        } else if(['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
+        } else if (['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
             return msg.edit(this.Embed.fail('Command was canceled!'));
         }
 
@@ -64,20 +65,18 @@ export default class extends Command {
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
         } catch {
-            return message.reply(this.Embed.fail(`${member} isn't bannable!`));
+            return this.Embed.fail(`${member} isn't bannable!`);
         }
 
         await message.reply(this.Embed.success(`
         ${member} has been soft-banned from the guild!
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             return channel.send(this.Embed.success(`
             **Offender:** ${member}

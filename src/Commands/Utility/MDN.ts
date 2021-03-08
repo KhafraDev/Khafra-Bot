@@ -1,10 +1,10 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { mdn } from '../../lib/Backend/MDN/MDNHandler.js';
-import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
-import { MDNSearch } from '../../lib/Backend/MDN/types/MDN';
+import { fetchMDN as mdn } from 'search-mdn';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -21,25 +21,25 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let results: MDNSearch;
-        try {
-            results = await mdn(args.join(' '));
-        } catch {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+        const results = await mdn(args.join(' '));
+
+        if ('errors' in results) {
+            const keys = Object.keys(results.errors);
+            return this.Embed.fail(
+                // gets all errors and types of errors and joins them together.
+                keys.map(k => results.errors[k].map(e => e.message).join('\n')).join('\n')
+            );
         }
 
-        const best = results.documents
-            .map(doc => Object.assign(doc, { 
-                diff: compareTwoStrings(args.join(' ').toLowerCase(), doc.title.toLowerCase()) 
-            }))
-            .sort((a, b) => b.diff - a.diff);
+        if (results.documents.length === 0)
+            return this.Embed.fail('No results found!');
+        
+        const best = results.documents.sort((a, b) => b.score - a.score);
 
-        const embed = this.Embed.success()
-            .setAuthor('Mozilla Development Network', 'https://developer.mozilla.org/static/img/opengraph-logo.72382e605ce3.png')
-            .setDescription(best.map(doc => `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`))
+        return this.Embed.success()
+            .setAuthor('Mozilla Development Network', 'https://developer.mozilla.org/static/img/opengraph-logo.png')
+            .setDescription(best.map(doc => `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`).join('\n'))
             .setFooter('Requested by ' + message.author.tag)
-            .setTimestamp()
-
-        return message.reply(embed);
+            .setTimestamp();
     }
 }

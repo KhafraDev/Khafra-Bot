@@ -36,7 +36,7 @@ const APOD_PATH = join(process.cwd(), 'assets/NASA.json');
 let ratelimit = 1000;
 let interval: NodeJS.Timeout | null = null;
 let lastDate: Date | null = (() => {
-    if(existsSync(APOD_PATH)) {
+    if (existsSync(APOD_PATH)) {
         const file = JSON.parse(readFileSync(APOD_PATH, 'utf-8'));
         const [y, m, d] = Object.keys(file).pop().split('-');
         return new Date(+y, +m - 1, +d);
@@ -50,19 +50,19 @@ export const cache = new Map<string, Pick<
 >();
 
 export const APOD = async (bulk?: boolean) => {
-    if(!process.env.NASA) return Promise.reject(new NASAError('No NASA API key in env!'));
+    if (!process.env.NASA) return Promise.reject(new NASAError('No NASA API key in env!'));
 
     const sd = setLastDate();
-    if(!sd) return Promise.reject(new NASAError('Exceeded APOD EPOCH.'));
+    if (!sd) return Promise.reject(new NASAError('Exceeded APOD EPOCH.'));
     
     const date = bulk ? `&date=${sd}` : '';
     const res = await fetch(`${APOD_API_URL}${process.env.NASA}${date}`);
     ratelimit = parseInt(res.headers.get('X-RateLimit-Remaining'));
 
-    if(res.status === 429) return Promise.reject(new NASAError('Rate-limit reached!'));
+    if (res.status === 429) return Promise.reject(new NASAError('Rate-limit reached!'));
 
     const json = await res.json() as IAPOD | IAPODErr;
-    if('code' in json) return Promise.reject(new NASAError(json.msg));
+    if ('code' in json) return Promise.reject(new NASAError(json.msg));
     return json;
 }
 
@@ -77,7 +77,7 @@ export const APOD_BULK_FETCH = async (): Promise<void> => {
             })());
         } catch(e) {
             errors.push(e as Error);
-            if(errors.length > 10) {
+            if (errors.length > 10) {
                 return Promise.reject(
                     new NASAError(errors.map(e => e.toString()).join('\n'))
                 );
@@ -85,7 +85,7 @@ export const APOD_BULK_FETCH = async (): Promise<void> => {
         }
     }
 
-    if(!interval) {
+    if (!interval) {
         interval = setInterval(() => {
             clearInterval(interval);
             ratelimit = 1000;
@@ -97,7 +97,7 @@ export const APOD_SAVE = async () => {
     const data = Object.fromEntries(cache);
     cache.clear();
 
-    if(existsSync(APOD_PATH)) {
+    if (existsSync(APOD_PATH)) {
         const file = JSON.parse(readFileSync(APOD_PATH, 'utf-8'));
         await writeFile(APOD_PATH, JSON.stringify(Object.assign(file, data), null, 2));
     } else {
@@ -106,12 +106,12 @@ export const APOD_SAVE = async () => {
 }
 
 export const APOD_CLEAR_BAD = async () => {
-    if(!existsSync(APOD_PATH)) return;
+    if (!existsSync(APOD_PATH)) return;
 
     const file = JSON.parse(await readFile(APOD_PATH, 'utf-8'));
-    for(const key of Object.keys(file)) {
+    for (const key of Object.keys(file)) {
         const obj = file[key];
-        if(!('hdurl' in obj)) {
+        if (!('hdurl' in obj)) {
             delete file[key];
         }
         delete obj['date'];
@@ -125,7 +125,7 @@ const setLastDate = (): string | null => {
         ? lastDate = new Date() 
         : lastDate = new Date(lastDate.getTime() - 86_400_000);
 
-    if(lastDate.getTime() <= EPOCH.getTime()) return null;
+    if (lastDate.getTime() <= EPOCH.getTime()) return null;
 
     return `${lastDate.getFullYear()}-${(lastDate.getMonth()+1+'').padStart(2, '0')}-${(lastDate.getDate()+'').padStart(2, '0')}`;
 }

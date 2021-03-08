@@ -2,11 +2,10 @@ import { Event } from '../Structures/Event.js';
 import { GuildMember, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { formatDate } from '../lib/Utility/Date.js';
-import { Logger } from '../Structures/Logger.js';
 import { GuildSettings } from '../lib/types/Collections';
-import { Command } from '../Structures/Command.js';
-
-const Embed = Command.Embed;
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { hasPerms } from '../lib/Utility/Permissions.js';
+import { RegisterEvent } from '../Structures/Decorator.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -14,9 +13,9 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class extends Event<'guildMemberRemove'> {
+@RegisterEvent
+export class kEvent extends Event {
     name = 'guildMemberRemove' as const;
-    logger = new Logger(this.name);
 
     async init(member: GuildMember) {
         const date = formatDate('MM-DD-YYYY', new Date());
@@ -35,7 +34,7 @@ export default class extends Event<'guildMemberRemove'> {
         );
 
         const server = await settingsCollection.findOne<GuildSettings>({ id: member.guild.id });
-        if(!server?.welcomeChannel) {
+        if (!server?.welcomeChannel) {
             return;
         }
 
@@ -43,18 +42,16 @@ export default class extends Event<'guildMemberRemove'> {
         try {
             // TextChannel logic is handled where the user sets the channel
             channel = await member.guild.client.channels.fetch(server.welcomeChannel) as TextChannel;
-        } catch(e) {
-            this.logger.log(e);
+        } catch (e) {
             return;
         }
 
-        if(!channel.permissionsFor(member.guild.me).has(basic)) {
+        if (!hasPerms(channel, member.guild.me, basic))
             return;
-        }
 
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member} (${member.user.tag}) has left the server!`);
+            .setDescription(`${member.user} (${member.user.tag}) has left the server!`);
 
         return channel.send(embed);
     }

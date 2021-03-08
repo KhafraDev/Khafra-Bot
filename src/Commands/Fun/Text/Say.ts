@@ -1,7 +1,9 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -18,10 +20,8 @@ export default class extends Command {
     }
 
     init(message: Message, args: string[]) {
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setAuthor(message.author.username, message.author.displayAvatarURL())
             .setDescription(args.join(' '));
-
-        return message.reply(embed);
     }
 }

@@ -40,7 +40,7 @@ export const hasteServers: PasteServer[] = [
 export const Paste = async (server: string, text: string) => {
     server = server.toLowerCase();
     const supported = hasteServers.some(s => s.url === server || s.alias.includes(server));
-    if(!supported) {
+    if (!supported) {
         return Promise.reject('Server not supported');
     }
 
@@ -63,7 +63,7 @@ export const Paste = async (server: string, text: string) => {
     }
 
     const { origin } = new URL(pasteServer.url);
-    if(!res.ok) {
+    if (!res.ok) {
         return Promise.reject('Response wasn\'t ok.');
     }
 

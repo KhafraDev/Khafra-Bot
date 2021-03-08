@@ -1,8 +1,10 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -18,10 +20,7 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        const user = await getMentions(message, 'users');
-        if (!user) {
-            return message.reply(this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!'));
-        }
+        const user = await getMentions(message, 'users') ?? message.author;
 
         const avatar = user.displayAvatarURL({
             size: 512,
@@ -29,6 +28,6 @@ export default class extends Command {
             dynamic: true
         });
         
-        return message.reply(this.Embed.success(`${user}'s avatar`).setImage(avatar));
+        return this.Embed.success(`${user}'s avatar`).setImage(avatar);
     }
 }

@@ -1,10 +1,13 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isText } from '../../lib/types/Discord.js.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -23,18 +26,15 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
         } 
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
-        if(!channel || !isText(channel)) {
-            this.logger.log(`Channel: ${channel}`);
-            return message.reply(this.Embed.fail(`
+        if (!channel || !isText(channel)) {
+            return this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
-            `));
+            `);
         }
 
         const client = await pool.moderation.connect();
@@ -49,8 +49,8 @@ export default class extends Command {
             { upsert: true }
         );
 
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         Set public mod-logging channel to ${channel}!
-        `));
+        `);
     }
 }

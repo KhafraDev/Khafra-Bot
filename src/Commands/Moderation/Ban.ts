@@ -4,8 +4,11 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
+import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -26,16 +29,19 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const member = await getMentions(message, 'users');
+        const user = await getMentions(message, 'users');
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
 
+        const member = message.guild.members.resolve(user);
+        if (member && !hierarchy(message.member, member)) {
+            return this.Embed.fail(`You do not have permission to ban ${member}!`);
+        }
+
         const msg = await message.reply(this.Embed.success(`
-        Are you sure you want to ban ${member}?
+        Are you sure you want to ban ${user}?
 
         Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
         `));
-
-        if (!msg) return;
 
         const filter = (m: Message) => 
             m.author.id === message.author.id &&
@@ -48,35 +54,33 @@ export default class extends Command {
         });
 
         if (m.size === 0) {
-            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${member}!`));
+            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${user}!`));
         } else if (['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
             return msg.edit(this.Embed.fail('Command was canceled!'));
         }
 
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
         try {
-            await message.guild.members.ban(member, {
+            await message.guild.members.ban(user, {
                 days: isValidNumber(clear) ? clear : 7,
                 reason
             });
         } catch {
-            return message.reply(this.Embed.fail(`${member} isn't bannable!`));
+            return this.Embed.fail(`${user} isn't bannable!`);
         }
 
         await message.reply(this.Embed.success(`
-        ${member} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear} days worth of messages have been removed.
+        ${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear} days worth of messages have been removed.
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             return channel.send(this.Embed.success(`
-            **Offender:** ${member}
+            **Offender:** ${user}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             `).setTitle('Member Banned'));

@@ -1,26 +1,13 @@
 import Mongo from 'mongodb'; // cjs module
 
-type MongoPool = Record<string, MongoDB>;
-
 const anonymousURL = 'mongodb://localhost:27017/';
 const authURL = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@localhost:27017/`;
-
-const pool: MongoPool = Object.assign(
-    Object.create(null), {
-        pocket: null,
-        tags: null,
-        insights: null,
-        moderation: null,
-        settings: null,
-        commands: null
-    }
-);
 
 class MongoDB {
     client: Mongo.MongoClient
 
     async connect() {
-        if(this.client) {
+        if (this.client) {
             return Promise.resolve(this.client);
         }
 
@@ -35,8 +22,8 @@ class MongoDB {
             (entry: { user: string; db: string; }) => entry.user === process.env.DB_USER && entry.db === 'admin'
         );
 
-        if(admin.length > 0) {
-            if(!process.env.DB_USER || !process.env.DB_PASSWORD) {
+        if (admin.length > 0) {
+            if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
                 throw new Error('No db auth given but admin user exists!');
             }
 
@@ -44,14 +31,14 @@ class MongoDB {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             });
-        } else if(admin.length === 0 && process.env.DB_USER && process.env.DB_PASSWORD) {
+        } else if (admin.length === 0 && process.env.DB_USER && process.env.DB_PASSWORD) {
             const test: { ok: 0 | 1 } = await anonymousClient.db('admin').addUser(process.env.DB_USER, process.env.DB_PASSWORD, {
                 roles: [ {
                     role: 'dbAdmin', db: 'admin'
                 } ]
             });
 
-            if(test.ok === 1) {
+            if (test.ok === 1) {
                 this.client = await Mongo.MongoClient.connect(authURL, {
                     useNewUrlParser: true,
                     useUnifiedTopology: true
@@ -69,8 +56,11 @@ class MongoDB {
     }
 }
 
-for(const prop in pool) {
-    pool[prop] = new MongoDB();
-}
-
-export { pool, MongoDB };
+export const pool = {
+    pocket: new MongoDB(),
+    tags: new MongoDB(),
+    insights: new MongoDB(),
+    moderation: new MongoDB(),
+    settings: new MongoDB(),
+    commands: new MongoDB()
+} as const;

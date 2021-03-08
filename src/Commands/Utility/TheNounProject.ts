@@ -1,9 +1,10 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
 import { theNounProjectSearch } from '../../lib/Backend/TheNounProject/TheNounProject.js';
-import { NounSearch } from '../../lib/Backend/TheNounProject/types/Noun.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -14,36 +15,29 @@ export default class extends Command {
                 name: 'thenounproject',
                 folder: 'Utility',
                 args: [1],
-                aliases: [ 'tnp' ]
+                aliases: [ 'tnp' ],
+                errors: {
+                    AssertionError: 'Received bad response from server.'
+                }
             }
         );
     }
 
     async init(message: Message, args: string[]) {
-        let icons: NounSearch | null;
-        try {
-            icons = await theNounProjectSearch(args.join(' '));
-        } catch(e) {
-            if(e.name === 'AssertionError') {
-                return message.reply(this.Embed.fail('Received bad response from server.'));
-            }
-
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
-        }
-
-        if(icons.icons.length === 0) {
-            return message.reply(this.Embed.fail('No icons found for that search!'));
+        const icons = await theNounProjectSearch(args.join(' '));
+        
+        if (icons.icons.length === 0) {
+            return this.Embed.fail('No icons found for that search!');
         }
 
         let i = 0;
         const format = () => {
-            if(!icons.icons[i]) {
+            if (!icons.icons[i]) {
                 this.Embed.success().setImage(icons.icons[0].preview_url)
             }
             return this.Embed.success().setImage(icons.icons[i].preview_url);
         }
         const m = await message.reply(format());
-        if(!m) return;
 
         await m.react('▶️');
         await m.react('◀️');
@@ -54,14 +48,8 @@ export default class extends Command {
         );
         collector.on('collect', r => {
             r.emoji.name === '▶️' ? i++ : i--;
-            try {
-                return m.edit(format());
-            } catch {}
+            return m.edit(format());
         });
-        collector.on('end', () => {
-            try {
-                return m.reactions.removeAll();
-            } catch {}
-        });
+        collector.on('end', () => m.reactions.removeAll());
     }
 }

@@ -1,13 +1,13 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { thisWordDoesNotExist } from '../../../lib/Backend/ThisWordDoesNotExist.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'This word does not exist!',
-                ''
+                'This word does not exist!'
             ],
 			{
                 name: 'thisworddoesnotexist',
@@ -18,21 +18,16 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        let word;
-        try {
-            word = await thisWordDoesNotExist();
-        } catch {
-            return message.reply(this.Embed.fail('Received bad response from server!'));    
-        }
+    async init() {
+        const word = await thisWordDoesNotExist();
 
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         **${word.word.word.toUpperCase()}** - ${word.word.pos}
         *${word.word.syllables.join(' − ')}*
         \`\`${word.word.definition}\`\`
         ${word.word.example ? `*__${word.word.example}__*` : ''}
 
         [View Online](${word.permalink_url}).
-        `));
+        `);
     }
 }

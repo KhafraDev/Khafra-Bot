@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 /**
  * List of all sites available.
@@ -79,14 +79,14 @@ const list = [
     'https://zoomquilt.org/',
     'https://dadlaughbutton.com/',
     'https://www.bouncingdvdlogo.com/'
-]
+];
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Visit a useless site!',
-                ''
+                'Visit a useless site!'
             ],
 			{
                 name: 'theuselessweb',
@@ -97,8 +97,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        const random = list[Math.floor(Math.random() * list.length)];
-        return message.reply(this.Embed.success(random));
+    async init() {
+        return this.Embed.success(list[Math.floor(Math.random() * list.length)]);
     }
 }

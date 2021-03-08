@@ -3,8 +3,10 @@ import { Message } from 'discord.js';
 import { Wikipedia } from '../../lib/Backend/Wikipedia/Wikipedia.js';
 import entities from 'entities'; // cjs module
 import { WikipediaSearch } from '../../lib/Backend/Wikipedia/types/Wikipedia';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -20,23 +22,23 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if(args.length === 0) {
-            return message.reply(this.Embed.generic());
+    async init(_message: Message, args: string[]) {
+        if (args.length === 0) {
+            return this.Embed.generic(this);
         }
 
         let wiki = await Wikipedia(args.join(' '));
-        if('method' in wiki) { // WikipediaArticleNotFound
+        if ('method' in wiki) { // WikipediaArticleNotFound
             wiki = await Wikipedia(args.join(' '), 'en', 1); // force search
         }
         
-        if('error' in wiki) { // WikipediaError
-            return message.reply(this.Embed.fail(`
+        if ('error' in wiki) { // WikipediaError
+            return this.Embed.fail(`
             Received status ${wiki.httpCode} (${wiki.httpReason}).
-            `));
+            `);
         } 
         
-        if('extract' in wiki) {
+        if ('extract' in wiki) {
             const embed = this.Embed.success(`
             ${wiki.content_urls.desktop?.page.slice(0, 140)}
 
@@ -47,18 +49,18 @@ export default class extends Command {
                 .setTimestamp(wiki.timestamp ?? Date.now())
                 .setFooter('Last updated');
 
-            return message.reply(embed);
+            return embed;
         }
         
         wiki = wiki as WikipediaSearch; // can't be WikipediaArticleNotFound
-        if(wiki.pages.length === 0) {
-            return message.reply(this.Embed.fail(`No results found!`));
+        if (wiki.pages.length === 0) {
+            return this.Embed.fail(`No results found!`);
         }
 
         const embed = this.Embed.success(entities.decode(wiki.pages[0].excerpt.replace(/<[^>]*>?/gm, '').slice(0, 2048), 1))
             .setTitle(wiki.pages[0].title)
             .setThumbnail(wiki.pages[0].thumbnail?.url ? 'https:' + wiki.pages[0].thumbnail?.url : null);
 
-        return message.reply(embed);
+        return embed;
     }
 }

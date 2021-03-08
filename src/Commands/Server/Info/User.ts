@@ -2,10 +2,11 @@ import { Command } from '../../../Structures/Command.js';
 import { Message, Activity, SnowflakeUtil } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
-    for(const activity of activities) {
+    for (const activity of activities) {
         switch(activity.type) {
             case 'CUSTOM_STATUS':
                 push.push(`${activity.emoji ?? ' '}\`\`${activity.state}\`\``); break;
@@ -21,7 +22,8 @@ const formatPresence = (activities: Activity[]) => {
     return push.join('\n');
 }
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -41,7 +43,7 @@ export default class extends Command {
         const user = await getMentions(message, 'users') ?? message.author;
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
-        const embed = this.Embed.success(formatPresence(user.presence.activities))
+        return this.Embed.success(formatPresence(user.presence.activities))
             .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user.displayAvatarURL())
             .addField('**Username:**', user.username, true)
             .addField('**ID:**', user.id, true)
@@ -49,7 +51,5 @@ export default class extends Command {
             .addField('**Bot:**', user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
             .addField('**Flags:**', !user.flags || user.flags.bitfield === 0 ? 'Unknown' : user.flags?.toArray().join(', '), true)
             .addField('**Created:**', formatDate('MMM. Do, YYYY hh:mm:ssA t', snowflake.date), true);
-
-        return message.reply(embed);
     }
 }

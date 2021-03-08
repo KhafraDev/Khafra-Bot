@@ -1,8 +1,9 @@
-import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { forgotify } from '../../lib/Backend/Forgotify.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -17,18 +18,9 @@ export default class extends Command {
         )
     }
 
-    async init(message: Message) {
-        let song;
-        try {
-            song = await forgotify();
-        } catch(e) {
-            if(e.name === 'FetchError') {
-                return message.reply(this.Embed.fail(`The server had an error processing the request.`));
-            }
+    async init() {
+        const song = await forgotify();
 
-            return message.reply(this.Embed.fail(`An unknown ${e.name} occurred!`));
-        }
-
-        return message.reply(this.Embed.success(`[${song.title}](${song.url})`));
+        return this.Embed.success(`[${song.title}](${song.url})`);
     }
 }

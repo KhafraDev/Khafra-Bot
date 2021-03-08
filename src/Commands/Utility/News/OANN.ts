@@ -1,8 +1,8 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
-import { decode } from 'entities';
+import { decodeXML } from 'entities';
 import { URL } from 'url';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IOANN {
     title: string
@@ -18,14 +18,14 @@ interface IOANN {
 }
 
 const rss = new RSSReader<IOANN>();
-rss.cache('https://feeds.feedburner.com/breitbart');
+rss.cache('https://www.oann.com/feed');
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://oann.com',
-                ''
+                'Fetch latest articles from https://oann.com'
             ],
             {
                 name: 'oann',
@@ -35,9 +35,9 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        if(rss.results.size === 0) {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()].map(p => {
@@ -48,11 +48,11 @@ export default class extends Command {
         });
         const embed = this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decode(p.title)}](${p.link})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg');
-        return message.reply(embed);
+        return embed;
     }
 }

@@ -16,8 +16,8 @@ export const pigLatin = (s: string) => {
     const words = s.split(/\s+/g).map(w => {
         const punc = w.match(nonAlphanumeric);
 
-        if(vowel.test(w)) w = `${w}yay`;
-        else if(reConsonants.test(w)) {
+        if (vowel.test(w)) w = `${w}yay`;
+        else if (reConsonants.test(w)) {
             const m = w.match(reConsonants);
 
             w = m?.[0] === w 
