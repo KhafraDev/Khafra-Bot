@@ -8,7 +8,9 @@ interface RSSJSON<T extends any> {
             title: string
             link: string
             description: string
+            ttl?: number
             item: T[]
+            // todo: add better typings that follow the rss specification
             [key: string]: any
         }
     }
@@ -30,8 +32,9 @@ export class RSSReader<T extends any> {
     public results = new Map<number, T>();
     public timeout = 60 * 1000 * 60;
     public save = 10;
+    public url = 'https://google.com/'
 
-    public afterSave: null | (() => any) = null;
+    public afterSave = () => {};
 
     constructor(loadFunction?: (() => any)) {
         this.afterSave = loadFunction;
@@ -40,12 +43,11 @@ export class RSSReader<T extends any> {
     /**
      * Very rarely, a network/server side error will occur. This function retries requests
      * up to 10 times before giving up.
-     * @param url {string} RSS feed to fetch
      */
-    forceFetch = async (url: string) => {
+    forceFetch = async () => {
         for (let i = 0; i < 10; i++) {
             try {
-                const res = await fetch(url).send();
+                const res = await fetch(this.url).send();
                 return res;
             } catch {
                 await delay(1000);
@@ -53,14 +55,28 @@ export class RSSReader<T extends any> {
         }
     }
 
-    parse = async (url: string) => {
-        const r = await this.forceFetch(url);
-        const xml = await r.text();
+    parse = async () => {
+        const r = await this.forceFetch();
+        const xml = await r?.text();
 
-        if (!validate(xml)) return;
+        if (typeof xml !== 'string' || validate(xml) !== true) return;
         this.results.clear();
 
         const j = parse(xml) as RSSJSON<T> | AtomJSON<T>;
+
+        // respects a feed's ttl option if present.
+        // https://www.rssboard.org/rss-draft-1#element-channel-ttl
+        if ('rss' in j && typeof j.rss.channel.ttl === 'number') {
+            clearInterval(this.interval);
+            this.timeout = 60 * 1000 * j.rss.channel.ttl;
+            if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
+
+            this.interval = setInterval(
+                this.parse, 
+                this.timeout
+            );
+        }
+
         const i = 'rss' in j 
             ? j.rss.channel.item // RSS feed
             : j.feed.entry;      // Atom feed
@@ -76,10 +92,11 @@ export class RSSReader<T extends any> {
 
     cache = async (url: string) => {
         if (this.interval) return this.interval;
+        this.url = url;
 
-        await this.parse(url).catch(() => {});
+        await this.parse();
         this.interval = setInterval(
-            () => this.parse(url).catch(() => {}),
+            this.parse,
             this.timeout
         );
     }
