@@ -42,7 +42,11 @@ export class KhafraClient extends Client {
     async loadCommands() {
         const commands = await this.load('build/src/Commands');
         const importPromise = commands.map<Promise<Command>>(command => import(absPath(command)));
-        await Promise.allSettled(importPromise);
+        const settled = await Promise.allSettled(importPromise);
+
+        const rejected = settled.filter(p => p.status === 'rejected') as PromiseRejectedResult[];
+        for (const reject of rejected)
+            console.log(reject.reason);
 
         console.log(`Loaded ${commands.length} commands!`);
         return KhafraClient.Commands;

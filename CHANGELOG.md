@@ -446,6 +446,9 @@
 * Add `forceban` command that allows banning multiple people without confirmation.
 * Massively improve the `emoji` command.
 * Remove `quote`, `kanye`, `boredapi`, `cheese`, `connect4`, `nim`, `what-is-npm`, `slots`, `trivia`, `tictactoe`, `xkcd`, `discover`, `discriminator`, `whitelist (all)`, `giverole`, `reactrole`, `tags (all)`, `bang`, `boilthefrog`, old `theonion`, and `500px` commands.
+* Add `about` command for basic information about the bot.
+* Add `invite` command for links to invite the bot to your own server.
+* Add `links` command.
 
 ## Structure
 * Commands will now return with an embed to reply to the user with. This reduces a ton of repetitive code and allows for cleaner error handling without proxying the methods or using try/catch.
@@ -460,3 +463,4 @@
 * Partially transition databases to Postgres.
 * Add in `fetch` util for cleaner, functional code.
 * Remove `kongregate` chat forwarder. 
+* Log commands that fail to load.

@@ -94,9 +94,14 @@ class Fetcher {
         });
     }
 
-    json<T extends any = any>() {
-        return this.send()
-            .then(r => r.json() as T);
+    async json<T extends any = any>() {
+        const r = await this.send();
+        return r.json() as T;
+    }
+
+    async text() {
+        const r = await this.send();
+        return r.text();
     }
 }
 
