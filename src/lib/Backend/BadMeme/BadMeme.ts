@@ -1,13 +1,23 @@
+import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
+import { stringify } from 'querystring';
 import { IBadMeme } from './types/BadMeme.d';
 
-interface IBadMemeCache {
+export interface IBadMemeCache {
     nsfw: boolean
-    url: string
+    url: string | string[]
+}
+
+interface RedditReqOpts {
+    limit: number
+    after?: string
+    // querystring#stringify requires an index signature 
+    [key: string]: any
 }
 
 const cache = new Map<string, IBadMemeCache[]>();
 const lastUsed = new Map<string, number>();
+const after = new Map<string, string>();
 
 const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCache | null => {
     if (!cache.has(subreddit))
@@ -38,13 +48,26 @@ export const badmeme = async (
         return getItemRespectNSFW(subreddit, nsfw);
     }
 
-    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=100`);
+    const o: RedditReqOpts = { limit: 100 };
+    if (after.has(subreddit))
+        o.after = after.get(subreddit)!;
+
+    // https://www.reddit.com/dev/api#GET_new
+    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${stringify(o)}`);
     const j = await r.json() as IBadMeme;
 
     const urls: IBadMemeCache[] = j.data.children
         .map(child => child.data)
         .filter(post => post.is_self === false)
         .map(post => {
+            if (post.is_gallery === true) {
+                const galleryImages = Object
+                    .keys(post.media_metadata) // object is mapped by dynamic image key so... 
+                    .map(k => decodeXML(post.media_metadata[k].s.u));
+
+                return { nsfw: post.over_18, url: galleryImages };
+            }
+
             if (post.domain === 'gfycat.com') {
                 if (!post.secure_media && !post.preview?.reddit_video_preview?.fallback_url)
                     return { nsfw: post.over_18, url: `${post.url}.mp4` };
@@ -66,6 +89,8 @@ export const badmeme = async (
             return { nsfw: post.over_18, url: post.url };
         });
 
+    const last = j.data.children[j.data.children.length - 1].data.name;
+    after.set(subreddit, last);
     cache.set(subreddit, urls);
 
     return getItemRespectNSFW(subreddit, nsfw);
@@ -80,6 +105,7 @@ setInterval(() => {
         ) { // 10 mins
             lastUsed.delete(subreddit);
             cache.delete(subreddit);
+            after.delete(subreddit);
         }
     });
 }, 60 * 1000 * 10);

@@ -64,6 +64,10 @@ export class RSSReader<T extends any> {
 
         const j = parse(xml) as RSSJSON<T> | AtomJSON<T>;
 
+        if (!('rss' in j) && !('feed' in j)) {
+            return clearInterval(this.interval);
+        }
+
         // respects a feed's ttl option if present.
         // https://www.rssboard.org/rss-draft-1#element-channel-ttl
         if ('rss' in j && typeof j.rss.channel.ttl === 'number') {

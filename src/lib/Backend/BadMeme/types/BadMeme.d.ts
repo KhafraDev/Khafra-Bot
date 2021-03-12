@@ -4,6 +4,7 @@ export interface IBadMeme<T extends string = 'dankmemes'> {
         children: {
             kind: 't3',
             data: {
+                is_gallery?: boolean
                 approved_at_utc?: number
                 subreddit: Lowercase<T>
                 selftext: string
@@ -117,6 +118,7 @@ export interface IBadMeme<T extends string = 'dankmemes'> {
                 num_crossposts: number
                 media?: any
                 is_video: boolean
+                [key: string]: any
             }
         }[]
     }
