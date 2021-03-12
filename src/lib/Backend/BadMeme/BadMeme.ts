@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
 import { stringify } from 'querystring';
-import { IBadMeme } from './types/BadMeme.d';
+import { RedditData, IRedditGfycat } from './types/BadMeme.d';
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -38,6 +38,10 @@ const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCach
     return item || null;
 }
 
+// no, doing <post>.domain === 'gfycat.com' does not work.
+// I tried.
+const isgfycat = (p: RedditData['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
+
 export const badmeme = async (
     subreddit = 'dankmemes',
     nsfw = false
@@ -54,13 +58,13 @@ export const badmeme = async (
 
     // https://www.reddit.com/dev/api#GET_new
     const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${stringify(o)}`);
-    const j = await r.json() as IBadMeme;
+    const j = await r.json();
 
-    const urls: IBadMemeCache[] = j.data.children
+    const urls: IBadMemeCache[] = (j.data.children as RedditData[])
         .map(child => child.data)
         .filter(post => post.is_self === false)
         .map(post => {
-            if (post.is_gallery === true) {
+            if ('is_gallery' in post && post.is_gallery === true) {
                 const galleryImages = Object
                     .keys(post.media_metadata) // object is mapped by dynamic image key so... 
                     .map(k => decodeXML(post.media_metadata[k].s.u));
@@ -68,7 +72,7 @@ export const badmeme = async (
                 return { nsfw: post.over_18, url: galleryImages };
             }
 
-            if (post.domain === 'gfycat.com') {
+            if (isgfycat(post)) {
                 if (!post.secure_media && !post.preview?.reddit_video_preview?.fallback_url)
                     return { nsfw: post.over_18, url: `${post.url}.mp4` };
 
@@ -83,7 +87,10 @@ export const badmeme = async (
             if (post.domain === 'redgifs.com')
                 return { nsfw: post.over_18, url: post.url.replace('/watch/', '/ifr/') };
 
-            if (post.post_hint === 'hosted:video')
+            // reddit separates the video from the audio, so the best we can do is get the video
+            // not gonna waste resources combining audio + video.
+            // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
+            if ('post_hint' in post && post.post_hint === 'hosted:video')
                 return { nsfw: post.over_18, url: post.media.reddit_video.fallback_url };
 
             return { nsfw: post.over_18, url: post.url };
