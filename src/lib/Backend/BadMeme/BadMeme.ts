@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
 import { stringify } from 'querystring';
-import { RedditData, IRedditGfycat } from './types/BadMeme.d';
+import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess } from './types/BadMeme.d';
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -66,8 +66,9 @@ export const badmeme = async (
         .map(post => {
             if ('is_gallery' in post && post.is_gallery === true) {
                 const galleryImages = Object
-                    .keys(post.media_metadata) // object is mapped by dynamic image key so... 
-                    .map(k => decodeXML(post.media_metadata[k].s.u));
+                    .values(post.media_metadata)
+                    .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid')
+                    .map(k => decodeXML(k.s.u));
 
                 return { nsfw: post.over_18, url: galleryImages };
             }

@@ -48,6 +48,19 @@ type RedditOEmbed<T extends string> = {
     thumbnail_height: number
 }
 
+export type RedditMediaMetadataSuccess = {
+    status: 'valid',
+    e: 'Image',
+    m: string,
+    p: GalleryData[],
+    s: GalleryData,
+    id: string
+}
+
+type RedditMediaMetadataFail = {
+    status: 'failed'
+} 
+
 /** 
  * Properties all Reddit posts have in common.
  * If a property type is `unknown`, it needs to be updated if you can provide
@@ -167,14 +180,7 @@ interface IRedditBase {
 interface IRedditGallery extends IRedditBase {
     is_gallery: true
     media_metadata: {
-        [key: string]: {
-            status: 'valid',
-            e: 'Image',
-            m: string,
-            p: GalleryData[],
-            s: GalleryData,
-            id: string
-        }
+        [key: string]: RedditMediaMetadataFail | RedditMediaMetadataSuccess
     }
     gallery_data: {
         items: { media_id: string, id: number }[]
