@@ -222,6 +222,18 @@ export interface IRedditGfycat extends IRedditBase {
     }
 }
 
+/**
+ * https://www.reddit.com/r/redditdev/comments/l46y2l/check_if_post_is_a_crosspost/gknm508
+ */
+interface IRedditIsCrosspost extends IRedditBase {
+    /** Parent's ID */
+    crosspost_parent: string
+    crosspost_parent_list: RedditData['data'][]
+}
+
+/**
+ * Union type of every possible post
+ */
 export type RedditData = {
-    data: IRedditGallery | IRedditIsVideo | IRedditGfycat
+    data: IRedditGallery | IRedditIsVideo | IRedditGfycat | IRedditIsCrosspost
 }

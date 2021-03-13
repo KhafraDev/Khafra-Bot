@@ -62,7 +62,7 @@ export const badmeme = async (
 
     const urls: IBadMemeCache[] = (j.data.children as RedditData[])
         .map(child => child.data)
-        .filter(post => post.is_self === false)
+        .filter(post => post.is_self === false && !('crosspost_parent' in post))
         .map(post => {
             if ('is_gallery' in post && post.is_gallery === true) {
                 const galleryImages = Object
