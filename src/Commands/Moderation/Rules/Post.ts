@@ -1,19 +1,21 @@
 import { Command } from '../../../Structures/Command.js';
 import { 
     Message, 
+    Permissions, 
     TextChannel
 } from 'discord.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { delay } from '../../../lib/Utility/Constants/OneLiners.js';
 
-const delay = (): Promise<void> => new Promise(r => setTimeout(r, 5000));
-
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Set the rules to the server.',
-                ''
+                'Set the rules to the server.'
             ],
 			{
                 name: 'post',
@@ -26,34 +28,32 @@ export default class extends Command {
     }
 
     async init(message: Message, _: string[], settings: GuildSettings) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        } else if(!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return message.reply(this.Embed.fail(`
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
+        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
+            return this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
-            `));
+            `);
         }
 
         const channel = message.guild.channels.cache.get(settings.rules.channel) as TextChannel;
-        if(!channel || !isText(channel)) {
-            return message.reply(this.Embed.fail(`Channel ${channel ?? settings.rules.channel} is invalid!`));
-        } else if(!channel.permissionsFor(message.guild.me).has(['EMBED_LINKS', 'SEND_MESSAGES'])) {
-            return message.reply(this.Embed.fail(`Missing permissions to either use embeds or send messages!`));
+        if (!channel || !isText(channel)) {
+            return this.Embed.fail(`Channel ${channel ?? settings.rules.channel} is invalid!`);
+        } else if (!hasPerms(channel, message.guild.me, ['EMBED_LINKS', 'SEND_MESSAGES'])) {
+            return this.Embed.fail(`Missing permissions to either use embeds or send messages!`);
         }
 
         await message.reply(this.Embed.success(`
         Posting ${settings.rules.rules.length} rules in intervals of 5 seconds.
         `));
 
-        for(const rule of settings.rules.rules) {
+        for (const rule of settings.rules.rules) {
             await channel.send(this.Embed.success(`
             ${rule.rule}
             `).setTitle(`Rule ${rule.index}`));
-            await delay();
+            await delay(5000);
         }
     }
 }

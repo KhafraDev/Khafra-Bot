@@ -1,12 +1,13 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get the bot\'s ping!',
-                ''
+                'Get the bot\'s ping!'
             ],
 			{
                 name: 'ping',
@@ -18,9 +19,6 @@ export default class extends Command {
 
     async init(message: Message) {
         const m = await message.reply(this.Embed.success('Pinging...!'));
-        if(!m) {
-            return;
-        }
         
         const embed = this.Embed.success(`
         Pong! 🏓

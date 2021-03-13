@@ -1,12 +1,13 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Have the bot reply to the user.',
-                ''
+                'Have the bot reply to the user.'
             ], 
             {
                 name: 'debug:reply',
@@ -17,6 +18,6 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        return message.reply(this.Embed.success(`Hello, ${message.author}!`));
+        return this.Embed.success(`Hello, ${message.author}!`);
     }
 }

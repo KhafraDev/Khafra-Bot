@@ -1,12 +1,12 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'See reviews for the worst ISP in the U.S.',
-                ''
+                'See reviews for the worst ISP in the U.S.'
             ],
 			{
                 name: 'optimum',
@@ -17,8 +17,8 @@ export default class extends Command {
         );
     }
 
-    init(message: Message) {
-        const embed = this.Embed.success()
+    init() {
+        return this.Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`
             Reviews by *real* people:
@@ -31,7 +31,5 @@ export default class extends Command {
             [SiteJabber](https://www.sitejabber.com/reviews/optimum.com) - 1 ⭐
             [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐
             `);
-
-        return message.reply(embed);
     }
 }

@@ -7,7 +7,7 @@ import {
 } from './types/Wikipedia.d';
 
 export const Wikipedia = async (q: string, language='en', limit?: number) => {
-    if(typeof limit === 'number') {
+    if (typeof limit === 'number') {
         const res = await fetch(`https://${language}.wikipedia.org/w/rest.php/v1/search/page?q=${encodeURIComponent(q)}&limit=${limit}`);
         const json = await res.json() as WikipediaError | WikipediaSearch;
         return json;

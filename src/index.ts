@@ -1,42 +1,38 @@
 import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
-import './Structures/Proxy/ChannelSend.js';
-import './Structures/Proxy/React.js';
-import './Structures/Proxy/Edit.js';
-import './Structures/Proxy/Reply.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { Logger } from './Structures/Logger.js';
 import { trim } from './lib/Utility/Template.js';
 import { ClientEvents } from 'discord.js';
 
-if(process.env.__KONG_USERNAME && process.env.__KONG_PASSWORD) {
-    await import('./lib/Backend/Kongregate.js');
-}
-
 const logger = new Logger('RateLimit');
 
-const emitted = (name: keyof ClientEvents) => {
-    return (...args: ClientEvents[keyof ClientEvents]) => 
+const emitted = <T extends keyof ClientEvents>(name: T) => {
+    return (...args: ClientEvents[T]) => 
         KhafraClient.Events.get(name)?.init(...args);
 }
 
-const client = new KhafraClient({
+export const client = new KhafraClient({
     allowedMentions: { parse: [ 'users', 'roles' ], repliedUser: true },
-    presence: {
-        status: 'online'
-    },
+    presence: { status: 'online' },
     messageCacheLifetime: 1800, // defaults to never..
     messageSweepInterval: 1800, // defaults to never..
     partials: [ 'REACTION', 'MESSAGE', 'USER' ],
-    ws: {
-        intents: [ 'GUILDS', 'GUILD_MEMBERS', 'GUILD_PRESENCES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES' ]
-    }
+    intents: [ 
+        'DIRECT_MESSAGES',
+        'GUILDS', 
+        'GUILD_EMOJIS',
+        'GUILD_MEMBERS', 
+        'GUILD_MESSAGES', 
+        'GUILD_MESSAGE_REACTIONS',
+        'GUILD_PRESENCES' 
+    ]
 })
     .on('ready',                 emitted('ready'))
     .on('message',               emitted('message'))
-    .on('messageReactionAdd',    emitted('messageReactionAdd'))
-    .on('messageReactionRemove', emitted('messageReactionRemove'))
+    .on('guildCreate',           emitted('guildCreate'))
+    .on('guildDelete',           emitted('guildDelete'))
     .on('guildMemberAdd',        emitted('guildMemberAdd'))
     .on('guildMemberRemove',     emitted('guildMemberRemove'))
     .on('guildMemberUpdate',     emitted('guildMemberUpdate'))
@@ -51,5 +47,3 @@ const client = new KhafraClient({
     });
 
 client.init();
-
-export { client };

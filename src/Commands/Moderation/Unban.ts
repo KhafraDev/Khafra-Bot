@@ -1,8 +1,11 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, User, TextChannel, Permissions } from 'discord.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -26,22 +29,19 @@ export default class extends Command {
         try {
             user = await message.client.users.fetch(id);
             await message.guild.members.unban(user, reason?.join(' '));
-        } catch(e) {
-            console.log(e);
-            return message.reply(this.Embed.fail('Invalid User!'));
+        } catch {
+            return this.Embed.fail('Invalid User!');
         }
 
         await message.reply(this.Embed.success(`
         **Successfully** unbanned ${user}${reason.join(' ').length ? ' for \`\`' + reason.join(' ') + '\`\`' : ''}!
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             return channel.send(this.Embed.success(`
             **Offender:** ${user}

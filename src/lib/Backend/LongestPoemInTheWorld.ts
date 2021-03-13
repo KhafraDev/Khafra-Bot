@@ -24,7 +24,7 @@ export const longestPoem = async () => {
     const res = await fetch(`${base}${cursor ? '?cursor=' + cursor : ''}`);
     const json = await res.json() as Poem | NoPoem;
 
-    if('code' in json) return Promise.reject();
+    if ('code' in json) return Promise.reject();
     deepStrictEqual('verses' in json, true);
     deepStrictEqual('cursor' in json, true);
     notDeepStrictEqual(json.verses.length, 0);

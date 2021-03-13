@@ -2,8 +2,10 @@ import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { npm } from '../../lib/Backend/NPM/npmHandler.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -19,25 +21,17 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let _package;
-        try {
-            _package = await npm(args[0]);
-        } catch(e) {
-            return message.reply(this.Embed.fail(`
-            An unexpected error occurred!
-            ${e.message ? '``' + e.message + '``' : ''}
-            `));
-        }
+    async init(_message: Message, args: string[]) {
+        const _package = await npm(args[0]);
 
-        if('code' in _package) {
-            return message.reply(this.Embed.fail('No package with that name was found!'));
-        } else if('error' in _package) {
-            return message.reply(this.Embed.fail(`Received error \`\`${_package.error}\`\`.`));
+        if ('code' in _package) {
+            return this.Embed.fail('No package with that name was found!');
+        } else if ('error' in _package) {
+            return this.Embed.fail(`Received error \`\`${_package.error}\`\`.`);
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
@@ -50,7 +44,5 @@ export default class extends Command {
             .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', _package.time?.created), true)
             .addField('**Homepage:**', _package.homepage ?? 'None', true)
             .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
-
-        return message.reply(embed);
     }
 }

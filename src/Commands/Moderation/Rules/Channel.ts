@@ -1,11 +1,14 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -23,31 +26,20 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
-        if((!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id))
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        } else if(!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return message.reply(this.Embed.fail(`
+    async init(message: Message, _args: string[], settings: GuildSettings) {
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
+        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
+            return this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
-            `));
+            `);
         }
 
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            return message.reply(this.Embed.fail(`Invalid channel ID provided!`));
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
-        if(!channel) {
-            return message.reply(this.Embed.fail(`
-            Channel isn't fetched or the ID is incorrect.
-            `));
-        } else if(!isText(channel)) {
-            return message.reply(this.Embed.fail(`Not a text channel.`));
+        const channel = await getMentions(message, 'channels');
+        if (!isText(channel)) {
+            return this.Embed.fail(`Not a text channel.`);
         }
 
         const client = await pool.settings.connect();
@@ -59,8 +51,8 @@ export default class extends Command {
             } }
         );
 
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         The rules will now be posted to ${channel}!
-        `));
+        `);
     }
 }

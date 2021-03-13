@@ -22,7 +22,7 @@ interface PeopleInSpace {
 export const fetchPeopleInSpace = async (): Promise<PeopleInSpace> => {
     try {
         const res = await fetch('https://www.howmanypeopleareinspacerightnow.com/peopleinspace.json');
-        if(res.status !== 200) {
+        if (res.status !== 200) {
             return Promise.reject('Received non-200 status.');
         }
         const json = await res.json() as PeopleInSpace;

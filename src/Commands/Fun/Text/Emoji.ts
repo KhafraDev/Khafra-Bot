@@ -1,8 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import twemoji from 'twemoji-parser'; // cjs module
+import { parse } from 'twemoji-parser';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
+
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -18,24 +22,19 @@ export default class extends Command {
         );
     }
 
-    init(message: Message, args: string[]) {
-        const guildEmojis   = args.slice(0, 5).join(' ').match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g) ?? [];
-        const unicodeEmojis = args.slice(0, 5).join(' ').replace(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g, '');
-
-        const unicodeParsed = twemoji.parse(unicodeEmojis, {
-            assetType: 'png'
-        }).map(({ url }) => url);
-        
-        const guildParsed = guildEmojis
-            .map(e => e.match(/\d{17,19}/).shift())
-            .map(id => message.guild.emojis.cache.get(id) ?? message.client.emojis.cache.get(id))
-            .filter(Boolean)
+    async init(message: Message) {
+        const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 
-        if(unicodeParsed.length === 0 && guildParsed.length === 0) {
-            return message.reply(this.Embed.fail('No guild or unicode emojis provided!'));
-        }
+        const guild = [...message.content.matchAll(GUILD_EMOJI_REG)]
+            .filter(e => message.guild.emojis.cache.has(e[3]))
+            .map(e => message.guild.emojis.resolve(e[3]).url);
 
-        return message.reply([...unicodeParsed, ...guildParsed].join('\n'));
+        const all =  [...unicode, ...guild];
+
+        if (all.length === 0)
+            return this.Embed.fail(`No guild or unicode emojis were in the message! 😕`);
+
+        return all.join('\n');
     }
 }

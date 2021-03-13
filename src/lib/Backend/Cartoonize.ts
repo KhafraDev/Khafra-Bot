@@ -1,5 +1,4 @@
 import FormData from '@discordjs/form-data';
-import fetch from 'node-fetch';
 import parse5, {
     DefaultTreeParentNode as DTPN,
     DefaultTreeElement as DTE,
@@ -8,6 +7,7 @@ import parse5, {
 import { deepStrictEqual } from 'assert';
 import { MessageAttachment } from 'discord.js';
 import { lookup } from 'mime-types';
+import { fetch } from '../../Structures/Fetcher.js';
 
 const getA = (html: string) => {
     const document = parse5.parse(html);
@@ -16,14 +16,14 @@ const getA = (html: string) => {
 
     while(els.length !== 0) {
         const el = els.shift() as DTCN | DTPN;
-        if(el.nodeName === 'a') {
-            if(
+        if (el.nodeName === 'a') {
+            if (
                 (el as DTE).attrs.every(a => ['download', 'href'].includes(a.name)) &&
                 (el as DTCN).parentNode.nodeName === 'div'
             ) {
                 a.push(el);
             }
-        } else if((el as DTPN).childNodes?.length > 0) {
+        } else if ((el as DTPN).childNodes?.length > 0) {
             els.push(...(el as DTPN).childNodes);
         }
     }
@@ -40,7 +40,7 @@ export const cartoonize = async (attachment: MessageAttachment) => {
     const mime = lookup(attachment.name) + '';
     deepStrictEqual(typeof mime !== 'boolean', true);
 
-    const res = await fetch(attachment.proxyURL);
+    const res = await fetch(attachment.proxyURL).send();
     deepStrictEqual(res.status, 200);
     const form = new FormData();
     form.append('image', res.body, {
@@ -48,11 +48,12 @@ export const cartoonize = async (attachment: MessageAttachment) => {
         contentType: mime
     });
 
-    const cartoonizeRes = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
-        method: 'POST',
-        headers: form.getHeaders(),
-        body: form
-    });
+    const cartoonizeRes = await fetch()
+        .post('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize')
+        .header(form.getHeaders())
+        .send({
+            body: form
+        });
 
     deepStrictEqual(cartoonizeRes.status, 200);
     const a = getA(await cartoonizeRes.text());

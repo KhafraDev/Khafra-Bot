@@ -26,7 +26,7 @@ export const killedByGoogle = async () => {
     const res = await fetch('https://raw.githubusercontent.com/codyogden/killedbygoogle/main/graveyard.json');
     const json = await res.json() as GoogleProduct[];
 
-    for(const k in cache) delete cache[k as keyof typeof cache];
+    for (const k in cache) delete cache[k as keyof typeof cache];
 
     Object.defineProperties(cache, {
         total: {
@@ -47,7 +47,7 @@ export const killedByGoogle = async () => {
 }
 
 export const kbgSetInterval = async () => {
-    if(interval) return interval;
+    if (interval) return interval;
     await killedByGoogle().catch(() => {});
     interval = setInterval(() => 
         killedByGoogle().catch(() => {})

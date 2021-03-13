@@ -1,72 +1,119 @@
+import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
-import { RedditNew, RedditNotFound, RedditPostMin } from './types/BadMeme';
+import { stringify } from 'querystring';
+import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess } from './types/BadMeme.d';
 
-interface RedditCache {
-    posts: RedditPostMin[],
-    updated: number
+export interface IBadMemeCache {
+    nsfw: boolean
+    url: string | string[]
 }
 
-const cache = new Map<string, RedditCache>();
+interface RedditReqOpts {
+    limit: number
+    after?: string
+    // querystring#stringify requires an index signature 
+    [key: string]: any
+}
 
-const retrieve = async (subreddit: string): Promise<RedditCache> => {
+const cache = new Map<string, IBadMemeCache[]>();
+const lastUsed = new Map<string, number>();
+const after = new Map<string, string>();
+
+const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCache | null => {
+    if (!cache.has(subreddit))
+        return null;
+
+    const cached = cache.get(subreddit);
+    // TODO: get random item so if the subreddit is removed from the cache
+    // you can still see unique posts
+    const item = cached.find(p => allowNSFW || !p.nsfw);
+    if (item) {
+        cached.splice(cached.indexOf(item), 1);
+        cached.length === 0 
+            ? cache.delete(subreddit)
+            : cache.set(subreddit, cached);
+    }
+
+    lastUsed.set(subreddit, Date.now());
+    return item || null;
+}
+
+// no, doing <post>.domain === 'gfycat.com' does not work.
+// I tried.
+const isgfycat = (p: RedditData['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
+
+export const badmeme = async (
+    subreddit = 'dankmemes',
+    nsfw = false
+) => {
     subreddit = subreddit.toLowerCase();
-    if(cache.has(subreddit)) {
-        return cache.get(subreddit)!;
+
+    if (cache.has(subreddit)) {
+        return getItemRespectNSFW(subreddit, nsfw);
     }
 
-    try {
-        const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?limit=100`);
-        const json = await res.json() as RedditNew | RedditNotFound;
+    const o: RedditReqOpts = { limit: 100 };
+    if (after.has(subreddit))
+        o.after = after.get(subreddit)!;
 
-        if('error' in json) {
-            return Promise.reject(json.message);
-        } else {
-            const posts = json.data.children;
-            cache.set(subreddit, {
-                posts: posts.map(p => ({
-                    over_18: p.data.over_18,
-                    thumbnail: p.data.thumbnail,
-                    url: p.data.url,
-                    id: p.data.id
-                })),
-                updated: Date.now()
-            });
-            return cache.get(subreddit)!;
-        }
-    } catch(e) {
-        return Promise.reject(e.toString());
-    }
-}
+    // https://www.reddit.com/dev/api#GET_new
+    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${stringify(o)}`);
+    const j = await r.json();
 
-export const reddit = async (subreddit = 'dankmemes', allowNSFW = false) => {
-    let posts: RedditCache;
-    try {
-        posts = await retrieve(subreddit);
-    } catch(e) {
-        return Promise.reject(e);
-    }
+    const urls: IBadMemeCache[] = (j.data.children as RedditData[])
+        .map(child => child.data)
+        .filter(post => post.is_self === false && !('crosspost_parent' in post))
+        .map(post => {
+            if ('is_gallery' in post && post.is_gallery === true) {
+                const galleryImages = Object
+                    .values(post.media_metadata)
+                    .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid')
+                    .map(k => decodeXML(k.s.u));
 
-    const filtered = posts.posts.filter(p => 
-        (allowNSFW ? true : !p.over_18) &&
-        p.thumbnail !== 'self' &&
-        /(.gif|.png|.jpeg|.jpg)$/.test(p.url)
-    );
+                return { nsfw: post.over_18, url: galleryImages };
+            }
 
-    const first = filtered.shift();
-    if(!first) return Promise.reject('No posts found!');
-    
-    cache.set(subreddit.toLowerCase(), {
-        posts: posts.posts.filter(p => p.id !== first.id),
-        updated: Date.now()
-    });
-    return first;
+            if (isgfycat(post)) {
+                if (!post.secure_media && !post.preview?.reddit_video_preview?.fallback_url)
+                    return { nsfw: post.over_18, url: `${post.url}.mp4` };
+
+                return { 
+                    nsfw: post.over_18, 
+                    url: post.secure_media 
+                        ? post.secure_media.oembed.thumbnail_url
+                        : post.preview.reddit_video_preview.fallback_url
+                };
+            }
+
+            if (post.domain === 'redgifs.com')
+                return { nsfw: post.over_18, url: post.url.replace('/watch/', '/ifr/') };
+
+            // reddit separates the video from the audio, so the best we can do is get the video
+            // not gonna waste resources combining audio + video.
+            // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
+            if ('post_hint' in post && post.post_hint === 'hosted:video')
+                return { nsfw: post.over_18, url: post.media.reddit_video.fallback_url };
+
+            return { nsfw: post.over_18, url: post.url };
+        });
+
+    const last = j.data.children[j.data.children.length - 1].data.name;
+    after.set(subreddit, last);
+    cache.set(subreddit, urls);
+
+    return getItemRespectNSFW(subreddit, nsfw);
 }
 
 setInterval(() => {
     const now = Date.now();
-    cache.forEach((v, k) => {
-        if(now - v.updated > 60 * 1000 * 10) { // 10 mins || 600,000 ms
-            cache.delete(k);
+    lastUsed.forEach((time, subreddit) => {
+        if (
+            !cache.has(subreddit) || // can be deleted if cache is depleted
+            now - time >= 60 * 1000 * 10 // 10 mins
+        ) { // 10 mins
+            lastUsed.delete(subreddit);
+            cache.delete(subreddit);
+            after.delete(subreddit);
         }
     });
 }, 60 * 1000 * 10);

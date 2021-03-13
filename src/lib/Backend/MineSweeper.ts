@@ -1,27 +1,21 @@
 import { chunk } from '../Utility/Array.js';
 
-const yo: Record<string, string> = {
-    '10': ':zero:',
-    '9': 'bomb',
-    '0': 'zero',
-    '1': 'one',
-    '2': 'two',
-    '3': 'three',
-    '4': 'four',
-    '5': 'five',
-    '6': 'six',
-    '7': 'seven',
-    '8': 'eight'
-}
+const emojis = [
+    '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', 
+    '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣',
+    '💣'
+] as const;
 
 export const Board = () => {
     const board = Array.from(chunk(Array<number>(100).fill(0), 10));
 
-    for(let i = 0; i < 10;) {
+    for (let i = 0; i < 10;) {
         const x = Math.floor(Math.random() * 10);
         const y = Math.floor(Math.random() * 10);
-        if(board[x][y] <= 8) {
-            board[x][y] = 9; //'💣';
+        // a spot could theoretically be surrounded by 8 bombs
+        // but we use 10 as a placeholder for bombs
+        if (board[x][y] <= 8) {
+            board[x][y] = 10; //'💣';
             i++;
             
             // horizontal + vertical
@@ -39,19 +33,18 @@ export const Board = () => {
     }
 
     // choose random spot on board that will not be masked
-    // this is the starter hint; denoted by -2
-    while(!board.flat().some(a => a === 10)) {
+    // this is the starter hint; denoted by -1
+    while(!board.flat().includes(-1)) {
         const x = Math.floor(Math.random() * 10)
         const y = Math.floor(Math.random() * 10);
-        if(board[x][y] === 0) {
-            board[x][y] = 10;
-            break;
+        if (board[x][y] === 0) {
+            board[x][y] = -1;
         }
     }
 
     const emojified = board.map(row => 
         row.map(spot =>
-            spot === 10 ? yo[10] : `|| :${yo[spot]}: ||`
+            spot === -1 ? emojis[0] : `|| ${emojis[spot]} ||`
         ).join('')
     ).join('\n');
 

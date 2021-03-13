@@ -1,7 +1,9 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -17,8 +19,6 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        return message.reply(message.content, {
-            embed: this.Embed.success(`\`\`\`${message.content}\`\`\``),
-        });
+        return this.Embed.success(`\`\`\`${message.content}\`\`\``);
     }
 }

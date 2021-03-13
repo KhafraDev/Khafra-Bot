@@ -9,12 +9,12 @@
  */
 export const compareTwoStrings = (X: string, Y: string): number => {
     const bigramsX = Array.from(
-        Array(X.length - 1),
+        { length: X.length - 1 },
         (_, index) => X[index] + X[index + 1]
     );
 
     const bigramsY = Array.from(
-        Array(Y.length - 1),
+        { length: Y.length - 1 },
         (_, index) => Y[index] + Y[index + 1]
     );
 

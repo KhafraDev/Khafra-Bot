@@ -1,21 +1,25 @@
 import { Event } from '../Structures/Event.js';
-import { ClientEvents, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
 import config from '../../config.json';
+import { RegisterEvent } from '../Structures/Decorator.js';
 
-const { botOwner } = config;
-
-export default class implements Event {
-    name: keyof ClientEvents = 'ready';
+@RegisterEvent
+export class kEvent extends Event {
+    name = 'ready' as const;
 
     async init() {
         const s = `Logged in at ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}`;
         console.log(s);
         
-        if(typeof botOwner === 'string') {
-            const user = await client.users.fetch(botOwner);
-            await user.send(new MessageEmbed().setDescription(s).setColor('#ffe449')); 
+        if (typeof config.botOwner === 'string') {
+            try {
+                const user = await client.users.fetch(config.botOwner);
+                await user.send(new MessageEmbed().setDescription(s).setColor('#ffe449')); 
+            } catch {
+                console.log(`Logged in! Could not send message to the bot owner.`);
+            }
         }
     }
 }

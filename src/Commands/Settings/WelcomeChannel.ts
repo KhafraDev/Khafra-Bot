@@ -3,6 +3,8 @@ import {
     Message, TextChannel, Permissions
 } from "discord.js";
 import { pool } from '../../Structures/Database/Mongo.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -10,7 +12,8 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -28,26 +31,18 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
         } 
 
-        let channel: TextChannel;
-        try {
-            channel = message.mentions.channels.first() ?? await message.client.channels.fetch(args[0]) as TextChannel;
-        } catch(e) {
-            this.logger.log(e);
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
-        }
-
-        if(channel.type !== 'text') {
-            return message.reply(this.Embed.fail(`${channel} is not a text channel!`));
-        } else if(!channel.permissionsFor(message.guild.me).has(basic)) {
-            return message.reply(this.Embed.fail(`
+        const channel = message.mentions.channels.first() ?? await message.client.channels.fetch(args[0]) as TextChannel;
+        
+        if (channel.type !== 'text') {
+            return this.Embed.fail(`${channel} is not a text channel!`);
+        } else if (!hasPerms(channel, message.guild.me, basic)) {
+            return this.Embed.fail(`
             I am missing one or more of ${basic.toArray().map(p => `\`\`${p}\`\``).join(', ')} permissions!
-            `));
+            `);
         }
 
         const client = await pool.settings.connect();
@@ -61,12 +56,12 @@ export default class extends Command {
             { upsert: true }
         );
         
-        if(updated.modifiedCount === 1 || updated.upsertedCount === 1) {
-            return message.reply(this.Embed.success(`
+        if (updated.modifiedCount === 1 || updated.upsertedCount === 1) {
+            return this.Embed.success(`
             You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
-            `));
+            `);
         } else {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+            return this.Embed.fail('An unexpected error occurred!');
         }
     }
 }

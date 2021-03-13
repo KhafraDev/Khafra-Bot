@@ -1,12 +1,11 @@
 import { Event } from '../Structures/Event.js';
-import { ClientEvents, GuildMember, TextChannel, Permissions } from 'discord.js';
+import { GuildMember, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { GuildSettings } from '../lib/types/Collections';
-import { Logger } from '../Structures/Logger.js';
-import { Command } from '../Structures/Command.js';
-
-const Embed = Command.Embed;
+import { hasPerms } from '../lib/Utility/Permissions.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { RegisterEvent } from '../Structures/Decorator.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -14,11 +13,11 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-export default class implements Event {
-    name: keyof ClientEvents = 'guildMemberAdd';
-    logger = new Logger(this.name);
+@RegisterEvent
+export class kEvent extends Event {
+    name = 'guildMemberAdd' as const;
 
-    async init(member: GuildMember) {        
+    async init(member: GuildMember) {  
         const date = formatDate('MM-DD-YYYY', new Date());
         const client = await pool.insights.connect();
 
@@ -35,7 +34,7 @@ export default class implements Event {
         );
 
         const server = await settingsCollection.findOne<GuildSettings>({ id: member.guild.id });
-        if(!server?.welcomeChannel) {
+        if (!server?.welcomeChannel) {
             return;
         }
 
@@ -43,18 +42,17 @@ export default class implements Event {
         try {
             // TextChannel logic is handled where the user sets the channel
             channel = await member.guild.client.channels.fetch(server.welcomeChannel) as TextChannel;
-        } catch(e) {
-            this.logger.log(e);
+        } catch (e) {
             return;
         }
 
-        if(!channel.permissionsFor(member.guild.me).has(basic)) {
+        if (!hasPerms(channel, member.guild.me, basic))
             return;
-        }
+        
 
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member} (${member.user.tag}) joined the server!`);
+            .setDescription(`${member.user} (${member.user.tag}) joined the server!`);
 
         return channel.send(embed);
     }

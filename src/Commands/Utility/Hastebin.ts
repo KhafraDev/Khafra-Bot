@@ -3,10 +3,12 @@ import { hasteServers, Paste } from '../../lib/Backend/Hastebin/Hastebin.js';
 import { Message } from 'discord.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import config from '../../../config.json';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const { prefix: defPrefix } = config;
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -19,12 +21,12 @@ export default class extends Command {
                 name: 'hastebin',
                 folder: 'Utility',
                 args: [1],
-                aliases: hasteServers.map(s => s.alias).flat()
+                aliases: hasteServers.flatMap(s => s.alias)
             }
         );
     }
 
-    async init(message: Message, _: string[], settings: GuildSettings) {
+    async init(message: Message, _args: string[], settings: GuildSettings) {
         // args replaces all whitespace characters, including new lines.
         // to prevent this, we re-format the message's content.
         const prefix: string = settings?.prefix ?? defPrefix;
@@ -32,16 +34,11 @@ export default class extends Command {
         const command = message.content.split(/\s+/g)[0].slice(prefix.length).toLowerCase();
         const content = message.content.replace(new RegExp(`^${prefix}${command} `, 'i'), '');
 
-        let res;
-        try {
-            res = await Paste(command, content);
-        } catch(e) {
-            return message.reply(this.Embed.fail(e.message ?? 'An error occurred!'));
-        }
-
-        return message.reply(this.Embed.success(`
+        const res = await Paste(command, content);
+        
+        return this.Embed.success(`
         ${content.length} characters posted!
         ${res}
-        `));
+        `);
     }
 }

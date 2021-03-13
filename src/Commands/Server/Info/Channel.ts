@@ -1,18 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
-import { 
-    Message, 
-    Channel, 
-    TextChannel, 
-    VoiceChannel, 
-} from 'discord.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { Message } from 'discord.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-// TypeScript is based
-const isVoice = <T extends Channel>(c: T): c is T & VoiceChannel => c.type === 'voice';
-
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -30,18 +24,12 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        }
-
-        const channel = message.guild.channels.resolve(idOrChannel);
-        if(!channel) {
-            this.logger.log(`Channel: ${channel}, ID: ${idOrChannel}`);
-            return message.reply(this.Embed.fail(`
+    async init(message: Message) {
+        const channel = await getMentions(message, 'channels');
+        if (!channel) {
+            return this.Embed.fail(`
             Channel isn't fetched or the ID is incorrect.
-            `));
+            `);
         }
 
         const embed = this.Embed.success()
@@ -51,8 +39,8 @@ export default class extends Command {
             )
             .setFooter(`Created ${formatDate('MMM. Do, YYYY hh:mm:ssA t', channel.createdTimestamp)}`);
 
-        if(isText(channel)) {
-                embed
+        if (isText(channel)) {
+            embed
                 .setDescription(`
                 ${channel}
                 ${channel.topic ? `\`\`\`${channel.topic}\`\`\`` : ''}
@@ -64,16 +52,16 @@ export default class extends Command {
                     { name: '**Position:**', value: channel.position, inline: true },
                 );
 
-                if(channel instanceof TextChannel) {
-                    embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
-                }
-        } else if(isVoice(channel)) {
+            if (isExplicitText(channel)) {
+                embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
+            }
+        } else if (isVoice(channel)) {
             embed
-            .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
-            .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
-            .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
+                .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
+                .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
+                .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
         }
 
-        return message.reply(embed);
+        return embed;
     }
 }

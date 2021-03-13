@@ -1,72 +1,61 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { KhafraClient } from '../../../Bot/KhafraBot.js';
+import { upperCase } from '../../../lib/Utility/String.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-const toUpper = (s: string) => `${s.charAt(0).toUpperCase()}${s.slice(1).toLowerCase()}`;
-
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
-            [
-                'Disable a command in a guild. Administrators bypass this inhibitor.',
+            [ 
+                'GuildSettings: Disable a command in the entire guild.',
                 'badmeme'
             ],
 			{
                 name: 'disable',
                 folder: 'Settings',
                 args: [1, 1],
-                guildOnly: true,
-                aliases: [ 'blacklist', 'deny' ]
+                aliases: [ 'blacklist' ],
+                guildOnly: true
             }
         );
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        }
-
-        const name = args.shift()!.toLowerCase();
-
-        if(!KhafraClient.Commands.has(name)) {
-            return message.reply(this.Embed.fail(`No command found with that name!`));
-        } 
-
-        const command = KhafraClient.Commands.get(name)!;
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
+            return this.Embed.missing_perms(true);
+        
+        const command = KhafraClient.Commands.get(args[0].toLowerCase());
+        if (!command)
+            return this.Embed.generic(this, 'That isn\'t a command!');
+        if (['Settings', 'Moderation'].includes(command.settings.folder))
+            return this.Embed.fail(`You can't disable commands in the ${command.settings.folder} folder!`);
         
         const client = await pool.settings.connect();
         const collection = client.db('khafrabot').collection('settings');
 
-        if(settings?.disabledGuild?.includes(name)) {
-            await collection.updateOne(
-                { id: message.guild.id },
-                { $pull: {
-                    disabledGuild: {
-                        $in: [ ...(command.settings.aliases ?? []), command.settings.name ]
-                    }
-                } }
-            );
+        const pull = settings?.blacklist?.includes(command.settings.name);
 
-            return message.reply(this.Embed.success(`
-            ${toUpper(command.settings.name)} has been un-blacklisted in the guild.
-            `));
-        }
-
-        await collection.updateOne(
+        const updated = await collection.updateOne(
             { id: message.guild.id },
-            { $push: {
-                disabledGuild: {
-                    $each: [ ...(command.settings.aliases ?? []), command.settings.name ]
+            { [pull ? '$pull' : '$push']: {
+                blacklist: {
+                    [pull ? '$in' : '$each']: [ ...(command.settings.aliases ?? []), command.settings.name ]
                 }
-            } }
+            } },
+            { upsert: true }
         );
 
-        return message.reply(this.Embed.success(`
-        ${toUpper(command.settings.name)} has been blacklisted in the guild.
-        `));
+        if (updated.modifiedCount === 1) {
+            if (pull)
+                return this.Embed.success(`${upperCase(command.settings.name)} is no longer disabled!`);
+            return this.Embed.success(`${upperCase(command.settings.name)} has been disabled in this guild!`);
+        } else {
+            return this.Embed.fail(`An unexpected error occurred!`);
+        }
     }
 }

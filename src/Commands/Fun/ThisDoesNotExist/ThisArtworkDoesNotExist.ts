@@ -1,13 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { thisDoesNotExist } from '../../../lib/Backend/ThisDoesNotExist.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'This artwork does not exist!',
-                ''
+                'This artwork does not exist!'
             ],
 			{
                 name: 'thisartworkdoesnotexist',
@@ -18,8 +18,7 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        const embed = await thisDoesNotExist('artwork');
-        return message.reply(embed);
+    async init() {
+        return await thisDoesNotExist('artwork');
     }
 }

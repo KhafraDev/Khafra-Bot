@@ -1,9 +1,10 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, TextChannel, NewsChannel, Permissions } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -23,12 +24,12 @@ export default class extends Command {
 
     async init(message: Message, args: string[]) {
         const toDelete = +args.shift() + 1;
-        if(!isValidNumber(toDelete)) {
-            return message.reply(this.Embed.fail(`
+        if (!isValidNumber(toDelete)) {
+            return this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 
             Example: \`\`${this.settings.name} 100\`\`
-            `));
+            `);
         }
 
         const channel = (message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel) as TextChannel | NewsChannel;
@@ -45,6 +46,6 @@ export default class extends Command {
             `);
 
         const m = await message.reply(embed);
-        if(m) setTimeout(() => m.delete().catch(() => {}), 5000);
+        setTimeout(() => m.delete(), 5000);
     }
 }

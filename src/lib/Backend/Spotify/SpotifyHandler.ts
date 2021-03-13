@@ -46,7 +46,7 @@ class Spotify {
     }
   
     async getTokenHeader() {
-        if(!this.token || !this.token.access_token || this.expired) {
+        if (!this.token || !this.token.access_token || this.expired) {
             await this.setToken();
         }
 

@@ -2,16 +2,19 @@ import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { titleRegex, titles, parseBible } from '../../lib/Backend/Bible/Bible.js';
-
 import { BibleExcerpt } from '../../lib/types/Collections';
+import { upperCase } from '../../lib/Utility/String.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 let updated = false;
 
-const toUpperCase = (s: string) => {
-    return s.split(/\s+/).map(n => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase()).join(' ');
-};
+const toUpperCase = (s: string) => 
+    s.split(/\s+/)
+        .map(n => upperCase(n))
+        .join(' ');
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -26,12 +29,12 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if(!updated) {
+    async init(_message: Message, args: string[]) {
+        if (!updated) {
             const client = await pool.commands.connect();
             const collection = client.db('khafrabot').collection('bible');
             const exists = await collection.findOne<BibleExcerpt>({});
-            if(!exists) {
+            if (!exists) {
                 const parsed = await parseBible();
                 await collection.insertMany(parsed);
                 updated = true;
@@ -39,34 +42,34 @@ export default class extends Command {
         }
 
         // list all books available to the bot
-        if(args[0]?.toLowerCase() === 'list') {
-            return message.reply(this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', ')));
+        if (args[0]?.toLowerCase() === 'list') {
+            return this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', '));
         }
 
         const book = args.join(' ').match(titleRegex);
         // no chapters found and there are arguments
         // representing misuse of the command
-        if((!book || book.length === 0) && args.length !== 0) { 
-            return message.reply(this.Embed.fail('No chapters found!'));
+        if ((!book || book.length === 0) && args.length !== 0) { 
+            return this.Embed.fail('No chapters found!');
         }
 
         // last valid argument
         const last = args.length === 0 ? null : args.slice(book[0].split(' ').length).shift();
-        if(last && !/\d+:\d+/.test(last)) { // last exists and follows format `number(s):number(s)`
-            return message.reply(this.Embed.fail('Invalid format!'));
+        if (last && !/\d+:\d+/.test(last)) { // last exists and follows format `number(s):number(s)`
+            return this.Embed.fail('Invalid format!');
         }
 
         const [chapter, verse] = last ? last.split(':') : [null, null];
         // if there's no chapter or verse and there are arguments
         // !NaN === true; +null === NaN; +'string' === NaN
-        if((!+chapter || !+verse) && args.length !== 0) {
-            return message.reply(this.Embed.fail('Missing chapter or verse!'));
+        if ((!+chapter || !+verse) && args.length !== 0) {
+            return this.Embed.fail('Missing chapter or verse!');
         }
 
         const client = await pool.commands.connect();
         const collection = client.db('khafrabot').collection('bible');
 
-        if(args.length !== 0) {
+        if (args.length !== 0) {
             const short = Object.entries(titles).filter(([k]) => k === toUpperCase(book[0]));
             const item = await collection.findOne<BibleExcerpt>({
                 book: toUpperCase(short[0][1]),
@@ -74,21 +77,18 @@ export default class extends Command {
                 verse: +verse
             });
 
-            if(!item) {
-                return message.reply(this.Embed.fail('No verse found!'));
+            if (!item) {
+                return this.Embed.fail('No verse found!');
             }
 
-            const embed = this.Embed.success(item.content)
+            return this.Embed.success(item.content)
                 .setTitle(`${toUpperCase(book[0])} ${item.chapter}:${item.verse}`);
-
-            return message.reply(embed);
         } else {
-            const random = await collection.aggregate<BibleExcerpt>([ { $sample: { size: 1 } } ]).toArray();
-            const long = Object.entries(titles).filter(([, v]) => v.toLowerCase() === random[0].book.toLowerCase());
-            const embed = this.Embed.success(random[0].content)
-                .setTitle(`${long[0][0]} ${random[0].chapter}:${random[0].verse}`);
-
-            return message.reply(embed);
+            const random = await collection.aggregate<BibleExcerpt>([ { $sample: { size: 1 } } ]).next();
+            const long = Object.entries(titles).filter(([, v]) => v.toLowerCase() === random.book.toLowerCase());
+            
+            return this.Embed.success(random.content)
+                .setTitle(`${long[0][0]} ${random.chapter}:${random.verse}`);
         }
     }
 }

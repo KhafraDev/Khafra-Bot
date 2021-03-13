@@ -3,18 +3,17 @@ import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { parseQuran } from '../../lib/Backend/Quran/Quran.js';
 import { QuranExcerpt } from '../../lib/types/Collections';
-import { promisify } from 'util';
-import { randomInt } from 'crypto';
+import { rand } from '../../lib/Utility/Constants/OneLiners.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-const randInt: (max: number) => Promise<number> = promisify(randomInt);
 let updated = false;
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'The Quran.',
-                ''
+                'The Quran.'
             ],
 			{
                 name: 'quran',
@@ -24,12 +23,12 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if(!updated) {
+    async init(_message: Message, args: string[]) {
+        if (!updated) {
             const client = await pool.commands.connect();
             const collection = client.db('khafrabot').collection('quran');
             const exists = await collection.findOne<QuranExcerpt>({});
-            if(!exists) {
+            if (!exists) {
                 const parsed = await parseQuran();
                 await collection.insertMany(parsed);
                 updated = true;
@@ -37,8 +36,8 @@ export default class extends Command {
         }
 
         const last = args.pop();
-        if(!/\d+:\d+/.test(last) && args.length !== 0) {
-            return message.reply(this.Embed.generic());
+        if (!/\d+:\d+/.test(last) && args.length !== 0) {
+            return this.Embed.generic(this);
         }
 
         const [, b, v] = last?.match(/(\d+):(\d+)/) ?? [];
@@ -46,14 +45,14 @@ export default class extends Command {
         const client = await pool.commands.connect();
         const collection = client.db('khafrabot').collection('quran');
 
-        if(args.length === 0) {
+        if (args.length === 0) {
             const random = await collection.aggregate<QuranExcerpt>([ { $sample: { size: 1 } } ]).next();
-            const randVerse = random.verses[await randInt(random.verses.length)]; // [min=0, max)
+            const randVerse = random.verses[await rand(random.verses.length)]; // [min=0, max)
 
-            return message.reply(this.Embed.success(`
+            return this.Embed.success(`
             **${random.title}** ${randVerse.book}:${randVerse.verse}
             ${randVerse.content}
-            `));
+            `);
         }
 
         const verse = await collection.findOne<QuranExcerpt>({
@@ -62,18 +61,18 @@ export default class extends Command {
             'verses.verse': +v
         });
 
-        if(!verse) {
-            return message.reply(this.Embed.fail(`
+        if (!verse) {
+            return this.Embed.fail(`
             No verses found!
             
             A list can be found [here](https://sacred-texts.com/isl/pick/)!
-            `));
+            `);
         }
 
         const f = verse.verses.filter(i => i.book === +b && i.verse === +v).shift();
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         **${verse.title}** ${b}:${v}
         ${f.content}
-        `));
+        `);
     }
 }

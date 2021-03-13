@@ -1,8 +1,11 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
+import { delay } from '../../lib/Utility/Constants/OneLiners.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -25,19 +28,14 @@ export default class extends Command {
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
         const msg = await message.reply(embed);
-        if(!msg) {
-            return;
-        }
         
-        setTimeout(() => {
-            if(msg.deleted) {
-                return;
-            }
+        await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
 
-            const embed = this.Embed.success()
-                .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
+        if (msg.deleted) return;
 
-            return msg.edit(embed);
-        }, Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
+        const embed2 = this.Embed.success()
+            .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
+
+        return msg.edit(embed2);
     }
 }

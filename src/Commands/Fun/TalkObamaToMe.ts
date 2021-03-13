@@ -1,8 +1,10 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { talkObamaToMe } from '../../lib/Backend/TalkObamaToMe.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -18,22 +20,13 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let obama;
-        try {
-            obama = await talkObamaToMe(args.join(' ').slice(0, 280));
-        } catch(e) {
-            if(e.name === 'AssertionError') {
-                return message.reply(this.Embed.fail('Received bad response from server!'));
-            }
+    async init(_message: Message, args: string[]) {
+        const obama = await talkObamaToMe(args.join(' ').slice(0, 280));
 
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+        if (!obama) {
+            return this.Embed.fail('Server never sent URL.');
         }
 
-        if(!obama) {
-            return message.reply(this.Embed.fail('Server never sent URL.'));
-        }
-
-        return message.reply(this.Embed.success(obama));
+        return this.Embed.success(obama);
     }
 }

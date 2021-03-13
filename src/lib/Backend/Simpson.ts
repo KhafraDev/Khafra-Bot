@@ -23,7 +23,7 @@ export const fetchOGKey = async () => {
 }
 
 export const thisSimpsonDoesNotExist = async () => {
-    if(!key) await fetchOGKey();
+    if (!key) await fetchOGKey();
 
     const res = await fetch(`${url}item/${key}`);
     const json = await res.json() as ISimpson;

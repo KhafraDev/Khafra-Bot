@@ -1,8 +1,11 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [ 
@@ -19,16 +22,15 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
         }
 
-        if(args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
-            return message.reply(this.Embed.fail(`
+        // TODO: remove
+        if (args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
+            return this.Embed.fail(`
             Only non-alphanumeric characters are allowed!
-            `));
+            `);
         }
 
         const client = await pool.settings.connect();
@@ -42,14 +44,14 @@ export default class extends Command {
             { upsert: true }
         );
 
-        if(updated.upsertedCount === 1 || updated.modifiedCount === 1) {
-            return message.reply(this.Embed.success(`
+        if (updated.upsertedCount === 1 || updated.modifiedCount === 1) {
+            return this.Embed.success(`
             Changed prefix to \`\`${args[0]}\`\`!
-            `));
+            `);
         } else {
-            return message.reply(this.Embed.fail(`
+            return this.Embed.fail(`
             An unexpected error occurred!
-            `));
+            `);
         }
     }
 }

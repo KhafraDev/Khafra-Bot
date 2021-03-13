@@ -1,16 +1,17 @@
 import { Command } from '../../Structures/Command.js';
 import { 
     Message, 
-    GuildChannel, 
     TextChannel, 
-    OverwriteData,
     Permissions
 } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { isText } from '../../lib/types/Discord.js.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -29,60 +30,38 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
-        let idOrChannel = getMentions(message, args, { type: 'channels' });
-        if(!idOrChannel || (typeof idOrChannel === 'string' && !validSnowflake(idOrChannel))) {
-            idOrChannel = message.channel; 
-        } else if(typeof idOrChannel === 'string' && message.guild.channels.cache.has(idOrChannel)) {
-            idOrChannel = message.guild.channels.cache.get(idOrChannel);
-        }
-
-        if(!idOrChannel) {
-            return message.reply(this.Embed.generic('Invalid Channel!'));
-        }
-
+    async init(message: Message, _args: string[], settings: GuildSettings) {
+        const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
-        const text = idOrChannel as GuildChannel;
-        if(!isText(text)) {
-            return message.reply(this.Embed.generic('No channel found!'));
-        } else if(!text.permissionsFor(message.guild.me).has(this.permissions)) {
+
+        if (!isText(text)) {
+            return this.Embed.generic(this, 'No channel found!');
+        } else if (!hasPerms(text, message.guild.me, this.permissions)) {
             // maybe better fail message?
-            return message.reply(this.Embed.missing_perms());
+            return this.Embed.missing_perms();
         }
 
-        const opts: OverwriteData = {
-            id: everyone
-        };
+        // TODO: test once https://github.com/discordjs/discord.js/pull/5251 is closed
 
-        if(!text.permissionsFor(everyone).has([ 'SEND_MESSAGES' ])) {
-            opts.allow = 'SEND_MESSAGES';
+        let lockState = 'unlocked';
+        if (!hasPerms(text, everyone, Permissions.FLAGS.SEND_MESSAGES)) {
+            await text.lockPermissions();
         } else {
-            opts.deny = 'SEND_MESSAGES';
-        }
-
-        const lockState = `${'allow' in opts ? 'un' : ''}locked`;
-        try {
+            lockState = 'locked';
             await text.overwritePermissions(
-                [ opts ], 
-                `${text.id} ${lockState} by ${message.author.tag} (${message.author.id})`
+                [ { id: everyone.id, deny: [Permissions.FLAGS.SEND_MESSAGES] } ]
             );
-        } catch {
-            return message.reply(this.Embed.fail(`
-            An error occurred creating permission overwrites in ${text}!
-            `));
         }
 
         await message.reply(this.Embed.success(`
         ${text} has been ${lockState} for ${everyone}!
         `));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             return channel.send(this.Embed.success(`
             **Channel:** ${text} (${text.id}).

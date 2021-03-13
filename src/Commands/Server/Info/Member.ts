@@ -1,11 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Activity, GuildMember } from 'discord.js';
+import { Message, Activity } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { getMentions, validSnowflake } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
-    for(const activity of activities) {
+    for (const activity of activities) {
         switch(activity.type) {
             case 'CUSTOM_STATUS':
                 push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
@@ -24,11 +25,12 @@ const formatPresence = (activities: Activity[]) => {
     return push.join('\n');
 }
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get info about a user.',
+                'Get info about a guild member.',
                 '@Khafra#0001', '267774648622645249'
             ],
 			{
@@ -41,26 +43,11 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let idOrMember = getMentions(message, args, { type: 'members' });
-        if(!idOrMember || (typeof idOrMember === 'string' && !validSnowflake(idOrMember))) {
-            idOrMember = message.member;
-        }
-
-        let member: GuildMember | Promise<GuildMember> = typeof idOrMember === 'string'
-            ? message.guild.members.fetch(idOrMember)
-            : idOrMember;
-
-        if(member instanceof Promise) {
-            try {
-                member = await member;
-            } catch {
-                return message.reply(this.Embed.fail('Invalid user ID!'));
-            }
-        }
+    async init(message: Message) {
+        const member = await getMentions(message, 'members') ?? message.member;
 
         // max role length = 84 characters
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`
             ${member} on *${member.guild.name}*.
@@ -80,7 +67,5 @@ export default class extends Command {
                 },
             )
             .setFooter('For general user info use the **user** command!');
-        
-        return message.reply(embed);
     }
 }

@@ -1,13 +1,13 @@
-import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { fetchPeopleInSpace } from '../../lib/Backend/PeopleInSpace.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'How many people are in space right now?',
-                ''
+                'How many people are in space right now?'
             ],
 			{
                 name: 'spacern',
@@ -18,21 +18,16 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        let spacern;
-        try {
-            spacern = await fetchPeopleInSpace();
-        } catch {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
-        }
+    async init() {
+        const spacern = await fetchPeopleInSpace();
 
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         ${spacern.number} people.
         ${spacern.people
             .map(p => `${p.name}, ${Math.floor((Date.now() - new Date(p.launchdate).getTime()) / 86400000)} days`)
             .join('\n')
         }
         [Click Here](http://howmanypeopleareinspacerightnow.com)!
-        `));
+        `);
     }
 }

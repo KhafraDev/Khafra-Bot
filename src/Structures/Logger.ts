@@ -2,6 +2,7 @@ import { join } from 'path';
 import { mkdirSync, createWriteStream, WriteStream } from 'fs';
 import { formatDate } from '../lib/Utility/Date.js';
 import { inspect } from 'util';
+import { EOL } from 'os';
 
 const logPath = join(process.cwd(), 'assets/Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories
@@ -22,7 +23,7 @@ export class Logger {
 
     log(data: any) {
         const formatted = `[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] ${this.name}: "${typeof data === 'string' ? data : inspect(data)}"`;
-        this.stream.write(formatted + '\n');
+        this.stream.write(`${formatted}${EOL}`);
     }
 }
 

@@ -1,16 +1,18 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { stripIndents } from '../../../lib/Utility/Template.js';
-import fetch, { Response } from 'node-fetch';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { fetch } from '../../../Structures/Fetcher.js';
 
 const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Create a Strawpoll!', 
-                ''
+                'Create a Strawpoll!'
             ],
 			{
                 name: 'strawpoll',
@@ -24,8 +26,8 @@ export default class extends Command {
     }
 
     async init(message: Message) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ]) && !this.isBotOwner(message.author.id)) {
-            return message.reply(this.Embed.missing_perms(true));
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
         }
 
         const msg = await message.reply(this.Embed.success(`
@@ -42,13 +44,9 @@ export default class extends Command {
         `}\`\`\`
         `));
 
-        if(!msg) {
-            return; // can return null if an error is caught
-        }
-
         const filter = (m: Message) => m.author.id === message.author.id && m.content?.split(/\r\n|\n/g).length > 1;
         const collected = await message.channel.awaitMessages(filter, { max: 1, time: 60000 });
-        if(collected.size === 0) {
+        if (collected.size === 0) {
             return;
         }
 
@@ -87,31 +85,28 @@ export default class extends Command {
 
         const filterOpts = (m: Message) => m.author.id === message.author.id && m.content?.length <= 16;
         const collectedOpts = await message.channel.awaitMessages(filterOpts, { max: 1, time: 60000 });
-        if(collectedOpts.size === 0) {
+        if (collectedOpts.size === 0) {
             return;
         }
 
         const opt = collectedOpts.first().content.split(/\s+/g).map(isYesLike);
         const keys = Object.keys(opts);
-        for(let i = 0; i < keys.length; i++) {
+        for (let i = 0; i < keys.length; i++) {
             opts[keys[i]] = Number(opt[i] ?? 0);
         }
-     
-        const res: Response = await fetch('https://strawpoll.com/api/poll', {
-            method: 'POST',
-            body: JSON.stringify({
-                poll: {
-                    title,
-                    answers: choices,
-                    ...opts
-                }
-            })
-        });
 
-        if(!res.ok) {
-            return message.reply(this.Embed.fail(`
+        const res = await fetch()
+            .post('https://strawpoll.com/api/poll')
+            .send({
+                body: JSON.stringify({
+                    poll: { title, answers: choices, ...opts }
+                })
+            });
+
+        if (!res.ok) {
+            return this.Embed.fail(`
             An unexpected error occurred! Received status ${res.status} (${res.statusText})!
-            `));
+            `);
         }
 
         const json = await res.json();
@@ -119,13 +114,12 @@ export default class extends Command {
         ${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}
         `));
 
-        if(json.success === 1) {
+        if (json.success === 1) {
             return message.author.send(this.Embed.success(`
             Created a poll: https://strawpoll.com/${json.content_id}
 
             Admin ID: \`\`${json.admin_key}\`\`
-            `))
-                .catch(() => {});
+            `));
         }
     }
 }

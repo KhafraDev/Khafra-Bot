@@ -1,37 +1,48 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
-import { bellingcatInterval, cache } from '../../../lib/Backend/BellingCat.js';
+import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { decodeXML } from 'entities';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-export default class extends Command {
+interface IBBC {
+    title: string
+    description: string
+    link: string
+    guid: string
+    pubDate: string
+}
+
+const rss = new RSSReader<IBBC>();
+rss.cache('https://www.bellingcat.com/category/news/feed');
+
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get the latest articles from Bellingcat!',
-                ''
+                'Fetch latest articles from https://bellingcat.com'
             ],
 			{
                 name: 'bellingcat',
                 folder: 'News',
                 args: [0, 0],
-                aliases: ['belling']
+                aliases: [ 'belling' ]
             }
         );
     }
 
-    async init(message: Message) {
-        if(cache.size === 0) {
-            await bellingcatInterval();
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
         }
 
-        const articles = [...cache.values()];
-        if(articles.length === 0) {
-            return message.reply(this.Embed.fail(`
-            An error occurred fetching the articles.
-            `));
-        }
-
-        return message.reply(this.Embed.success(`
-        ${articles.map((a,i) => `[${i+1}] [${a.title}](${a.href})`).join('\n')}
-        `));
+        const posts = [...rss.results.values()];
+        const embed = this.Embed.success()
+            .setDescription(posts
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+                .join('\n')
+                .slice(0, 2048)
+            )
+            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+        return embed;
     }
 }

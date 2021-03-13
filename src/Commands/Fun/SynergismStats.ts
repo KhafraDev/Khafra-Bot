@@ -1,13 +1,13 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { Kongregate } from '../../lib/Backend/SynergismStats.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get play stats about Synergism!',
-                ''
+                'Get play stats about Synergism!'
             ],
 			{
                 name: 'synergismstats',
@@ -18,21 +18,16 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init() {
         const stats = await Kongregate();
-        if('status' in stats) {
-            return message.reply(this.Embed.fail(`Received status ${stats.status} (${stats.statusText})!`));
-        }
 
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setTitle('Synergism Stats (Kongregate)')
             .setDescription(`
             **Plays:**: ${stats.gameplays_count.toLocaleString()}
             **Favorites:** ${stats.favorites_count.toLocaleString()}
             Synergism averages **${average}**/5 ⭐ from **${ratings}** ratings! 
             `);
-
-        return message.reply(embed);
     }
 }

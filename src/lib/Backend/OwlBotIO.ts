@@ -22,7 +22,7 @@ class OwlBotError extends Error {
 
 export const owlbotio = async (word: string) => {
     word = encodeURIComponent(word.toLowerCase());
-    if(!process.env.OWLBOTIO) {
+    if (!process.env.OWLBOTIO) {
         return Promise.reject(new OwlBotError('No API token found in env variables.'));
     }
 

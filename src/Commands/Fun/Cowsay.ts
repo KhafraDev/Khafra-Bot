@@ -2,6 +2,7 @@ import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const dir = join(process.cwd(), 'assets/Cowsay');
 const start = `
@@ -20,7 +21,8 @@ const types = [
     'tux', 'www'
 ];
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -35,46 +37,44 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if(args[0].toLowerCase() === 'list') {
-            return message.reply(this.Embed.success(`
+    async init(_message: Message, args: string[]) {
+        if (args[0].toLowerCase() === 'list') {
+            return this.Embed.success(`
             ${types.map(t => '``' + t + '``').join(', ')}
-            `));
+            `);
         }
 
         const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');
-        if(sentence.trim().length === 0) {
-            return message.reply(this.Embed.fail('Empty message after type.'));
+        if (sentence.trim().length === 0) {
+            return this.Embed.fail('Empty message after type.');
         }
 
         const split = sentence
             .match(/.{1,38}/g)                                              // split every 38 characters
             // just to make sure this doesn't happen again
             ?.map((value, index, arr) => {
-                if(index === 0) {                                           // first item in array
+                if (index === 0) {                                           // first item in array
                     return '/ ' + value.trim().padEnd(38, ' ') + ' \\';
-                } else if(index === arr.length - 1) {                       // last item in array
+                } else if (index === arr.length - 1) {                       // last item in array
                     return '\\ ' + value.trim().padEnd(38, ' ') + ' /';
                 }                                                     
                 return '| ' + value.trim().padEnd(38, ' ') + ' |';          // all others
             });
 
-        if(!split) {
-            return message.reply(this.Embed.fail('Couldn\'t format message!'));
-        } else if(split.length === 1) {
+        if (!split) {
+            return this.Embed.fail('Couldn\'t format message!');
+        } else if (split.length === 1) {
             split.push('\\ ' + ''.padEnd(38, ' ') + ' /');
         }
 
         const i = types.includes(args[0].toLowerCase()) ? args[0].toLowerCase() : 'cowsay';
-        const data = await readFile(join(dir, `${i}.txt`), {
-            encoding: 'utf-8'
-        });
+        const data = await readFile(join(dir, `${i}.txt`), 'utf-8');
             
         const formatted = `\`\`\`${start}${split.join('\n')}\n${data}\`\`\``;
-        if(formatted.length > 2048) {
-            return message.reply(this.Embed.fail('Cowsay message is too long!'));
+        if (formatted.length > 2048) {
+            return this.Embed.fail('Cowsay message is too long!');
         }
 
-        return message.reply(formatted);
+        return formatted;
     }
 }

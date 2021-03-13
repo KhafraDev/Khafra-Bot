@@ -2,12 +2,12 @@ import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { weather } from '../../lib/Backend/HereWeather/HereWeather.js';
 import { formatDate } from '../../lib/Utility/Date.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-const ctof = (celcius: string | number) => {
-    return (+celcius * (9/5) + 32).toFixed(2);
-}
+const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -23,19 +23,19 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(_message: Message, args: string[]) {
         const results = await weather(args.join(' '));
-        if('status' in results) {
-            return message.reply(this.Embed.fail(`
+        if ('status' in results) {
+            return this.Embed.fail(`
             An unexpected error occurred! Received status ${results.status} with text ${results.statusText}. Contact the bot owner to fix!
-            `));
-        } else if(results.Type) {
-            return message.reply(this.Embed.fail(results.Type));
+            `);
+        } else if (results.Type) {
+            return this.Embed.fail(results.Type);
         }
 
         const first = results.observations.location?.[0].observation?.[0];
-        if(first === undefined) {
-            return message.reply(this.Embed.fail('No location found!'));
+        if (first === undefined) {
+            return this.Embed.fail('No location found!');
         }
 
         const embed = this.Embed.success(first.description)
@@ -49,6 +49,6 @@ export default class extends Command {
             .addField('**Coordinates:**', `(${first.latitude}, ${first.longitude})`, true)
             .setFooter(`Last updated ${formatDate('MMMM Do, YYYY hh:mm:ss A t', first.utcTime)}\n© 2020 HERE`)
 
-        return message.reply(embed);
+        return embed;
     }
 }

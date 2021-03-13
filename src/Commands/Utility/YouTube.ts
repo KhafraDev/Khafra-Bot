@@ -1,11 +1,11 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, MessageReaction, User, MessageEmbed } from 'discord.js';
-import { YouTubeSearchResults, YouTubeError } from '../../lib/Backend/YouTube/types/YouTube';
-import { YouTube } from '../../lib/Backend/YouTube/YouTube.js';
+import { YouTube, YouTubeSearchResults } from '../../lib/Backend/YouTube.js';
 import { formatDate } from '../../lib/Utility/Date.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
 function* format(items: YouTubeSearchResults, embed: (reason?: string) => MessageEmbed) {
-    for(let i = 0; i < items.items.length; i++) {
+    for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const Embed = embed()
             .setTitle(video.title)
@@ -19,7 +19,8 @@ function* format(items: YouTubeSearchResults, embed: (reason?: string) => Messag
     }
 }
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -36,32 +37,22 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        let results: YouTubeSearchResults | YouTubeError;
-        try {
-            results = await YouTube(args);
-        } catch(e) {
-            return message.reply(this.Embed.fail(`
-            An unexpected error occurred!
-            \`\`${e.toString()}\`\`
-            `));
-        }
+        const results = await YouTube(args);
 
-        if('error' in results) {
-            return message.reply(this.Embed.fail(`
+        if ('error' in results) {
+            return this.Embed.fail(`
             ${results.error.code}: ${results.error.message}
-            `));
-        } else if(results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return message.reply(this.Embed.fail(`
+            `);
+        } else if (results.pageInfo.totalResults === 0 || results.items.length === 0) {
+            return this.Embed.fail(`
             No results found!
-            `));
+            `);
         }
 
         const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
         const m = await message.reply(embeds[0]);
-        if(!m) {
-            return;
-        }
+        
         await m.react('▶️');
         await m.react('◀️');
         await m.react('⏹️');
@@ -71,24 +62,20 @@ export default class extends Command {
         const collector = m.createReactionCollector(filter, { time: 60000 });
 
         collector.on('collect', async r => {
-            if(m.deleted) {
+            if (m.deleted) {
                 collector.stop();
                 return;
             }
 
-            if(r.emoji.name === '⏹️') {
-                try {
-                    await m.reactions.removeAll();
-                } finally {
-                    collector.stop();
-                }
-            } else if(r.emoji.name === '▶️') {
-                if(embeds[idx + 1]) {
+            if (r.emoji.name === '⏹️') {
+                await m.reactions.removeAll();
+            } else if (r.emoji.name === '▶️') {
+                if (embeds[idx + 1]) {
                     idx++;
                     return m.edit(embeds[idx]);
                 }
             } else {
-                if(embeds[idx - 1]) {
+                if (embeds[idx - 1]) {
                     idx--;
                     return m.edit(embeds[idx]);
                 }

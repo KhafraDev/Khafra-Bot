@@ -44,7 +44,7 @@ export const colorPhoto = async (url: URL) => {
     });
     const json = await res.json() as algorithmiaError | algorithmiaSuccess;
 
-    if('error' in json) {
+    if ('error' in json) {
         return Promise.reject(new AlgorithmiaError(json.error.message));
     }
 

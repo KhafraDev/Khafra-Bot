@@ -1,12 +1,13 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get the number of members in a guild!',
-                ''
+                'Get the number of members in a guild!'
             ],
 			{
                 name: 'members',
@@ -19,8 +20,8 @@ export default class extends Command {
     }
 
     init(message: Message) {
-        return message.reply(this.Embed.success(`
+        return this.Embed.success(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
-        `));
+        `);
     }
 }

@@ -1,48 +1,52 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { decodeXML } from 'entities';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-import { GuardianResponse } from '../../../lib/Backend/Guardian/types/Guardian';
-import { guardian } from '../../../lib/Backend/Guardian/Guardian.js';
+interface ITheGuardian {
+    title: string
+    link: string
+    description: string
+    category: string[]
+    pubDate: string
+    guid: string
+    'media:content': { 'media:credit': string }[]
+    'dc:creator': string
+    'dc:date': string
+}
 
-export default class extends Command {
+const rss = new RSSReader<ITheGuardian>();
+rss.cache('https://www.theguardian.com/world/rss');
+
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'TheGuardian: search for articles dating back to 1999!',
-                '2008-01-01 obama presidency',
-                'trump presidency'
+                'Fetch latest articles from https://theguardian.com'
             ],
-			{
-                name: 'theguardian',
+            {
+                name: 'guardian',
                 folder: 'News',
-                args: [1],
-                aliases: [ 'guardian' ]
+                args: [0, 0],
+                aliases: [ 'theguardian' ]
             }
         );
     }
 
-    async init(message: Message, args: string[]) {
-        let res: GuardianResponse;
-        try {
-            res = await guardian(args, new Date(args[0]));
-        } catch {
-            return message.reply(this.Embed.fail('An unexpected error occurred!'));
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
         }
 
-        let desc = '';
-        for(const article of res.response.results) {
-            const line = `[${article.webTitle}](${article.webUrl}) - ${article.pillarName}\n`;
-            if(desc.length + line.length > 2048) {
-                break;
-            }
-            desc += line;
-        }
-
+        const posts = [...rss.results.values()];
         const embed = this.Embed.success()
-            .setFooter('© 2020 Guardian News & Media Limited or its affiliated companies.')
-            .setDescription(desc)
-            .setTitle('Results')
-
-        return message.reply(embed);
+            .setDescription(posts
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+                .join('\n')
+                .slice(0, 2048)
+            )
+            .setAuthor('The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg');
+        return embed;
     }
 }

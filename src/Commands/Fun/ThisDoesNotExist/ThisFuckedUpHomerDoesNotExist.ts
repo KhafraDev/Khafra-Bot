@@ -1,15 +1,15 @@
-import { Message } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import { thisSimpsonDoesNotExist } from '../../../lib/Backend/Simpson.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 // this is not handled the same way the other this[x]doesnotexist commands.
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
-                'This fucked up Homer does not exist!',
-                ''
+                'This fucked up Homer does not exist!'
             ],
 			{
                 name: 'thisfuckeduphomerdoesnotexist',
@@ -20,18 +20,9 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message) {
-        let homer: string | null = null;
-        try {
-            homer = await thisSimpsonDoesNotExist();
-        } catch(e) {
-            if(e.name === 'FetchError') {
-                return message.reply(this.Embed.fail('Server failed to process the request!'));
-            } 
+    async init() {
+        const homer = await thisSimpsonDoesNotExist();
 
-            return message.reply(this.Embed.fail(`An unexpected ${e.name} occurred!`));
-        }
-
-        return message.reply(this.Embed.success().setImage(homer));
+        return this.Embed.success().setImage(homer);
     }
 }

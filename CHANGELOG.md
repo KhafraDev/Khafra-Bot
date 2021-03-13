@@ -318,7 +318,8 @@
 * Fix ``hastebin`` command not working with new lines. Doing so, I realized there was some really bad logic in the message event for handling the prefix, and was also able to remove (one of?) the ugliest piece(s) of code remaining in the bot.
 </details>
 
-# v1.0.7
+<details><summary><b>v1.0.7 (Released 30 December 2020)</b></summary>
+
 * Add in ``avatar`` command.
 * Add in Google ``translate`` command.
 * Removed ``synergismsave`` command.
@@ -369,3 +370,97 @@
 * Add in ``killedbygoogle`` command.
 * Add in ``bellingcat`` command.
 * Add in ``piglatin`` command.
+</details>
+
+<details><summary><b># v1.0.8 - The News Update (Early 2021)</b></summary>
+
+* Add a fully fledged RSS feed parser.
+* Add in ``abcnews`` command.
+* Add in ``aljazeera`` command.
+* Add in ``apnews`` command.
+* Add in ``axios`` command.
+* Add in ``bbc`` command.
+* Add in ``bloomberg`` new command.
+* Add in ``breitbart`` command.
+* Add in ``businessinsider`` command.
+* Add in ``buzzfeed`` command.
+* Add in ``cbs`` command.
+* Add in ``cnbc`` command.
+* Add in ``cnet`` command.
+* Add in ``cnn`` command.
+* Add in ``defenceblog`` command.
+* Add in ``derspiegel`` command.
+* Add in ``espn`` command.
+* Add in ``e-ir`` command.
+* Add in ``foxnews`` command.
+* Add in ``ft`` command.
+* Add in ``hackernews`` command.
+* Add in ``heavy`` command.
+* Add in ``huffpost`` command.
+* Add in ``independent`` command.
+* Add in ``jpost`` command.
+* Add in ``latimes`` command.
+* Add in ``mirror`` command.
+* Add in ``nbc`` command.
+* Add in ``nbc2`` command.
+* Add in ``newyorker`` command.
+* Add in ``npr`` command.
+* Add in ``oann`` command.
+* Add in ``people`` magazine command.
+* Add in ``politico`` command.
+* Add in ``reuters`` command.
+* Add in ``rt`` command.
+* Add in ``skynews`` command.
+* Add in ``slate`` command.
+* Add in ``space`` news command.
+* Add in ``thecipherbrief`` command.
+* Add in ``thehill`` command.
+* Add in ``thesun`` command.
+* Add in ``time`` (magazine) command.
+* Add in ``timesofindia`` command.
+* Add in ``tmz`` command.
+* Add in ``UN`` news command.
+* Add in ``vox`` command.
+* Add in ``washingtonpost`` command.
+* Add in ``wsj`` command.
+* Add in ``yahoo`` news command.
+* Removed ``chatarr`` command.
+* Update ``bellingcat`` command to use new RSS feed parser.
+* Update ``nytimes`` command to use new RSS feed parser.
+* Update ``theguardian`` command to use the new RSS feed parser.
+
+</details>
+
+# v1.0.8 - Part 2, New Bot
+
+## Commands
+* Add `twitdl` command to get the links to media in tweets.
+* Add `garrison` command to show awareness to mental illness.
+* Replace `trump` scraper with JSON.
+* Fix type error in `poll` command.
+* `lock` command now syncs permissions with the category channel when unlocking.
+* Normalized `blacklist` and `whitelist` commands.
+* Remove `insightsdaily` and `insightsgraph` command for a more informative `insights` table.
+* Better logic in the `hangman` command.
+* Allow emojis in `addemoji` to be added with an image link and an attachment now.
+* Add `forceban` command that allows banning multiple people without confirmation.
+* Massively improve the `emoji` command.
+* Remove `quote`, `kanye`, `boredapi`, `cheese`, `connect4`, `nim`, `what-is-npm`, `slots`, `trivia`, `tictactoe`, `xkcd`, `discover`, `discriminator`, `whitelist (all)`, `giverole`, `reactrole`, `tags (all)`, `bang`, `boilthefrog`, old `theonion`, and `500px` commands.
+* Add `about` command for basic information about the bot.
+* Add `invite` command for links to invite the bot to your own server.
+* Add `links` command.
+
+## Structure
+* Commands will now return with an embed to reply to the user with. This reduces a ton of repetitive code and allows for cleaner error handling without proxying the methods or using try/catch.
+* Decouple methods from multiple areas (mostly separate permission checks and Embed from the `Command` class).
+* Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.
+* Remove commands that are low quality and/or not up to standards.
+* Guild settings will now be automatically inputted into the database when the bot joins a guild. Likewise, guild settings are removed from the database when the bot leaves a guild.
+* Added hierarchy checks for `ban` (partially), `kick`, `warn`, and `deletewarn` commands.
+* Update `discord.js` to master.
+* Remove deprecated `entities.decode` method from RSS commands.
+* Removed `export default` from commands, add `RegisterCommand` class decorator to register commands instead.
+* Partially transition databases to Postgres.
+* Add in `fetch` util for cleaner, functional code.
+* Remove `kongregate` chat forwarder. 
+* Log commands that fail to load.

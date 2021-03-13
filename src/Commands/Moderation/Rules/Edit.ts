@@ -1,13 +1,16 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import config from '../../../../config.json';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const { prefix: defPrefix } = config;
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -26,18 +29,16 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        if(!super.userHasPerms(message, [ 'ADMINISTRATOR' ])
-            && !this.isBotOwner(message.author.id)
-        ) {
-            return message.reply(this.Embed.missing_perms(true));
-        } else if(!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return message.reply(this.Embed.fail(`
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+            return this.Embed.missing_perms(true);
+        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
+            return this.Embed.fail(`
             Guild has no rules.
 
             Use the \`\`rules\`\` command to get started!
-            `));
-        } else if(!isValidNumber(+args[0]) || +args[0] < 1 || +args[1] > settings.rules.rules.length + 1) {
-            return message.reply(this.Embed.generic());
+            `);
+        } else if (!isValidNumber(+args[0]) || +args[0] < 1 || +args[1] > settings.rules.rules.length + 1) {
+            return this.Embed.generic(this);
         }
 
         // This is needed so the message doesn't lose its formatting (new lines, etc.)
@@ -58,6 +59,6 @@ export default class extends Command {
             } }
         );
 
-        return message.reply(this.Embed.success(`Edited rule #${num}!`));
+        return this.Embed.success(`Edited rule #${num}!`);
     }
 }

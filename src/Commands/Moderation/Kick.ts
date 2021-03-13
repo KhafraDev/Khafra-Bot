@@ -1,9 +1,12 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, GuildMember, TextChannel, Permissions } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { Message, TextChannel, Permissions } from 'discord.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
+import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -22,50 +25,39 @@ export default class extends Command {
     }
 
     async init(message: Message, args: string[], settings: GuildSettings) {
-        const idOrUser = getMentions(message, args, { type: 'members' });
-        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            return message.reply(this.Embed.generic('Invalid user ID!'));
-        }
- 
-        let member = typeof idOrUser === 'string'
-            ? message.guild.members.fetch(idOrUser)
-            : idOrUser;
+        const member = await getMentions(message, 'members');
 
-        if(member instanceof Promise) {
-            try {
-                member = await member;
-            } catch {
-                return message.reply(this.Embed.fail('Member couldn\'t be fetched!'));
-            }
+        if (!hierarchy(message.member, member)) {
+            return this.Embed.fail(`You cannot kick ${member}!`);
         }
-
-        if(!member.kickable) {
-            return message.reply(this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`));
+        
+        if (!member) {
+            return this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!');
+        } else if (!member.kickable) {
+            return this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`);
         }
 
         try {
-            await (member as GuildMember).kick(`
+            await member.kick(`
             Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).
             `);
         } catch {
-            return message.reply(this.Embed.fail(`
+            return this.Embed.fail(`
             An unexpected error occurred!
-            `));
+            `);
         }
 
         await message.reply(this.Embed.fail(`Kicked ${member} from the server!`));
 
-        if(typeof settings?.modActionLogChannel === 'string') {
+        if (typeof settings?.modActionLogChannel === 'string') {
             const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            if(channel?.type !== 'text') {
+            
+            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
-            } else if(!channel.permissionsFor(message.guild.me).has([ 'SEND_MESSAGES', 'EMBED_LINKS' ])) {
-                return;
-            }
 
             const reason = args.slice(1).join(' ');
             return channel.send(this.Embed.success(`
-            **Offender:** ${idOrUser}
+            **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             `).setTitle('Member Kicked'));

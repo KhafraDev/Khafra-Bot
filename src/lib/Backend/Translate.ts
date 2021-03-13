@@ -10,13 +10,13 @@ const token = (a: string) => {
 	const arb_1 = 406644, arb_2 = 3293161072,
 	      jd = '.', $b = '+-a^+6', Zb = '+-3^+b+-f', e = [];
 
-    for(let f = 0, g = 0; g < a.length; g++) {
+    for (let f = 0, g = 0; g < a.length; g++) {
         let m = a.charCodeAt(g);
-        if(m < 128) {
+        if (m < 128) {
             e[f++] = m;
-        } else if(m < 2048) {
+        } else if (m < 2048) {
             e[f++] = (m >> 6) | 192;
-        } else if(55296 === (m & 64512) && g + 1 < a.length && 56320 === (a.charCodeAt(g + 1) & 64512)) {
+        } else if (55296 === (m & 64512) && g + 1 < a.length && 56320 === (a.charCodeAt(g + 1) & 64512)) {
             m = 65536 + ((m & 1023) << 10) + (a.charCodeAt(++g) & 1023);
             e[f++] = (m >> 18) | 240; 
             e[f++] = ((m >> 12) & 63) | 128;

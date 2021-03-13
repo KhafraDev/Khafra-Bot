@@ -1,0 +1,48 @@
+import { Command } from '../../../Structures/Command.js';
+import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { decodeXML } from 'entities';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
+
+interface IBloomberg {
+    title: string
+    link: string
+    guid: string
+    pubDate: string
+    description: string
+    source: string
+}
+
+const rss = new RSSReader<IBloomberg>();
+rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&ceid=US:en&hl=en-US&gl=US');
+
+@RegisterCommand
+export class kCommand extends Command {
+    constructor() {
+        super(
+            [
+                'Fetch latest articles from https://bloomberg.com'
+            ],
+            {
+                name: 'bloomberg',
+                folder: 'News',
+                args: [0, 0]
+            }
+        );
+    }
+
+    async init() {
+        if (rss.results.size === 0) {
+            return this.Embed.fail('An unexpected error occurred!');
+        }
+
+        const posts = [...rss.results.values()];
+        const embed = this.Embed.success()
+            .setDescription(posts
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+                .join('\n')
+                .slice(0, 2048)
+            )
+            .setAuthor('Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png');
+        return embed;
+    }
+}

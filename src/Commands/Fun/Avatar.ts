@@ -1,8 +1,10 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, User } from 'discord.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
+import { Message } from 'discord.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 
-export default class extends Command {
+@RegisterCommand
+export class kCommand extends Command {
     constructor() {
         super(
             [
@@ -17,20 +19,8 @@ export default class extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const idOrUser = getMentions(message, args);
-        let user;
-        if(!idOrUser || (typeof idOrUser === 'string' && !validSnowflake(idOrUser))) {
-            user = message.author;
-        } else if(idOrUser instanceof User) {
-            user = idOrUser;
-        } else {
-            try {
-                user = await message.client.users.fetch(idOrUser);
-            } catch {
-                return message.reply(this.Embed.generic('Invalid user ID!'));
-            }
-        }
+    async init(message: Message) {
+        const user = await getMentions(message, 'users') ?? message.author;
 
         const avatar = user.displayAvatarURL({
             size: 512,
@@ -38,6 +28,6 @@ export default class extends Command {
             dynamic: true
         });
         
-        return message.reply(this.Embed.success(`${user}'s avatar`).setImage(avatar));
+        return this.Embed.success(`${user}'s avatar`).setImage(avatar);
     }
 }
