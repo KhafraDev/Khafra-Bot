@@ -85,8 +85,13 @@ export class RSSReader<T extends any> {
             ? j.rss.channel.item // RSS feed
             : j.feed.entry;      // Atom feed
 
-        for (const item of i.slice(0, this.save)) {
-            this.results.set(this.results.size, item);
+        
+        if (Array.isArray(i)) {
+            for (const item of i.slice(0, this.save)) {
+                this.results.set(this.results.size, item);
+            }
+        } else {
+            this.results.set(this.results.size, i as T);
         }
 
         if (typeof this.afterSave === 'function') {
