@@ -1,14 +1,14 @@
 import { Command } from '../../Structures/Command.js';
-import { getCurrency, setCryptoInterval } from '../../lib/Backend/CoinGecko.js';
+import { setCryptoInterval, cache } from '../../lib/Backend/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
-setCryptoInterval(60 * 1000 * 5); // 5 minutes
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
 @RegisterCommand
 export class kCommand extends Command {
+    middleware = [setCryptoInterval];
     constructor() {
         super(
             [
@@ -18,17 +18,21 @@ export class kCommand extends Command {
 			{
                 name: 'crypto',
                 folder: 'Utility',
-                args: [1],
+                args: [1], // some symbols are multi-worded
                 aliases: [ 'cc' ]
             }
         );
     }
 
     async init(_message: Message, args: string[]) {
-        const currency = getCurrency(args.join(' '));
-        if (!currency) {
-            return this.Embed.fail('No crypto found!');
-        }
+        if (!cache.has(args.join(' ').toLowerCase()))
+            return this.Embed.fail(`
+            No cryptocurrency with that name or ID was found!
+
+            The API used does not yet support this currency.
+            `);
+
+        const currency = cache.get(args.join(' ').toLowerCase());
 
         return this.Embed.success()
             .setThumbnail(currency.image)

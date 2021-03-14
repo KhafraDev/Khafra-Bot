@@ -1,4 +1,16 @@
-import { fetch } from '../../Structures/Fetcher.js';
+/**
+ * The making of this command lead to memory leaks.
+ * https://bugs.chromium.org/p/v8/issues/detail?id=11560
+ */
+
+import fetch, { Response } from 'node-fetch';
+import { chunkSafe } from '../Utility/Array.js';
+
+interface CGCrypto {
+    id: string
+    name: string
+    symbol: string
+}
 
 interface CoinGeckoRes {
     id: string,
@@ -33,45 +45,68 @@ interface CoinGeckoRes {
     last_updated: Date
 }
 
-const cache: Record<string, CoinGeckoRes> = {};
+/**
+ * Cache of all symbols and ids of supported cryptocurrencies on Coingecko
+ */
+export const symbolCache = new Set<string>();
+const strictlyIDs = new Set<string>();
 
-const cryptoUpdate = async () => {
-    for (let i = 1;;i++) {
-        try {
-            const j = await fetch()
-                .get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${i}&sparkline=false`)
-                .header('Accept', 'application/json')
-                .json<CoinGeckoRes[]>();
+export const cache = new Map<string, CoinGeckoRes>();
 
-            if (j.length === 0)
-                break;
+const defaults = [
+    // list all currencies
+    'https://api.coingecko.com/api/v3/coins/list?include_platform=false',
+    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false'
+] as const;
 
-            Object.assign(cache, ...j);
-        } catch {
-            break;
+const list = async () => {
+    const r = await fetch(defaults[0], {
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+    const j = await r.json() as CGCrypto[];
+
+    for (const { id, symbol } of j) {
+        symbolCache.add(id);
+        symbolCache.add(symbol);
+        strictlyIDs.add(id);
+    }
+}
+
+const all = async () => {
+    if (symbolCache.size === 0)
+        await list();
+
+    const reqs = chunkSafe([...strictlyIDs], 250)
+        .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
+    const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
+
+    cache.clear();
+
+    for (const all of reqsChunk) {
+        const success = (await Promise.allSettled(all))
+            .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
+            .filter(r => r.value.ok)
+            .map(r => r.value.json() as Promise<CoinGeckoRes[]>);
+
+        const json = await Promise.all(success);
+
+        for (const currList of json) {
+            for (const curr of currList) {
+                cache.set(curr.symbol, curr);
+                cache.set(curr.id, curr);
+            }
         }
     }
 }
 
-export const getCurrency = (name: string): CoinGeckoRes => {
-    name = name.toLowerCase();
-    if (name in cache) {
-        return cache[name];
-    }
+export const setCryptoInterval = async () => {
+    try { await all() } catch {}
 
-    // .id is already checked, no need to look for it again
-    return Object.values(cache)
-        .filter(c => c.symbol === name || c.name.toLowerCase() === name)
-        .shift();
+    setInterval(async () => {
+        try {
+            await all();
+        } catch {}
+    }, 60 * 1000 * 5);
 }
-
-let interval: NodeJS.Timeout;
-export const setCryptoInterval = async (ms: number) => {
-    if (Object.keys(cache).length === 0) {
-        await cryptoUpdate();
-    }
-
-    clearInterval(interval);
-    interval = setInterval(cryptoUpdate, ms);
-    return interval;
-};
