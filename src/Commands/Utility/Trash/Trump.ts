@@ -15,7 +15,7 @@ export class kCommand extends Command {
             ],
 			{
                 name: 'trump',
-                folder: 'Utility',
+                folder: 'Trash',
                 args: [0, 3] // 0 = random, 3 = February 10, 2017
             }
         );

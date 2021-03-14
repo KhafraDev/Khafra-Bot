@@ -8,19 +8,19 @@ interface Comic {
     link: string
 }
 
-const PATH = join(process.cwd(), 'assets/Garrison.json');
+const PATH = join(process.cwd(), 'assets/Stonewall.json');
 
-export const migrateGarrison = async () => {
-    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbGarrison);`);
+export const migrateStonewall = async () => {
+    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbStonewall);`);
     if (rows[0].exists === false) {
         const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
-        await garrisonTransaction(file);
+        await stonewallTransaction(file);
     }
 
     return true;
 }
 
-export const garrisonTransaction = async (comics: Comic[]) => {
+export const stonewallTransaction = async (comics: Comic[]) => {
     const client = await pool.connect();
 
     try {
@@ -28,7 +28,7 @@ export const garrisonTransaction = async (comics: Comic[]) => {
 
         for (const comic of comics) {
             await client.query(`
-                INSERT INTO kbGarrison (
+                INSERT INTO kbStonewall (
                     href, link, title
                 ) VALUES (
                     $1, $2, $3

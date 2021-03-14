@@ -10,7 +10,7 @@ export class kCommand extends Command {
             ],
 			{
                 name: 'trumpkey',
-                folder: 'Utility',
+                folder: 'Trash',
                 args: [0, 3]
             }
         );

@@ -49,7 +49,7 @@ export class kCommand extends Command {
             ],
             {
                 name: 'bengarrison',
-                folder: 'News',
+                folder: 'Trash',
                 args: [0, 0],
                 aliases: [ 'garrison' ]
             }
