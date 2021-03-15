@@ -5,7 +5,7 @@ import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.
 import { decodeXML } from 'entities';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 
-interface ISchizophrenia {
+interface IBranco {
     title: string
     link: string
     comments: string
@@ -27,11 +27,11 @@ interface Comic {
     title: string
 }
 
-const rss = new RSSReader<ISchizophrenia>(async () => {
+const rss = new RSSReader<IBranco>(async () => {
     const comics = [...rss.results.values()].map(item => ({
         href: item.link,
         title: decodeXML(item.title),
-        link: item['content:encoded'].match(/src="(.*?)"/)[1]?.replace(/-\d+x?\d+\.(.*?)/, '.$1')
+        link: item['content:encoded'].match(/src="(.*?)"/)[1]?.replace(/-\d+x\d+\.(.*?)/, '.$1')
     }));
 
     await brancoTransaction(comics);

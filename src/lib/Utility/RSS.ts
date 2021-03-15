@@ -1,4 +1,4 @@
-import { parse, validate } from 'fast-xml-parser';
+import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
 import { fetch } from '../../Structures/Fetcher.js';
 import { delay } from './Constants/OneLiners.js';
 
@@ -28,6 +28,7 @@ interface AtomJSON<T extends any> {
 
 export class RSSReader<T extends any> {
     private interval: NodeJS.Timeout | null = null;
+    private options: X2jOptionsOptional = {};
 
     public results = new Map<number, T>();
     public timeout = 60 * 1000 * 60;
@@ -36,8 +37,9 @@ export class RSSReader<T extends any> {
 
     public afterSave = () => {};
 
-    constructor(loadFunction?: (() => any)) {
+    constructor(loadFunction?: (() => any), options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
+        this.options = options;
     }
 
     /**
@@ -62,7 +64,7 @@ export class RSSReader<T extends any> {
         if (typeof xml !== 'string' || validate(xml) !== true) return;
         this.results.clear();
 
-        const j = parse(xml) as RSSJSON<T> | AtomJSON<T>;
+        const j = parse(xml, this.options) as RSSJSON<T> | AtomJSON<T>;
 
         if (!('rss' in j) && !('feed' in j)) {
             return clearInterval(this.interval);
