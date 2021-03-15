@@ -45,15 +45,14 @@ export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Khafra-Bot does not support white supremacists. ' +
-                'This command is meant to illustrate the horrible ' +
-                '(racist, anti-semitic, and other) views portrayed by Stonewall.'
+                'KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. ' +
+                'The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.'
             ],
             {
                 name: 'stonewall',
                 folder: 'Trash',
                 args: [0, 0],
-                aliases: [ 'rockthrow' ]
+                aliases: [ 'rockthrow', 'pebble' ]
             }
         );
     }
@@ -65,8 +64,8 @@ export class kCommand extends Command {
 
         return this.Embed.success()
             .setDescription(`
-            StoneToss is a Nazi who holds anti-Semitic views that KhafraBot does not support. 
-            This command is designed to make fun of right-wingers who hold these crude and trashy beliefs, not to support his reprehensible ideology.
+            KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
+            The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.
             `)
             .setTitle(rows[0].title)
             .setURL(rows[0].href)
