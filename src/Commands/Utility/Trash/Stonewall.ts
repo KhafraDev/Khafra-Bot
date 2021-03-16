@@ -6,6 +6,7 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
+import { URL } from 'url';
 
 interface ITrashHuman {
     title: string
@@ -29,11 +30,14 @@ interface Comic {
 }
 
 const rss = new RSSReader<ITrashHuman>(async () => {
-    const comics = [...rss.results.values()].map(item => ({
-        href: item.link,
-        title: decodeXML(item.title),
-        link: item['content:encoded'].match(/src="(.*?)"/)[1]
-    }));
+    const comics = [...rss.results.values()].map(item => {
+        const { origin, pathname } = new URL(item['content:encoded'].match(/src="(.*?)"/)[1]);
+        return {
+            href: item.link,
+            title: decodeXML(item.title),
+            link: `${origin}${pathname}`
+        }
+    });
 
     await stonewallTransaction(comics);
 });
