@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import AdmZip from 'adm-zip';
+import { pool } from '../../Structures/Database/Postgres.js';
 
 export const titles = {
     'Genesis': 'gen',
@@ -110,6 +111,7 @@ export const parseBible = async () => {
 
     const lines = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse
+        .filter(l => l.trim().length > 0) // for example the last line is a newline, causing an undefined/NaN combo below
         .map(line => {
             const [book, chapter, verse, content] = line.split('|');
             return {
@@ -121,4 +123,33 @@ export const parseBible = async () => {
         });
 
     return lines;
+}
+
+export const bibleInsertDB = async () => {
+    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbBible);`);
+    if (rows[0].exists === true)
+        return true;
+    
+    const client = await pool.connect();
+    const bible = await parseBible();
+
+    try {
+        await client.query('BEGIN');
+
+        for (const verse of bible) {
+            await client.query(`
+                INSERT INTO kbBible (
+                    book, chapter, verse, content
+                ) VALUES (
+                    $1, $2, $3, $4
+                ) ON CONFLICT DO NOTHING;
+            `, [verse.book, verse.chapter, verse.verse, verse.content]);
+        }
+
+        await client.query('COMMIT');
+    } catch {
+        await client.query('ROLLBACK');
+    } finally {
+        client.release();
+    }
 }

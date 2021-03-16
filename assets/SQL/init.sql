@@ -18,3 +18,11 @@ CREATE TABLE IF NOT EXISTS kbBranco (
     link TEXT UNIQUE NOT NULL,
     title TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS kbBible (
+    idx SERIAL PRIMARY KEY,
+    book TEXT NOT NULL,
+    chapter INT NOT NULL,
+    verse INT NOT NULL,
+    content TEXT NOT NULL
+);

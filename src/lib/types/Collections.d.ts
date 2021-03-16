@@ -1,14 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Snowflake } from 'discord.js';
 
-export interface BibleExcerpt {
-    _id: ObjectId
-    book: string
-    chapter: number
-    verse: number
-    content: string
-}
-
 export interface QuranExcerpt {
     _id: ObjectId
     title: string
