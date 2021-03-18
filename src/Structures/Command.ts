@@ -57,7 +57,7 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];
-        Object.assign({ ...this.errors }, this.settings.errors);
+        this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
     abstract init (message?: Message, args?: string[], settings?: GuildSettings | null): 
