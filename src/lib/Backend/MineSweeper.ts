@@ -1,4 +1,4 @@
-import { chunk } from '../Utility/Array.js';
+import { chunkSafe } from '../Utility/Array.js';
 
 const emojis = [
     '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', 
@@ -7,7 +7,7 @@ const emojis = [
 ] as const;
 
 export const Board = () => {
-    const board = Array.from(chunk(Array<number>(100).fill(0), 10));
+    const board = chunkSafe(Array<number>(100).fill(0), 10);
 
     for (let i = 0; i < 10;) {
         const x = Math.floor(Math.random() * 10);
