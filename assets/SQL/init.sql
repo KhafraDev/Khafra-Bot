@@ -33,3 +33,10 @@ CREATE TABLE IF NOT EXISTS kbBible (
     verse INT NOT NULL,
     content TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS kbAPOD (
+    apod_key SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    link TEXT NOT NULL,
+    copyright TEXT DEFAULT NULL
+);

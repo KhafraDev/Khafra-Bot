@@ -1,10 +1,9 @@
 import fetch from 'node-fetch';
-import { readFileSync, existsSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
-import { join } from 'path';
+import { URLSearchParams } from 'url';
+import { nasaInsert } from '../Migration/NASA.js';
 
 interface IAPOD {
-    copyright?: string | undefined
+    copyright?: string
     date: string
     explanation: string
     hdurl: string
@@ -14,118 +13,69 @@ interface IAPOD {
     url: string
 }
 
-interface IAPODErr {
-    code: number
-    msg: string
-}
+const APOD_API_URL = 'https://api.nasa.gov/planetary/apod?';
+const START = new Date(1995, 5 /* 0-indexed */, 16);
 
-const APOD_API_URL = 'https://api.nasa.gov/planetary/apod?api_key=';
+const formatDate = (d: Date) => 
+    `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 
-class NASAError extends Error {
-    constructor(m?: string) {
-        super(m);
-        this.name = new.target.name;
-    }
-}
+/**
+ * Generate date ranges between June 16th, 1995 and the current date.
+ * NASA's APOD api has issues when the start + end time differences are too large.
+ * Even a yearly difference is extremely slow!
+ */
+const generateRanges = () => {
+    const now = new Date();
+    const dates = [];
 
-const EPOCH = new Date(1995, 5, 16);
-const APOD_PATH = join(process.cwd(), 'assets/NASA.json');
+    for (let i = START.getFullYear(); i <= now.getFullYear(); i++) {
+        const start = formatDate(new Date(i, 0, 1));
+        const end = formatDate(new Date(i, 11, 31));
 
-// 1,000 requests an hour
-// (limits expire an hour after each request is sent)
-let ratelimit = 1000;
-let interval: NodeJS.Timeout | null = null;
-let lastDate: Date | null = (() => {
-    if (existsSync(APOD_PATH)) {
-        const file = JSON.parse(readFileSync(APOD_PATH, 'utf-8'));
-        const [y, m, d] = Object.keys(file).pop().split('-');
-        return new Date(+y, +m - 1, +d);
-    }
-    return null;
-})();
-
-export const cache = new Map<string, Pick<
-    IAPOD, 
-    'date' | 'copyright' | 'hdurl' | 'title'>
->();
-
-export const APOD = async (bulk?: boolean) => {
-    if (!process.env.NASA) return Promise.reject(new NASAError('No NASA API key in env!'));
-
-    const sd = setLastDate();
-    if (!sd) return Promise.reject(new NASAError('Exceeded APOD EPOCH.'));
-    
-    const date = bulk ? `&date=${sd}` : '';
-    const res = await fetch(`${APOD_API_URL}${process.env.NASA}${date}`);
-    ratelimit = parseInt(res.headers.get('X-RateLimit-Remaining'));
-
-    if (res.status === 429) return Promise.reject(new NASAError('Rate-limit reached!'));
-
-    const json = await res.json() as IAPOD | IAPODErr;
-    if ('code' in json) return Promise.reject(new NASAError(json.msg));
-    return json;
-}
-
-export const APOD_BULK_FETCH = async (): Promise<void> => {
-    const errors: Error[] = [];
-    while(ratelimit !== 0) {
-        try {
-            const photo = await APOD(true);
-            cache.set(photo.date, (() => {
-                (['explanation', 'media_type', 'service_version', 'url'] as const).forEach(k => delete photo[k]);
-                return photo;
-            })());
-        } catch(e) {
-            errors.push(e as Error);
-            if (errors.length > 10) {
-                return Promise.reject(
-                    new NASAError(errors.map(e => e.toString()).join('\n'))
-                );
-            }
-        }
+        if (i === START.getFullYear())
+            dates.push([formatDate(START), end]);
+        else if (i === now.getFullYear())
+            dates.push([start, formatDate(now)]);
+        else 
+            dates.push([start, end]);
     }
 
-    if (!interval) {
-        interval = setInterval(() => {
-            clearInterval(interval);
-            ratelimit = 1000;
-        }, 60 * 1000 * 60);
-    }
+    return dates;
 }
 
-export const APOD_SAVE = async () => {
-    const data = Object.fromEntries(cache);
-    cache.clear();
+export const apodFetchAll = async () => {
+    const range = generateRanges();
+    const paramBase = { api_key: process.env.NASA ?? 'DEMO_KEY' };
 
-    if (existsSync(APOD_PATH)) {
-        const file = JSON.parse(readFileSync(APOD_PATH, 'utf-8'));
-        await writeFile(APOD_PATH, JSON.stringify(Object.assign(file, data), null, 2));
-    } else {
-        await writeFile(APOD_PATH, JSON.stringify(data, null, 2));
+    const images: { title: string, link: string, copyright: string | null }[] = [];
+    for (const [start, end] of range) {
+        const params = new URLSearchParams({ 
+            start_date: start,
+            end_date: end,
+            ...paramBase
+        }).toString();
+
+        const r = await fetch(`${APOD_API_URL}${params}`);
+        if (!r.ok) continue;
+
+        const j = await r.json() as IAPOD[] | IAPOD;
+        // https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=2006-05-29
+        // some "pictures of the day" are not actually pictures, so we need to filter
+        // these out.
+        const f = (Array.isArray(j) ? j : [j]).filter(a => a.title && (a.hdurl || a.url));
+
+        for (const { title, hdurl, url, copyright } of f) 
+            images.push({ title: title, link: hdurl ?? url, copyright: copyright ?? null });
     }
+
+    return images;
 }
 
-export const APOD_CLEAR_BAD = async () => {
-    if (!existsSync(APOD_PATH)) return;
-
-    const file = JSON.parse(await readFile(APOD_PATH, 'utf-8'));
-    for (const key of Object.keys(file)) {
-        const obj = file[key];
-        if (!('hdurl' in obj)) {
-            delete file[key];
-        }
-        delete obj['date'];
-    }
-
-    await writeFile(APOD_PATH, JSON.stringify(file, null, 2));
-}
-
-const setLastDate = (): string | null => {
-    lastDate = !lastDate 
-        ? lastDate = new Date() 
-        : lastDate = new Date(lastDate.getTime() - 86_400_000);
-
-    if (lastDate.getTime() <= EPOCH.getTime()) return null;
-
-    return `${lastDate.getFullYear()}-${(lastDate.getMonth()+1+'').padStart(2, '0')}-${(lastDate.getDate()+'').padStart(2, '0')}`;
+export const apodFetchDaily = async () => {
+    setInterval(async () => {
+        const r = await fetch(`${APOD_API_URL}api_key=${process.env.NASA}`);
+        if (!r.ok) return;
+        const j = await r.json() as IAPOD;
+        return nasaInsert({ title: j.title, link: j.hdurl ?? j.url, copyright: j.copyright ?? null });
+    }, 60 * 1000 * 60);
 }
