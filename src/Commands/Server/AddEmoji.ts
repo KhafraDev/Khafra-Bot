@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { GuildEmoji, Message, Permissions } from 'discord.js';
 import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -35,11 +35,16 @@ export class kCommand extends Command {
         if (!/(.png|.jpe?g|.webp|.gif)/.test(file.href))
             return this.Embed.fail('Not a valid image/gif link!');
 
-        const e = await message.guild.emojis.create(
-            file.toString(),
-            args[0],
-            { reason: `${message.author.id} (${message.author.tag}) requested.` }
-        );
+        let e: GuildEmoji | null = null;
+        try {
+            e = await message.guild.emojis.create(
+                file.toString(),
+                args[0],
+                { reason: `${message.author.id} (${message.author.tag}) requested.` }
+            );
+        } catch (e) {
+            return this.Embed.fail(e.message);
+        }
 
         return this.Embed.success(`Added ${e} to the guild emojis!`);
     }
