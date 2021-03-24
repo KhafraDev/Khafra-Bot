@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
 import { stringify } from 'querystring';
-import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess } from './types/BadMeme.d';
+import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -40,7 +40,7 @@ const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCach
 
 // no, doing <post>.domain === 'gfycat.com' does not work.
 // I tried.
-const isgfycat = (p: RedditData['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
+const isgfycat = (p: RedditData['data']['children'][0]['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
 
 export const badmeme = async (
     subreddit = 'dankmemes',
@@ -58,9 +58,13 @@ export const badmeme = async (
 
     // https://www.reddit.com/dev/api#GET_new
     const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${stringify(o)}`);
-    const j = await r.json();
+    const j = await r.json() as RedditData | IRedditBadResp;
 
-    const urls: IBadMemeCache[] = (j.data.children as RedditData[])
+    if ('error' in j) {
+        return j;
+    }
+
+    const urls: IBadMemeCache[] = j.data.children
         .map(child => child.data)
         .filter(post => post.is_self === false && !('crosspost_parent' in post))
         .map(post => {

@@ -235,5 +235,15 @@ interface IRedditIsCrosspost extends IRedditBase {
  * Union type of every possible post
  */
 export type RedditData = {
-    data: IRedditGallery | IRedditIsVideo | IRedditGfycat | IRedditIsCrosspost
+    data: {
+        children: {
+            data: IRedditGallery | IRedditIsVideo | IRedditGfycat | IRedditIsCrosspost
+        }[]
+    }
+}
+
+export interface IRedditBadResp {
+    reason: string
+    message: string
+    error: number
 }
