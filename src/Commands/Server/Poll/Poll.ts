@@ -26,6 +26,7 @@ export class kCommand extends Command {
                 name: 'poll',
                 folder: 'Server',
                 args: [1, 1],
+                ratelimit: 30,
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }

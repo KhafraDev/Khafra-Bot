@@ -6,18 +6,19 @@ import { GuildSettings } from '../lib/types/Collections';
 import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
-import { cooldown } from '../Structures/Cooldown/CommandCooldown.js';
+import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import config from '../../config.json';
 import { client as kClient } from '../index.js';
 import { isDM } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
 
 const { prefix: defaultPrefix } = config;
 
-const _cooldownGuild = cooldown(15, 60000);
-const _cooldownUsers = cooldown( 6, 60000);
+const _cooldownGuild = cooldown(30, 60000);
+const _cooldownUsers = cooldown(10, 60000);
 
 let mentioned: RegExp | null = null;
 
@@ -45,6 +46,8 @@ export class kEvent extends Event {
         if (!KhafraClient.Commands.has(fName)) return;
 
         const command = KhafraClient.Commands.get(fName);
+        // command cooldowns are based around the commands name, not aliases
+        if (!commandLimit(command.settings.name, message.author.id)) return;
 
         /** Check blacklist/whitelist status of command */
         if (!['Settings', 'Moderation'].includes(command.settings.folder)) {
@@ -84,18 +87,10 @@ export class kEvent extends Event {
         `);
 
         if (!_cooldownUsers(message.author.id)) {
-            return message.reply(Embed.fail(`
-            Users are limited to 6 commands a minute.
-
-            Please refrain from spamming the bot.
-            `));
+            return message.reply(Embed.fail(`Users are limited to 10 commands a minute.`));
         } else if (message.channel.type !== 'dm') {
             if (!_cooldownGuild(message.guild.id)) {
-                return message.reply(Embed.fail(`
-                Guilds are limited to 15 commands a minute.
-    
-                Please refrain from spamming the bot.
-                `));
+                return message.reply(Embed.fail(`Guilds are limited to 30 commands a minute.`));
             } 
         }
 

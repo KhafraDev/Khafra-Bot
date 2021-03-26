@@ -8,6 +8,7 @@ export class kCommand extends Command {
             name: 'links',
             folder: 'Bot',
             args: [0, 0],
+            ratelimit: 3,
             aliases: ['link']
         });
     }

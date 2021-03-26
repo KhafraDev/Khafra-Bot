@@ -19,6 +19,8 @@ interface ICommand {
         name: string
         folder: string
         args: [number, number?]
+        /** Ratelimit in seconds, defaults to 5 */
+        ratelimit?: number
         permissions?: PermissionResolvable
         aliases?: string[]
         guildOnly?: boolean
@@ -57,6 +59,7 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];
+        this.settings.ratelimit ??= 5;
         this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 

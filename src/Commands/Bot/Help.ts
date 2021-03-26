@@ -17,7 +17,8 @@ export class kCommand extends Command {
                 name: 'help',
                 folder: 'Bot',
                 aliases: [ 'commandlist', 'list' ],
-                args: [0, 1]
+                args: [0, 1],
+                ratelimit: 3
             }
         );
     }
@@ -78,7 +79,8 @@ export class kCommand extends Command {
         `)
         .addFields(
             { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-            { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
+            { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+            { name: '**Rate-Limit:**', value: `${settings.ratelimit} seconds`, inline: true}
         );
     }
 }

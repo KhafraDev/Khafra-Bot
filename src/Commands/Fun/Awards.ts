@@ -16,7 +16,8 @@ export class kCommand extends Command {
                 name: 'award',
                 folder: 'Fun',
                 aliases: [ 'awards', 'awardprice' ],
-                args: [1, 1]
+                args: [1, 1],
+                ratelimit: 7
             }
         );
     }

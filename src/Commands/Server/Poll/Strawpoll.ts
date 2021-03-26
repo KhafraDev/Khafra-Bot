@@ -19,6 +19,7 @@ export class kCommand extends Command {
                 aliases: [ 'createstrawpoll', 'newstrawpoll' ],
                 folder: 'Server',
                 args: [0, 0],
+                ratelimit: 15,
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }

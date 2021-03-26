@@ -12,7 +12,8 @@ export class kCommand extends Command {
                 name: 'optimum',
                 folder: 'Fun',
                 aliases: [ 'altice' ],
-                args: [0, 0]
+                args: [0, 0],
+                ratelimit: 3
             }
         );
     }

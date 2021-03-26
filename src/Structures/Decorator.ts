@@ -1,5 +1,6 @@
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { Command } from './Command.js';
+import { CommandCooldown } from './Cooldown/CommandCooldown.js';
 import { Event } from './Event.js';
 
 export const RegisterCommand = <T extends new (...args: unknown[]) => Command>(
@@ -15,6 +16,8 @@ export const RegisterCommand = <T extends new (...args: unknown[]) => Command>(
 
     if (cmd.help.length < 2) // fill array to min length 2
         cmd.help = [...cmd.help, ...Array<string>(2 - cmd.help.length).fill('')];
+
+    CommandCooldown.set(cmd.settings.name.toLowerCase(), new Set());
 }
 
 export const RegisterEvent = <T extends new (...args: unknown[]) => Event>(

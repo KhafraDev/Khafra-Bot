@@ -12,7 +12,8 @@ export class kCommand extends Command {
 			{
                 name: 'ping',
                 folder: 'Fun',
-                args: [0, 0]
+                args: [0, 0],
+                ratelimit: 7
             }
         );
     }

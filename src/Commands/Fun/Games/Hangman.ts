@@ -33,7 +33,8 @@ export class kCommand extends Command {
 			{
                 name: 'hangman',
                 folder: 'Games',
-                args: [0, 0]
+                args: [0, 0],
+                ratelimit: 30
             }
         );
     }

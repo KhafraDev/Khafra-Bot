@@ -13,6 +13,8 @@ export class kCommand extends Command {
                 name: 'minesweeper',
                 folder: 'Games',
                 args: [0, 0],
+                // although being lightweight, games should take >30 seconds
+                ratelimit: 30, 
                 aliases: ['ms']
             }
         );

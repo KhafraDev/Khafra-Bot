@@ -14,7 +14,8 @@ export class kCommand extends Command {
 			{
                 name: 'piglatin',
                 folder: 'Fun',
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }

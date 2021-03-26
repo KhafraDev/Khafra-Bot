@@ -14,7 +14,8 @@ export class kCommand extends Command {
                 name: 'say',
                 folder: 'Fun',
                 aliases: [ 'speak', 'talk', 'tell' ],
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }

@@ -1,65 +1,86 @@
-import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { stat } from 'fs/promises';
-import { fileURLToPath, pathToFileURL } from 'url';
-import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { upperCase } from '../../lib/Utility/String.js';
+// This command is a beast.
 
-const isPrototypeOf = Object.prototype.isPrototypeOf.bind(Command);
+import { Message } from 'discord.js';
+import { join, parse, sep } from 'path';
+import { pathToFileURL } from 'url';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
+import { client } from '../../index.js';
+import { compile } from '../../lib/Backend/Compile.js';
+import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
+import { Command } from '../../Structures/Command.js';
+import { CommandCooldown } from '../../Structures/Cooldown/CommandCooldown.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
+
+const basePath = join(process.cwd(), 'src/Commands');
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([
-            'Reload a command. ' + 
-            'You must provide the path from the base directory as Khafra-Bot does not retain references to command locations in the file system.',
-            'build/src/Commands/Fun/Bible.js'
+            'Reloads a command without needing to restart.'
         ], {
             name: 'reload',
             folder: 'Bot',
-            args: [1],
-            ownerOnly: true,
-            errors: {
-                Error: 'File does not exist!'
-            }
+            args: [2, 2],
+            ratelimit: 0,
+            ownerOnly: true
         });
     }
 
-    async init(_message: Message, args: string[]) {
-        const { href } = pathToFileURL(args[0]);
-        const path = fileURLToPath(href);
-        
-        /**
-         * I'm not entirely sure if this is even the best way of checking
-         * for the existence of a file, but it would appear as though no one
-         * else knows either.
-         */
-        const exists = (await stat(path)).isFile();
-        if (!exists) 
-            return this.Embed.fail(`\`${href}\` is not a file!`);
-        
-        // all commands have similar exports, so any command will do
-        const { kCommand } = await import(href) as typeof import('./Reload.js');
-        if (!isPrototypeOf(kCommand))
-            return this.Embed.fail('Invalid path imported: does not have a named export `kCommand`!');
+    async init(message: Message, args: string[]) {
+        const files = await client.load(join(basePath, args[0]), () => true);
+        const mapped = files
+            .map(p => parse(p))
+            .map(p => ({ 
+                dir: p.dir, 
+                base: p.base, 
+                similarity: compareTwoStrings(p.base.toLowerCase(), args[1].toLowerCase()) }
+            ))
+            .sort((a, b) => b.similarity - a.similarity);
 
-        // instantiate new instance, remove aliases+name from command cache
-        // this DOES NOT cause the decorator to fire again!
-        const cmd = new kCommand();
-        KhafraClient.Commands.delete(cmd.settings.name.toLowerCase());
-        cmd.settings.aliases.forEach(a => KhafraClient.Commands.delete(a));
+        let description = '';
+        for (const item of mapped) {
+            const str = `${item.base} - ${(item.similarity * 100).toFixed(2)}%\n`;
+            if (description.length + str.length > 2048) break;
+            description += str;
+        }
 
-        // now we will mirror the decorator function for the most part
-        // we might want to run the middleware in the future, but not for now
-        KhafraClient.Commands.set(cmd.settings.name.toLowerCase(), cmd);
-        cmd.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, cmd));
+        const m = await message.reply(this.Embed
+            .success(description)
+            .setTitle('Which file should be reloaded?')
+        );
 
-        if (cmd.help.length < 2) // fill array to min length 2
-            cmd.help = [...cmd.help, ...Array<string>(2 - cmd.help.length).fill('')];
+        const c = await m.channel.awaitMessages(
+            (msg: Message) => mapped.some(({ base }) => base === msg.content),
+            { max: 1, time: 30000 }
+        );
 
-        return this.Embed.success(`
-        Reloaded command ${upperCase(cmd.settings.name)} from ${path}!
-        `);
+        if (c.size === 0)
+            return this.Embed.fail('Command canceled!');
+
+        const cmd = mapped.find(({ base }) => base === c.first().content);
+        const outDir = cmd.dir.replace(`${sep}src${sep}`, `${sep}build${sep}src${sep}`);
+
+        const compiled = compile(
+            [ join(cmd.dir, cmd.base) ],
+            { outDir: join(process.cwd(), 'build') }
+        );
+
+        await m.edit(this.Embed.success(compiled.join('\n').slice(0, 2048))); 
+
+        const { href } = pathToFileURL(join(outDir, cmd.base.replace(/\.(.*?)$/, '.js')));
+        const { kCommand } = await import(href) as typeof import('./Reload');
+        const command = new kCommand();
+        const commandName = command.settings.name.toLowerCase();
+
+        KhafraClient.Commands.delete(commandName); // remove from command cache
+        CommandCooldown.delete(commandName); // remove from individual command cooldown
+        KhafraClient.Commands.set(commandName, command); // add back to cache
+        CommandCooldown.set(commandName, new Set()); // add back to cache
+
+        command.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, command));
+
+        if (command.help.length < 2) // fill array to min length 2
+            command.help = [...command.help, ...Array<string>(2 - command.help.length).fill('')];
     }
 }

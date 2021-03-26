@@ -15,6 +15,7 @@ export class kCommand extends Command {
                 name: 'thisfuckeduphomerdoesnotexist',
                 folder: 'Fun',
                 args: [0, 0],
+                ratelimit: 7,
                 aliases: [ 'thishomerdoesnotexist', 'tfuhdne' ]
             }
         );

@@ -16,6 +16,7 @@ export class kCommand extends Command {
                 name: 'colorize',
                 folder: 'Fun',
                 args: [1, 1],
+                ratelimit: 30,
                 errors: {
                     TypeError: 'Invalid image URL!',
                     AlgorithmiaError: 'A server error occurred!',

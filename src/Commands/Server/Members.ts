@@ -14,6 +14,7 @@ export class kCommand extends Command {
                 folder: 'Server',
                 args: [0, 0],
                 guildOnly: true,
+                ratelimit: 3,
                 aliases: [ 'membercount' ]
             }
         );

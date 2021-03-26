@@ -13,6 +13,7 @@ export class kCommand extends Command {
                 name: 'thispersondoesnotexist',
                 folder: 'Fun',
                 args: [0, 0],
+                ratelimit: 7,
                 aliases: [ 'thispersondoesn\'texist', 'tpdne' ]
             }
         );

@@ -14,6 +14,7 @@ export class kCommand extends Command {
             name: 'rockpaperscissors',
             folder: 'Games',
             args: [0, 0],
+            ratelimit: 10,
             aliases: ['rps']
         });
     }

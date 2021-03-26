@@ -13,7 +13,8 @@ export class kCommand extends Command {
             {
                 name: 'debug:content',
                 folder: 'Debug',
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }

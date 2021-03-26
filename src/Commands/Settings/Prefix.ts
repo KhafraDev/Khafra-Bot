@@ -16,6 +16,7 @@ export class kCommand extends Command {
                 name: 'prefix',
                 folder: 'Settings',
                 args: [1, 1],
+                ratelimit: 10,
                 guildOnly: true
             }
         );

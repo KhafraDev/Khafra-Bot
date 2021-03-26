@@ -48,6 +48,7 @@ export class kCommand extends Command {
                 name: 'cyanideandhappiness',
                 folder: 'Games',
                 args: [0, 0],
+                ratelimit: 5,
                 aliases: ['cah']
             }
         );

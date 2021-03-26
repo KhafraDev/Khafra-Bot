@@ -18,7 +18,8 @@ export class kCommand extends Command {
                 name: 'randomnum',
                 aliases: ['randnum', 'randomint', 'randint'],
                 folder: 'Fun',
-                args: [1, 2]
+                args: [1, 2],
+                ratelimit: 5
             }
         );
     }

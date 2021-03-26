@@ -32,7 +32,8 @@ export class kCommand extends Command {
 			{
                 name: 'cowsay',
                 folder: 'Fun',
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }
