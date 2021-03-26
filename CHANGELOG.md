@@ -372,7 +372,7 @@
 * Add in ``piglatin`` command.
 </details>
 
-<details><summary><b># v1.0.8 - The News Update (Early 2021)</b></summary>
+<details><summary><b>v1.0.8 - The News Update (Early 2021)</b></summary>
 
 * Add a fully fledged RSS feed parser.
 * Add in ``abcnews`` command.
@@ -431,7 +431,7 @@
 
 </details>
 
-# v1.0.8 - Part 2, New Bot
+<details><summary><b>v1.0.8 - Part 2, New Bot</b></summary>
 
 ## Commands
 * Add `twitdl` command to get the links to media in tweets.
@@ -464,3 +464,29 @@
 * Add in `fetch` util for cleaner, functional code.
 * Remove `kongregate` chat forwarder. 
 * Log commands that fail to load.
+
+</details>
+
+# v1.0.9
+
+* Update `mongodb` to the GitHub version which fixes the circular dependency warning.
+* New `crypto` command and backend that doesn't use an infinite loop.
+* New `bible` command that allows selecting a random verse, a single verse (given book and chapter/verse), and an ability to select a list of verses.
+* New `apod` command.
+* New `paste` command that allows pasting message content that's quoted.
+* New `cartoonize` command and backend (removes parse5).
+* New array chunking function that doesn't use [generator functions](https://bugs.chromium.org/p/v8/issues/detail?id=11560). Completely remove the old function.
+* New ratelimit system (both global and command), KhafraClient#load now takes a function parameter as a filter.
+* Add `reload` command to reload a command.
+* Add `cyanideandhappiness` cartoon command.
+* Add `stonewall` command; better migration for Garrison, etc.
+* Add `garrisondump` command that dumps every cartoon to JSON.
+* Add `branco` command.
+* Add these political cartoon commands under a new folder, Trash.
+* RSS reader can now take custom parsing options.
+* Transfer `bible` database from Mongo to Postgres.
+* `twitdl` command now has better twitter.com URL checks.
+* `twitdl` backend now has advanced types and better logic.
+* Command#errors are now properly assigned.
+* Better error handling in `addemoji`.
+* Better error messages in `badmeme` when a subreddit is banned, privated, or quarantined.
