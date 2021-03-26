@@ -20,18 +20,22 @@ export class kCommand extends Command {
                 ratelimit: 30,
                 errors: {
                     'TypeError': 'Image wasn\'t found on page.',
-                    'AssertionError': 'Request failed!'
+                    'FetchError': 'A server issue occurred.'
                 }
             }
         );
     }
 
     async init(message: Message) {
-        if (message.attachments.size === 0) {
+        if (message.attachments.size === 0)
             return this.Embed.generic(this, 'No image attached!');
-        }
+
+        message.channel.startTyping();
         
         const cartoon = await cartoonize(message.attachments.first());
+        message.channel.stopTyping(true);
+        if (!cartoon)
+            return this.Embed.fail('Failed to extract the image from the HTML. 😕');
         
         return this.Embed
             .success(`[Click Here](${cartoon}) to download!`)

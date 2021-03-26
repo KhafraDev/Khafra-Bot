@@ -1,35 +1,11 @@
 import FormData from '@discordjs/form-data';
-import parse5, {
-    DefaultTreeParentNode as DTPN,
-    DefaultTreeElement as DTE,
-    DefaultTreeChildNode as DTCN
-} from 'parse5';
-import { deepStrictEqual } from 'assert';
 import { MessageAttachment } from 'discord.js';
+import { decodeXML } from 'entities';
 import { lookup } from 'mime-types';
-import { fetch } from '../../Structures/Fetcher.js';
+import fetch from 'node-fetch';
 
-const getA = (html: string) => {
-    const document = parse5.parse(html);
-    const els = (document as DTPN).childNodes; // elements in the page's body
-    const a = [];
-
-    while(els.length !== 0) {
-        const el = els.shift() as DTCN | DTPN;
-        if (el.nodeName === 'a') {
-            if (
-                (el as DTE).attrs.every(a => ['download', 'href'].includes(a.name)) &&
-                (el as DTCN).parentNode.nodeName === 'div'
-            ) {
-                a.push(el);
-            }
-        } else if ((el as DTPN).childNodes?.length > 0) {
-            els.push(...(el as DTPN).childNodes);
-        }
-    }
-
-    return a as (DTE & DTPN)[];
-}
+/*** Get the image from the html */
+const R = /<div class="image">\s+<img src="(.*?)">/;
 
 /**
  * Cartoonize an image using AI from an "unofficial API".
@@ -38,26 +14,28 @@ const getA = (html: string) => {
  */
 export const cartoonize = async (attachment: MessageAttachment) => {
     const mime = lookup(attachment.name) + '';
-    deepStrictEqual(typeof mime !== 'boolean', true);
 
-    const res = await fetch(attachment.proxyURL).send();
-    deepStrictEqual(res.status, 200);
+    const res = await fetch(attachment.proxyURL);
+    if (!res.ok)    
+        return null;
+
     const form = new FormData();
     form.append('image', res.body, {
         filename: attachment.name,
         contentType: mime
     });
 
-    const cartoonizeRes = await fetch()
-        .post('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize')
-        .header(form.getHeaders())
-        .send({
-            body: form
-        });
+    const cartoonizeRes = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
+        method: 'POST',
+        headers: form.getHeaders(),
+        body: form
+    });
 
-    deepStrictEqual(cartoonizeRes.status, 200);
-    const a = getA(await cartoonizeRes.text());
-    deepStrictEqual(a.length, 1);
+    if (!cartoonizeRes.ok)
+        return null;
 
-    return a.shift().attrs.find(attr => attr.name === 'href').value;
+    const html = await cartoonizeRes.text();
+    const image = decodeXML(html.match(R)[1]);
+
+    return image;
 }
