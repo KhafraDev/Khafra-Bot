@@ -482,6 +482,7 @@
 * Add `stonewall` command; better migration for Garrison, etc.
 * Add `garrisondump` command that dumps every cartoon to JSON.
 * Add `branco` command.
+* Add `tmdb` command.
 * Add these political cartoon commands under a new folder, Trash.
 * RSS reader can now take custom parsing options.
 * Transfer `bible` database from Mongo to Postgres.

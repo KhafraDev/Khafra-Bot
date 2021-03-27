@@ -39,6 +39,7 @@ TWITTER_API=
 TWITTER_API_SECRET=
 POSTGRES_USER=
 POSTGRES_PASS=
+TMDB=
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
