@@ -63,7 +63,7 @@ export abstract class Command implements ICommand {
         this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
-    abstract init (message?: Message, args?: string[], settings?: GuildSettings | null): 
+    abstract init (message?: Message, args?: string[], settings?: GuildSettings | Partial<GuildSettings>): 
         Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
 
     isBotOwner (id: Snowflake) {

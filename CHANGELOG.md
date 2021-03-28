@@ -483,6 +483,7 @@
 * Add `garrisondump` command that dumps every cartoon to JSON.
 * Add `branco` command.
 * Add `tmdb` command.
+* Add `debug:ghost` command (ghost pinging "bug").
 * Add these political cartoon commands under a new folder, Trash.
 * RSS reader can now take custom parsing options.
 * Transfer `bible` database from Mongo to Postgres.
@@ -491,3 +492,4 @@
 * Command#errors are now properly assigned.
 * Better error handling in `addemoji`.
 * Better error messages in `badmeme` when a subreddit is banned, privated, or quarantined.
+* The message event will now pass a partial `GuildSettings` object into command handlers rather than null.

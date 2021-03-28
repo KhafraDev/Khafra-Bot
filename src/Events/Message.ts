@@ -15,7 +15,11 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
 
-const { prefix: defaultPrefix } = config;
+const defaultSettings: Partial<GuildSettings> = {
+    prefix: config.prefix,
+    whitelist: [],
+    blacklist: []
+};
 
 const _cooldownGuild = cooldown(30, 60000);
 const _cooldownUsers = cooldown(10, 60000);
@@ -38,9 +42,11 @@ export class kEvent extends Event {
     
         const client =      isDM(message.channel) ? null : await pool.settings.connect();
         const collection =  isDM(message.channel) ? null : client.db('khafrabot').collection('settings');
-        const guild =       isDM(message.channel) ? null : await collection.findOne<GuildSettings>({ id: message.guild.id });
+        const guild =       isDM(message.channel) 
+            ? defaultSettings 
+            : Object.assign({ ...defaultSettings }, await collection.findOne<GuildSettings>({ id: message.guild.id }));
 
-        const prefix = selfMentioned ? '' : (guild?.prefix ?? defaultPrefix);
+        const prefix = selfMentioned ? '' : guild.prefix;
         const fName = name.toLowerCase().slice(prefix.length);
         if (!name.startsWith(prefix)) return; // 'hello'.startsWith('') = true
         if (!KhafraClient.Commands.has(fName)) return;
@@ -51,9 +57,9 @@ export class kEvent extends Event {
 
         /** Check blacklist/whitelist status of command */
         if (!['Settings', 'Moderation'].includes(command.settings.folder)) {
-            if (guild?.whitelist?.length > 0 && !guild?.whitelist?.includes(command.settings.name))
+            if (guild.whitelist.length > 0 && !guild.whitelist.includes(command.settings.name))
                 return message.reply(Embed.fail('This command has not been whitelisted!'));
-            if (guild?.blacklist?.includes(command.settings.name)) 
+            if (guild.blacklist.includes(command.settings.name)) 
                 return message.reply(Embed.fail('This command has been disabled by an administrator!'));
         }
         
