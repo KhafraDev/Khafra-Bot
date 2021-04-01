@@ -1,8 +1,3 @@
-/**
- * The making of this command lead to memory leaks.
- * https://bugs.chromium.org/p/v8/issues/detail?id=11560
- */
-
 import fetch, { Response } from 'node-fetch';
 import { chunkSafe } from '../Utility/Array.js';
 

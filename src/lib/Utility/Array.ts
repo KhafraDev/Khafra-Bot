@@ -1,8 +1,7 @@
 import { rand } from './Constants/OneLiners.js';
 
 /**
- * Array chunking without generator functions,
- * which may cause v8 memory leaks/crashes depending on array size. 
+ * Array chunking without generator functions
  */
 export const chunkSafe = <T>(arr: T[], step: number): T[][] => {
     const res: T[][] = [];
