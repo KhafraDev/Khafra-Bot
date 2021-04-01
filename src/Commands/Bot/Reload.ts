@@ -28,7 +28,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const files = await client.load(join(basePath, args[0]), () => true);
+        const files = await client.walk(join(basePath, args[0]), () => true);
         const mapped = files
             .map(p => parse(p))
             .map(p => ({ 

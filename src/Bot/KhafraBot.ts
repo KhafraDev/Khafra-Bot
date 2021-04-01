@@ -15,7 +15,10 @@ export class KhafraClient extends Client {
         super(args);
     }
 
-    load = async (dir: string, fn: (path: string) => boolean) => {
+    /**
+     * Walk up a directory tree and return the path for every file in the directory and sub-directories.
+     */
+    walk = async (dir: string, fn: (path: string) => boolean) => {
         const ini = await readdir(dir);
         const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
     
@@ -40,7 +43,7 @@ export class KhafraClient extends Client {
      * Load commands
      */
     async loadCommands() {
-        const commands = await this.load('build/src/Commands', p => p.endsWith('.js'));
+        const commands = await this.walk('build/src/Commands', p => p.endsWith('.js'));
         const importPromise = commands.map<Promise<Command>>(command => import(absPath(command)));
         const settled = await Promise.allSettled(importPromise);
 
@@ -53,7 +56,7 @@ export class KhafraClient extends Client {
     }
 
     async loadEvents() {
-        const events = await this.load('build/src/Events', p => p.endsWith('.js'));
+        const events = await this.walk('build/src/Events', p => p.endsWith('.js'));
         const importPromise = events.map<Promise<Event>>(event => import(absPath(event)));
         await Promise.allSettled(importPromise);
 
