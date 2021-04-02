@@ -1,8 +1,9 @@
 // This command is a beast.
 
 import { Message } from 'discord.js';
+import { readdir } from 'fs/promises';
 import { join, parse, sep } from 'path';
-import { pathToFileURL } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { client } from '../../index.js';
 import { compile } from '../../lib/Backend/Compile.js';
@@ -28,7 +29,17 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, args: string[]) {
-        const files = await client.walk(join(basePath, args[0]), () => true);
+        // on Linux (and possibly other OSes), capitalization in directory paths
+        // does matter, but does not on Windows. This will get the correct folder capitalization.
+        const dir = await readdir(join(fileURLToPath(import.meta.url), '../..'));
+        const closest = dir
+            .sort((a, b) => 
+                compareTwoStrings(b.toLowerCase(), args[0].toLowerCase()) 
+                - compareTwoStrings(a.toLowerCase(), args[0].toLowerCase())
+            )
+            .shift();
+        
+        const files = await client.walk(join(basePath, closest), () => true);
         const mapped = files
             .map(p => parse(p))
             .map(p => ({ 
