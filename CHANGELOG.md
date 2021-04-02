@@ -475,7 +475,8 @@
 * New `apod` command.
 * New `paste` command that allows pasting message content that's quoted.
 * New `cartoonize` command and backend (removes parse5).
-* New array chunking function that doesn't use [generator functions](https://bugs.chromium.org/p/v8/issues/detail?id=11560). Completely remove the old function.
+* New `hangman` command, adding an option to get a hint, and ability to end a game (type "stop" in the channel).
+* New array chunking function. Completely remove the old function.
 * New ratelimit system (both global and command), KhafraClient#load now takes a function parameter as a filter.
 * Add `reload` command to reload a command.
 * Add `cyanideandhappiness` cartoon command.
