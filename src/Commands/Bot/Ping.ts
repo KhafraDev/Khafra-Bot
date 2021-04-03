@@ -11,7 +11,7 @@ export class kCommand extends Command {
             ],
 			{
                 name: 'ping',
-                folder: 'Fun',
+                folder: 'Bot',
                 args: [0, 0],
                 ratelimit: 7
             }

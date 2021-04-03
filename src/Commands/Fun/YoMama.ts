@@ -4,13 +4,12 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { isText } from '../../lib/types/Discord.js.js';
+import { upperCase } from '../../lib/Utility/String.js';
 
 // "jokes"
 const file = await readFile(join(process.cwd(), 'assets/yomama.txt'), 'utf-8');
-const jokes = file.split(/\r\n|\n/g).reduce((p, c) => {
-    c.startsWith('NSFW:') ? p.nsfw.push(c.slice(5)) : p.sfw.push(c);
-    return p;
-}, { nsfw: [], sfw: [] });
+const jokes = file.split(/\r\n|\n/g).slice(0, -1); // last line will be empty
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -28,9 +27,9 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        const nsfw = 'nsfw' in message.channel ? message.channel.nsfw : true;
-        const all = nsfw ? [...jokes.nsfw, ...jokes.sfw] : [...jokes.sfw];
-        const epicfunnyjoke = all[await rand(all.length)];
-        return this.Embed.success(epicfunnyjoke);
+        if (isText(message.channel) && !message.channel.nsfw)
+            return this.Embed.fail('🔞 This command only works in NSFW channels.');
+
+        return this.Embed.success(upperCase(jokes[await rand(jokes.length)]));
     }
 }

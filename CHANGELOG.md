@@ -486,6 +486,7 @@
 * Add `branco` command.
 * Add `tmdb` command.
 * Add `debug:ghost` command (ghost pinging "bug").
+* Add more `yomama` jokes and disallow the command in SFW channels.
 * Add these political cartoon commands under a new folder, Trash.
 * RSS reader can now take custom parsing options.
 * Transfer `bible` database from Mongo to Postgres.
