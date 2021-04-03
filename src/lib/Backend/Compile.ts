@@ -47,24 +47,3 @@ export const compile = (fileNames: string[], options: ts.CompilerOptions) => {
     const exitCode = emitResult.emitSkipped ? 1 : 0;
     return [ `Exited with code "${exitCode}".`, ...diagnostics ];
 }
-
-/*const res = compile(process.argv.slice(2), {
-    target: ts.ScriptTarget.ESNext,
-    module: ts.ModuleKind.ESNext,
-    outDir: './build/s/',
-    allowJs: false,
-    moduleResolution: ts.ModuleResolutionKind.NodeJs,
-    resolveJsonModule: true,
-    strict: true,
-    noImplicitAny: true,               
-    strictNullChecks: false,              
-    strictBindCallApply: true,           
-    noImplicitThis: true,
-    alwaysStrict: true,
-    noUnusedLocals: true,
-    noUnusedParameters: true,
-    noFallthroughCasesInSwitch: true,
-    esModuleInterop: true,
-    experimentalDecorators: true,
-    emitDecoratorMetadata: true 
-});*/

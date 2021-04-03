@@ -24,7 +24,8 @@ export const Sanitize = (message: Message) => {
         (message.guild && !message.guild.available) ||
         message.system ||
         message.partial ||
-        message.tts
+        message.tts || 
+        message.content.length === 0
     ) { 
         return false;
     }
