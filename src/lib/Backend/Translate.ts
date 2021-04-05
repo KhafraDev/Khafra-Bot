@@ -1,54 +1,13 @@
-/**
- * Based VERY-roughly on {@see https://github.com/DarinRowe/googletrans} (v1.0.0, MIT license).
- * Only uses the URL logic (params, base url) to get a valid response.
+/*
+ * Originally based VERY-roughly on https://github.com/DarinRowe/googletrans (v1.0.0, MIT license).
+ * Refined from this comment, https://github.com/matheuss/google-translate-api/issues/79#issuecomment-426007365,
+ * that removes the token entirely.
  */
 
 import fetch from 'node-fetch';
-import { URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'url';
 
-const token = (a: string) => {
-	const arb_1 = 406644, arb_2 = 3293161072,
-	      jd = '.', $b = '+-a^+6', Zb = '+-3^+b+-f', e = [];
-
-    for (let f = 0, g = 0; g < a.length; g++) {
-        let m = a.charCodeAt(g);
-        if (m < 128) {
-            e[f++] = m;
-        } else if (m < 2048) {
-            e[f++] = (m >> 6) | 192;
-        } else if (55296 === (m & 64512) && g + 1 < a.length && 56320 === (a.charCodeAt(g + 1) & 64512)) {
-            m = 65536 + ((m & 1023) << 10) + (a.charCodeAt(++g) & 1023);
-            e[f++] = (m >> 18) | 240; 
-            e[f++] = ((m >> 12) & 63) | 128;
-        } else {
-            e[f++] = (m >> 12) | 224; 
-            e[f++] = ((m >> 6) & 63) | 128; 
-            e[f++] = (m & 63) | 128;
-        }
-	}
-	
-    let arb_1_clone = arb_1;
-    for (let f = 0; f < e.length; f++) {
-		arb_1_clone += e[f];
-		arb_1_clone = arb_fn(arb_1_clone, $b);
-	};
-    arb_1_clone = arb_fn(arb_1_clone, Zb);
-	arb_1_clone ^= arb_2 || 0;
-	// 												 2 ** 32 (-1)
-    0 > arb_1_clone && (arb_1_clone = (arb_1_clone & 2147483647) + 2147483648);
-    arb_1_clone %= 1e6;
-    return arb_1_clone.toString() + jd + (arb_1_clone ^ arb_1);
-}
-
-const arb_fn = (p_1: number, p_2: string) => {
-	for (let c = 0; c < p_2.length - 2; c += 3) {
-		const d = p_2.charAt(c + 2);
-		const e = d >= 'a' ? d.charCodeAt(0) - 87 : Number(d);
-    	const f = p_2.charAt(c + 1) === '+' ? p_1 >>> e : p_1 << e;
-    	p_1 = p_2.charAt(c) === '+' ? (p_1 + f) & 4294967295 : p_1 ^ f;
-  	}
-  	return p_1;
-}
+type Opts = { to?: string, from?: string };
 
 export const langs = [
 	'auto', 'af', 'sq', 'am', 'ar', 
@@ -75,42 +34,43 @@ export const langs = [
 	'cy', 'xh', 'yi', 'yo', 'zu', 'fil', 
 ];
 
+const staticParams = new URLSearchParams([
+    ['client', 'gtx'],
+    ['hl', 'en'],
+    ['dt', 'at'], ['dt', 'bd'], ['dt', 'ex'], ['dt', 'ld'], ['dt', 'md'], 
+    ['dt', 'qca'], ['dt', 'rw'], ['dt', 'rm'], ['dt', 'ss'], ['dt', 't'],
+    ['ie', 'UTF-8'],
+    ['oe', 'UTF-8'],
+    ['otf', '1'],
+    ['ssel', '0'],
+    ['tsel', '0'],
+    ['kc', '7']
+]);
+
 export const translate = async (
 	text: string, 
-	opts: { to: string, from: string } = { to: 'en', from: 'auto' }
-) => {
+	opts: Opts = { to: 'en', from: 'auto' }
+): Promise<string> => {
 	opts.from = langs.includes(opts.from?.toLowerCase()) ? opts.from.toLowerCase() : 'auto';
 	opts.to = langs.includes(opts.to?.toLowerCase()) ? opts.to.toLowerCase() : 'en';
 
 	const url = 'https://translate.google.com/translate_a/single?';
-  	const PARAMS: [string, string][] = [
-		['client', 't'],
-		['sl', opts.from],
-		['tl', opts.to],
-		['hl', 'en'],
-		['dt', 'at'], ['dt', 'bd'], ['dt', 'ex'], ['dt', 'ld'], ['dt', 'md'], 
-		['dt', 'qca'], ['dt', 'rw'], ['dt', 'rm'], ['dt', 'ss'], ['dt', 't'],
-		['ie', 'UTF-8'],
-		['oe', 'UTF-8'],
-		['otf', '1'],
-		['ssel', '0'],
-		['tsel', '0'],
-		['kc', '7'],
-		['q', text],
-		['tk', token(text)],
-	];
+	const params = new URLSearchParams(staticParams);
+    params.append('sl', opts.from);
+    params.append('tl', opts.to);
+    params.append('q', text);
 
-	let json: any[][];
-	try {
-		const res = await fetch(url + new URLSearchParams(PARAMS).toString(), {
-			headers: {
-				'Accept-Encoding': 'gzip, deflate, br',
-			}
-		});
-		json = await res.json();
-	} catch(e) {
-		return Promise.reject(e);
-	} 
+    const r = await fetch(new URL(`?${params}`, url), {
+        headers: {
+            'Accept-Encoding': 'gzip, deflate, br',
+			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0'
+        }
+    });
+	// setting real types for this is a waste of time
+    const j = await r.json() as unknown[][][];
 
-	return json?.[0].map(tr => tr.shift()).join('') ?? 'Bad response!';
+	if (!Array.isArray(j) || !Array.isArray(j[0]))
+		return 'Invalid response received!';
+	 
+	return j[0].map(tr => tr.shift()).join('');
 }

@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { GuildEmoji, Message, Permissions } from 'discord.js';
+import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js';
 import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -34,6 +34,12 @@ export class kCommand extends Command {
 
         if (!/(.png|.jpe?g|.webp|.gif)/.test(file.href))
             return this.Embed.fail('Not a valid image/gif link!');
+
+        // MessageAttachment provides us with this information, a url does not.
+        // this is a check to cut down on API requests by checking for file size.
+        if (fileFromArgs instanceof MessageAttachment)
+            if (fileFromArgs.size / 1000 > 256) // size is in bytes, convert to kb
+                return this.Embed.fail('Discord disallows images (or gifs) larger than 256 kb!');
 
         let e: GuildEmoji | null = null;
         try {
