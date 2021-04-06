@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 
 interface JHURes {
     type: 'FeatureCollection'
@@ -44,18 +44,24 @@ interface CovidCache {
 }
 
 const base = 'https://opendata.arcgis.com/datasets/1cb306b5331945548745a5ccd290188e_1.geojson';
-export const cache: CovidCache[] = [];
+export const cache = new Set<CovidCache>();
 
 /**
  * Fetches COVID data from @see https://github.com/CSSEGISandData/COVID-19/
  */
 export const fetchCOVIDStats = async () => {
-    const r = await fetch(base);
+    let r: Response | null = null;
+    try {
+        r = await fetch(base);
+    } catch { 
+        return; 
+    }
+
     const j = await r.json() as JHURes;
 
-    cache.splice(0);
+    cache.clear();
     for (const feature of j.features) {
-        cache.push({
+        cache.add({
             Province_State: feature.properties.Province_State,
             Country_Region: feature.properties.Country_Region,
             Last_Update: feature.properties.Last_Update,
@@ -74,7 +80,7 @@ export const fetchCOVIDStats = async () => {
 
 export const start = async () => {
     try { await fetchCOVIDStats() } catch {}
-    return setInterval(() => {
-        try { return fetchCOVIDStats() } catch {}
+    return setInterval(async () => {
+        try { await fetchCOVIDStats() } catch {}
     }, 60 * 1000 * 10);
 }

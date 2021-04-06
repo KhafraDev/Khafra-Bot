@@ -20,7 +20,7 @@ enum Regions {
     'sydney' = 'New South Wales'
 }
 
-type GetFromArray<T extends Array<any>> = T extends Array<infer U>
+type GetFromArray<T extends Set<unknown>> = T extends Set<infer U>
     ? U
     : never
 
@@ -45,7 +45,7 @@ export class kCommand extends Command {
                 : args.join(' ')
         ).toLowerCase();
 
-        const item = cache.filter(place => 
+        const item = [...cache].filter(place => 
             place.Country_Region.toLowerCase() === area ||
             place.Province_State?.toLowerCase() === area ||
             place.Admin2?.toLowerCase() === area ||
