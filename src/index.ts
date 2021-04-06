@@ -33,6 +33,7 @@ export const client = new KhafraClient({
     .on('message',               emitted('message'))
     .on('guildCreate',           emitted('guildCreate'))
     .on('guildDelete',           emitted('guildDelete'))
+    .on('interaction',           emitted('interaction'))
     .on('guildMemberAdd',        emitted('guildMemberAdd'))
     .on('guildMemberRemove',     emitted('guildMemberRemove'))
     .on('guildMemberUpdate',     emitted('guildMemberUpdate'))

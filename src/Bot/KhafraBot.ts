@@ -4,12 +4,14 @@ import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event.js';
 import { type } from 'os';
+import { Interactions } from '../Structures/Interaction.js';
 
 const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
+    static Interactions: Map<string, Interactions> = new Map();
 
     constructor(args: ClientOptions) {
         super(args);
@@ -39,9 +41,6 @@ export class KhafraClient extends Client {
         return f;
     }
 
-    /**
-     * Load commands
-     */
     async loadCommands() {
         const commands = await this.walk('build/src/Commands', p => p.endsWith('.js'));
         const importPromise = commands.map<Promise<Command>>(command => import(absPath(command)));
@@ -64,9 +63,15 @@ export class KhafraClient extends Client {
         return KhafraClient.Events;
     }
 
-    /**
-     * Initialize the bot.
-     */
+    async loadInteractions() {
+        const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
+        const importPromise = interactions.map<Promise<Interactions>>(int => import(absPath(int)));
+        console.log(await Promise.allSettled(importPromise));
+
+        console.log(`Loaded ${importPromise.length} global interactions!`);
+        return KhafraClient.Interactions;
+    }
+
     async init() {
         const start = Date.now();
         await this.loadEvents();

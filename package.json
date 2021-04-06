@@ -6,7 +6,7 @@
   "type": "module",
   "dependencies": {
     "adm-zip": "^0.4.16",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "github:vaporox/discord.js#feat-interactions",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
     "mongodb": "github:mongodb/node-mongodb-native",
