@@ -66,7 +66,7 @@ export class KhafraClient extends Client {
     async loadInteractions() {
         const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
         const importPromise = interactions.map<Promise<Interactions>>(int => import(absPath(int)));
-        console.log(await Promise.allSettled(importPromise));
+        await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${importPromise.length} global interactions!`);
         return KhafraClient.Interactions;
