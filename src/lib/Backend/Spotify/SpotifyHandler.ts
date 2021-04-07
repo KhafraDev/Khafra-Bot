@@ -1,23 +1,33 @@
 import fetch from 'node-fetch';
-import { URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'node:url';
+import { stringify } from 'node:querystring';
 import { SpotifyResult } from './types/Spotify';
+
+type Token = { 
+    access_token: string;
+    token_type: string; 
+    expires_in: number;
+    scope?: string;
+}
 
 class Spotify {
     private id = process.env.SPOTIFY_ID;
     private secret = process.env.SPOTIFY_SECRET;
 
-    token?: { 
-        access_token: string;
-        token_type: string; 
-        expires_in: number;
-        scope?: string;
-    };
-
-    expires_in?: number;
+    private token: Token | null = null;
+    private expires_in: number | null = null;
 
     async search(query: string) {
+        // URLSearchParams encodes differently (and incorrectly for Spotify), so we use qs#stringify instead.
+        const params = '?' + stringify({
+            type: 'track',
+            limit: '10',
+            q: query // automatically encoded
+        });
+
         const token = await this.getTokenHeader();
-        return fetch('https://api.spotify.com/v1/search?type=track&limit=10&q=' + encodeURIComponent(query), {
+
+        return fetch(new URL(params, 'https://api.spotify.com/v1/search'), {
             headers: { 
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -28,8 +38,7 @@ class Spotify {
     }
   
     async setToken() {
-        const params = new URLSearchParams();
-        params.append('grant_type', 'client_credentials');
+        const params = new URLSearchParams({ grant_type: 'client_credentials' });
 
         return fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
@@ -38,10 +47,10 @@ class Spotify {
                 Authorization: `Basic ${Buffer.from(`${this.id}:${this.secret}`).toString('base64')}`
             }
         })
-        .then(res => res.json())
+        .then(res => res.json() as Promise<Token>)
         .then(creds => {
             this.token = creds;
-            this.expires_in = new Date().getTime() + creds.expires_in * 1000; // in milliseconds
+            this.expires_in = Date.now() + creds.expires_in * 1000; // in milliseconds
         });
     }
   
@@ -54,11 +63,8 @@ class Spotify {
     }
 
     get expired() {
-        return this.token && new Date().getTime() >= this.expires_in!
-            ? true
-            : false;
+        return this.token && Date.now() >= this.expires_in!;
     }
 }
 
-const spotify = new Spotify();
-export { spotify };
+export const spotify = new Spotify();

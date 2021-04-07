@@ -1,7 +1,10 @@
+type ExternalURL = {
+    spotify: string
+    [key: string]: string
+}
+
 type SpotifyArtist = {
-    external_urls: {
-        spotify: string
-    },
+    external_urls: ExternalURL
     href: string,
     id: string,
     name: string,
@@ -13,11 +16,8 @@ type SpotifyItem = {
     album: {
         album_type: string,
         artists: SpotifyArtist[],
-        available_markets: [
-        ],
-        external_urls: {
-            spotify: string
-        },
+        available_markets: string[]
+        external_urls: ExternalURL
         href: string,
         id: string,
         images: {
@@ -40,9 +40,7 @@ type SpotifyItem = {
     external_ids: {
         isrc: string
     },
-    external_urls: {
-        spotify: string
-    },
+    external_urls: ExternalURL
     href: string,
     id: string,
     is_local: boolean,
