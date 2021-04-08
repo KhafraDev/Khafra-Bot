@@ -34,7 +34,7 @@ export async function getMentions(
         const id = args[0].replace(/[^0-9]/g, ''); // replace non-numeric characters
         // sometimes, especially for users, they might not be cached/auto fetched
         // for the bot, so no items will be in the collection
-        const item = [...mentions[type]].find(i => i[1].id === id)?.pop() ?? id;
+        const item = mentions[type].get(id) ?? id;
 
         // if it's not a string, no need to fetch it; we can just return it!
         if (typeof item !== 'string')
@@ -46,7 +46,9 @@ export async function getMentions(
                 return coll;
             } catch {}
         } else if (type === 'channels') {
-            return guild.channels.cache.find(c => c.id === item);
+            // only TextChannels/NewsChannels can be mentioned. Voice channels and stage channels 
+            // can only be fetched given its id!
+            return guild.channels.cache.get(item);
         } else {
             try {
                 const users = await client.users.fetch(item);
