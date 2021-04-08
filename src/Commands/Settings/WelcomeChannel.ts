@@ -1,7 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { 
-    Message, TextChannel, Permissions
-} from "discord.js";
+import { Message, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
