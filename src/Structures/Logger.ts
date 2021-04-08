@@ -1,8 +1,8 @@
-import { join } from 'path';
-import { mkdirSync, createWriteStream, WriteStream } from 'fs';
+import { join } from 'node:path';
+import { mkdirSync, createWriteStream, WriteStream } from 'node:fs';
 import { formatDate } from '../lib/Utility/Date.js';
-import { inspect } from 'util';
-import { EOL } from 'os';
+import { inspect } from 'node:util';
+import { EOL } from 'node:os';
 
 const logPath = join(process.cwd(), 'assets/Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories

@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IWashingtonPost {

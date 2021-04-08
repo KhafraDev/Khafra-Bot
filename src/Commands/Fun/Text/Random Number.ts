@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 

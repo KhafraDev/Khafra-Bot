@@ -1,7 +1,7 @@
 import { Command } from '../Structures/Command.js';
 import { Client, ClientOptions, ClientEvents } from 'discord.js';
-import { resolve } from 'path';
-import { readdir, stat } from 'fs/promises';
+import { resolve } from 'node:path';
+import { readdir, stat } from 'node:fs/promises';
 import { Event } from '../Structures/Event.js';
 import { Interactions } from '../Structures/Interaction.js';
 import { pathToFileURL } from 'node:url';

@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { colorPhoto } from '../../lib/Backend/Colorize.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 

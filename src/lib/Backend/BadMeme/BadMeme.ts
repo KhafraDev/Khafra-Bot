@@ -1,6 +1,6 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
-import { stringify } from 'querystring';
+import { stringify } from 'node:querystring';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
 export interface IBadMemeCache {

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import { promisify } from 'util';
-import zlib from 'zlib';
+import { promisify } from 'node:util';
+import zlib from 'node:zlib';
 import { deepStrictEqual } from 'assert';
 
 const unzip = promisify(zlib.unzip);

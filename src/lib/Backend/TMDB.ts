@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
-import { stringify } from 'querystring';
-import { URL } from 'url';
+import { stringify } from 'node:querystring';
+import { URL } from 'node:url';
 
 interface ITMDBSearch {
     page: number

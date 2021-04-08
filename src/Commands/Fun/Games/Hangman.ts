@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, MessageReaction, Snowflake, User } from 'discord.js';
-import { join } from 'path';
-import { readFileSync } from 'fs';
+import { join } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';

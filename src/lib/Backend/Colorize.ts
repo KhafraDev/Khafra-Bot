@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { deepStrictEqual, doesNotThrow } from 'assert';
 
 type algorithmiaError = { error: { message: string } };

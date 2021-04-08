@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const dir = join(process.cwd(), 'assets/Cowsay');

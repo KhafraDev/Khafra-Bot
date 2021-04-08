@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import pg from 'pg';
 
 const loadSQL = await readFile(join(process.cwd(), 'assets/SQL/init.sql'), 'utf-8');

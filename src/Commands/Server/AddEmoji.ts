@@ -1,6 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js';
-import { URL } from 'url';
+import { URL } from 'node:url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

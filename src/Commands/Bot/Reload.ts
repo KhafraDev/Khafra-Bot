@@ -1,9 +1,9 @@
 // This command is a beast.
 
 import { Message } from 'discord.js';
-import { readdir } from 'fs/promises';
-import { join, parse, sep } from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import { readdir } from 'node:fs/promises';
+import { join, parse, sep } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { client } from '../../index.js';
 import { compile } from '../../lib/Backend/Compile.js';

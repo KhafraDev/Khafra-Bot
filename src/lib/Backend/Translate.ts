@@ -5,7 +5,7 @@
  */
 
 import fetch from 'node-fetch';
-import { URL, URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'node:url';
 
 type Opts = { to?: string, from?: string };
 

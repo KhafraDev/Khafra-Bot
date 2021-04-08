@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { URLSearchParams } from 'url';
+import { URLSearchParams } from 'node:url';
 import { nasaInsert } from '../Migration/NASA.js';
 
 interface IAPOD {
