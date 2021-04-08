@@ -54,7 +54,7 @@ export const formatDate = (
             case 'H':       // 0..23
             case 'HH':      // 00..23
                 return dateObj.toLocaleString(locale, { 
-                    hour12: formatter[0] === 'H' ? false : true, 
+                    hour12: formatter[0] !== 'H', 
                     hour: 'numeric' 
                 }).split(' ').shift().padStart(formatter.length, '0');
             case 'A':

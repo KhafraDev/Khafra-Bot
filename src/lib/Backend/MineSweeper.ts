@@ -34,7 +34,7 @@ export const Board = () => {
 
     // choose random spot on board that will not be masked
     // this is the starter hint; denoted by -1
-    while(!board.flat().includes(-1)) {
+    while (!board.flat().includes(-1)) {
         const x = Math.floor(Math.random() * 10)
         const y = Math.floor(Math.random() * 10);
         if (board[x][y] === 0) {

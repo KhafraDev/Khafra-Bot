@@ -3,10 +3,8 @@ import { Client, ClientOptions, ClientEvents } from 'discord.js';
 import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event.js';
-import { type } from 'os';
 import { Interactions } from '../Structures/Interaction.js';
-
-const absPath = (s: string) => type() === 'Windows_NT' ? `file:///${s}` : s;
+import { pathToFileURL } from 'node:url';
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -24,7 +22,7 @@ export class KhafraClient extends Client {
         const ini = await readdir(dir);
         const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
     
-        while(ini.length !== 0) {        
+        while (ini.length !== 0) {        
             for (const d of ini) {
                 const path = resolve(dir, d);
                 ini.splice(ini.indexOf(d), 1); // remove from array
@@ -43,7 +41,7 @@ export class KhafraClient extends Client {
 
     async loadCommands() {
         const commands = await this.walk('build/src/Commands', p => p.endsWith('.js'));
-        const importPromise = commands.map<Promise<Command>>(command => import(absPath(command)));
+        const importPromise = commands.map<Promise<Command>>(command => import(pathToFileURL(command).href));
         const settled = await Promise.allSettled(importPromise);
 
         const rejected = settled.filter(p => p.status === 'rejected') as PromiseRejectedResult[];
@@ -56,7 +54,7 @@ export class KhafraClient extends Client {
 
     async loadEvents() {
         const events = await this.walk('build/src/Events', p => p.endsWith('.js'));
-        const importPromise = events.map<Promise<Event>>(event => import(absPath(event)));
+        const importPromise = events.map<Promise<Event>>(event => import(pathToFileURL(event).href));
         await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${events.length} events!`);
@@ -65,7 +63,7 @@ export class KhafraClient extends Client {
 
     async loadInteractions() {
         const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
-        const importPromise = interactions.map<Promise<Interactions>>(int => import(absPath(int)));
+        const importPromise = interactions.map<Promise<Interactions>>(int => import(pathToFileURL(int).href));
         await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${importPromise.length} global interactions!`);
