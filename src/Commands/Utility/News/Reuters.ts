@@ -37,13 +37,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Reuters', 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048');
-        return embed;
     }
 }

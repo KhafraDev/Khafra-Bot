@@ -35,13 +35,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('BBC News', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png');
-        return embed;
     }
 }

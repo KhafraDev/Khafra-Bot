@@ -38,13 +38,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Der Spiegel', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo-der_spiegel.svg/1280px-Logo-der_spiegel.svg.png');
-        return embed;
     }
 }

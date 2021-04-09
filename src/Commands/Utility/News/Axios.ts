@@ -39,13 +39,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Axios', 'https://eig.org/wp-content/uploads/2017/06/Axios-Logo.png');
-        return embed;
     }
 }

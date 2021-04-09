@@ -36,13 +36,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('ESPN', 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg');
-        return embed;
     }
 }

@@ -41,13 +41,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('E-IR', 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png');
-        return embed;
     }
 }

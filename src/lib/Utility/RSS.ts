@@ -1,43 +1,47 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
-import { fetch } from '../../Structures/Fetcher.js';
+import fetch from 'node-fetch';
 import { delay } from './Constants/OneLiners.js';
 
-interface RSSJSON<T extends any> {
+interface RSSJSON<T extends unknown> {
     rss: {
         channel: {
             title: string
             link: string
             description: string
             ttl?: number
-            item: T[]
+            item: T[] | T
             // todo: add better typings that follow the rss specification
-            [key: string]: any
+            [key: string]: unknown
         }
     }
 }
 
-interface AtomJSON<T extends any> {
+interface AtomJSON<T extends unknown> {
     feed: {
         id: string
         title: string
         updated: string
-        entry: T[]
-        [key: string]: any
+        entry: T[] | T
+        [key: string]: unknown
     }
 }
 
-export class RSSReader<T extends any> {
+export class RSSReader<T extends unknown> {
     private interval: NodeJS.Timeout | null = null;
     private options: X2jOptionsOptional = {};
 
-    public results = new Map<number, T>();
+    public results = new Set<T>();
     public timeout = 60 * 1000 * 60;
     public save = 10;
-    public url = 'https://google.com/'
+    public url = 'https://google.com/';
 
     public afterSave = () => {};
 
-    constructor(loadFunction?: (() => any), options: X2jOptionsOptional = {}) {
+    /**
+     * @param loadFunction function to run after RSS feed has been fetched and parsed.
+     * @param options RSS reader options
+     */
+    constructor(loadFunction?: (() => void), options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
         this.options = options;
     }
@@ -49,7 +53,7 @@ export class RSSReader<T extends any> {
     forceFetch = async () => {
         for (let i = 0; i < 10; i++) {
             try {
-                const res = await fetch(this.url).send();
+                const res = await fetch(this.url);
                 return res;
             } catch {
                 await delay(1000);
@@ -87,18 +91,15 @@ export class RSSReader<T extends any> {
             ? j.rss.channel.item // RSS feed
             : j.feed.entry;      // Atom feed
 
-        
         if (Array.isArray(i)) {
             for (const item of i.slice(0, this.save)) {
-                this.results.set(this.results.size, item);
+                this.results.add(item);
             }
         } else {
-            this.results.set(this.results.size, i as T);
+            this.results.add(i);
         }
 
-        if (typeof this.afterSave === 'function') {
-            this.afterSave();
-        }
+        this.afterSave?.();
     }
 
     cache = async (url: string) => {

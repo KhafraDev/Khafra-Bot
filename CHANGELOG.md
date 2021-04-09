@@ -487,8 +487,11 @@
 * Add `tmdb` command.
 * Add `debug:ghost` command (ghost pinging "bug").
 * Add more `yomama` jokes and disallow the command in SFW channels.
+* Add `eff` news command.
 * Add these political cartoon commands under a new folder, Trash.
+* Fix `newyorker` fetching news from HuffPost.
 * RSS reader can now take custom parsing options.
+* RSS reader now stores articles in a `Set` and improved types.
 * Transfer `bible` database from Mongo to Postgres.
 * `twitdl` command now has better twitter.com URL checks.
 * `twitdl` backend now has advanced types and better logic.

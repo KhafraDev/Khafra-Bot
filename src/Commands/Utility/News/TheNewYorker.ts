@@ -18,7 +18,7 @@ interface ITheNewYorker {
 }
 
 const rss = new RSSReader<ITheNewYorker>();
-rss.cache('https://www.huffpost.com/section/front-page/feed');
+rss.cache('https://www.newyorker.com/feed/everything');
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -42,13 +42,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('The New Yorker', 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png');
-        return embed;
     }
 }

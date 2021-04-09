@@ -36,13 +36,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png');
-        return embed;
     }
 }

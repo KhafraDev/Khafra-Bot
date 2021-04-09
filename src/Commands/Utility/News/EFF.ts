@@ -3,34 +3,31 @@ import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-interface INYTimes {
+interface IEFF {
     title: string
     link: string
-    guid: string
-    'atom:link': string
     description: string
-    'dc:creator': string
     pubDate: string
+    guid: string
     category: string[]
-    'media:content': string
-    'media:credit': string
-    'media:description': string
+    'dc:creator': string
+    enclosure: string
 }
 
-const rss = new RSSReader<INYTimes>();
-rss.cache('https://rss.nytimes.com/services/xml/rss/nyt/World.xml');
+const rss = new RSSReader<IEFF>();
+rss.cache('https://www.eff.org/rss/updates.xml');
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://nytimes.com'
+                'Fetch latest articles from https://eff.org. Donate @ https://supporters.eff.org/donate/join-eff-today!'
             ],
             {
-                name: 'nytimes',
+                name: 'eff',
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
             }
         );
     }
@@ -47,6 +44,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('NYTimes', 'https://i.imgur.com/GmhBcJs.png');
+            .setAuthor('EFF', 'https://www.eff.org/files/2018/06/14/eff_monogram-primary-red.png');
     }
 }

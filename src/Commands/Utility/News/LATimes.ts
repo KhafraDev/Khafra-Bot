@@ -41,13 +41,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('LATimes', 'https://cdn.shopify.com/s/files/1/0249/9326/7772/products/logo_grande_grande_a5b034b5-8b86-47bc-af3c-eba114fdea8b_600x.jpg');
-        return embed;
     }
 }

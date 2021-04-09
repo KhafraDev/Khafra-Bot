@@ -40,13 +40,12 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
             .setAuthor('Fox News', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png');
-        return embed;
     }
 }
