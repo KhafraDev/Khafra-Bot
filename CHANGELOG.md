@@ -477,8 +477,9 @@
 * New `cartoonize` command and backend (removes parse5).
 * New `hangman` command, adding an option to get a hint, and ability to end a game (type "stop" in the channel).
 * New `ratelimit` command.
+* New `cowsay` command that makes use of caching and better argument parsing.
 * New array chunking function. Completely remove the old function.
-* New ratelimit system (both global and command), KhafraClient#load now takes a function parameter as a filter.
+* New ratelimit system (both global and command), KhafraClient#walk now takes a function parameter as a filter.
 * Add `reload` command to reload a command.
 * Add `cyanideandhappiness` cartoon command.
 * Add `stonewall` command; better migration for Garrison, etc.
