@@ -108,6 +108,8 @@ export class kEvent extends Event {
             const returnValue = await command.init(message, args, guild);
             if (!returnValue || returnValue instanceof Message) 
                 return;
+            if (message.deleted) // if the parent message is deleted before the command finishes
+                return;
             
             return message.reply(returnValue);
         } catch (e) {

@@ -486,6 +486,7 @@
 * Add `branco` command.
 * Add `tmdb` command.
 * Add `debug:ghost` command (ghost pinging "bug").
+* Add `debug:defer` command.
 * Add more `yomama` jokes and disallow the command in SFW channels.
 * Add `eff` news command.
 * Add these political cartoon commands under a new folder, Trash.
