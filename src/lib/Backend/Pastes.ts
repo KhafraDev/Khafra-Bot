@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { URL, URLSearchParams } from 'node:url';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 
@@ -41,7 +42,7 @@ export interface PasteGGError {
  * 
  * Seems to have issues with the word "function" (for whatever reason).
  */
-export const hatebin = async (text: string) => {
+const hatebin = async (text: string) => {
     const r = await fetch('https://hatebin.com/index.php', {
         method: 'POST',
         body: `text=${encodeURIComponent(text)}`,
@@ -54,7 +55,7 @@ export const hatebin = async (text: string) => {
 /**
  * Upload text to https://sourceb.in
  */
-export const sourcebin = async (text: string) => {
+const sourcebin = async (text: string) => {
     const r = await fetch('https://sourceb.in/api/bins', {
         method: 'POST',
         body: JSON.stringify({
@@ -72,7 +73,7 @@ export const sourcebin = async (text: string) => {
 /**
  * Upload text to https://paste.nomsy.net
  */
-export const nomsy = async (text: string) => {
+const nomsy = async (text: string) => {
     const r = await fetch('https://paste.nomsy.net/documents', {
         method: 'POST',
         body: text,
@@ -89,7 +90,7 @@ export const nomsy = async (text: string) => {
  * Upload text to https://paste.gg
  * @see https://github.com/ascclemens/paste/blob/master/api.md#post-pastes
  */
-export const pastegg = async (text: string) => {
+const pastegg = async (text: string) => {
     const r = await fetch('https://api.paste.gg/v1/pastes', {
         method: 'POST',
         body: JSON.stringify({
@@ -107,6 +108,26 @@ export const pastegg = async (text: string) => {
 }
 
 /**
+ * Upload text to https://ghostbin.co/
+ */
+const ghostbin = async (text: string) => {
+    const r = await fetch('https://ghostbin.co/paste/new', {
+        method: 'POST',
+        body: new URLSearchParams({
+            lang: 'text',
+            text, 
+            expire: '-1', 
+            password: '', 
+            title: ''
+        }),
+        redirect: 'manual'
+    });
+
+    if (r.status === 303)
+        return new URL(r.headers.get('location'), 'https://ghostbin.co').toString();
+}
+
+/**
  * List of aliases with the corresponding function.
  */
 export const pasteAliases = new Map<string, PasteFn>([
@@ -114,5 +135,6 @@ export const pasteAliases = new Map<string, PasteFn>([
     ['sourcebin', sourcebin],
     ['nomsy', nomsy],
     ['paste', pastegg],
-    ['pastegg', pastegg]
+    ['pastegg', pastegg],
+    ['ghostbin', ghostbin]
 ]);
