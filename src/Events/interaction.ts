@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { Interaction } from 'discord.js';
+import { Interaction, MessageEmbed } from 'discord.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 
@@ -11,6 +11,16 @@ export class kEvent extends Event {
         if (!interaction.isCommand()) return;
         if (!KhafraClient.Interactions.has(interaction.commandName)) return;
 
-        return KhafraClient.Interactions.get(interaction.commandName).init(interaction);
+        const command = KhafraClient.Interactions.get(interaction.commandName);
+
+        try {
+            const result = await command.init(interaction);
+            if (typeof result !== 'string' && !(result instanceof MessageEmbed))
+                return;
+
+            await interaction.reply(result);
+        } catch (e) {
+            // TODO(@KhafraDev): do something with error?
+        }
     }
 }

@@ -28,21 +28,18 @@ export class kInteraction extends Interactions {
 
         if ('errors' in result) {
             const keys = Object.keys(result.errors);
-            return interaction.reply(`${emoji} ` + 
-                // gets all errors and types of errors and joins them together.
-                keys.map(k => result.errors[k].map(e => e.message).join('\n')).join('\n')
-            );
+            return `${emoji} ${keys.map(k => result.errors[k].map(e => e.message).join('\n')).join('\n')}`;
         }
 
         if (result.documents.length === 0)
-            return interaction.reply(`${emoji} No search results found!`);
+            return `${emoji} No search results found!`;
 
         const document = result.documents[0]!;
 
         const t = '``'; // if these are inside of the template literal, they will be escaped on Discord's side. Bug with stripIndents.
-        return interaction.reply(stripIndents`    
-        ${emoji} [${document.title}](https://developer.mozilla.org/${document.locale}/docs/${document.slug})
+        return stripIndents`    
+        ${emoji} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
         ${t}${document.summary.replace(/\s+/g, ' ')}${t}
-        `);
+        `;
     }
 }

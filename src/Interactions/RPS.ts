@@ -39,15 +39,15 @@ export class kInteraction extends Interactions {
         const botChoice = emoji[await rand(emoji.length)];
 
         if (emojis[value] === botChoice)
-            return interaction.reply(`It's a tie! ${botChoice}`);
+            return `It's a tie! ${botChoice}`;
 
         if (
             (value === 'choice_rock' && botChoice === '✂️') || // rock beats scissors
             (value === 'choice_paper' && botChoice === '🪨') || // paper beats rock
             (value === 'choice_scissors' && botChoice === '🧻')   // scissors beats paper
         )
-            return interaction.reply(`${emojis[value]} You win, I chose ${botChoice}!`);
+            return `${emojis[value]} You win, I chose ${botChoice}!`;
 
-        return interaction.reply(`${botChoice} I win, you chose ${emojis[value]}!`);
+        return `${botChoice} I win, you chose ${emojis[value]}!`;
     }
 }
