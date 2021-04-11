@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const folders = [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
         const name = args.join(' ').toLowerCase();
         const isFolder = folders.some(f => f.toLowerCase() === name);

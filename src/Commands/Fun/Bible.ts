@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         // no arguments provided, get a random entry
         if (args.length === 0) {
             const { rows } = await pool.query<IBibleVerse>(`

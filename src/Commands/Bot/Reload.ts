@@ -8,7 +8,7 @@ import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { client } from '../../index.js';
 import { compile } from '../../lib/Backend/Compile.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { CommandCooldown } from '../../Structures/Cooldown/CommandCooldown.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         // on Linux (and possibly other OSes), capitalization in directory paths
         // does matter, but does not on Windows. This will get the correct folder capitalization.
         const dir = await readdir(join(fileURLToPath(import.meta.url), '../..'));

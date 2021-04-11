@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, TextChannel, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } 

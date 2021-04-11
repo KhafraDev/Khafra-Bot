@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { 
     Message, 
     Permissions, 
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _: string[], settings: GuildSettings) {
+    async init(message: Message, _args: Arguments, settings: GuildSettings) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {

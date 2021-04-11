@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js';
 import { URL } from 'node:url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const fileFromArgs = args.length === 2
             ? args.pop()
             : message.attachments.first();

@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, TextChannel, NewsChannel, Permissions } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const toDelete = +args.shift() + 1;
         if (!isValidNumber(toDelete)) {
             return this.Embed.fail(`

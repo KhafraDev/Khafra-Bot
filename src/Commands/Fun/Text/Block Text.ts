@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(_message: Message, args: string[]) {     
+    init(_message: Message, { args }: Arguments) {     
         const blocks = args
             .join(' ')
             .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')

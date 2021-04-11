@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { URL } from 'node:url';
 import { colorPhoto } from '../../lib/Backend/Colorize.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const url = new URL(args.shift());
         const photoURL = await colorPhoto(url);
 

@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { URL } from 'node:url';
 import { getTwitterMediaURL } from '../../lib/Backend/Twitter.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const { hostname, pathname } = new URL(args[0]);
         if (hostname !== 'twitter.com')
             return this.Embed.fail('Not a Twitter status!');

@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const presence = message.author.presence.activities.filter(activity => 
             activity.type === 'LISTENING' && activity.name === 'Spotify'
         ).pop();

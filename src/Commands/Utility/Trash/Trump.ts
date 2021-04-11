@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, MessageEmbed, MessageReaction, Permissions, User } from 'discord.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const item = args.length === 0 
             ? [Trump[await rand(Trump.length)]]
             : Trump.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      

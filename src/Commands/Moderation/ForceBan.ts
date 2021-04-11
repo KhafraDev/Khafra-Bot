@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions, GuildMember, User, TextChannel } from 'discord.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
         if (args.some(id => !validSnowflake(id)))
             return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
 

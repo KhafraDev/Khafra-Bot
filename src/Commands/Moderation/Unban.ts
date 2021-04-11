@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, User, TextChannel, Permissions } from 'discord.js';
 import { GuildSettings } from '../../lib/types/Collections.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
         const [id, ...reason] = args.length > 1 ? args : [args].flat();
         let user: User;
         try {

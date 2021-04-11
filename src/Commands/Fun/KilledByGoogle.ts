@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { kbgSetInterval, cache } from '../../lib/Backend/KillledByGoogle.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (typeof cache.total !== 'number') {
             return this.Embed.fail('An error occurred caching the data.');
         } 

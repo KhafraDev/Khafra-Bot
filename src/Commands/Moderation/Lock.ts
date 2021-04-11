@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { 
     Message, 
     TextChannel, 
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: string[], settings: GuildSettings) {
+    async init(message: Message, _args: Arguments, settings: GuildSettings) {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 

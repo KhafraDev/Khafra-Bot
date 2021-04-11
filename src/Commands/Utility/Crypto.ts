@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { setCryptoInterval, cache } from '../../lib/Backend/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (!cache.has(args.join(' ').toLowerCase()))
             return this.Embed.fail(`
             No cryptocurrency with that name or ID was found!

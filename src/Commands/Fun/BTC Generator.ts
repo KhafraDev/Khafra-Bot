@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const btc = isValidNumber(+args[0]) ? +args[0] : 1000;
         const embed = this.Embed.success()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)

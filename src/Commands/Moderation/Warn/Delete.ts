@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
         const member = await getMentions(message, 'members');
         const points = Number(args[1]);
 

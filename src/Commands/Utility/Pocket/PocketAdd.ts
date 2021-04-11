@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { Pocket } from '../../../lib/Backend/Pocket/Pocket.js';
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const client = await pool.pocket.connect();
         const collection = client.db('khafrabot').collection('pocket');
 

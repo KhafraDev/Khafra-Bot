@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { URL } from 'node:url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const url = new URL(args[0]);
         [...url.searchParams.keys()].forEach(k => url.searchParams.delete(k));
 

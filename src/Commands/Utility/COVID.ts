@@ -1,7 +1,7 @@
 import { EmbedFieldData, Message } from 'discord.js';
 import { cache, start } from '../../lib/Backend/COVID.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 enum Regions {
@@ -38,7 +38,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const area = (
             args.length === 0
                 ? Regions[message.guild.region as keyof typeof Regions]

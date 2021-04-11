@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, TextChannel, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
         const user = await getMentions(message, 'users');
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
 

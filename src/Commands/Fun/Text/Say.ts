@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message, args: string[]) {
+    init(message: Message, { args }: Arguments) {
         return this.Embed.success()
             .setAuthor(message.author.username, message.author.displayAvatarURL())
             .setDescription(args.join(' '));

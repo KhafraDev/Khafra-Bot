@@ -1,6 +1,6 @@
 /** Please get mental illness treated! */
 
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
@@ -62,7 +62,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift();
             const { origin, pathname } = new URL(trash['content:encoded'].match(/src="(.*?)"/)[1]);

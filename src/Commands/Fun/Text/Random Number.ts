@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import crypto from 'node:crypto';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (!('randomInt' in crypto)) {
             return this.Embed.fail(`
             The \`\`node\`\` version the bot is running on is too old!

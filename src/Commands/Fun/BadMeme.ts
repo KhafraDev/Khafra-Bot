@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
 import { badmeme, IBadMemeCache } from '../../lib/Backend/BadMeme/BadMeme.js';
 import { isDM } from '../../lib/types/Discord.js.js';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {        
+    async init(message: Message, { args }: Arguments) {        
         const res = await badmeme(args[0], isDM(message.channel) || message.channel.nsfw);
         if ('error' in res) {
             if (res.reason === 'private')

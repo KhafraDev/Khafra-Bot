@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { searchMovie } from '../../lib/Backend/TMDB.js';
 import { isDM } from '../../lib/types/Discord.js.js';
 import { formatDate } from '../../lib/Utility/Date.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const formatMS = (ms: number) => {
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const movies = await searchMovie(
             args.join(' '), 
             'en-US', 

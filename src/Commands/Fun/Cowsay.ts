@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (types.size === 0) { // lazy load types
             const items = await readdir(dir);
             const filtered = items

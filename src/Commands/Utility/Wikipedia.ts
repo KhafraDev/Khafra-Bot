@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { Wikipedia } from '../../lib/Backend/Wikipedia/Wikipedia.js';
 import entities from 'entities'; // cjs module
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (args.length === 0) {
             return this.Embed.generic(this);
         }

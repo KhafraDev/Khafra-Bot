@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pigLatin } from '../../../lib/Backend/PigLatin.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const pig = pigLatin(args.join(' '));
         return this.Embed.success(pig.slice(0, 2048))
     }

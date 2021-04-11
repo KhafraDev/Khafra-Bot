@@ -14,6 +14,7 @@ import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
+import { Arguments } from '../Structures/Command.js';
 
 const defaultSettings: Partial<GuildSettings> = {
     prefix: config.prefix,
@@ -104,8 +105,16 @@ export class kEvent extends Event {
             return message.reply(Embed.missing_perms(false, command.permissions));
         }
 
+        // matches the start of the string with the prefix defined above
+        // captures the command name following the prefix up to a whitespace or end of string
+        // captures anything else, irregardless of new lines or other formatting (s flag)
+        const optre = new RegExp(`^${guild.prefix}(\\w+)\\s?(.*?)$`, 'si');
+        // there should be no case in which this is null, but we are dealing with regexes
+        const optionsMatch = message.content.match(optre)!;
+
         try {
-            const returnValue = await command.init(message, args, guild);
+            const options: Arguments = { args, commandName: optionsMatch[1], content: optionsMatch[2] };
+            const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message) 
                 return;
             if (message.deleted) // if the parent message is deleted before the command finishes

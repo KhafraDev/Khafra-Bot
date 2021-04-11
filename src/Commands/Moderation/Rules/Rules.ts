@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, GuildChannel, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { validSnowflake, getMentions } from '../../../lib/Utility/Mentions.js';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
         if (
             !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)
             || args.length === 1

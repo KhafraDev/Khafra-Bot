@@ -11,6 +11,15 @@ import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 
+export interface Arguments {
+    /** Default arguments, removes formatting (new lines, tabs, etc.) */
+    args: string[]
+    /** Command used. */
+    commandName: string
+    /** Text unformatted, removes prefix+command with leading whitespace. */
+    content: string
+}
+
 interface ICommand {
     logger: Logger
     help: string[]
@@ -63,7 +72,7 @@ export abstract class Command implements ICommand {
         this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
-    abstract init (message?: Message, args?: string[], settings?: GuildSettings | Partial<GuildSettings>): 
+    abstract init (message?: Message, args?: Arguments, settings?: GuildSettings | Partial<GuildSettings>): 
         Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
 
     isBotOwner (id: Snowflake) {

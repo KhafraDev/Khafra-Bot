@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
@@ -56,7 +56,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();
             return this.Embed.success()

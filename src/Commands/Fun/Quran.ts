@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
 import { parseQuran } from '../../lib/Backend/Quran/Quran.js';
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (!updated) {
             const client = await pool.commands.connect();
             const collection = client.db('khafrabot').collection('quran');
