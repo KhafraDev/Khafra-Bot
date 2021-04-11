@@ -36,7 +36,6 @@ interface ICommand {
         ownerOnly?: boolean
         errors?: Record<string, string>
     }
-    middleware?: (() => unknown)[]
 }
 
 type Reply = ReturnType<Message['reply']>;
@@ -46,7 +45,6 @@ type Promisify<T> = T extends Promise<infer U>
 
 export abstract class Command implements ICommand {
     logger = new Logger('Command');
-    middleware: ICommand['middleware'] = [];
     errors = Errors;
 
     /*** Description and example usage. */

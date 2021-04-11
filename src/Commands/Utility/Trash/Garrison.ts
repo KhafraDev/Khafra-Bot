@@ -4,6 +4,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { migrateGarrison } from '../../../lib/Migration/Garrison.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 /*interface ISchizophrenia {
     title: string
@@ -37,9 +38,10 @@ interface Comic {
 });
 rss.cache('https://grrrgraphics.com/feed/');*/
 
+const mw = once(migrateGarrison);
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [migrateGarrison];
     constructor() {
         super(
             [
@@ -55,6 +57,8 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await mw();
+        
         /*if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();
             return this.Embed.success()

@@ -3,12 +3,13 @@ import { setCryptoInterval, cache } from '../../lib/Backend/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { once } from '../../lib/Utility/Memoize.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
+const mw = once(setCryptoInterval);
 
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [setCryptoInterval];
     constructor() {
         super(
             [
@@ -25,6 +26,8 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
+        await mw();
+        
         if (!cache.has(args.join(' ').toLowerCase()))
             return this.Embed.fail(`
             No cryptocurrency with that name or ID was found!

@@ -5,6 +5,7 @@ import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.
 import { decodeXML } from 'entities';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { Message } from 'discord.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IBranco {
     title: string
@@ -39,9 +40,10 @@ const rss = new RSSReader<IBranco>(async () => {
 });
 rss.cache('https://comicallyincorrect.com/feed/');
 
+const mw = once(migrateBranco);
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [migrateBranco];
     constructor() {
         super(
             [
@@ -57,6 +59,8 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
+        await mw();
+        
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();
             return this.Embed.success()

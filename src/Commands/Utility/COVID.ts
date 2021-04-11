@@ -1,6 +1,7 @@
 import { EmbedFieldData, Message } from 'discord.js';
 import { cache, start } from '../../lib/Backend/COVID.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
+import { once } from '../../lib/Utility/Memoize.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -24,9 +25,10 @@ type GetFromArray<T extends Set<unknown>> = T extends Set<infer U>
     ? U
     : never
 
+const mw = once(start);
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [start]
     constructor() {
         super([
             'Get stats about COVID-19.',
@@ -39,6 +41,8 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
+        await mw();
+        
         const area = (
             args.length === 0
                 ? Regions[message.guild.region as keyof typeof Regions]

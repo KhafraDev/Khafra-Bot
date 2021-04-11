@@ -453,7 +453,7 @@
 ## Structure
 * Commands will now return with an embed to reply to the user with. This reduces a ton of repetitive code and allows for cleaner error handling without proxying the methods or using try/catch.
 * Decouple methods from multiple areas (mostly separate permission checks and Embed from the `Command` class).
-* Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.
+* ~~Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.~~
 * Remove commands that are low quality and/or not up to standards.
 * Guild settings will now be automatically inputted into the database when the bot joins a guild. Likewise, guild settings are removed from the database when the bot leaves a guild.
 * Added hierarchy checks for `ban` (partially), `kick`, `warn`, and `deletewarn` commands.
@@ -505,3 +505,4 @@
 * Better error messages in `badmeme` when a subreddit is banned, privated, or quarantined.
 * The message event will now pass a partial `GuildSettings` object into command handlers rather than null.
 * New argument parsing.
+* Removed middleware, replaced by lazy loading using memoized functions.

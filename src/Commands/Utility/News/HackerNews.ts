@@ -1,10 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
 import { cache, fetchHN } from '../../../lib/Backend/HackerNews.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const mw = once(fetchHN);
 
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [ fetchHN ];
     constructor() {
         super(
             [
@@ -20,6 +22,8 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await mw();
+        
         if (cache.size === 0) {
             return this.Embed.fail('Failed to fetch the articles!');
         }

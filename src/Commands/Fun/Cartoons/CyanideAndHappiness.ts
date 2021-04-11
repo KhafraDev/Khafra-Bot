@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { cahTransaction, migrateCAH } from '../../../lib/Migration/CyanideAndHappiness.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { Command } from '../../../Structures/Command.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
@@ -36,9 +37,10 @@ const rss = new RSSReader<ICyanideAndHappiness>(async () => {
 // does the scraping for us, so might as well use until it's no longer available
 rss.cache('https://explosm-1311.appspot.com/');
 
+const mw = once(migrateCAH);
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [migrateCAH];
     constructor() {
         super(
             [
@@ -55,6 +57,8 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
+        await mw();
+        
         if (isText(message.channel) && !message.channel.nsfw) {
             return this.Embed.fail('Channel isn\'t marked as NSFW!');
         }

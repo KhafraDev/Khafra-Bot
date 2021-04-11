@@ -3,10 +3,12 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { kbgSetInterval, cache } from '../../lib/Backend/KillledByGoogle.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { once } from '../../lib/Utility/Memoize.js';
+
+const mw = once(kbgSetInterval);
 
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [ kbgSetInterval ];
     constructor() {
         super(
             [
@@ -22,6 +24,8 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
+        await mw();
+        
         if (typeof cache.total !== 'number') {
             return this.Embed.fail('An error occurred caching the data.');
         } 

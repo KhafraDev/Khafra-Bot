@@ -1,5 +1,6 @@
 import { apodFetchDaily } from '../../lib/Backend/NASA.js';
 import { nasaDBTransaction } from '../../lib/Migration/NASA.js';
+import { once } from '../../lib/Utility/Memoize.js';
 import { Command } from '../../Structures/Command.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -10,9 +11,13 @@ interface APOD {
     copyright: string | null
 }
 
+const mw = once(async () => {
+    await apodFetchDaily();
+    await nasaDBTransaction();
+});
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [apodFetchDaily, nasaDBTransaction];
     constructor() {
         super(
             [
@@ -28,6 +33,8 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await mw();
+        
         const { rows } = await pool.query<APOD>(`
             SELECT * FROM kbAPOD TABLESAMPLE BERNOULLI(.5) ORDER BY random() LIMIT 1;
         `);

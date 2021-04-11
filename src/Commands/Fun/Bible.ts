@@ -4,6 +4,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { upperCase } from '../../lib/Utility/String.js';
+import { once } from '../../lib/Utility/Memoize.js';
 
 interface IBibleVerse {
     idx: number
@@ -19,9 +20,10 @@ const R = {
     CHAPTER: /(\d{1,2})/
 } as const;
 
+const mw = once(bibleInsertDB);
+
 @RegisterCommand
 export class kCommand extends Command {
-    middleware = [bibleInsertDB];
     constructor() {
         super(
             [
@@ -37,6 +39,8 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
+        await mw();
+
         // no arguments provided, get a random entry
         if (args.length === 0) {
             const { rows } = await pool.query<IBibleVerse>(`
