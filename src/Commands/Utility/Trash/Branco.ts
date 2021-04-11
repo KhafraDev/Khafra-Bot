@@ -4,6 +4,7 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
 import { decodeXML } from 'entities';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Message } from 'discord.js';
 
 interface IBranco {
     title: string
@@ -49,13 +50,21 @@ export class kCommand extends Command {
             {
                 name: 'branco',
                 folder: 'Trash',
-                args: [0, 0],
+                args: [0, 1],
                 aliases: [ 'afbranco' ]
             }
         );
     }
 
-    async init() {
+    async init(_message: Message, args: string[]) {
+        if (args[0] === 'latest' && rss.results.size > 0) {
+            const comic = [...rss.results.values()].shift();
+            return this.Embed.success()
+                .setTitle(decodeXML(comic.title))
+                .setURL(comic.link)
+                .setImage(comic['content:encoded'].match(/src="(.*?)"/)[1]?.replace(/-\d+x\d+\.(.*?)/, '.$1'));
+        }
+
         const { rows } = await pool.query<Comic>(`
             SELECT * FROM kbBranco TABLESAMPLE BERNOULLI(10) ORDER BY random() LIMIT 1;
         `);

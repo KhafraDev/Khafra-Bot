@@ -7,6 +7,7 @@ import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/S
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'node:url';
+import { Message } from 'discord.js';
 
 interface ITrashHuman {
     title: string
@@ -55,13 +56,27 @@ export class kCommand extends Command {
             {
                 name: 'stonewall',
                 folder: 'Trash',
-                args: [0, 0],
+                args: [0, 1],
                 aliases: [ 'rockthrow', 'pebble' ]
             }
         );
     }
 
-    async init() {
+    async init(_message: Message, args: string[]) {
+        if (args[0] === 'latest' && rss.results.size > 0) {
+            const trash = [...rss.results.values()].shift();
+            const { origin, pathname } = new URL(trash['content:encoded'].match(/src="(.*?)"/)[1]);
+
+            return this.Embed.success()
+                .setDescription(`
+                KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
+                The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.
+                `)
+                .setTitle(decodeXML(trash.title))
+                .setURL(trash.link)
+                .setImage(`${origin}${pathname}`);
+        }
+
         const { rows } = await pool.query<Comic>(`
             SELECT * FROM kbStonewall TABLESAMPLE BERNOULLI(20) ORDER BY random() LIMIT 1;
         `);

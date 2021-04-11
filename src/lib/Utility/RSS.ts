@@ -65,7 +65,8 @@ export class RSSReader<T extends unknown> {
         const r = await this.forceFetch();
         const xml = await r?.text();
 
-        if (typeof xml !== 'string' || validate(xml) !== true) return;
+        if (typeof xml !== 'string' || validate(xml) !== true) 
+            return console.log(validate(xml), this.url);
         this.results.clear();
 
         const j = parse(xml, this.options) as RSSJSON<T> | AtomJSON<T>;
