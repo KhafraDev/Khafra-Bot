@@ -3,6 +3,8 @@ import fetch from 'node-fetch';
 import { stringify } from 'node:querystring';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
+export { RedditData, IRedditBadResp };
+
 export interface IBadMemeCache {
     nsfw: boolean
     url: string | string[]

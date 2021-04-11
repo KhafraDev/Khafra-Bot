@@ -61,6 +61,40 @@ type RedditMediaMetadataFail = {
     status: 'failed'
 } 
 
+type RedditAwarding = {
+    giver_coin_reward: number | null
+    subreddit_id: string | null
+    is_new: boolean
+    days_of_drip_extension: number
+    coin_price: number
+    id: string
+    penny_donate: number | null
+    coin_reward: number
+    icon_url: string
+    days_of_premium: number
+    icon_height: number
+    tiers_by_required_awardings: unknown
+    resized_icons: RedditVideoData[]
+    icon_width: number
+    static_icon_width: number
+    start_date: string | null
+    is_enabled: boolean
+    awardings_required_to_grant_benefits: unknown
+    description: string
+    end_date: string | null
+    subreddit_coin_reward: number
+    count: number
+    static_icon_height: number
+    name: string
+    resized_static_icons: unknown[]
+    icon_format: string | null
+    award_sub_type: string
+    penny_price: number | null
+    // lowercase award_sub_type
+    award_type: string
+    static_icon_url: string
+}
+
 /** 
  * Properties all Reddit posts have in common.
  * If a property type is `unknown`, it needs to be updated if you can provide
@@ -137,7 +171,7 @@ interface IRedditBase {
     is_crosspostable: boolean
     pinned: boolean
     over_18: boolean
-    all_awardings: unknown[]
+    all_awardings: RedditAwarding[]
     awarders: unknown[]
     media_only: boolean
     can_gild: boolean
