@@ -479,6 +479,7 @@
 * New `ratelimit` command.
 * New `cowsay` command that makes use of caching and better argument parsing.
 * New `hastebin` (etc.) command.
+* New `awards` command that uses `badmeme` types.
 * New array chunking function. Completely remove the old function.
 * New ratelimit system (both global and command), KhafraClient#walk now takes a function parameter as a filter.
 * Add `reload` command to reload a command.
@@ -491,6 +492,7 @@
 * Add `debug:defer` command.
 * Add more `yomama` jokes and disallow the command in SFW channels.
 * Add `eff` news command.
+* Add `babylonbee` command.
 * Add these political cartoon commands under a new folder, Trash.
 * Fix `newyorker` fetching news from HuffPost.
 * RSS reader can now take custom parsing options.
@@ -502,3 +504,4 @@
 * Better error handling in `addemoji`.
 * Better error messages in `badmeme` when a subreddit is banned, privated, or quarantined.
 * The message event will now pass a partial `GuildSettings` object into command handlers rather than null.
+* New argument parsing.
