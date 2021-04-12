@@ -1,12 +1,15 @@
 /** Please get mental illness treated! */
 
-import { Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { migrateGarrison } from '../../../lib/Migration/Garrison.js';
+import { garrisonTransaction, migrateGarrison } from '../../../lib/Migration/Garrison.js';
 import { once } from '../../../lib/Utility/Memoize.js';
+import { Message } from 'discord.js';
+import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { decodeXML } from 'entities';
 
-/*interface ISchizophrenia {
+interface ISchizophrenia {
     title: string
     link: string
     comments: string
@@ -18,7 +21,7 @@ import { once } from '../../../lib/Utility/Memoize.js';
     'content:encoded': string
     'wfw:commentRss': string
     'slash:comments': number
-}*/
+}
 
 interface Comic {
     comic_key: number
@@ -27,7 +30,7 @@ interface Comic {
     title: string
 }
 
-/*const rss = new RSSReader<ISchizophrenia>(async () => {
+const rss = new RSSReader<ISchizophrenia>(async () => {
     const comics = [...rss.results.values()].map(item => ({
         href: item.link,
         title: decodeXML(item.title),
@@ -36,7 +39,7 @@ interface Comic {
 
     await garrisonTransaction(comics);
 });
-rss.cache('https://grrrgraphics.com/feed/');*/
+rss.cache('https://grrrgraphics.com/feed/');
 
 const mw = once(migrateGarrison);
 
@@ -56,16 +59,16 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init(_message: Message, { args }: Arguments) {
         await mw();
         
-        /*if (args[0] === 'latest' && rss.results.size > 0) {
+        if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();
             return this.Embed.success()
                 .setTitle(decodeXML(comic.title))
                 .setURL(comic.link)
                 .setImage(comic['content:encoded'].match(/src="(.*?)"/)[1]);
-        }*/
+        }
 
         const { rows } = await pool.query<Comic>(`
             SELECT * FROM kbGarrison TABLESAMPLE BERNOULLI(20) ORDER BY random() LIMIT 1;

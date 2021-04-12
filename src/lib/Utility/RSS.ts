@@ -65,8 +65,15 @@ export class RSSReader<T extends unknown> {
         const r = await this.forceFetch();
         const xml = await r?.text();
 
-        if (typeof xml !== 'string' || validate(xml) !== true) 
-            return console.log(validate(xml), this.url);
+        if (typeof xml !== 'string' || validate(xml) !== true) {
+            const valid = validate(xml);
+            if (valid !== true) {
+                const { line, msg, code } = valid.err;
+                console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
+            }
+            console.log(`${this.url} has been disabled as invalid XML has been fetched.`);
+            return clearInterval(this.interval);
+        }
         this.results.clear();
 
         const j = parse(xml, this.options) as RSSJSON<T> | AtomJSON<T>;
