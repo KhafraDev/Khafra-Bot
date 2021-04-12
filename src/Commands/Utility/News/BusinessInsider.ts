@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IBusinessInsider {
     guid: string
@@ -15,7 +16,7 @@ interface IBusinessInsider {
 }
 
 const rss = new RSSReader<IBusinessInsider>();
-rss.cache('https://www.businessinsider.com/rss?op=1');
+const cache = once(() => rss.cache('https://www.businessinsider.com/rss?op=1'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -33,6 +34,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

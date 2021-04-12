@@ -38,9 +38,10 @@ const rss = new RSSReader<IBranco>(async () => {
 
     await brancoTransaction(comics);
 });
-rss.cache('https://comicallyincorrect.com/feed/');
-
-const mw = once(migrateBranco);
+const cache = once(async () => {
+    await migrateBranco();
+    await rss.cache('https://comicallyincorrect.com/feed/')
+});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -59,7 +60,7 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        await mw();
+        await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();

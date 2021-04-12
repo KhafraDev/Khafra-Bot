@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IBreitbart {
     title: string
@@ -24,7 +25,7 @@ interface IBreitbart {
 }
 
 const rss = new RSSReader<IBreitbart>();
-rss.cache('https://feeds.feedburner.com/breitbart');
+const cache = once(() => rss.cache('https://feeds.feedburner.com/breitbart'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -42,6 +43,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

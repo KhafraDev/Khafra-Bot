@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IRT {
     title: string
@@ -14,7 +15,7 @@ interface IRT {
 }
 
 const rss = new RSSReader<IRT>();
-rss.cache('https://www.rt.com/rss/news/');
+const cache = once(() => rss.cache('https://www.rt.com/rss/news/'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -32,6 +33,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

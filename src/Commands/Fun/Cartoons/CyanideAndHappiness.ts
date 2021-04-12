@@ -35,9 +35,10 @@ const rss = new RSSReader<ICyanideAndHappiness>(async () => {
 });
 // https://github.com/daniellowtw/explosm-rss
 // does the scraping for us, so might as well use until it's no longer available
-rss.cache('https://explosm-1311.appspot.com/');
-
-const mw = once(migrateCAH);
+const cache = once(async () => {
+    await migrateCAH();
+    await rss.cache('https://explosm-1311.appspot.com/');
+});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -57,7 +58,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        await mw();
+        await cache();
         
         if (isText(message.channel) && !message.channel.nsfw) {
             return this.Embed.fail('Channel isn\'t marked as NSFW!');

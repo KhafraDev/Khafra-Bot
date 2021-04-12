@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IJPost {
     title: string
@@ -20,7 +21,7 @@ interface IJPost {
 }
 
 const rss = new RSSReader<IJPost>();
-rss.cache('https://www.jpost.com/rss/rssfeedsfrontpage.aspx');
+const cache = once(() => rss.cache('https://www.jpost.com/rss/rssfeedsfrontpage.aspx'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -38,6 +39,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

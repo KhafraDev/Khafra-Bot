@@ -3,6 +3,7 @@ import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'node:url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IWashingtonPost {
     title: string
@@ -17,7 +18,7 @@ interface IWashingtonPost {
 
 const rss = new RSSReader<IWashingtonPost>();
 rss.save = 8;
-rss.cache('http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43');
+const cache = once(() => rss.cache('http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -35,6 +36,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

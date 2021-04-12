@@ -43,9 +43,10 @@ const rss = new RSSReader<ITrashHuman>(async () => {
 
     await stonewallTransaction(comics);
 });
-rss.cache('https://stonetoss.com/index.php/comic/feed/');
-
-const mw = once(migrateStonewall);
+const cache = once(async () => {
+    await migrateStonewall();
+    await rss.cache('https://stonetoss.com/index.php/comic/feed/')
+});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -65,7 +66,7 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        await mw();
+        await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift();

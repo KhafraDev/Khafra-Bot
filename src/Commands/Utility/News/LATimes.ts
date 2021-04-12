@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface ILATimes {
     title: string
@@ -18,7 +19,7 @@ interface ILATimes {
 }
 
 const rss = new RSSReader<ILATimes>();
-rss.cache('https://www.latimes.com/world/rss2.0.xml');
+const cache = once(() => rss.cache('https://www.latimes.com/world/rss2.0.xml'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -36,6 +37,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

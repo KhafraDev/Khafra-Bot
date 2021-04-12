@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IESPN {
     title: string
@@ -13,7 +14,7 @@ interface IESPN {
 }
 
 const rss = new RSSReader<IESPN>();
-rss.cache('https://www.espn.com/espn/rss/news');
+const cache = once(() => rss.cache('https://www.espn.com/espn/rss/news'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -31,6 +32,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

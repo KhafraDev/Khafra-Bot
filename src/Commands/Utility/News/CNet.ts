@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface ICNet {
     title: string
@@ -14,7 +15,7 @@ interface ICNet {
 }
 
 const rss = new RSSReader<ICNet>();
-rss.cache('https://www.cnet.com/rss/all/');
+const cache = once(() => rss.cache('https://www.cnet.com/rss/all/'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -32,6 +33,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface INBC {
     guid: string
@@ -21,7 +22,7 @@ interface INBC {
 }
 
 const rss = new RSSReader<INBC>();
-rss.cache('https://feeds.nbcnews.com/nbcnews/public/news');
+const cache = once(() => rss.cache('https://feeds.nbcnews.com/nbcnews/public/news'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -40,6 +41,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

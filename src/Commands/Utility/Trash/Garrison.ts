@@ -39,9 +39,10 @@ const rss = new RSSReader<ISchizophrenia>(async () => {
 
     await garrisonTransaction(comics);
 });
-rss.cache('https://grrrgraphics.com/feed/');
-
-const mw = once(migrateGarrison);
+const cache = once(async () => {
+    await migrateGarrison();
+    await rss.cache('https://grrrgraphics.com/feed/')
+});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -60,7 +61,7 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        await mw();
+        await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift();

@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IMirrorCo {
     title: string
@@ -17,7 +18,7 @@ interface IMirrorCo {
 }
 
 const rss = new RSSReader<IMirrorCo>();
-rss.cache('http://www.mirror.co.uk/news/world-news/rss.xml');
+const cache = once(() => rss.cache('http://www.mirror.co.uk/news/world-news/rss.xml'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -35,6 +36,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

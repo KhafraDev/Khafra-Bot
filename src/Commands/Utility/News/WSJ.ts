@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IWSJ {
     title: string
@@ -15,7 +16,7 @@ interface IWSJ {
 }
 
 const rss = new RSSReader<IWSJ>();
-rss.cache('https://feeds.a.dj.com/rss/RSSWorldNews.xml');
+const cache = once(() => rss.cache('https://feeds.a.dj.com/rss/RSSWorldNews.xml'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -34,6 +35,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

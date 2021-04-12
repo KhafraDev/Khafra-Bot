@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IAxios {
     title: string
@@ -16,7 +17,7 @@ interface IAxios {
 }
 
 const rss = new RSSReader<IAxios>();
-rss.cache('https://api.axios.com/feed/');
+const cache = once(() => rss.cache('https://api.axios.com/feed/'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -34,6 +35,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface ITheHill {
     title: string
@@ -13,7 +14,7 @@ interface ITheHill {
 }
 
 const rss = new RSSReader<ITheHill>();
-rss.cache('http://thehill.com/rss/syndicator/19109');
+const cache = once(() => rss.cache('http://thehill.com/rss/syndicator/19109'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -31,6 +32,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

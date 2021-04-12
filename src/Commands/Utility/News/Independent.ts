@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IIndependent {
     title: string
@@ -16,7 +17,7 @@ interface IIndependent {
 }
 
 const rss = new RSSReader<IIndependent>();
-rss.cache('https://www.independent.co.uk/news/world/rss');
+const cache = once(() => rss.cache('https://www.independent.co.uk/news/world/rss'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -34,6 +35,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

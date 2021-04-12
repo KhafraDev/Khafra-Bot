@@ -3,6 +3,7 @@ import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'node:url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IOANN {
     title: string
@@ -18,7 +19,7 @@ interface IOANN {
 }
 
 const rss = new RSSReader<IOANN>();
-rss.cache('https://www.oann.com/feed');
+const cache = once(() => rss.cache('https://www.oann.com/feed'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -36,6 +37,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }

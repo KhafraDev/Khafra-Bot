@@ -1,6 +1,7 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
 import fetch from 'node-fetch';
 import { delay } from './Constants/OneLiners.js';
+import config from '../../../package.json';
 
 interface RSSJSON<T extends unknown> {
     rss: {
@@ -53,7 +54,11 @@ export class RSSReader<T extends unknown> {
     forceFetch = async () => {
         for (let i = 0; i < 10; i++) {
             try {
-                const res = await fetch(this.url);
+                const res = await fetch(this.url, {
+                    headers: { 
+                        'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})` 
+                    }
+                });
                 return res;
             } catch {
                 await delay(1000);

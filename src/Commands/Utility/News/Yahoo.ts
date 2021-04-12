@@ -2,6 +2,7 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 interface IYahooNews {
     title: string
@@ -12,7 +13,7 @@ interface IYahooNews {
 }
 
 const rss = new RSSReader<IYahooNews>();
-rss.cache('https://www.yahoo.com/news/rss/world');
+const cache = once(() => rss.cache('https://www.yahoo.com/news/rss/world'));
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -31,6 +32,7 @@ export class kCommand extends Command {
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
