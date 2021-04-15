@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
-import { stringify } from 'node:querystring';
-import { URL } from 'node:url';
+import { URL, URLSearchParams } from 'node:url';
 
 interface ITMDBSearch {
     page: number
@@ -71,9 +70,14 @@ export const searchMovie = async (
     language = 'en-US',
     include_adult = false
 ) => {
+    const params = new URLSearchParams({ 
+        query, 
+        language, 
+        include_adult: `${include_adult}`, 
+        page: '1' 
+    }).toString().replace(/\+/g, '%20'); 
     // if the question mark is appended to the base url, it's stripped by new URL(...)
-    const qs = '?' + stringify({ query, language, include_adult, page: 1 });
-    const res = await fetch(new URL(qs, base.search).href, { headers });
+    const res = await fetch(new URL(`?${params}`, base.search), { headers });
     const search = await res.json() as ITMDBSearch;
 
     if (search.total_results === 0 || search.results.length === 0)

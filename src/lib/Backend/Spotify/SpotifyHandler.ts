@@ -1,6 +1,5 @@
 import fetch from 'node-fetch';
 import { URL, URLSearchParams } from 'node:url';
-import { stringify } from 'node:querystring';
 import { SpotifyResult } from './types/Spotify';
 
 type Token = { 
@@ -19,11 +18,11 @@ class Spotify {
 
     async search(query: string) {
         // URLSearchParams encodes differently (and incorrectly for Spotify), so we use qs#stringify instead.
-        const params = '?' + stringify({
+        const params = '?' + new URLSearchParams({
             type: 'track',
             limit: '10',
             q: query // automatically encoded
-        });
+        }).toString().replace(/\+/g, '%20');
 
         const token = await this.getTokenHeader();
 

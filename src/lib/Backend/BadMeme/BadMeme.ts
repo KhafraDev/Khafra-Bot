@@ -1,6 +1,6 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
-import { stringify } from 'node:querystring';
+import { URLSearchParams } from 'node:url';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
 export { RedditData, IRedditBadResp };
@@ -8,13 +8,6 @@ export { RedditData, IRedditBadResp };
 export interface IBadMemeCache {
     nsfw: boolean
     url: string | string[]
-}
-
-interface RedditReqOpts {
-    limit: number
-    after?: string
-    // querystring#stringify requires an index signature 
-    [key: string]: any
 }
 
 const cache = new Map<string, IBadMemeCache[]>();
@@ -54,12 +47,12 @@ export const badmeme = async (
         return getItemRespectNSFW(subreddit, nsfw);
     }
 
-    const o: RedditReqOpts = { limit: 100 };
+    const o: Record<string, string> = { limit: '100' };
     if (after.has(subreddit))
         o.after = after.get(subreddit)!;
 
     // https://www.reddit.com/dev/api#GET_new
-    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${stringify(o)}`);
+    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${new URLSearchParams(o)}`);
     const j = await r.json() as RedditData | IRedditBadResp;
 
     if ('error' in j) {
