@@ -33,30 +33,28 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const movies = await searchMovie(
             args.join(' '), 
-            'en-US', 
             isDM(message.channel) || message.channel.nsfw
         );
         
         if (!movies)
             return this.Embed.fail('No movies found!');
 
-        const { details } = movies;
-
         const embed = this.Embed.success()
-            .setTitle(details.original_title ?? details.title)
-            .setDescription(details.overview)
-            .addField('**Genres:**', details.genres.map(g => g.name).join(', '), true)
-            .addField('**Uptime:**', formatMS(details.runtime * 60000), true)
-            .addField('**Released:**', details.release_date ? formatDate('MMMM Do, YYYY hh:mm:ssA', details.release_date) : 'Unknown', true)
-            .addField('**TMDB:**', `https://www.themoviedb.org/movie/${details.id}`, true)
+            .setTitle(movies.original_title ?? movies.title)
+            .setDescription(movies.overview)
+            .addField('**Genres:**', movies.genres.map(g => g.name).join(', '), true)
+            .addField('**Runtime:**', formatMS(movies.runtime * 60000), true)
+            .addField('**Status:**', movies.status, true)
+            .addField('**Released:**', movies.release_date ? formatDate('MMMM Do, YYYY', movies.release_date) : 'Unknown', true)
+            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             
-        details.homepage && embed.setURL(details.homepage);
-        details.imdb_id && embed.addField('**IMDB:**', `https://www.imdb.com/title/${details.imdb_id}/`, true);
-        if (details.poster_path) 
-            embed.setImage(`https://image.tmdb.org/t/p/original${details.poster_path}`);
-        else if (details.backdrop_path)
-            embed.setImage(`https://image.tmdb.org/t/p/original${details.backdrop_path}`);
+            movies.homepage && embed.setURL(movies.homepage);
+            movies.imdb_id && embed.addField('**IMDB:**', `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`, true);
+        if (movies.poster_path) 
+            embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);
+        else if (movies.backdrop_path)
+            embed.setImage(`https://image.tmdb.org/t/p/original${movies.backdrop_path}`);
 
         return embed;
     }
