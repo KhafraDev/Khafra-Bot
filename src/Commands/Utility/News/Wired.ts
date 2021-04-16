@@ -4,28 +4,34 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
-interface IVox {
-    published: string
-    updated: string
+interface IWired {
     title: string
-    content: string
     link: string
-    id: string
-    author: { name: string }
+    guid: string
+    pubDate: string
+    'media:content': string
+    description: string
+    category: string[]
+    'media:keywords': string
+    'dc:creator': string
+    'dc:modified': string
+    'dc:publisher': string
+    'dc:subject': string
+    'media:thumbnail': string
 }
 
-const rss = new RSSReader<IVox>();
-const cache = once(() => rss.cache('https://www.vox.com/rss/index.xml'));
+const rss = new RSSReader<IWired>();
+const cache = once(() => rss.cache('https://www.wired.com/feed/rss'));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://vox.com'
+                'Fetch latest articles from https://www.wired.com'
             ],
             {
-                name: 'vox',
+                name: 'wired',
                 folder: 'News',
                 args: [0, 0]
             }
@@ -41,10 +47,10 @@ export class kCommand extends Command {
         const posts = [...rss.results.values()];
         return this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Vox', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vox_logo.svg/1200px-Vox_logo.svg.png');
+            .setAuthor('Wired', 'https://www.wired.com/images/logos/wired.png');
     }
 }

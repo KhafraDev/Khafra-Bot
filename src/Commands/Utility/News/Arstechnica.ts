@@ -4,30 +4,32 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
-interface IVox {
-    published: string
-    updated: string
+interface IArstechnica {
     title: string
-    content: string
     link: string
-    id: string
-    author: { name: string }
+    pubDate: string
+    'dc:creator': string
+    category: string
+    guid: string
+    description: string
+    'content:encoded': string
 }
 
-const rss = new RSSReader<IVox>();
-const cache = once(() => rss.cache('https://www.vox.com/rss/index.xml'));
+const rss = new RSSReader<IArstechnica>();
+const cache = once(() => rss.cache('https://arstechnica.com/rss/'));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://vox.com'
+                'Fetch latest articles from https://arstechnica.com'
             ],
             {
-                name: 'vox',
+                name: 'ars',
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: [ 'arstechnica' ]
             }
         );
     }
@@ -41,10 +43,10 @@ export class kCommand extends Command {
         const posts = [...rss.results.values()];
         return this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Vox', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vox_logo.svg/1200px-Vox_logo.svg.png');
+            .setAuthor('Arstechnica', 'https://i.imgur.com/NpeaohK.png');
     }
 }

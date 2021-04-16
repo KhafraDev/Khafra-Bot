@@ -4,7 +4,7 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
-interface IDeadline {
+interface IDeadState {
     title: string
     link: string
     comments: string
@@ -19,7 +19,7 @@ interface IDeadline {
     'media:content': { 'media:title': string }
 }
 
-const rss = new RSSReader<IDeadline>();
+const rss = new RSSReader<IDeadState>();
 const cache = once(() => rss.cache('https://deadstate.org/feed/'));
 
 @RegisterCommand

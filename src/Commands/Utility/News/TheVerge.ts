@@ -4,7 +4,7 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
-interface IVox {
+interface ITheVerge {
     published: string
     updated: string
     title: string
@@ -14,20 +14,21 @@ interface IVox {
     author: { name: string }
 }
 
-const rss = new RSSReader<IVox>();
-const cache = once(() => rss.cache('https://www.vox.com/rss/index.xml'));
+const rss = new RSSReader<ITheVerge>();
+const cache = once(() => rss.cache('https://www.theverge.com/rss/index.xml'));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://vox.com'
+                'Fetch latest articles from https://www.theverge.com'
             ],
             {
-                name: 'vox',
+                name: 'theverge',
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: ['verge']
             }
         );
     }
@@ -41,10 +42,10 @@ export class kCommand extends Command {
         const posts = [...rss.results.values()];
         return this.Embed.success()
             .setDescription(posts
-                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`)
+                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`) // the verge does not use the link item for the actual link
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Vox', 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vox_logo.svg/1200px-Vox_logo.svg.png');
+            .setAuthor('The Verge', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/The_Verge_Logo_2016.svg/1024px-The_Verge_Logo_2016.svg.png');
     }
 }
