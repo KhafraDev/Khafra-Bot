@@ -19,16 +19,16 @@ export const Board = () => {
             i++;
             
             // horizontal + vertical
-            board[x-1]?.[y] === undefined ? null : board[x-1][y] < 8 ? (board[x-1][y] += 1) : null; // 1 row back
-            board[x+1]?.[y] === undefined ? null : board[x+1][y] < 8 ? (board[x+1][y] += 1) : null; // 1 row forward
-            board[x][y-1]   === undefined ? null : board[x][y-1] < 8 ? (board[x][y-1] += 1) : null; // 1 space back
-            board[x][y+1]   === undefined ? null : board[x][y+1] < 8 ? (board[x][y+1] += 1) : null; // 1 space forward
+            typeof board[x-1]?.[y] === 'number' && board[x-1][y] < 8 && board[x-1][y]++; // 1 row back
+            typeof board[x+1]?.[y] === 'number' && board[x+1][y] < 8 && board[x+1][y]++; // 1 row forward
+            typeof board[x][y-1]   === 'number' && board[x][y-1] < 8 && board[x][y-1]++; // 1 space back
+            typeof board[x][y+1]   === 'number' && board[x][y+1] < 8 && board[x][y+1]++; // 1 space forward
 
             // diagonal
-            board[x-1]?.[y-1] === undefined ? null : board[x-1][y-1] < 8 ? (board[x-1][y-1] += 1) : null; // back 1 row, back 1 space
-            board[x-1]?.[y+1] === undefined ? null : board[x-1][y+1] < 8 ? (board[x-1][y+1] += 1) : null; // back 1 row, forward 1 space
-            board[x+1]?.[y-1] === undefined ? null : board[x+1][y-1] < 8 ? (board[x+1][y-1] += 1) : null; // forward 1 row, back 1 space
-            board[x+1]?.[y+1] === undefined ? null : board[x+1][y+1] < 8 ? (board[x+1][y+1] += 1) : null; // forward 1 row, forward 1 space
+            typeof board[x-1]?.[y-1] === 'number' && board[x-1][y-1] < 8 && board[x-1][y-1]++; // back 1 row, back 1 space
+            typeof board[x-1]?.[y+1] === 'number' && board[x-1][y+1] < 8 && board[x-1][y+1]++; // back 1 row, forward 1 space
+            typeof board[x+1]?.[y-1] === 'number' && board[x+1][y-1] < 8 && board[x+1][y-1]++; // forward 1 row, back 1 space
+            typeof board[x+1]?.[y+1] === 'number' && board[x+1][y+1] < 8 && board[x+1][y+1]++; // forward 1 row, forward 1 space
         }
     }
 
