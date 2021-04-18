@@ -14,6 +14,10 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const basePath = join(process.cwd(), 'src/Commands');
 
+// https://github.com/nodejs/help/issues/2806#issuecomment-650653295
+// The ESM cache is not exposed, unlike `require.cache`, so commands
+// cannot be reloaded. However, new commands can still be loaded with this.
+
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {

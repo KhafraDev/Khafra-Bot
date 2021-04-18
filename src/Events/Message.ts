@@ -108,7 +108,7 @@ export class kEvent extends Event {
         // matches the start of the string with the prefix defined above
         // captures the command name following the prefix up to a whitespace or end of string
         // captures anything else, irregardless of new lines or other formatting (s flag)
-        const optre = new RegExp(`^${guild.prefix}(\\w+)\\s?(.*?)$`, 'si');
+        const optre = new RegExp(`^${guild.prefix}([A-z0-9:_]+)\\s?(.*?)$`, 'si');
         // there should be no case in which this is null, but we are dealing with regexes
         const optionsMatch = message.content.match(optre)!;
 

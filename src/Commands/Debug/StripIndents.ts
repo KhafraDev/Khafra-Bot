@@ -1,17 +1,17 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { stripIndents } from '../../lib/Utility/Template.js';
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get the content of a message stringified (guild emojis, etc.).',
-                '<guildemoji:1294020340213912>', 'testing stuff?'
+                'Test the stripIndents function.'
             ],
             {
-                name: 'debug:content',
+                name: 'debug:stripindents',
                 folder: 'Debug',
                 args: [1],
                 ratelimit: 3
@@ -20,6 +20,8 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { content }: Arguments) {
-        return this.Embed.success(`\`\`\`${content}\`\`\``);
+        return stripIndents`
+        \`\`${content.slice(0, 2040)}\`\`
+        `;
     }
 }

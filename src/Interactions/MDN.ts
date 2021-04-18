@@ -36,10 +36,9 @@ export class kInteraction extends Interactions {
 
         const document = result.documents[0]!;
 
-        const t = '``'; // if these are inside of the template literal, they will be escaped on Discord's side. Bug with stripIndents.
         return stripIndents`    
         ${emoji} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
-        ${t}${document.summary.replace(/\s+/g, ' ')}${t}
+        \`\`${document.summary.replace(/\s+/g, ' ')}\`\`
         `;
     }
 }
