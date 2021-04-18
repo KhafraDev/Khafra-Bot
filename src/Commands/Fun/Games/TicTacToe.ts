@@ -30,7 +30,7 @@ export class kCommand extends Command {
                 name: 'tictactoe',
                 folder: 'Games',
                 args: [0, 0],
-                ratelimit: 3
+                ratelimit: 30
             }
         );
     }

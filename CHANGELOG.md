@@ -493,6 +493,7 @@
 * Add more `yomama` jokes and disallow the command in SFW channels.
 * Add `eff` news command.
 * Add `babylonbee` command.
+* Add back `tictactoe` command.
 * Add these political cartoon commands under a new folder, Trash.
 * Fix `newyorker` fetching news from HuffPost.
 * RSS reader can now take custom parsing options.

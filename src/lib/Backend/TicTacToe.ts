@@ -86,8 +86,8 @@ export class TicTacToe {
             [2, 4, 6]
         ];
 
-        for(const [a, b, c] of lines) {
-            if(
+        for (const [a, b, c] of lines) {
+            if (
                 this.board[a] !== ' ' && // make sure it's not an empty box
                 this.board[a] === this.board[b] && 
                 this.board[a] === this.board[c]
