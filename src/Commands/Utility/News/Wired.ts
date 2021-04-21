@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.wired.com/feed/rss',
+    main: 'https://www.wired.com',
+    command: ['wired'],
+    author: ['Wired', 'https://www.wired.com/images/logos/wired.png']
+} as const;
+
 interface IWired {
     title: string
     link: string
@@ -21,19 +28,20 @@ interface IWired {
 }
 
 const rss = new RSSReader<IWired>();
-const cache = once(() => rss.cache('https://www.wired.com/feed/rss'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.wired.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'wired',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -51,6 +59,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Wired', 'https://www.wired.com/images/logos/wired.png');
+            .setAuthor(...settings.author);
     }
 }

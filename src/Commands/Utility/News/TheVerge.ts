@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.theverge.com/rss/index.xml',
+    main: 'https://www.theverge.com',
+    command: ['theverge', 'verge'],
+    author: ['The Verge', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/The_Verge_Logo_2016.svg/1024px-The_Verge_Logo_2016.svg.png']
+} as const;
+
 interface ITheVerge {
     published: string
     updated: string
@@ -15,20 +22,20 @@ interface ITheVerge {
 }
 
 const rss = new RSSReader<ITheVerge>();
-const cache = once(() => rss.cache('https://www.theverge.com/rss/index.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.theverge.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'theverge',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: ['verge']
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -46,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Verge', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/The_Verge_Logo_2016.svg/1024px-The_Verge_Logo_2016.svg.png');
+            .setAuthor(...settings.author);
     }
 }

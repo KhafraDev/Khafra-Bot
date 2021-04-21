@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://deadstate.org/feed/',
+    main: 'https://deadstate.org/',
+    command: ['deadstate'],
+    author: ['DeadState', 'https://deadstate.org/wp-content/uploads/2016/01/logo-new.jpg']
+} as const;
+
 interface IDeadState {
     title: string
     link: string
@@ -20,19 +27,20 @@ interface IDeadState {
 }
 
 const rss = new RSSReader<IDeadState>();
-const cache = once(() => rss.cache('https://deadstate.org/feed/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://deadstate.org/'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'deadstate',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -50,6 +58,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('DeadState', 'https://deadstate.org/wp-content/uploads/2016/01/logo-new.jpg');
+            .setAuthor(...settings.author);
     }
 }

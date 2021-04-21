@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:ft.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://ft.com',
+    command: ['ft', 'financialtimes'],
+    author: ['FT', 'https://www.ft.com/__origami/service/image/v2/images/raw/ftlogo-v1%3Abrand-ft-logo-square-coloured?source=update-logos&format=png']
+} as const;
+
 interface IFT {
     title: string
     link: string
@@ -14,20 +21,20 @@ interface IFT {
 }
 
 const rss = new RSSReader<IFT>();
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:ft.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://ft.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'ft',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'financialtimes' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('FT', 'https://www.ft.com/__origami/service/image/v2/images/raw/ftlogo-v1%3Abrand-ft-logo-square-coloured?source=update-logos&format=png');
+            .setAuthor(...settings.author);
     }
 }

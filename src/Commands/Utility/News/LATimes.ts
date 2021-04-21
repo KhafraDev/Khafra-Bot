@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.latimes.com/world/rss2.0.xml',
+    main: 'https://www.latimes.com',
+    command: ['latimes'],
+    author: ['LATimes', 'https://cdn.shopify.com/s/files/1/0249/9326/7772/products/logo_grande_grande_a5b034b5-8b86-47bc-af3c-eba114fdea8b_600x.jpg']
+} as const;
+
 interface ILATimes {
     title: string
     'dc:creator': string
@@ -19,19 +26,20 @@ interface ILATimes {
 }
 
 const rss = new RSSReader<ILATimes>();
-const cache = once(() => rss.cache('https://www.latimes.com/world/rss2.0.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.latimes.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'latimes',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -49,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('LATimes', 'https://cdn.shopify.com/s/files/1/0249/9326/7772/products/logo_grande_grande_a5b034b5-8b86-47bc-af3c-eba114fdea8b_600x.jpg');
+            .setAuthor(...settings.author);
     }
 }

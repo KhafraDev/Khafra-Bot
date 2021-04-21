@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://deadline.com/feed/',
+    main: 'https://deadline.com/',
+    command: ['deadline'],
+    author: ['Deadline', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Deadline_logo.svg/1280px-Deadline_logo.svg.png']
+} as const;
+
 interface IDeadline {
     title: string
     link: string
@@ -20,19 +27,20 @@ interface IDeadline {
 }
 
 const rss = new RSSReader<IDeadline>();
-const cache = once(() => rss.cache('https://deadline.com/feed/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://deadline.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'deadline',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -50,6 +58,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Deadline', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Deadline_logo.svg/1280px-Deadline_logo.svg.png');
+            .setAuthor(...settings.author);
     }
 }

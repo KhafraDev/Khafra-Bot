@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.jpost.com/rss/rssfeedsfrontpage.aspx',
+    main: 'https://jpost.com',
+    command: ['jpost'],
+    author: ['JPost', 'https://images.jpost.com/image/upload/f_auto,fl_lossy/t_JD_ExpertTopPic_1024/268438']
+} as const;
+
 interface IJPost {
     title: string
     link: string
@@ -21,19 +28,20 @@ interface IJPost {
 }
 
 const rss = new RSSReader<IJPost>();
-const cache = once(() => rss.cache('https://www.jpost.com/rss/rssfeedsfrontpage.aspx'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://jpost.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'jpost',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -51,6 +59,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('JPost', 'https://images.jpost.com/image/upload/f_auto,fl_lossy/t_JD_ExpertTopPic_1024/268438');
+            .setAuthor(...settings.author);
     }
 }

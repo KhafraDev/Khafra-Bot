@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:people.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://people.com',
+    command: ['people'],
+    author: ['People', 'https://people.com/img/misc/og-default.png']
+} as const;
+
 interface IPeople {
     title: string
     link: string
@@ -14,19 +21,20 @@ interface IPeople {
 }
 
 const rss = new RSSReader<IPeople>();
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:people.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://people.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'people',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('People', 'https://people.com/img/misc/og-default.png');
+            .setAuthor(...settings.author);
     }
 }

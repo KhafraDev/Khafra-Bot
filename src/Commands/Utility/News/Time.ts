@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://feeds.feedburner.com/time/world',
+    main: 'https://time.com',
+    command: ['time'],
+    author: ['Time', 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png']
+} as const;
+
 interface ITime {
     title: string
     link: string
@@ -17,19 +24,20 @@ interface ITime {
 }
 
 const rss = new RSSReader<ITime>();
-const cache = once(() => rss.cache('http://feeds.feedburner.com/time/world'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://time.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'time',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -47,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Time', 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png');
+            .setAuthor(...settings.author);
     }
 }

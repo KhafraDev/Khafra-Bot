@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.thecipherbrief.com/feed',
+    main: 'https://thecipherbrief.com',
+    command: ['thecipherbrief', 'cipherbrief'],
+    author: ['The Cipher Brief', 'https://www.thecipherbrief.com/wp-content/uploads/2017/07/cropped-logo-768x228.png']
+} as const;
+
 interface ICipherBrief {
     title: string
     link: string
@@ -18,20 +25,20 @@ interface ICipherBrief {
 }
 
 const rss = new RSSReader<ICipherBrief>();
-const cache = once(() => rss.cache('https://www.thecipherbrief.com/feed'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://thecipherbrief.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'thecipherbrief',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'cipherbrief' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -49,6 +56,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Cipher Brief', 'https://www.thecipherbrief.com/wp-content/uploads/2017/07/cropped-logo-768x228.png');
+            .setAuthor(...settings.author);
     }
 }

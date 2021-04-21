@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://bloomberg.com',
+    command: ['bloomberg'],
+    author: ['Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png']
+} as const;
+
 interface IBloomberg {
     title: string
     link: string
@@ -14,19 +21,20 @@ interface IBloomberg {
 }
 
 const rss = new RSSReader<IBloomberg>();
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bloomberg.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'bloomberg',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png');
+            .setAuthor(...settings.author);
     }
 }

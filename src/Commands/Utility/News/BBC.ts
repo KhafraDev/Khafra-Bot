@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://feeds.bbci.co.uk/news/rss.xml',
+    main: 'https://bbc.com',
+    command: ['bbc'],
+    author: ['The BBC', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png']
+} as const;
+
 interface IBBC {
     title: string
     description: string
@@ -13,19 +20,20 @@ interface IBBC {
 }
 
 const rss = new RSSReader<IBBC>();
-const cache = once(() => rss.cache('http://feeds.bbci.co.uk/news/rss.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bbc.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'bbc',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -43,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('BBC News', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png');
+            .setAuthor(...settings.author);
     }
 }

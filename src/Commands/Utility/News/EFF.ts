@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.eff.org/rss/updates.xml',
+    main: 'https://eff.org. Donate @ https://supporters.eff.org/donate/join-eff-today',
+    command: ['eff'],
+    author: ['EFF', 'https://www.eff.org/files/2018/06/14/eff_monogram-primary-red.png']
+} as const;
+
 interface IEFF {
     title: string
     link: string
@@ -16,19 +23,20 @@ interface IEFF {
 }
 
 const rss = new RSSReader<IEFF>();
-const cache = once(() => rss.cache('https://www.eff.org/rss/updates.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://eff.org. Donate @ https://supporters.eff.org/donate/join-eff-today!'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'eff',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -46,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('EFF', 'https://www.eff.org/files/2018/06/14/eff_monogram-primary-red.png');
+            .setAuthor(...settings.author);
     }
 }

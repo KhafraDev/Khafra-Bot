@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://feeds.npr.org/1004/rss.xml',
+    main: 'https://npr.org',
+    command: ['npr'],
+    author: ['NPR', 'https://media.npr.org/assets/img/2019/06/17/nprlogo_rgb_whiteborder_custom-7c06f2837fb5d2e65e44de702968d1fdce0ce748-s800-c85.png']
+} as const;
+
 interface INPR {
     title: string
     description: string
@@ -15,19 +22,20 @@ interface INPR {
 }
 
 const rss = new RSSReader<INPR>();
-const cache = once(() => rss.cache('https://feeds.npr.org/1004/rss.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://npr.org'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'npr',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('NPR', 'https://media.npr.org/assets/img/2019/06/17/nprlogo_rgb_whiteborder_custom-7c06f2837fb5d2e65e44de702968d1fdce0ce748-s800-c85.png');
+            .setAuthor(...settings.author);
     }
 }

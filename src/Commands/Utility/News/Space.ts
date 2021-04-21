@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.space.com/feeds/all',
+    main: 'https://space.com',
+    command: ['space', 'spacenews'],
+    author: ['Space News', 'https://vectorlogoseek.com/wp-content/uploads/2019/05/space-com-vector-logo.png']
+} as const;
+
 interface ISpaceNews {
     title: string
     link: string
@@ -14,20 +21,20 @@ interface ISpaceNews {
 }
 
 const rss = new RSSReader<ISpaceNews>();
-const cache = once(() => rss.cache('https://www.space.com/feeds/all'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://space.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'space',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'spacenews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Space News', 'https://vectorlogoseek.com/wp-content/uploads/2019/05/space-com-vector-logo.png');
+            .setAuthor(...settings.author);
     }
 }

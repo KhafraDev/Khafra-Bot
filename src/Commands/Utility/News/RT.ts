@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.rt.com/rss/news/',
+    main: 'https://www.RT.com',
+    command: ['rt'],
+    author: ['RT', 'https://i.imgur.com/4kS8mvK.png']
+} as const;
+
 interface IRT {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface IRT {
 }
 
 const rss = new RSSReader<IRT>();
-const cache = once(() => rss.cache('https://www.rt.com/rss/news/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.RT.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'rt',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('RT', 'https://i.imgur.com/4kS8mvK.png');
+            .setAuthor(...settings.author);
     }
 }

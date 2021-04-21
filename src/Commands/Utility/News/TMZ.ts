@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.tmz.com/rss.xml',
+    main: 'https://tmz.com',
+    command: ['tmz'],
+    author: ['TMZ', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png']
+} as const;
+
 interface ITMZ {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface ITMZ {
 }
 
 const rss = new RSSReader<ITMZ>();
-const cache = once(() => rss.cache('https://www.tmz.com/rss.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://tmz.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'tmz',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('TMZ', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png');
+            .setAuthor(...settings.author);
     }
 }

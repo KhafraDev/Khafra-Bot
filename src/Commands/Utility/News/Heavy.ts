@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://heavy.com/feed/',
+    main: 'https://heavy.com',
+    command: ['heavy'],
+    author: ['Heavy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png']
+} as const;
+
 interface IHeavy {
     title: string
     link: string
@@ -18,19 +25,20 @@ interface IHeavy {
 }
 
 const rss = new RSSReader<IHeavy>();
-const cache = once(() => rss.cache('https://heavy.com/feed/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://heavy.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'heavy',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -48,6 +56,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Heavy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png');
+            .setAuthor(...settings.author);
     }
 }

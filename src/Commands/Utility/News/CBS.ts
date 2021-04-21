@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.cbsnews.com/latest/rss/world',
+    main: 'https://www.cbsnews.com/',
+    command: ['cbs', 'cbsnews'],
+    author: ['CBS', 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png']
+} as const;
+
 interface IABCNews {
     title: string
     link: string
@@ -13,20 +20,20 @@ interface IABCNews {
 }
 
 const rss = new RSSReader<IABCNews>();
-const cache = once(() => rss.cache('https://www.cbsnews.com/latest/rss/world'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://cbsnews.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'cbs',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'cbsnews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('CBS', 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png');
+            .setAuthor(...settings.author);
     }
 }

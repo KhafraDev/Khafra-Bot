@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://feeds.skynews.com/feeds/rss/world.xml',
+    main: 'https://news.sky.com',
+    command: ['sky', 'skynews'],
+    author: ['Sky News', 'https://news.sky.com/resources/sky-news-logo.png?v=1?bypass-service-worker']
+} as const;
+
 interface ISkyNews {
     title: string
     link: string
@@ -17,20 +24,20 @@ interface ISkyNews {
 }
 
 const rss = new RSSReader<ISkyNews>();
-const cache = once(() => rss.cache('http://feeds.skynews.com/feeds/rss/world.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://news.sky.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'sky',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'skynews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -48,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Sky News', 'https://news.sky.com/resources/sky-news-logo.png?v=1?bypass-service-worker');
+            .setAuthor(...settings.author);
     }
 }

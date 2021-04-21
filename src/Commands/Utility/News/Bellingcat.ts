@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.bellingcat.com/category/news/feed',
+    main: 'https://www.bellingcat.com/',
+    command: ['bellingcat', 'belling'],
+    author: ['Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg']
+} as const;
+
 interface IBBC {
     title: string
     description: string
@@ -13,20 +20,20 @@ interface IBBC {
 }
 
 const rss = new RSSReader<IBBC>();
-const cache = once(() => rss.cache('https://www.bellingcat.com/category/news/feed'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bellingcat.com'
+                `Get the latest articles from ${settings.main}!`
             ],
-			{
-                name: 'bellingcat',
+            {
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'belling' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg');
+            .setAuthor(...settings.author);
     }
 }

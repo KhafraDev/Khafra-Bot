@@ -5,6 +5,13 @@ import { URL } from 'node:url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.oann.com/feed',
+    main: 'https://oann.com',
+    command: ['oann'],
+    author: ['OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg']
+} as const;
+
 interface IOANN {
     title: string
     link: string
@@ -19,19 +26,20 @@ interface IOANN {
 }
 
 const rss = new RSSReader<IOANN>();
-const cache = once(() => rss.cache('https://www.oann.com/feed'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://oann.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'oann',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -54,6 +62,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg');
+            .setAuthor(...settings.author);
     }
 }

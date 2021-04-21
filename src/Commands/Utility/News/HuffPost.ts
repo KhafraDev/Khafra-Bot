@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.huffpost.com/section/front-page/feed',
+    main: 'https://www.huffpost.com',
+    command: ['huff', 'huffpost'],
+    author: ['HuffPost', 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png']
+} as const;
+
 interface IHuffPost {
     title: string
     link: string
@@ -16,20 +23,20 @@ interface IHuffPost {
 }
 
 const rss = new RSSReader<IHuffPost>();
-const cache = once(() => rss.cache('https://www.huffpost.com/section/front-page/feed'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.huffpost.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'huffpost',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'huff' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -47,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('HuffPost', 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png');
+            .setAuthor(...settings.author);
     }
 }

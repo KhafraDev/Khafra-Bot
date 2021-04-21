@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://www.aljazeera.com/xml/rss/all.xml',
+    main: 'https://aljazeera.com',
+    command: ['aljazeera'],
+    author: ['Aljazeera', 'https://i.imgur.com/I1X7ygr.png']
+} as const;
+
 interface IAljazeera {
     link: string
     title: string
@@ -14,19 +21,20 @@ interface IAljazeera {
 }
 
 const rss = new RSSReader<IAljazeera>();
-const cache = once(() => rss.cache('http://www.aljazeera.com/xml/rss/all.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://aljazeera.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'aljazeera',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Aljazeera', 'https://i.imgur.com/I1X7ygr.png');
+            .setAuthor(...settings.author);
     }
 }

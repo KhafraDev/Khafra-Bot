@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://thehill.com/rss/syndicator/19109',
+    main: 'https://thehill.com',
+    command: ['thehill'],
+    author: ['The Hill', 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png']
+} as const;
+
 interface ITheHill {
     title: string
     link: string
@@ -14,19 +21,20 @@ interface ITheHill {
 }
 
 const rss = new RSSReader<ITheHill>();
-const cache = once(() => rss.cache('http://thehill.com/rss/syndicator/19109'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://thehill.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'thehill',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Hill', 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png');
+            .setAuthor(...settings.author);
     }
 }

@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.espn.com/espn/rss/news',
+    main: 'https://espn.com',
+    command: ['espn'],
+    author: ['ESPN', 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg']
+} as const;
+
 interface IESPN {
     title: string
     description: string
@@ -14,19 +21,20 @@ interface IESPN {
 }
 
 const rss = new RSSReader<IESPN>();
-const cache = once(() => rss.cache('https://www.espn.com/espn/rss/news'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://espn.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'espn',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('ESPN', 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg');
+            .setAuthor(...settings.author);
     }
 }

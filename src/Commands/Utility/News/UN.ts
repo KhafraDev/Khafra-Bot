@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+    main: 'https://news.un.org/en/',
+    command: ['un'],
+    author: ['UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg']
+} as const;
+
 interface IUN {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface IUN {
 }
 
 const rss = new RSSReader<IUN>();
-const cache = once(() => rss.cache('https://news.un.org/feed/subscribe/en/news/all/rss.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://news.un.org/en/'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'un',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg');
+            .setAuthor(...settings.author);
     }
 }

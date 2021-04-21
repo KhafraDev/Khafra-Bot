@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.cnbc.com/id/100727362/device/rss/rss.html',
+    main: 'https://www.cnbc.com/',
+    command: ['cnbc'],
+    author: ['CNBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/1200px-CNBC_logo.svg.png']
+} as const;
+
 interface ICNBC {
     link: string
     title: string
@@ -14,19 +21,20 @@ interface ICNBC {
 }
 
 const rss = new RSSReader<ICNBC>();
-const cache = once(() => rss.cache('https://www.cnbc.com/id/100727362/device/rss/rss.html'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.cnbc.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'cnbc',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('CNBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/1200px-CNBC_logo.svg.png');
+            .setAuthor(...settings.author);
     }
 }

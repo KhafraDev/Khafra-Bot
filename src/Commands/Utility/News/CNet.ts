@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.cnet.com/rss/all/',
+    main: 'https://www.cnet.com/',
+    command: ['cnet'],
+    author: ['CNet', 'http://www.ranklogos.com/wp-content/uploads/2012/04/CNET_Logo.jpg']
+} as const;
+
 interface ICNet {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface ICNet {
 }
 
 const rss = new RSSReader<ICNet>();
-const cache = once(() => rss.cache('https://www.cnet.com/rss/all/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://cnet.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'cnet',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('CNet', 'http://www.ranklogos.com/wp-content/uploads/2012/04/CNET_Logo.jpg');
+            .setAuthor(...settings.author);
     }
 }

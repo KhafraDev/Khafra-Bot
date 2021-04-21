@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.yahoo.com/news/rss/world',
+    main: 'https://www.yahoo.com/news',
+    command: ['yahoo', 'yahoonews'],
+    author: ['Yahoo! News', 'https://s.yimg.com/os/creatr-uploaded-images/2019-09/7ce28da0-de21-11e9-8ef3-b3d0b3dcfb8b']
+} as const;
+
 interface IYahooNews {
     title: string
     link: string
@@ -13,20 +20,20 @@ interface IYahooNews {
 }
 
 const rss = new RSSReader<IYahooNews>();
-const cache = once(() => rss.cache('https://www.yahoo.com/news/rss/world'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.yahoo.com/news'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'yahoo',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'yahoonews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Yahoo! News', 'https://s.yimg.com/os/creatr-uploaded-images/2019-09/7ce28da0-de21-11e9-8ef3-b3d0b3dcfb8b');
+            .setAuthor(...settings.author);
     }
 }

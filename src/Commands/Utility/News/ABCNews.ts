@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://abcnews.go.com/abcnews/internationalheadlines',
+    main: 'https://abcnews.go.com',
+    command: ['abc', 'abcnews'],
+    author: ['ABC News', 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png']
+} as const;
+
 interface IABCNews {
     'media:keywords': string
     title: string
@@ -15,20 +22,20 @@ interface IABCNews {
 }
 
 const rss = new RSSReader<IABCNews>();
-const cache = once(() => rss.cache('https://abcnews.go.com/abcnews/internationalheadlines'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://abcnews.go.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'abc',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'abcnews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -46,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('ABC News', 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png');
+            .setAuthor(...settings.author);
     }
 }

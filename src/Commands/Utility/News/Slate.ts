@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.slate.com/articles.fulltext.all.10.rss',
+    main: 'https://slate.com',
+    command: ['slate'],
+    author: ['Slate', 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Slate_new_logo.png/250px-Slate_new_logo.png']
+} as const;
+
 interface ISlate {
     'slate:id': string
     title: string
@@ -19,19 +26,20 @@ interface ISlate {
 }
 
 const rss = new RSSReader<ISlate>();
-const cache = once(() => rss.cache('https://www.slate.com/articles.fulltext.all.10.rss'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://slate.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'slate',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -49,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Slate', 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Slate_new_logo.png/250px-Slate_new_logo.png');
+            .setAuthor(...settings.author);
     }
 }

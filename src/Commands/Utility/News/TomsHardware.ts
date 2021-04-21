@@ -5,24 +5,22 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://feeds.a.dj.com/rss/RSSWorldNews.xml',
-    main: 'https://wsj.com',
-    command: ['wsj', 'wallstreetjournal'],
-    author: ['WSJ', 'http://si.wsj.net/img/WSJ_Logo_black_social.gif']
+    rss: 'https://www.tomshardware.com/feeds/all',
+    main: 'https://www.tomshardware.com/',
+    command: ['tomshardware'],
+    author: ['Tom\'s Hardware', 'https://vanilla.futurecdn.net/tomshardware/apple-touch-icon.png']
 } as const;
 
-interface IWSJ {
+interface ITomsHardware {
     title: string
     link: string
     description: string
-    'content:encoded': string
-    pubDate: string
+    enclosure: string
     guid: string
-    category: string
-    'wsj:articletype': string
+    pubDate: string
 }
 
-const rss = new RSSReader<IWSJ>();
+const rss = new RSSReader<ITomsHardware>();
 const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand

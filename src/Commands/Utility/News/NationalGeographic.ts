@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:nationalgeographic.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://nationalgeographic.com',
+    command: ['nationalgeographic'],
+    author: ['National Geographic', 'https://i.imgur.com/sXMsOj0.png']
+} as const;
+
 interface INationalGeographic {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface INationalGeographic {
 
 const rss = new RSSReader<INationalGeographic>();
 // their official rss feed is not updated very often
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:nationalgeographic.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://nationalgeographic.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'nationalgeographic',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('National Geographic', 'https://i.imgur.com/sXMsOj0.png');
+            .setAuthor(...settings.author);
     }
 }

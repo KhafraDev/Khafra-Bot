@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://rss.cnn.com/rss/cnn_world.rss',
+    main: 'https://cnn.com',
+    command: ['cnn'],
+    author: ['CNN', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/CNN.svg/1200px-CNN.svg.png']
+} as const;
+
 interface ICNN {
     title: string
     description: string
@@ -15,19 +22,20 @@ interface ICNN {
 }
 
 const rss = new RSSReader<ICNN>();
-const cache = once(() => rss.cache('http://rss.cnn.com/rss/cnn_world.rss'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://cnn.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'cnn',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('CNN', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/CNN.svg/1200px-CNN.svg.png');
+            .setAuthor(...settings.author);
     }
 }

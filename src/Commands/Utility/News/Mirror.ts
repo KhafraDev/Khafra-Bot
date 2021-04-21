@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://www.mirror.co.uk/news/world-news/rss.xml',
+    main: 'https://www.mirror.co.uk',
+    command: ['mirror'],
+    author: ['Mirror', 'https://i.imgur.com/wuINM4z.png']
+} as const;
+
 interface IMirrorCo {
     title: string
     link: string
@@ -18,19 +25,20 @@ interface IMirrorCo {
 }
 
 const rss = new RSSReader<IMirrorCo>();
-const cache = once(() => rss.cache('http://www.mirror.co.uk/news/world-news/rss.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.mirror.co.uk'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'mirror',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -48,6 +56,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Mirror', 'https://i.imgur.com/wuINM4z.png');
+            .setAuthor(...settings.author);
     }
 }

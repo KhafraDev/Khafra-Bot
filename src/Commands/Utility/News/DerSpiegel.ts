@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.spiegel.de/international/index.rss',
+    main: 'https://spiegel.de',
+    command: ['derspiegel', 'spiegel'],
+    author: ['Der Spiegel', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo-der_spiegel.svg/1280px-Logo-der_spiegel.svg.png']
+} as const;
+
 interface IABCNews {
     title: string
     link: string
@@ -15,20 +22,20 @@ interface IABCNews {
 }
 
 const rss = new RSSReader<IABCNews>();
-const cache = once(() => rss.cache('https://www.spiegel.de/international/index.rss'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://spiegel.de'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'spiegel',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'derspiegel' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -46,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Der Spiegel', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo-der_spiegel.svg/1280px-Logo-der_spiegel.svg.png');
+            .setAuthor(...settings.author);
     }
 }

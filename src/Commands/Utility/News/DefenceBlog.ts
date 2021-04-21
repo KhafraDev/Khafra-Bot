@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'http://defence-blog.com/feed',
+    main: 'https://defence-blog.com',
+    command: ['defenceblog', 'defence-blog'],
+    author: ['DefenceBlog', 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png']
+} as const;
+
 interface IDefenceBlog {
     title: string
     link: string
@@ -16,20 +23,20 @@ interface IDefenceBlog {
 }
 
 const rss = new RSSReader<IDefenceBlog>();
-const cache = once(() => rss.cache('http://defence-blog.com/feed'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://defence-blog.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'defenceblog',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'defence-blog' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -47,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('DefenceBlog', 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png');
+            .setAuthor(...settings.author);
     }
 }

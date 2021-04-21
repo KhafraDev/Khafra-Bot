@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.buzzfeed.com/ca/world.xml',
+    main: 'https://www.buzzfeed.com/',
+    command: ['buzzfeed'],
+    author: ['BuzzFeed', 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png']
+} as const;
+
 interface IBuzzfeed {
     title: string
     description: string
@@ -14,19 +21,20 @@ interface IBuzzfeed {
 }
 
 const rss = new RSSReader<IBuzzfeed>();
-const cache = once(() => rss.cache('https://www.buzzfeed.com/ca/world.xml'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://buzzfeed.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'buzzfeed',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('BuzzFeed', 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png');
+            .setAuthor(...settings.author);
     }
 }

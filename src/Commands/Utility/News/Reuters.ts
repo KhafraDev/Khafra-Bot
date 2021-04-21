@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://reuters.com',
+    command: ['reuters'],
+    author: ['Reuters', 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048']
+} as const;
+
 interface IReuters {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface IReuters {
 
 const rss = new RSSReader<IReuters>();
 // https://codarium.substack.com/p/returning-the-killed-rss-of-reuters
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://reuters.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'reuters',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Reuters', 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048');
+            .setAuthor(...settings.author);
     }
 }

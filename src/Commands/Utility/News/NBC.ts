@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://feeds.nbcnews.com/nbcnews/public/news',
+    main: 'https://nbcnews.com',
+    command: ['nbc', 'nbcnews'],
+    author: ['NBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png']
+} as const;
+
 interface INBC {
     guid: string
     title: string
@@ -22,20 +29,20 @@ interface INBC {
 }
 
 const rss = new RSSReader<INBC>();
-const cache = once(() => rss.cache('https://feeds.nbcnews.com/nbcnews/public/news'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://nbcnews.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'nbc',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'nbcnews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -53,6 +60,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('NBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png');
+            .setAuthor(...settings.author);
     }
 }

@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://www.theguardian.com/world/rss',
+    main: 'https://theguardian.com',
+    command: ['guardian', 'theguardian'],
+    author: ['The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg']
+} as const;
+
 interface ITheGuardian {
     title: string
     link: string
@@ -17,20 +24,20 @@ interface ITheGuardian {
 }
 
 const rss = new RSSReader<ITheGuardian>();
-const cache = once(() => rss.cache('https://www.theguardian.com/world/rss'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://theguardian.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'guardian',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'theguardian' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -48,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg');
+            .setAuthor(...settings.author);
     }
 }

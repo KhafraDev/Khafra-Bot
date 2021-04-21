@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://timesofindia.indiatimes.com/rssfeeds/296589292.cms',
+    main: 'https://timesofindia.indiatimes.com',
+    command: ['timesofindia'],
+    author: ['Times of India', 'https://lawprofessors.typepad.com/.a/6a00d8341bfae553ef01b8d1594773970c-800wi']
+} as const;
+
 interface ITimesOfIndia {
     title: string
     description: string
@@ -13,20 +20,20 @@ interface ITimesOfIndia {
 }
 
 const rss = new RSSReader<ITimesOfIndia>();
-const cache = once(() => rss.cache('https://timesofindia.indiatimes.com/rssfeeds/296589292.cms'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://timesofindia.indiatimes.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'timesofindia',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'indiatimes' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -44,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Times of India', 'https://lawprofessors.typepad.com/.a/6a00d8341bfae553ef01b8d1594773970c-800wi');
+            .setAuthor(...settings.author);
     }
 }

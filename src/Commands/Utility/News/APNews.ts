@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:apnews.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://apnews.com',
+    command: ['apnews', 'ap'],
+    author: ['AP News', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png']
+} as const;
+
 interface IAPNews {
     title: string
     link: string
@@ -14,20 +21,20 @@ interface IAPNews {
 }
 
 const rss = new RSSReader<IAPNews>();
-const cache = once(() => rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:apnews.com&ceid=US:en&hl=en-US&gl=US'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://apnews.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'apnews',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'ap' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('AP News', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png');
+            .setAuthor(...settings.author);
     }
 }

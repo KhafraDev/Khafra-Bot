@@ -4,6 +4,13 @@ import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+const settings = {
+    rss: 'https://babylonbee.com/feed/',
+    main: 'https://babylonbee.com/',
+    command: ['babylonbee'],
+    author: ['The Babylon Bee', 'https://babylonbee.com/img/card-logo.jpg']
+} as const;
+
 interface IBabylonBee {
     title: string
     link: string
@@ -15,19 +22,20 @@ interface IBabylonBee {
 }
 
 const rss = new RSSReader<IBabylonBee>();
-const cache = once(() => rss.cache('https://babylonbee.com/feed/'));
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://babylonbee.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'babylonbee',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
@@ -45,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Babylon Bee', 'https://babylonbee.com/img/card-logo.jpg');
+            .setAuthor(...settings.author);
     }
 }
