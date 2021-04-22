@@ -1,6 +1,5 @@
-import { rmdir } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { rm } from 'node:fs/promises';
 
-await rmdir(join(resolve('.'), 'build'), {
+await rm('./build/', {
     recursive: true
-});
+}).catch(() => {});
