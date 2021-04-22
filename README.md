@@ -6,8 +6,8 @@ A Discord.js framework and bot that is extendable and fast.
 
 # Environment
 * Khafra-Bot has been tested on both Windows 10 and Ubuntu. 
-* Khafra-Bot will always support new features and will not support old (or sometimes LTS) versions of Node.
-* The bot currently supports v14.1.0 or above, although the latest version of Node is recommended.
+* Khafra-Bot will always support and use new features and will not support old versions of Node.
+* The bot currently supports v15.4.0 or above, although the *latest* version of Node is recommended.
 
 # Privacy
 ```md
