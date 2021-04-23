@@ -35,7 +35,7 @@ export class kCommand extends Command {
             .addField('**Premiered:**', tv.first_air_date ? formatDate('MMMM Do, YYYY', tv.first_air_date) : 'Unknown', true)
             .addField('**Seasons:**', tv.number_of_seasons, true)
             .addField('**Episodes:**', tv.number_of_episodes, true)
-            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/movie/${tv.id})`, true)
+            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             
         tv.homepage && embed.setURL(tv.homepage);
