@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { plural } from '../../../lib/Utility/String.js';
 
 const games = new Set<Snowflake>();
 const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
@@ -76,7 +77,7 @@ export class kCommand extends Command {
                     .setTitle('You guessed the word!')
                     .setDescription(`
                     ${word}
-                    ${wrong} wrong guess${wrong === 1 ? '' : 'es'}.
+                    ${wrong} wrong guess${plural(wrong, 'es')}.
                     Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                     `)
                     .setImage(images[wrong])
@@ -93,7 +94,7 @@ export class kCommand extends Command {
                         .setTitle(`You lost! The word was "${word}"!`)
                         .setDescription(`
                         ${hide(word, guesses)}
-                        ${wrong} wrong guess${wrong === 1 ? '' : 'es'}.
+                        ${wrong} wrong guess${plural(wrong, 'es')}.
                         Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                         `)
                         .setImage(images[wrong])
@@ -103,7 +104,7 @@ export class kCommand extends Command {
                 const embed = this.Embed.success()
                     .setDescription(`
                     ${hide(word, guesses)}
-                    ${wrong} wrong guess${wrong === 1 ? '' : 'es'}.
+                    ${wrong} wrong guess${plural(wrong, 'es')}.
                     Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                     `)
                     .setImage(images[wrong]);
@@ -118,7 +119,7 @@ export class kCommand extends Command {
                 .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                 .setDescription(`
                 ${hide(word, guesses)}
-                ${wrong} wrong guess${wrong === 1 ? '' : 'es'}.
+                ${wrong} wrong guess${plural(wrong, 'es')}.
                 Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                 `)
                 .setImage(images[wrong])
@@ -151,7 +152,7 @@ export class kCommand extends Command {
                 .setTitle(`"${letter}" is the hint!`)
                 .setDescription(`
                 ${hide(word, guesses)}
-                ${wrong} wrong guess${wrong === 1 ? '' : 'es'}.
+                ${wrong} wrong guess${plural(wrong, 'es')}.
                 Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                 `)
                 .setImage(images[wrong])

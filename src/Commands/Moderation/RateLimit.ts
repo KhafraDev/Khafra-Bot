@@ -6,6 +6,7 @@ import { GuildSettings } from '../../lib/types/Collections.js';
 import { isExplicitText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { plural } from '../../lib/Utility/String.js';
 
 const MAX_SECS = ms('6h') / 1000;
 
@@ -59,7 +60,7 @@ export class kCommand extends Command {
         }
 
         message.reply(this.Embed.success(`
-        Slow-mode set in ${channel} for ${secs} second${secs === 1 ? '' : 's'}!
+        Slow-mode set in ${channel} for ${secs} second${plural(secs)}!
         `));
 
         if (typeof settings?.modActionLogChannel === 'string') {
@@ -71,7 +72,7 @@ export class kCommand extends Command {
             return channel.send(this.Embed.success(`
             **Channel:** ${channel} (${channel.id}, ${channel.type}).
             **Staff:** ${message.member}
-            **Duration:** ${secs} second${secs === 1 ? '' : 's'}
+            **Duration:** ${secs} second${plural(secs)}
             `).setTitle('Channel Rate-Limited'));
         }
     }

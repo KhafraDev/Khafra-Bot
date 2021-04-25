@@ -1,8 +1,8 @@
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { readdir, readFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import pg from 'pg';
 
-const loadSQL = await readFile(join(process.cwd(), 'assets/SQL/init.sql'), 'utf-8');
+const dir = await readdir(join(process.cwd(), 'assets/SQL'));
 
 export const pool = new pg.Pool({
     user: process.env.POSTGRES_USER!,
@@ -11,4 +11,9 @@ export const pool = new pg.Pool({
 });
 
 // create tables and other defaults if needed
-await pool.query(loadSQL);
+const sql = dir.map(f => resolve(process.cwd(), 'assets/SQL', f));
+
+for (const file of sql) {
+    const text = await readFile(file, 'utf-8');
+    await pool.query(text);
+}

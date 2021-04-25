@@ -2,6 +2,7 @@ import { MessageEmbed, PermissionResolvable, Permissions } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
 import config from '../../../../config.json';
 import { permResolvableToString } from '../Permissions.js';
+import { plural } from '../String.js';
 
 type PartialCommand = {
     settings: Command['settings'],
@@ -52,7 +53,7 @@ export const Embed = {
      */
     generic: ({ settings, help }: PartialCommand, reason?: string) => {
         const [min, max] = settings.args;
-        const r = reason ?? `Missing ${min} minimum argument${min === 1 ? '' : 's'} (${max} maximum).`;
+        const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
         
         return new MessageEmbed()
             .setColor(config.embed.fail)
