@@ -1,5 +1,12 @@
 import { Snowflake } from 'discord.js';
 
+export interface kGuild {
+    id: number
+    guild_id: string
+    max_warning_points: number
+    mod_log_channel: string | null
+}
+
 /**
  * Warning row when the kbGuild and kbWarns are joined.
  */

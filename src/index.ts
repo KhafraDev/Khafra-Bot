@@ -22,6 +22,7 @@ export const client = new KhafraClient({
     intents: [ 
         'DIRECT_MESSAGES',
         'GUILDS', 
+        'GUILD_BANS',
         'GUILD_EMOJIS',
         'GUILD_MEMBERS', 
         'GUILD_MESSAGES', 
@@ -31,6 +32,7 @@ export const client = new KhafraClient({
 })
     .on('ready',                 emitted('ready'))
     .on('message',               emitted('message'))
+    .on('guildBanAdd',           emitted('guildBanAdd'))
     .on('guildCreate',           emitted('guildCreate'))
     .on('guildDelete',           emitted('guildDelete'))
     .on('interaction',           emitted('interaction'))

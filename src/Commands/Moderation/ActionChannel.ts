@@ -1,6 +1,7 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
+import { pool as _pool } from '../../Structures/Database/Postgres.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -48,6 +49,12 @@ export class kCommand extends Command {
             },
             { upsert: true }
         );
+
+        await _pool.query(`
+            UPDATE kbGuild 
+            SET mod_log_channel = $1::text
+            WHERE kbGuild.guild_id = $2::text;
+        `, [channel.id, message.guild.id]);
 
         return this.Embed.success(`
         Set public mod-logging channel to ${channel}!

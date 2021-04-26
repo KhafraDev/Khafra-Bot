@@ -41,8 +41,6 @@ export class kCommand extends Command {
             return this.Embed.missing_perms();
         }
 
-        // TODO: test once https://github.com/discordjs/discord.js/pull/5251 is closed
-
         let lockState = 'unlocked';
         if (!hasPerms(text, everyone, Permissions.FLAGS.SEND_MESSAGES)) {
             await text.lockPermissions();
