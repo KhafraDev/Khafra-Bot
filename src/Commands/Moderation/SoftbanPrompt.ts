@@ -4,23 +4,25 @@ import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { plural } from '../../lib/Utility/String.js';
 import { bans } from '../../lib/Cache/Bans.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Softban a member (bans and instantly unbans them; clearing recent messages).',
+                'Softban a member (bans and instantly unbans them; clearing recent messages).\n' +
+                'Will prompt you to confirm before soft-banning them.',
                 '@user for a good reason',
                 '@user bye!',
                 '239566240987742220'
             ],
 			{
-                name: 'softban', 
+                name: 'softbanprompt', 
                 folder: 'Moderation',
-                aliases: [ 'softbna' ],
+                aliases: [ 'softbnaprompt' ],
                 args: [1],
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
@@ -36,6 +38,28 @@ export class kCommand extends Command {
 
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
+        const msg = await message.reply(this.Embed.success(`
+        Are you sure you want to soft-ban ${member}? 
+        This will delete ${clear} day${plural(clear)} worth of messages from them, but they will be allowed to rejoin the guild.
+
+        Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
+        `));
+        
+        const filter = (m: Message) => 
+            m.author.id === message.author.id &&
+            ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content.toLowerCase())
+        ;
+
+        const m = await message.channel.awaitMessages(filter, {
+            max: 1,
+            time: 20000
+        });
+
+        if (m.size === 0) {
+            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${member}!`));
+        } else if (['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
+            return msg.edit(this.Embed.fail('Command was canceled!'));
+        }
 
         try {
             await message.guild.members.ban(member, {
