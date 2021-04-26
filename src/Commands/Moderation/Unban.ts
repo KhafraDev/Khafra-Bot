@@ -1,8 +1,9 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, User, TextChannel, Permissions } from 'discord.js';
-import { GuildSettings } from '../../lib/types/Collections.js';
+import { Message, Permissions } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { unbans } from '../../lib/Cache/Unban.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -23,31 +24,22 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
-        const [id, ...reason] = args.length > 1 ? args : [args].flat();
-        let user: User;
+    async init(message: Message, { args }: Arguments) {
+        const user = await getMentions(message, 'users');
+
+        if (!user) 
+            return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
+
         try {
-            user = await message.client.users.fetch(id);
-            await message.guild.members.unban(user, reason?.join(' '));
-        } catch {
-            return this.Embed.fail('Invalid User!');
+            await message.guild.members.unban(user, args.slice(1).join(' '));
+        } catch (e) {
+            return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
+        } finally {
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+                if (!unbans.has(`${message.guild.id},${user.id}`))
+                    unbans.set(`${message.guild.id},${user.id}`, { staff: message.member, time: Date.now() });
         }
 
-        await message.reply(this.Embed.success(`
-        **Successfully** unbanned ${user}${reason.join(' ').length ? ' for \`\`' + reason.join(' ') + '\`\`' : ''}!
-        `));
-
-        if (typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
-            
-            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
-                return;
-
-            return channel.send(this.Embed.success(`
-            **Offender:** ${user}
-            **Reason:** ${reason?.join(' ') ?? 'No reason given.'}
-            **Staff:** ${message.member}
-            `).setTitle('Member Unbanned'));
-        }
+        return this.Embed.success(`${user} is now unbanned!`);
     }
 }

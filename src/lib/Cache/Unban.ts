@@ -6,9 +6,9 @@ interface Ban {
 }
 
 /**
- * Cache for bans that occur from the bot banning a user.
+ * Cache for unbans that occur from the bot unbanning a user.
  * 
  * Messages are sent to the log channels from the guildBanAdd event.
  * @link { https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildBanAdd }
  */
-export const bans = new Map<string, Ban>();
+export const unbans = new Map<string, Ban>();
