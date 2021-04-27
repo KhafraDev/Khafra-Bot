@@ -21,7 +21,7 @@ export class Logger {
         // this.stream.write(`[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] Initialized ${this.name}.\n`);
     }
 
-    log(data: any) {
+    log(data: unknown) {
         const formatted = `[${formatDate('MM-DD-YYYY hh:mm:ssA', new Date())}] ${this.name}: "${typeof data === 'string' ? data : inspect(data)}"`;
         this.stream.write(`${formatted}${EOL}`);
     }
