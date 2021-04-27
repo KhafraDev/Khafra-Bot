@@ -95,7 +95,7 @@ export class kEvent extends Event {
 
         if (!_cooldownUsers(message.author.id)) {
             return message.reply(Embed.fail(`Users are limited to 10 commands a minute.`));
-        } else if (message.channel.type !== 'dm') {
+        } else if (!isDM(message.channel)) {
             if (!_cooldownGuild(message.guild.id)) {
                 return message.reply(Embed.fail(`Guilds are limited to 30 commands a minute.`));
             } 
