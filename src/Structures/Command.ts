@@ -18,6 +18,8 @@ export interface Arguments {
     commandName: string
     /** Text unformatted, removes prefix+command with leading whitespace. */
     content: string
+    /** Prefix used */
+    prefix: string
 }
 
 interface ICommand {

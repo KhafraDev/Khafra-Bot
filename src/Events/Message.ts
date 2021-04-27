@@ -8,7 +8,6 @@ import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import config from '../../config.json';
-import { client as kClient } from '../index.js';
 import { isDM } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -25,8 +24,6 @@ const defaultSettings: Partial<GuildSettings> = {
 const _cooldownGuild = cooldown(30, 60000);
 const _cooldownUsers = cooldown(10, 60000);
 
-let mentioned: RegExp | null = null;
-
 @RegisterEvent
 export class kEvent extends Event {
     name = 'message' as const;
@@ -35,11 +32,7 @@ export class kEvent extends Event {
     async init(message: Message) {
         if (!Sanitize(message)) return;
 
-        const split = message.content.split(/\s+/g);
-        const selfMentioned = (mentioned ??= new RegExp(`<@!?${kClient.user.id}>`)).test(split[0]); // bot mentioned first argument
-        const [name, ...args] = selfMentioned ? split.slice(1) : split;
-
-        if (!name) return;
+        const [name, ...args] = message.content.split(/\s+/g);
     
         const client =      isDM(message.channel) ? null : await pool.settings.connect();
         const collection =  isDM(message.channel) ? null : client.db('khafrabot').collection('settings');
@@ -47,12 +40,18 @@ export class kEvent extends Event {
             ? defaultSettings 
             : Object.assign({ ...defaultSettings }, await collection.findOne<GuildSettings>({ id: message.guild.id }));
 
-        const prefix = selfMentioned ? '' : guild.prefix;
-        const fName = name.toLowerCase().slice(prefix.length);
-        if (!name.startsWith(prefix)) return; // 'hello'.startsWith('') = true
-        if (!KhafraClient.Commands.has(fName)) return;
+        // matches the start of the string with the prefix defined above
+        // captures the command name following the prefix up to a whitespace or end of string
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges#using_named_groups
+        const optre = new RegExp(`^(?<prefix>${guild.prefix})(?<commandName>[A-z0-9:_]+)\\s?(?<content>.*?)$`, 'si');
+        // there should be no case in which this is null, but we are dealing with regexes
+        const optionsMatch = message.content.match(optre)!;
 
-        const command = KhafraClient.Commands.get(fName);
+        if (!optionsMatch || typeof optionsMatch.groups === 'undefined') return;
+        if (!name.startsWith(guild.prefix)) return;
+        if (!KhafraClient.Commands.has(optionsMatch.groups!.commandName.toLowerCase())) return;
+
+        const command = KhafraClient.Commands.get(optionsMatch.groups!.commandName.toLowerCase());
         // command cooldowns are based around the commands name, not aliases
         if (!commandLimit(command.settings.name, message.author.id)) return;
 
@@ -81,7 +80,7 @@ export class kEvent extends Event {
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
             Example(s):
-            ${command.help.slice(1).map(c => `\`\`${prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
+            ${command.help.slice(1).map(c => `\`\`${guild.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
             `));
         }
         
@@ -105,19 +104,10 @@ export class kEvent extends Event {
             return message.reply(Embed.missing_perms(false, command.permissions));
         }
 
-        // matches the start of the string with the prefix defined above
-        // captures the command name following the prefix up to a whitespace or end of string
-        // captures anything else, irregardless of new lines or other formatting (s flag)
-        const optre = new RegExp(`^${guild.prefix}([A-z0-9:_]+)\\s?(.*?)$`, 'si');
-        // there should be no case in which this is null, but we are dealing with regexes
-        const optionsMatch = message.content.match(optre)!;
-
         try {
-            const options: Arguments = { args, commandName: optionsMatch[1], content: optionsMatch[2] };
+            const options = <Arguments> { args, ...optionsMatch.groups! };
             const returnValue = await command.init(message, options, guild);
-            if (!returnValue || returnValue instanceof Message) 
-                return;
-            if (message.deleted) // if the parent message is deleted before the command finishes
+            if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
             
             return message.reply(returnValue);
