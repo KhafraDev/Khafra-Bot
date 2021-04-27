@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS kbGuild (
     id SERIAL PRIMARY KEY,
     guild_id TEXT NOT NULL,
     prefix TEXT DEFAULT '!' NOT NULL,
-    max_warning_points SMALLINT,
+    max_warning_points SMALLINT DEFAULT 20,
     mod_log_channel TEXT DEFAULT NULL,
     welcome_channel TEXT DEFAULT NULL,
     UNIQUE (guild_id)
