@@ -93,7 +93,7 @@ export class kCommand extends Command {
 
                 if (!channel || !isText(channel)) return;
 
-                return msg.edit(this.Embed.success(`
+                return void msg.edit(this.Embed.success(`
                 **Rule Board:** ${channel}
                 The first step is now done, continue to enter rules until all of them have been posted in order.
                 Once you're done posting all of them, post \`\`stop\`\` (if you forget, all of the rules will be discarded).

@@ -55,9 +55,9 @@ export class kCommand extends Command {
         });
 
         if (m.size === 0) {
-            return msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${user}!`));
+            return void msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${user}!`));
         } else if (['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
-            return msg.edit(this.Embed.fail('Command was canceled!'));
+            return void msg.edit(this.Embed.fail('Command was canceled!'));
         }
 
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');

@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message): Promise<void> {
         const m = await message.reply(this.Embed.success('Pinging...!'));
         
         const embed = this.Embed.success(`
@@ -28,6 +28,6 @@ export class kCommand extends Command {
         Heartbeat: ${m.client.ws.ping} ms
         `);
 
-        return m.edit(embed);
+        return void m.edit(embed);
     }
 }

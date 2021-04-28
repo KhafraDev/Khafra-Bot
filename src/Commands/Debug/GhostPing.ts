@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
-        return message.channel.send(`${base} ${message.member}`);
+    async init(message: Message): Promise<void> {
+        return void message.channel.send(`${base} ${message.member}`);
     }
 }

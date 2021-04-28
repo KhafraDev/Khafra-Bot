@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments): Promise<void> {
         const btc = isValidNumber(+args[0]) ? +args[0] : 1000;
         const embed = this.Embed.success()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
@@ -36,6 +36,6 @@ export class kCommand extends Command {
         const embed2 = this.Embed.success()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return msg.edit(embed2);
+        return void msg.edit(embed2);
     }
 }
