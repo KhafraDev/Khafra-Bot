@@ -1,7 +1,9 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
-import fetch from 'node-fetch';
+import fetch, { RequestInit } from 'node-fetch';
 import { delay } from './Constants/OneLiners.js';
 import config from '../../../package.json';
+
+const noop: (() => void | Promise<void>) = () => {};
 
 interface RSSJSON<T extends unknown> {
     rss: {
@@ -11,7 +13,6 @@ interface RSSJSON<T extends unknown> {
             description: string
             ttl?: number
             item: T[] | T
-            // todo: add better typings that follow the rss specification
             [key: string]: unknown
         }
     }
@@ -36,13 +37,13 @@ export class RSSReader<T extends unknown> {
     public save = 10;
     public url = 'https://google.com/';
 
-    public afterSave = () => {};
+    public afterSave = noop;
 
     /**
      * @param loadFunction function to run after RSS feed has been fetched and parsed.
      * @param options RSS reader options
      */
-    constructor(loadFunction?: (() => void), options: X2jOptionsOptional = {}) {
+    constructor(loadFunction = noop, options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
         this.options = options;
     }
@@ -54,13 +55,21 @@ export class RSSReader<T extends unknown> {
     forceFetch = async () => {
         for (let i = 0; i < 10; i++) {
             try {
+                const ac = new AbortController();
+                setTimeout(ac.abort.bind(ac), 15000);
+
                 const res = await fetch(this.url, {
+                    signal: ac.signal as RequestInit['signal'],
                     headers: { 
                         'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})` 
                     }
                 });
+
                 return res;
-            } catch {
+            } catch (e) {
+                if (e.name === 'AbortError')
+                    break;
+
                 await delay(1000);
             }
         }
@@ -68,29 +77,30 @@ export class RSSReader<T extends unknown> {
 
     parse = async () => {
         const r = await this.forceFetch();
-        const xml = await r?.text();
+        const xml = await r?.text()!;
 
-        if (typeof xml !== 'string' || validate(xml) !== true) {
-            const valid = validate(xml);
-            if (valid !== true) {
-                const { line, msg, code } = valid.err;
+        const validXML = validate(xml);
+        if (typeof xml !== 'string' || validXML !== true) {
+            if (validXML !== true) {
+                const { line, msg, code } = validXML.err;
                 console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
             }
             console.log(`${this.url} has been disabled as invalid XML has been fetched.`);
-            return clearInterval(this.interval);
+            return clearInterval(this.interval!);
         }
-        this.results.clear();
 
+        // if the XML is valid, we can clear the old cache
+        this.results.clear();
         const j = parse(xml, this.options) as RSSJSON<T> | AtomJSON<T>;
 
         if (!('rss' in j) && !('feed' in j)) {
-            return clearInterval(this.interval);
+            return clearInterval(this.interval!);
         }
 
         // respects a feed's ttl option if present.
         // https://www.rssboard.org/rss-draft-1#element-channel-ttl
         if ('rss' in j && typeof j.rss.channel.ttl === 'number') {
-            clearInterval(this.interval);
+            clearInterval(this.interval!);
             this.timeout = 60 * 1000 * j.rss.channel.ttl;
             if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 
