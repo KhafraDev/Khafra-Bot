@@ -1,11 +1,13 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
-import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
+import { Range } from '../../lib/Utility/Range.js';
+
+const range = Range(0, 7, true);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -42,7 +44,7 @@ export class kCommand extends Command {
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
         try {
             await message.guild.members.ban(user, {
-                days: isValidNumber(clear) ? clear : 7,
+                days: range.isInRange(clear) ? clear : 7,
                 reason
             });
         } catch {

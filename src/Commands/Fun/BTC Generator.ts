@@ -1,8 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Range } from '../../lib/Utility/Range.js';
+
+const range = Range(0, Number.MAX_SAFE_INTEGER);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -22,7 +24,9 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments): Promise<void> {
-        const btc = isValidNumber(+args[0]) ? +args[0] : 1000;
+        const num = Number(args[0]);
+        const btc = range.isInRange(num) ? num : 1000;
+
         const embed = this.Embed.success()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');

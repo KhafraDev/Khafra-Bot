@@ -3,7 +3,9 @@ import { Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
+import { Range } from '../../../lib/Utility/Range.js';
+
+const range = Range(0, 32767, true); // small int
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -33,7 +35,7 @@ export class kCommand extends Command {
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        else if (!isValidNumber(newAmount) || newAmount > 32767) // small int
+        else if (!range.isInRange(newAmount)) 
             return this.Embed.fail(`An invalid number of points was provided, try with a positive whole number instead!`);
 
         await pool.query(`

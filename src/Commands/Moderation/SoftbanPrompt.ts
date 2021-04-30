@@ -1,12 +1,14 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Range } from '../../lib/Utility/Range.js';
+
+const range = Range(0, 7, true);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -63,7 +65,7 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.ban(member, {
-                days: isValidNumber(clear) ? clear : 7,
+                days: range.isInRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
