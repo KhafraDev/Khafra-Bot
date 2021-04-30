@@ -8,6 +8,9 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
+import { Logger } from '../Structures/Logger.js';
+
+const guildBanRemoveLogger = new Logger('guildBanRemove');
 
 @RegisterEvent
 export class kEvent extends Event {
@@ -50,8 +53,8 @@ export class kEvent extends Event {
             **Staff:** ${unban?.staff ?? 'Unknown'}
             **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', unban?.time ?? new Date())}
             `).setTitle('Member Unbanned'));
-        } catch {
-            // TODO(@KhafraDev): handle this somehow, at the very least log it
+        } catch (e) {
+            guildBanRemoveLogger.log(e);
         } finally {
             unbans.delete(key);
         }

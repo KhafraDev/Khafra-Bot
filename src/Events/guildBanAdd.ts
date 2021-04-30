@@ -8,6 +8,9 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { bans } from '../lib/Cache/Bans.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
+import { Logger } from '../Structures/Logger.js';
+
+const guildBanAddLogger = new Logger('guildBanAdd');
 
 @RegisterEvent
 export class kEvent extends Event {
@@ -50,8 +53,8 @@ export class kEvent extends Event {
             **Staff:** ${ban?.staff ?? 'Unknown'}
             **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', ban?.time ?? new Date())}
             `).setTitle('Member Banned'));
-        } catch {
-            // TODO(@KhafraDev): handle this somehow, at the very least log it
+        } catch (e) {
+            guildBanAddLogger.log(e);
         } finally {
             bans.delete(key);
         }

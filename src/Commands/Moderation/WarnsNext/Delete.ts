@@ -64,7 +64,6 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, logChannel))
                 return;
 
-            // TODO(@KhafraDev): add reason?
             return channel.send(this.Embed.success(`
             **Removed From:** ${member}
             **Staff:** ${message.member}

@@ -507,3 +507,4 @@
 * The message event will now pass a partial `GuildSettings` object into command handlers rather than null.
 * New argument parsing.
 * Removed middleware, replaced by lazy loading using memoized functions.
+* Better caches in `killedbygoogle` and `hackernews` commands. Also make use of the `once` memoize function.
