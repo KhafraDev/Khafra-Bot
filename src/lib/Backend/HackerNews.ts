@@ -1,12 +1,12 @@
 import fetch from 'node-fetch';
+import { once } from '../Utility/Memoize.js';
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 const art = 'https://hacker-news.firebaseio.com/v0/item/{id}.json';
 
-export const cache = new Map<number, story>();
-let interval: NodeJS.Timeout | null = null;
+export const cache = new Set<Story>();
 
-interface story {
+interface Story {
     by: string
     descendants: number
     id: number,
@@ -27,23 +27,23 @@ const fetchTop = async () => {
 
 const fetchEntries = async () => {
     const ids = await fetchTop();
-    const stories: story[] = [];
+    const stories: Story[] = [];
 
     for (const id of ids) {
         const r = await fetch(art.replace('{id}', `${id}`));
-        const j = await r.json() as story;
+        const j = await r.json() as Story;
         stories.push(j);
     }
 
     cache.clear();
-    Object.entries(stories).map(([idx, sty]) => cache.set(+idx, sty));
+    stories.forEach(s => cache.add(s));
+
+    return stories;
 }
 
 const safeFetchHN = async () => fetchEntries().catch(() => {});
 
-export const fetchHN = async () => {
-    if (interval) return interval;
-
+export const fetchHN = once(async () => {
     await safeFetchHN();
-    interval = setInterval(safeFetchHN, 60 * 1000 * 10);
-}
+    return setInterval(safeFetchHN, 60 * 1000 * 10);
+});
