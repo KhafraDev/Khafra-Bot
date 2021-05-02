@@ -14,11 +14,17 @@ export class kEvent extends Event {
         const command = KhafraClient.Interactions.get(interaction.commandName);
 
         try {
+            if (command.options?.defer)
+                await interaction.defer();
+
             const result = await command.init(interaction);
             if (typeof result !== 'string' && !(result instanceof MessageEmbed))
                 return;
 
-            await interaction.reply(result);
+            if (command.options?.defer)
+                return interaction.editReply(result);
+
+            return interaction.reply(result);
         } catch (e) {
             // TODO(@KhafraDev): do something with error?
         }

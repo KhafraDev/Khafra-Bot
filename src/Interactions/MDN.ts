@@ -21,6 +21,9 @@ export class kInteraction extends Interactions {
             required: true
         }]
     };
+    options = {
+        defer: true
+    }
 
     async init(interaction: CommandInteraction) {
         const search = interaction.options[0].value! as string;
