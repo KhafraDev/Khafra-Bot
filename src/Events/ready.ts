@@ -21,7 +21,5 @@ export class kEvent extends Event {
                 console.log(`Logged in! Could not send message to the bot owner.`);
             }
         }
-
-        client.loadInteractions();
     }
 }
