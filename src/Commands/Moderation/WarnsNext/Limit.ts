@@ -4,6 +4,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 
 const range = Range(0, 32767, true); // small int
 
@@ -35,7 +36,7 @@ export class kCommand extends Command {
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        else if (!range.isInRange(newAmount)) 
+        else if (!range.isInRange(newAmount) || !validateNumber(newAmount)) 
             return this.Embed.fail(`An invalid number of points was provided, try with a positive whole number instead!`);
 
         await pool.query(`

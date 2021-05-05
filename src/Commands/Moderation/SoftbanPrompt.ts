@@ -7,6 +7,7 @@ import { plural } from '../../lib/Utility/String.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Range.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 
 const range = Range(0, 7, true);
 
@@ -65,7 +66,7 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.ban(member, {
-                days: range.isInRange(clear) ? clear : 7,
+                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);

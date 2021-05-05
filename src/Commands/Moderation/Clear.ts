@@ -3,6 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { Range } from '../../lib/Utility/Range.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 
 const range = Range(1, 100, true);
 
@@ -27,7 +28,7 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         const toDelete = Number(args.shift()) + 1;
-        if (!range.isInRange(toDelete)) {
+        if (!range.isInRange(toDelete) || !validateNumber(toDelete)) {
             return this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 

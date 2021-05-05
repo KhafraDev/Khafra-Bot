@@ -4,7 +4,7 @@ import { pool } from '../../../Structures/Database/Mongo.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
 
         if (!member) {
             return this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!');
-        } else if (!isValidNumber(points, { allowNegative: false }) || points === 0) {
+        } else if (!validateNumber(points)) {
             return this.Embed.fail('You\'re trying to remove an invalid number of points!');
         } else if (!hierarchy(message.member, member)) {
             return this.Embed.fail(`You cannot remove warning points from ${member}!`);

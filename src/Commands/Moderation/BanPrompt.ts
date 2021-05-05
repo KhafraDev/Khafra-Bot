@@ -5,6 +5,7 @@ import ms from 'ms';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Range.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 
 const range = Range(0, 7, true);
 
@@ -65,7 +66,7 @@ export class kCommand extends Command {
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
         try {
             await message.guild.members.ban(user, {
-                days: range.isInRange(clear) ? clear : 7,
+                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
                 reason
             });
         } catch {

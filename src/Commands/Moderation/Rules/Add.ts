@@ -1,11 +1,12 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import config from '../../../../config.json';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Range } from '../../../lib/Utility/Range.js';
 
 const { prefix: defPrefix } = config;
 
@@ -37,7 +38,10 @@ export class kCommand extends Command {
 
             Use the \`\`rules\`\` command to get started!
             `);
-        } else if (!isValidNumber(+args[0]) || +args[0] < 1 || +args[1] > settings.rules.rules.length + 1) {
+        } else if (
+            !validateNumber(Number(args[0])) || 
+            !Range(1, settings.rules.rules.length, true).isInRange(Number(args[1]))
+        ) {
             return this.Embed.generic(this);
         }
 

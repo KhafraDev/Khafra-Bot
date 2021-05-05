@@ -3,7 +3,7 @@ import { Message, GuildChannel, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
 import { validSnowflake, getMentions } from '../../../lib/Utility/Mentions.js';
 import { GuildSettings } from '../../../lib/types/Collections.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
@@ -30,9 +30,9 @@ export class kCommand extends Command {
             !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)
             || args.length === 1
         ) {
-            const num = +args[0];
+            const num = Number(args[0]);
             const rule = settings?.rules?.rules?.filter(r => r.index === num).shift();
-            if (!isValidNumber(+args[0]) || !rule) {
+            if (!validateNumber(num) || !rule) {
                 return this.Embed.fail(
                     args.length === 1
                     ? `Rule #${args[0]} doesn't exist!`
