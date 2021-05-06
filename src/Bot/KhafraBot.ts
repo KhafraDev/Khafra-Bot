@@ -1,5 +1,5 @@
 import { Command } from '../Structures/Command.js';
-import { Client, ClientOptions, ClientEvents } from 'discord.js';
+import { Client, ClientEvents } from 'discord.js';
 import { resolve } from 'node:path';
 import { readdir, stat } from 'node:fs/promises';
 import { Event } from '../Structures/Event.js';
@@ -9,32 +9,29 @@ export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
 
-    constructor(args: ClientOptions) {
-        super(args);
-    }
-
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
      */
     walk = async (dir: string, fn: (path: string) => boolean) => {
-        const ini = await readdir(dir);
-        const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
+        const ini = new Set<string>(await readdir(dir));
+        const files = new Set<string>(); 
     
-        while (ini.length !== 0) {        
+        while (ini.size !== 0) {        
             for (const d of ini) {
                 const path = resolve(dir, d);
-                ini.splice(ini.indexOf(d), 1); // remove from array
+                ini.delete(d); // remove from set
                 const stats = await stat(path);
     
                 if (stats.isDirectory()) {
-                    ini.push(...(await readdir(path)).map(f => resolve(path, f)));
+                    for (const f of await readdir(path))
+                        ini.add(resolve(path, f));
                 } else if (stats.isFile() && fn(d)) {
-                    f.push(path);
+                    files.add(path);
                 }
             }
         }
     
-        return f;
+        return [...files];
     }
 
     async loadCommands() {
