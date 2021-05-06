@@ -1,41 +1,33 @@
-import { Command } from '../Structures/Command.js';
-import { Client, ClientOptions, ClientEvents } from 'discord.js';
-import { resolve } from 'node:path';
-import { readdir, stat } from 'node:fs/promises';
-import { Event } from '../Structures/Event.js';
-import { Interactions } from '../Structures/Interaction.js';
-import { pathToFileURL } from 'node:url';
+import { Command } from '../Structures/Command.ts';
+import { resolve } from 'https://deno.land/std@0.95.0/path/mod.ts';
+import { Event } from '../Structures/Event.ts';
 
-export class KhafraClient extends Client {
+export class KhafraClient {
     static Commands: Map<string, Command> = new Map();
-    static Events: Map<keyof ClientEvents, Event> = new Map();
-    static Interactions: Map<string, Interactions> = new Map();
-
-    constructor(args: ClientOptions) {
-        super(args);
-    }
+    static Events: Map<string, Event> = new Map();
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
      */
     walk = async (dir: string, fn: (path: string) => boolean) => {
-        const ini = await readdir(dir);
-        const f = Array<string>(); // same as [] but TypeScript now knows it's a string array
-    
+        const ini = [...Deno.readDirSync(dir)];
+        const f = [];
+
         while (ini.length !== 0) {        
             for (const d of ini) {
-                const path = resolve(dir, d);
+                const path = resolve(dir, d.name);
                 ini.splice(ini.indexOf(d), 1); // remove from array
-                const stats = await stat(path);
-    
-                if (stats.isDirectory()) {
-                    ini.push(...(await readdir(path)).map(f => resolve(path, f)));
-                } else if (stats.isFile() && fn(d)) {
+                const stats = Deno.statSync(path);
+
+                if (stats.isDirectory) {
+                    for (const f of Deno.readDirSync(path))
+                        ini.push({ name: resolve(path, f.name), isDirectory: true, isSymlink: false, isFile: false });
+                } else if (stats.isFile && fn(path)) {
                     f.push(path);
-                }
+                } 
             }
         }
-    
+
         return f;
     }
 
@@ -61,20 +53,10 @@ export class KhafraClient extends Client {
         return KhafraClient.Events;
     }
 
-    async loadInteractions() {
-        const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
-        const importPromise = interactions.map<Promise<Interactions>>(int => import(pathToFileURL(int).href));
-        await Promise.allSettled(importPromise);
-
-        console.log(`Loaded ${importPromise.length} global interactions!`);
-        return KhafraClient.Interactions;
-    }
-
     async init() {
         const start = Date.now();
         await this.loadEvents();
         await this.loadCommands();
-        await this.login(process.env.TOKEN);
         console.log(`Started in ${((Date.now() - start) / 1000).toFixed(2)} seconds!`);
     }
 }
