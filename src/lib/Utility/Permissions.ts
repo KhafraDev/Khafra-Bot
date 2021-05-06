@@ -1,5 +1,5 @@
 import { Channel, GuildMember, PermissionFlags, PermissionResolvable, Permissions, Role } from 'discord.js';
-import { isText, isVoice } from '../types/Discord.js.js';
+import { isText, isVoice } from '../types/Discord.js.ts';
 
 /**
  * Check if a user or role has permissions in a channel.

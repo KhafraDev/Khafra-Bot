@@ -1,4 +1,4 @@
-import { rand } from './Constants/OneLiners.js';
+import { rand } from './Constants/OneLiners.ts';
 
 /**
  * Array chunking without generator functions

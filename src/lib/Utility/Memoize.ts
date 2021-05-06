@@ -1,7 +1,10 @@
-import { types } from 'node:util';
-
 type SyncFn = (...args: unknown[]) => unknown;
 type AsyncFn = (...args: unknown[]) => Promise<unknown>;
+
+const AsyncFunction = (async () => {}).constructor;
+
+const isAsync = (fn: (...args: unknown[]) => unknown): fn is AsyncFn =>
+    fn instanceof AsyncFunction;
 
 /**
  * Memoize a function.
@@ -18,7 +21,7 @@ export function once(fn: SyncFn | AsyncFn) {
         // because it's being memoized.
         isRunning = false;
 
-    if (!types.isAsyncFunction(fn)) {
+    if (!isAsync(fn)) {
         return () => {
             if (ran) return res;
             res = fn();
