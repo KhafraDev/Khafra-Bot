@@ -10,7 +10,7 @@ export interface IBadMemeCache {
     url: string | string[]
 }
 
-const cache = new Map<string, IBadMemeCache[]>();
+const cache = new Map<string, Set<IBadMemeCache>>();
 const lastUsed = new Map<string, number>();
 const after = new Map<string, string>();
 
@@ -19,12 +19,10 @@ const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCach
         return null;
 
     const cached = cache.get(subreddit);
-    // TODO: get random item so if the subreddit is removed from the cache
-    // you can still see unique posts
-    const item = cached.find(p => allowNSFW || !p.nsfw);
+    const item = [...cached].find(p => allowNSFW || !p.nsfw);
     if (item) {
-        cached.splice(cached.indexOf(item), 1);
-        cached.length === 0 
+        cached.delete(item);
+        cached.size === 0 
             ? cache.delete(subreddit)
             : cache.set(subreddit, cached);
     }
@@ -47,12 +45,12 @@ export const badmeme = async (
         return getItemRespectNSFW(subreddit, nsfw);
     }
 
-    const o: Record<string, string> = { limit: '100' };
+    const o = new URLSearchParams({ limit: '100' });
     if (after.has(subreddit))
-        o.after = after.get(subreddit)!;
+        o.set('after', after.get(subreddit)!);
 
     // https://www.reddit.com/dev/api#GET_new
-    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${new URLSearchParams(o)}`);
+    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${o}`);
     const j = await r.json() as RedditData | IRedditBadResp;
 
     if ('error' in j) {
@@ -85,7 +83,7 @@ export const badmeme = async (
             }
 
             if (post.domain === 'redgifs.com')
-                return { nsfw: post.over_18, url: post.url.replace('/watch/', '/ifr/') };
+                return { nsfw: post.over_18, url: post.url };
 
             // reddit separates the video from the audio, so the best we can do is get the video
             // not gonna waste resources combining audio + video.
@@ -98,7 +96,7 @@ export const badmeme = async (
 
     const last = j.data.children[j.data.children.length - 1].data.name;
     after.set(subreddit, last);
-    cache.set(subreddit, urls);
+    cache.set(subreddit, new Set(urls));
 
     return getItemRespectNSFW(subreddit, nsfw);
 }
