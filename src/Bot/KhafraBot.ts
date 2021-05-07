@@ -43,7 +43,7 @@ export class KhafraClient extends Client {
         for (const reject of rejected)
             console.log(reject.reason);
 
-        console.log(`Loaded ${commands.length} commands!`);
+        console.log(`Loaded ${commands.length - rejected.length} commands!`);
         return KhafraClient.Commands;
     }
 
@@ -52,7 +52,7 @@ export class KhafraClient extends Client {
         const importPromise = events.map<Promise<Event>>(event => import(pathToFileURL(event).href));
         await Promise.allSettled(importPromise);
 
-        console.log(`Loaded ${events.length} events!`);
+        console.log(`Loaded ${KhafraClient.Events.size} events!`);
         return KhafraClient.Events;
     }
 
