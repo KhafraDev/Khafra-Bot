@@ -34,10 +34,14 @@ export class kEvent extends Event {
         }
 
         let channel: Channel;
-        try {
-            channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel);
-        } catch {
-            return;
+        if (oldMember.guild.channels.cache.has(guild.welcomeChannel)) {
+            channel = oldMember.guild.channels.cache.get(guild.welcomeChannel)!;
+        } else {
+            try {
+                channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel);
+            } catch {
+                return;
+            }
         }
 
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 

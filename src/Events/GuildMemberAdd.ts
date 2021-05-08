@@ -1,11 +1,12 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, TextChannel, Permissions } from 'discord.js';
+import { GuildMember, Channel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { GuildSettings } from '../lib/types/Collections';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { isText } from '../lib/types/Discord.js.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -38,18 +39,20 @@ export class kEvent extends Event {
             return;
         }
 
-        let channel: TextChannel;
-        try {
-            // TextChannel logic is handled where the user sets the channel
-            channel = await member.guild.client.channels.fetch(server.welcomeChannel) as TextChannel;
-        } catch (e) {
-            return;
+        let channel: Channel;
+        if (member.guild.channels.cache.has(server.welcomeChannel)) {
+            channel = member.guild.channels.cache.get(server.welcomeChannel);
+        } else {
+            try {
+                channel = await member.guild.client.channels.fetch(server.welcomeChannel);
+            } catch (e) {
+                return;
+            }
         }
 
-        if (!hasPerms(channel, member.guild.me, basic))
+        if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
         
-
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`${member.user} (${member.user.tag}) joined the server!`);
