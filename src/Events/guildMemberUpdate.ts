@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, TextChannel, Permissions } from 'discord.js';
+import { GuildMember, Channel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
 import { GuildSettings } from '../lib/types/Collections';
 import { isText } from '../lib/types/Discord.js.js';
@@ -33,9 +33,9 @@ export class kEvent extends Event {
             return;
         }
 
-        let channel: TextChannel;
+        let channel: Channel;
         try {
-            channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel) as TextChannel;
+            channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel);
         } catch {
             return;
         }
@@ -46,15 +46,15 @@ export class kEvent extends Event {
         if (oldRoles > newRoles) { // lost role
             return channel.send(Embed.fail(`
             ${newMember} is no longer boosting the server! 😨
-            `));
+            `)).catch(() => {});
         } else if (newRoles > oldRoles) { // gained role
             return channel.send(Embed.success(`
             ${newMember} just boosted the server! 🥳
-            `));
+            `)).catch(() => {});
         } else { // other servers?
             return channel.send(Embed.success(`
             ${!oldMember.premiumSince && newMember.premiumSince ? `${newMember} boosted a server.` : `${newMember} stopped boosting a server.`}
-            `));
+            `)).catch(() => {});
         }
     }
 }

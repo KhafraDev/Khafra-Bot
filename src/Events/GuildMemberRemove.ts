@@ -53,6 +53,8 @@ export class kEvent extends Event {
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`${member.user} (${member.user.tag}) has left the server!`);
 
-        return channel.send(embed);
+        try {
+            return channel.send(embed);
+        } catch {}
     }
 }
