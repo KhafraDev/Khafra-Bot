@@ -1,5 +1,5 @@
-import { readdir, readFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { readdir, readFile } from 'fs/promises';
+import { join, resolve } from 'path';
 import pg from 'pg';
 
 const dir = await readdir(join(process.cwd(), 'assets/SQL'));

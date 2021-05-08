@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { URL } from 'node:url';
+import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { fetch } from '../../Structures/Fetcher.js';
 import { RedditData } from '../../lib/Backend/BadMeme/BadMeme.js';

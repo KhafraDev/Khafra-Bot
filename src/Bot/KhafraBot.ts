@@ -1,9 +1,9 @@
 import { Command } from '../Structures/Command.js';
 import { Client, ClientEvents } from 'discord.js';
-import { resolve } from 'node:path';
-import { readdir, stat } from 'node:fs/promises';
+import { resolve } from 'path';
+import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event.js';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL } from 'url';
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();

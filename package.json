@@ -46,5 +46,8 @@
   "homepage": "https://github.com/khafradev/khafra-bot#readme",
   "engines": {
     "node": ">=15.4.0"
-  }
+  },
+  "workspaces": [
+    "src/lib/Backend/BadMeme"
+  ]
 }

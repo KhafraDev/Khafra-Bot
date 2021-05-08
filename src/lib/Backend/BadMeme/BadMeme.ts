@@ -1,6 +1,6 @@
 import { decodeXML } from 'entities';
 import fetch from 'node-fetch';
-import { URLSearchParams } from 'node:url';
+import { URLSearchParams } from 'url';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
 export { RedditData, IRedditBadResp };

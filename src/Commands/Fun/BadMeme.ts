@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
-import { badmeme, IBadMemeCache } from '../../lib/Backend/BadMeme/BadMeme.js';
+import { badmeme, IBadMemeCache } from '@khaf/badmeme';
 import { isDM } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 

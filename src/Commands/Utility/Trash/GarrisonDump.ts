@@ -4,8 +4,8 @@ import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Message, MessageAttachment } from 'discord.js';
-import { readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { readFile, writeFile } from 'fs/promises';
+import { join } from 'path';
 
 interface Comic {
     comic_key: number

@@ -6,7 +6,7 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { URL } from 'node:url';
+import { URL } from 'url';
 import { Message } from 'discord.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 

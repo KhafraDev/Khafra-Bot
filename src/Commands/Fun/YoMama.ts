@@ -1,7 +1,7 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';

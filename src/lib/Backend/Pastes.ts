@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { URL, URLSearchParams } from 'node:url';
+import { URL, URLSearchParams } from 'url';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 

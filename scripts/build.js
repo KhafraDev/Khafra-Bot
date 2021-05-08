@@ -1,4 +1,4 @@
-import { rm } from 'node:fs/promises';
+import { rm } from 'fs/promises';
 
 await rm('./build/', {
     recursive: true

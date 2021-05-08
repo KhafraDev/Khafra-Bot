@@ -1,4 +1,4 @@
-import { URLSearchParams } from 'node:url';
+import { URLSearchParams } from 'url';
 import { fetch } from '../../Structures/Fetcher.js';
 
 interface YouTubeError {

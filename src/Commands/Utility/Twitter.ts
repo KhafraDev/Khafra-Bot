@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { URL } from 'node:url';
+import { URL } from 'url';
 import { getTwitterMediaURL } from '../../lib/Backend/Twitter.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 

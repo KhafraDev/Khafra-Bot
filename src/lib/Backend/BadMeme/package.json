@@ -2,15 +2,15 @@
   "name": "@khaf/badmeme",
   "version": "3.1.0",
   "description": "Get a bad meme from Reddit.",
-  "main": "BadMeme",
-  "types": "types/BadMeme.d.ts",
+  "main": "./BadMeme.js",
+  "typings": "./BadMeme.d.ts",
   "type": "module",
   "dependencies": {
+    "@types/node": "^15.0.2",
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
-    "typescript": "3.4.3"
+    "@types/node-fetch": "1.6.9"
   },
   "repository": {
     "type": "git",

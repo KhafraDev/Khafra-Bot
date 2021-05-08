@@ -1,5 +1,5 @@
 import fetch, { Headers } from 'node-fetch';
-import { URL, URLSearchParams } from 'node:url';
+import { URL, URLSearchParams } from 'url';
 
 interface ITMDBSearch {
     page: number
