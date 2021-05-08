@@ -61,3 +61,5 @@ type locationObservation = {
     elevation: number,
     utcTime: Date
 }[]
+
+export declare const weather: (q: string) => Promise<import("node-fetch").Response | HereResult>;

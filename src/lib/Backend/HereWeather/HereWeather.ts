@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { HereResult } from './types/Here';
+import { HereResult } from './HereWeather.d';
 
 export const weather = async (q: string) => {
     q = encodeURIComponent(q);

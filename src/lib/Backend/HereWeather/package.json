@@ -2,14 +2,14 @@
   "name": "@khaf/hereweather",
   "version": "1.0.0",
   "description": "Get the weather from Here.com!",
-  "main": "HereWeather",
-  "types": "types/Here.d.ts",
+  "main": "./HereWeather.js",
+  "types": "./HereWeather.d.ts",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
-    "typescript": "3.4.3"
+    "@types/node-fetch": "1.6.9"
   },
   "repository": {
     "type": "git",
