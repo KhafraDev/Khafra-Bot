@@ -63,3 +63,18 @@ export type SpotifyResult = {
         total: number
     }
 }
+
+declare class Spotify {
+    private id;
+    private secret;
+    private token;
+    private expires_in;
+    search(query: string): Promise<SpotifyResult>;
+    setToken(): Promise<void>;
+    getTokenHeader(): Promise<{
+        Authorization: string;
+    }>;
+    get expired(): boolean | null;
+}
+
+export declare const spotify: Spotify;

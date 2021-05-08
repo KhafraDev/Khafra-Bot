@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { URL, URLSearchParams } from 'url';
-import { SpotifyResult } from './types/Spotify';
+import { SpotifyResult } from './Spotify.d';
 
 type Token = { 
     access_token: string;

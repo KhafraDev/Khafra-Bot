@@ -2,14 +2,14 @@
   "name": "@khaf/spotify",
   "version": "1.0.0",
   "description": "Search Spotify for songs!",
-  "main": "SpotifyHandler",
-  "types": "types/Spotify.d.ts",
+  "main": "./Spotify.js",
+  "types": "./Spotify.d.ts",
+  "type": "module",
   "dependencies": {
-    "node-fetch": "2.6.1"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
-    "typescript": "3.4.3"
+    "@types/node-fetch": "^2.5.7"
   },
   "repository": {
     "type": "git",

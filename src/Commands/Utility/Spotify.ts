@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { spotify } from '../../lib/Backend/Spotify/SpotifyHandler.js';
+import { spotify } from '@khaf/spotify';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
