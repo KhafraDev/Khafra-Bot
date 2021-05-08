@@ -1,8 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { Wikipedia } from '../../lib/Backend/Wikipedia/Wikipedia.js';
 import entities from 'entities'; // cjs module
-import { WikipediaSearch } from '../../lib/Backend/Wikipedia/types/Wikipedia';
+import { Wikipedia, WikipediaSearch } from '@khaf/wikipedia';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

@@ -4,7 +4,7 @@ import {
     WikipediaSearch,
     WikipediaArticle,
     WikipediaArticleNotFound
-} from './types/Wikipedia.d';
+} from './Wikipedia.d';
 
 export const Wikipedia = async (q: string, language='en', limit?: number) => {
     if (typeof limit === 'number') {

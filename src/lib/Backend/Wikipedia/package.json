@@ -2,14 +2,14 @@
   "name": "@khaf/wikipedia",
   "version": "1.0.0",
   "description": "Search Wikipedia.",
-  "main": "Wikipedia",
-  "types": "types/Wikipedia.d.ts",
+  "main": "./Wikipedia.js",
+  "types": "./Wikipedia.d.ts",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
-    "typescript": "3.4.3"
+    "@types/node-fetch": "1.6.9"
   },
   "repository": {
     "type": "git",

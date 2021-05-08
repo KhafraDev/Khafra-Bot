@@ -49,6 +49,7 @@
   },
   "workspaces": [
     "src/lib/Backend/BadMeme",
-    "src/lib/Backend/HereWeather"
+    "src/lib/Backend/HereWeather",
+    "src/lib/Backend/Wikipedia"
   ]
 }

@@ -89,3 +89,6 @@ export interface WikipediaArticleNotFound {
     detail: string
     uri: string
 }
+
+declare const Wikipedia: (q: string, language?: string, limit?: number | undefined) => 
+    Promise<WikipediaError | WikipediaSearch | WikipediaArticle | WikipediaArticleNotFound>
