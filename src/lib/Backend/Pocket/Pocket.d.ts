@@ -75,3 +75,37 @@ export type PocketAddResults = {
 }
 
 export type PocketRateLimit = Record<string, number>
+
+declare class Pocket {
+    consumer_key: string | undefined;
+    redirect_uri?: string;
+    request_token?: string;
+    access_token?: string;
+    username?: string;
+    constructor(user?: {
+        request_token: string;
+        access_token: string;
+        username: string;
+    });
+    /**
+     * Pocket Authentication:
+     *
+     * Step 2: Obtain a request token
+     * @throws {Error} when status isn't 200
+     */
+    requestCode(): Promise<string | undefined>;
+    /**
+     * Authorization URL. User must authorize Khafra-Bot by clicking the link generated.
+     * @throws {Error} if there is no request_token
+     */
+    get requestAuthorization(): string;
+    accessToken(): Promise<string | undefined>;
+    getList(): Promise<PocketGetResults>;
+    add(url: string, title?: string): Promise<any>;
+    toObject(): {
+        request_token: string | undefined;
+        access_token: string | undefined;
+        username: string | undefined;
+    };
+}
+export { Pocket };

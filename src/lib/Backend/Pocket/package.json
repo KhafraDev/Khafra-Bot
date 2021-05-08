@@ -2,14 +2,14 @@
   "name": "@khaf/pocket",
   "version": "1.0.0",
   "description": "Manage a user's articles (add and retrieve) and authenticate with Pocket OAuth!",
-  "main": "Pocket",
-  "types": "types/Pocket.d.ts",
+  "main": "./Pocket.js",
+  "types": "./Pocket.d.ts",
+  "type": "module",
   "dependencies": {
     "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
-    "typescript": "3.4.3"
+    "@types/node-fetch": "^1.6.9"
   },
   "repository": {
     "type": "git",

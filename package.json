@@ -51,6 +51,8 @@
     "src/lib/Backend/BadMeme",
     "src/lib/Backend/HereWeather",
     "src/lib/Backend/Wikipedia",
-    "src/lib/Backend/Spotify"
+    "src/lib/Backend/Spotify",
+    "src/lib/Backend/NPM",
+    "src/lib/Backend/Pocket"
   ]
 }

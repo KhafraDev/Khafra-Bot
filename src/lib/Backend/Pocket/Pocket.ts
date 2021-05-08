@@ -1,5 +1,5 @@
 import fetch, { Headers } from 'node-fetch';
-import type { PocketGetResults, PocketRateLimit } from './types/Pocket';
+import type { PocketGetResults, PocketRateLimit } from './Pocket.d';
 
 const limits: PocketRateLimit = {
     'x-limit-user-limit':     -1,   // Current rate limit enforced per user
@@ -198,7 +198,7 @@ class Pocket {
 
 const setRateLimits = (headers: Headers) => {
     const keys = Object.keys(limits).map(k => k.toLowerCase());
-    for (const [header, value] of headers) {
+    for (const [header, value] of Object.entries(headers)) {
         if (keys.includes(header.toLowerCase())) {
             limits[header.toLowerCase()] = +value;
         }

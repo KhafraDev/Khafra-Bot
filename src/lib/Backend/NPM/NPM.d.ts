@@ -78,3 +78,5 @@ interface NPMError {
 }
 
 export type INPMPackage = NPMError | Package | { error: string };
+
+declare const npm: (package_name: string) => Promise<INPMPackage>

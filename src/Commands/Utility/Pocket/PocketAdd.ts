@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../../Structures/Database/Mongo.js';
-import { Pocket } from '../../../lib/Backend/Pocket/Pocket.js';
+import { Pocket } from '@khaf/pocket';
 import { URL } from 'url';
 import { PocketUser } from '../../../lib/types/Collections';
 import { RegisterCommand } from '../../../Structures/Decorator.js';

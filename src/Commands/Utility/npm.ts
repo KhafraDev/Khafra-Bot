@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
-import { npm } from '../../lib/Backend/NPM/npmHandler.js';
+import { npm } from '@khaf/npm';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
