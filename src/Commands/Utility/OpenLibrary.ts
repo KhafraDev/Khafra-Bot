@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { openLibrary } from '../../lib/Backend/Openlibrary.js';
+import { openLibrary } from '../../lib/Packages/Openlibrary.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

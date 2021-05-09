@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { talkObamaToMe } from '../../lib/Backend/TalkObamaToMe.js';
+import { talkObamaToMe } from '../../lib/Packages/TalkObamaToMe.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

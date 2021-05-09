@@ -6,7 +6,7 @@ import { join, parse, sep } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { client } from '../../index.js';
-import { compile } from '../../lib/Backend/Compile.js';
+import { compile } from '../../lib/Packages/Compile.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { CommandCooldown } from '../../Structures/Cooldown/CommandCooldown.js';

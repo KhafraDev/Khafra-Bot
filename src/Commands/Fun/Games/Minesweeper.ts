@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { Board } from '../../../lib/Backend/MineSweeper.js';
+import { Board } from '../../../lib/Packages/MineSweeper.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 @RegisterCommand

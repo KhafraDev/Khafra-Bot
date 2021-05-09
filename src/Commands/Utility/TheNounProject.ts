@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
-import { theNounProjectSearch } from '../../lib/Backend/TheNounProject/TheNounProject.js';
+import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

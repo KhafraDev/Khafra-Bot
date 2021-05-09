@@ -1,5 +1,5 @@
 import { GuildMember, Message } from 'discord.js';
-import { TicTacToe } from '../../../lib/Backend/TicTacToe.js';
+import { TicTacToe } from '../../../lib/Packages/TicTacToe.js';
 import { Embed } from '../../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';

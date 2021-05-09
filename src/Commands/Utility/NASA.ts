@@ -1,4 +1,4 @@
-import { apodFetchDaily } from '../../lib/Backend/NASA.js';
+import { apodFetchDaily } from '../../lib/Packages/NASA.js';
 import { nasaDBTransaction } from '../../lib/Migration/NASA.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { Command } from '../../Structures/Command.js';

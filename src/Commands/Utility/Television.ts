@@ -1,5 +1,5 @@
 import { Message } from 'discord.js';
-import { searchTV } from '../../lib/Backend/TMDB.js';
+import { searchTV } from '../../lib/Packages/TMDB.js';
 import { isDM } from '../../lib/types/Discord.js.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { Command, Arguments } from '../../Structures/Command.js';

@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { pasteAliases } from '../../lib/Backend/Pastes.js';
+import { pasteAliases } from '../../lib/Packages/Pastes.js';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
 

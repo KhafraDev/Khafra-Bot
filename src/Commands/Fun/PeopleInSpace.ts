@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { fetchPeopleInSpace } from '../../lib/Backend/PeopleInSpace.js';
+import { fetchPeopleInSpace } from '../../lib/Packages/PeopleInSpace.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

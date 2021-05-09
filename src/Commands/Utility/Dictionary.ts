@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { owlbotio } from '../../lib/Backend/OwlBotIO.js';
+import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

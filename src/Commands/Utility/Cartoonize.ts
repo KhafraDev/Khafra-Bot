@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { cartoonize } from '../../lib/Backend/Cartoonize.js';
+import { cartoonize } from '../../lib/Packages/Cartoonize.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

@@ -1,6 +1,6 @@
 import { Message, MessageAttachment } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { washYourLyrics } from '../../lib/Backend/WashYourLyrics.js';
+import { washYourLyrics } from '../../lib/Packages/WashYourLyrics.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

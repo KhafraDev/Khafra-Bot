@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { pool } from '../../Structures/Database/Mongo.js';
-import { parseQuran } from '../../lib/Backend/Quran/Quran.js';
+import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
 import { QuranExcerpt } from '../../lib/types/Collections';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';

@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { setCryptoInterval, cache } from '../../lib/Backend/CoinGecko.js';
+import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';

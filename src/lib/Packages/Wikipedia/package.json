@@ -1,27 +1,29 @@
 {
-  "name": "@khaf/spotify",
+  "name": "@khaf/wikipedia",
   "version": "1.0.0",
-  "description": "Search Spotify for songs!",
-  "main": "./Spotify.js",
-  "types": "./Spotify.d.ts",
+  "description": "Search Wikipedia.",
+  "main": "./Wikipedia.js",
+  "types": "./Wikipedia.d.ts",
   "type": "module",
   "dependencies": {
-    "node-fetch": "^2.6.1"
+    "node-fetch": "2.6.1"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7"
+    "@types/node-fetch": "1.6.9"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/khafradev/Khafra-Bot.git",
-    "directory": "src/lib/Backend"
+    "directory": "src/lib/Packages"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsc"
   },
   "keywords": [
-    "spotify",
+    "wikipedia",
+    "wikimedia",
+    "wiki",
     "khafra-bot"
   ],
   "author": "KhafraDev",

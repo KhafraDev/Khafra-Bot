@@ -48,11 +48,11 @@
     "node": ">=15.4.0"
   },
   "workspaces": [
-    "src/lib/Backend/BadMeme",
-    "src/lib/Backend/HereWeather",
-    "src/lib/Backend/Wikipedia",
-    "src/lib/Backend/Spotify",
-    "src/lib/Backend/NPM",
-    "src/lib/Backend/Pocket"
+    "src/lib/Packages/BadMeme",
+    "src/lib/Packages/HereWeather",
+    "src/lib/Packages/Wikipedia",
+    "src/lib/Packages/Spotify",
+    "src/lib/Packages/NPM",
+    "src/lib/Packages/Pocket"
   ]
 }

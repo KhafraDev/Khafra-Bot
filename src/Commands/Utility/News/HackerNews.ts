@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { cache, fetchHN } from '../../../lib/Backend/HackerNews.js';
+import { cache, fetchHN } from '../../../lib/Packages/HackerNews.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 @RegisterCommand

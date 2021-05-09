@@ -1,28 +1,24 @@
 {
-  "name": "@khaf/pocket",
+  "name": "@khaf/quran",
   "version": "1.0.0",
-  "description": "Manage a user's articles (add and retrieve) and authenticate with Pocket OAuth!",
-  "main": "./Pocket.js",
-  "types": "./Pocket.d.ts",
+  "description": "Download and parse the Quran (https://sacred-texts.com/isl/pick/) into separate sections.",
+  "main": "Quran",
   "type": "module",
-  "dependencies": {
-    "node-fetch": "2.6.1"
-  },
   "devDependencies": {
-    "@types/node-fetch": "^1.6.9"
+    "typescript": "3.4.3",
+    "@types/node-fetch": "^2.5.7"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/khafradev/Khafra-Bot.git",
-    "directory": "src/lib/Backend"
+    "directory": "src/lib/Packages"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "tsc"
   },
   "keywords": [
-    "pocket",
-    "getpocket",
+    "quran",
     "khafra-bot"
   ],
   "author": "KhafraDev",
@@ -30,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/khafradev/Khafra-Bot/issues"
   },
-  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
 }

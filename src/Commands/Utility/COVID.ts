@@ -1,5 +1,5 @@
 import { EmbedFieldData, Message } from 'discord.js';
-import { cache, start } from '../../lib/Backend/COVID.js';
+import { cache, start } from '../../lib/Packages/COVID.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { Command, Arguments } from '../../Structures/Command.js';

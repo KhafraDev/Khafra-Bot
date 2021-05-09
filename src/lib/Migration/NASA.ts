@@ -1,5 +1,5 @@
 import { pool } from '../../Structures/Database/Postgres.js';
-import { apodFetchAll } from '../Backend/NASA.js';
+import { apodFetchAll } from '../Packages/NASA.js';
 
 interface INASA { 
     title: string, 

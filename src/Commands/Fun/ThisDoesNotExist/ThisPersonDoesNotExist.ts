@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { thisDoesNotExist } from '../../../lib/Backend/ThisDoesNotExist.js';
+import { thisDoesNotExist } from '../../../lib/Packages/ThisDoesNotExist.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 @RegisterCommand
