@@ -2,14 +2,10 @@ import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
-import { Logger } from './Structures/Logger.js';
-import { trim } from './lib/Utility/Template.js';
 import { ClientEvents, Intents } from 'discord.js';
 
-const logger = new Logger('RateLimit');
-
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]) => 
+    return (...args: ClientEvents[T]): Promise<unknown> => 
         KhafraClient.Events.get(name)?.init(...args);
 }
 
@@ -30,23 +26,15 @@ export const client = new KhafraClient({
         Intents.FLAGS.GUILD_PRESENCES
     ]
 })
-    .on('ready',                 emitted('ready'))
-    .on('message',               emitted('message'))
-    .on('guildBanAdd',           emitted('guildBanAdd'))
-    .on('guildBanRemove',        emitted('guildBanRemove'))
-    .on('guildCreate',           emitted('guildCreate'))
-    .on('guildDelete',           emitted('guildDelete'))
-    .on('guildMemberAdd',        emitted('guildMemberAdd'))
-    .on('guildMemberRemove',     emitted('guildMemberRemove'))
-    .on('guildMemberUpdate',     emitted('guildMemberUpdate'))
-    .on('rateLimit', data => {
-        logger.log(trim`
-        Timeout: ${data.timeout} 
-        | Limit: ${data.limit} 
-        | HTTP Method: ${data.method} 
-        | Route: ${data.route} 
-        | Path: ${data.path}
-        `);
-    });
+    .on('ready',                emitted('ready'))
+    .on('message',              emitted('message'))
+    .on('guildBanAdd',          emitted('guildBanAdd'))
+    .on('guildBanRemove',       emitted('guildBanRemove'))
+    .on('guildCreate',          emitted('guildCreate'))
+    .on('guildDelete',          emitted('guildDelete'))
+    .on('guildMemberAdd',       emitted('guildMemberAdd'))
+    .on('guildMemberRemove',    emitted('guildMemberRemove'))
+    .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
+    .on('rateLimit',            emitted('rateLimit'));
 
 client.init();
