@@ -3,11 +3,13 @@ import { Client, ClientEvents } from 'discord.js';
 import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { Event } from '../Structures/Event.js';
+import { Interactions } from '../Structures/Interaction.js';
 import { pathToFileURL } from 'url';
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
+    static Interactions: Map<string, Interactions> = new Map();
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
@@ -54,6 +56,15 @@ export class KhafraClient extends Client {
 
         console.log(`Loaded ${KhafraClient.Events.size} events!`);
         return KhafraClient.Events;
+    }
+
+    async loadInteractions() {
+        const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
+        const importPromise = interactions.map<Promise<Interactions>>(int => import(pathToFileURL(int).href));
+        await Promise.allSettled(importPromise);
+
+        console.log(`Loaded ${importPromise.length} global interactions!`);
+        return KhafraClient.Interactions;
     }
 
     async init() {
