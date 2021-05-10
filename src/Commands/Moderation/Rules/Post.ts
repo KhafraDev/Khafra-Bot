@@ -32,6 +32,9 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, _args: Arguments) {
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
+            return this.Embed.missing_perms(true);
+
         const { rows } = await pool.query<{ rules_channel: string | null, rule: string }>(`
             SELECT rules_channel, rule FROM kbGuild
             INNER JOIN kbRules ON kbGuild.guild_id = kbRules.k_guild_id

@@ -1,14 +1,8 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { GuildSettings } from '../../../lib/types/Collections.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
-import config from '../../../../config.json';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { Range } from '../../../lib/Utility/Range.js';
-
-const { prefix: defPrefix } = config;
+import { pool } from '../../../Structures/Database/Postgres.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -23,47 +17,26 @@ export class kCommand extends Command {
                 name: 'add',
                 aliases: [ 'addrules', 'addrule' ],
                 folder: 'Rules',
-                args: [2],
+                args: [1],
                 guildOnly: true
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+    async init(message: Message, { content }: Arguments) {
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return this.Embed.fail(`
-            Guild has no rules.
 
-            Use the \`\`rules\`\` command to get started!
-            `);
-        } else if (
-            !validateNumber(Number(args[0])) || 
-            !Range(1, settings.rules.rules.length, true).isInRange(Number(args[1]))
-        ) {
-            return this.Embed.generic(this);
-        }
+        await pool.query(`
+            INSERT INTO kbRules (
+                k_guild_id, rule
+            ) VALUES (
+                $1::text, $2::text
+            ) ON CONFLICT DO NOTHING;
+        `, [message.guild.id, content]);
 
-        // This is needed so the message doesn't lose its formatting (new lines, etc.)
-        const prefix: string = settings?.prefix ?? defPrefix;
-        const split = message.content.split(/\s+/g);
-        const command = split.shift().slice(prefix.length).toLowerCase();
-        const num = Number(split.shift());
-        const content = message.content.replace(new RegExp(`^${prefix}${command} ${num} `, 'i'), '');
-
-        settings.rules.rules.splice(num - 1, 0, { index: num, rule: content });
-        settings.rules.rules.slice(num).map(r => r.index = r.index + 1);
-
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-        await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                rules: { channel: settings.rules.channel, rules: settings.rules.rules }
-            } }
-        );
-
-        return this.Embed.success(`Added a new rule #${num}!`);
+        return this.Embed.success(`
+        Added rule \`\`\`${content.length > 100 ? `${content.slice(0, 100)}...`: content}\`\`\` to the server!
+        `);
     }
 }
