@@ -1,11 +1,10 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { GuildSettings } from '../../../lib/types/Collections.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -26,30 +25,20 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: GuildSettings) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+    async init(message: Message, _args: Arguments) {
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return this.Embed.fail(`
-            Guild has no rules.
-
-            Use the \`\`rules\`\` command to get started!
-            `);
-        }
 
         const channel = await getMentions(message, 'channels');
         if (!isText(channel)) {
             return this.Embed.fail(`Not a text channel.`);
         }
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-        await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                'rules.channel': channel.id
-            } }
-        );
+        await pool.query(`
+            UPDATE kbGuild 
+            SET rules_channel = $1::text
+            WHERE kbGuild.guild_id = $2::text;
+        `, [channel.id, message.guild.id]);
 
         return this.Embed.success(`
         The rules will now be posted to ${channel}!
