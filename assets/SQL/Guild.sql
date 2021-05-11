@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS kbRules (
     id SERIAL PRIMARY KEY,
     k_guild_id TEXT NOT NULL,
     rule TEXT NOT NULL,
+    rule_id SMALLINT NOT NULL,
     FOREIGN KEY (k_guild_id) REFERENCES kbGuild(guild_id) ON DELETE CASCADE
 );
 
@@ -48,13 +49,13 @@ INSERT INTO kbWarns (
 ) ON CONFLICT DO NOTHING;
 
 INSERT INTO kbRules (
-    k_guild_id, rule
+    k_guild_id, rule, rule_id
 ) VALUES (
-    '503024525076725771', 'Dont be a dick sucker'
+    '503024525076725771', 'Do not be rude, please <3', 1
 ) ON CONFLICT DO NOTHING;
 
 INSERT INTO kbRules (
-    k_guild_id, rule
+    k_guild_id, rule, rule_id
 ) VALUES (
-    '503024525076725771', 'Dont be a cuck'
+    '503024525076725771', 'Follow all of the Discord T.O.S.!', 2
 ) ON CONFLICT DO NOTHING;

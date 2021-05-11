@@ -29,9 +29,13 @@ export class kCommand extends Command {
 
         await pool.query(`
             INSERT INTO kbRules (
-                k_guild_id, rule
+                k_guild_id, 
+                rule, 
+                rule_id
             ) VALUES (
-                $1::text, $2::text
+                $1::text, 
+                $2::text, 
+                (SELECT COUNT(kbRules.id) FROM kbRules WHERE kbRules.k_guild_id = $1::text) + 1
             ) ON CONFLICT DO NOTHING;
         `, [message.guild.id, content]);
 

@@ -1,11 +1,19 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { GuildSettings } from '../../../lib/types/Collections.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { Range } from '../../../lib/Utility/Range.js';
+
+interface UpdatedAndDeletedRule {
+    rule_id: number
+    rule: string
+    new_rule_id: number
+    new_rule: string
+}
+
+const range = Range(0, 32767, true); // smallint range
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -21,40 +29,50 @@ export class kCommand extends Command {
                 aliases: [ 'removerules', 'removerule', 'delete', 'deleterule', 'deleterules' ],
                 folder: 'Rules',
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                ratelimit: 10
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+    async init(message: Message, { args }: Arguments) {
+        const id = Number(args[0]);
+        
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        } else if (!settings || !('rules' in settings) || !settings.rules.rules?.length) {
-            return this.Embed.fail(`
-            Guild has no rules.
+        else if (!validateNumber(id) || !range.isInRange(id))
+            return this.Embed.fail(`An invalid rule id to delete was passed, try again.`);
 
-            Use the \`\`rules\`\` command to get started!
-            `);
-        } else if (
-            !validateNumber(Number(args[0])) || 
-            !Range(0, settings.rules.rules.length).isInRange(Number(args[1]))
-        ) {
-            return this.Embed.generic(this);
-        }
+        const { rows } = await pool.query<UpdatedAndDeletedRule>(`
+            WITH deleted AS (
+                DELETE FROM kbRules
+                WHERE rule_id = $1::smallint
+                RETURNING rule_id, rule
+            ), updated AS (
+                UPDATE kbRules
+                SET rule_id = rule_id - 1
+                WHERE rule_id > (SELECT rule_id FROM deleted)
+                RETURNING rule_id, rule
+            )
 
-        const num = Number(args[0]);
-        settings.rules.rules.splice(num - 1, 1);
-        settings.rules.rules.slice(num - 1).map(r => r.index = r.index - 1);
+            SELECT 
+                deleted.rule_id, 
+                deleted.rule, 
+                updated.rule_id AS new_rule_id, 
+                updated.rule AS new_rule 
+            FROM deleted, updated
+            LIMIT 1;
+        `, [id]);
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-        await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                rules: { channel: settings.rules.channel, rules: settings.rules.rules }
-            } }
-        );
+        if (rows.length === 0)
+            return this.Embed.fail(`Rule #${args[0]} doesn't exist, couldn't remove it.`);
 
-        return this.Embed.success(`Removed rule #${num}!`);
+        const { rule_id, rule } = rows.shift();
+
+        return this.Embed.success(`
+        Removed rule \`\`#${rule_id}\`\`
+        \`\`\`${rule.length > 100 ? `${rule.slice(0, 100)}...` : rule}\`\`\`
+        from the server.
+        `);
     }
 }
