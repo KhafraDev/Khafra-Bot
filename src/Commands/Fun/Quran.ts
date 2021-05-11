@@ -69,7 +69,7 @@ export class kCommand extends Command {
             `);
         }
 
-        const f = verse.verses.filter(i => i.book === +b && i.verse === +v).shift();
+        const f = verse.verses.find(i => i.book === +b && i.verse === +v);
         return this.Embed.success(`
         **${verse.title}** ${b}:${v}
         ${f.content}

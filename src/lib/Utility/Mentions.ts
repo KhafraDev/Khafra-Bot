@@ -1,6 +1,10 @@
 import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel } from 'discord.js';
 import { client } from '../../index.js';
 
+interface Options {
+    splice: boolean
+}
+
 type MessageMentionTypes = 
     | 'roles' 
     | 'users' 
@@ -15,6 +19,9 @@ const REGEX = {
 }
 const epoch = new Date('January 1, 2015 GMT-0');
 const zeroBinary = '0'.repeat(64);
+const opts: Options = {
+    splice: true
+}
 
 export async function getMentions(message: Message, type: 'roles'): Promise<Role>;
 export async function getMentions(message: Message, type: 'users'): Promise<User>;
@@ -22,12 +29,11 @@ export async function getMentions(message: Message, type: 'members'): Promise<Gu
 export async function getMentions(message: Message, type: 'channels'): Promise<GuildChannel>;
 export async function getMentions(
     { mentions, content, guild }: Message, 
-    type: MessageMentionTypes
+    type: MessageMentionTypes,
+    options: Options = opts
 ) {
     const args = content.split(/\s+/g);
-    if (REGEX.users.test(args[0])) // if the client user is the first mentioned
-        args.splice(0, 2); // remove the first two elements in args
-    else 
+    if (options.splice)
         args.splice(0, 1); // normal prefixed command
 
     if (REGEX[type].test(args[0])) {
