@@ -1,11 +1,10 @@
 import { Event } from '../Structures/Event.js';
 import { GuildMember, Channel, Permissions } from 'discord.js';
-import { pool } from '../Structures/Database/Mongo.js';
-import { GuildSettings } from '../lib/types/Collections';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { pool } from '../Structures/Database/Postgres.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -18,27 +17,33 @@ export class kEvent extends Event {
     name = 'guildMemberUpdate' as const;
 
     async init(oldMember: GuildMember, newMember: GuildMember) {
-        if ((!oldMember.premiumSince && !newMember.premiumSince) || oldMember.premiumSince && newMember.premiumSince) { // both either have or don't have
+        if (
+            (!oldMember.premiumSince && !newMember.premiumSince) || 
+            oldMember.premiumSince && newMember.premiumSince
+        ) { // both either have or don't have
             return;
         }
 
         const oldRoles = oldMember.roles.cache.filter(r => r.managed).size;
         const newRoles = newMember.roles.cache.filter(r => r.managed).size;
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-        const guild = await collection.findOne<GuildSettings>({ id: oldMember.guild.id });
+        const { rows: guilds } = await pool.query<{ welcome_channel: string }>(`
+            SELECT welcome_channel
+            FROM kbGuild
+            WHERE guild_id = $1::text;
+        `, [oldMember.guild.id]);
 
-        if (!guild?.welcomeChannel) {
-            return;
-        }
+        if (guilds.length === 0) return;
+        if (guilds[0].welcome_channel === null) return;
+
+        const { welcome_channel } = guilds.shift()!;
 
         let channel: Channel;
-        if (oldMember.guild.channels.cache.has(guild.welcomeChannel)) {
-            channel = oldMember.guild.channels.cache.get(guild.welcomeChannel)!;
+        if (oldMember.guild.channels.cache.has(welcome_channel)) {
+            channel = oldMember.guild.channels.cache.get(welcome_channel)!;
         } else {
             try {
-                channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel);
+                channel = await oldMember.guild.me.client.channels.fetch(welcome_channel);
             } catch {
                 return;
             }

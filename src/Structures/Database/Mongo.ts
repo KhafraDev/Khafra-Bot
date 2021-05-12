@@ -58,9 +58,6 @@ class MongoDB {
 
 export const pool = {
     pocket: new MongoDB(),
-    tags: new MongoDB(),
     insights: new MongoDB(),
-    moderation: new MongoDB(),
-    settings: new MongoDB(),
     commands: new MongoDB()
 } as const;
