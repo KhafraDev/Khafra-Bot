@@ -2,11 +2,18 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { plural } from '../../../lib/Utility/String.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
-import { WarningJoined } from '../../../lib/types/Warnings.js';
+import { plural } from '../../../lib/Utility/String.js';
+
+interface Total {
+    total_points: string // pg doesn't parse correctly
+    total_warns: string // pg doesn't parse correctly
+    dates: Date[]
+    ids: number[]
+    points: number[]
+}
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -19,9 +26,9 @@ export class kCommand extends Command {
                 '267774648622645249'
             ],
 			{
-                name: 'warnings:next',
+                name: 'warnings',
                 folder: 'Moderation',
-                aliases: ['warns:next'],
+                aliases: ['warns'],
                 args: [0, 1],
                 guildOnly: true
             }
@@ -33,24 +40,31 @@ export class kCommand extends Command {
             ? (await getMentions(message, 'users') ?? message.author)
             : message.author;
         
-        const { rows } = await pool.query<WarningJoined>(`
-            SELECT * FROM kbWarns
+        const { rows } = await pool.query<Total>(`
+            SELECT 
+                SUM(k_points) AS total_points,
+                COUNT(id) AS total_warns,
+                ARRAY_AGG(k_ts) dates,
+                ARRAY_AGG(k_id) ids,
+                ARRAY_AGG(k_points) points
+            FROM kbWarns
             WHERE kbWarns.k_guild_id = $1::text AND kbWarns.k_user_id = $2::text
-            LIMIT 25; 
         `, [message.guild.id, user.id]);
 
-        // total warning points the person has
-        const totalMemberPoints = rows.reduce((a, b) => a + b.k_points, 0);
+        if (rows.length === 0)
+            return this.Embed.success(`${user} has no warning points! 👍`);
 
+        const { dates, ids, points, total_points, total_warns } = rows.shift()!;
+        const mapped = ids.map<[number, Date, number]>((id, idx) => [id, dates[idx], points[idx]]);
         const embed = this.Embed.success(
-            `${user} - ${totalMemberPoints.toLocaleString(message.guild.preferredLocale)} point${plural(totalMemberPoints)}` + 
-            ` and ${rows.length.toLocaleString(message.guild.preferredLocale)} warning${plural(rows.length)}.`
+            `${user} has ${Number(total_warns).toLocaleString()} warnings ` +
+            `with ${Number(total_points).toLocaleString()} warning points total.`
         );
 
         // embeds can have a maximum of 25 fields
-        for (const row of rows.slice(0, 25)) {
-            const points = row.k_points.toLocaleString(message.guild.preferredLocale);
-            embed.addField(`**${formatDate('MMMM Do, YYYY', row.k_ts)}:**`, `#${row.id}: ${points} point${plural(row.k_points)}.`, true);
+        for (const [id, date, p] of mapped.slice(0, 25)) {
+            const points = p.toLocaleString(message.guild.preferredLocale);
+            embed.addField(`**${formatDate('MMMM Do, YYYY', date)}:**`, `\`\`#${id}\`\`: ${points} point${plural(p)}.`, true);
         }
 
         return embed;

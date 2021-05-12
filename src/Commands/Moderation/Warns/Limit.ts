@@ -19,8 +19,8 @@ export class kCommand extends Command {
                 '32767'
             ],
 			{
-                name: 'warnlimit:next',
-                aliases: [ 'limit:next', 'setwarn:next' ],
+                name: 'warnlimit',
+                aliases: [ 'limit', 'setwarn' ],
                 folder: 'Moderation',
                 args: [1, 1],
                 guildOnly: true
@@ -29,9 +29,6 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        // TODO(@KhafraDev): when kbGuild is set as the guild settings parameter, 
-        // we can use that to show the old vs. new limit.
-
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))

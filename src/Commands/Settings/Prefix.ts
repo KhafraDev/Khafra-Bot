@@ -1,7 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Mongo.js';
-import { pool as _pool } from '../../Structures/Database/Postgres.js';
+import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -29,18 +28,7 @@ export class kCommand extends Command {
         else if (args[0].length > 100)
             return this.Embed.fail(`Maximum prefix length is 100 characters!`);
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-
-        await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                prefix: args[0]
-            } },
-            { upsert: true }
-        );
-
-        await _pool.query(`
+        await pool.query(`
             UPDATE kbGuild
             SET prefix = $1::text
             WHERE guild_id = $2::text;

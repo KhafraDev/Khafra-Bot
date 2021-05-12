@@ -1,8 +1,6 @@
 import { DiscordAPIError, Message } from 'discord.js';
 import { Event } from '../Structures/Event.js';
 import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
-import { pool } from '../Structures/Database/Mongo.js';
-import { GuildSettings } from '../lib/types/Collections';
 import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
@@ -14,11 +12,15 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments } from '../Structures/Command.js';
+import { pool } from '../Structures/Database/Postgres.js';
+import { kGuild } from '../lib/types/Warnings.js';
 
-const defaultSettings: Partial<GuildSettings> = {
+const defaultSettings: Partial<kGuild> = {
     prefix: config.prefix,
-    whitelist: [],
-    blacklist: []
+    max_warning_points: 20,
+    mod_log_channel: null,
+    welcome_channel: null,
+    rules_channel: null
 };
 
 const _cooldownGuild = cooldown(30, 60000);
@@ -34,16 +36,23 @@ export class kEvent extends Event {
 
         const [name, ...args] = message.content.split(/\s+/g);
     
-        const client =      isDM(message.channel) ? null : await pool.settings.connect();
-        const collection =  isDM(message.channel) ? null : client.db('khafrabot').collection('settings');
-        const guild =       isDM(message.channel) 
-            ? defaultSettings 
-            : Object.assign({ ...defaultSettings }, await collection.findOne<GuildSettings>({ id: message.guild.id }));
+        let guild: Partial<kGuild> | kGuild | null = null;
+        if (isDM(message.channel))
+            guild = defaultSettings;
+        else {
+            const { rows } = await pool.query<kGuild>(`
+                SELECT * 
+                FROM kbGuild
+                WHERE guild_id = $1::text
+            `, [message.guild.id]);
+
+            guild = Object.assign({ ...defaultSettings }, rows.shift());
+        }
 
         // matches the start of the string with the prefix defined above
         // captures the command name following the prefix up to a whitespace or end of string
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges#using_named_groups
-        const optre = new RegExp(`^(?<prefix>${guild.prefix})(?<commandName>[A-z0-9:_]+)\\s?(?<content>.*?)$`, 'si');
+        const optre = new RegExp(`^(?<prefix>${guild.prefix.replace(/([^A-z0-9])/g, '\\$1')})(?<commandName>[A-z0-9:_]+)\\s?(?<content>.*?)$`, 'si');
         // there should be no case in which this is null, but we are dealing with regexes
         const optionsMatch = message.content.match(optre)!;
 
@@ -54,14 +63,6 @@ export class kEvent extends Event {
         const command = KhafraClient.Commands.get(optionsMatch.groups!.commandName.toLowerCase());
         // command cooldowns are based around the commands name, not aliases
         if (!commandLimit(command.settings.name, message.author.id)) return;
-
-        /** Check blacklist/whitelist status of command */
-        if (!['Settings', 'Moderation'].includes(command.settings.folder)) {
-            if (guild.whitelist.length > 0 && !guild.whitelist.includes(command.settings.name))
-                return message.reply(Embed.fail('This command has not been whitelisted!'));
-            if (guild.blacklist.includes(command.settings.name)) 
-                return message.reply(Embed.fail('This command has been disabled by an administrator!'));
-        }
         
         if (command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
             return message.reply(Embed.fail(`

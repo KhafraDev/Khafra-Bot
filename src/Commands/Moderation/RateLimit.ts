@@ -1,12 +1,12 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, TextChannel, Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { GuildSettings } from '../../lib/types/Collections.js';
-import { isExplicitText } from '../../lib/types/Discord.js.js';
+import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
+import { kGuild } from '../../lib/types/Warnings.js';
 
 const MAX_SECS = ms('6h') / 1000;
 
@@ -32,7 +32,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const channel = channelFirst 
@@ -63,10 +63,10 @@ export class kCommand extends Command {
         Slow-mode set in ${channel} for ${secs} second${plural(secs)}!
         `));
 
-        if (typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
+        if (settings.mod_log_channel !== null) {
+            const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
             return channel.send(this.Embed.success(`

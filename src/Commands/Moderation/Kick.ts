@@ -1,9 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, TextChannel, Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { GuildSettings } from '../../lib/types/Collections.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { kGuild } from '../../lib/types/Warnings.js';
+import { isText } from '../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -24,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: GuildSettings) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
         const member = await getMentions(message, 'members');
 
         if (!hierarchy(message.member, member)) {
@@ -49,10 +50,10 @@ export class kCommand extends Command {
 
         await message.reply(this.Embed.fail(`Kicked ${member} from the server!`));
 
-        if (typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
+        if (settings.mod_log_channel !== null) {
+            const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
             const reason = args.slice(1).join(' ');

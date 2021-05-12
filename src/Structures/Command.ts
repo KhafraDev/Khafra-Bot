@@ -6,10 +6,10 @@ import {
     MessageEmbed
 } from 'discord.js';
 import { Logger } from './Logger.js';
-import { GuildSettings } from '../lib/types/Collections.js';
 import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { kGuild } from '../lib/types/Warnings.js';
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */
@@ -72,7 +72,7 @@ export abstract class Command implements ICommand {
         this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
-    abstract init (message?: Message, args?: Arguments, settings?: GuildSettings | Partial<GuildSettings>): 
+    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
         Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
 
     isBotOwner (id: Snowflake) {

@@ -23,22 +23,6 @@ export interface Insights {
     }
 }
 
-export interface Warnings {
-    _id: ObjectId
-    id: string,
-    limit: number
-    users: {
-        [key: string]: {
-            active: number,
-            inactive: number,
-            warns: {
-                reason: string,
-                points: number
-            }[]
-        }
-    }
-}
-
 export interface PocketUser {
     _id: ObjectId
     id: string
@@ -65,18 +49,4 @@ export interface GuildSettings {
         channel: string
         rules: { index: number, rule: string }[] 
     }
-}
-
-export interface Tags {
-    _id: ObjectId
-    id: string
-    name: string
-    owner: string
-    content: string
-    created: number,
-    history?: {
-        old: string
-        new: string
-        now: number
-    }[]
 }

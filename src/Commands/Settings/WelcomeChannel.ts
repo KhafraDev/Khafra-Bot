@@ -1,7 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Mongo.js';
-import { pool as _pool } from '../../Structures/Database/Postgres.js';
+import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
@@ -46,18 +45,7 @@ export class kCommand extends Command {
             `);
         }
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-
-        await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                welcomeChannel: channel.id
-            } },
-            { upsert: true }
-        );
-
-        await _pool.query(`
+        await pool.query(`
             UPDATE kbGuild
             SET welcome_channel = $1::text
             WHERE guild_id = $2::text;
