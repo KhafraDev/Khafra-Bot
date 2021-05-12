@@ -51,7 +51,7 @@ export class kCommand extends Command {
             WHERE kbWarns.k_guild_id = $1::text AND kbWarns.k_user_id = $2::text
         `, [message.guild.id, user.id]);
 
-        if (rows.length === 0)
+        if (rows.length === 0 || rows[0].dates.length === 0 || rows[0].ids.length === 0)
             return this.Embed.success(`${user} has no warning points! 👍`);
 
         const { dates, ids, points, total_points, total_warns } = rows.shift()!;

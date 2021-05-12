@@ -55,13 +55,11 @@ export class kCommand extends Command {
                 RETURNING rule_id, rule
             )
 
-            SELECT 
-                deleted.rule_id, 
-                deleted.rule, 
-                updated.rule_id AS new_rule_id, 
-                updated.rule AS new_rule 
-            FROM deleted, updated
-            LIMIT 1;
+            SELECT rule_id, rule FROM deleted
+
+            UNION ALL
+
+            SELECT rule_id, rule FROM updated;
         `, [id]);
 
         if (rows.length === 0)

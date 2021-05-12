@@ -54,9 +54,3 @@ INSERT INTO kbRules (
 ) VALUES (
     '503024525076725771', 'Do not be rude, please <3', 1
 ) ON CONFLICT DO NOTHING;
-
-INSERT INTO kbRules (
-    k_guild_id, rule, rule_id
-) VALUES (
-    '503024525076725771', 'Follow all of the Discord T.O.S.!', 2
-) ON CONFLICT DO NOTHING;

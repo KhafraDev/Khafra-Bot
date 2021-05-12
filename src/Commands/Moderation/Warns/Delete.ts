@@ -48,12 +48,25 @@ export class kCommand extends Command {
             return this.Embed.fail(`No member was mentioned. Try again!`);
 
         const { rows: deleted } = await pool.query<WarningDel>(`
-            DELETE FROM kbWarns
-            WHERE 
-                kbWarns.k_id = $1::smallint AND
-                kbWarns.k_guild_id = $2::text AND
-                kbWarns.k_user_id = $3::text
-            RETURNING k_id, k_points;
+            WITH deleted AS (
+                DELETE FROM kbWarns
+                WHERE 
+                    kbWarns.k_id = $1::smallint AND
+                    kbWarns.k_guild_id = $2::text AND
+                    kbWarns.k_user_id = $3::text
+                RETURNING k_id, k_points
+            ), updated AS (
+                UPDATE kbWarns
+                SET k_id = k_id - 1
+                WHERE k_id > (SELECT k_id FROM deleted)
+                RETURNING k_id, k_points
+            )
+
+            SELECT k_id, k_points FROM deleted
+
+            UNION ALL
+
+            SELECT k_id, k_points FROM updated;
         `, [id, message.guild.id, member.id]);
 
         if (deleted.length === 0)
