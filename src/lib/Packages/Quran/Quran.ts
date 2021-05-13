@@ -1,36 +1,27 @@
 import fetch from 'node-fetch';
 import { promisify } from 'util';
-import zlib from 'zlib';
-import { deepStrictEqual } from 'assert';
+import { createHash } from 'crypto';
+import { unzip } from 'zlib';
 
-const unzip = promisify(zlib.unzip);
+interface Excerpt {
+    book: string
+    verse: string
+    content: string
+}
 
-export const parseQuran = async () => {
+const unzipAsync = promisify(unzip);
+const reg = /^\[(?<book>\d{3})_(?<verse>\d{3})\]\d{1,3} (?<content>.*?)$/gm
+// sha-256 of file buffer
+const hash = 'e6a7cdaa513dbe10f37aa49ac2c2cad726b35031a227ebb03c839dd3daf1dabb'; 
+
+export const parseQuran = async (): Promise<Excerpt[]> => {
     const res = await fetch('https://sacred-texts.com/isl/pick/pick.txt.gz');
     const buffer = await res.buffer();
 
-    let unzipped;
-    try {
-        unzipped = await unzip(buffer);
-    } catch(e) {
-        return Promise.reject(e);
-    }
+    const sha256 = createHash('sha256').update(buffer).digest('hex');
+    if (sha256 !== hash)
+        throw new Error(`File hash: ${sha256}, expected ${hash}.`);
 
-    const sections = unzipped.toString()
-        .split(`The Meaning of the Glorious Qur'an, by M.M. Pickthall, at sacred-texts.com`)
-        .map(l => l.trim())
-        .filter(l => l.length > 0);
-
-    deepStrictEqual(sections.length, 114);
-
-    const split = sections.map(s => {
-        const [title, ...verses] = s.split('\r\n\r\n');
-        const verse = verses.map(v => {
-            const [, book, verse, content] = v.match(/^\[(\d+)_(\d+)\]\d+ (.*)/) as string[];
-            return { book: +book, verse: +verse, content };
-        });
-        return { title, verses: verse }
-    });
-
-    return split;
+    const unzipped = await unzipAsync(buffer);
+    return [...unzipped.toString().matchAll(reg)].map(f => f.groups!) as unknown as Excerpt[];
 }

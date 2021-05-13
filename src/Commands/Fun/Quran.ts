@@ -31,8 +31,8 @@ export class kCommand extends Command {
             if (!exists) {
                 const parsed = await parseQuran();
                 await collection.insertMany(parsed);
-                updated = true;
             }
+            updated = true;
         }
 
         const last = args.pop();
