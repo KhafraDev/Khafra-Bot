@@ -1,12 +1,14 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { pool } from '../../Structures/Database/Mongo.js';
 import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
-import { QuranExcerpt } from '../../lib/types/Collections';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { once } from '../../lib/Utility/Memoize.js';
+import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 
-let updated = false;
+const Titles = new Map<string, string>();
+const Verses = new Map<string, { book: string, verse: string, content: string}>();
+const Max = new Map<number, number>();
+const mw = once(parseQuran);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -18,61 +20,56 @@ export class kCommand extends Command {
 			{
                 name: 'quran',
                 folder: 'Fun',
-                args: [0]
+                args: [0, 1]
             }
         );
     }
 
     async init(_message: Message, { args }: Arguments) {
-        if (!updated) {
-            const client = await pool.commands.connect();
-            const collection = client.db('khafrabot').collection('quran');
-            const exists = await collection.findOne<QuranExcerpt>({});
-            if (!exists) {
-                const parsed = await parseQuran();
-                await collection.insertMany(parsed);
+        if (Titles.size === 0) {
+            const max: Record<number, number[]> = {};
+            const { titles, verses } = await mw();
+
+            for (const title of titles)
+                Titles.set(title.chapter, title.title);
+
+            for (const verse of verses) {
+                Verses.set(`${verse.book}-${verse.verse}`, verse);
+                const [b, v] = [Number(verse.book), Number(verse.verse)];
+
+                b in max ? max[b].push(v) : (max[b] = [v]);
             }
-            updated = true;
+
+            for (const k in max) {
+                const m = Math.max(...max[k]);
+                Max.set(Number(k), m);
+            }
         }
-
-        const last = args.pop();
-        if (!/\d+:\d+/.test(last) && args.length !== 0) {
-            return this.Embed.generic(this);
-        }
-
-        const [, b, v] = last?.match(/(\d+):(\d+)/) ?? [];
-
-        const client = await pool.commands.connect();
-        const collection = client.db('khafrabot').collection('quran');
 
         if (args.length === 0) {
-            const random = await collection.aggregate<QuranExcerpt>([ { $sample: { size: 1 } } ]).next();
-            const randVerse = random.verses[await rand(random.verses.length)]; // [min=0, max)
+            const chapter = `${await rand(1, 114 + 1)}`; // [1, 114]
+            const verse = `${await rand(1, Max.get(Number(chapter)) + 1)}`;
+
+            const excerpt = Verses.get(`${chapter.padStart(3, '0')}-${verse.padStart(3, '0')}`);
+            const title = Titles.get(chapter);
 
             return this.Embed.success(`
-            **${random.title}** ${randVerse.book}:${randVerse.verse}
-            ${randVerse.content}
-            `);
+            ${chapter}:${verse} - \`\`${excerpt.content}\`\`
+            `).setTitle(title);
         }
 
-        const verse = await collection.findOne<QuranExcerpt>({
-            title: new RegExp(args.join(' '), 'i'),
-            'verses.book': +b,
-            'verses.verse': +v
-        });
+        if (!/\d{1,3}:\d{1,3}/.test(args[0]))
+            return this.Embed.generic(this);
 
-        if (!verse) {
-            return this.Embed.fail(`
-            No verses found!
-            
-            A list can be found [here](https://sacred-texts.com/isl/pick/)!
-            `);
-        }
+        const { b, v } = args[0].match(/(?<b>\d{1,3}):(?<v>\d{1,3})/)!.groups!;
+        if (!Verses.has(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`))
+            return this.Embed.fail(`Verse not found.`);
 
-        const f = verse.verses.find(i => i.book === +b && i.verse === +v);
+        const excerpt = Verses.get(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`);
+        const title = Titles.get(`${Number(excerpt.book)}`);
+
         return this.Embed.success(`
-        **${verse.title}** ${b}:${v}
-        ${f.content}
-        `);
+        ${b}:${v} \`\`${excerpt.content}\`\`
+        `).setTitle(title);
     }
 }
