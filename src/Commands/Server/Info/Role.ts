@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message, Role } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -17,14 +17,16 @@ export class kCommand extends Command {
                 name: 'role',
                 folder: 'Server',
                 aliases: [ 'roleinfo' ],
-                args: [1, 1],
+                args: [1, 50],
                 guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
-        const role = await getMentions(message, 'roles');
+    async init(message: Message, { content }: Arguments) {
+        const role = 
+            await getMentions(message, 'roles') ?? 
+            message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
 
         if (!(role instanceof Role)) {
             return this.Embed.fail('No role found!');

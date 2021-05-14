@@ -48,7 +48,7 @@ export async function getMentions(
 
         if (type === 'members' || type === 'roles') {
             try {
-                const coll = await guild[type].fetch(item);
+                const coll = await guild[type].fetch(item); // cache is checked with this
                 return coll;
             } catch {}
         } else if (type === 'channels') {
