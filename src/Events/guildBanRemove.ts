@@ -1,6 +1,6 @@
 import { Event } from '../Structures/Event.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
-import { Guild, User } from 'discord.js';
+import { GuildBan } from 'discord.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild } from '../lib/types/Warnings.js';
 import { isText } from '../lib/types/Discord.js.js';
@@ -16,7 +16,7 @@ const guildBanRemoveLogger = new Logger('guildBanRemove');
 export class kEvent extends Event {
     name = 'guildBanRemove' as const;
 
-    async init(guild: Guild, user: User) {
+    async init({ guild, user }: GuildBan) {
         const key = `${guild.id},${user.id}`;
         const { rows } = await pool.query<kGuild>(`
             SELECT mod_log_channel FROM kbGuild
