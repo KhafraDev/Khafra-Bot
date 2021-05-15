@@ -73,27 +73,31 @@ const all = async () => {
     if (symbolCache.size === 0)
         await list();
 
-    const reqs = chunkSafe([...strictlyIDs], 250)
-        .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
-    const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
+    // so something here can error out, be completely ignored by the try/catch
+    // and give no useful stack traces. Highly doubt this fixes it.
+    try { 
+        const reqs = chunkSafe([...strictlyIDs], 250)
+            .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
+        const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
 
-    cache.clear();
+        cache.clear();
 
-    for (const all of reqsChunk) {
-        const success = (await Promise.allSettled(all))
-            .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
-            .filter(r => r.value.ok)
-            .map(r => r.value.json() as Promise<CoinGeckoRes[]>);
+        for (const all of reqsChunk) {
+            const success = (await Promise.allSettled(all))
+                .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
+                .filter(r => r.value.ok)
+                .map(r => r.value.json() as Promise<CoinGeckoRes[]>);
 
-        const json = await Promise.all(success);
+            const json = await Promise.all(success);
 
-        for (const currList of json) {
-            for (const curr of currList) {
-                cache.set(curr.symbol, curr);
-                cache.set(curr.id, curr);
+            for (const currList of json) {
+                for (const curr of currList) {
+                    cache.set(curr.symbol, curr);
+                    cache.set(curr.id, curr);
+                }
             }
         }
-    }
+    } catch {}
 }
 
 export const setCryptoInterval = async () => {
@@ -103,5 +107,5 @@ export const setCryptoInterval = async () => {
         try {
             await all();
         } catch {}
-    }, 60 * 1000 * 5);
+    }, 60 * 1000 * 15);
 }
