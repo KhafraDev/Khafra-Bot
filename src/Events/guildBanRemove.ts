@@ -16,7 +16,7 @@ const guildBanRemoveLogger = new Logger('guildBanRemove');
 export class kEvent extends Event {
     name = 'guildBanRemove' as const;
 
-    async init({ guild, user }: GuildBan) {
+    async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
         const { rows } = await pool.query<kGuild>(`
             SELECT mod_log_channel FROM kbGuild
@@ -50,8 +50,9 @@ export class kEvent extends Event {
             await channel.send(Embed.success(`
             **User:** ${user} (${user.tag})
             **ID:** ${user.id}
-            **Staff:** ${unban?.staff ?? 'Unknown'}
-            **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', unban?.time ?? new Date())}
+            **Staff:** ${unban ?? 'Unknown'}
+            **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
+            **Reason:** \`\`${reason.length > 1500 ? reason.slice(1500) + '...' : reason}\`\`
             `).setTitle('Member Unbanned'));
         } catch (e) {
             guildBanRemoveLogger.log(e);

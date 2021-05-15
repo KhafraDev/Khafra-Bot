@@ -37,7 +37,7 @@ export class kCommand extends Command {
         } finally {
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!unbans.has(`${message.guild.id},${user.id}`))
-                    unbans.set(`${message.guild.id},${user.id}`, { staff: message.member, time: Date.now() });
+                    unbans.set(`${message.guild.id},${user.id}`, message.member);
         }
 
         return this.Embed.success(`${user} is now unbanned!`);

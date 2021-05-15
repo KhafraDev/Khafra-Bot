@@ -16,7 +16,7 @@ const guildBanAddLogger = new Logger('guildBanAdd');
 export class kEvent extends Event {
     name = 'guildBanAdd' as const;
 
-    async init({ guild, user }: GuildBan) {
+    async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
         const { rows } = await pool.query<kGuild>(`
             SELECT mod_log_channel FROM kbGuild
@@ -50,8 +50,9 @@ export class kEvent extends Event {
             await channel.send(Embed.success(`
             **User:** ${user} (${user.tag})
             **ID:** ${user.id}
-            **Staff:** ${ban?.staff ?? 'Unknown'}
-            **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', ban?.time ?? new Date())}
+            **Staff:** ${ban ?? 'Unknown'}
+            **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
+            **Reason:** \`\`${reason.length > 1500 ? reason.slice(1500) + '...' : reason}\`\`
             `).setTitle('Member Banned'));
         } catch (e) {
             guildBanAddLogger.log(e);

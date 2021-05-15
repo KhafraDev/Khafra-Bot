@@ -54,7 +54,7 @@ export class kCommand extends Command {
             // not sure if the event is fired without permission to view audit logs
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { staff: message.member, time: Date.now() });
+                    bans.set(`${message.guild.id},${user.id}`, message.member);
         }
 
         return this.Embed.success(`

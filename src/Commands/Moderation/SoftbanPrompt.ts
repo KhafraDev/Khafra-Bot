@@ -75,7 +75,7 @@ export class kCommand extends Command {
         } finally {
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${member.id}`, { staff: message.member, time: Date.now() });
+                    bans.set(`${message.guild.id},${member.id}`, message.member);
         }
 
         return this.Embed.success(`
