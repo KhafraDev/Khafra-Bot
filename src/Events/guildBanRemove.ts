@@ -52,7 +52,7 @@ export class kEvent extends Event {
             **ID:** ${user.id}
             **Staff:** ${unban ?? 'Unknown'}
             **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
-            **Reason:** \`\`${reason.length > 1500 ? reason.slice(1500) + '...' : reason}\`\`
+            **Reason:** \`\`${reason?.length > 1500 ? reason.slice(1500) + '...' : (reason ?? 'Unknown')}\`\`
             `).setTitle('Member Unbanned'));
         } catch (e) {
             guildBanRemoveLogger.log(e);
