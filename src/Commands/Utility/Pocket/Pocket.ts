@@ -11,7 +11,7 @@ export class kCommand extends Command {
 			{
                 name: 'pocket',
                 folder: 'Pocket',
-                args: [0, 0]
+                args: [0]
             }
         );
     }
@@ -24,6 +24,8 @@ export class kCommand extends Command {
             
             Examples:
             \`\`pocketinit\`\` - Start the process of authorizing your Pocket account.
+            \`\`pocketget\`\` - List your favorited articles.
+            \`\`pocketadd [article] [optional title]\`\`
             `);
     }
 }

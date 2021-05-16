@@ -1,4 +1,5 @@
 import fetch, { Headers } from 'node-fetch';
+import crypto from 'crypto';
 import type { PocketGetResults, PocketRateLimit } from './Pocket.d';
 
 const limits: PocketRateLimit = {
@@ -20,8 +21,8 @@ class Pocket {
 
     constructor(user?: { request_token: string, access_token: string, username: string }) {
         if (user) {
-            this.request_token = user.request_token;
-            this.access_token = user.access_token;
+            this.request_token = this.decrypt(user.request_token);
+            this.access_token = this.decrypt(user.access_token);
             this.username = user.username;
         }
     }
@@ -150,7 +151,7 @@ class Pocket {
         return res.json();
     }
 
-    async add(url: string, title?: string) {
+    async add(url: string | import('url').URL, title?: string) {
         const rateLimited = checkRateLimits();
         if (rateLimited) {
             throw new Error(
@@ -168,7 +169,7 @@ class Pocket {
                 'X-Accept': 'application/json'
             },
             body: JSON.stringify({
-                url,
+                url: `${url}`,
                 title,
                 time: Date.now(),
                 consumer_key: process.env.POCKET_CONSUMER_KEY,
@@ -187,10 +188,27 @@ class Pocket {
         return res.json();
     }
 
+    encrypt = (text: string) => {
+        const iv = crypto.randomBytes(16);
+        const cipher = crypto.createCipheriv('aes-256-ctr', process.env.POCKET_SECRET_KEY!, iv);
+        const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+        return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
+
+    }
+
+    decrypt = (hash: string) => {
+        const [iv, content] = hash.split(':');
+        const decipher = crypto.createDecipheriv('aes-256-ctr', process.env.POCKET_SECRET_KEY!, Buffer.from(iv, 'hex'));
+        const decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()]);
+
+        return decrpyted.toString();
+    }
+
     toObject() {
         return {
-            request_token: this.request_token,
-            access_token: this.access_token,
+            request_token: this.encrypt(this.request_token!),
+            access_token: this.encrypt(this.access_token!),
             username: this.username
         }
     }

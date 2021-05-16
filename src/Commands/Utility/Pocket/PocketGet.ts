@@ -1,9 +1,15 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
 import { Pocket } from '@khaf/pocket';
-import { PocketUser } from '../../../lib/types/Collections';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+
+interface PocketUser {
+    access_token: string 
+    request_token: string 
+    username: string
+}
+
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -21,19 +27,21 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        const client = await pool.pocket.connect();
-        const collection = client.db('khafrabot').collection('pocket');
+        const { rows } = await pool.query<PocketUser>(`
+            SELECT access_token, request_token, username
+            FROM kbPocket
+            WHERE user_id = $1::text
+            LIMIT 1;
+        `, [message.member.id]);
 
-        const user = await collection.findOne<PocketUser>({ id: message.author.id });
-        if (!user) {
+        if (rows.length === 0)
             return this.Embed.fail(`
             You haven't set-up Pocket integration!
 
             Try using the \`\`pocket\`\` command for more information.
             `);
-        }
 
-        const pocket = new Pocket(user);
+        const pocket = new Pocket(rows.shift()!);
         const latest = await pocket.getList();
 
         const formatted = Object.values(latest.list)

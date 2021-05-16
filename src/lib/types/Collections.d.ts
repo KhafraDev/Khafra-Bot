@@ -1,16 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { Snowflake } from 'discord.js';
 
-export interface QuranExcerpt {
-    _id: ObjectId
-    title: string
-    verses: {
-        book: number
-        verse: number
-        content: string
-    }[]
-}
-
 export interface Insights {
     _id: ObjectId
     id: string
@@ -21,14 +11,6 @@ export interface Insights {
             joined: number
         }
     }
-}
-
-export interface PocketUser {
-    _id: ObjectId
-    id: string
-    access_token: string
-    request_token: string
-    username: string
 }
 
 export interface GuildSettings {

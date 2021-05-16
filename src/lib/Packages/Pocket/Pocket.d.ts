@@ -101,7 +101,7 @@ declare class Pocket {
     get requestAuthorization(): string;
     accessToken(): Promise<string | undefined>;
     getList(): Promise<PocketGetResults>;
-    add(url: string, title?: string): Promise<any>;
+    add(url: string | import('url').URL, title?: string): Promise<any>;
     toObject(): {
         request_token: string | undefined;
         access_token: string | undefined;
