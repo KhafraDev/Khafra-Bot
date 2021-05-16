@@ -1,8 +1,8 @@
 import { Event } from '../Structures/Event.js';
 import { GuildMember, Channel, Permissions } from 'discord.js';
 import { pool } from '../Structures/Database/Mongo.js';
+import { pool as _pool } from '../Structures/Database/Postgres.js';
 import { formatDate } from '../lib/Utility/Date.js';
-import { GuildSettings } from '../lib/types/Collections';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
@@ -23,7 +23,6 @@ export class kEvent extends Event {
         const client = await pool.insights.connect();
 
         const insightsCollection = client.db('khafrabot').collection('insights');   
-        const settingsCollection = client.db('khafrabot').collection('settings');
         
         await insightsCollection.updateOne(
             { id: member.guild.id },
@@ -34,17 +33,21 @@ export class kEvent extends Event {
             { upsert: true }
         );
 
-        const server = await settingsCollection.findOne<GuildSettings>({ id: member.guild.id });
-        if (!server?.welcomeChannel) {
-            return;
-        }
+        const { rows } = await _pool.query<{ welcome_channel: string }>(`
+            SELECT welcome_channel
+            FROM kbGuild
+            WHERE guild_id = $1::text
+            LIMIT 1;
+        `, [member.guild.id]);
+
+        if (rows.length === 0 || rows[0].welcome_channel === null) return;
 
         let channel: Channel;
-        if (member.guild.channels.cache.has(server.welcomeChannel)) {
-            channel = member.guild.channels.cache.get(server.welcomeChannel);
+        if (member.guild.channels.cache.has(rows[0].welcome_channel)) {
+            channel = member.guild.channels.cache.get(rows[0].welcome_channel);
         } else {
             try {
-                channel = await member.guild.client.channels.fetch(server.welcomeChannel);
+                channel = await member.guild.client.channels.fetch(rows[0].welcome_channel);
             } catch (e) {
                 return;
             }

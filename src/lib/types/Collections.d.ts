@@ -12,23 +12,3 @@ export interface Insights {
         }
     }
 }
-
-export interface GuildSettings {
-    _id: ObjectId
-    id: string
-    prefix: string
-    /**
-     * Names of commands whitelisted on the server.
-     */
-    whitelist: string[]
-    /**
-     * Names of commands blacklisted on the server.
-     */
-    blacklist: string[]
-    welcomeChannel: string
-    modActionLogChannel: string
-    rules: {
-        channel: string
-        rules: { index: number, rule: string }[] 
-    }
-}
