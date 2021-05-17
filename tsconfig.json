@@ -79,6 +79,7 @@
     "src/lib/Packages/Wikipedia",
     "src/lib/Packages/HereWeather",
     "src/lib/Packages/NPM",
-    "src/lib/Packages/Pocket"
+    "src/lib/Packages/Pocket",
+    "src/lib/Packages/Vaccines"
   ]
 }
