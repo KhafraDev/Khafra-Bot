@@ -38,6 +38,7 @@ export class kCommand extends Command {
         let desc = '', i = 0;
         while (desc.length < 2048) {
             const loc = available.providers[i++];
+            if (!loc.in_stock) continue;
             const chunk = `[**${loc.distance} miles**]: \`\`${loc.name.split(' #')[0]}\`\`; ${loc.address1} ${loc.city}, ${loc.zip}.\n`
             if (chunk.length + desc.length > 2048) break;
 
@@ -45,6 +46,6 @@ export class kCommand extends Command {
         }
 
         return this.Embed.success(desc)
-            .setTitle(`Vaccines Near ${zipcode}`);
+            .setTitle(`Available Vaccines Near ${zipcode}`);
     }
 }
