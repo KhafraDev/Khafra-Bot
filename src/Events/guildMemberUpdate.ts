@@ -17,15 +17,14 @@ export class kEvent extends Event {
     name = 'guildMemberUpdate' as const;
 
     async init(oldMember: GuildMember, newMember: GuildMember) {
-        if (
-            (!oldMember.premiumSince && !newMember.premiumSince) || 
-            oldMember.premiumSince && newMember.premiumSince
-        ) { // both either have or don't have
-            return;
-        }
+        // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
+        const premiumRole = oldMember.roles.premiumSubscriberRole;
+        const oldHas = oldMember.roles.cache.has(premiumRole.id);
+        const newHas = newMember.roles.cache.has(premiumRole.id);
 
-        const oldRoles = oldMember.roles.cache.filter(r => r.managed).size;
-        const newRoles = newMember.roles.cache.filter(r => r.managed).size;
+        // both either have or don't have the role
+        if (oldHas === newHas)
+            return;
 
         const { rows: guilds } = await pool.query<{ welcome_channel: string }>(`
             SELECT welcome_channel
@@ -52,17 +51,13 @@ export class kEvent extends Event {
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 
             return;
 
-        if (oldRoles > newRoles) { // lost role
+        if (oldHas && !newHas) { // lost role
             return channel.send(Embed.fail(`
             ${newMember} is no longer boosting the server! 😨
             `)).catch(() => {});
-        } else if (newRoles > oldRoles) { // gained role
+        } else { // gained role
             return channel.send(Embed.success(`
             ${newMember} just boosted the server! 🥳
-            `)).catch(() => {});
-        } else { // other servers?
-            return channel.send(Embed.success(`
-            ${!oldMember.premiumSince && newMember.premiumSince ? `${newMember} boosted a server.` : `${newMember} stopped boosting a server.`}
             `)).catch(() => {});
         }
     }
