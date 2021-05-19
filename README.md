@@ -52,3 +52,7 @@ All values are required, as there is no guarantee that there is error handling f
 8. Run the bot:
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``
+
+# Before the Next Update
+* Convert `insights` to postgres.
+* Use redis for commands (`garrison`, `stonewall`, `quran`, etc.).

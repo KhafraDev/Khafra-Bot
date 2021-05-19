@@ -13,7 +13,7 @@ export class kCommand extends Command {
 			{
                 name: 'server',
                 folder: 'Server',
-                aliases: [ 'serverinfo', 'guildinfo' ],
+                aliases: [ 'serverinfo', 'guildinfo', 'guild' ],
                 args: [0, 0],
                 guildOnly: true
             }
