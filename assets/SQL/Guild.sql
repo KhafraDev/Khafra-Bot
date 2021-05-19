@@ -1,11 +1,12 @@
 DROP TABLE IF EXISTS kbRules;
 DROP TABLE IF EXISTS kbWarns;
 DROP TABLE IF EXISTS kbGuild;
+DROP TABLE IF EXISTS kbInsights;
 
 CREATE TABLE IF NOT EXISTS kbGuild (
     id SERIAL PRIMARY KEY,
     guild_id TEXT NOT NULL,
-    prefix TEXT DEFAULT '!!' NOT NULL,
+    prefix TEXT DEFAULT '!' NOT NULL,
     max_warning_points SMALLINT DEFAULT 20,
     mod_log_channel TEXT DEFAULT NULL,
     welcome_channel TEXT DEFAULT NULL,
@@ -31,26 +32,17 @@ CREATE TABLE IF NOT EXISTS kbRules (
     FOREIGN KEY (k_guild_id) REFERENCES kbGuild(guild_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS kbInsights (
+    id SERIAL PRIMARY KEY,
+    k_guild_id TEXT NOT NULL,
+    k_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    k_left INTEGER NOT NULL DEFAULT 0,
+    k_joined INTEGER NOT NULL DEFAULT 0,
+    UNIQUE (k_date, k_guild_id)
+);
+
 INSERT INTO kbGuild (
-    guild_id, max_warning_points, rules_channel
+    guild_id, max_warning_points, rules_channel, prefix
 ) VALUES (
-    '503024525076725771', 20, '688943609348882456'
-) ON CONFLICT DO NOTHING;
-
-INSERT INTO kbWarns (
-    k_guild_id, k_user_id, k_id
-) VALUES (
-    '503024525076725771', '261575834559709184', 1
-) ON CONFLICT DO NOTHING;
-
-INSERT INTO kbWarns (
-    k_guild_id, k_user_id, k_points, k_id
-) VALUES (
-    '503024525076725771', '261575834559709184', 4, 2
-) ON CONFLICT DO NOTHING;
-
-INSERT INTO kbRules (
-    k_guild_id, rule, rule_id
-) VALUES (
-    '503024525076725771', 'Do not be rude, please <3', 1
+    '503024525076725771', 20, '688943609348882456', '!!'
 ) ON CONFLICT DO NOTHING;

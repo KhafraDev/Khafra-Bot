@@ -1,10 +1,18 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
-import { Insights } from '../../../lib/types/Collections';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { table } from '../../../lib/Utility/CLITable.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+import { table } from '../../../lib/Utility/CLITable.js';
+import { formatDate } from '../../../lib/Utility/Date.js';
+
+interface Insights {
+    k_date: Date
+    k_left: number 
+    k_joined: number
+}
+
+const TWO_WEEKS = 8.64e7 * 14;
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -28,25 +36,30 @@ export class kCommand extends Command {
             return this.Embed.missing_perms(true);
         }
 
-        const client = await pool.insights.connect();
-        const collection = client.db('khafrabot').collection('insights');
+        const { rows } = await pool.query<Insights>(`
+            WITH removed AS (
+                DELETE FROM kbInsights
+                WHERE k_date < CURRENT_DATE - 14 AND k_guild_id = $1::text
+            )
 
-        const guild = await collection.findOne<Insights>({ id: message.guild.id });
+            SELECT k_date, k_left, k_joined
+            FROM kbInsights
+            WHERE k_guild_id = $1::text;
+        `, [message.guild.id]);
 
-        if (!guild || Object.keys(guild?.daily ?? {}).length < 2) {
-            return this.Embed.fail('No insights available - yet!');
-        }
+        if (rows.length === 0)
+            return this.Embed.fail(`No insights available within the last 14 days.`);
 
-        const dates = Object.keys(guild.daily)
-            .slice(-14)
-            .reverse();
+        const date = new Date();
+        const now = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+        const r = rows.filter(r => (now - r.k_date.getTime()) <= TWO_WEEKS);
 
         const t = table(
             [ 'Dates', 'Joins', 'Leaves' ],
             [
-                dates,
-                dates.map(d => `${guild.daily[d].joined ?? 0}`),
-                dates.map(d => `${guild.daily[d].left ?? 0}`)
+                r.map(row => formatDate('MMMM Do, YYYY', row.k_date)),
+                r.map(row => row.k_joined.toLocaleString(message.guild.preferredLocale)),
+                r.map(row => row.k_left.toLocaleString(message.guild.preferredLocale))
             ]
         );
 

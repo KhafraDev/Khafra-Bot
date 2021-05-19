@@ -1,8 +1,6 @@
 import { Event } from '../Structures/Event.js';
 import { GuildMember, Channel, Permissions } from 'discord.js';
-import { pool } from '../Structures/Database/Mongo.js';
-import { pool as _pool } from '../Structures/Database/Postgres.js';
-import { formatDate } from '../lib/Utility/Date.js';
+import { pool } from '../Structures/Database/Postgres.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
@@ -19,21 +17,17 @@ export class kEvent extends Event {
     name = 'guildMemberRemove' as const;
 
     async init(member: GuildMember) {
-        const date = formatDate('MM-DD-YYYY', new Date());
-        const client = await pool.insights.connect();
-        
-        const insightsCollection = client.db('khafrabot').collection('insights');   
-            
-        await insightsCollection.updateOne(
-            { id: member.guild.id },
-            { $inc: { 
-                [`daily.${date}.total`]: -1,
-                [`daily.${date}.left`]: 1
-            } },
-            { upsert: true }
-        );
+        await pool.query(`
+            INSERT INTO kbInsights (
+                k_guild_id, k_left
+            ) VALUES (
+                $1::text, 1::integer
+            ) ON CONFLICT (k_guild_id, k_date) DO UPDATE SET
+                k_left = kbInsights.k_left + 1
+                WHERE kbInsights.k_guild_id = $1::text;
+        `, [member.guild.id]);
 
-        const { rows } = await _pool.query<{ welcome_channel: string }>(`
+        const { rows } = await pool.query<{ welcome_channel: string }>(`
             SELECT welcome_channel
             FROM kbGuild
             WHERE guild_id = $1::text

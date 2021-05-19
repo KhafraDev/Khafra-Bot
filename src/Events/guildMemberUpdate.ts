@@ -19,6 +19,8 @@ export class kEvent extends Event {
     async init(oldMember: GuildMember, newMember: GuildMember) {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
         const premiumRole = oldMember.roles.premiumSubscriberRole;
+        if (!premiumRole) return;
+        
         const oldHas = oldMember.roles.cache.has(premiumRole.id);
         const newHas = newMember.roles.cache.has(premiumRole.id);
 
