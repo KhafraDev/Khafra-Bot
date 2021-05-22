@@ -31,8 +31,6 @@ export class kCommand extends Command {
         if (!cache.has(args.join(' ').toLowerCase()))
             return this.Embed.fail(`
             No cryptocurrency with that name or ID was found!
-
-            The API used does not yet support this currency.
             `);
 
         const currency = cache.get(args.join(' ').toLowerCase());
