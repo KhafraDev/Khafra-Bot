@@ -1,8 +1,32 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, MessageAttachment, Permissions } from 'discord.js';
+import { Channel, Message, MessageAttachment, Permissions } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { isText, isVoice } from '../../../lib/types/Discord.js.js';
+import { isCategory } from '../../../lib/types/Discord.js.js';
+
+const propsToRemove = (c: Channel): readonly string[] => {
+    switch (c.type) {
+        case 'text':
+        case 'news':
+            return ['createdTimestamp', 'deleted', 'lastMessageID', 'lastPinTimestamp', 'messages'];
+        case 'voice':
+        case 'category':
+            return ['createdTimestamp', 'deleted'];
+        default:
+            return null;
+    }
+}
+
+const deleteProps = (c: Channel) => {
+    const toRemove = propsToRemove(c);
+    const json = c.toJSON() as Record<string, unknown>;
+
+    if (Array.isArray(toRemove))
+        for (const prop of toRemove)
+            delete json[prop];
+
+    return json;
+}
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -33,15 +57,12 @@ export class kCommand extends Command {
         // TODO(@KhafraDev): permissionOverwrites
         // TODO(@KhafraDev): pins
 
-        const obj = channel.toJSON() as Record<string, unknown>;
-        
-        // remove properties that are useless in a backup
-        if (isText(channel))
-            ['createdTimestamp', 'deleted', 'lastMessageID', 'lastPinTimestamp', 'messages']
-                .forEach(p => delete obj[p]);
-        else if (isVoice(channel))
-            ['createdTimestamp', 'deleted']
-                .forEach(p => delete obj[p]);
+        const obj = deleteProps(channel);
+               
+        if (isCategory(channel)) {
+            const children = channel.children.map(c => deleteProps(c));
+            Object.assign(obj, { children });
+        }
 
         return new MessageAttachment(
             Buffer.from(JSON.stringify(obj)), 
