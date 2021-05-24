@@ -1,29 +1,8 @@
-import { EmbedFieldData, Message } from 'discord.js';
-import { cache, start } from '../../lib/Packages/COVID.js';
-import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
+import { Message } from 'discord.js';
+import { fromCache, start } from '../../lib/Packages/COVID.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-
-enum Regions {
-    'us-central' = 'Austin',
-    'us-east' = 'New York',
-    'us-south' = 'Miami-Dade',
-    'us-west' = 'Sacramento',
-    'brazil' = 'Rio de Janeiro',
-    'europe' = 'Berlin', 
-    'hongkong' = 'Hong Kong',
-    'india' = 'Delhi',
-    'japan' = 'Tokyo',
-    'russia' = 'Moscow',
-    'singapore' = 'Singapore',
-    'southafrica' = 'South Africa',
-    'sydney' = 'New South Wales'
-}
-
-type GetFromArray<T extends Set<unknown>> = T extends Set<infer U>
-    ? U
-    : never
 
 const mw = once(start);
 
@@ -36,78 +15,80 @@ export class kCommand extends Command {
         ], {
             name: 'covid',
             folder: 'Utility',
-            args: [0]
+            args: [1]
         });
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { content }: Arguments) {
         await mw();
+
+        const locale = message.guild.preferredLocale;
         
-        const area = (
-            args.length === 0
-                ? Regions[message.guild.region as keyof typeof Regions]
-                : args.join(' ')
-        ).toLowerCase();
+        // providing a lone city name will no longer be valid,
+        // a state *must* also be provided from now on.
+        // for example, `!covid albany` won't work but `!covid albany, new york` should.
 
-        const item = [...cache].filter(place => 
-            place.Country_Region.toLowerCase() === area ||
-            place.Province_State?.toLowerCase() === area ||
-            place.Admin2?.toLowerCase() === area ||
-            place.Combined_Key.toLowerCase().includes(area)
-        );
+        const loc = fromCache(content);
+        if (loc === null || !loc.result)
+            return this.Embed.generic(this, `No location with that query was found.`);
 
-        const country = item.map(c => c.Country_Region);
-        const most = country
-            .sort((a,b) => country.filter(v => v === a).length - country.filter(v => v === b).length)
-            .pop();
-        const city = item.filter(c => 
-            c.Province_State?.toLowerCase() === area && 
-            c.Country_Region === most
-        );
+        if (loc.type === 'city') {
+            return this.Embed.success(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
+                .setTitle(`${loc.result.Combined_Key} COVID-19 Stats`)
+                .addField('**Active Cases:**', loc.result.Active?.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Total Cases:**', loc.result.Confirmed?.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true)
+                .addField('**Recovered:**', loc.result.Recovered?.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Deaths:**', loc.result.Deaths?.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true);     
+        } else if (loc.type === 'state,province') {
+            const active = loc.result.reduce((a, b) => a + Number(b.Active), 0) || 'N/A';
+            const confirmed = loc.result.reduce((a, b) => a + Number(b.Confirmed), 0) || 'N/A';
+            const recovered = loc.result.reduce((a, b) => a + Number(b.Recovered), 0) || 'N/A';
+            const deaths = loc.result.reduce((a, b) => a + Number(b.Deaths), 0) || 'N/A';
 
-        if (item.length === 0)
-            return this.Embed.fail(`No data for this location was supplied by \`\`JHU CSSE COVID-19 Data\`\`!`);
+            return this.Embed.success(`
+            Out of ${loc.result.length} cities/provinces in ${loc.result[0].Province_State}
 
-        let bestResult: GetFromArray<typeof cache> | null = null;
-
-        if (city.length > 0) {
-            const total = city.reduce((a, b) => {
-                Object.keys(a).forEach(k => a[k as keyof typeof a] += b[k as keyof typeof b] as number);
-                return a;
-            }, {
-                Confirmed: 0,
-                Recovered: 0,
-                Deaths: 0,
-                Active: 0,
-                People_Tested: 0
-            });
-
-            bestResult = { ...city[0], ...total };
+            [Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)
+            `)
+                .setTitle(`${loc.result[0].Province_State}, ${loc.result[0].Country_Region} COVID-19 Stats`)
+                .addField('**Active Cases:**', active.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Total Cases:**', confirmed.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true)
+                .addField('**Recovered:**', recovered.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Deaths:**', deaths.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true);  
         } else {
-            bestResult = item.slice(0, 20).sort((a, b) =>
-                compareTwoStrings(b.Combined_Key.toLowerCase(), area) - compareTwoStrings(a.Combined_Key.toLowerCase(), area)
-            ).shift()!;
+            if (loc.result.length === 1) {
+                return this.Embed.success(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
+                    .setTitle(`${loc.result[0].Combined_Key} COVID-19 Stats`)
+                    .addField('**Active Cases:**', loc.result[0].Active?.toLocaleString(locale) ?? 'N/A', true)
+                    .addField('**Total Cases:**', loc.result[0].Confirmed?.toLocaleString(locale) ?? 'N/A', true)
+                    .addField('\u200b', '\u200b', true)
+                    .addField('**Recovered:**', loc.result[0].Recovered?.toLocaleString(locale) ?? 'N/A', true)
+                    .addField('**Deaths:**', loc.result[0].Deaths?.toLocaleString(locale) ?? 'N/A', true)
+                    .addField('\u200b', '\u200b', true);  
+            }
+
+            const totalStates = new Set(loc.result.map(e => e.Province_State)).size;
+            const active = loc.result.reduce((a, b) => a + Number(b.Active), 0) || 'N/A';
+            const confirmed = loc.result.reduce((a, b) => a + Number(b.Confirmed), 0) || 'N/A';
+            const recovered = loc.result.reduce((a, b) => a + Number(b.Recovered), 0) || 'N/A';
+            const deaths = loc.result.reduce((a, b) => a + Number(b.Deaths), 0) || 'N/A';
+
+            return this.Embed.success(`
+            Out of ${totalStates} states/provinces in ${loc.result[0].Country_Region}
+
+            [Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)
+            `)
+                .setTitle(`${loc.result[0].Country_Region} COVID-19 Stats`)
+                .addField('**Active Cases:**', active.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Total Cases:**', confirmed.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true)
+                .addField('**Recovered:**', recovered.toLocaleString(locale) ?? 'N/A', true)
+                .addField('**Deaths:**', deaths.toLocaleString(locale) ?? 'N/A', true)
+                .addField('\u200b', '\u200b', true);  
         }
-
-        const fields: EmbedFieldData[] = [];
-        if (bestResult.Admin2 && city.length === 0)
-            fields.push({ name: `**City:**`, value: bestResult.Admin2 });
-        if (bestResult.Province_State) 
-            fields.push({ name: `**Province/State:**`, value: bestResult.Province_State });
-        
-        fields.push({ name: `**Country:**`, value: bestResult.Country_Region });
-        fields.push({ name: `**Total Cases:**`, value: bestResult.Confirmed.toLocaleString() });
-        fields.push({ name: `**Deaths:**`, value: bestResult.Deaths.toLocaleString() });
-        if (bestResult.Country_Region !== 'US') // https://github.com/CSSEGISandData/COVID-19/issues/3464
-            fields.push({ name: `**Recovered:**`, value: bestResult.Recovered.toLocaleString() });
-        fields.push({ name: `**Active:**`, value: bestResult.Active.toLocaleString() });
-
-        return this.Embed.success()
-            .setTitle(`Daily COVID-19 stats reported in ${city.length > 0 ? bestResult.Province_State : bestResult.Combined_Key}`)
-            .addFields(fields.map(f => ({ ...f, inline: true })))
-            .setTimestamp(new Date(bestResult.Last_Update))
-            .setDescription(`
-            Data supplied by \`\`JHU CSSE COVID-19 Data\`\` (https://github.com/CSSEGISandData/COVID-19)`
-            );
     }
 }
