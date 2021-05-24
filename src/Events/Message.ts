@@ -14,6 +14,7 @@ import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild } from '../lib/types/Warnings.js';
+import { client } from '../Structures/Database/Redis.js';
 
 const defaultSettings: Partial<kGuild> = {
     prefix: config.prefix,
@@ -40,13 +41,22 @@ export class kEvent extends Event {
         if (isDM(message.channel))
             guild = defaultSettings;
         else {
-            const { rows } = await pool.query<kGuild>(`
-                SELECT * 
-                FROM kbGuild
-                WHERE guild_id = $1::text
-            `, [message.guild.id]);
+            const exists = await client.message.exists(message.guild.id) as 0 | 1;
+            if (exists === 1) {
+                const row = await client.message.get(message.guild.id);
+                guild = Object.assign({ ...defaultSettings }, JSON.parse(row));
+            } else {
+                const { rows } = await pool.query<kGuild>(`
+                    SELECT * 
+                    FROM kbGuild
+                    WHERE guild_id = $1::text
+                    LIMIT 1;
+                `, [message.guild.id]);
 
-            guild = Object.assign({ ...defaultSettings }, rows.shift());
+                await client.message.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+
+                guild = Object.assign({ ...defaultSettings }, rows.shift());
+            }
         }
 
         // matches the start of the string with the prefix defined above

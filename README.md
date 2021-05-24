@@ -46,7 +46,7 @@ All values are required, as there is no guarantee that there is error handling f
 
 4. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-5. Install MongoDB and Postgres. Google instructions for your operating system.
+5. Install Postgres and Redis. For Windows development, setup WSL and install redis from there.
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
 7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
 8. Run the bot:
