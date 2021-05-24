@@ -5,6 +5,7 @@ import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { pool } from '../Structures/Database/Postgres.js';
+import { client } from '../Structures/Database/Redis.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -28,23 +29,30 @@ export class kEvent extends Event {
         if (oldHas === newHas)
             return;
 
-        const { rows: guilds } = await pool.query<{ welcome_channel: string }>(`
-            SELECT welcome_channel
-            FROM kbGuild
-            WHERE guild_id = $1::text;
-        `, [oldMember.guild.id]);
+        const cached = await client.message.exists(oldMember.guild.id) === 1;
+        let item: { welcome_channel: string } | null = null
 
-        if (guilds.length === 0) return;
-        if (guilds[0].welcome_channel === null) return;
+        if (cached) {
+            item = JSON.parse(await client.message.get(oldMember.guild.id));
+        } else {
+            const { rows } = await pool.query<{ welcome_channel: string }>(`
+                SELECT welcome_channel
+                FROM kbGuild
+                WHERE guild_id = $1::text
+                LIMIT 1;
+            `, [oldMember.guild.id]);
+            
+            item = rows[0];
+        }
 
-        const { welcome_channel } = guilds.shift()!;
+        if (!item || item.welcome_channel === null) return;
 
         let channel: Channel;
-        if (oldMember.guild.channels.cache.has(welcome_channel)) {
-            channel = oldMember.guild.channels.cache.get(welcome_channel)!;
+        if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
+            channel = oldMember.guild.channels.cache.get(item.welcome_channel)!;
         } else {
             try {
-                channel = await oldMember.guild.me.client.channels.fetch(welcome_channel);
+                channel = await oldMember.guild.me.client.channels.fetch(item.welcome_channel);
             } catch {
                 return;
             }

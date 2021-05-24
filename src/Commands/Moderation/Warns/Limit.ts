@@ -5,6 +5,8 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
+import { client } from '../../../Structures/Database/Redis.js';
+import { kGuild } from '../../../lib/types/Warnings.js';
 
 const range = Range(0, 32767, true); // small int
 
@@ -28,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
@@ -41,6 +43,11 @@ export class kCommand extends Command {
             SET max_warning_points = $1::smallint
             WHERE guild_id = $2::text;
         `, [newAmount, message.guild.id]);
+
+        await client.message.set(message.guild.id, JSON.stringify({
+            ...settings,
+            max_warning_points: newAmount
+        }));
 
         return this.Embed.success(`Set the max warning points limit to \`\`${newAmount.toLocaleString()}\`\`!`);
     }

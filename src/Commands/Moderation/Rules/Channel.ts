@@ -5,6 +5,8 @@ import { isText } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { client } from '../../../Structures/Database/Redis.js';
+import { kGuild } from '../../../lib/types/Warnings.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -25,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments) {
+    async init(message: Message, _args: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
 
@@ -39,6 +41,11 @@ export class kCommand extends Command {
             SET rules_channel = $1::text
             WHERE kbGuild.guild_id = $2::text;
         `, [channel.id, message.guild.id]);
+
+        await client.message.set(message.guild.id, JSON.stringify({
+            ...settings,
+            rules_channel: channel.id
+        }));
 
         return this.Embed.success(`
         The rules will now be posted to ${channel}!

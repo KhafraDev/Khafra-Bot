@@ -9,6 +9,7 @@ import { bans } from '../lib/Cache/Bans.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
 import { Logger } from '../Structures/Logger.js';
+import { client } from '../Structures/Database/Redis.js';
 
 const guildBanAddLogger = new Logger('guildBanAdd');
 
@@ -18,20 +19,29 @@ export class kEvent extends Event {
 
     async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
-        const { rows } = await pool.query<kGuild>(`
-            SELECT mod_log_channel FROM kbGuild
-            WHERE guild_id = $1::text
-            LIMIT 1;
-        `, [guild.id]);
+        const cached = await client.message.exists(guild.id) === 1;
+        let item: kGuild | null = null
+
+        if (cached) {
+            item = JSON.parse(await client.message.get(guild.id));
+        } else {
+            const { rows } = await pool.query<kGuild>(`
+                SELECT mod_log_channel FROM kbGuild
+                WHERE guild_id = $1::text
+                LIMIT 1;
+            `, [guild.id]);
+
+            item = rows[0];
+        }
 
         if (
-            rows.length === 0 || // precaution
-            rows[0].mod_log_channel === null || // default value, not set
-            !guild.channels.cache.has(rows[0].mod_log_channel) // channel isn't cached
+            !item || // precaution
+            item.mod_log_channel === null || // default value, not set
+            !guild.channels.cache.has(item.mod_log_channel) // channel isn't cached
         ) 
             return bans.delete(key);
 
-        const channel = guild.channels.cache.get(rows[0].mod_log_channel);
+        const channel = guild.channels.cache.get(item.mod_log_channel);
         if (!isText(channel))
             return bans.delete(key);
 

@@ -1,10 +1,12 @@
-import { Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
+import { kGuild } from '../../lib/types/Warnings.js';
+import { client } from '../../Structures/Database/Redis.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -30,7 +32,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message, _: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } 
@@ -50,6 +52,11 @@ export class kCommand extends Command {
             SET welcome_channel = $1::text
             WHERE guild_id = $2::text;
         `, [channel.id, message.guild.id]);
+
+        await client.message.set(message.guild.id, JSON.stringify({
+            ...settings,
+            welcome_channel: channel.id
+        }));
         
         return this.Embed.success(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!

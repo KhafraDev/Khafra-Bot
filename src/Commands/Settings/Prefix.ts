@@ -3,6 +3,8 @@ import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { client } from '../../Structures/Database/Redis.js';
+import { kGuild } from '../../lib/types/Warnings.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -22,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
         else if (args[0].length > 100)
@@ -33,6 +35,11 @@ export class kCommand extends Command {
             SET prefix = $1::text
             WHERE guild_id = $2::text;
         `, [args[0]!, message.guild.id]);
+
+        await client.message.set(message.guild.id, JSON.stringify({
+            ...settings,
+            prefix: args[0]!
+        }));
 
         return this.Embed.success(`Updated the guild's prefix to \`\`${args[0]}\`\``);
     }
