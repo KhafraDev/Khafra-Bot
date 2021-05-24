@@ -43,7 +43,8 @@ export class kCommand extends Command {
                 SELECT rule FROM kbRules
                 WHERE 
                     rule_id = $1::smallint AND
-                    k_guild_id = $2::text;
+                    k_guild_id = $2::text
+                LIMIT 1;
             `, [id, message.guild.id]);
 
             if (rows.length === 0)

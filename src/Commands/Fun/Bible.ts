@@ -128,7 +128,7 @@ export class kCommand extends Command {
                     book = $1 AND
                     chapter = $2 AND
                     verse BETWEEN $3 AND $4
-                ;
+                LIMIT 10;
             `, [upperCase(bookAcronym.pop()), chapter, ...versesDiff]);
 
             if (rows.length === 0)

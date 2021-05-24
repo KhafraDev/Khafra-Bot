@@ -49,6 +49,7 @@ export class kCommand extends Command {
                 ARRAY_AGG(k_points) points
             FROM kbWarns
             WHERE kbWarns.k_guild_id = $1::text AND kbWarns.k_user_id = $2::text
+            LIMIT 1;
         `, [message.guild.id, user.id]);
 
         if (rows.length === 0 || rows[0].dates.length === 0 || rows[0].ids.length === 0)
