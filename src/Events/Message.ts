@@ -53,7 +53,7 @@ export class kEvent extends Event {
                     LIMIT 1;
                 `, [message.guild.id]);
 
-                await client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
                 guild = Object.assign({ ...defaultSettings }, rows.shift());
             }
