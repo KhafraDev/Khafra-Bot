@@ -13,7 +13,6 @@ export class kEvent extends Event {
             WHERE guild_id = $1::text;
         `, [guild.id]);
 
-        // TODO(@KhafraDev): 95% sure this will error.
         await pool.query(`
             DELETE FROM kbWarns
             WHERE k_guild_id = $1::text;

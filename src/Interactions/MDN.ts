@@ -4,9 +4,9 @@ import { client } from '../index.js';
 import { stripIndents } from '../lib/Utility/Template.js';
 import { RegisterInteraction } from '../Structures/Decorator.js';
 import { Interactions } from '../Structures/Interaction.js';
+import config from '../../config.json';
 
-// TODO(@KhafraDev): read this id from a config file
-const emoji = client.emojis.cache.get('828993033306505218');
+const emoji = client.emojis.cache.get(config.interactions.mdn);
 
 @RegisterInteraction
 export class kInteraction extends Interactions {
@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
         const document = result.documents[0]!;
 
         return stripIndents`    
-        ${emoji} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
+        ${emoji ?? 'MDN'} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
         \`\`${document.summary.replace(/\s+/g, ' ')}\`\`
         `;
     }
