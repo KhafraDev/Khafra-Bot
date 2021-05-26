@@ -25,8 +25,6 @@ Excerpted from [here](https://discord.com/channels/677271830838640680/7058945254
 2. Install pm2 globally using ``npm i -g pm2``.
 3. Create a ``.env`` file in the root directory and fill in the required values.
 ```
-DB_USER=[OPTIONAL]
-DB_PASSWORD=[OPTIONAL]
 TOKEN=[Discord Token]
 SPOTIFY_ID=[Spotify App ID]
 SPOTIFY_SECRET=[Spotify Secret]
@@ -40,6 +38,8 @@ TWITTER_API=
 TWITTER_API_SECRET=
 POSTGRES_USER=
 POSTGRES_PASS=
+REDIS_USER=
+REDIS_PASS=
 TMDB=
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
@@ -49,6 +49,8 @@ All values are required, as there is no guarantee that there is error handling f
 5. Install Postgres and Redis. For Windows development, setup WSL and install redis from there.
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
 7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
+8. Open redis-cli and run 
+    - `ACL SETUSER [username] on >[password] allkeys allcommands`
 8. Run the bot:
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``

@@ -44,7 +44,7 @@ export class kCommand extends Command {
             WHERE guild_id = $2::text;
         `, [newAmount, message.guild.id]);
 
-        await client.message.set(message.guild.id, JSON.stringify({
+        await client.set(message.guild.id, JSON.stringify({
             ...settings,
             max_warning_points: newAmount
         }));

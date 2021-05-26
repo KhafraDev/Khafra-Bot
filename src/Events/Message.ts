@@ -41,9 +41,9 @@ export class kEvent extends Event {
         if (isDM(message.channel))
             guild = defaultSettings;
         else {
-            const exists = await client.message.exists(message.guild.id) as 0 | 1;
+            const exists = await client.exists(message.guild.id) as 0 | 1;
             if (exists === 1) {
-                const row = await client.message.get(message.guild.id);
+                const row = await client.get(message.guild.id);
                 guild = Object.assign({ ...defaultSettings }, JSON.parse(row));
             } else {
                 const { rows } = await pool.query<kGuild>(`
@@ -53,7 +53,7 @@ export class kEvent extends Event {
                     LIMIT 1;
                 `, [message.guild.id]);
 
-                await client.message.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                await client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
                 guild = Object.assign({ ...defaultSettings }, rows.shift());
             }

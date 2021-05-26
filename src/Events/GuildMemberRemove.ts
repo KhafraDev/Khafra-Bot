@@ -28,11 +28,11 @@ export class kEvent extends Event {
                 WHERE kbInsights.k_guild_id = $1::text;
         `, [member.guild.id]);
 
-        const cached = await client.message.exists(member.guild.id) === 1;
+        const cached = await client.exists(member.guild.id) === 1;
         let item: { welcome_channel: string } | null = null
 
         if (cached) {
-            item = JSON.parse(await client.message.get(member.guild.id));
+            item = JSON.parse(await client.get(member.guild.id));
         } else {
             const { rows } = await pool.query<{ welcome_channel: string }>(`
                 SELECT welcome_channel

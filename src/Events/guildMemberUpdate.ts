@@ -29,11 +29,11 @@ export class kEvent extends Event {
         if (oldHas === newHas)
             return;
 
-        const cached = await client.message.exists(oldMember.guild.id) === 1;
+        const cached = await client.exists(oldMember.guild.id) === 1;
         let item: { welcome_channel: string } | null = null
 
         if (cached) {
-            item = JSON.parse(await client.message.get(oldMember.guild.id));
+            item = JSON.parse(await client.get(oldMember.guild.id));
         } else {
             const { rows } = await pool.query<{ welcome_channel: string }>(`
                 SELECT welcome_channel

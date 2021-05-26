@@ -53,7 +53,7 @@ export class kCommand extends Command {
             WHERE guild_id = $2::text;
         `, [channel.id, message.guild.id]);
 
-        await client.message.set(message.guild.id, JSON.stringify({
+        await client.set(message.guild.id, JSON.stringify({
             ...settings,
             welcome_channel: channel.id
         }));

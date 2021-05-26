@@ -19,11 +19,11 @@ export class kEvent extends Event {
 
     async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
-        const cached = await client.message.exists(guild.id) === 1;
+        const cached = await client.exists(guild.id) === 1;
         let item: kGuild | null = null
 
         if (cached) {
-            item = JSON.parse(await client.message.get(guild.id));
+            item = JSON.parse(await client.get(guild.id));
         } else {
             const { rows } = await pool.query<kGuild>(`
                 SELECT mod_log_channel FROM kbGuild

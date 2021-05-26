@@ -13,8 +13,11 @@ type RedisExists<R = unknown> = OverloadedCommand<string, number, R>;
 type RedisHSet<R = unknown> = OverloadedSetCommand<string, number, R>;
 type RedisHGet<R = unknown> = (key: string, field: string) => R;
 
-const messageClient = redis.createClient();
-const commandClient = redis.createClient();
+const user = process.env.REDIS_USER ?? '';
+const pass = process.env.REDIS_PASS ? `:${process.env.REDIS_PASS}@` : '';
+const connect = `redis://${user}${pass}localhost:6379`;
+
+const messageClient = redis.createClient(`${connect}/1`);
 
 /**
  * Promisifies some redisclient methods, retaining *good enough* typings.
@@ -31,7 +34,4 @@ const Promisify = (client: RedisClient) => {
     return { get, set, exists, hset, hget, hgetAll };
 }
 
-export const client = {
-    message: { ...Promisify(messageClient) },
-    commands: { ...Promisify(commandClient) }
-}
+export const client = Promisify(messageClient);
