@@ -32,6 +32,7 @@ export const RegisterInteraction = <T extends new (...args: unknown[]) => Intera
     const interaction = new InteractionObject();
 
     // TODO(@KhafraDev): set this as a global slash command. 
-    client.guilds.cache.get('503024525076725771').commands.create(interaction.data);
+    client.guilds.cache.get('503024525076725771').commands.create(interaction.data)
+        .catch(e => console.log(e));
     KhafraClient.Interactions.set(interaction.data.name, interaction);
 }

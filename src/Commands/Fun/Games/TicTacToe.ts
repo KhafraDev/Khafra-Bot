@@ -1,7 +1,8 @@
 import { GuildMember, Message } from 'discord.js';
 import { TicTacToe } from '../../../lib/Packages/TicTacToe.js';
 import { Embed } from '../../../lib/Utility/Constants/Embeds.js';
-import { Command } from '../../../Structures/Command.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const getEmbed = (game: TicTacToe, [X, Op]: [GuildMember, GuildMember]) => {
@@ -29,15 +30,18 @@ export class kCommand extends Command {
 			{
                 name: 'tictactoe',
                 folder: 'Games',
-                args: [0, 0],
+                args: [0, 1],
                 ratelimit: 30
             }
         );
     }
 
-    async init(message: Message) {
-        // TODO(@KhafraDev): play against another guild member
-        const opponent = message.guild.me;
+    async init(message: Message, { args }: Arguments) {
+        const member = args.length === 0 
+            ? message.guild.me 
+            : await getMentions(message, 'members');
+            
+        const opponent = member ?? message.guild.me;
         const game = new TicTacToe();
 
         const m = await message.reply(getEmbed(game, [message.member, opponent]));
