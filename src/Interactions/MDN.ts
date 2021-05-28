@@ -1,4 +1,4 @@
-import { ApplicationCommandOption, CommandInteraction } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { fetchMDN } from 'search-mdn';
 import { client } from '../index.js';
 import { stripIndents } from '../lib/Utility/Template.js';
@@ -10,19 +10,20 @@ const emoji = client.emojis.cache.get(config.interactions.mdn);
 
 @RegisterInteraction
 export class kInteraction extends Interactions {
-    data: ApplicationCommandOption = {
-        type: 'STRING',
-        name: 'mdn',
-        description: 'Searches MDN and returns the top result!',
-        options: [{
-            name: 'input',
+    constructor() {
+        super({
             type: 'STRING',
-            description: 'Your search query on MDN',
-            required: true
-        }]
-    };
-    options = {
-        defer: true
+            name: 'mdn',
+            description: 'Searches MDN and returns the top result!',
+            options: [{
+                name: 'input',
+                type: 'STRING',
+                description: 'Your search query on MDN',
+                required: true
+            }]
+        }, {
+            defer: true
+        });
     }
 
     async init(interaction: CommandInteraction) {
