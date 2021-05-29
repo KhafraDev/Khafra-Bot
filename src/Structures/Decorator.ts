@@ -32,7 +32,9 @@ export const RegisterInteraction = <T extends new (...args: unknown[]) => Intera
     const interaction = new InteractionObject();
 
     // TODO(@KhafraDev): set this as a global slash command. 
+    // There isn't a better way to check if a bot can make a slash command "yet".
+    // https://discord.com/channels/222078108977594368/824410868505903114/848343604308475934
     client.guilds.cache.get('503024525076725771').commands.create(interaction.data)
-        .catch(e => console.log(e));
+        .catch(() => {});
     KhafraClient.Interactions.set(interaction.data.name, interaction);
 }
