@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS kbPocket;
-
 CREATE TABLE IF NOT EXISTS kbGarrison (
     comic_key SERIAL PRIMARY KEY,
     href TEXT UNIQUE NOT NULL,
