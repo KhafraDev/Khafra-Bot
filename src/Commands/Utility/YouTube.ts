@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User, MessageEmbed } from 'discord.js';
-import { YouTube, YouTubeSearchResults } from '../../lib/Backend/YouTube.js';
+import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const results = await YouTube(args);
 
         if ('error' in results) {

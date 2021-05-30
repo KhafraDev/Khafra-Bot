@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.newyorker.com/feed/everything',
+    main: 'https://www.newyorker.com/',
+    command: ['newyorker', 'thenewyorker'],
+    author: ['The New Yorker', 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png']
+} as const;
 
 interface ITheNewYorker {
     title: string
@@ -18,37 +26,37 @@ interface ITheNewYorker {
 }
 
 const rss = new RSSReader<ITheNewYorker>();
-rss.cache('https://www.huffpost.com/section/front-page/feed');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.newyorker.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'newyorker',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'thenewyorker' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The New Yorker', 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

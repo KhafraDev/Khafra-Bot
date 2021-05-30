@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { trumpQuote } from '../../lib/Backend/TronaldDump.js';
+import { trumpQuote } from '../../lib/Packages/TronaldDump.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

@@ -6,10 +6,21 @@ import {
     MessageEmbed
 } from 'discord.js';
 import { Logger } from './Logger.js';
-import { GuildSettings } from '../lib/types/Collections.js';
 import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { kGuild } from '../lib/types/Warnings.js';
+
+export interface Arguments {
+    /** Default arguments, removes formatting (new lines, tabs, etc.) */
+    args: string[]
+    /** Command used. */
+    commandName: string
+    /** Text unformatted, removes prefix+command with leading whitespace. */
+    content: string
+    /** Prefix used */
+    prefix: string
+}
 
 interface ICommand {
     logger: Logger
@@ -19,13 +30,14 @@ interface ICommand {
         name: string
         folder: string
         args: [number, number?]
+        /** Ratelimit in seconds, defaults to 5 */
+        ratelimit?: number
         permissions?: PermissionResolvable
         aliases?: string[]
         guildOnly?: boolean
         ownerOnly?: boolean
         errors?: Record<string, string>
     }
-    middleware?: (() => unknown)[]
 }
 
 type Reply = ReturnType<Message['reply']>;
@@ -35,7 +47,6 @@ type Promisify<T> = T extends Promise<infer U>
 
 export abstract class Command implements ICommand {
     logger = new Logger('Command');
-    middleware: ICommand['middleware'] = [];
     errors = Errors;
 
     /*** Description and example usage. */
@@ -57,10 +68,11 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];
-        Object.assign({ ...this.errors }, this.settings.errors);
+        this.settings.ratelimit ??= 5;
+        this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
-    abstract init (message?: Message, args?: string[], settings?: GuildSettings | null): 
+    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
         Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
 
     isBotOwner (id: Snowflake) {

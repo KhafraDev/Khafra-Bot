@@ -11,7 +11,8 @@ export class kCommand extends Command {
         ], {
             name: 'about',
             folder: 'Bot',
-            args: [0, 0]
+            args: [0, 0],
+            ratelimit: 3
         });
     }
 

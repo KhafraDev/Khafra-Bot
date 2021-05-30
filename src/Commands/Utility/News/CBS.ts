@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.cbsnews.com/latest/rss/world',
+    main: 'https://www.cbsnews.com/',
+    command: ['cbs', 'cbsnews'],
+    author: ['CBS', 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png']
+} as const;
 
 interface IABCNews {
     title: string
@@ -12,37 +20,37 @@ interface IABCNews {
 }
 
 const rss = new RSSReader<IABCNews>();
-rss.cache('https://www.cbsnews.com/latest/rss/world');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://cbsnews.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'cbs',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'cbsnews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('CBS', 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

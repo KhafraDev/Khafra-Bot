@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.independent.co.uk/news/world/rss',
+    main: 'https://independent.co.uk',
+    command: ['independent'],
+    author: ['Independent', 'https://www.calculuscapital.com/cms/media/Independent_logo_logotype.png']
+} as const;
 
 interface IIndependent {
     title: string
@@ -16,36 +24,37 @@ interface IIndependent {
 }
 
 const rss = new RSSReader<IIndependent>();
-rss.cache('https://www.independent.co.uk/news/world/rss');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://independent.co.uk'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'independent',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Independent', 'https://www.calculuscapital.com/cms/media/Independent_logo_logotype.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

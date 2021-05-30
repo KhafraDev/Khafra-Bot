@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.e-ir.info/feed/',
+    main: 'https://e-ir.info',
+    command: ['eir', 'e-ir'],
+    author: ['EIR', 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png']
+} as const;
 
 interface IEIRinfo {
     title: string
@@ -17,37 +25,37 @@ interface IEIRinfo {
 }
 
 const rss = new RSSReader<IEIRinfo>();
-rss.cache('https://www.e-ir.info/feed/');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://e-ir.info'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'eir',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'e-ir', 'e-irinfo' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('E-IR', 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

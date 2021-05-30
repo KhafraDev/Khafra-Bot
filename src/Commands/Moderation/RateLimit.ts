@@ -1,17 +1,14 @@
-import { Command } from '../../Structures/Command.js';
-import { 
-    Message, 
-    TextChannel,
-    Permissions
-} from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
 import ms from 'ms';
-import { GuildSettings } from '../../lib/types/Collections.js';
-import { isExplicitText } from '../../lib/types/Discord.js.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { plural } from '../../lib/Utility/String.js';
+import { kGuild } from '../../lib/types/Warnings.js';
 
-const MAX = ms('6h');
+const MAX_SECS = ms('6h') / 1000;
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -21,6 +18,8 @@ export class kCommand extends Command {
                 'Sets ratelimit in seconds.',
                 '#general 6h',
                 '543940496683434014 15s',
+                '#general 0',
+                '5s'
             ],
 			{
                 name: 'ratelimit', 
@@ -33,43 +32,47 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
-        const text = await getMentions(message, 'channels') ?? message.channel;
-        const secs = (args.length === 2 ? ms(args[1]) : ms('0')) / 1000;
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
+        // if the channel is mentioned as the first argument
+        const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
+        const channel = channelFirst 
+            ? (await getMentions(message, 'channels') ?? message.channel)
+            : message.channel;
 
-        if (!isExplicitText(text)) {
-            return this.Embed.generic(this, 'No text channel found!');
-        } else if (!hasPerms(text, message.guild.me, this.permissions)) {
-            // maybe better fail message?
-            return this.Embed.missing_perms();
-        } else if (isNaN(secs) || secs > MAX) {
-            return this.Embed.fail('Invalid number of seconds (max is 6H)!');
-        }
+        // if a channel is mentioned in the first argument, 
+        // seconds must be the second argument + vice versa.
+        // by default, reset the ratelimit (0s).
+        const secs = ms((channelFirst ? args[1] : args[0]) ?? '0s') / 1000;
+
+        if (typeof secs !== 'number' || secs < 0 || secs > MAX_SECS)
+            return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
+        // although there are docs for NewsChannel#setRateLimitPerUser, news channels
+        // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
+        if (!isExplicitText(channel))
+            return this.Embed.fail('Rate-limits can only be set in text channels!');
 
         try {
-            await text.setRateLimitPerUser(
-                secs,
-                `Khafra-Bot: ${secs}s. rate-limit set by ${message.author.tag} (${message.author.id})`
+            await channel.setRateLimitPerUser(secs, 
+                `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
             );
         } catch {
-            return this.Embed.fail(`
-            An error occurred setting a slow-mode!
-            `);
+            return this.Embed.fail('An error prevented the rate-limit from being set.');
         }
 
-        await message.reply(this.Embed.success(`
-        Slow-mode set in ${text} for ${secs} seconds!
+        message.reply(this.Embed.success(`
+        Slow-mode set in ${channel} for ${secs} second${plural(secs)}!
         `));
 
-        if (typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
+        if (settings.mod_log_channel !== null) {
+            const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
             return channel.send(this.Embed.success(`
-            **Channel:** ${text} (${text.id}).
+            **Channel:** ${channel} (${channel.id}, ${channel.type}).
             **Staff:** ${message.member}
+            **Duration:** ${secs} second${plural(secs)}
             `).setTitle('Channel Rate-Limited'));
         }
     }

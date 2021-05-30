@@ -19,13 +19,14 @@ const tableChars = {
     right: ' │',
     middle: ' │ ',
 } as const;
+
+const hasOwnProperty = Object.prototype.hasOwnProperty;
   
 const renderRow = (row: string[], columnWidths: number[]) => {
 	let out = tableChars.left;
 	for (let i = 0; i < row.length; i++) {
 		const cell = row[i];
-		const len = cell.length;
-		const needed = (columnWidths[i] - len) / 2;
+		const needed = (columnWidths[i] - cell.length) / 2;
 		// round(needed) + ceil(needed) will always add up to the amount
 		// of spaces we need while also left justifying the output.
 		out += `${' '.repeat(needed)}${cell}${' '.repeat(Math.ceil(needed))}`;
@@ -56,20 +57,20 @@ const renderRow = (row: string[], columnWidths: number[]) => {
 export const table = (head: string[], columns: string[][]) => {
     const rows: string[][] = [];
     const columnWidths = head.map(h => h.length);
-    const longestColumn = columns.reduce((n, a) => Math.max(n, a.length), 0);
+    const longestColumn = Math.max(...columns.map(h => h.length));
 	
     for (let i = 0; i < head.length; i++) {
         const column = columns[i];
         for (let j = 0; j < longestColumn; j++) {
             rows[j] ??= [];
     
-            const value = rows[j][i] = Object.prototype.hasOwnProperty.call(column, j) ? column[j] : '';
+            const value = rows[j][i] = hasOwnProperty.call(column, j) ? column[j] : '';
             const width = columnWidths[i] || 0;
             columnWidths[i] = Math.max(width, value.length);
         }
     }
   
-    const divider = columnWidths.map((i: number) => tableChars.middleMiddle.repeat(i + 2));
+    const divider = columnWidths.map(i => tableChars.middleMiddle.repeat(i + 2));
   
     let result = `${tableChars.topLeft}${divider.join(tableChars.topMiddle)}` +
                  `${tableChars.topRight}\n${renderRow(head, columnWidths)}\n` +

@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { langs, translate } from '../../lib/Backend/Translate.js';
+import { langs, translate } from '../../lib/Packages/Translate.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const to = langs.includes(args[0].toLowerCase()) ? args[0] : 'en';
         const from = langs.includes(args[1].toLowerCase()) ? args[1] : 'auto';
 

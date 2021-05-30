@@ -1,123 +1,121 @@
-import { Command } from '../../../Structures/Command.js';
-import { Message, GuildChannel, Permissions } from 'discord.js';
-import { pool } from '../../../Structures/Database/Mongo.js';
-import { validSnowflake, getMentions } from '../../../lib/Utility/Mentions.js';
-import { GuildSettings } from '../../../lib/types/Collections.js';
-import { isValidNumber } from '../../../lib/Utility/Valid/Number.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Range } from '../../../lib/Utility/Range.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+
+const range = Range(0, 32767, true); // smallint
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Set the rules to the server.'
+                'Set the rules to the server, or get a rule with a known id.',
+                '', '69'
             ],
 			{
                 name: 'rules',
                 aliases: [ 'setrules', 'rule', 'ruleboard', 'rulesboard' ],
                 folder: 'Rules',
                 args: [0, 1],
-                guildOnly: true
+                guildOnly: true,
+                ratelimit: 60 * 1000 * 5
             }
         );
     }
 
-    async init(message: Message, args: string[], settings: GuildSettings) {
-        if (
-            !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)
-            || args.length === 1
+    async init(message: Message, { args }: Arguments) {
+        if ( // get existing rule with a given id
+            !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR) || 
+            args.length === 1
         ) {
-            const num = +args[0];
-            const rule = settings?.rules?.rules?.filter(r => r.index === num).shift();
-            if (!isValidNumber(+args[0]) || !rule) {
-                return this.Embed.fail(
-                    args.length === 1
-                    ? `Rule #${args[0]} doesn't exist!`
-                    : `You don't have permission to add rules!`
-                );
-            }
+            if (args.length === 0)
+                return this.Embed.fail(`You can't set the rules, so you have to provide a rule id to view.`);
 
-            return this.Embed.success(rule.rule).setTitle(`Rule ${rule.index}`);
-        } else if (settings && 'rules' in settings && settings.rules.rules?.length > 0) {
-            return this.Embed.fail(`
-            Rules already exist in this guild!
+            const id = Number(args[0]);
+            if (!validateNumber(id) || !range.isInRange(id))
+                return this.Embed.fail(`Try giving me an actual rule id this time.`);
 
-            Use \`\`clearrules\`\` (\`\`help clearrules\`\` for examples) to remove all rules.
-            Use \`\`addrule\`\` (\`\`help addrule\`\` for examples) to add a rule.
-            `);
+            const { rows } = await pool.query<{ rule: string }>(`
+                SELECT rule FROM kbRules
+                WHERE 
+                    rule_id = $1::smallint AND
+                    k_guild_id = $2::text
+                LIMIT 1;
+            `, [id, message.guild.id]);
+
+            if (rows.length === 0)
+                return this.Embed.fail(`No rule with that ID was found.`);
+
+            return this.Embed.success(`\`\`\`${rows[0].rule}\`\`\``)
+                .setTitle(`Rule #${id}`);
         }
 
         const msg = await message.reply(this.Embed.success(`
         **Rule Board:**
         Steps:
-            1. Enter the channel or channel id to post the rules to (once reading this).
-            2. Enter the rules one at a time.
-            3. Once all the rules are entered, post \`\`stop\`\`.
-            4. To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
-            5. To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
-            6. To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
+            1. Enter the rules one at a time.
+            2. Once all the rules are entered, send a \`\`stop\`\` message.
+            3. Set a channel to post the rules to using the \`\`channel\`\` command!
 
-        Make sure the rules are already written down - you will have 5 minutes to enter all of them.
+            - To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
+            - To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
+            - To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
+
+        Make sure the rules are already written down - you have 5 minutes to enter all of them.
         `));
         
-        let channel: GuildChannel;
-        let i = 1;
-        const rules: { index: number, rule: string }[] = [];
-
+        const rules = new Set<string>();
         const collector = message.channel.createMessageCollector(
-            (m: Message) => 
-                m.author.id === message.author.id
-                && (!channel ? validSnowflake(m.content) : true)
-                && rules.length < 20, // can add more later
+            (m: Message) => m.author.id === message.author.id && rules.size <= 20,
             { time: 60 * 1000 * 5 }
         );
+
         collector.on('collect', async (m: Message) => {
-            if (!msg || msg?.deleted) {
+            if (msg?.deleted)
                 return collector.stop();
-            } else if (m.content.toLowerCase() === 'stop') {
+            else if (m.content.toLowerCase() === 'stop')
                 return collector.stop('1');
-            }
+            else if (rules.size === 20)
+                return collector.stop('1');
 
-            if (!channel) {
-                // TODO: fix
-                channel = await getMentions(Object.assign(message, { 
-                    // so you may be wondering, "wtf is this?"
-                    // getMentions currently doesn't accept an index and auto slices
-                    // either 1 or 2 args from this (detected by a @khafra-bot regex)
-                    // so we put the "LOL" as a buffer to save the original content.
-                    content: `LOL ${message.content}` 
-                }), 'channels');
-
-                if (!channel || !isText(channel)) return;
-
-                return msg.edit(this.Embed.success(`
-                **Rule Board:** ${channel}
-                The first step is now done, continue to enter rules until all of them have been posted in order.
-                Once you're done posting all of them, post \`\`stop\`\` (if you forget, all of the rules will be discarded).
-
-                The bot will automatically post the rule number in order of the messages so you do not need to include them.
-                `));
-            }
-
-            rules.push({ index: i++, rule: m.content });
+            rules.add(m.content);
         });
-        collector.on('end', async (_, r) => {
-            if (r === '1') { // stopped by user
-                const client = await pool.settings.connect();
-                const collection = client.db('khafrabot').collection('settings');
-                await collection.updateOne(
-                    { id: message.guild.id },
-                    { $set: {
-                        rules: { channel: channel.id, rules }
-                    } },
-                    { upsert: true }
-                );
+
+        collector.on('end', async (_collection, reason) => {
+            if (reason === '1') { // stopped by user
+                // https://node-postgres.com/features/transactions
+                const client = await pool.connect();
+
+                try {
+                    await client.query('BEGIN');
+
+                    for (const rule of rules) {
+                        await client.query(`
+                            INSERT INTO kbRules (
+                                k_guild_id, 
+                                rule, 
+                                rule_id
+                            ) VALUES (
+                                $1::text, 
+                                $2::text, 
+                                (SELECT COUNT(kbRules.id) FROM kbRules WHERE kbRules.k_guild_id = $1::text) + 1
+                            ) ON CONFLICT DO NOTHING;
+                        `, [message.guild.id, rule]);
+                    }
+
+                    await client.query('COMMIT');
+                } catch {
+                    await client.query('ROLLBACK');
+                } finally {
+                    client.release();
+                }
 
                 return msg.edit(this.Embed.success(`
-                Added ${rules.length} rules!
+                Added ${rules.size} rules!
 
                 To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
                 To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).

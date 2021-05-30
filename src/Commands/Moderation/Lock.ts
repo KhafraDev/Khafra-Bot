@@ -1,14 +1,10 @@
-import { Command } from '../../Structures/Command.js';
-import { 
-    Message, 
-    TextChannel, 
-    Permissions
-} from 'discord.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { GuildSettings } from '../../lib/types/Collections.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { kGuild } from '../../lib/types/Warnings.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -30,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: string[], settings: GuildSettings) {
+    async init(message: Message, _args: Arguments, settings: kGuild) {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 
@@ -40,8 +36,6 @@ export class kCommand extends Command {
             // maybe better fail message?
             return this.Embed.missing_perms();
         }
-
-        // TODO: test once https://github.com/discordjs/discord.js/pull/5251 is closed
 
         let lockState = 'unlocked';
         if (!hasPerms(text, everyone, Permissions.FLAGS.SEND_MESSAGES)) {
@@ -57,10 +51,10 @@ export class kCommand extends Command {
         ${text} has been ${lockState} for ${everyone}!
         `));
 
-        if (typeof settings?.modActionLogChannel === 'string') {
-            const channel = message.guild.channels.cache.get(settings.modActionLogChannel) as TextChannel;
+        if (settings.mod_log_channel !== null) {
+            const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
             return channel.send(this.Embed.success(`

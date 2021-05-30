@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { thisWordDoesNotExist } from '../../../lib/Backend/ThisWordDoesNotExist.js';
+import { thisWordDoesNotExist } from '../../../lib/Packages/ThisWordDoesNotExist.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -13,6 +13,7 @@ export class kCommand extends Command {
                 name: 'thisworddoesnotexist',
                 folder: 'Fun',
                 args: [0, 0],
+                ratelimit: 7,
                 aliases: [ 'thisworddoesn\'texist', 'twdne' ]
             }
         );

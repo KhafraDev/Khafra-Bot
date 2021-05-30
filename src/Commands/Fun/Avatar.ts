@@ -14,7 +14,8 @@ export class kCommand extends Command {
 			{
                 name: 'avatar',
                 folder: 'Fun',
-                args: [0, 1]
+                args: [0, 1],
+                ratelimit: 10
             }
         );
     }

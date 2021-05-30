@@ -2,14 +2,10 @@ import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
-import { Logger } from './Structures/Logger.js';
-import { trim } from './lib/Utility/Template.js';
-import { ClientEvents } from 'discord.js';
-
-const logger = new Logger('RateLimit');
+import { ClientEvents, Intents } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]) => 
+    return (...args: ClientEvents[T]): Awaited<void> => 
         KhafraClient.Events.get(name)?.init(...args);
 }
 
@@ -20,30 +16,26 @@ export const client = new KhafraClient({
     messageSweepInterval: 1800, // defaults to never..
     partials: [ 'REACTION', 'MESSAGE', 'USER' ],
     intents: [ 
-        'DIRECT_MESSAGES',
-        'GUILDS', 
-        'GUILD_EMOJIS',
-        'GUILD_MEMBERS', 
-        'GUILD_MESSAGES', 
-        'GUILD_MESSAGE_REACTIONS',
-        'GUILD_PRESENCES' 
+        Intents.FLAGS.DIRECT_MESSAGES,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_BANS,
+        Intents.FLAGS.GUILD_EMOJIS,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+        Intents.FLAGS.GUILD_PRESENCES
     ]
 })
-    .on('ready',                 emitted('ready'))
-    .on('message',               emitted('message'))
-    .on('guildCreate',           emitted('guildCreate'))
-    .on('guildDelete',           emitted('guildDelete'))
-    .on('guildMemberAdd',        emitted('guildMemberAdd'))
-    .on('guildMemberRemove',     emitted('guildMemberRemove'))
-    .on('guildMemberUpdate',     emitted('guildMemberUpdate'))
-    .on('rateLimit', data => {
-        logger.log(trim`
-        Timeout: ${data.timeout} 
-        | Limit: ${data.limit} 
-        | HTTP Method: ${data.method} 
-        | Route: ${data.route} 
-        | Path: ${data.path}
-        `);
-    });
+    .on('ready',                emitted('ready'))
+    .on('message',              emitted('message'))
+    .on('guildBanAdd',          emitted('guildBanAdd'))
+    .on('guildBanRemove',       emitted('guildBanRemove'))
+    .on('guildCreate',          emitted('guildCreate'))
+    .on('guildDelete',          emitted('guildDelete'))
+    .on('interaction',          emitted('interaction'))
+    .on('guildMemberAdd',       emitted('guildMemberAdd'))
+    .on('guildMemberRemove',    emitted('guildMemberRemove'))
+    .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
+    .on('rateLimit',            emitted('rateLimit'));
 
 client.init();

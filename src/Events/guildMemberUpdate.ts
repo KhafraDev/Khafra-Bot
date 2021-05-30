@@ -1,11 +1,11 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, TextChannel, Permissions } from 'discord.js';
-import { pool } from '../Structures/Database/Mongo.js';
-import { GuildSettings } from '../lib/types/Collections';
+import { GuildMember, Channel, Permissions } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { pool } from '../Structures/Database/Postgres.js';
+import { client } from '../Structures/Database/Redis.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -18,43 +18,57 @@ export class kEvent extends Event {
     name = 'guildMemberUpdate' as const;
 
     async init(oldMember: GuildMember, newMember: GuildMember) {
-        if ((!oldMember.premiumSince && !newMember.premiumSince) || oldMember.premiumSince && newMember.premiumSince) { // both either have or don't have
+        // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
+        const premiumRole = oldMember.roles.premiumSubscriberRole;
+        if (!premiumRole) return;
+        
+        const oldHas = oldMember.roles.cache.has(premiumRole.id);
+        const newHas = newMember.roles.cache.has(premiumRole.id);
+
+        // both either have or don't have the role
+        if (oldHas === newHas)
             return;
+
+        const cached = await client.exists(oldMember.guild.id) === 1;
+        let item: { welcome_channel: string } | null = null
+
+        if (cached) {
+            item = JSON.parse(await client.get(oldMember.guild.id));
+        } else {
+            const { rows } = await pool.query<{ welcome_channel: string }>(`
+                SELECT welcome_channel
+                FROM kbGuild
+                WHERE guild_id = $1::text
+                LIMIT 1;
+            `, [oldMember.guild.id]);
+            
+            item = rows[0];
         }
 
-        const oldRoles = oldMember.roles.cache.filter(r => r.managed).size;
-        const newRoles = newMember.roles.cache.filter(r => r.managed).size;
+        if (!item || item.welcome_channel === null) return;
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
-        const guild = await collection.findOne<GuildSettings>({ id: oldMember.guild.id });
-
-        if (!guild?.welcomeChannel) {
-            return;
-        }
-
-        let channel: TextChannel;
-        try {
-            channel = await oldMember.guild.me.client.channels.fetch(guild.welcomeChannel) as TextChannel;
-        } catch {
-            return;
+        let channel: Channel;
+        if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
+            channel = oldMember.guild.channels.cache.get(item.welcome_channel)!;
+        } else {
+            try {
+                channel = await oldMember.guild.me.client.channels.fetch(item.welcome_channel);
+            } catch {
+                return;
+            }
         }
 
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 
             return;
 
-        if (oldRoles > newRoles) { // lost role
+        if (oldHas && !newHas) { // lost role
             return channel.send(Embed.fail(`
             ${newMember} is no longer boosting the server! 😨
-            `));
-        } else if (newRoles > oldRoles) { // gained role
+            `)).catch(() => {});
+        } else { // gained role
             return channel.send(Embed.success(`
             ${newMember} just boosted the server! 🥳
-            `));
-        } else { // other servers?
-            return channel.send(Embed.success(`
-            ${!oldMember.premiumSince && newMember.premiumSince ? `${newMember} boosted a server.` : `${newMember} stopped boosting a server.`}
-            `));
+            `)).catch(() => {});
         }
     }
 }

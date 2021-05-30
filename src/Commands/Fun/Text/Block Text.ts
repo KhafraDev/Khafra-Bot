@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -23,13 +23,14 @@ export class kCommand extends Command {
             {
                 name: 'blocksay',
                 folder: 'Fun',
-                aliases: [ 'block', 'blocktext' ],
-                args: [1]
+                args: [1],
+                ratelimit: 3,
+                aliases: [ 'block', 'blocktext' ]
             }
         );
     }
 
-    init(_message: Message, args: string[]) {        
+    init(_message: Message, { args }: Arguments) {     
         const blocks = args
             .join(' ')
             .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')

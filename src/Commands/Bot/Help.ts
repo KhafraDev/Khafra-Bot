@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
@@ -17,12 +17,13 @@ export class kCommand extends Command {
                 name: 'help',
                 folder: 'Bot',
                 aliases: [ 'commandlist', 'list' ],
-                args: [0, 1]
+                args: [0, 1],
+                ratelimit: 3
             }
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const folders = [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
         const name = args.join(' ').toLowerCase();
         const isFolder = folders.some(f => f.toLowerCase() === name);
@@ -78,7 +79,8 @@ export class kCommand extends Command {
         `)
         .addFields(
             { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-            { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
+            { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+            { name: '**Rate-Limit:**', value: `${settings.ratelimit} seconds`, inline: true}
         );
     }
 }

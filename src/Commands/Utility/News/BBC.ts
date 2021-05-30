@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'http://feeds.bbci.co.uk/news/rss.xml',
+    main: 'https://bbc.com',
+    command: ['bbc'],
+    author: ['The BBC', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png']
+} as const;
 
 interface IBBC {
     title: string
@@ -12,36 +20,37 @@ interface IBBC {
 }
 
 const rss = new RSSReader<IBBC>();
-rss.cache('http://feeds.bbci.co.uk/news/rss.xml');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://bbc.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'bbc',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('BBC News', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

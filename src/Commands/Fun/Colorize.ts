@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { URL } from 'url';
-import { colorPhoto } from '../../lib/Backend/Colorize.js';
+import { colorPhoto } from '../../lib/Packages/Colorize.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -16,6 +16,7 @@ export class kCommand extends Command {
                 name: 'colorize',
                 folder: 'Fun',
                 args: [1, 1],
+                ratelimit: 30,
                 errors: {
                     TypeError: 'Invalid image URL!',
                     AlgorithmiaError: 'A server error occurred!',
@@ -25,7 +26,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const url = new URL(args.shift());
         const photoURL = await colorPhoto(url);
 

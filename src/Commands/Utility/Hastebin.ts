@@ -1,44 +1,42 @@
-import { Command } from '../../Structures/Command.js';
-import { hasteServers, Paste } from '../../lib/Backend/Hastebin/Hastebin.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { GuildSettings } from '../../lib/types/Collections.js';
-import config from '../../../config.json';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { pasteAliases } from '../../lib/Packages/Pastes.js';
 
-const { prefix: defPrefix } = config;
+const keys = ['pastebin', ...pasteAliases.keys()];
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Upload a paste to Hastebin, Hatebin, or Nomsy!',
-                'hatebin const bot = KhafraClient;',
-                'Nomsy who knew Heroku CDN was trash? Not hastebin.',
-                'hastebin Hello, world!'
+                'Upload a paste to a number of different pastebin services!',
+                ...keys.slice(1).map(k => `${k} const bot = KhafraClient;`)
             ],
 			{
-                name: 'hastebin',
+                name: 'pastebin',
                 folder: 'Utility',
-                args: [1],
-                aliases: hasteServers.flatMap(s => s.alias)
+                args: [0],
+                aliases: [...pasteAliases.keys()]
             }
         );
     }
 
-    async init(message: Message, _args: string[], settings: GuildSettings) {
-        // args replaces all whitespace characters, including new lines.
-        // to prevent this, we re-format the message's content.
-        const prefix: string = settings?.prefix ?? defPrefix;
-        // this is always valid because it uses the command's name
-        const command = message.content.split(/\s+/g)[0].slice(prefix.length).toLowerCase();
-        const content = message.content.replace(new RegExp(`^${prefix}${command} `, 'i'), '');
+    async init(_message: Message, { content, commandName }: Arguments) {
+        const command = commandName.toLowerCase();
 
-        const res = await Paste(command, content);
-        
-        return this.Embed.success(`
-        ${content.length} characters posted!
-        ${res}
-        `);
+        if (command === 'pastebin' || content.length == 0) 
+            return this.Embed.success(`
+            Here is a list of the sites currently supported by this command:
+            ${keys.map(k => `\`\`${k}\`\``).join(', ')}
+            `);
+
+        const paste = pasteAliases.get(command);
+        const pasteLink = await paste(content);
+
+        if (!pasteLink)
+            return this.Embed.fail('A server error prevented me from uploading the paste. Try a different server!');
+
+        return this.Embed.success(pasteLink);
     }
 }

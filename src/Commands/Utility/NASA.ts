@@ -1,14 +1,20 @@
+import { apodFetchDaily } from '../../lib/Packages/NASA.js';
+import { nasaDBTransaction } from '../../lib/Migration/NASA.js';
+import { once } from '../../lib/Utility/Memoize.js';
 import { Command } from '../../Structures/Command.js';
-import { join } from 'path';
-import { existsSync } from 'fs';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
+import { pool } from '../../Structures/Database/Postgres.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
-const APOD_PATH = join(process.cwd(), 'assets/NASA.json');
-const exists = existsSync(APOD_PATH);
-const file = exists
-    ? (await import('../../../assets/NASA.json')).default
-    : null;    
+interface APOD {
+    title: string
+    link: string
+    copyright: string | null
+}
+
+const mw = once(async () => {
+    await apodFetchDaily();
+    await nasaDBTransaction();
+});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -27,21 +33,20 @@ export class kCommand extends Command {
     }
 
     async init() {
-        if (!file) {
-            return this.Embed.fail(`
-            Ask the bot owner to download the pre-existing NASA APOD data from the bot's repo or use the command \`\`apodfetch\`\`!
-            `);
-        }
+        await mw();
         
-        const keys = Object.keys(file) as Array<keyof typeof file>;
-        const key = keys[await rand(keys.length)]; 
-        const photo = file[key];
+        const { rows } = await pool.query<APOD>(`
+            SELECT * FROM kbAPOD TABLESAMPLE BERNOULLI(.5) ORDER BY random() LIMIT 1;
+        `);
+
+        if (rows.length === 0)
+            return this.Embed.fail('Entries are being fetched from NASA, give it a few minutes. :)');
 
         const embed = this.Embed.success()
-            .setTitle(photo.title)
-            .setImage(photo.hdurl);
+            .setTitle(rows[0].title)
+            .setImage(rows[0].link);
             
-        'copyright' in photo ? embed.setFooter(`© ${photo.copyright}`) : '';
+        rows[0].copyright !== null && embed.setFooter(`© ${rows[0].copyright}`);
         return embed;
     }
 }

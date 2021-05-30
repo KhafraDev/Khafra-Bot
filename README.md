@@ -6,8 +6,8 @@ A Discord.js framework and bot that is extendable and fast.
 
 # Environment
 * Khafra-Bot has been tested on both Windows 10 and Ubuntu. 
-* Khafra-Bot will always support new features and will not support old (or sometimes LTS) versions of Node.
-* The bot currently supports v14.1.0 or above, although the latest version of Node is recommended.
+* Khafra-Bot will always support and use new features and will not support old versions of Node.
+* The bot currently supports v15.4.0 or above, although the *latest* version of Node is recommended.
 
 # Privacy
 ```md
@@ -25,12 +25,11 @@ Excerpted from [here](https://discord.com/channels/677271830838640680/7058945254
 2. Install pm2 globally using ``npm i -g pm2``.
 3. Create a ``.env`` file in the root directory and fill in the required values.
 ```
-DB_USER=[OPTIONAL]
-DB_PASSWORD=[OPTIONAL]
 TOKEN=[Discord Token]
 SPOTIFY_ID=[Spotify App ID]
 SPOTIFY_SECRET=[Spotify Secret]
 POCKET_CONSUMER_KEY=[Pocket API Key]
+POCKET_SECRET_KEY=[32 digit random password]
 HERE_WEATHER=[Weather API]
 GOOGLE_API=[Google API Key]
 OWLBOTIO=[Owlbot.io free API token]
@@ -39,14 +38,45 @@ TWITTER_API=
 TWITTER_API_SECRET=
 POSTGRES_USER=
 POSTGRES_PASS=
+REDIS_USER=
+REDIS_PASS=
+TMDB=
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
 4. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-5. Install MongoDB and Postgres. Google instructions for your operating system.
+5. Install Postgres and Redis. For Windows development, setup WSL and install redis from there.
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
 7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
+8. Open redis-cli and run 
+    - `ACL SETUSER [username] on >[password] allkeys allcommands`
 8. Run the bot:
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``
+
+Optional steps:
+
+## Setup a systemctl service to restart the bot when the host restarts (Linux only):
+1. `touch /etc/systemd/system/khafrabot.service` - creates a file in the path.
+2. `nano /etc/systemd/system/khafrabot.service` - opens the file in the nano text editor.
+3. Input the following into the file and save.
+```bash
+[Unit]
+Description=startsbot
+
+[Service]
+WorkingDirectory=/var/Khafra-Bot
+
+ExecStart=-npm run dev:build
+ExecStart=-npm run prod:run
+
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+4. `sudo systemctl daemon-reload`
+5. `sudo systemctl enable khafrabot.service` (or `sudo systemctl restart khafrabot.service` if you previously attempted to).
+6. On system startup, the bot will automatically start.

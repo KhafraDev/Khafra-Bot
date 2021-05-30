@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { fetchMDN as mdn } from 'search-mdn';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const results = await mdn(args.join(' '));
 
         if ('errors' in results) {

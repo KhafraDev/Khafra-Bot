@@ -372,7 +372,7 @@
 * Add in ``piglatin`` command.
 </details>
 
-<details><summary><b># v1.0.8 - The News Update (Early 2021)</b></summary>
+<details><summary><b>v1.0.8 - The News Update (Early 2021)</b></summary>
 
 * Add a fully fledged RSS feed parser.
 * Add in ``abcnews`` command.
@@ -431,7 +431,7 @@
 
 </details>
 
-# v1.0.8 - Part 2, New Bot
+<details><summary><b>v1.0.8 - Part 2, New Bot</b></summary>
 
 ## Commands
 * Add `twitdl` command to get the links to media in tweets.
@@ -453,7 +453,7 @@
 ## Structure
 * Commands will now return with an embed to reply to the user with. This reduces a ton of repetitive code and allows for cleaner error handling without proxying the methods or using try/catch.
 * Decouple methods from multiple areas (mostly separate permission checks and Embed from the `Command` class).
-* Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.
+* ~~Commands can now specify middleware to run right after the command is loaded, and a custom error list and error messages.~~
 * Remove commands that are low quality and/or not up to standards.
 * Guild settings will now be automatically inputted into the database when the bot joins a guild. Likewise, guild settings are removed from the database when the bot leaves a guild.
 * Added hierarchy checks for `ban` (partially), `kick`, `warn`, and `deletewarn` commands.
@@ -464,3 +464,47 @@
 * Add in `fetch` util for cleaner, functional code.
 * Remove `kongregate` chat forwarder. 
 * Log commands that fail to load.
+
+</details>
+
+# v1.0.9
+
+* Update `mongodb` to the GitHub version which fixes the circular dependency warning.
+* New `crypto` command and backend that doesn't use an infinite loop.
+* New `bible` command that allows selecting a random verse, a single verse (given book and chapter/verse), and an ability to select a list of verses.
+* New `apod` command.
+* New `paste` command that allows pasting message content that's quoted.
+* New `cartoonize` command and backend (removes parse5).
+* New `hangman` command, adding an option to get a hint, and ability to end a game (type "stop" in the channel).
+* New `ratelimit` command.
+* New `cowsay` command that makes use of caching and better argument parsing.
+* New `hastebin` (etc.) command.
+* New `awards` command that uses `badmeme` types.
+* New array chunking function. Completely remove the old function.
+* New ratelimit system (both global and command), KhafraClient#walk now takes a function parameter as a filter.
+* Add `reload` command to reload a command.
+* Add `cyanideandhappiness` cartoon command.
+* Add `stonewall` command; better migration for Garrison, etc.
+* Add `garrisondump` command that dumps every cartoon to JSON.
+* Add `branco` command.
+* Add `tmdb` command.
+* Add `debug:ghost` command (ghost pinging "bug").
+* Add `debug:defer` command.
+* Add more `yomama` jokes and disallow the command in SFW channels.
+* Add `eff` news command.
+* Add `babylonbee` command.
+* Add back `tictactoe` command.
+* Add these political cartoon commands under a new folder, Trash.
+* Fix `newyorker` fetching news from HuffPost.
+* RSS reader can now take custom parsing options.
+* RSS reader now stores articles in a `Set` and improved types.
+* Transfer `bible` database from Mongo to Postgres.
+* `twitdl` command now has better twitter.com URL checks.
+* `twitdl` backend now has advanced types and better logic.
+* Command#errors are now properly assigned.
+* Better error handling in `addemoji`.
+* Better error messages in `badmeme` when a subreddit is banned, privated, or quarantined.
+* The message event will now pass a partial `GuildSettings` object into command handlers rather than null.
+* New argument parsing.
+* Removed middleware, replaced by lazy loading using memoized functions.
+* Better caches in `killedbygoogle` and `hackernews` commands. Also make use of the `once` memoize function.

@@ -1,8 +1,10 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Mongo.js';
+import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { client } from '../../Structures/Database/Redis.js';
+import { kGuild } from '../../lib/types/Warnings.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -16,42 +18,29 @@ export class kCommand extends Command {
                 name: 'prefix',
                 folder: 'Settings',
                 args: [1, 1],
+                ratelimit: 10,
                 guildOnly: true
             }
         );
     }
 
-    async init(message: Message, args: string[]) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
+        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
-        }
+        else if (args[0].length > 100)
+            return this.Embed.fail(`Maximum prefix length is 100 characters!`);
 
-        // TODO: remove
-        if (args[0].replace(/[A-z0-9]/g, '').length !== args[0].length) {
-            return this.Embed.fail(`
-            Only non-alphanumeric characters are allowed!
-            `);
-        }
+        await pool.query(`
+            UPDATE kbGuild
+            SET prefix = $1::text
+            WHERE guild_id = $2::text;
+        `, [args[0]!, message.guild.id]);
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
+        await client.set(message.guild.id, JSON.stringify({
+            ...settings,
+            prefix: args[0]!
+        }));
 
-        const updated = await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                prefix: args[0]
-            } },
-            { upsert: true }
-        );
-
-        if (updated.upsertedCount === 1 || updated.modifiedCount === 1) {
-            return this.Embed.success(`
-            Changed prefix to \`\`${args[0]}\`\`!
-            `);
-        } else {
-            return this.Embed.fail(`
-            An unexpected error occurred!
-            `);
-        }
+        return this.Embed.success(`Updated the guild's prefix to \`\`${args[0]}\`\``);
     }
 }

@@ -6,23 +6,31 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 export class kCommand extends Command {
     constructor() {
         super([
-            'Get the link to invite the bot to another server.'
+            'Get the invite links for the bot! :)'
         ], {
             name: 'invite',
             folder: 'Bot',
             args: [0, 0],
+            ratelimit: 3,
             aliases: [ 'botinvite' ]
         });
     }
 
     init(message: Message) {
-        return this.Embed.success(`
-        **Basic Permissions:**
-        Some commands will not work!
-        https://discord.com/oauth2/authorize?client_id=${message.client.user.id}&scope=bot&permissions=117824
+        const selfId = message.client.user.id;
 
-        **Everything:**
-        https://discord.com/oauth2/authorize?client_id=${message.client.user.id}&scope=bot&permissions=1074654294
-        `);
+        return this.Embed.success()
+            .addField(
+                '**Basic Permissions:**', 
+                `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=117824)`
+            )
+            .addField(
+                '**Everything:**',
+                `[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=1074654294)`
+            )
+            .addField(
+                '**Enable slash commands and buttons:**',
+                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=applications.commands%20bot)`
+            );
     }
 }

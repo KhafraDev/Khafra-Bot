@@ -1,6 +1,6 @@
 import { Message, MessageReaction, User } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { longestPoem } from '../../lib/Backend/LongestPoemInTheWorld.js';
+import { longestPoem } from '../../lib/Packages/LongestPoemInTheWorld.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

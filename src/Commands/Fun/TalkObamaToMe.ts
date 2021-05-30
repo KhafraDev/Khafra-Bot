@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { talkObamaToMe } from '../../lib/Backend/TalkObamaToMe.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { talkObamaToMe } from '../../lib/Packages/TalkObamaToMe.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const obama = await talkObamaToMe(args.join(' ').slice(0, 280));
 
         if (!obama) {

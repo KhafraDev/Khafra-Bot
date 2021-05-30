@@ -1,6 +1,6 @@
 import { Message, MessageAttachment } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { washYourLyrics } from '../../lib/Backend/WashYourLyrics.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { washYourLyrics } from '../../lib/Packages/WashYourLyrics.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const [artist, ...name] = args.join(' ').split(' - ');
         
         if (name.length === 0) {

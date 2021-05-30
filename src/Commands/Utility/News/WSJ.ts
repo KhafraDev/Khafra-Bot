@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://feeds.a.dj.com/rss/RSSWorldNews.xml',
+    main: 'https://wsj.com',
+    command: ['wsj', 'wallstreetjournal'],
+    author: ['WSJ', 'http://si.wsj.net/img/WSJ_Logo_black_social.gif']
+} as const;
 
 interface IWSJ {
     title: string
@@ -15,37 +23,37 @@ interface IWSJ {
 }
 
 const rss = new RSSReader<IWSJ>();
-rss.cache('https://feeds.a.dj.com/rss/RSSWorldNews.xml');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://wsj.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'wsj',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'wallstreetjournal' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('WSJ', 'http://si.wsj.net/img/WSJ_Logo_black_social.gif');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

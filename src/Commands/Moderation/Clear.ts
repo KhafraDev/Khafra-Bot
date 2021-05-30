@@ -1,7 +1,11 @@
-import { Command } from '../../Structures/Command.js';
-import { Message, TextChannel, NewsChannel, Permissions } from 'discord.js';
-import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { isText } from '../../lib/types/Discord.js.js';
+import { Range } from '../../lib/Utility/Range.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+
+const range = Range(1, 100, true);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -22,9 +26,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const toDelete = +args.shift() + 1;
-        if (!isValidNumber(toDelete)) {
+    async init(message: Message, { args }: Arguments) {
+        const toDelete = Number(args.shift()) + 1;
+        if (!range.isInRange(toDelete) || !validateNumber(toDelete)) {
             return this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 
@@ -32,7 +36,10 @@ export class kCommand extends Command {
             `);
         }
 
-        const channel = (message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel) as TextChannel | NewsChannel;
+        const channel = message.mentions.channels.size > 0 ? message.mentions.channels.first() : message.channel;
+        if (!isText(channel))
+            return this.Embed.fail('Can\'t delete messages from this type of channel, sorry!');
+
         const deleted = await channel.bulkDelete(toDelete > 100 ? 100 : toDelete, true);
 
         const embed = this.Embed.success()

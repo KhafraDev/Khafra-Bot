@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'http://feeds.foxnews.com/foxnews/world',
+    main: 'https://foxnews.com',
+    command: ['fox', 'foxnews'],
+    author: ['Fox News', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png']
+} as const;
 
 interface IFoxNews {
     guid: string
@@ -16,37 +24,37 @@ interface IFoxNews {
 }
 
 const rss = new RSSReader<IFoxNews>();
-rss.cache('http://feeds.foxnews.com/foxnews/world');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://foxnews.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'fox',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'foxnews' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('Fox News', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

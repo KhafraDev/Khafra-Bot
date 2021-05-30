@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -13,12 +13,13 @@ export class kCommand extends Command {
             {
                 name: 'debug:content',
                 folder: 'Debug',
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }
 
-    async init(message: Message) {
-        return this.Embed.success(`\`\`\`${message.content}\`\`\``);
+    async init(_message: Message, { content }: Arguments) {
+        return this.Embed.success(`\`\`\`${content}\`\`\``);
     }
 }

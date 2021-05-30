@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { openLibrary } from '../../lib/Backend/Openlibrary.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { openLibrary } from '../../lib/Packages/Openlibrary.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {

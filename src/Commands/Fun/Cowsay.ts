@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { readFile } from 'fs/promises';
+import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -8,18 +8,8 @@ const dir = join(process.cwd(), 'assets/Cowsay');
 const start = `
  ________________________________________
 `;
-const types = [
-    'beavis',   'bong',   'bud-frogs',   'bunny',   'cheese',
-    'cowering', 'cowsay', 'cowth-vader', 'darth-vader-koala',
-    'demon',    'dragon', 'dragon-and-cow', 'elephant',
-    'elephant-in-snake',  'flaming-sheep', 'ghostbusters',
-    'head-in', 'hello-kitty', 'kiss', 'kitty', 'koala',
-    'luke-skywalker-koala', 'mech-and-cow', 'meow', 'milk',
-    'moofasa', 'mutilated', 'ren', 'satanic', 'scowleton', 
-    'sheep', 'small-cow', 'sodomized', 'squirrel', 'stegosaurus',
-    'stimpy', 'super-milker', 'surgery', 'turkey', 'turtle',
-    'tux', 'www'
-];
+const types = new Set<string>();
+const bases = new Map<string, string>();
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -32,49 +22,63 @@ export class kCommand extends Command {
 			{
                 name: 'cowsay',
                 folder: 'Fun',
-                args: [1]
+                args: [1],
+                ratelimit: 3
             }
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
+        if (types.size === 0) { // lazy load types
+            const items = await readdir(dir);
+            const filtered = items
+                .filter(t => t.endsWith('.txt'))
+                .map(t => t.replace(/\.txt$/, ''));
+
+            for (const item of filtered)
+                types.add(item);
+        }
+
         if (args[0].toLowerCase() === 'list') {
             return this.Embed.success(`
-            ${types.map(t => '``' + t + '``').join(', ')}
-            `);
+            ${[...types].map(t => '``' + t + '``').join(', ')}
+            `).setTitle(`${types.size} formats available`);
         }
 
-        const sentence = types.includes(args[0].toLowerCase()) ? args.slice(1).join(' ') : args.join(' ');
-        if (sentence.trim().length === 0) {
-            return this.Embed.fail('Empty message after type.');
-        }
+        const [format, ...content] = types.has(args[0].toLowerCase())
+            ? [args[0].toLowerCase(), ...args.slice(1)]
+            : ['cowsay', ...args];
 
-        const split = sentence
-            .match(/.{1,38}/g)                                              // split every 38 characters
-            // just to make sure this doesn't happen again
-            ?.map((value, index, arr) => {
-                if (index === 0) {                                           // first item in array
-                    return '/ ' + value.trim().padEnd(38, ' ') + ' \\';
-                } else if (index === arr.length - 1) {                       // last item in array
-                    return '\\ ' + value.trim().padEnd(38, ' ') + ' /';
-                }                                                     
-                return '| ' + value.trim().padEnd(38, ' ') + ' |';          // all others
+        if (!content)
+            return this.Embed.fail('Since you provided a format, you have to provide some text to say!');
+        if (!types.has(format))
+            return this.Embed.fail(`Format not found! Use the command \`cowsay list\` to list all formats!`);
+
+        const split = content.join(' ')
+            .match(/.{1,38}/g) // split every 38 characters; removes new lines
+            .map((value, index, arr) => {
+                if (index === 0) // first item in array
+                    return `/ ${value.trim().padEnd(38, ' ')} \\`;
+                if (index === arr.length - 1) // last item in array
+                    return `\\ ${value.trim().padEnd(38, ' ')} /`;
+                                                             
+                return `| ${value.trim().padEnd(38, ' ')} |`; // all others
             });
 
-        if (!split) {
-            return this.Embed.fail('Couldn\'t format message!');
-        } else if (split.length === 1) {
-            split.push('\\ ' + ''.padEnd(38, ' ') + ' /');
+        if (split.length === 1) // 1-lined messages
+            split.push(`\\ ${''.padEnd(38, ' ')} /`);
+
+        if (!bases.has(format)) { // lazy load ascii arts
+            const file = await readFile(join(dir, `${format}.txt`), 'utf-8');
+            bases.set(format, file);
         }
 
-        const i = types.includes(args[0].toLowerCase()) ? args[0].toLowerCase() : 'cowsay';
-        const data = await readFile(join(dir, `${i}.txt`), 'utf-8');
-            
-        const formatted = `\`\`\`${start}${split.join('\n')}\n${data}\`\`\``;
-        if (formatted.length > 2048) {
-            return this.Embed.fail('Cowsay message is too long!');
-        }
+        const art = bases.get(format)!;
+        const formatted = `\`\`\`${start}${split.join('\n')}\n${art}\`\`\``;
 
-        return formatted;
+        if (formatted.length > 2048)
+            return this.Embed.fail('Message is too long, trim it down!');
+
+        return this.Embed.success(formatted);
     }
 }

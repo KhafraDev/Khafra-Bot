@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.theguardian.com/world/rss',
+    main: 'https://theguardian.com',
+    command: ['guardian', 'theguardian'],
+    author: ['The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg']
+} as const;
 
 interface ITheGuardian {
     title: string
@@ -16,37 +24,37 @@ interface ITheGuardian {
 }
 
 const rss = new RSSReader<ITheGuardian>();
-rss.cache('https://www.theguardian.com/world/rss');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://theguardian.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'guardian',
+                name: settings.command[0],
                 folder: 'News',
                 args: [0, 0],
-                aliases: [ 'theguardian' ]
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

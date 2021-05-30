@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { owlbotio } from '../../lib/Backend/OwlBotIO.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const word = await owlbotio(args.join(' '));
 
         if (typeof word.definitions === 'undefined') {

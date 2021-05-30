@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
-import { theNounProjectSearch } from '../../lib/Backend/TheNounProject/TheNounProject.js';
+import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, { args }: Arguments) {
         const icons = await theNounProjectSearch(args.join(' '));
         
         if (icons.icons.length === 0) {

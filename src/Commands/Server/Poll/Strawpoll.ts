@@ -19,6 +19,7 @@ export class kCommand extends Command {
                 aliases: [ 'createstrawpoll', 'newstrawpoll' ],
                 folder: 'Server',
                 args: [0, 0],
+                ratelimit: 15,
                 guildOnly: true,
                 permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
             }
@@ -115,7 +116,7 @@ export class kCommand extends Command {
         `));
 
         if (json.success === 1) {
-            return message.author.send(this.Embed.success(`
+            return void message.author.send(this.Embed.success(`
             Created a poll: https://strawpoll.com/${json.content_id}
 
             Admin ID: \`\`${json.admin_key}\`\`

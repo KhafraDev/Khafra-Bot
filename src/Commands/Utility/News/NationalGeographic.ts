@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:nationalgeographic.com&ceid=US:en&hl=en-US&gl=US',
+    main: 'https://nationalgeographic.com',
+    command: ['nationalgeographic'],
+    author: ['National Geographic', 'https://i.imgur.com/sXMsOj0.png']
+} as const;
 
 interface INationalGeographic {
     title: string
@@ -14,36 +22,37 @@ interface INationalGeographic {
 
 const rss = new RSSReader<INationalGeographic>();
 // their official rss feed is not updated very often
-rss.cache('https://news.google.com/rss/search?q=when:24h+allinurl:nationalgeographic.com&ceid=US:en&hl=en-US&gl=US');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://nationalgeographic.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'nationalgeographic',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('National Geographic', 'https://i.imgur.com/sXMsOj0.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

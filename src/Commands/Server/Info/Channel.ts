@@ -25,12 +25,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        const channel = await getMentions(message, 'channels');
-        if (!channel) {
-            return this.Embed.fail(`
-            Channel isn't fetched or the ID is incorrect.
-            `);
-        }
+        const channel = await getMentions(message, 'channels') ?? message.channel;
 
         const embed = this.Embed.success()
             .addFields(

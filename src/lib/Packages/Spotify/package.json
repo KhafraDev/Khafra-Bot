@@ -1,0 +1,33 @@
+{
+  "name": "@khaf/spotify",
+  "version": "1.0.0",
+  "description": "Search Spotify for songs!",
+  "main": "./Spotify.js",
+  "types": "./Spotify.d.ts",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.5.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/Khafra-Bot.git",
+    "directory": "src/lib/Packages"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "spotify",
+    "khafra-bot"
+  ],
+  "author": "KhafraDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
+}

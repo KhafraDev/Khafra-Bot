@@ -1,8 +1,7 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { Wikipedia } from '../../lib/Backend/Wikipedia/Wikipedia.js';
 import entities from 'entities'; // cjs module
-import { WikipediaSearch } from '../../lib/Backend/Wikipedia/types/Wikipedia';
+import { Wikipedia, WikipediaSearch } from '@khaf/wikipedia';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -22,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         if (args.length === 0) {
             return this.Embed.generic(this);
         }

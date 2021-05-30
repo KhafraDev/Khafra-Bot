@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Kongregate } from '../../lib/Backend/SynergismStats.js';
+import { Kongregate } from '../../lib/Packages/SynergismStats.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

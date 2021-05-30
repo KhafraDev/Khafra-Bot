@@ -1,9 +1,14 @@
 import { rand } from './Constants/OneLiners.js';
 
-export function* chunk<T>(arr: T[], size: number) {
-    for (let i = 0; i < arr.length; i += size) {
-        yield arr.slice(i, i + size);
-    }
+/**
+ * Array chunking without generator functions
+ */
+export const chunkSafe = <T>(arr: T[], step: number): T[][] => {
+    const res: T[][] = [];
+    for (let i = 0; i < arr.length; i += step)
+        res.push(arr.slice(i, i + step));
+
+    return res;
 }
 
 export const shuffle = <T>(a: T[]): T[] => {

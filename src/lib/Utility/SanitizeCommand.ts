@@ -1,9 +1,6 @@
-import { 
-    Message, 
-    Permissions
-} from "discord.js";
+import { Message, Permissions } from 'discord.js';
 import { isText } from '../types/Discord.js.js';
-import { hasPerms } from "./Permissions.js";
+import { hasPerms } from './Permissions.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -20,11 +17,12 @@ export const Sanitize = (message: Message) => {
     if (
         message.webhookID || // author is null in webhook messages
         message.author.bot ||
-        message.type !== 'DEFAULT' ||
+        !['DEFAULT', 'REPLY'].includes(message.type) ||
         (message.guild && !message.guild.available) ||
         message.system ||
         message.partial ||
-        message.tts
+        message.tts || 
+        message.content.length === 0
     ) { 
         return false;
     }

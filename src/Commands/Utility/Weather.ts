@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { weather } from '../../lib/Backend/HereWeather/HereWeather.js';
+import { weather } from '@khaf/hereweather';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, args: string[]) {
+    async init(_message: Message, { args }: Arguments) {
         const results = await weather(args.join(' '));
         if ('status' in results) {
             return this.Embed.fail(`

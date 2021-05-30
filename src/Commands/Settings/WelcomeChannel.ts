@@ -1,10 +1,12 @@
-import { Command } from '../../Structures/Command.js';
-import { 
-    Message, TextChannel, Permissions
-} from "discord.js";
-import { pool } from '../../Structures/Database/Mongo.js';
+import { Arguments, Command } from '../../Structures/Command.js';
+import { Message, Permissions } from 'discord.js';
+import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { isText } from '../../lib/types/Discord.js.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { kGuild } from '../../lib/types/Warnings.js';
+import { client } from '../../Structures/Database/Redis.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -30,14 +32,14 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
+    async init(message: Message, _: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } 
 
-        const channel = message.mentions.channels.first() ?? await message.client.channels.fetch(args[0]) as TextChannel;
+        const channel = await getMentions(message, 'channels');
         
-        if (channel.type !== 'text') {
+        if (!isText(channel)) {
             return this.Embed.fail(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild.me, basic)) {
             return this.Embed.fail(`
@@ -45,23 +47,19 @@ export class kCommand extends Command {
             `);
         }
 
-        const client = await pool.settings.connect();
-        const collection = client.db('khafrabot').collection('settings');
+        await pool.query(`
+            UPDATE kbGuild
+            SET welcome_channel = $1::text
+            WHERE guild_id = $2::text;
+        `, [channel.id, message.guild.id]);
 
-        const updated = await collection.updateOne(
-            { id: message.guild.id },
-            { $set: {
-                welcomeChannel: channel.id
-            } },
-            { upsert: true }
-        );
+        await client.set(message.guild.id, JSON.stringify({
+            ...settings,
+            welcome_channel: channel.id
+        }));
         
-        if (updated.modifiedCount === 1 || updated.upsertedCount === 1) {
-            return this.Embed.success(`
-            You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
-            `);
-        } else {
-            return this.Embed.fail('An unexpected error occurred!');
-        }
+        return this.Embed.success(`
+        You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
+        `);
     }
 }

@@ -1,5 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { nobodyLive } from '../../lib/Backend/NobodyLive.js';
+import { nobodyLive } from '../../lib/Packages/NobodyLive.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

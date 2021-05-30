@@ -71,6 +71,15 @@
     "./src/"
   ], 
   "exclude": [
-    "node_modules", "scripts", "*.json"
+    "node_modules", 
+    "scripts", 
+    "*.json",
+    "src/lib/Packages/BadMeme",
+    "src/lib/Packages/Spotify",
+    "src/lib/Packages/Wikipedia",
+    "src/lib/Packages/HereWeather",
+    "src/lib/Packages/NPM",
+    "src/lib/Packages/Pocket",
+    "src/lib/Packages/Vaccines"
   ]
 }

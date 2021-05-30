@@ -26,7 +26,12 @@ export const stripIndents = (temp: TemplateStringsArray, ...args: unknown[]) => 
     for (const item of s) {
         // rather than using \s+ for all whitespace, we use a normal space
         // this fixes a bug where two+ new lines will be transformed into 1
-        f += `${item.replace(/\n +/g, '\n')}${args.shift() ?? ''}`
+        const str = item
+            .replace(/\n +/g, '\n')
+            // then we remove backslashes not followed by a-z (\n, \t, etc. will not be matched)
+            .replace(/\\(?![a-z])/g, '');
+
+        f += `${str}${args.shift() ?? ''}`;
     }
 
     return f.trim();

@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageReaction, User } from 'discord.js';
-import { badmeme, IBadMemeCache } from '../../lib/Backend/BadMeme/BadMeme.js';
+import { badmeme, IBadMemeCache } from '@khaf/badmeme';
 import { isDM } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -25,8 +25,19 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {        
+    async init(message: Message, { args }: Arguments) {        
         const res = await badmeme(args[0], isDM(message.channel) || message.channel.nsfw);
+        if ('error' in res) {
+            if (res.reason === 'private')
+                return this.Embed.fail('Subreddit is set as private!');
+            else if (res.reason === 'banned') // r/the_donald
+                return this.Embed.fail('Subreddit is banned!');
+            else if (res.reason === 'quarantined') // r/spacedicks (all others are just banned now)
+                return this.Embed.fail('Subreddit is quarantined!');
+                
+            return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`);
+        }
+
         if (!res || res.url.length === 0)
             return this.Embed.fail(`
             No image posts found in this subreddit.

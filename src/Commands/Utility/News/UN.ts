@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
+    main: 'https://news.un.org/en/',
+    command: ['un'],
+    author: ['UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg']
+} as const;
 
 interface IUN {
     title: string
@@ -14,36 +22,37 @@ interface IUN {
 }
 
 const rss = new RSSReader<IUN>();
-rss.cache('https://news.un.org/feed/subscribe/en/news/all/rss.xml');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://news.un.org/en/'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'un',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

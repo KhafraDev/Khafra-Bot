@@ -1,5 +1,4 @@
-import { existsSync } from 'fs';
-import { readFile, rm } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { pool } from '../../Structures/Database/Postgres.js';
 
@@ -12,13 +11,12 @@ interface Comic {
 const PATH = join(process.cwd(), 'assets/Garrison.json');
 
 export const migrateGarrison = async () => {
-    const exists = existsSync(PATH);
-    if (exists) {
+    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbGarrison);`);
+    if (rows[0].exists === false) {
         const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
         await garrisonTransaction(file);
-        
-        await rm(PATH);
     }
+
     return true;
 }
 

@@ -1,11 +1,12 @@
-import { Command } from '../../Structures/Command.js';
-import { getCurrency, setCryptoInterval } from '../../lib/Backend/CoinGecko.js';
+import { Command, Arguments } from '../../Structures/Command.js';
+import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
 import { Message } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { once } from '../../lib/Utility/Memoize.js';
 
-setCryptoInterval(60 * 1000 * 5); // 5 minutes
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
+const mw = once(setCryptoInterval);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -18,17 +19,21 @@ export class kCommand extends Command {
 			{
                 name: 'crypto',
                 folder: 'Utility',
-                args: [1],
+                args: [1], // some symbols are multi-worded
                 aliases: [ 'cc' ]
             }
         );
     }
 
-    async init(_message: Message, args: string[]) {
-        const currency = getCurrency(args.join(' '));
-        if (!currency) {
-            return this.Embed.fail('No crypto found!');
-        }
+    async init(_message: Message, { args }: Arguments) {
+        await mw();
+        
+        if (!cache.has(args.join(' ').toLowerCase()))
+            return this.Embed.fail(`
+            No cryptocurrency with that name or ID was found!
+            `);
+
+        const currency = cache.get(args.join(' ').toLowerCase());
 
         return this.Embed.success()
             .setThumbnail(currency.image)

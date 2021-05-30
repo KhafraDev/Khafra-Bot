@@ -2,6 +2,14 @@ import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+
+const settings = {
+    rss: 'https://www.rt.com/rss/news/',
+    main: 'https://www.RT.com',
+    command: ['rt'],
+    author: ['RT', 'https://i.imgur.com/4kS8mvK.png']
+} as const;
 
 interface IRT {
     title: string
@@ -14,36 +22,37 @@ interface IRT {
 }
 
 const rss = new RSSReader<IRT>();
-rss.cache('https://www.rt.com/rss/news/');
+const cache = once(() => rss.cache(settings.rss));
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Fetch latest articles from https://www.RT.com'
+                `Get the latest articles from ${settings.main}!`
             ],
             {
-                name: 'rt',
+                name: settings.command[0],
                 folder: 'News',
-                args: [0, 0]
+                args: [0, 0],
+                aliases: settings.command.slice(1)
             }
         );
     }
 
     async init() {
+        await cache();
         if (rss.results.size === 0) {
             return this.Embed.fail('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        const embed = this.Embed.success()
+        return this.Embed.success()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor('RT', 'https://i.imgur.com/4kS8mvK.png');
-        return embed;
+            .setAuthor(...settings.author);
     }
 }

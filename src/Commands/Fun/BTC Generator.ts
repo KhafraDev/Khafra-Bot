@@ -1,8 +1,11 @@
-import { Command } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { isValidNumber } from '../../lib/Utility/Valid/Number.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Range } from '../../lib/Utility/Range.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+
+const range = Range(0, Number.MAX_SAFE_INTEGER);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -21,8 +24,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, args: string[]) {
-        const btc = isValidNumber(+args[0]) ? +args[0] : 1000;
+    async init(message: Message, { args }: Arguments): Promise<void> {
+        const num = Number(args[0]);
+        const btc = range.isInRange(num) && validateNumber(num) ? num : 1000;
+
         const embed = this.Embed.success()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
@@ -36,6 +41,6 @@ export class kCommand extends Command {
         const embed2 = this.Embed.success()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return msg.edit(embed2);
+        return void msg.edit(embed2);
     }
 }
