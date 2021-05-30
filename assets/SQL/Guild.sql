@@ -35,9 +35,3 @@ CREATE TABLE IF NOT EXISTS kbInsights (
     k_joined INTEGER NOT NULL DEFAULT 0,
     UNIQUE (k_date, k_guild_id)
 );
-
-INSERT INTO kbGuild (
-    guild_id, max_warning_points, rules_channel, prefix
-) VALUES (
-    '503024525076725771', 20, '688943609348882456', '!!'
-) ON CONFLICT DO NOTHING;
