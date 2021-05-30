@@ -6,7 +6,6 @@
   "type": "module",
   "dependencies": {
     "adm-zip": "^0.4.16",
-    "better-sqlite3": "^7.4.0",
     "discord.js": "github:discordjs/discord.js",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
