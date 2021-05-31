@@ -15,7 +15,12 @@ export class kCommand extends Command {
                 name: 'talkobamatome',
                 folder: 'Fun',
                 aliases: [ 'totm' ], 
-                args: [1]
+                args: [1],
+                errors: {
+                    FetchError: 'A server error occurred, try again later!',
+                    // invalid URL
+                    TypeError: 'Server replied with an invalid response, try again later!'
+                }
             }
         );
     }
@@ -23,10 +28,6 @@ export class kCommand extends Command {
     async init(_message: Message, { args }: Arguments) {
         const obama = await talkObamaToMe(args.join(' ').slice(0, 280));
 
-        if (!obama) {
-            return this.Embed.fail('Server never sent URL.');
-        }
-
-        return this.Embed.success(obama);
+        return obama;
     }
 }
