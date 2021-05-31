@@ -36,7 +36,7 @@ export class kCommand extends Command {
         const embed = this.Embed.success(`
         *${book.title}* by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
-        ISBN: \`\`${book.isbn.shift()}\`\`
+        ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: \`\`${book.isbn[0]}\`\`` : ''}
 
         [Download (PDF)](https://archive.org/download/${book.ia[0]}/${book.ia[0]}.pdf)
         [OpenLibrary](https://openlibrary.org${book.key}/)
