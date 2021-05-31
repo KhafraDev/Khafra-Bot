@@ -5,6 +5,7 @@
   "main": "build/src/index.js",
   "type": "module",
   "dependencies": {
+    "@khaf/badmeme": "file:src/lib/Packages/BadMeme",
     "adm-zip": "^0.4.16",
     "discord.js": "github:discordjs/discord.js",
     "entities": "^2.1.0",

@@ -27,7 +27,9 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {        
         const res = await badmeme(args[0], isDM(message.channel) || message.channel.nsfw);
-        if ('error' in res) {
+        if (res === null)
+            return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
+        else if ('error' in res) {
             if (res.reason === 'private')
                 return this.Embed.fail('Subreddit is set as private!');
             else if (res.reason === 'banned') // r/the_donald
@@ -36,9 +38,7 @@ export class kCommand extends Command {
                 return this.Embed.fail('Subreddit is quarantined!');
                 
             return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`);
-        }
-
-        if (!res || res.url.length === 0)
+        } else if (res.url.length === 0)
             return this.Embed.fail(`
             No image posts found in this subreddit.
             

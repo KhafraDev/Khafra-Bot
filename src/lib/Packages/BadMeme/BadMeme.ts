@@ -10,7 +10,7 @@ export interface IBadMemeCache {
     url: string | string[]
 }
 
-const cache = new Map<string, Set<IBadMemeCache>>();
+export const cache = new Map<string, Set<IBadMemeCache>>();
 const lastUsed = new Map<string, number>();
 const after = new Map<string, string>();
 

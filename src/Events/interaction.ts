@@ -18,10 +18,10 @@ export class kEvent extends Event {
                 await interaction.defer();
 
             const result = await command.init(interaction);
-            if (typeof result !== 'string' && !(result instanceof MessageEmbed))
-                return;
 
-            if (command.options?.defer)
+            if (typeof result !== 'string' && !(result instanceof MessageEmbed))
+                return interaction.deleteReply();
+            else if (interaction.deferred)
                 return interaction.editReply(result);
 
             return interaction.reply(result);
