@@ -81,5 +81,11 @@ const sql = dir.map(f => resolve(process.cwd(), 'assets/SQL/SQLite', f));
 
 for (const file of sql) {
     const text = await readFile(file, 'utf-8');
-    asyncQuery(text, { run: true });
+    const queries = text
+        .split(';')
+        .map(l => l.trim())
+        .filter(l => l.length > 0);
+
+    for (const query of queries)
+        asyncQuery(`${query};`, { run: true });
 }

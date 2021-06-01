@@ -2,12 +2,13 @@
 
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
 import { garrisonTransaction, migrateGarrison } from '../../../lib/Migration/Garrison.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { Message } from 'discord.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
+import { cpus } from 'os';
+import { asyncQuery } from '../../../Structures/Database/SQLite.js';
 
 interface ISchizophrenia {
     title: string
@@ -61,6 +62,9 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
+        if (cpus().length === 1) 
+            return this.Embed.fail(`This command will not work on this host! Ask the bot maintainer to change their host!`);
+            
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
@@ -71,13 +75,13 @@ export class kCommand extends Command {
                 .setImage(comic['content:encoded'].match(/src="(.*?)"/)[1]);
         }
 
-        const { rows } = await pool.query<Comic>(`
-            SELECT * FROM kbGarrison TABLESAMPLE BERNOULLI(20) ORDER BY random() LIMIT 1;
+        const { 0: comic } = await asyncQuery<Comic>(`
+            SELECT * FROM kbGarrison ORDER BY RANDOM() LIMIT 1;
         `);
 
         return this.Embed.success()
-            .setTitle(rows[0].title)
-            .setURL(rows[0].href)
-            .setImage(rows[0].link);
+            .setTitle(comic.title)
+            .setURL(comic.href)
+            .setImage(comic.link);
     }
 }
