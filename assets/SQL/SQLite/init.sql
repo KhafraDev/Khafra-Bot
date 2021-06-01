@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS kbBranco (
+    comic_key INTEGER NOT NULL PRIMARY KEY,
+    href TEXT UNIQUE NOT NULL,
+    link TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL
+);
