@@ -1,7 +1,8 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { pool } from '../../Structures/Database/Postgres.js';
+import { asyncQuery } from '../../Structures/Database/SQLite.js';
 
+type Ret = { 'EXISTS(SELECT 1 from kbStonewall)': number };
 interface Comic {
     href: string
     title: string
@@ -11,8 +12,9 @@ interface Comic {
 const PATH = join(process.cwd(), 'assets/Stonewall.json');
 
 export const migrateStonewall = async () => {
-    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbStonewall);`);
-    if (rows[0].exists === false) {
+    const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbStonewall);`);
+
+    if (r[0]['EXISTS(SELECT 1 from kbStonewall)'] === 0) {
         const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
         await stonewallTransaction(file);
     }
@@ -21,25 +23,13 @@ export const migrateStonewall = async () => {
 }
 
 export const stonewallTransaction = async (comics: Comic[]) => {
-    const client = await pool.connect();
-
-    try {
-        await client.query('BEGIN');
-
-        for (const comic of comics) {
-            await client.query(`
-                INSERT INTO kbStonewall (
-                    href, link, title
-                ) VALUES (
-                    $1, $2, $3
-                ) ON CONFLICT DO NOTHING;
-            `, [comic.href, comic.link, comic.title]);
-        }
-
-        await client.query('COMMIT');
-    } catch {
-        await client.query('ROLLBACK');
-    } finally {
-        client.release();
+    for (const comic of comics) {
+        await asyncQuery(`
+            INSERT OR IGNORE INTO kbStonewall (
+                href, link, title
+            ) VALUES (
+                ?, ?, ?
+            );
+        `, { run: true }, comic.href, comic.link, comic.title);
     }
 }
