@@ -44,9 +44,8 @@ interface CoinGeckoRes {
  * Cache of all symbols and ids of supported cryptocurrencies on Coingecko
  */
 export const symbolCache = new Set<string>();
+export const cache = new Map<string, CoinGeckoRes | CoinGeckoRes[]>();
 const strictlyIDs = new Set<string>();
-
-export const cache = new Map<string, CoinGeckoRes>();
 
 const defaults = [
     // list all currencies
@@ -55,11 +54,7 @@ const defaults = [
 ] as const;
 
 const list = async () => {
-    const r = await fetch(defaults[0], {
-        headers: {
-            'Accept': 'application/json'
-        }
-    });
+    const r = await fetch(defaults[0]);
     const j = await r.json() as CGCrypto[];
 
     for (const { id, symbol } of j) {
@@ -90,7 +85,14 @@ const all = async () => {
 
             for (const currList of json) {
                 for (const curr of currList) {
-                    cache.set(curr.symbol, curr);
+                    // there are nearly 1,000 duplicate symbols but name and ids are all unique
+                    if (cache.has(curr.symbol)) {
+                        const item = cache.get(curr.symbol)!;
+                        cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
+                    } else {
+                        cache.set(curr.symbol, curr);
+                    }
+
                     cache.set(curr.id, curr);
                 }
             }
