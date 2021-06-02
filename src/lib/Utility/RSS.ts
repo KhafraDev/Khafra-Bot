@@ -2,8 +2,17 @@ import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
 import fetch, { RequestInit } from 'node-fetch';
 import { delay } from './Constants/OneLiners.js';
 import config from '../../../package.json';
+import { validateNumber } from './Valid/Number.js';
 
 const noop: (() => void | Promise<void>) = () => {};
+const syUpdateFrequency = ['hourly', 'daily', 'weekly', 'monthly', 'yearly'] as const;
+const ms = {
+    hourly: 3.6e+6,
+    daily: 8.64e+7,
+    weekly: 6.048e+8,
+    monthly: 2.628e+9,
+    yearly: 3.154e+10
+} as const;
 
 interface RSSJSON<T extends unknown> {
     rss: {
@@ -12,6 +21,8 @@ interface RSSJSON<T extends unknown> {
             link: string
             description: string
             ttl?: number
+            'sy:updatePeriod': number
+            'sy:updateFrequency': typeof syUpdateFrequency[number]
             item: T[] | T
             [key: string]: unknown
         }
@@ -97,28 +108,52 @@ export class RSSReader<T extends unknown> {
             return clearInterval(this.interval!);
         }
 
-        // respects a feed's ttl option if present.
+        // respects a feed's ttl or syndication frequency option if present.
         // https://www.rssboard.org/rss-draft-1#element-channel-ttl
-        if ('rss' in j && typeof j.rss.channel.ttl === 'number') {
-            clearInterval(this.interval!);
-            this.timeout = 60 * 1000 * j.rss.channel.ttl;
-            if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
+        // https://web.resource.org/rss/1.0/modules/syndication/
+        if ('rss' in j) {
+            if (typeof j.rss.channel?.ttl === 'number') {
+                clearInterval(this.interval!);
+                this.timeout = 60 * 1000 * j.rss.channel.ttl;
+                if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 
-            this.interval = setInterval(
-                this.parse, 
-                this.timeout
-            );
+                this.interval = setInterval(
+                    this.parse.bind(this), 
+                    this.timeout
+                );
+            } else if (
+                typeof j.rss.channel?.['sy:updateFrequency'] === 'string' && 
+                typeof j.rss.channel?.['sy:updatePeriod'] === 'number'
+            ) {
+                const period = j.rss.channel['sy:updatePeriod'];
+                const frequency = j.rss.channel['sy:updateFrequency'];
+
+                // make sure that the period and frequency are both valid
+                if (!validateNumber(period) || !syUpdateFrequency.includes(frequency)) {
+                    return clearInterval(this.interval);
+                }
+
+                const time = Math.floor(period * ms[frequency]);
+                if (!validateNumber(time)) {
+                    return clearInterval(this.interval);
+                } 
+
+                this.interval = setInterval(
+                    this.parse.bind(this),
+                    time
+                );
+            }
         }
 
         const i = 'rss' in j 
-            ? j.rss.channel.item // RSS feed
+            ? j.rss.channel?.item // RSS feed
             : j.feed.entry;      // Atom feed
 
         if (Array.isArray(i)) {
             for (const item of i.slice(0, this.save)) {
                 this.results.add(item);
             }
-        } else {
+        } else if (i !== null && i !== undefined) {
             this.results.add(i);
         }
 
@@ -131,7 +166,7 @@ export class RSSReader<T extends unknown> {
 
         await this.parse();
         this.interval = setInterval(
-            this.parse,
+            this.parse.bind(this),
             this.timeout
         );
     }
