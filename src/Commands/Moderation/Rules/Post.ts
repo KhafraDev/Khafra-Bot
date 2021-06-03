@@ -35,7 +35,7 @@ export class kCommand extends Command {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
 
-        const { rows } = await pool.query<{ rules_channel: string | null, rule: string }>(`
+        const { rows } = await pool.query<{ rules_channel: `${bigint}` | null, rule: string }>(`
             SELECT rules_channel, rule FROM kbGuild
             INNER JOIN kbRules ON kbGuild.guild_id = kbRules.k_guild_id
             WHERE kbGuild.guild_id = $1::text;

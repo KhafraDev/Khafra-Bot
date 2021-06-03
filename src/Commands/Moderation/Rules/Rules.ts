@@ -114,7 +114,7 @@ export class kCommand extends Command {
                     client.release();
                 }
 
-                return msg.edit(this.Embed.success(`
+                return void msg.edit(this.Embed.success(`
                 Added ${rules.size} rules!
 
                 To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).

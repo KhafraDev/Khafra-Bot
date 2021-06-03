@@ -35,7 +35,7 @@ export class kCommand extends Command {
                 { name: '**Members:**', value: message.guild.memberCount.toLocaleString(), inline: true },
                 { name: '**Owner:**', value: `<@!${message.guild.ownerID}>`, inline: true },
                 { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount.toLocaleString(), inline: true },
-                { name: '**Tier:**', value: message.guild.premiumTier, inline: true },
+                { name: '**Tier:**', value: `${message.guild.premiumTier}`, inline: true },
                 { name: '**Region:**', value: message.guild.region, inline: true },
                 { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
                 { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },

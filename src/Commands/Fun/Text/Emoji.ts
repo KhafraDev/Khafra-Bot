@@ -28,8 +28,8 @@ export class kCommand extends Command {
             .map(e => e.url);
 
         const guild = [...message.content.matchAll(GUILD_EMOJI_REG)]
-            .filter(e => message.guild.emojis.cache.has(e[3]))
-            .map(e => message.guild.emojis.resolve(e[3]).url);
+            .filter(e => message.guild.emojis.cache.has(e[3] as `${bigint}`))
+            .map(e => message.guild.emojis.resolve(e[3] as `${bigint}`).url);
 
         const all =  [...unicode, ...guild];
 

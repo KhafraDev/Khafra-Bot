@@ -42,9 +42,9 @@ export class kCommand extends Command {
                 `)
                 .addFields(
                     { name: '**Name:**', value: channel.name, inline: true },
-                    { name: '**Parent:**', value: channel.parent ?? 'None', inline: true },
+                    { name: '**Parent:**', value: channel.parent ? `${channel.parent}` : 'None', inline: true },
                     { name: '**NSFW:**', value: channel.nsfw ? 'Yes' : 'No', inline: true },
-                    { name: '**Position:**', value: channel.position, inline: true },
+                    { name: '**Position:**', value: `${channel.position}`, inline: true },
                 );
 
             if (isExplicitText(channel)) {
@@ -54,7 +54,7 @@ export class kCommand extends Command {
             embed
                 .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
                 .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
-                .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : channel.userLimit, true)
+                .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
         }
 
         return embed;

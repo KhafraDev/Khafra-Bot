@@ -51,15 +51,15 @@ export class kCommand extends Command {
                 { name: '**Circulating:**',   value: currency.circulating_supply.toLocaleString(), inline: true },
 
                 { name: '**All Time High:**', value: f(currency.ath), inline: true },
-                { name: '**% Change ATH:**',  value: currency.ath_change_percentage.toFixed(2) + '%', inline: true },
+                { name: '**% Change ATH:**',  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
                 { name: '**ATH Date:**',      value: formatDate('MMM. Do, YYYY', currency.ath_date), inline: true },
 
-                { name: '**All Time Low:**',  value: (currency.atl), inline: true },
-                { name: '**% Change ATL:**',  value: currency.atl_change_percentage.toFixed(2) + '%', inline: true },
+                { name: '**All Time Low:**',  value: f(currency.atl), inline: true },
+                { name: '**% Change ATL:**',  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
                 { name: '**ATL Date:**',      value: formatDate('MMM. Do, YYYY', currency.atl_date), inline: true },
 
                 { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
-                { name: '**% Change 24H:**',  value: currency.price_change_percentage_24h + '%', inline: true }
+                { name: '**% Change 24H:**',  value: `${currency.price_change_percentage_24h}%`, inline: true }
             );
 
         if (!Array.isArray(currencies))

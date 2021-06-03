@@ -24,10 +24,10 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        if (args.some(id => !validSnowflake(id)))
+        if (args.some(id => !validSnowflake(id as `${bigint}`)))
             return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
 
-        const promiseArr = args.map(id => message.guild.members.ban(id, {
+        const promiseArr = args.map(id => message.guild.members.ban(id as `${bigint}`, {
             reason: `Force-ban by ${message.author.id} (${message.author.tag}).`
         }));
 

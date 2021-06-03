@@ -15,7 +15,7 @@ export class kEvent extends Event {
         
         if (typeof config.botOwner === 'string') {
             try {
-                const user = await client.users.fetch(config.botOwner);
+                const user = await client.users.fetch(config.botOwner as `${bigint}`);
                 await user.send(new MessageEmbed().setDescription(s).setColor('#ffe449')); 
             } catch {
                 console.log(`Logged in! Could not send message to the bot owner.`);

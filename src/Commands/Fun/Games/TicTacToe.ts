@@ -62,7 +62,7 @@ export class kCommand extends Command {
             else if (game.turn === 'O' && opponent.id === message.guild.me.id && !game.isFull()) // bot's turn to go, not real player
                 game.botGo();
 
-            return m.edit(getEmbed(game, [message.member, opponent]));
+            return void m.edit(getEmbed(game, [message.member, opponent]));
         });
     }
 }

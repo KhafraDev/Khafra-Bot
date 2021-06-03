@@ -30,7 +30,7 @@ const emojis = new Map<UserFlagsString, string>();
 const getEmojis = () => {
     if (emojis.size > 0) return emojis;
 
-    for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, string][])
+    for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, `${bigint}`][])
         // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 

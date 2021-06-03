@@ -6,7 +6,7 @@ import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
 import config from '../../../config.json';
 
-const emoji = client.emojis.cache.get(config.interactions.mdn);
+const emoji = client.emojis.cache.get(config.interactions.mdn as `${bigint}`);
 
 @RegisterInteraction
 export class kInteraction extends Interactions {
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const search = interaction.options[0].value! as string;
+        const search = interaction.options.first()!.value as string;
         const result = await fetchMDN(search);
 
         if ('errors' in result) {

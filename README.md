@@ -80,3 +80,10 @@ WantedBy=multi-user.target
 4. `sudo systemctl daemon-reload`
 5. `sudo systemctl enable khafrabot.service` (or `sudo systemctl restart khafrabot.service` if you previously attempted to).
 6. On system startup, the bot will automatically start.
+
+## Migrating Versions
+
+### v1.0.9 -> v1.10
+1. `npm run v1.10` (dumps the current postgres databases for a few commands to JSON).
+2. `npm i better-sqlite3`
+3. `npm run dev:build && npm run prod:run`

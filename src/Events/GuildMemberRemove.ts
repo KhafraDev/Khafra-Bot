@@ -29,12 +29,12 @@ export class kEvent extends Event {
         `, [member.guild.id]);
 
         const cached = await client.exists(member.guild.id) === 1;
-        let item: { welcome_channel: string } | null = null
+        let item: { welcome_channel: `${bigint}` } | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(member.guild.id));
         } else {
-            const { rows } = await pool.query<{ welcome_channel: string }>(`
+            const { rows } = await pool.query<{ welcome_channel: `${bigint}` }>(`
                 SELECT welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text

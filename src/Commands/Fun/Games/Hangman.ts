@@ -73,7 +73,7 @@ export class kCommand extends Command {
             
             if (t === w) { // guessed correct word
                 c.stop();
-                return m.edit(this.Embed.success()
+                return void m.edit(this.Embed.success()
                     .setTitle('You guessed the word!')
                     .setDescription(`
                     ${word}
@@ -83,14 +83,14 @@ export class kCommand extends Command {
                     .setImage(images[wrong])
                 );
             }
-
+            
             if (
                 !w.includes(t) || // letter isn't in the word
                 (w.includes(t) && w !== t && t.length > 1) // partially correct
             ) {
                 if (++wrong >= 6) { // game lost
                     c.stop();
-                    return m.edit(this.Embed.success()
+                    return void m.edit(this.Embed.success()
                         .setTitle(`You lost! The word was "${word}"!`)
                         .setDescription(`
                         ${hide(word, guesses)}
@@ -112,10 +112,10 @@ export class kCommand extends Command {
                 if (w.includes(t) && w !== t)
                     embed.setTitle('Partial guesses are marked as incorrect!');
 
-                return m.edit(embed);
+                return void m.edit(embed);
             }
 
-            return m.edit(this.Embed.success()
+            return void m.edit(this.Embed.success()
                 .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                 .setDescription(`
                 ${hide(word, guesses)}
@@ -126,7 +126,7 @@ export class kCommand extends Command {
             );
         });
 
-        c.on('end', () => games.delete(message.author.id));
+        c.on('end', () => void games.delete(message.author.id));
 
         try { await m.react('❓') } catch {} // ignore error
 

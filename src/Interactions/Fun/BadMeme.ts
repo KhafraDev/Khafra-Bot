@@ -20,9 +20,9 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const subreddit = interaction.options.length === 0
+        const subreddit = interaction.options.size === 0
             ? 'dankmemes'
-            : `${interaction.options[0].value}`.toLowerCase();
+            : `${interaction.options.first()!.value}`.toLowerCase();
 
         if (!cache.has(subreddit))
             await interaction.defer();
