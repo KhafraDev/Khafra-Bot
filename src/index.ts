@@ -5,8 +5,8 @@ import { KhafraClient } from './Bot/KhafraBot.js';
 import { ClientEvents, Intents } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]): Awaited<void> => 
-        KhafraClient.Events.get(name)?.init(...args);
+    return (...args: ClientEvents[T]) => 
+        KhafraClient.Events.get(name)?.init(...args) as Awaited<void>;
 }
 
 export const client = new KhafraClient({

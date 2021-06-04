@@ -2,8 +2,7 @@ import {
     Message, 
     Snowflake,
     Permissions,
-    PermissionResolvable,
-    MessageEmbed
+    PermissionResolvable
 } from 'discord.js';
 import { Logger } from './Logger.js';
 import config from '../../config.json';
@@ -40,14 +39,10 @@ interface ICommand {
     }
 }
 
-type Reply = ReturnType<Message['reply']>;
-type Promisify<T> = T extends Promise<infer U>
-    ? U | T
-    : T | Promise<T>;
-
 export abstract class Command implements ICommand {
     logger = new Logger('Command');
     errors = Errors;
+    Embed = Embed;
 
     /*** Description and example usage. */
     help: string[];
@@ -73,11 +68,9 @@ export abstract class Command implements ICommand {
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
-        Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
+        Promise<unknown> | unknown;
 
-    isBotOwner (id: Snowflake) {
-        return Array.isArray(config.botOwner) ? config.botOwner.includes(id) : config.botOwner === id;
-    }
-
-    get Embed () { return Embed; }
+    isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 
+        ? config.botOwner.includes(id) 
+        : config.botOwner === id;
 }
