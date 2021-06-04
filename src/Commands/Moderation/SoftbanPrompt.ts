@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -8,6 +8,7 @@ import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Components } from '../../lib/Utility/Constants/Components.js';
 
 const range = Range(0, 7, true);
 
@@ -34,52 +35,67 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        const member = await getMentions(message, 'users');
-        if (!member) {
+        const user = await getMentions(message, 'users');
+        if (!user) {
             return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
         const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
-        const msg = await message.reply(this.Embed.success(`
-        Are you sure you want to soft-ban ${member}? 
-        This will delete ${clear} day${plural(clear)} worth of messages from them, but they will be allowed to rejoin the guild.
 
-        Answer "\`\`yes\`\`" to ban and "\`\`no\`\`" to cancel.
-        `));
-        
-        const filter = (m: Message) => 
-            m.author.id === message.author.id &&
-            ['yes', 'no', 'y', 'n', 'cancel', 'stop'].includes(m.content.toLowerCase())
-        ;
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Yes'),
+                Components.deny('No')
+            );
 
-        const m = await message.channel.awaitMessages(filter, {
-            max: 1,
-            time: 20000
+        const msg = await message.reply({
+            embed: this.Embed.success(`
+            Are you sure you want to soft-ban ${user}? 
+    
+            This will delete ${clear} day${plural(clear)} worth of messages from them, but they **will be** allowed to rejoin the guild.
+            `),
+            components: [row]
         });
 
-        if (m.size === 0) {
-            return void msg.edit(this.Embed.fail(`Didn't get confirmation to ban ${member}!`));
-        } else if (['no', 'n', 'cancel', 'stop'].includes(m.first()?.content.toLowerCase())) {
-            return void msg.edit(this.Embed.fail('Command was canceled!'));
-        }
+        const filter = (interaction: Interaction) => 
+            interaction.isMessageComponent() &&
+            ['approve', 'deny'].includes(interaction.customID) && 
+            interaction.user.id === message.author.id;
 
+        const buttons = await msg.awaitMessageComponentInteractions(filter, { time: 20000, max: 1 });
+        if (buttons.size === 0) 
+            return void msg.edit(this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`));
+        
+        const button = buttons.first()!;
+        if (button.customID === 'deny')
+            return button.update({
+                embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
+                components: []
+            }); 
+
+        await button.deferUpdate();
+        
         try {
-            await message.guild.members.ban(member, {
+            await message.guild.members.ban(user, {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
                 reason
             });
-            await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
+            await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
         } catch {
-            return this.Embed.fail(`${member} isn't bannable!`);
+            return button.editReply({
+                embeds: [this.Embed.fail(`${user} isn't bannable!`)],
+                components: []
+            });
         } finally {
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${member.id}`, message.member);
+                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                    bans.set(`${message.guild.id},${user.id}`, message.member);
         }
 
-        return this.Embed.success(`
-        ${member} has been soft-banned from the guild!
-        `);
+        return button.editReply({
+            embeds: [this.Embed.success(`${user} has been soft-banned from the guild!`)],
+            components: []
+        });
     }
 }

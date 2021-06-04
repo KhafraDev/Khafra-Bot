@@ -1,8 +1,9 @@
 import { Command } from '../../../Structures/Command.js';
-import { Interaction, Message, MessageActionRow, MessageButton, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -31,7 +32,7 @@ export class kCommand extends Command {
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
-        After authorizing click the approve ✅ button, or click to canceled ❌ button to cancel! 
+        After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
         
         **Command will be canceled after 2 minutes automatically.**
         `)
@@ -39,14 +40,8 @@ export class kCommand extends Command {
 
         const row = new MessageActionRow()
 			.addComponents(
-                new MessageButton()
-                    .setCustomID('approve')
-                    .setLabel('finished')
-                    .setStyle('SUCCESS'),
-                new MessageButton()
-                    .setCustomID('deny')
-                    .setLabel('canceled')
-                    .setStyle('DANGER')
+                Components.approve('Approve'),
+                Components.deny('Cancel')
             );
 
         const msg = await message.reply({
