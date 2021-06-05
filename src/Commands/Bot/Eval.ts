@@ -21,13 +21,15 @@ export class kCommand extends Command {
     async init(message: Message, { content }: Arguments) {
         // https://github.com/nodejs/node/blob/e46c680bf2b211bbd52cf959ca17ee98c7f657f5/test/parallel/test-vm-basic.js#L132-L145
 
-        const fn = compileFunction(
-            `${content}`,
-            ['message']
-        ) as (...params: unknown[]) => unknown;
-
         let ret: unknown;
         try {
+            // vm.compileFunction can throw when using unsupported syntax
+            // ie. import.meta
+            const fn = compileFunction(
+                `${content}`,
+                ['message']
+            ) as (...params: unknown[]) => unknown;
+        
             ret = fn(message);
         } catch (e) {
             ret = e;
