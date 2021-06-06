@@ -60,10 +60,10 @@ export class kCommand extends Command {
             description += str;
         }
 
-        const m = await message.reply(this.Embed
+        const m = await message.reply({ embed: this.Embed
             .success(description)
             .setTitle('Which file should be reloaded?')
-        );
+        });
 
         const c = await m.channel.awaitMessages(
             (msg: Message) => mapped.some(({ base }) => base === msg.content),

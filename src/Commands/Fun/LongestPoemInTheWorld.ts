@@ -22,7 +22,7 @@ export class kCommand extends Command {
     async init(message: Message) {
         const poem = await longestPoem();
 
-        const m = await message.reply(this.Embed.success(poem.slice(0, 2048)));
+        const m = await message.reply({ embed: this.Embed.success(poem.slice(0, 2048)) });
         // allSettled won't throw if there's an error
         await Promise.allSettled(['➡️', '🗑️'].map(e => m.react(e)));
 

@@ -50,10 +50,10 @@ export class kCommand extends Command {
         const guesses: string[] = []; // guesses
 
         const word = presidents[await rand(presidents.length)];
-        const m = await message.reply(this.Embed.success()
+        const m = await message.reply({ embed: this.Embed.success()
             .setDescription(word.replace(/[A-z0-9\.]/g, '☐'))
             .setImage(images[wrong])
-        );
+        });
 
         const c = message.channel.createMessageCollector(
             (m: Message) =>

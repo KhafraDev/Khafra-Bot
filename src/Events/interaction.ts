@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { Interaction, MessageEmbed } from 'discord.js';
+import { Interaction, InteractionReplyOptions, MessageEmbed } from 'discord.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 
@@ -24,7 +24,13 @@ export class kEvent extends Event {
             else if (interaction.deferred)
                 return interaction.editReply(result);
 
-            return interaction.reply(result);
+            const param = {} as InteractionReplyOptions;
+            if (typeof result === 'string')
+                param.content = result;
+            else if (result instanceof MessageEmbed)
+                param.embeds = [result];
+
+            return interaction.reply(param);
         } catch (e) {
             // TODO(@KhafraDev): do something with error?
         }

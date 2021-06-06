@@ -31,13 +31,11 @@ export class kCommand extends Command {
         }
 
         let i = 0;
-        const format = () => {
-            if (!icons.icons[i]) {
-                this.Embed.success().setImage(icons.icons[0].preview_url)
-            }
-            return this.Embed.success().setImage(icons.icons[i].preview_url);
-        }
-        const m = await message.reply(format());
+        const format = () => !icons.icons[i] 
+            ? this.Embed.success().setImage(icons.icons[0].preview_url)
+            : this.Embed.success().setImage(icons.icons[i].preview_url);
+        
+        const m = await message.reply({ embed: format() });
 
         await m.react('▶️');
         await m.react('◀️');

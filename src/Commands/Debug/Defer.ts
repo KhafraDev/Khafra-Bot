@@ -20,6 +20,6 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         await message.delete();
-        await message.reply(this.Embed.fail('If you\'re seeing this, something went wrong...'));
+        await message.reply({ embed: this.Embed.fail('If you\'re seeing this, something went wrong...') });
     }
 }

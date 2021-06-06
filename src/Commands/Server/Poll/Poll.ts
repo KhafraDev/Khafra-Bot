@@ -45,13 +45,13 @@ export class kCommand extends Command {
             return this.Embed.missing_perms(false, basic);
         }
 
-        await message.reply(this.Embed.success(`
+        await message.reply({ embed: this.Embed.success(`
         Setting up a poll now!
 
         Enter all of the options in separate messages in the form \`\`[emoji] [text]\`\` to get started.
         Once you're done, post \`\`stop\`\` (it will stop after 5 options automatically).
         You can also cancel the command using \`\`cancel\`\`.
-        `));
+        `) });
 
         const filter = (m: Message) =>
             m.author.id === message.author.id &&
@@ -84,9 +84,9 @@ export class kCommand extends Command {
                     return;
 
                 try {
-                    const m = await channel.send(this.Embed.success(
+                    const m = await channel.send({ embed: this.Embed.success(
                         lines.map(l => `${l.emoji}: ${l.text}`).join('\n')
-                    ));
+                    ) });
 
                     await Promise.allSettled(lines.map(l => m.react(l.emoji)));
                 } catch {}

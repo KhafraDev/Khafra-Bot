@@ -55,7 +55,7 @@ export class kCommand extends Command {
             ['▶️', '🗑️'].includes(r.emoji.name) &&
             u.id === message.author.id;
 
-        const m = await message.channel.send(g.next().value as string);
+        const m = await message.channel.send({ content: g.next().value as string });
         await Promise.allSettled([m.react('▶️'), m.react('🗑️')]);
         const c = m.createReactionCollector(f, { max: 6, time: 30000 });
 

@@ -31,7 +31,7 @@ export class kCommand extends Command {
             return this.Embed.missing_perms(true);
         }
 
-        const msg = await message.reply(this.Embed.success(`
+        const msg = await message.reply({ embed: this.Embed.success(`
         Welcome to the Strawpoll creator. Due to the number of configurable options, this is a lengthy process.
 
         To start off, enter the \`\`title\`\` of the poll and the \`\`answers\`\`, all on different lines (press \`\`Shift+Enter\`\` to go to a new line).
@@ -43,7 +43,7 @@ export class kCommand extends Command {
         🍇 - Grapes
         something else
         `}\`\`\`
-        `));
+        `) });
 
         const filter = (m: Message) => m.author.id === message.author.id && m.content?.split(/\r\n|\n/g).length > 1;
         const collected = await message.channel.awaitMessages(filter, { max: 1, time: 60000 });

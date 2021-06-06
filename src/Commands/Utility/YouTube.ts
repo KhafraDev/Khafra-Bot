@@ -51,7 +51,7 @@ export class kCommand extends Command {
 
         const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
-        const m = await message.reply(embeds[0]);
+        const m = await message.reply({ embed: embeds[0] });
         
         await m.react('▶️');
         await m.react('◀️');

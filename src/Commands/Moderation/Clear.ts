@@ -52,7 +52,7 @@ export class kCommand extends Command {
             \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared and your input message has also been deleted.\`\`
             `);
 
-        const m = await message.reply(embed);
+        const m = await message.reply({ embed });
         setTimeout(() => m.delete(), 5000);
     }
 }

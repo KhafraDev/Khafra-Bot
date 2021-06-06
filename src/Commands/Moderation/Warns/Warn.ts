@@ -94,15 +94,15 @@ export class kCommand extends Command {
                 return this.Embed.fail(`Member was warned (#${k_id}) but an error prevented me from kicking them.`);
             }
 
-            await message.reply(this.Embed.success(
+            await message.reply({ embed: this.Embed.success(
                 `${member} was automatically kicked from the server for having ` + 
-                `${total.toLocaleString()} warning point${plural(total)} (#${k_id}).
-            `));
+                `${total.toLocaleString()} warning point${plural(total)} (#${k_id}).`
+            )});
         } else {
-            await message.reply(this.Embed.success(`
+            await message.reply({ embed: this.Embed.success(`
             Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (#${k_id}).
             Member has ${total.toLocaleString()} points total.
-            `));
+            `) });
         }
 
         if (settings.mod_log_channel !== null) {
@@ -111,14 +111,14 @@ export class kCommand extends Command {
                 return;
 
             const reason = args.slice(2).join(' ');
-            return channel.send(this.Embed.success(`
+            return channel.send({ embed: this.Embed.success(`
             **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             **Points:** ${points} warning point${plural(points)} given.
             **Kicked:** ${settings.max_warning_points <= total ? 'Yes' : 'No'} (${total.toLocaleString()} total point${plural(total)}).
             **ID:** #${k_id}
-            `).setTitle('Member Warned'));
+            `).setTitle('Member Warned') });
         }
     }
 }

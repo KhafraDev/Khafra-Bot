@@ -44,7 +44,7 @@ export class kCommand extends Command {
         const opponent = member ?? message.guild.me;
         const game = new TicTacToe();
 
-        const m = await message.reply(getEmbed(game, [message.member, opponent]));
+        const m = await message.reply({ embed: getEmbed(game, [message.member, opponent]) });
 
         const f = (m: Message) =>
             (game.turn === 'X' ? message.author.id : opponent.id) === m.member.id && // it's the player's turn

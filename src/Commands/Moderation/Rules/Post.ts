@@ -61,11 +61,11 @@ export class kCommand extends Command {
         else if (!hasPerms(channel, message.guild.me, perms)) // doesn't have perms to post
             return this.Embed.fail('Give me permissions to read message history, embed links, manage channel, and send messages please!');
 
-        await message.reply(`Posting ${rows.length} rules to ${channel} now!`);
+        await message.reply({ content: `Posting ${rows.length} rules to ${channel} now!` });
         
         const embeds = rows.map((rule, idx) => this.Embed.success(`${rule.rule}`).setTitle(`Rule #${idx+1}`));
         if (embeds.length === 1)
-            return channel.send(embeds[0]);
+            return channel.send({ embed: embeds[0] });
 
         const groups = chunkSafe(embeds, 10); // max # of embeds 1 webhook msg can have
         const webhooks = await channel.fetchWebhooks(); // check for existing webhooks

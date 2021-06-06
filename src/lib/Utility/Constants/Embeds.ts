@@ -14,7 +14,7 @@ const defaultPerms = [
     Permissions.FLAGS.EMBED_LINKS,
     Permissions.FLAGS.VIEW_CHANNEL, 
     Permissions.FLAGS.READ_MESSAGE_HISTORY 
-]
+];
 
 export const Embed = {
     fail: (reason?: string) => {

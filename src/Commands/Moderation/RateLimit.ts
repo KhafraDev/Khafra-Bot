@@ -59,9 +59,9 @@ export class kCommand extends Command {
             return this.Embed.fail('An error prevented the rate-limit from being set.');
         }
 
-        message.reply(this.Embed.success(`
-        Slow-mode set in ${channel} for ${secs} second${plural(secs)}!
-        `));
+        message.reply({ 
+            embed: this.Embed.success(`Slow-mode set in ${channel} for ${secs} second${plural(secs)}!`) 
+        });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -69,11 +69,11 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send(this.Embed.success(`
+            return channel.send({ embed: this.Embed.success(`
             **Channel:** ${channel} (${channel.id}, ${channel.type}).
             **Staff:** ${message.member}
             **Duration:** ${secs} second${plural(secs)}
-            `).setTitle('Channel Rate-Limited'));
+            `).setTitle('Channel Rate-Limited') });
         }
     }
 }

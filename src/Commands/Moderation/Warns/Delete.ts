@@ -72,21 +72,21 @@ export class kCommand extends Command {
         if (deleted.length === 0)
             return this.Embed.fail('No warning with that ID could be found in the guild!');
 
-        await message.reply(this.Embed.success(`
+        await message.reply({ embed: this.Embed.success(`
         Warning #${deleted[0].k_id} was removed from ${member}!
-        `));
+        `) });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             if (!isText(channel) || !hasPerms(channel, message.guild.me, logChannel))
                 return;
 
-            return channel.send(this.Embed.success(`
+            return channel.send({ embed: this.Embed.success(`
             **Removed From:** ${member}
             **Staff:** ${message.member}
             **Points:** ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
             **ID:** #${id}
-            `).setTitle('Warning Removed'));
+            `).setTitle('Warning Removed') });
         }
     }
 }

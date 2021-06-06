@@ -65,7 +65,7 @@ export class kEvent extends Event {
             .setDescription(`${member.user} (${member.user.tag}) joined the server!`);
 
         try {
-            return channel.send(embed);
+            return channel.send({ embed });
         } catch {}
     }
 }

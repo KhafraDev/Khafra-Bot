@@ -54,7 +54,7 @@ export class kCommand extends Command {
                 .setTitle(`Rule #${id}`);
         }
 
-        const msg = await message.reply(this.Embed.success(`
+        const msg = await message.reply({ embed: this.Embed.success(`
         **Rule Board:**
         Steps:
             1. Enter the rules one at a time.
@@ -66,7 +66,7 @@ export class kCommand extends Command {
             - To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
 
         Make sure the rules are already written down - you have 5 minutes to enter all of them.
-        `));
+        `) });
         
         const rules = new Set<string>();
         const collector = message.channel.createMessageCollector(

@@ -42,7 +42,7 @@ export class kCommand extends Command {
 
         let page = 0;
 
-        const m = await message.reply(embeds[page]);
+        const m = await message.reply({ embed: embeds[page] });
         await m.react('▶️');
         await m.react('◀️');
         await m.react('🗑️');
