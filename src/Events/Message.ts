@@ -1,4 +1,4 @@
-import { DiscordAPIError, Message } from 'discord.js';
+import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, MessageOptions } from 'discord.js';
 import { Event } from '../Structures/Event.js';
 import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
 import { Logger } from '../Structures/Logger.js';
@@ -120,8 +120,18 @@ export class kEvent extends Event {
             const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
+
+            const param = {} as MessageOptions;
+            if (typeof returnValue === 'string')
+                param.content = returnValue;
+            else if (returnValue instanceof MessageEmbed)
+                param.embed = returnValue;
+            else if (returnValue instanceof MessageAttachment)
+                param.files = [returnValue];
+            else if (typeof returnValue === 'object') // MessageOptions
+                Object.assign(param, returnValue);
             
-            return message.reply(returnValue);
+            return message.reply(param);
         } catch (e) {
             // if there's an error sending a message, we should probably
             // not send another message. in the future try figuring out
