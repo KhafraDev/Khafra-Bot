@@ -52,7 +52,7 @@ export const Embed = {
      * A generic help embed useful for most situations.
      */
     generic: ({ settings, help }: PartialCommand, reason?: string) => {
-        const [min, max] = settings.args;
+        const [min, max = 'no'] = settings.args;
         const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
         
         return new MessageEmbed()
