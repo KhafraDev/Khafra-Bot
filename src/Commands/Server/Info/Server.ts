@@ -20,7 +20,9 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) {        
+    init(message: Message) { 
+        const locale = message.guild.preferredLocale;
+
         return this.Embed.success()
             .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
             .setTimestamp()
@@ -31,10 +33,11 @@ export class kCommand extends Command {
             `)
             .addFields(
                 { name: '**ID:**', value: message.guild.id, inline: true },
-                { name: '**Large:**', value: message.guild.large ? 'Yes' : 'No', inline: true },
-                { name: '**Members:**', value: message.guild.memberCount.toLocaleString(), inline: true },
+                { name: '**Verified:**', value: message.guild.verified ? 'Yes' : 'No', inline: true },
+                { name: '**Partnered:**', value: message.guild.partnered ? 'Yes' : 'No', inline: true },
+                { name: '**Members:**', value: message.guild.memberCount.toLocaleString(locale), inline: true },
                 { name: '**Owner:**', value: `<@!${message.guild.ownerID}>`, inline: true },
-                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount.toLocaleString(), inline: true },
+                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount.toLocaleString(locale), inline: true },
                 { name: '**Tier:**', value: `${message.guild.premiumTier}`, inline: true },
                 { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
                 { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },
