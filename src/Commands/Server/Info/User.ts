@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Activity, SnowflakeUtil } from 'discord.js';
+import { Message, Activity, SnowflakeUtil, Snowflake } from 'discord.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
@@ -10,7 +10,7 @@ import config from '../../../../config.json';
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
     for (const activity of activities) {
-        switch(activity.type) {
+        switch (activity.type) {
             case 'CUSTOM_STATUS':
                 push.push(`${activity.emoji ?? ''}${activity.state ? ` \`\`${activity.state}\`\`` : ''}`); break;
             case 'LISTENING':
@@ -30,7 +30,7 @@ const emojis = new Map<UserFlagsString, string>();
 const getEmojis = () => {
     if (emojis.size > 0) return emojis;
 
-    for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, `${bigint}`][])
+    for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][])
         // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 

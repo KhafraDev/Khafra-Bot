@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions, GuildMember, User } from 'discord.js';
+import { Message, Permissions, GuildMember, User, Snowflake } from 'discord.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -24,10 +24,10 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        if (args.some(id => !validSnowflake(id as `${bigint}`)))
+        if (args.some(id => !validSnowflake(id as Snowflake)))
             return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
 
-        const promiseArr = args.map(id => message.guild.members.ban(id as `${bigint}`, {
+        const promiseArr = args.map(id => message.guild.members.ban(id as Snowflake, {
             reason: `Force-ban by ${message.author.id} (${message.author.tag}).`
         }));
 

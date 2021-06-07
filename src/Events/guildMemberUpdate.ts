@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, Channel, Permissions } from 'discord.js';
+import { GuildMember, Channel, Permissions, Snowflake } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -30,12 +30,12 @@ export class kEvent extends Event {
             return;
 
         const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: { welcome_channel: `${bigint}` } | null = null
+        let item: { welcome_channel: Snowflake } | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(oldMember.guild.id));
         } else {
-            const { rows } = await pool.query<{ welcome_channel: `${bigint}` }>(`
+            const { rows } = await pool.query<{ welcome_channel: Snowflake }>(`
                 SELECT welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text

@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { MessageEmbed } from 'discord.js';
+import { MessageEmbed, Snowflake } from 'discord.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
 import config from '../../config.json';
@@ -15,7 +15,7 @@ export class kEvent extends Event {
         
         if (typeof config.botOwner === 'string') {
             try {
-                const user = await client.users.fetch(config.botOwner as `${bigint}`);
+                const user = await client.users.fetch(config.botOwner as Snowflake);
                 await user.send({ 
                     embed: new MessageEmbed()
                         .setDescription(s)

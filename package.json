@@ -8,7 +8,7 @@
     "@khaf/badmeme": "file:src/lib/Packages/BadMeme",
     "adm-zip": "^0.4.16",
     "better-sqlite3": "^7.4.0",
-    "discord.js": "^13.0.0-dev.dec191aa1e4f22690285ca06c6eee7e6086b2930",
+    "discord.js": "^13.0.0-dev.e980948de55e91e59c9e3293ac76bc645a058a53",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
     "ms": "^2.1.2",

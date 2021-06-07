@@ -7,7 +7,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
     for (const activity of activities) {
-        switch(activity.type) {
+        switch (activity.type) {
             case 'CUSTOM_STATUS':
                 push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
                 break;

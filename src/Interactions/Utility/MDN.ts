@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, Snowflake } from 'discord.js';
 import { fetchMDN } from 'search-mdn';
 import { client } from '../../index.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
@@ -6,7 +6,7 @@ import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
 import config from '../../../config.json';
 
-const emoji = client.emojis.cache.get(config.interactions.mdn as `${bigint}`);
+const emoji = client.emojis.cache.get(config.interactions.mdn as Snowflake);
 
 @RegisterInteraction
 export class kInteraction extends Interactions {

@@ -1,4 +1,4 @@
-import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel } from 'discord.js';
+import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel, Snowflake } from 'discord.js';
 import { client } from '../../index.js';
 
 interface Options {
@@ -37,7 +37,7 @@ export async function getMentions(
         args.splice(0, 1); // normal prefixed command
 
     if (REGEX[type].test(args[0])) {
-        const id = args[0].replace(/[^0-9]/g, '') as `${bigint}`; // replace non-numeric characters
+        const id = args[0].replace(/[^0-9]/g, '') as Snowflake; // replace non-numeric characters
         // sometimes, especially for users, they might not be cached/auto fetched
         // for the bot, so no items will be in the collection
         const item = mentions[type].get(id) ?? id;
@@ -66,7 +66,7 @@ export async function getMentions(
     }
 }
 
-export const validSnowflake = (id: `${bigint}`) => {
+export const validSnowflake = (id: Snowflake) => {
     const snowflake = SnowflakeUtil.deconstruct(id);
     if ( 
         snowflake.date.getTime() === epoch.getTime()

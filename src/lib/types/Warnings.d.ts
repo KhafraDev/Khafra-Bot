@@ -2,12 +2,12 @@ import { Snowflake } from 'discord.js';
 
 export interface kGuild {
     id: number
-    guild_id: `${bigint}`
+    guild_id: Snowflake
     prefix: string
     max_warning_points: number
-    mod_log_channel: `${bigint}` | null
-    welcome_channel: `${bigint}` | null
-    rules_channel: `${bigint}` | null
+    mod_log_channel: Snowflake | null
+    welcome_channel: Snowflake | null
+    rules_channel: Snowflake | null
 }
 
 /**

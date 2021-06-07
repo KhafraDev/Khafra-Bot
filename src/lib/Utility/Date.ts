@@ -3,7 +3,7 @@ const ordinal = (num = 0) => {
         return 'th';
     }
 
-    switch(num % 10) {
+    switch (num % 10) {
         case 1: return 'st';
         case 2: return 'nd';
         case 3: return 'rd';
@@ -28,7 +28,7 @@ export const formatDate = (
 
     const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?|t/g;
     const replace = format.replace(formatRegex, formatter => {
-        switch(formatter) {
+        switch (formatter) {
             case 'YYYY':    // 2020
                 return '' + dateObj.getFullYear();
             case 'YY':      // 2010 -> 10

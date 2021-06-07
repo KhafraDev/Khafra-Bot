@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Message, Permissions, Snowflake } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -28,8 +28,8 @@ export class kCommand extends Command {
             .map(e => e.url);
 
         const guild = [...message.content.matchAll(GUILD_EMOJI_REG)]
-            .filter(e => message.guild.emojis.cache.has(e[3] as `${bigint}`))
-            .map(e => message.guild.emojis.resolve(e[3] as `${bigint}`).url);
+            .filter(e => message.guild.emojis.cache.has(e[3] as Snowflake))
+            .map(e => message.guild.emojis.resolve(e[3] as Snowflake).url);
 
         const all =  [...unicode, ...guild];
 
