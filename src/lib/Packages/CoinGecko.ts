@@ -75,6 +75,8 @@ const all = async () => {
             .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
         const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
 
+        cache.clear();
+
         for (const all of reqsChunk) {
             const success = (await Promise.allSettled(all))
                 .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
