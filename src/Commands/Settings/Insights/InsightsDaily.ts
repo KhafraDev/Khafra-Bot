@@ -54,14 +54,11 @@ export class kCommand extends Command {
         const now = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
         const r = rows.filter(r => (now - r.k_date.getTime()) <= TWO_WEEKS);
 
-        const t = table(
-            [ 'Dates', 'Joins', 'Leaves' ],
-            [
-                r.map(row => formatDate('MMMM Do, YYYY', row.k_date)),
-                r.map(row => row.k_joined.toLocaleString(message.guild.preferredLocale)),
-                r.map(row => row.k_left.toLocaleString(message.guild.preferredLocale))
-            ]
-        );
+        const t = table({
+            Dates: r.map(row => formatDate('MMMM Do, YYYY', row.k_date)),
+            Joins: r.map(row => row.k_joined.toLocaleString(message.guild.preferredLocale)),
+            Leaves: r.map(row => row.k_left.toLocaleString(message.guild.preferredLocale))
+        });
 
         return this.Embed.success(`\`\`\`${t}\`\`\``);
     }

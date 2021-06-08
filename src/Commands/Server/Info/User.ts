@@ -6,6 +6,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { UserFlagsString } from 'discord.js';
 import { client } from '../../../index.js';
 import config from '../../../../config.json';
+import { once } from '../../../lib/Utility/Memoize.js';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -27,15 +28,13 @@ const formatPresence = (activities: Activity[]) => {
 
 const emojis = new Map<UserFlagsString, string>();
 // lazy load emojis
-const getEmojis = () => {
-    if (emojis.size > 0) return emojis;
-
+const getEmojis = once(() => {
     for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][])
         // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 
     return emojis;
-}
+});
 
 @RegisterCommand
 export class kCommand extends Command {
