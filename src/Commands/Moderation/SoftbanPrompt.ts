@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -63,11 +63,16 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customID) && 
             interaction.user.id === message.author.id;
 
-        const buttons = await msg.awaitMessageComponentInteractions(filter, { time: 20000, max: 1 });
-        if (buttons.size === 0) 
-            return void msg.edit(this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`));
-        
-        const button = buttons.first()!;
+        let button: MessageComponentInteraction | null = null;
+        try {
+            button = await msg.awaitMessageComponentInteraction(filter, 20000);
+        } catch {
+            return void msg.edit({
+                embed: this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`),
+                components: []
+            });
+        }
+
         if (button.customID === 'deny')
             return button.update({
                 embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],

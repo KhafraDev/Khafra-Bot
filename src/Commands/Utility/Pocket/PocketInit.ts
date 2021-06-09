@@ -1,5 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
@@ -54,11 +54,16 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customID) && 
             interaction.user.id === message.author.id;
 
-        const buttons = await msg.awaitMessageComponentInteractions(filter, { time: 120000, max: 1 });
-        if (buttons.size === 0)
-            return void msg.edit(this.Embed.fail('Canceled the command, took over 2 minutes.'));
+        let button: MessageComponentInteraction | null = null;
+        try {
+            button = await msg.awaitMessageComponentInteraction(filter, 120000);
+        } catch {
+            return void msg.edit({
+                embed: this.Embed.fail('Canceled the command, took over 2 minutes.'),
+                components: []
+            });
+        }
 
-        const button = buttons.first()!;
         await button.deferUpdate();
 
         if (button.customID === 'approve') {
