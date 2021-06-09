@@ -71,7 +71,7 @@ export class kCommand extends Command {
                 return c.stop();
 
             lastEdit = Date.now();
-            return m.edit(next.value);
+            return m.edit({ content: next.value });
         });
 
         c.on('end', () => m.reactions.removeAll());

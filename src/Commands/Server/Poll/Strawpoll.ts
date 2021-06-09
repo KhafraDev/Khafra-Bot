@@ -63,26 +63,28 @@ export class kCommand extends Command {
         };
 
         const [title, ...choices] = collected.first().content.split(/\r\n|\n/g);
-        await msg.edit(this.Embed.success(`
-        Got a title and ${choices.length} answers. Let's configure options now.
+        await msg.edit({ 
+            embed: this.Embed.success(`
+            Got a title and ${choices.length} answers. Let's configure options now.
 
-        Enter a \`\`1\`\` to enable an option and \`\`0\`\` to disable an option.
-        Some fields may differ in how to change its value, make sure to read each option!
+            Enter a \`\`1\`\` to enable an option and \`\`0\`\` to disable an option.
+            Some fields may differ in how to change its value, make sure to read each option!
 
-        To continue, enter each choice separated by a space, as shown below:
-        Invalid options will be set to a default value!
-        \`\`\`1 0 0 0 1 0 0 0\`\`\`
-        This would create a \`\`private\`\` poll where only 1 answer is allowed per IP, no comments allowed, anonymous voting, no captchas, and would end in 10 days.
-        `).addFields(
-            { name: '**State**',                 value: '1 - Private, 0 - Public',       inline: true },
-            { name: '**Multiple Answers:**',     value: 'Allow multiple answers.',       inline: true },
-            { name: '**Multiple Votes Per IP**', value: 'Allow multiple votes per IP.',  inline: true },
-            { name: '**Comments:**',             value: 'Allow comments.',               inline: true },
-            { name: '**VPN:**',                  value: 'Allow people on VPNs to vote.', inline: true },
-            { name: '**Enter Name:**',           value: 'Voters must enter their name.', inline: true },
-            { name: '**Registered:**',           value: 'Only allow registered users.',  inline: true },
-            { name: '**Captcha:**',              value: 'Background reCAPTCHA solving.', inline: true },
-        ));
+            To continue, enter each choice separated by a space, as shown below:
+            Invalid options will be set to a default value!
+            \`\`\`1 0 0 0 1 0 0 0\`\`\`
+            This would create a \`\`private\`\` poll where only 1 answer is allowed per IP, no comments allowed, anonymous voting, no captchas, and would end in 10 days.
+            `).addFields(
+                { name: '**State**',                 value: '1 - Private, 0 - Public',       inline: true },
+                { name: '**Multiple Answers:**',     value: 'Allow multiple answers.',       inline: true },
+                { name: '**Multiple Votes Per IP**', value: 'Allow multiple votes per IP.',  inline: true },
+                { name: '**Comments:**',             value: 'Allow comments.',               inline: true },
+                { name: '**VPN:**',                  value: 'Allow people on VPNs to vote.', inline: true },
+                { name: '**Enter Name:**',           value: 'Voters must enter their name.', inline: true },
+                { name: '**Registered:**',           value: 'Only allow registered users.',  inline: true },
+                { name: '**Captcha:**',              value: 'Background reCAPTCHA solving.', inline: true },
+            )
+        });
 
         const filterOpts = (m: Message) => m.author.id === message.author.id && m.content?.length <= 16;
         const collectedOpts = await message.channel.awaitMessages(filterOpts, { max: 1, time: 60000 });
@@ -111,16 +113,18 @@ export class kCommand extends Command {
         }
 
         const json = await res.json();
-        await msg.edit(this.Embed.success(`
-        ${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}
-        `));
+        await msg.edit({ 
+            embed: this.Embed.success(`${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}`)
+        });
 
         if (json.success === 1) {
-            return void message.author.send(this.Embed.success(`
-            Created a poll: https://strawpoll.com/${json.content_id}
+            return void message.author.send({ 
+                embed: this.Embed.success(`
+                Created a poll: https://strawpoll.com/${json.content_id}
 
-            Admin ID: \`\`${json.admin_key}\`\`
-            `));
+                Admin ID: \`\`${json.admin_key}\`\`
+                `)
+            });
         }
     }
 }

@@ -72,12 +72,12 @@ export class kCommand extends Command {
             } else if (r.emoji.name === '▶️') {
                 if (embeds[idx + 1]) {
                     idx++;
-                    return m.edit(embeds[idx]);
+                    return m.edit({ embed: embeds[idx] });
                 }
             } else {
                 if (embeds[idx - 1]) {
                     idx--;
-                    return m.edit(embeds[idx]);
+                    return m.edit({ embed: embeds[idx] });
                 }
             }
         });

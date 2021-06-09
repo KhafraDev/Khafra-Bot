@@ -65,7 +65,7 @@ export class kCommand extends Command {
             if (page >= embeds.length) page = embeds.length - 1;
 
             if (page !== old)
-                return m.edit(embeds[page]);
+                return m.edit({ embed: embeds[page] });
         });
         collector.on('end', () => m.reactions.removeAll());
     }

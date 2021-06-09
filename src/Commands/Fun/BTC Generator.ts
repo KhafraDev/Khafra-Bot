@@ -41,6 +41,6 @@ export class kCommand extends Command {
         const embed2 = this.Embed.success()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return void msg.edit(embed2);
+        return void msg.edit({ embed: embed2 });
     }
 }

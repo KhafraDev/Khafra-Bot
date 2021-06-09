@@ -33,7 +33,7 @@ export class kCommand extends Command {
         collector.on('collect', async r => {
             if (r.emoji.name === '➡️') {
                 const poem = await longestPoem();
-                return m.edit(this.Embed.success(poem.slice(0, 2048)));
+                return m.edit({ embed: this.Embed.success(poem.slice(0, 2048)) });
             }
 
             return collector.stop();

@@ -81,7 +81,7 @@ export class kCommand extends Command {
             { outDir: join(process.cwd(), 'build') }
         );
 
-        await m.edit(this.Embed.success(compiled.join('\n').slice(0, 2048))); 
+        await m.edit({ embed: this.Embed.success(compiled.join('\n').slice(0, 2048)) }); 
 
         const { href } = pathToFileURL(join(outDir, cmd.base.replace(/\.(.*?)$/, '.js')));
         const { kCommand } = await import(href) as typeof import('./Reload');

@@ -73,15 +73,16 @@ export class kCommand extends Command {
             
             if (t === w) { // guessed correct word
                 c.stop();
-                return void m.edit(this.Embed.success()
-                    .setTitle('You guessed the word!')
-                    .setDescription(`
-                    ${word}
-                    ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)
-                    .setImage(images[wrong])
-                );
+                return void m.edit({ 
+                    embed: this.Embed.success()
+                        .setTitle('You guessed the word!')
+                        .setImage(images[wrong])
+                        .setDescription(`
+                        ${word}
+                        ${wrong} wrong guess${plural(wrong, 'es')}.
+                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                        `)
+                });
             }
             
             if (
@@ -90,15 +91,16 @@ export class kCommand extends Command {
             ) {
                 if (++wrong >= 6) { // game lost
                     c.stop();
-                    return void m.edit(this.Embed.success()
-                        .setTitle(`You lost! The word was "${word}"!`)
-                        .setDescription(`
-                        ${hide(word, guesses)}
-                        ${wrong} wrong guess${plural(wrong, 'es')}.
-                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                        `)
-                        .setImage(images[wrong])
-                    );
+                    return void m.edit({ 
+                        embed: this.Embed.success()
+                            .setTitle(`You lost! The word was "${word}"!`)
+                            .setImage(images[wrong])
+                            .setDescription(`
+                            ${hide(word, guesses)}
+                            ${wrong} wrong guess${plural(wrong, 'es')}.
+                            Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                            `)
+                    });
                 }
 
                 const embed = this.Embed.success()
@@ -112,18 +114,19 @@ export class kCommand extends Command {
                 if (w.includes(t) && w !== t)
                     embed.setTitle('Partial guesses are marked as incorrect!');
 
-                return void m.edit(embed);
+                return void m.edit({ embed });
             }
 
-            return void m.edit(this.Embed.success()
-                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
-                .setDescription(`
-                ${hide(word, guesses)}
-                ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                `)
-                .setImage(images[wrong])
-            );
+            return void m.edit({
+                embed: this.Embed.success()
+                    .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
+                    .setImage(images[wrong])
+                    .setDescription(`
+                    ${hide(word, guesses)}
+                    ${wrong} wrong guess${plural(wrong, 'es')}.
+                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    `)
+            });
         });
 
         c.on('end', () => void games.delete(message.author.id));
@@ -148,15 +151,16 @@ export class kCommand extends Command {
             const letter = letters[await rand(letters.length)];
 
             guesses.push(letter);
-            return m.edit(this.Embed.success()
-                .setTitle(`"${letter}" is the hint!`)
-                .setDescription(`
-                ${hide(word, guesses)}
-                ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                `)
-                .setImage(images[wrong])
-            );
+            return m.edit({
+                embed: this.Embed.success()
+                    .setTitle(`"${letter}" is the hint!`)
+                    .setImage(images[wrong])
+                    .setDescription(`
+                    ${hide(word, guesses)}
+                    ${wrong} wrong guess${plural(wrong, 'es')}.
+                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    `)
+            });
         });
 
         r.on('end', () => {

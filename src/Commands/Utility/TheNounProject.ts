@@ -46,7 +46,7 @@ export class kCommand extends Command {
         );
         collector.on('collect', r => {
             r.emoji.name === '▶️' ? i++ : i--;
-            return m.edit(format());
+            return m.edit({ embed: format() });
         });
         collector.on('end', () => m.reactions.removeAll());
     }

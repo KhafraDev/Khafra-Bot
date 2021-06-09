@@ -21,14 +21,15 @@ export class kEvent extends Event {
 
             if (typeof result !== 'string' && !(result instanceof MessageEmbed))
                 return interaction.deleteReply();
-            else if (interaction.deferred)
-                return interaction.editReply(result);
 
             const param = {} as InteractionReplyOptions;
             if (typeof result === 'string')
                 param.content = result;
             else if (result instanceof MessageEmbed)
                 param.embeds = [result];
+
+            if (interaction.deferred)
+                return interaction.editReply(param);
 
             return interaction.reply(param);
         } catch (e) {

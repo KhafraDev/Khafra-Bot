@@ -114,13 +114,15 @@ export class kCommand extends Command {
                     client.release();
                 }
 
-                return void msg.edit(this.Embed.success(`
-                Added ${rules.size} rules!
+                return void msg.edit({ 
+                    embed: this.Embed.success(`
+                    Added ${rules.size} rules!
 
-                To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
-                To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
-                To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
-                `));
+                    To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
+                    To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
+                    To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
+                    `)
+                });
             }
         });
     }
