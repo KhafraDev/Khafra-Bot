@@ -1,4 +1,4 @@
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, MessageOptions } from 'discord.js';
+import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { Event } from '../Structures/Event.js';
 import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
 import { Logger } from '../Structures/Logger.js';
@@ -121,7 +121,7 @@ export class kEvent extends Event {
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
 
-            const param = {} as MessageOptions;
+            const param = {} as ReplyMessageOptions & { split?: false };
             if (typeof returnValue === 'string')
                 param.content = returnValue;
             else if (returnValue instanceof MessageEmbed)
