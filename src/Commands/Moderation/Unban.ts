@@ -32,12 +32,12 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.unban(user, args.slice(1).join(' '));
-        } catch (e) {
-            return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
-        } finally {
+
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!unbans.has(`${message.guild.id},${user.id}`))
                     unbans.set(`${message.guild.id},${user.id}`, message.member);
+        } catch (e) {
+            return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
         }
 
         return this.Embed.success(`${user} is now unbanned!`);

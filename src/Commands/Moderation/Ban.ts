@@ -48,13 +48,13 @@ export class kCommand extends Command {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
                 reason
             });
-        } catch {
-            return this.Embed.fail(`${user} isn't bannable!`);
-        } finally {
-            // not sure if the event is fired without permission to view audit logs
+            
+            // TODO(@KhafraDev): check if this perm requires any intents/perms
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${user.id}`, message.member);
+        } catch {
+            return this.Embed.fail(`${user} isn't bannable!`);
         }
 
         return this.Embed.success(`

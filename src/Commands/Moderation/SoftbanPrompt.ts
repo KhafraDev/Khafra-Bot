@@ -87,15 +87,15 @@ export class kCommand extends Command {
                 reason
             });
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
+
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                    bans.set(`${message.guild.id},${user.id}`, message.member);
         } catch {
             return button.editReply({
                 embeds: [this.Embed.fail(`${user} isn't bannable!`)],
                 components: []
             });
-        } finally {
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, message.member);
         }
 
         return button.editReply({

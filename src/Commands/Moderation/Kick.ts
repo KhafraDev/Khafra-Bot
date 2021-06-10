@@ -39,9 +39,7 @@ export class kCommand extends Command {
         }
 
         try {
-            await member.kick(`
-            Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).
-            `);
+            await member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`);
         } catch {
             return this.Embed.fail(`
             An unexpected error occurred!

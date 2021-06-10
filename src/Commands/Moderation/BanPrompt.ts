@@ -2,11 +2,12 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import ms from 'ms';
-import { hierarchy } from '../../lib/Utility/Permissions.js';
+import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
+import { bans } from '../../lib/Cache/Bans.js';
 
 const range = Range(0, 7, true);
 
@@ -81,6 +82,10 @@ export class kCommand extends Command {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
                 reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
             });
+
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                    bans.set(`${message.guild.id},${user.id}`, message.member);
         } catch {
             return button.editReply({
                 embeds: [this.Embed.fail(`${user} isn't bannable!`)],
