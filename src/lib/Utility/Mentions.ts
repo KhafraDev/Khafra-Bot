@@ -66,7 +66,10 @@ export async function getMentions(
     }
 }
 
-export const validSnowflake = (id: Snowflake) => {
+export const validSnowflake = (id: Snowflake): id is Snowflake => {
+    if (typeof id !== 'string')
+        return false;
+        
     const snowflake = SnowflakeUtil.deconstruct(id);
     if ( 
         snowflake.date.getTime() === epoch.getTime()

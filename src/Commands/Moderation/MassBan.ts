@@ -26,12 +26,17 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        if (args.some(id => !validSnowflake(id as Snowflake)))
+        const ids = args.map(id => /^\d{17,19}$/.test(id) 
+            ? <Snowflake>id 
+            : message.mentions.members.get(id.replace(/[^\d]/g, '') as Snowflake)
+        );
+
+        if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))
             return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
 
-        const promiseArr = args.map(id => {
+        const promiseArr = ids.map(id => {
             return async () => {
-                const type = await message.guild.members.ban(id as Snowflake, {
+                const type = await message.guild.members.ban(id, {
                     reason: `Force-ban by ${message.author.id} (${message.author.tag}).`
                 });
 
