@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { stripIndents } from '../../../lib/Utility/Template.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { fetch } from '../../../Structures/Fetcher.js';
+import fetch from 'node-fetch';
 
 const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;
 
@@ -98,13 +98,12 @@ export class kCommand extends Command {
             opts[keys[i]] = Number(opt[i] ?? 0);
         }
 
-        const res = await fetch()
-            .post('https://strawpoll.com/api/poll')
-            .send({
-                body: JSON.stringify({
-                    poll: { title, answers: choices, ...opts }
-                })
-            });
+        const res = await fetch('https://strawpoll.com/api/poll', {
+            method: 'POST',
+            body: JSON.stringify({
+                poll: { title, answers: choices, ...opts }
+            })
+        });
 
         if (!res.ok) {
             return this.Embed.fail(`

@@ -1,9 +1,9 @@
 import { Command, Arguments } from '../../Structures/Command.js';
+import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Message } from 'discord.js';
 import { URL } from 'url';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { fetch } from '../../Structures/Fetcher.js';
 import { RedditData } from '@khaf/badmeme';
+import fetch from 'node-fetch';
 
 const PER_COIN = 1.99 / 500;
 
@@ -39,9 +39,8 @@ export class kCommand extends Command {
             `);
         }
         
-        const json = await fetch()
-            .get(`${url.href.replace(/.json$/, '')}.json`)
-            .json<[RedditData, RedditData]>();
+        const res = await fetch(`${url.href.replace(/.json$/, '')}.json`);
+        const json = await res.json() as [RedditData, RedditData];
 
         const post = json[0]?.data?.children?.[0]?.data;
         if (!post) {

@@ -1,6 +1,6 @@
+import fetch from 'node-fetch';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { fetch } from '../../Structures/Fetcher.js';
 
 interface IMCOnline {
     online: true,
@@ -57,9 +57,8 @@ interface IMCOffline {
 }
 
 export const fetchMeepOnline = async () => {
-	const j = await fetch()
-		.get('https://api.mcsrvstat.us/2/meepcraft.com')
-		.json<IMCOnline | IMCOffline>();
+	const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
+	const j = await r.json() as IMCOnline | IMCOffline;
 
     return { playersOnline: j.online ? j.players.online : 0 };
 }
