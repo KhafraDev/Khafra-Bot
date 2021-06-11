@@ -1,4 +1,4 @@
-import { Message, MessageAttachment } from 'discord.js';
+import { Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { washYourLyrics } from '../../lib/Packages/WashYourLyrics.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -40,8 +40,11 @@ export class kCommand extends Command {
         }
 
         const a = new MessageAttachment(stream, 'wyl.png');
-        return this.Embed.success('https://washyourlyrics.com/')
-            .attachFiles([ a ])
-            .setImage('attachment://wyl.png');
+
+        return {
+            embed: this.Embed.success('https://washyourlyrics.com/')
+                .setImage('attachment://wyl.png'),
+            files: [a]
+        } as ReplyMessageOptions;
     }
 }

@@ -1,6 +1,13 @@
 import fetch from 'node-fetch';
-import { MessageAttachment } from 'discord.js';
+import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Embed } from '../Utility/Constants/Embeds.js';
+
+const formatURL = new Map<DNE, (type: DNE) => string>([
+    ['artwork', t => `https://this${t}doesnotexist.com/`],
+    ['cat',     t => `https://this${t}doesnotexist.com/`],
+    ['horse',   t => `https://this${t}doesnotexist.com/`],
+    ['person',  t => `https://this${t}doesnotexist.com/image`]
+]);
 
 type DNE = 
     | 'artwork' 
@@ -9,11 +16,13 @@ type DNE =
     | 'person'
 
 export const thisDoesNotExist = async (type: DNE) => {
-    const url = `https://this${type}doesnotexist.com/${type === 'person' ? 'image' : ''}`;
+    const url = formatURL.get(type)(type);
 
     const res = await fetch(url);
     const attach = new MessageAttachment(res.body, `t${type}dne.jpeg`);
-    return Embed.success()
-        .attachFiles([ attach ])
-        .setImage(`attachment://t${type}dne.jpeg`);
+
+    return {
+        embed: Embed.success().setImage(`attachment://t${type}dne.jpeg`),
+        files: [attach]
+    } as ReplyMessageOptions;
 }
