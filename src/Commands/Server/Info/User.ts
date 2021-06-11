@@ -29,12 +29,17 @@ const formatPresence = (activities: Activity[]) => {
 const emojis = new Map<UserFlagsString, string>();
 // lazy load emojis
 const getEmojis = once(() => {
-    for (const [flag, emojiID] of Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][])
+    const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][];
+    for (const [flag, emojiID] of flags)
         // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 
     return emojis;
 });
+
+// 84484653687267328 -> Certified moderator; early supporter; partnered server owner; early verified bot owner; brilliance
+// 173547401905176585 -> Discord employee; bravery
+// 104360151208706048 -> balance
 
 @RegisterCommand
 export class kCommand extends Command {
