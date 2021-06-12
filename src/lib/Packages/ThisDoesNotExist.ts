@@ -22,7 +22,9 @@ export const thisDoesNotExist = async (type: DNE) => {
     const attach = new MessageAttachment(res.body, `t${type}dne.jpeg`);
 
     return {
-        embed: Embed.success().setImage(`attachment://t${type}dne.jpeg`),
+        embeds: [
+            Embed.success().setImage(`attachment://t${type}dne.jpeg`)
+        ],
         files: [attach]
     } as ReplyMessageOptions;
 }

@@ -42,8 +42,10 @@ export class kCommand extends Command {
         const a = new MessageAttachment(stream, 'wyl.png');
 
         return {
-            embed: this.Embed.success('https://washyourlyrics.com/')
-                .setImage('attachment://wyl.png'),
+            embeds: [
+                this.Embed.success('https://washyourlyrics.com/')
+                .setImage('attachment://wyl.png')
+            ],
             files: [a]
         } as ReplyMessageOptions;
     }

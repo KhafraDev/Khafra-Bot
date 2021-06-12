@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
-import { Message, MessageOptions } from 'discord.js';
+import { Message, ReplyMessageOptions } from 'discord.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { once } from '../../lib/Utility/Memoize.js';
@@ -72,7 +72,7 @@ export class kCommand extends Command {
             If this is the wrong currency, try using one of the following IDs:
             \`\`${currencies.map(c => c.id).join('\`\`, \`\`')}\`\`
             `.trim(),
-            embed
-        } as MessageOptions;
+            embeds: [embed]
+        } as ReplyMessageOptions;
     }
 }
