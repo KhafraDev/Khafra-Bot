@@ -13,7 +13,7 @@ export class kCommand extends Command {
             ],
 			{
                 name: 'avatar',
-                folder: 'Fun',
+                folder: 'Server',
                 args: [0, 1],
                 ratelimit: 10
             }
