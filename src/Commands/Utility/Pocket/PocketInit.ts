@@ -45,7 +45,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embed,
+            embeds: [embed],
             components: [row]
         });
         
@@ -59,7 +59,7 @@ export class kCommand extends Command {
             button = await msg.awaitMessageComponentInteraction(filter, 120000);
         } catch {
             return void msg.edit({
-                embed: this.Embed.fail('Canceled the command, took over 2 minutes.'),
+                embeds: [this.Embed.fail('Canceled the command, took over 2 minutes.')],
                 components: []
             });
         }

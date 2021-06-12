@@ -51,7 +51,7 @@ export class kCommand extends Command {
 
         const embeds = [...format(results, this.Embed.success)];
         let idx = 0;
-        const m = await message.reply({ embed: embeds[0] });
+        const m = await message.reply({ embeds: [embeds[0]] });
         
         await m.react('▶️');
         await m.react('◀️');
@@ -72,12 +72,12 @@ export class kCommand extends Command {
             } else if (r.emoji.name === '▶️') {
                 if (embeds[idx + 1]) {
                     idx++;
-                    return m.edit({ embed: embeds[idx] });
+                    return m.edit({ embeds: [embeds[idx]] });
                 }
             } else {
                 if (embeds[idx - 1]) {
                     idx--;
-                    return m.edit({ embed: embeds[idx] });
+                    return m.edit({ embeds: [embeds[idx]] });
                 }
             }
         });

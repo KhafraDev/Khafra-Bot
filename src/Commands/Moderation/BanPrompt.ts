@@ -50,7 +50,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embed: this.Embed.success(`Are you sure you want to ban ${user}?`),
+            embeds: [this.Embed.success(`Are you sure you want to ban ${user}?`)],
             components: [row]
         });
 
@@ -64,7 +64,7 @@ export class kCommand extends Command {
             button = await msg.awaitMessageComponentInteraction(filter, 20000);
         } catch {
             return void msg.edit({
-                embed: this.Embed.fail(`Didn't get confirmation to ban ${user}!`),
+                embeds: [this.Embed.fail(`Didn't get confirmation to ban ${user}!`)],
                 components: []
             });
         }

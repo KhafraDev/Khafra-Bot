@@ -17,9 +17,11 @@ export class kEvent extends Event {
             try {
                 const user = await client.users.fetch(config.botOwner as Snowflake);
                 await user.send({ 
-                    embed: new MessageEmbed()
-                        .setDescription(s)
-                        .setColor(config.embed.success) 
+                    embeds: [
+                        new MessageEmbed()
+                            .setDescription(s)
+                            .setColor(config.embed.success)
+                    ]
                 }); 
             } catch {
                 console.log(`Logged in! Could not send message to the bot owner.`);

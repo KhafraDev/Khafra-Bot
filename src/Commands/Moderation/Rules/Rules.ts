@@ -54,7 +54,7 @@ export class kCommand extends Command {
                 .setTitle(`Rule #${id}`);
         }
 
-        const msg = await message.reply({ embed: this.Embed.success(`
+        const msg = await message.reply({ embeds: [this.Embed.success(`
         **Rule Board:**
         Steps:
             1. Enter the rules one at a time.
@@ -66,7 +66,7 @@ export class kCommand extends Command {
             - To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
 
         Make sure the rules are already written down - you have 5 minutes to enter all of them.
-        `) });
+        `)] });
         
         const rules = new Set<string>();
         const collector = message.channel.createMessageCollector(
@@ -115,13 +115,13 @@ export class kCommand extends Command {
                 }
 
                 return void msg.edit({ 
-                    embed: this.Embed.success(`
+                    embeds: [this.Embed.success(`
                     Added ${rules.size} rules!
 
                     To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
                     To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
                     To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
-                    `)
+                    `)]
                 });
             }
         });

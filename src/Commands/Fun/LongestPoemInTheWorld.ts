@@ -22,7 +22,7 @@ export class kCommand extends Command {
     async init(message: Message) {
         const poem = await longestPoem();
 
-        const m = await message.reply({ embed: this.Embed.success(poem.slice(0, 2048)) });
+        const m = await message.reply({ embeds: [this.Embed.success(poem.slice(0, 2048))] });
         // allSettled won't throw if there's an error
         await Promise.allSettled(['➡️', '🗑️'].map(e => m.react(e)));
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         collector.on('collect', async r => {
             if (r.emoji.name === '➡️') {
                 const poem = await longestPoem();
-                return m.edit({ embed: this.Embed.success(poem.slice(0, 2048)) });
+                return m.edit({ embeds: [this.Embed.success(poem.slice(0, 2048))] });
             }
 
             return collector.stop();

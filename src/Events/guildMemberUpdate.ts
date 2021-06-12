@@ -62,13 +62,13 @@ export class kEvent extends Event {
             return;
 
         if (oldHas && !newHas) { // lost role
-            return channel.send({ embed: Embed.fail(`
-            ${newMember} is no longer boosting the server! 😨
-            `) }).catch(() => {});
+            return channel.send({ embeds: [
+                Embed.fail(`${newMember} is no longer boosting the server! 😨`)
+            ] }).catch(() => {});
         } else { // gained role
-            return channel.send({ embed: Embed.success(`
-            ${newMember} just boosted the server! 🥳
-            `) }).catch(() => {});
+            return channel.send({ embeds: [
+                Embed.success(`${newMember} just boosted the server! 🥳`)
+            ] }).catch(() => {});
         }
     }
 }

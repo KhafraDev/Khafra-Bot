@@ -42,7 +42,7 @@ export class kCommand extends Command {
 
         let page = 0;
 
-        const m = await message.reply({ embed: embeds[page] });
+        const m = await message.reply({ embeds: [embeds[page]] });
         await m.react('▶️');
         await m.react('◀️');
         await m.react('🗑️');
@@ -65,7 +65,7 @@ export class kCommand extends Command {
             if (page >= embeds.length) page = embeds.length - 1;
 
             if (page !== old)
-                return m.edit({ embed: embeds[page] });
+                return m.edit({ embeds: [embeds[page]] });
         });
         collector.on('end', () => m.reactions.removeAll());
     }

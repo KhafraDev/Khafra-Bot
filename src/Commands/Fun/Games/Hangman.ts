@@ -50,10 +50,10 @@ export class kCommand extends Command {
         const guesses: string[] = []; // guesses
 
         const word = presidents[await rand(presidents.length)];
-        const m = await message.reply({ embed: this.Embed.success()
+        const m = await message.reply({ embeds: [this.Embed.success()
             .setDescription(word.replace(/[A-z0-9\.]/g, '☐'))
             .setImage(images[wrong])
-        });
+        ]});
 
         const c = message.channel.createMessageCollector(
             (m: Message) =>
@@ -74,14 +74,14 @@ export class kCommand extends Command {
             if (t === w) { // guessed correct word
                 c.stop();
                 return void m.edit({ 
-                    embed: this.Embed.success()
+                    embeds: [this.Embed.success()
                         .setTitle('You guessed the word!')
                         .setImage(images[wrong])
                         .setDescription(`
                         ${word}
                         ${wrong} wrong guess${plural(wrong, 'es')}.
                         Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                        `)
+                        `)]
                 });
             }
             
@@ -92,14 +92,14 @@ export class kCommand extends Command {
                 if (++wrong >= 6) { // game lost
                     c.stop();
                     return void m.edit({ 
-                        embed: this.Embed.success()
+                        embeds: [this.Embed.success()
                             .setTitle(`You lost! The word was "${word}"!`)
                             .setImage(images[wrong])
                             .setDescription(`
                             ${hide(word, guesses)}
                             ${wrong} wrong guess${plural(wrong, 'es')}.
                             Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                            `)
+                            `)]
                     });
                 }
 
@@ -114,18 +114,18 @@ export class kCommand extends Command {
                 if (w.includes(t) && w !== t)
                     embed.setTitle('Partial guesses are marked as incorrect!');
 
-                return void m.edit({ embed });
+                return void m.edit({ embeds: [embed] });
             }
 
             return void m.edit({
-                embed: this.Embed.success()
+                embeds: [this.Embed.success()
                     .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                     .setImage(images[wrong])
                     .setDescription(`
                     ${hide(word, guesses)}
                     ${wrong} wrong guess${plural(wrong, 'es')}.
                     Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)
+                    `)]
             });
         });
 
@@ -152,14 +152,14 @@ export class kCommand extends Command {
 
             guesses.push(letter);
             return m.edit({
-                embed: this.Embed.success()
+                embeds: [this.Embed.success()
                     .setTitle(`"${letter}" is the hint!`)
                     .setImage(images[wrong])
                     .setDescription(`
                     ${hide(word, guesses)}
                     ${wrong} wrong guess${plural(wrong, 'es')}.
                     Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)
+                    `)]
             });
         });
 

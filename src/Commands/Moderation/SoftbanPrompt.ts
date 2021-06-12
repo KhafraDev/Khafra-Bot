@@ -50,11 +50,11 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embed: this.Embed.success(`
+            embeds: [this.Embed.success(`
             Are you sure you want to soft-ban ${user}? 
     
             This will delete ${clear} day${plural(clear)} worth of messages from them, but they **will be** allowed to rejoin the guild.
-            `),
+            `)],
             components: [row]
         });
 
@@ -68,7 +68,7 @@ export class kCommand extends Command {
             button = await msg.awaitMessageComponentInteraction(filter, 20000);
         } catch {
             return void msg.edit({
-                embed: this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`),
+                embeds: [this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []
             });
         }

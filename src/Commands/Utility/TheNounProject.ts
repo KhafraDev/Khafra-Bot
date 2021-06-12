@@ -32,10 +32,10 @@ export class kCommand extends Command {
 
         let i = 0;
         const format = () => !icons.icons[i] 
-            ? this.Embed.success().setImage(icons.icons[0].preview_url)
-            : this.Embed.success().setImage(icons.icons[i].preview_url);
+            ? [this.Embed.success().setImage(icons.icons[0].preview_url)]
+            : [this.Embed.success().setImage(icons.icons[i].preview_url)];
         
-        const m = await message.reply({ embed: format() });
+        const m = await message.reply({ embeds: format() });
 
         await m.react('▶️');
         await m.react('◀️');
@@ -46,7 +46,7 @@ export class kCommand extends Command {
         );
         collector.on('collect', r => {
             r.emoji.name === '▶️' ? i++ : i--;
-            return m.edit({ embed: format() });
+            return m.edit({ embeds: format() });
         });
         collector.on('end', () => m.reactions.removeAll());
     }

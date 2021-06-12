@@ -75,24 +75,24 @@ export class kEvent extends Event {
         if (!commandLimit(command.settings.name, message.author.id)) return;
         
         if (command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
-            return message.reply({ embed: Embed.fail(`
+            return message.reply({ embeds: [Embed.fail(`
             \`\`${command.settings.name}\`\` is only available to the bot owner!
-            `) });
+            `)] });
         } else if (command.settings.guildOnly && isDM(message.channel)) {
-            return message.reply({ embed: Embed.fail(`
+            return message.reply({ embeds: [Embed.fail(`
             \`\`${command.settings.name}\`\` is only available in guilds!
-            `) });
+            `)] });
         } 
 
         const [min, max] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return message.reply({ embed: Embed.fail(`
+            return message.reply({ embeds: [Embed.fail(`
             Incorrect number of arguments provided.
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
             Example(s):
             ${command.help.slice(1).map(c => `\`\`${guild.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
-            `) });
+            `)] });
         }
         
         this.logger.log(trim`
@@ -104,15 +104,15 @@ export class kEvent extends Event {
         `);
 
         if (!_cooldownUsers(message.author.id)) {
-            return message.reply({ embed: Embed.fail(`Users are limited to 10 commands a minute.`) });
+            return message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] });
         } else if (!isDM(message.channel)) {
             if (!_cooldownGuild(message.guild.id)) {
-                return message.reply({ embed: Embed.fail(`Guilds are limited to 30 commands a minute.`) });
+                return message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] });
             } 
         }
 
         if (!hasPerms(message.channel, message.member, command.permissions)) {
-            return message.reply({ embed: Embed.missing_perms(false, command.permissions) });
+            return message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] });
         }
 
         try {
@@ -125,7 +125,7 @@ export class kEvent extends Event {
             if (typeof returnValue === 'string')
                 param.content = returnValue;
             else if (returnValue instanceof MessageEmbed)
-                param.embed = returnValue;
+                param.embeds = [returnValue];
             else if (returnValue instanceof MessageAttachment)
                 param.files = [returnValue];
             else if (typeof returnValue === 'object') // MessageOptions
@@ -143,7 +143,7 @@ export class kEvent extends Event {
                 ? command.errors[e.name as keyof typeof command.errors] 
                 : command.errors.default;
                 
-            return message.reply({ embed: Embed.fail(error) })
+            return message.reply({ embeds: [Embed.fail(error)] })
                 .catch(() => {});
         }
     }

@@ -46,7 +46,7 @@ export class kCommand extends Command {
             `);
         }
 
-        await message.reply({ embed: this.Embed.fail(`Kicked ${member} from the server!`) });
+        await message.reply({ embeds: [this.Embed.fail(`Kicked ${member} from the server!`)] });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -55,11 +55,11 @@ export class kCommand extends Command {
                 return;
 
             const reason = args.slice(1).join(' ');
-            return channel.send({ embed: this.Embed.success(`
+            return channel.send({ embeds: [this.Embed.success(`
             **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
-            `).setTitle('Member Kicked') });
+            `).setTitle('Member Kicked')] });
         }
     }
 }

@@ -47,9 +47,9 @@ export class kCommand extends Command {
             );
         }
 
-        await message.reply({ embed: this.Embed.success(`
+        await message.reply({ embeds: [this.Embed.success(`
         ${text} has been ${lockState} for ${everyone}!
-        `) });
+        `)] });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -57,10 +57,10 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send({ embed: this.Embed.success(`
+            return channel.send({ embeds: [this.Embed.success(`
             **Channel:** ${text} (${text.id}).
             **Staff:** ${message.member}
-            `).setTitle('Channel Locked') });
+            `).setTitle('Channel Locked')] });
         }
     }
 }

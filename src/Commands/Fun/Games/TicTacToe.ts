@@ -13,11 +13,11 @@ const getEmbed = (game: TicTacToe, [X, Op]: [GuildMember, GuildMember]) => {
     .setTitle('Tic-Tac-Toe');
 
     if (game.winner())
-        return embed.addField('**Winner!**', `${game.turn} won!`);
+        return [embed.addField('**Winner!**', `${game.turn} won!`)];
     else if (game.isFull())
-        return embed.addField('**Status:**', 'It\'s a tie!');
+        return [embed.addField('**Status:**', 'It\'s a tie!')];
 
-    return embed.addField('**Turn:**', `${game.turn === 'X' ? X.user.username : Op.user.username}'s Turn`);
+    return [embed.addField('**Turn:**', `${game.turn === 'X' ? X.user.username : Op.user.username}'s Turn`)];
 }
 
 @RegisterCommand
@@ -44,7 +44,7 @@ export class kCommand extends Command {
         const opponent = member ?? message.guild.me;
         const game = new TicTacToe();
 
-        const m = await message.reply({ embed: getEmbed(game, [message.member, opponent]) });
+        const m = await message.reply({ embeds: getEmbed(game, [message.member, opponent]) });
 
         const f = (m: Message) =>
             (game.turn === 'X' ? message.author.id : opponent.id) === m.member.id && // it's the player's turn
@@ -62,7 +62,7 @@ export class kCommand extends Command {
             else if (game.turn === 'O' && opponent.id === message.guild.me.id && !game.isFull()) // bot's turn to go, not real player
                 game.botGo();
 
-            return void m.edit({ embed: getEmbed(game, [message.member, opponent]) });
+            return void m.edit({ embeds: getEmbed(game, [message.member, opponent]) });
         });
     }
 }

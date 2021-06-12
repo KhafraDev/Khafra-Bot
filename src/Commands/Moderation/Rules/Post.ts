@@ -65,19 +65,11 @@ export class kCommand extends Command {
         
         const embeds = rows.map((rule, idx) => this.Embed.success(`${rule.rule}`).setTitle(`Rule #${idx+1}`));
         if (embeds.length === 1)
-            return channel.send({ embed: embeds[0] });
+            return channel.send({ embeds: [embeds[0]] });
 
         const groups = chunkSafe(embeds, 10); // max # of embeds 1 webhook msg can have
-        const webhooks = await channel.fetchWebhooks(); // check for existing webhooks
-
-        const webhook = webhooks.size === 0 
-            ? await channel.createWebhook('Khafra-Bot Rules', { // no webhook, create one
-                avatar: message.client.user.displayAvatarURL(),
-                reason: 'posting rules'
-              })
-            : webhooks.find(wh => wh.type === 'Incoming'); // don't want channel following
 
         for (const group of groups)
-            await webhook.send({ embeds: group });
+            await channel.send({ embeds: group });
     }
 }

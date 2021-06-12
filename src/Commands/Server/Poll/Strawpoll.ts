@@ -31,7 +31,7 @@ export class kCommand extends Command {
             return this.Embed.missing_perms(true);
         }
 
-        const msg = await message.reply({ embed: this.Embed.success(`
+        const msg = await message.reply({ embeds: [this.Embed.success(`
         Welcome to the Strawpoll creator. Due to the number of configurable options, this is a lengthy process.
 
         To start off, enter the \`\`title\`\` of the poll and the \`\`answers\`\`, all on different lines (press \`\`Shift+Enter\`\` to go to a new line).
@@ -43,7 +43,7 @@ export class kCommand extends Command {
         🍇 - Grapes
         something else
         `}\`\`\`
-        `) });
+        `)] });
 
         const filter = (m: Message) => m.author.id === message.author.id && m.content?.split(/\r\n|\n/g).length > 1;
         const collected = await message.channel.awaitMessages(filter, { max: 1, time: 60000 });
@@ -64,7 +64,7 @@ export class kCommand extends Command {
 
         const [title, ...choices] = collected.first().content.split(/\r\n|\n/g);
         await msg.edit({ 
-            embed: this.Embed.success(`
+            embeds: [this.Embed.success(`
             Got a title and ${choices.length} answers. Let's configure options now.
 
             Enter a \`\`1\`\` to enable an option and \`\`0\`\` to disable an option.
@@ -83,7 +83,7 @@ export class kCommand extends Command {
                 { name: '**Enter Name:**',           value: 'Voters must enter their name.', inline: true },
                 { name: '**Registered:**',           value: 'Only allow registered users.',  inline: true },
                 { name: '**Captcha:**',              value: 'Background reCAPTCHA solving.', inline: true },
-            )
+            )]
         });
 
         const filterOpts = (m: Message) => m.author.id === message.author.id && m.content?.length <= 16;
@@ -113,16 +113,16 @@ export class kCommand extends Command {
 
         const json = await res.json();
         await msg.edit({ 
-            embed: this.Embed.success(`${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}`)
+            embeds: [this.Embed.success(`${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}`)]
         });
 
         if (json.success === 1) {
             return void message.author.send({ 
-                embed: this.Embed.success(`
+                embeds: [this.Embed.success(`
                 Created a poll: https://strawpoll.com/${json.content_id}
 
                 Admin ID: \`\`${json.admin_key}\`\`
-                `)
+                `)]
             });
         }
     }

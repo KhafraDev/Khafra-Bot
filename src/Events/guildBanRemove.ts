@@ -57,13 +57,15 @@ export class kEvent extends Event {
         const unban = unbans.has(key) ? unbans.get(key) : null;
 
         try {
-            await channel.send({ embed: Embed.success(`
-            **User:** ${user} (${user.tag})
-            **ID:** ${user.id}
-            **Staff:** ${unban ?? 'Unknown'}
-            **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
-            **Reason:** \`\`${reason?.length > 1500 ? reason.slice(1500) + '...' : (reason ?? 'Unknown')}\`\`
-            `).setTitle('Member Unbanned') });
+            await channel.send({ embeds: [
+                Embed.success(`
+                **User:** ${user} (${user.tag})
+                **ID:** ${user.id}
+                **Staff:** ${unban ?? 'Unknown'}
+                **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
+                **Reason:** \`\`${reason?.length > 1500 ? reason.slice(1500) + '...' : (reason ?? 'Unknown')}\`\`
+                `).setTitle('Member Unbanned') 
+            ] });
         } catch (e) {
             guildBanRemoveLogger.log(e);
         } finally {
