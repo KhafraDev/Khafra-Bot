@@ -1,13 +1,9 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, MessageReaction, User } from 'discord.js';
-import { badmeme, IBadMemeCache } from '@khaf/badmeme';
+import { Interaction, Message, MessageActionRow } from 'discord.js';
+import { badmeme } from '@khaf/badmeme';
 import { isDM } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-
-function* makeGenerator(arr: IBadMemeCache) {
-    for (const item of arr.url)
-        yield item;
-}
+import { Components } from '../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -48,32 +44,42 @@ export class kCommand extends Command {
         if (!Array.isArray(res.url))
             return res.url;
 
-        let lastEdit = 0;
+        let page = 0;
+        
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Next'),
+                Components.secondary('Previous'),
+                Components.deny('Stop')
+            );
 
-        const g = makeGenerator(res);
-        const f = (r: MessageReaction, u: User) => 
-            ['▶️', '🗑️'].includes(r.emoji.name) &&
-            u.id === message.author.id;
-
-        const m = await message.channel.send({ content: g.next().value as string });
-        await Promise.allSettled([m.react('▶️'), m.react('🗑️')]);
-        const c = m.createReactionCollector(f, { max: 6, time: 30000 });
-
-        c.on('collect', async (r: MessageReaction) => {
-            if (r.emoji.name === '🗑️')
-                return c.stop();
-
-            if ((Date.now() - lastEdit) / 1000 < 5)
-                return;
-
-            const next = g.next();
-            if (next.done === true || !next.value)
-                return c.stop();
-
-            lastEdit = Date.now();
-            return m.edit({ content: next.value });
+        const m = await message.channel.send({ 
+            content: res.url[page],
+            components: [row]
         });
 
-        c.on('end', () => m.reactions.removeAll());
+        const filter = (interaction: Interaction) =>
+            interaction.isMessageComponent() &&
+            ['approve', 'deny', 'secondary'].includes(interaction.customID) && 
+            interaction.user.id === message.author.id;
+
+        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000, max: 5 });
+        collector.on('collect', i => {
+            if (m.deleted) 
+                return collector.stop();
+            else if (i.customID === 'deny')
+                return collector.stop('deny');
+
+            i.customID === 'approve' ? page++ : page--;
+
+            if (page < 0) page = res.url.length - 1;
+            if (page >= res.url.length) page = 0;
+
+            return void i.update({ content: res.url[page] });
+        });
+        collector.on('end', (_c, reason) => {
+            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
+                return void m.edit({ components: [] });
+        });
     }
 }
