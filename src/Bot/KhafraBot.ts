@@ -41,11 +41,11 @@ export class KhafraClient extends Client {
         const importPromise = commands.map<Promise<Command>>(command => import(pathToFileURL(command).href));
         const settled = await Promise.allSettled(importPromise);
 
-        const rejected = settled.filter(p => p.status === 'rejected') as PromiseRejectedResult[];
+        const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
         for (const reject of rejected)
             console.log(reject.reason);
 
-        console.log(`Loaded ${commands.length - rejected.length} commands!`);
+        console.log(`Loaded ${commands.length - rejected.length}/${settled.length} commands!`);
         return KhafraClient.Commands;
     }
 

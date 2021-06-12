@@ -8,5 +8,9 @@ export const Components = {
     deny: (label = 'deny') => new MessageButton()
         .setCustomID('deny')
         .setLabel(label)
-        .setStyle('DANGER')
+        .setStyle('DANGER'),
+    secondary: (label = 'next') => new MessageButton()
+        .setCustomID('secondary')
+        .setLabel(label)
+        .setStyle('SECONDARY')
 }
