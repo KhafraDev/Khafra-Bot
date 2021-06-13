@@ -123,7 +123,7 @@ export class kCommand extends Command {
         });
 
         collector.on('end', () => {
-            if (/^-|\+|\*|\/$/.test(actions[actions.length - 1]))
+            if (symbols.test(actions[actions.length - 1]))
                 actions.pop();
             
             let eq: number | string = 'Invalid input!'; 
@@ -131,12 +131,17 @@ export class kCommand extends Command {
                 eq = runInContext(`${actions.join('')}`, context);
             } catch {}
 
+            const length = 6 + actions.join(' ').length + 3 + `${eq}`.length;
+            const sentence = length > 30 // approximate number of chars to go "off" the screen
+                ? `${actions.join(' ')}\n= ${eq}` 
+                : `${actions.join(' ')} = ${eq}`;
+
             return void m.edit({
                 content: null,
                 embeds: [
                     this.Embed.success(`
                     ${squiggles}
-                    \`\`\`${actions.join(' ')} = ${eq}\`\`\`
+                    \`\`\`${sentence}\`\`\`
                     ${squiggles}
                     `)
                 ],
