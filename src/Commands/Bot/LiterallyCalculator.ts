@@ -62,10 +62,17 @@ export class kCommand extends Command {
             interaction.message.id === m.id;
 
         let lastAction = '',
-            actions: string[] = [];
+            actions: string[] = [],
+            uses = 0;
 
-        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000, max: 10 });
+        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000 });
         collector.on('collect', i => {
+            if (++uses > 10) {
+                const removeLeadingZeroes = lastAction.replace(leadingZero, '');
+                actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
+                return collector.stop();
+            }
+
             if ( // used a symbol when there were no previous actions or previous action wasn't a number
                 (
                     actions.length === 0 &&
@@ -105,7 +112,6 @@ export class kCommand extends Command {
         collector.on('end', () => {
             if (/^-|\+|\*|\/$/.test(actions[actions.length - 1]))
                 actions.pop();
-
             
             let eq: number | string = 'Invalid input!'; 
             try {
