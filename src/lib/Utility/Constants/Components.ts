@@ -1,16 +1,16 @@
 import { MessageButton } from 'discord.js';
 
 export const Components = {
-    approve: (label = 'approve') => new MessageButton()
-        .setCustomID('approve')
+    approve: (label = 'approve', id?: string) => new MessageButton()
+        .setCustomID(id ?? 'approve')
         .setLabel(label)
         .setStyle('SUCCESS'),
-    deny: (label = 'deny') => new MessageButton()
-        .setCustomID('deny')
+    deny: (label = 'deny', id?: string) => new MessageButton()
+        .setCustomID(id ?? 'deny')
         .setLabel(label)
         .setStyle('DANGER'),
-    secondary: (label = 'next') => new MessageButton()
-        .setCustomID('secondary')
+    secondary: (label = 'next', id?: string) => new MessageButton()
+        .setCustomID(id ?? 'secondary')
         .setLabel(label)
         .setStyle('SECONDARY')
 }
