@@ -7,6 +7,9 @@ import { createContext, runInContext } from 'vm';
 const symbols = /^-|\+|\*|\/$/;
 const leadingZero = /^0+/g;
 const context = createContext({});
+const squiggles = 
+    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
+    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -52,7 +55,13 @@ export class kCommand extends Command {
         ];
 
         const m = await message.channel.send({ 
-            embeds: [this.Embed.success('\`\`\`Empty\`\`\`')],
+            embeds: [
+                this.Embed.success(`
+                ${squiggles}
+                \`\`\`Empty\`\`\`
+                ${squiggles}
+                `)
+            ],
             components: rows
         });
         
@@ -104,7 +113,11 @@ export class kCommand extends Command {
             return void i.update({ 
                 content: null,
                 embeds: [
-                    this.Embed.success(`\`\`\`${display}\`\`\``)
+                    this.Embed.success(`
+                    ${squiggles}
+                    \`\`\`${display}\`\`\`
+                    ${squiggles}
+                    `)
                 ] 
             });
         });
@@ -121,7 +134,11 @@ export class kCommand extends Command {
             return void m.edit({
                 content: null,
                 embeds: [
-                    this.Embed.success(`\`\`\`${actions.join(' ')} = ${eq}\`\`\``)
+                    this.Embed.success(`
+                    ${squiggles}
+                    \`\`\`${actions.join(' ')} = ${eq}\`\`\`
+                    ${squiggles}
+                    `)
                 ],
                 components: [] 
             });
