@@ -2,9 +2,11 @@ import { MessageActionRow, Interaction, Message } from 'discord.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { createContext, runInContext } from 'vm';
 
 const symbols = /^-|\+|\*|\/$/;
 const leadingZero = /^0+/g;
+const context = createContext({});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -77,12 +79,16 @@ export class kCommand extends Command {
                 lastAction += i.customID;
             } else if (symbols.test(i.customID)) { // used a symbol
                 if (lastAction.length !== 0) {
-                    actions.push(lastAction.replace(leadingZero, ''));
+                    const removeLeadingZeroes = lastAction.replace(leadingZero, '');
+                    actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
+
                     lastAction = '';
                 }
                 actions.push(i.customID);
             } else {
-                actions.push(lastAction.replace(leadingZero, ''));
+                const removeLeadingZeroes = lastAction.replace(leadingZero, '');
+                actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
+
                 return collector.stop();
             }
 
@@ -100,12 +106,16 @@ export class kCommand extends Command {
             if (/^-|\+|\*|\/$/.test(actions[actions.length - 1]))
                 actions.pop();
 
-            // TODO(@KhafraDev): replace eval with vm.*
+            
+            let eq: number | string = 'Invalid input!'; 
+            try {
+                eq = runInContext(`${actions.join('')}`, context);
+            } catch {}
 
             return void m.edit({
                 content: null,
                 embeds: [
-                    this.Embed.success(`\`\`\`${actions.join(' ')} = ${eval(actions.join(''))}\`\`\``)
+                    this.Embed.success(`\`\`\`${actions.join(' ')} = ${eq}\`\`\``)
                 ],
                 components: [] 
             });

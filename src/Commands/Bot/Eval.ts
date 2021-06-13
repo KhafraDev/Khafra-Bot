@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { inspect } from 'util';
-import { compileFunction } from 'vm';
+import { createContext, runInContext } from 'vm';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -24,16 +24,11 @@ export class kCommand extends Command {
         if (content.includes('import'))
             return this.Embed.fail('Import isn\'t supported yet.');
 
+        const context = createContext({ message });
         let ret: unknown;
+
         try {
-            // vm.compileFunction can throw when using unsupported syntax
-            // ie. import.meta
-            const fn = compileFunction(
-                `${content}`,
-                ['message']
-            ) as (...params: unknown[]) => unknown;
-        
-            ret = fn(message);
+            ret = runInContext(content, context);
         } catch (e) {
             ret = e;
         }
