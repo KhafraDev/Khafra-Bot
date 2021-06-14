@@ -62,7 +62,7 @@ export class kCommand extends Command {
         const user = await getMentions(message, 'users') ?? message.author;
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
-        const flags = user.flags?.bitfield !== 0
+        const flags = user.flags?.bitfield
             ? user.flags!.toArray()
             : [];
 

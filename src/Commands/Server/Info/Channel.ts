@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
@@ -24,8 +24,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
-        const channel = await getMentions(message, 'channels') ?? message.channel;
+    async init(message: Message, { content }: Arguments) {
+        const channel = 
+            await getMentions(message, 'channels') ?? 
+            message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
+            message.channel;
 
         const embed = this.Embed.success()
             .addFields(

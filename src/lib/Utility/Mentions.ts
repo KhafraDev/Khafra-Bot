@@ -69,6 +69,8 @@ export async function getMentions(
 export const validSnowflake = (id: Snowflake): id is Snowflake => {
     if (typeof id !== 'string')
         return false;
+    else if (!/^\d{17,19}$/.test(id))
+        return false;
         
     const snowflake = SnowflakeUtil.deconstruct(id);
     if ( 
