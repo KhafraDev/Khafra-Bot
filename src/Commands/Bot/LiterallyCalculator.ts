@@ -6,7 +6,7 @@ import { createContext, runInContext } from 'vm';
 
 const symbols = /^-|\+|\*|\/$/;
 const leadingZero = /^0+/g;
-const context = createContext({});
+const context = createContext(Object.create(null));
 const squiggles = 
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
