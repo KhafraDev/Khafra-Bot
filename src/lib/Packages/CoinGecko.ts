@@ -75,8 +75,6 @@ const all = async () => {
             .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
         const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
 
-        cache.clear();
-
         for (const all of reqsChunk) {
             const success = (await Promise.allSettled(all))
                 .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
@@ -90,7 +88,16 @@ const all = async () => {
                     // there are nearly 1,000 duplicate symbols but name and ids are all unique
                     if (cache.has(curr.symbol)) {
                         const item = cache.get(curr.symbol)!;
-                        cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
+                        const idx = Array.isArray(item) 
+                            ? item.findIndex(i => i.id === curr.id)
+                            : -1;
+
+                        if (idx !== -1 && Array.isArray(item)) {
+                            item[idx] = curr;
+                            cache.set(curr.symbol, item);
+                        } else {
+                            cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
+                        }
                     } else {
                         cache.set(curr.symbol, curr);
                     }
