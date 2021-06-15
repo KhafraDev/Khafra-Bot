@@ -4,7 +4,9 @@ import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
 
-const symbols = /^-|\+|\*|\/$/;
+const symbols = /^-|\+|\*|\/|\.|\(|\)$/;
+/** Symbols an input is not allowed to start with */
+const partialSymbols = /^-|\+|\*|\/$/;
 const leadingZero = /^0+/g;
 const context = createContext(Object.create(null));
 const squiggles = 
@@ -28,6 +30,12 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         const rows = [
+            new MessageActionRow().addComponents(
+                Components.approve('(', '('),
+                Components.approve(')', ')'),
+                Components.approve('.', '.'),
+                // Components.approve('idk', 'idk')
+            ),
             new MessageActionRow().addComponents(
                 Components.secondary('1', '1'),
                 Components.secondary('2', '2'),
@@ -88,7 +96,7 @@ export class kCommand extends Command {
                     !Number.isInteger(Number(actions[actions.length - 1])) &&
                     lastAction.length === 0
                 ) && 
-                symbols.test(i.customID)
+                partialSymbols.test(i.customID)
             ) {
                 return void i.update({ content: `Invalid action!` });
             } else if (Number.isInteger(Number(i.customID))) { // used a number
@@ -125,10 +133,15 @@ export class kCommand extends Command {
         collector.on('end', () => {
             if (symbols.test(actions[actions.length - 1]))
                 actions.pop();
+
+            const equation = actions.join('')
+                .replace(/(\d)\(/g, '$1*(') // 0(1+2) -> 0*(1+2)
+                .replace(/\)(\d)/g, ')*$1') // (1+2)0 -> (1+2)*0
+                .replace(/\.{2,}/g, '.') // 1..3 -> 1.3
             
             let eq: number | string = 'Invalid input!'; 
             try {
-                eq = runInContext(`${actions.join('')}`, context);
+                eq = runInContext(equation, context);
             } catch {}
 
             const length = 6 + actions.join(' ').length + 3 + `${eq}`.length;
@@ -136,16 +149,20 @@ export class kCommand extends Command {
                 ? `${actions.join(' ')}\n= ${eq}` 
                 : `${actions.join(' ')} = ${eq}`;
 
+            /** Formats the return value */
+            const format = sentence
+                .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
+                .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
+
             return void m.edit({
                 content: null,
                 embeds: [
                     this.Embed.success(`
                     ${squiggles}
-                    \`\`\`${sentence}\`\`\`
+                    \`\`\`${format}\`\`\`
                     ${squiggles}
                     `)
-                ],
-                components: [] 
+                ]
             });
         });
     }
