@@ -79,17 +79,10 @@ export class kCommand extends Command {
             interaction.message.id === m.id;
 
         let lastAction = '',
-            actions: string[] = [],
-            uses = 0;
+            actions: string[] = [];
 
-        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000 });
+        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000, max: 15 });
         collector.on('collect', i => {
-            if (++uses > 10) {
-                const removeLeadingZeroes = lastAction.replace(leadingZero, '');
-                actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
-                return collector.stop();
-            }
-
             if ( // used a symbol when there were no previous actions or previous action wasn't a number
                 (
                     actions.length === 0 &&
@@ -110,10 +103,7 @@ export class kCommand extends Command {
                 }
                 actions.push(i.customID);
             } else {
-                const removeLeadingZeroes = lastAction.replace(leadingZero, '');
-                actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
-
-                return collector.stop();
+                return collector.stop('stop');
             }
 
             const display = `${actions.join(' ')} ${lastAction}`;
@@ -130,7 +120,10 @@ export class kCommand extends Command {
             });
         });
 
-        collector.on('end', () => {
+        collector.on('end', (c, r) => {
+            const removeLeadingZeroes = lastAction.replace(leadingZero, '');
+            actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
+
             if (symbols.test(actions[actions.length - 1]))
                 actions.pop();
 
@@ -154,7 +147,7 @@ export class kCommand extends Command {
                 .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
                 .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
 
-            return void m.edit({
+            return void c.last()[r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
                 embeds: [
                     this.Embed.success(`
