@@ -1,10 +1,12 @@
 import { Command } from '../Structures/Command.js';
+import { Event } from '../Structures/Event.js';
+import { Interactions } from '../Structures/Interaction.js';
+import { once } from '../lib/Utility/Memoize.js';
 import { Client, ClientEvents } from 'discord.js';
 import { resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
-import { Event } from '../Structures/Event.js';
-import { Interactions } from '../Structures/Interaction.js';
 import { pathToFileURL } from 'url';
+import { performance } from 'perf_hooks';
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -67,11 +69,11 @@ export class KhafraClient extends Client {
         return KhafraClient.Interactions;
     }
 
-    async init() {
-        const start = Date.now();
+    init = once(async () => {
+        const start = performance.now();
         await this.loadEvents();
         await this.loadCommands();
         await this.login(process.env.TOKEN);
-        console.log(`Started in ${((Date.now() - start) / 1000).toFixed(2)} seconds!`);
-    }
+        console.log(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`);
+    });
 }

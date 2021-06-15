@@ -12,7 +12,7 @@ const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM_STATUS':
+            case 'CUSTOM':
                 push.push(`${activity.emoji ?? ''}${activity.state ? ` \`\`${activity.state}\`\`` : ''}`); break;
             case 'LISTENING':
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); break;

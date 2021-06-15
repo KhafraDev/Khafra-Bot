@@ -65,7 +65,7 @@ export class kCommand extends Command {
 
         let button: MessageComponentInteraction | null = null;
         try {
-            button = await msg.awaitMessageComponentInteraction(filter, 20000);
+            button = await msg.awaitMessageComponentInteraction(filter, { time: 20_000 });
         } catch {
             return void msg.edit({
                 embeds: [this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`)],

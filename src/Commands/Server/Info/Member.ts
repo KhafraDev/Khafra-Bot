@@ -8,7 +8,7 @@ const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM_STATUS':
+            case 'CUSTOM':
                 push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
                 break;
             case 'LISTENING':
