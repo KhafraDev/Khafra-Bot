@@ -121,7 +121,10 @@ export class kEvent extends Event {
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
 
-            const param = {} as ReplyMessageOptions & { split?: false };
+            const param = {
+                failIfNotExists: false
+            } as ReplyMessageOptions & { split?: false };
+            
             if (typeof returnValue === 'string')
                 param.content = returnValue;
             else if (returnValue instanceof MessageEmbed)
@@ -143,7 +146,10 @@ export class kEvent extends Event {
                 ? command.errors[e.name as keyof typeof command.errors] 
                 : command.errors.default;
                 
-            return message.reply({ embeds: [Embed.fail(error)] })
+            return message.reply({ 
+                embeds: [Embed.fail(error)],
+                failIfNotExists: false
+            })
                 .catch(() => {});
         }
     }

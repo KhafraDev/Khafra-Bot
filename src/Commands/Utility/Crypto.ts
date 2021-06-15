@@ -72,7 +72,8 @@ export class kCommand extends Command {
             If this is the wrong currency, try using one of the following IDs:
             \`\`${currencies.map(c => c.id).join('\`\`, \`\`')}\`\`
             `.trim(),
-            embeds: [embed]
+            embeds: [embed],
+            failIfNotExists: false
         } as ReplyMessageOptions;
     }
 }

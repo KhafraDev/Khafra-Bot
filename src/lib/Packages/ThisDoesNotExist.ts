@@ -25,6 +25,7 @@ export const thisDoesNotExist = async (type: DNE) => {
         embeds: [
             Embed.success().setImage(`attachment://t${type}dne.jpeg`)
         ],
-        files: [attach]
+        files: [attach],
+        failIfNotExists: false
     } as ReplyMessageOptions;
 }
