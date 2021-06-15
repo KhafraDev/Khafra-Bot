@@ -467,7 +467,7 @@
 
 </details>
 
-# v1.0.9
+<details><summary><b>v1.0.9</b></summary>
 
 * Update `mongodb` to the GitHub version which fixes the circular dependency warning.
 * New `crypto` command and backend that doesn't use an infinite loop.
@@ -508,3 +508,35 @@
 * New argument parsing.
 * Removed middleware, replaced by lazy loading using memoized functions.
 * Better caches in `killedbygoogle` and `hackernews` commands. Also make use of the `once` memoize function.
+
+</details>
+
+# v1.10
+* Update: General updates for Discord.js v13.
+* Update: `softbanprompt`, `banprompt`, `pocketinit`, `trump`, `youtube`, `badmeme`, `thenounproject` commands now use buttons instead of reactions.
+* Update: `talkobamatome` will now output the video url rather than a link to the video.
+* Update: `user` command now supports more badges.
+* Update: `server` command adds partnered and verified properties.
+* Update: Remove static `theonion` ID cache and only fetch the latest articles with the RSS feed provided.
+* Update: Move `avatar` command from `Fun` to `Server` categories.
+* Update: `channel` command now supports searching by name.
+* Update: `CLITable` utility is now easier to use.
+* Update: `RSSReader` now respects a feed's [syndication frequency and period](https://web.resource.org/rss/1.0/modules/syndication/).
+* Update: Improve `RSSReader` type checks to make it more strict.
+* Fix: `openlibrary` TypeError and limit results to 1.
+* Fix: `crypto` adds support for searching by `id`, which cannot have duplicates. Fixes duplicate names from overriding one another.
+* Fix: `banprompt` and `massban` now support mod logs.
+* Fix: `massban` now supports a mixture of Snowflakes and mentions.
+* Fix: `trumpkey` command no longer supports up to 3 arguments.
+* Fix: ban and unban cache being set even if the user is not banned/unbanned, never being cleared.
+* Fix: slash commands are now registered globally and locally (for testing).
+* New: `stonewall`, `garrison`, and `branco` commands will now use SQLite.
+* New: Add `eval` command.
+* New: Add `calc` command.
+* New: Add `reactroles` that use buttons.
+* New: Add `emojiinfo` command.
+* Remove: `garrisondump` command.
+* Remove: `washyourlyrics` command.
+* Remove: `forgotify` command.
+* Remove: `longestpoemintheworld` command.
+* Remove: `Fetcher` structure.
