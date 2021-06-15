@@ -35,26 +35,24 @@ export class kEvent extends Event {
                 if (interaction.member.partial)
                     await interaction.member.fetch();
                 
-                if (interaction.member.roles.cache.has(role.id))
+                const had = interaction.member.roles.cache.has(role.id);
+                if (had)
                     await interaction.member.roles.remove(role);
                 else 
                     await interaction.member.roles.add(role);
 
-                const opts = {
-                    embeds: [Embed.success(`Granted you the ${role} role!`)]
-                };
+                const opts: InteractionReplyOptions = { embeds: [] };
+                if (had) opts.embeds.push(Embed.success(`Removed role ${role} from you!`));
+                else opts.embeds.push(Embed.success(`Granted you the ${role} role!`));
+
                 return interaction.deferred
                     ? interaction.editReply(opts)
                     : interaction.reply({
                         ephemeral: true,
                         ...opts
                       });
-            } catch (e) {
-                console.log(e);
-                
-                const opts = {
-                    embeds: [Embed.fail(`An error prevented me from granting you the role!`)]
-                }
+            } catch {                
+                const opts = { embeds: [Embed.fail(`An error prevented me from granting you the role!`)] };
                 return interaction.deferred
                     ? interaction.editReply(opts)
                     : interaction.reply({
