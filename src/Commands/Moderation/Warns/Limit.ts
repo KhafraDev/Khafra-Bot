@@ -6,7 +6,7 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { client } from '../../../Structures/Database/Redis.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild } from '../../../lib/types/KhafraBot.js';
 
 const range = Range(0, 32767, true); // small int
 

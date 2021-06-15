@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { kGuild } from '../../lib/types/Warnings.js';
+import { kGuild } from '../../lib/types/KhafraBot.js';
 import { isText } from '../../lib/types/Discord.js.js';
 
 @RegisterCommand

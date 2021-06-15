@@ -13,7 +13,7 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild } from '../lib/types/Warnings.js';
+import { kGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
 
 const defaultSettings: Partial<kGuild> = {

@@ -66,13 +66,13 @@ export async function getMentions(
     }
 }
 
-export const validSnowflake = (id: Snowflake): id is Snowflake => {
+export const validSnowflake = (id: Snowflake | string): id is Snowflake => {
     if (typeof id !== 'string')
         return false;
     else if (!/^\d{17,19}$/.test(id))
         return false;
         
-    const snowflake = SnowflakeUtil.deconstruct(id);
+    const snowflake = SnowflakeUtil.deconstruct(id as Snowflake);
     if ( 
         snowflake.date.getTime() === epoch.getTime()
         || snowflake.binary === zeroBinary

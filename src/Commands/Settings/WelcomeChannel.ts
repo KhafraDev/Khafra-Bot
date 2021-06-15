@@ -5,7 +5,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { kGuild } from '../../lib/types/Warnings.js';
+import { kGuild } from '../../lib/types/KhafraBot.js';
 import { client } from '../../Structures/Database/Redis.js';
 
 const basic = new Permissions([

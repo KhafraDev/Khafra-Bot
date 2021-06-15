@@ -6,7 +6,7 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { client } from '../../../Structures/Database/Redis.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild } from '../../../lib/types/KhafraBot.js';
 
 @RegisterCommand
 export class kCommand extends Command {

@@ -8,7 +8,7 @@ import { Logger } from './Logger.js';
 import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { kGuild } from '../lib/types/Warnings.js';
+import { kGuild } from '../lib/types/KhafraBot.js';
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */

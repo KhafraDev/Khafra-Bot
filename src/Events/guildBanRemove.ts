@@ -2,7 +2,7 @@ import { Event } from '../Structures/Event.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { GuildBan } from 'discord.js';
 import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild } from '../lib/types/Warnings.js';
+import { kGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';

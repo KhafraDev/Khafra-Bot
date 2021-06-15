@@ -87,3 +87,6 @@ WantedBy=multi-user.target
 1. `npm run v1.10` (dumps the current postgres databases for a few commands to JSON).
 2. `npm i better-sqlite3`
 3. `npm run dev:build && npm run prod:run`
+4. Open postgres shell and `ALTER TABLE kbGuild ADD COLUMN reactRoleChannel TEXT DEFAULT NULL;`
+    - Windows tutorial [here](https://www.tutorialkart.com/postgresql/postgresql-sql-shell-psql/)!
+    - Linux: `sudo -u postgres psql`, `\c kb`, run the command above, `\q`.

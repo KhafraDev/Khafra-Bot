@@ -2,7 +2,7 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { GuildMember, Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';

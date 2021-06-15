@@ -6,7 +6,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
 

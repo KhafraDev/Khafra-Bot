@@ -6,7 +6,7 @@ import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
-import { kGuild } from '../../lib/types/Warnings.js';
+import { kGuild } from '../../lib/types/KhafraBot.js';
 
 const MAX_SECS = ms('6h') / 1000;
 

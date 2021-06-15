@@ -8,6 +8,7 @@ export interface kGuild {
     mod_log_channel: Snowflake | null
     welcome_channel: Snowflake | null
     rules_channel: Snowflake | null
+    reactRoleChannel: Snowflake | null
 }
 
 /**
