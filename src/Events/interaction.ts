@@ -32,7 +32,13 @@ export class kEvent extends Event {
             if (role.deleted || role.managed) return;
 
             try {
-                await interaction.member.roles.add(role);
+                if (interaction.member.partial)
+                    await interaction.member.fetch();
+                
+                if (interaction.member.roles.cache.has(role.id))
+                    await interaction.member.roles.remove(role);
+                else 
+                    await interaction.member.roles.add(role);
 
                 const opts = {
                     embeds: [Embed.success(`Granted you the ${role} role!`)]
