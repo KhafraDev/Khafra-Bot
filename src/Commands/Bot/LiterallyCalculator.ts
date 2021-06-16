@@ -130,6 +130,7 @@ export class kCommand extends Command {
             const equation = actions.join('')
                 .replace(/(\d)\(/g, '$1*(') // 0(1+2) -> 0*(1+2)
                 .replace(/\)(\d)/g, ')*$1') // (1+2)0 -> (1+2)*0
+                .replace(/\)\(/g, ')*(') // (1+2)(2+3) -> (1+2)*(2+3)
                 .replace(/\.{2,}/g, '.') // 1..3 -> 1.3
             
             let eq: number | string = 'Invalid input!'; 
