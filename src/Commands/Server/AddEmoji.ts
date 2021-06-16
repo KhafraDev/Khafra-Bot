@@ -1,17 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js';
-import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-
-const findURL = (args: string[]) => {
-    for (let i = 0; i < args.length; i++) {
-        try {
-            const u = new URL(args[i]);
-            if (u.protocol === 'https:' || u.protocol === 'http:')
-                return { i, u }
-        } catch {}
-    }
-}
+import { validURL } from '../../lib/Utility/Valid/URL.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -44,12 +34,12 @@ export class kCommand extends Command {
             name = args[0];
             link = message.attachments.first();
         } else {
-            const info = findURL(args);
-            if (!info)
+            const info = validURL(args);
+            if (info.length === 0 || info[0].url === null)
                 return this.Embed.fail(`No image link provided!`);
 
-            name = args[Number(!info.i)];
-            link = `${info.u}`;
+            name = args[Number(!info[0].idx)];
+            link = `${info[0].url}`;
         }
 
         if (link instanceof MessageAttachment) {

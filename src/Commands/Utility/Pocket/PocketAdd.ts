@@ -1,9 +1,9 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { URL } from 'url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 interface PocketUser {
     access_token: string 
@@ -43,7 +43,10 @@ export class kCommand extends Command {
             `);
 
         const pocket = new Pocket(rows.shift()!);
-        const added = await pocket.add(new URL(args[0]), args.slice(1).join(' ') || null);
+        const article = URLFactory(args[0]);
+        if (article === null)
+            return this.Embed.fail(`That's not an article URL, try again!`);
+        const added = await pocket.add(article, args.slice(1).join(' ') || null);
 
         return this.Embed.success()
             .setTitle(added.item.title)

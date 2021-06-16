@@ -1,8 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { URL } from 'url';
 import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -22,7 +22,7 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        const { hostname, pathname } = new URL(args[0]);
+        const { hostname, pathname } = URLFactory(args[0]) ?? {};
         if (hostname !== 'twitter.com')
             return this.Embed.fail('Not a Twitter status!');
         if (!/\/[A-z0-9]+\/status\/\d+$/.test(pathname))

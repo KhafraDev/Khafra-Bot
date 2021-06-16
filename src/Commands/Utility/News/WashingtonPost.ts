@@ -1,9 +1,9 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { URL } from 'url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
+import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 const settings = {
     rss: 'http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43',
@@ -50,8 +50,7 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()].map(p => {
-            const u = new URL(p.link);
-            u.search = '';
+            const u = URLFactory(p.link);
             p.link = u.toString();
             return p;
         });

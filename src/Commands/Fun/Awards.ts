@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
-import { URL } from 'url';
 import { RedditData } from '@khaf/badmeme';
 import fetch from 'node-fetch';
 
@@ -26,8 +26,9 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        const url = new URL(args[0]);
-        [...url.searchParams.keys()].forEach(k => url.searchParams.delete(k));
+        const url = URLFactory(args[0]);
+        if (url === null)
+            return this.Embed.fail('Invalid Reddit post!');
 
         if (
             url.origin !== 'https://www.reddit.com' ||
