@@ -4,7 +4,7 @@ import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const findURL = (args: string[]) => {
-    for (let i = 0; i < 69; i++) {
+    for (let i = 0; i < args.length; i++) {
         try {
             return { i, u: new URL(args[i]) }
         } catch {}
