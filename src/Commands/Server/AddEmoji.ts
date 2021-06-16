@@ -3,6 +3,14 @@ import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js'
 import { URL } from 'url';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
+const findURL = (args: string[]) => {
+    for (let i = 0; i < 69; i++) {
+        try {
+            return { i, u: new URL(args[i]) }
+        } catch {}
+    }
+}
+
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
@@ -10,7 +18,8 @@ export class kCommand extends Command {
             [
                 'Add an emoji to the server!',
                 'my_emoji [image attachment]',
-                'amogus https://cdn.discordapp.com/emojis/812093828978311219.png?v=1'
+                'amogus https://cdn.discordapp.com/emojis/812093828978311219.png?v=1',
+                'https://cdn.discordapp.com/emojis/812093828978311219.png?v=1 amogus'
             ],
 			{
                 name: 'addemoji',
@@ -23,29 +32,36 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        const fileFromArgs = args.length === 2
-            ? args.pop()
-            : message.attachments.first();
-
-        if (!fileFromArgs) 
+        if (args.length === 1 && message.attachments.size === 0)
             return this.Embed.generic(this, 'No attachment was included and no image link was provided!');
 
-        const file = new URL(typeof fileFromArgs === 'string' ? fileFromArgs : fileFromArgs.url);
+        let name: string | null = null,
+            link: string | MessageAttachment | null = null;
 
-        if (!/(.png|.jpe?g|.webp|.gif)/.test(file.href))
-            return this.Embed.fail('Not a valid image/gif link!');
+        if (args.length === 1) {
+            name = args[0];
+            link = message.attachments.first();
+        } else {
+            const info = findURL(args);
+            if (!info)
+                return this.Embed.fail(`No image link provided!`);
 
-        // MessageAttachment provides us with this information, a url does not.
-        // this is a check to cut down on API requests by checking for file size.
-        if (fileFromArgs instanceof MessageAttachment)
-            if (fileFromArgs.size / 1000 > 256) // size is in bytes, convert to kb
-                return this.Embed.fail('Discord disallows images (or gifs) larger than 256 kb!');
+            name = args[Number(!info.i)];
+            link = `${info.u}`;
+        }
+
+        if (link instanceof MessageAttachment) {
+            if (link.size > 256_000)
+                return this.Embed.fail(`Guild emojis can only be a maximum of 256kb! Try a smaller image!`);
+
+            link = link.url;
+        }
 
         let e: GuildEmoji | null = null;
         try {
             e = await message.guild.emojis.create(
-                file.toString(),
-                args[0],
+                link,
+                name,
                 { reason: `${message.author.id} (${message.author.tag}) requested.` }
             );
         } catch (e) {
