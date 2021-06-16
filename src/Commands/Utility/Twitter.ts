@@ -25,7 +25,7 @@ export class kCommand extends Command {
         const { hostname, pathname } = URLFactory(args[0]) ?? {};
         if (hostname !== 'twitter.com')
             return this.Embed.fail('Not a Twitter status!');
-        if (!/\/[A-z0-9]+\/status\/\d+$/.test(pathname))
+        if (!/\/[A-z0-9]+\/status\/\d{17,19}$/.test(pathname))
             return this.Embed.fail(`Invalid Twitter status!`);
 
         const id = pathname.match(/\/(\d+)$/)[1];
