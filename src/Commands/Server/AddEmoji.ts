@@ -6,7 +6,9 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 const findURL = (args: string[]) => {
     for (let i = 0; i < args.length; i++) {
         try {
-            return { i, u: new URL(args[i]) }
+            const u = new URL(args[i]);
+            if (u.protocol === 'https:' || u.protocol === 'http:')
+                return { i, u }
         } catch {}
     }
 }
