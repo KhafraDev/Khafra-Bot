@@ -1,11 +1,11 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, MessageReaction, Snowflake, User } from 'discord.js';
+import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { join } from 'path';
 import { readFileSync } from 'fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
 
 const games = new Set<Snowflake>();
 const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
@@ -45,25 +45,30 @@ export class kCommand extends Command {
         if (games.has(message.author.id))
             return this.Embed.fail('Finish your current game before starting another!');
 
-        
         let wrong = 0; // number of wrong guesses
         const guesses: string[] = []; // guesses
 
         const word = presidents[await rand(presidents.length)];
-        const m = await message.reply({ embeds: [this.Embed.success()
+        const embed = this.Embed.success()
             .setDescription(word.replace(/[A-z0-9\.]/g, '☐'))
-            .setImage(images[wrong])
-        ]});
+            .setImage(images[wrong]);
+        const row = new MessageActionRow()
+            .addComponents(Components.primary('Hint', 'hint'));
+        
+        const m = await message.reply({
+            embeds: [embed],
+            components: [row]
+        });
 
         const c = message.channel.createMessageCollector(
-            (m: Message) =>
+            m =>
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
                 !guesses.includes(m.content.toLowerCase()),
             { time: 60000, idle: 30000 }
         );
 
-        c.on('collect', (msg: Message) => {
+        c.on('collect', msg => {
             if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
                 return c.stop('requested');
         
@@ -131,16 +136,15 @@ export class kCommand extends Command {
 
         c.on('end', () => void games.delete(message.author.id));
 
-        try { await m.react('❓') } catch {} // ignore error
-
-        const r = m.createReactionCollector(
-            (react: MessageReaction, user: User) => 
-                user.id === message.author.id &&
-                react.emoji.name === '❓',
+        const r = m.createMessageComponentInteractionCollector(
+            (interaction) => 
+                interaction.message.id === m.id &&
+                interaction.user.id === message.author.id &&
+                interaction.customID === 'hint',
             { max: 1, time: 60000 }
         );
 
-        r.on('collect', async () => {
+        r.once('collect', i => {
             wrong++; // hint = 1 wrong guess added
 
             // filter out all guessed letters
@@ -148,25 +152,22 @@ export class kCommand extends Command {
                 .filter(l => l.length === 1)
                 .map(l => l.toLowerCase());
             const letters = [...word.toLowerCase()].filter(letter => !guessesLC.includes(letter));
-            const letter = letters[await rand(letters.length)];
-
+            const letter = letters[Math.floor(Math.random() * letters.length)];
             guesses.push(letter);
-            return m.edit({
-                embeds: [this.Embed.success()
-                    .setTitle(`"${letter}" is the hint!`)
-                    .setImage(images[wrong])
-                    .setDescription(`
-                    ${hide(word, guesses)}
-                    ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)]
-            });
-        });
 
-        r.on('end', () => {
-            if (hasPerms(message.channel, m.guild.me, 'MANAGE_MESSAGES')) 
-                return m.reactions.removeAll()
-                    .catch(() => {});
+            const embed = this.Embed.success()
+                .setTitle(`"${letter}" is the hint!`)
+                .setImage(images[wrong])
+                .setDescription(`
+                ${hide(word, guesses)}
+                ${wrong} wrong guess${plural(wrong, 'es')}.
+                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                `);
+            
+            return void i.update({
+                embeds: [embed],
+                components: []
+            });
         });
     }
 }
