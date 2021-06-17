@@ -12,5 +12,9 @@ export const Components = {
     secondary: (label = 'next', id?: string) => new MessageButton()
         .setCustomID(id ?? 'secondary')
         .setLabel(label)
-        .setStyle('SECONDARY')
+        .setStyle('SECONDARY'),
+    primary: (label = 'primary', id?: string) => new MessageButton()
+        .setCustomID(id ?? 'primary')
+        .setLabel(label)
+        .setStyle('PRIMARY')
 }
