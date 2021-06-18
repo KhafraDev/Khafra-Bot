@@ -1,23 +1,26 @@
-import { GuildMember, Message } from 'discord.js';
+import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import { TicTacToe } from '../../../lib/Packages/TicTacToe.js';
-import { Embed } from '../../../lib/Utility/Constants/Embeds.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { Arguments, Command } from '../../../Structures/Command.js';
+import { chunkSafe } from '../../../lib/Utility/Array.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-const getEmbed = (game: TicTacToe, [X, Op]: [GuildMember, GuildMember]) => {
-    const embed = Embed.success(`
-    ${X} vs. ${Op}
-    \`\`\`${game}\`\`\`
-    `)
-    .setTitle('Tic-Tac-Toe');
+type Board = ('X' | 'O' | null)[];
 
-    if (game.winner())
-        return [embed.addField('**Winner!**', `${game.turn} won!`)];
-    else if (game.isFull())
-        return [embed.addField('**Status:**', 'It\'s a tie!')];
+const makeRows = (turns: Board) => {
+    const rows: MessageButton[] = [];
 
-    return [embed.addField('**Turn:**', `${game.turn === 'X' ? X.user.username : Op.user.username}'s Turn`)];
+    for (let i = 0; i < turns.length; i++) {
+        const row = turns[i];
+        if (row === 'X')
+            rows.push(Components.approve('X', 'X'));
+        else if (row === 'O')
+            rows.push(Components.primary('O', 'O'));
+        else 
+            rows.push(Components.secondary('\u200b', `empty,${i}`));
+    }
+
+    return chunkSafe(rows, 3).map(r => new MessageActionRow().addComponents(r))
 }
 
 @RegisterCommand
@@ -31,38 +34,55 @@ export class kCommand extends Command {
                 name: 'tictactoe',
                 folder: 'Games',
                 args: [0, 1],
-                ratelimit: 30
+                ratelimit: 1
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
-        const member = args.length === 0 
-            ? message.guild.me 
-            : await getMentions(message, 'members');
-            
-        const opponent = member ?? message.guild.me;
+    async init(message: Message) {
         const game = new TicTacToe();
 
-        const m = await message.reply({ embeds: getEmbed(game, [message.member, opponent]) });
+        const m = await message.channel.send({
+            content: 'Tic-Tac-Toe',
+            components: makeRows(game.board)
+        });
 
-        const f = (m: Message) =>
-            (game.turn === 'X' ? message.author.id : opponent.id) === m.member.id && // it's the player's turn
-            Number(m.content) - 1 in game.board && // valid turn; [0, 8] so we subtract 1
-            game.go(Number(m.content) - 1) !== null; // this method returns null when the space is not empty
-
-        const c = message.channel.createMessageCollector(
-            f,
-            { time: 120000 }
+        const c = m.createMessageComponentInteractionCollector(
+            interaction => 
+                interaction.message.id === m.id &&
+                interaction.user.id === message.author.id &&
+                /^empty,\d$/.test(interaction.customID),
+            { time: 120_000, idle: 15_000, max: 5 }
         );
 
-        c.on('collect', (_msg: Message) => {
-            if (game.winner()) // stop collecting messages if there's a winner already
-                c.stop();
-            else if (game.turn === 'O' && opponent.id === message.guild.me.id && !game.isFull()) // bot's turn to go, not real player
-                game.botGo();
+        c.on('collect', i => {
+            const [, idx] = i.customID.split(',');
+            game.go(Number(idx));
+            game.botGo();
 
-            return void m.edit({ embeds: getEmbed(game, [message.member, opponent]) });
+            if (game.winner()) {
+                c.stop();
+                return void i.update({ 
+                    content: `Game over - ${game.turn} won!`,
+                    components: makeRows(game.board) 
+                });
+            } else if (game.isFull()) {
+                c.stop();
+                return void i.update({ 
+                    content: `Looks like it's a tie!`,
+                    components: makeRows(game.board)
+                });
+            }
+
+            return void i.update({ components: makeRows(game.board) });
+        });
+
+        c.on('end', (_c, r) => {
+            if (r === 'time') {
+                return void m.edit({
+                    content: `Game took too long, play a little faster next time!`
+                });
+            }
         });
     }
 }
