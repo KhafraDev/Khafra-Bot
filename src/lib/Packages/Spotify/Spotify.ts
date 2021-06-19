@@ -10,11 +10,11 @@ type Token = {
 }
 
 class Spotify {
-    private id = process.env.SPOTIFY_ID;
-    private secret = process.env.SPOTIFY_SECRET;
+    #id = process.env.SPOTIFY_ID;
+    #secret = process.env.SPOTIFY_SECRET;
 
-    private token: Token | null = null;
-    private expires_in: number | null = null;
+    #token: Token | null = null;
+    #expires_in: number | null = null;
 
     async search(query: string) {
         // URLSearchParams encodes differently (and incorrectly for Spotify), so we use qs#stringify instead.
@@ -43,26 +43,26 @@ class Spotify {
             method: 'POST',
             body: params,
             headers: {
-                Authorization: `Basic ${Buffer.from(`${this.id}:${this.secret}`).toString('base64')}`
+                Authorization: `Basic ${Buffer.from(`${this.#id}:${this.#secret}`).toString('base64')}`
             }
         })
         .then(res => res.json() as Promise<Token>)
         .then(creds => {
-            this.token = creds;
-            this.expires_in = Date.now() + creds.expires_in * 1000; // in milliseconds
+            this.#token = creds;
+            this.#expires_in = Date.now() + creds.expires_in * 1000; // in milliseconds
         });
     }
   
     async getTokenHeader() {
-        if (!this.token || !this.token.access_token || this.expired) {
+        if (!this.#token || !this.#token.access_token || this.expired) {
             await this.setToken();
         }
 
-        return { Authorization: `Bearer ${this.token!.access_token}` };
+        return { Authorization: `Bearer ${this.#token!.access_token}` };
     }
 
     get expired() {
-        return this.token && Date.now() >= this.expires_in!;
+        return this.#token && Date.now() >= this.#expires_in!;
     }
 }
 

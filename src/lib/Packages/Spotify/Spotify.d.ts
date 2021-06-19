@@ -65,10 +65,6 @@ export type SpotifyResult = {
 }
 
 declare class Spotify {
-    private id;
-    private secret;
-    private token;
-    private expires_in;
     search(query: string): Promise<SpotifyResult>;
     setToken(): Promise<void>;
     getTokenHeader(): Promise<{

@@ -40,8 +40,8 @@ interface AtomJSON<T extends unknown> {
 }
 
 export class RSSReader<T extends unknown> {
-    private interval: NodeJS.Timeout | null = null;
-    private options: X2jOptionsOptional = {};
+    #interval: NodeJS.Timeout | null = null;
+    #options: X2jOptionsOptional = {};
 
     public results = new Set<T>();
     public timeout = 60 * 1000 * 60;
@@ -56,7 +56,7 @@ export class RSSReader<T extends unknown> {
      */
     constructor(loadFunction = noop, options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
-        this.options = options;
+        this.#options = options;
     }
 
     /**
@@ -97,15 +97,15 @@ export class RSSReader<T extends unknown> {
                 console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
             }
             console.log(`${this.url} has been disabled as invalid XML has been fetched.`);
-            return clearInterval(this.interval!);
+            return clearInterval(this.#interval!);
         }
 
         // if the XML is valid, we can clear the old cache
         this.results.clear();
-        const j = parse(xml, this.options) as RSSJSON<T> | AtomJSON<T>;
+        const j = parse(xml, this.#options) as RSSJSON<T> | AtomJSON<T>;
 
         if (!('rss' in j) && !('feed' in j)) {
-            return clearInterval(this.interval!);
+            return clearInterval(this.#interval!);
         }
 
         // respects a feed's ttl or syndication frequency option if present.
@@ -113,11 +113,11 @@ export class RSSReader<T extends unknown> {
         // https://web.resource.org/rss/1.0/modules/syndication/
         if ('rss' in j) {
             if (typeof j.rss.channel?.ttl === 'number') {
-                clearInterval(this.interval!);
+                clearInterval(this.#interval!);
                 this.timeout = 60 * 1000 * j.rss.channel.ttl;
                 if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 
-                this.interval = setInterval(
+                this.#interval = setInterval(
                     this.parse.bind(this), 
                     this.timeout
                 );
@@ -130,15 +130,15 @@ export class RSSReader<T extends unknown> {
 
                 // make sure that the period and frequency are both valid
                 if (!validateNumber(period) || !syUpdateFrequency.includes(frequency)) {
-                    return clearInterval(this.interval);
+                    return clearInterval(this.#interval);
                 }
 
                 const time = Math.floor(period * ms[frequency]);
                 if (!validateNumber(time)) {
-                    return clearInterval(this.interval);
+                    return clearInterval(this.#interval);
                 } 
 
-                this.interval = setInterval(
+                this.#interval = setInterval(
                     this.parse.bind(this),
                     time
                 );
@@ -161,11 +161,11 @@ export class RSSReader<T extends unknown> {
     }
 
     cache = async (url: string) => {
-        if (this.interval) return this.interval;
+        if (this.#interval) return this.#interval;
         this.url = url;
 
         await this.parse();
-        this.interval = setInterval(
+        this.#interval = setInterval(
             this.parse.bind(this),
             this.timeout
         );
