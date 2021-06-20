@@ -44,7 +44,8 @@ export class kCommand extends Command {
 
             SELECT k_date, k_left, k_joined
             FROM kbInsights
-            WHERE k_guild_id = $1::text;
+            WHERE k_guild_id = $1::text
+            ORDER BY kbInsights.k_date ASC;
         `, [message.guild.id]);
 
         if (rows.length === 0)
