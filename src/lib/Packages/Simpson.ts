@@ -1,7 +1,7 @@
 // https://www.thisfuckeduphomerdoesnotexist.com/
 // had to include this one
 
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 interface ISimpson {
     url: string

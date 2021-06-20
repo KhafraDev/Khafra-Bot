@@ -3,7 +3,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 const PER_COIN = 1.99 / 500;
 

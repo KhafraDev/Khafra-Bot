@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 export interface IOpenLib {
     cover_i: number

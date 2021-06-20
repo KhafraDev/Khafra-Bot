@@ -1,4 +1,4 @@
-import fetch, { Headers } from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 interface ITMDBSearch {
@@ -162,10 +162,10 @@ const base = {
     detail: 'https://api.themoviedb.org/3/movie/',
     detail_tv: 'https://api.themoviedb.org/3/tv/'
 } as const;
-const headers = new Headers({
+const headers = {
     'Authorization': `Bearer ${process.env.TMDB}`,
     'Content-Type': 'application/json;charset=utf-8'
-});
+};
 
 export const searchMovie = async (
     query: string,
@@ -176,7 +176,7 @@ export const searchMovie = async (
         include_adult: `${include_adult}`
     }).toString().replace(/\+/g, '%20'); 
     // if the question mark is appended to the base url, it's stripped by new URL(...)
-    const res = await fetch(new URL(`?${params}`, base.search), { headers });
+    const res = await fetch(`${new URL(`?${params}`, base.search)}`, { headers });
     const search = await res.json() as ITMDBSearch;
 
     if (search.total_results === 0 || search.results.length === 0)
@@ -197,7 +197,7 @@ export const searchTV = async (
         include_adult: `${include_adult}`
     }).toString().replace(/\+/g, '%20'); 
 
-    const res = await fetch(new URL(`?${params}`, base.tv), { headers });
+    const res = await fetch(`${new URL(`?${params}`, base.tv)}`, { headers });
     const tv = await res.json() as TV;
 
     if (tv.total_results === 0 || tv.results.length === 0)

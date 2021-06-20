@@ -4,7 +4,7 @@
  * that removes the token entirely.
  */
 
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 type Opts = { to?: string, from?: string };
@@ -60,7 +60,7 @@ export const translate = async (
     params.append('tl', opts.to);
     params.append('q', text);
 
-    const r = await fetch(new URL(`?${params}`, url), {
+    const r = await fetch(`${new URL(`?${params}`, url)}`, {
         headers: {
             'Accept-Encoding': 'gzip, deflate, br',
 			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0'

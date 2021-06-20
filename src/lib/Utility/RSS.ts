@@ -1,8 +1,10 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
-import fetch, { RequestInit } from 'node-fetch';
+import fetch from 'undici-fetch';
 import { delay } from './Constants/OneLiners.js';
 import config from '../../../package.json';
 import { validateNumber } from './Valid/Number.js';
+
+type RequestInit = Parameters<typeof fetch>[1]
 
 const noop: (() => void | Promise<void>) = () => {};
 const syUpdateFrequency = ['hourly', 'daily', 'weekly', 'monthly', 'yearly'] as const;
