@@ -12,8 +12,6 @@ interface Insights {
     k_joined: number
 }
 
-const TWO_WEEKS = 8.64e7 * 14;
-
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
@@ -44,22 +42,29 @@ export class kCommand extends Command {
 
             SELECT k_date, k_left, k_joined
             FROM kbInsights
-            WHERE k_guild_id = $1::text
+            WHERE 
+                k_guild_id = $1::text AND
+                k_date > CURRENT_DATE - 14
             ORDER BY kbInsights.k_date ASC;
         `, [message.guild.id]);
 
         if (rows.length === 0)
             return this.Embed.fail(`No insights available within the last 14 days.`);
 
-        const date = new Date();
-        const now = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-        const r = rows.filter(r => (now - r.k_date.getTime()) <= TWO_WEEKS);
+        const locale = message.guild.preferredLocale;
+        const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
+            red.Dates.push(formatDate('MMMM Do, YYYY', row.k_date));
+            red.Joins.push(row.k_joined.toLocaleString(locale));
+            red.Leaves.push(row.k_left.toLocaleString(locale));
 
-        const t = table({
-            Dates: r.map(row => formatDate('MMMM Do, YYYY', row.k_date)),
-            Joins: r.map(row => row.k_joined.toLocaleString(message.guild.preferredLocale)),
-            Leaves: r.map(row => row.k_left.toLocaleString(message.guild.preferredLocale))
+            return red;
+        }, {
+            Dates: [],
+            Joins: [],
+            Leaves: []
         });
+
+        const t = table({ Dates, Joins, Leaves });
 
         return this.Embed.success(`\`\`\`${t}\`\`\``);
     }
