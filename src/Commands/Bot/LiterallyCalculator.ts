@@ -128,8 +128,8 @@ export class kCommand extends Command {
                 actions.pop();
 
             const equation = actions.join('')
-                .replace(/(\d)\(/g, '$1*(') // 0(1+2) -> 0*(1+2)
-                .replace(/\)(\d)/g, ')*$1') // (1+2)0 -> (1+2)*0
+                .replace(/(\d|\.)\(/g, '$1*(') // 0(1+2) -> 0*(1+2), 52.(2) -> 52. * (2)
+                .replace(/\)(\d|\.)/g, ')*$1') // (1+2)0 -> (1+2)*0, (2).5 -> (2)*.5
                 .replace(/\)\(/g, ')*(') // (1+2)(2+3) -> (1+2)*(2+3)
                 .replace(/\.{2,}/g, '.') // 1..3 -> 1.3
             
