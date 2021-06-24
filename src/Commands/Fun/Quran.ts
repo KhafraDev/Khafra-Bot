@@ -37,7 +37,7 @@ export class kCommand extends Command {
                 Verses.set(`${verse.book}-${verse.verse}`, verse);
                 const [b, v] = [Number(verse.book), Number(verse.verse)];
 
-                b in max ? max[b].push(v) : (max[b] = [v]);
+                (max[b] ??= []).push(v);
             }
 
             for (const k in max) {

@@ -1,6 +1,7 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Embed } from '../Utility/Constants/Embeds.js';
+import { Stream } from 'stream';
 
 const formatURL = new Map<DNE, (type: DNE) => string>([
     ['artwork', t => `https://this${t}doesnotexist.com/`],
@@ -19,7 +20,7 @@ export const thisDoesNotExist = async (type: DNE) => {
     const url = formatURL.get(type)(type);
 
     const res = await fetch(url);
-    const attach = new MessageAttachment(res.body, `t${type}dne.jpeg`);
+    const attach = new MessageAttachment(res.body.data as unknown as Stream, `t${type}dne.jpeg`);
 
     return {
         embeds: [

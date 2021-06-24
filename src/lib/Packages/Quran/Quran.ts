@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { promisify } from 'util';
 import { createHash } from 'crypto';
 import { unzip } from 'zlib';
@@ -22,7 +22,7 @@ const hash = 'e6a7cdaa513dbe10f37aa49ac2c2cad726b35031a227ebb03c839dd3daf1dabb';
 
 export const parseQuran = async (): Promise<{ verses: Excerpt[], titles: Title[] }> => {
     const res = await fetch('https://sacred-texts.com/isl/pick/pick.txt.gz');
-    const buffer = await res.buffer();
+    const buffer = await res.arrayBuffer();
 
     const sha256 = createHash('sha256').update(buffer).digest('hex');
     if (sha256 !== hash)

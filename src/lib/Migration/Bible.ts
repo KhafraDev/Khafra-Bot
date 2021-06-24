@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import AdmZip from 'adm-zip';
 import { pool } from '../../Structures/Database/Postgres.js';
 
@@ -104,7 +104,7 @@ export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'gi');
 
 export const parseBible = async () => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
-    const buffer = await res.buffer();
+    const buffer = await res.arrayBuffer();
     
     const zip = new AdmZip(buffer);
     const bible = zip.getEntries().shift()!.getData().toString('utf-8');
