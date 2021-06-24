@@ -4,7 +4,7 @@
  * that removes the token entirely.
  */
 
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 type Opts = { to?: string, from?: string };

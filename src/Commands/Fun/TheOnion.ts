@@ -4,7 +4,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { RSSReader } from '../../lib/Utility/RSS.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 interface ITheOnionAPI {
     data: {

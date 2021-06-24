@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { HereResult } from './HereWeather.d';
 
 export const weather = async (q: string) => {

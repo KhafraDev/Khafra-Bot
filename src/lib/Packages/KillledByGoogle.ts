@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { once } from '../Utility/Memoize.js';
 
 interface GoogleProduct {
