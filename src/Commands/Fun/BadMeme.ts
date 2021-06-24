@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme } from '@khaf/badmeme';
-import { isDM } from '../../lib/types/Discord.js.js';
+import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 
@@ -22,7 +22,11 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {        
-        const res = await badmeme(args[0], isDM(message.channel) || message.channel.nsfw);
+        const res = await badmeme(
+            args[0], 
+            isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
+        );
+        
         if (res === null)
             return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
         else if ('error' in res) {

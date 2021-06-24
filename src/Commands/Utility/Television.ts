@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { searchTV } from '../../lib/Packages/TMDB.js';
-import { isDM } from '../../lib/types/Discord.js.js';
+import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { formatDate } from '../../lib/Utility/Date.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -21,7 +21,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const tv = await searchTV(
             args.join(' '), 
-            isDM(message.channel) || message.channel.nsfw
+            isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
         
         if (!tv)
