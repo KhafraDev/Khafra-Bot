@@ -2,7 +2,7 @@ import FormData from '@discordjs/form-data';
 import { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
 import { lookup } from 'mime-types';
-import fetch from 'undici-fetch';
+import fetch from 'node-fetch';
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/;

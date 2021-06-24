@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { stripIndents } from '../../../lib/Utility/Template.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import fetch from 'undici-fetch';
+import fetch from 'node-fetch';
 
 const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;
 

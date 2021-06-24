@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import fetch from 'node-fetch';
 import { URL } from 'url';
 
 export const talkObamaToMe = async (q: string) => {

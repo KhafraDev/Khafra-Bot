@@ -3,7 +3,7 @@
  * look at how Twitter does it, and then do the EXACT OPPOSITE.
  */
 
-import fetch from 'undici-fetch';
+import fetch from 'node-fetch';
 
 type Indices = [number, number];
 type Media = {
