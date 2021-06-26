@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'http://www.aljazeera.com/xml/rss/all.xml',
+    rss: 'https://www.aljazeera.com/xml/rss/all.xml',
     main: 'https://aljazeera.com',
     command: ['aljazeera'],
     author: ['Aljazeera', 'https://i.imgur.com/I1X7ygr.png']

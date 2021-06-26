@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://www.thedailybeast.com/rss',
+    rss: 'https://feeds.thedailybeast.com/rss/articles',
     main: 'https://www.thedailybeast.com/',
     command: ['dailybeast', 'thedailybeast'],
     author: ['The Daily Beast', 'https://img.thedailybeast.com/image/upload/v1550872986/Whitelr_soctf0.png']

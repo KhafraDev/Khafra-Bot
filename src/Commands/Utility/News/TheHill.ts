@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'http://thehill.com/rss/syndicator/19109',
+    rss: 'https://thehill.com/rss/syndicator/19109',
     main: 'https://thehill.com',
     command: ['thehill'],
     author: ['The Hill', 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png']

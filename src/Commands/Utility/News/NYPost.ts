@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://nypost.com/feed',
+    rss: 'https://nypost.com/feed/',
     main: 'https://nypost.com',
     command: ['nypost'],
     author: ['NYPost', 'https://res-3.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco/v1448593722/ttyq9tw3bynhfx94u7ho.png']

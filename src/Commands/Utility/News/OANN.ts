@@ -6,7 +6,7 @@ import { once } from '../../../lib/Utility/Memoize.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 const settings = {
-    rss: 'https://www.oann.com/feed',
+    rss: 'https://www.oann.com/feed/',
     main: 'https://oann.com',
     command: ['oann'],
     author: ['OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg']

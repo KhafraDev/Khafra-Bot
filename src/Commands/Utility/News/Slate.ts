@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://www.slate.com/articles.fulltext.all.10.rss',
+    rss: 'https://slate.com/feeds/all.rss',
     main: 'https://slate.com',
     command: ['slate'],
     author: ['Slate', 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Slate_new_logo.png/250px-Slate_new_logo.png']

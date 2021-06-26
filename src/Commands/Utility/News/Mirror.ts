@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'http://www.mirror.co.uk/news/world-news/rss.xml',
+    rss: 'https://www.mirror.co.uk/news/world-news/?service=rss',
     main: 'https://www.mirror.co.uk',
     command: ['mirror'],
     author: ['Mirror', 'https://i.imgur.com/wuINM4z.png']
