@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://wp.api.aclu.org/rss',
+    rss: 'https://wp.api.aclu.org/feed/',
     main: 'https://aclu.org',
     command: ['aclu'],
     author: ['ACLU', 'https://www.aclu.org/shared/images/favicons/android-chrome-192x192.png']
