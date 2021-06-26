@@ -1,4 +1,4 @@
-import fetch, { Headers } from 'node-fetch';
+import fetch, { Headers } from 'undici-fetch';
 import crypto from 'crypto';
 import type { PocketGetResults, PocketRateLimit } from './Pocket.d';
 

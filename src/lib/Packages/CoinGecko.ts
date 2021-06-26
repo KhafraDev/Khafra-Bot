@@ -1,4 +1,4 @@
-import fetch, { Response } from 'node-fetch';
+import fetch, { Response } from 'undici-fetch';
 import { chunkSafe } from '../Utility/Array.js';
 
 interface CGCrypto {

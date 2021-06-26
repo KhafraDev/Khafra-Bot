@@ -8,7 +8,7 @@
     "@khaf/badmeme": "file:src/lib/Packages/BadMeme",
     "adm-zip": "^0.4.16",
     "better-sqlite3": "^7.4.0",
-    "discord.js": "^13.0.0-dev.ca2a36b1d713a743045b15adf99eda69a6fdbec7",
+    "discord.js": "^13.0.0-dev.4714a961b87746b0f85214c756614d276666f285",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
     "ms": "^2.1.2",
@@ -18,7 +18,7 @@
     "search-mdn": "^1.0.0",
     "twemoji-parser": "^13.0.0",
     "typescript": "^4.0.3",
-    "undici-fetch": "^1.0.0-rc.2"
+    "undici-fetch": "^1.0.0-rc.3"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.33",
