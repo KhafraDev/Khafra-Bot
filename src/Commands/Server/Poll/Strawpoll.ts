@@ -46,7 +46,7 @@ export class kCommand extends Command {
         `)] });
 
         const filter = (m: Message) => m.author.id === message.author.id && m.content?.split(/\r\n|\n/g).length > 1;
-        const collected = await message.channel.awaitMessages(filter, { max: 1, time: 60000 });
+        const collected = await message.channel.awaitMessages({ filter, max: 1, time: 60000 });
         if (collected.size === 0) {
             return;
         }
@@ -87,7 +87,7 @@ export class kCommand extends Command {
         });
 
         const filterOpts = (m: Message) => m.author.id === message.author.id && m.content?.length <= 16;
-        const collectedOpts = await message.channel.awaitMessages(filterOpts, { max: 1, time: 60000 });
+        const collectedOpts = await message.channel.awaitMessages({ filter: filterOpts, max: 1, time: 60000 });
         if (collectedOpts.size === 0) {
             return;
         }

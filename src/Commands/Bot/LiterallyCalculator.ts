@@ -81,7 +81,7 @@ export class kCommand extends Command {
         let lastAction = '',
             actions: string[] = [];
 
-        const collector = m.createMessageComponentInteractionCollector(filter, { time: 60000, max: 15 });
+        const collector = m.createMessageComponentInteractionCollector({ filter, time: 60000, max: 15 });
         collector.on('collect', i => {
             if ( // used a symbol when there were no previous actions or previous action wasn't a number
                 (

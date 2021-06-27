@@ -47,13 +47,15 @@ export class kCommand extends Command {
             components: makeRows(game.board)
         });
 
-        const c = m.createMessageComponentInteractionCollector(
-            interaction => 
+        const c = m.createMessageComponentInteractionCollector({
+            filter: interaction => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&
                 /^empty,\d$/.test(interaction.customID),
-            { time: 120_000, idle: 15_000, max: 5 }
-        );
+            time: 120_000, 
+            idle: 15_000, 
+            max: 5
+        });
 
         c.on('collect', i => {
             const [, idx] = i.customID.split(',');

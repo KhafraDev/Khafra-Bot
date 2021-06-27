@@ -43,13 +43,13 @@ export class kCommand extends Command {
 
         let c: MessageComponentInteraction | null = null;
         try {
-            c = await m.awaitMessageComponentInteraction(
-                (interaction) =>
+            c = await m.awaitMessageComponentInteraction({
+                filter: (interaction) =>
                     ['rock', 'paper', 'scissors'].includes(interaction.customID) &&
                     interaction.user.id === message.author.id &&
                     interaction.message.id === m.id,
-                { time: 20000 }
-            );
+                time: 20000
+            });
         } catch {
             return void m.edit({
                 embeds: [

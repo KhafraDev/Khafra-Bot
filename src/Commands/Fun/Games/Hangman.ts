@@ -60,13 +60,14 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        const c = message.channel.createMessageCollector(
-            m =>
+        const c = message.channel.createMessageCollector({
+            filter: m =>
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
                 !guesses.includes(m.content.toLowerCase()),
-            { time: 60000, idle: 30000 }
-        );
+            time: 60000, 
+            idle: 30000
+        });
 
         c.on('collect', msg => {
             if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
@@ -136,13 +137,14 @@ export class kCommand extends Command {
 
         c.on('end', () => void games.delete(message.author.id));
 
-        const r = m.createMessageComponentInteractionCollector(
-            (interaction) => 
+        const r = m.createMessageComponentInteractionCollector({
+            filter: (interaction) => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&
                 interaction.customID === 'hint',
-            { max: 1, time: 60000 }
-        );
+            max: 1, 
+            time: 60000
+        });
 
         r.once('collect', i => {
             wrong++; // hint = 1 wrong guess added

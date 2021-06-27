@@ -69,10 +69,10 @@ export class kCommand extends Command {
         `)] });
         
         const rules = new Set<string>();
-        const collector = message.channel.createMessageCollector(
-            (m: Message) => m.author.id === message.author.id && rules.size <= 20,
-            { time: 60 * 1000 * 5 }
-        );
+        const collector = message.channel.createMessageCollector({
+            filter: (m) => m.author.id === message.author.id && rules.size <= 20,
+            time: 60 * 1000 * 5 
+        });
 
         collector.on('collect', async (m: Message) => {
             if (msg?.deleted)

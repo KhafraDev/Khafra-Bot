@@ -60,7 +60,8 @@ export class kCommand extends Command {
 
         const lines: { emoji: string, text: string }[] = []
 
-        const collector = message.channel.createMessageCollector(filter, {
+        const collector = message.channel.createMessageCollector({
+            filter,
             max: 5,
             time: 60 * 1000 * 3
         });

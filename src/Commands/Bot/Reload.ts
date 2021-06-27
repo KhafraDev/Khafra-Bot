@@ -65,10 +65,11 @@ export class kCommand extends Command {
             .setTitle('Which file should be reloaded?')
         ]});
 
-        const c = await m.channel.awaitMessages(
-            (msg: Message) => mapped.some(({ base }) => base === msg.content),
-            { max: 1, time: 30000 }
-        );
+        const c = await m.channel.awaitMessages({ 
+            filter: m => mapped.some(({ base }) => base === m.content) && super.isBotOwner(m.author.id),
+            max: 1, 
+            time: 30000
+        });
 
         if (c.size === 0)
             return this.Embed.fail('Command canceled!');
