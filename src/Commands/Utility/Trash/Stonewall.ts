@@ -46,7 +46,7 @@ const rss = new RSSReader<ITrashHuman>(async () => {
 });
 const cache = once(async () => {
     await migrateStonewall();
-    await rss.cache('https://stonetoss.com/index.php/comic/feed/')
+    await rss.cache('http://stonetoss.com/comic/feed/')
 });
 
 @RegisterCommand
