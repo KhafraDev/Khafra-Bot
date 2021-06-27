@@ -3,7 +3,7 @@ import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Pe
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -100,13 +100,13 @@ export class kCommand extends Command {
                     Try adding an article with \`\`pocketadd\`\` now. 👍
                     `)
                 ],
-                components: []
+                components: disableAll(msg)
             });
         }
 
         return button.editReply({
             embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized, command was canceled!')],
-            components: []
+            components: disableAll(msg)
         });
     }
 }

@@ -1,5 +1,5 @@
 import { Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -74,7 +74,7 @@ export class kCommand extends Command {
 
         return void c.update({
             embeds: [embed],
-            components: []
+            components: disableAll(m)
         });
     }
 }

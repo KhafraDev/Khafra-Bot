@@ -34,7 +34,8 @@ export class kCommand extends Command {
         const keys = Object.keys(Components) as (keyof typeof Components)[];
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)];
-            row.addComponents(Components[type](type));
+            const disabled = Boolean(Math.round(Math.random()));
+            row.addComponents(Components[type](type).setDisabled(disabled));
         }
 
         await message.reply({

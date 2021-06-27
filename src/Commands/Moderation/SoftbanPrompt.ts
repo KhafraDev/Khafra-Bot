@@ -8,7 +8,7 @@ import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 
 const range = Range(0, 7, true);
 
@@ -100,7 +100,7 @@ export class kCommand extends Command {
 
         return button.editReply({
             embeds: [this.Embed.success(`${user} has been soft-banned from the guild!`)],
-            components: []
+            components: disableAll(msg)
         });
     }
 }

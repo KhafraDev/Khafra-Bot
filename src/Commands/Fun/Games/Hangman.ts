@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 
 const games = new Set<Snowflake>();
 const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
@@ -168,7 +168,7 @@ export class kCommand extends Command {
             
             return void i.update({
                 embeds: [embed],
-                components: []
+                components: disableAll(m)
             });
         });
     }

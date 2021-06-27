@@ -3,7 +3,7 @@ import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme } from '@khaf/badmeme';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -81,9 +81,8 @@ export class kCommand extends Command {
 
             return void i.update({ content: res.url[page] });
         });
-        collector.on('end', (_c, reason) => {
-            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
-                return void m.edit({ components: [] });
+        collector.on('end', (_c) => {
+            return void m.edit({ components: disableAll(m) });
         });
     }
 }

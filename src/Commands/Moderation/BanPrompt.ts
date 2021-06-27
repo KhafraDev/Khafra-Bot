@@ -6,7 +6,7 @@ import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bans } from '../../lib/Cache/Bans.js';
 
 const range = Range(0, 7, true);
@@ -100,7 +100,7 @@ export class kCommand extends Command {
                     ` days worth of messages have been removed.`
                 )
             ],
-            components: []
+            components: disableAll(msg)
         });
     }
 }

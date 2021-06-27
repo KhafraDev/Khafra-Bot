@@ -1,7 +1,7 @@
 import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import { TicTacToe } from '../../../lib/Packages/TicTacToe.js';
 import { chunkSafe } from '../../../lib/Utility/Array.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -66,13 +66,17 @@ export class kCommand extends Command {
                 c.stop();
                 return void i.update({ 
                     content: `Game over - ${game.turn} won!`,
-                    components: makeRows(game.board) 
+                    components: disableAll({
+                        components: makeRows(game.board)
+                    })
                 });
             } else if (game.isFull()) {
                 c.stop();
                 return void i.update({ 
                     content: `Looks like it's a tie!`,
-                    components: makeRows(game.board)
+                    components: disableAll({
+                        components: makeRows(game.board)
+                    })
                 });
             }
 
@@ -82,7 +86,8 @@ export class kCommand extends Command {
         c.on('end', (_c, r) => {
             if (r === 'time') {
                 return void m.edit({
-                    content: `Game took too long, play a little faster next time!`
+                    content: `Game took too long, play a little faster next time!`,
+                    components: disableAll(m)
                 });
             }
         });

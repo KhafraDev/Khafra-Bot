@@ -1,5 +1,5 @@
 import { MessageActionRow, Interaction, Message } from 'discord.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
@@ -150,6 +150,7 @@ export class kCommand extends Command {
 
             return void c.last()[r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
+                components: disableAll(m),
                 embeds: [
                     this.Embed.success(`
                     ${squiggles}

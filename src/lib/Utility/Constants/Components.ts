@@ -1,4 +1,4 @@
-import { MessageButton } from 'discord.js';
+import { Message, MessageButton } from 'discord.js';
 
 export const Components = {
     approve: (label = 'approve', id?: string) => new MessageButton()
@@ -17,4 +17,16 @@ export const Components = {
         .setCustomID(id ?? 'primary')
         .setLabel(label)
         .setStyle('PRIMARY')
+}
+
+type Component = { components: Message['components'] }
+
+export const disableAll = ({ components }: Component) => {
+    for (const component of components) {
+        for (const button of component.components) {
+            button.setDisabled(true);
+        }
+    }
+
+    return components;
 }
