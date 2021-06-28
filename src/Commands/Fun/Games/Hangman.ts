@@ -6,6 +6,7 @@ import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { performance } from 'perf_hooks';
 
 const games = new Set<Snowflake>();
 const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
@@ -60,6 +61,8 @@ export class kCommand extends Command {
             components: [row]
         });
 
+        const start = performance.now();
+
         const c = message.channel.createMessageCollector({
             filter: m =>
                 m.author.id === message.author.id &&
@@ -79,16 +82,15 @@ export class kCommand extends Command {
             
             if (t === w) { // guessed correct word
                 c.stop();
-                return void m.edit({ 
-                    embeds: [this.Embed.success()
-                        .setTitle('You guessed the word!')
-                        .setImage(images[wrong])
-                        .setDescription(`
-                        ${word}
-                        ${wrong} wrong guess${plural(wrong, 'es')}.
-                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                        `)]
-                });
+                const embed = this.Embed.success()
+                    .setTitle('You guessed the word!')
+                    .setImage(images[wrong])
+                    .setDescription(`
+                    ${word}
+                    ${wrong} wrong guess${plural(wrong, 'es')}.
+                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    `);
+                return void m.edit({ embeds: [embed] });
             }
             
             if (
@@ -97,16 +99,15 @@ export class kCommand extends Command {
             ) {
                 if (++wrong >= 6) { // game lost
                     c.stop();
-                    return void m.edit({ 
-                        embeds: [this.Embed.success()
-                            .setTitle(`You lost! The word was "${word}"!`)
-                            .setImage(images[wrong])
-                            .setDescription(`
-                            ${hide(word, guesses)}
-                            ${wrong} wrong guess${plural(wrong, 'es')}.
-                            Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                            `)]
-                    });
+                    const embed = this.Embed.success()
+                        .setTitle(`You lost! The word was "${word}"!`)
+                        .setImage(images[wrong])
+                        .setDescription(`
+                        ${hide(word, guesses)}
+                        ${wrong} wrong guess${plural(wrong, 'es')}.
+                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                        `)
+                    return void m.edit({ embeds: [embed] });
                 }
 
                 const embed = this.Embed.success()
@@ -123,15 +124,19 @@ export class kCommand extends Command {
                 return void m.edit({ embeds: [embed] });
             }
 
+            const now = performance.now();
+            const embed = this.Embed.success()
+                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
+                .setImage(images[wrong])
+                .setDescription(`
+                ${hide(word, guesses)}
+                ${wrong} wrong guess${plural(wrong, 'es')}.
+                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                `);
+
             return void m.edit({
-                embeds: [this.Embed.success()
-                    .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
-                    .setImage(images[wrong])
-                    .setDescription(`
-                    ${hide(word, guesses)}
-                    ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)]
+                content: `⏰ Time remaining: ${(60 - ((now - start) / 1000)).toFixed(2)} seconds!`,
+                embeds: [embed]
             });
         });
 
