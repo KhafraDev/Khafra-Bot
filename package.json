@@ -33,6 +33,7 @@
     "@types/ws": "^7.2.7"
   },
   "scripts": {
+    "dev:check": "npx -p typescript tsc",
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --experimental-json-modules build/src/index",

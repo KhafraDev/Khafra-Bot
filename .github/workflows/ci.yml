@@ -33,4 +33,4 @@ jobs:
           npm install
       - name: Test build
         run: |
-          npm run dev:build
+          npm run dev:check
