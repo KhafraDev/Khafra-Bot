@@ -62,7 +62,14 @@ export class kEvent extends Event {
         // matches the start of the string with the prefix defined above
         // captures the command name following the prefix up to a whitespace or end of string
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges#using_named_groups
-        const optre = new RegExp(`^(?<prefix>${guild.prefix.replace(/([^A-z0-9])/g, '\\$1')})(?<commandName>[A-z0-9:_]+)\\s?(?<content>.*?)$`, 'si');
+        const optre = new RegExp(
+            // start of string, match the escaped guild's prefix
+            `^(?<prefix>${guild.prefix.replace(/([^A-z0-9])/g, '\\$1')})` + 
+            // command name is anything up to a whitespace
+            // content is everything after the whitespace
+            `(?<commandName>[^\\s]+)\\s?(?<content>.*?)$`, 
+            'si'
+        );
         // there should be no case in which this is null, but we are dealing with regexes
         const optionsMatch = message.content.match(optre)!;
 
