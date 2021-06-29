@@ -31,12 +31,12 @@ export class kCommand extends Command {
         } else if (item.length === 1) {
             const { text, color, emojis } = item.shift();
             return new MessageEmbed()
-                .setColor(color)
+                .setColor(color as `#${string}`)
                 .setDescription(`${emojis.join('')} ${text}`);
         }
 
         const embeds = item.map(atro => new MessageEmbed()
-            .setColor(atro.color)
+            .setColor(atro.color as `#${string}`)
             .setDescription(`${atro.emojis.join('')} ${atro.text}`)
         );
 

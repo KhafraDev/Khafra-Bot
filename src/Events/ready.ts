@@ -20,7 +20,7 @@ export class kEvent extends Event {
                     embeds: [
                         new MessageEmbed()
                             .setDescription(s)
-                            .setColor(config.embed.success)
+                            .setColor(config.embed.success as `#${string}`)
                     ]
                 }); 
             } catch {

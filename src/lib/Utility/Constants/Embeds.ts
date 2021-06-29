@@ -18,7 +18,7 @@ const defaultPerms = [
 
 export const Embed = {
     fail: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.fail);
+        const Embed = new MessageEmbed().setColor(config.embed.fail as `#${string}`);
         reason && Embed.setDescription(reason);
         
         return Embed;
@@ -28,7 +28,7 @@ export const Embed = {
      * An embed for a command being successfully executed!
      */
     success: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.success); 
+        const Embed = new MessageEmbed().setColor(config.embed.success as `#${string}`); 
         reason && Embed.setDescription(reason);
         
         return Embed;
@@ -39,7 +39,7 @@ export const Embed = {
      */
     missing_perms: (admin?: boolean, perms: PermissionResolvable = defaultPerms) => {
         return new MessageEmbed()
-            .setColor(config.embed.fail)
+            .setColor(config.embed.fail as `#${string}`)
             .setDescription(`
             One of us doesn't have the needed permissions!
 
@@ -56,7 +56,7 @@ export const Embed = {
         const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
         
         return new MessageEmbed()
-            .setColor(config.embed.fail)
+            .setColor(config.embed.fail as `#${string}`)
             .setDescription(`
             ${r}
 
