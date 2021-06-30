@@ -72,17 +72,20 @@ export class kCommand extends Command {
             idle: 30000
         });
 
-        c.on('collect', (m: Message) => {
-            if (['stop', 'end', 'cancel'].includes(m.content.toLowerCase()))
+        c.on('collect', (msg: Message) => {
+            if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
                 return c.stop('requested');
         
-            guesses.push(m.content);
+            guesses.push(msg.content);
             const w = word.toLowerCase();
-            const t = m.content.toLowerCase();
+            const t = msg.content.toLowerCase();
             
+            const guessesLC = guesses.map(g => g.toLowerCase());
+            if (!guessesLC.includes(' ')) guessesLC.push(' ');
+
             if (
                 t === w ||
-                [...w].every(l => guesses.includes(l)) // every char in the word has been guessed
+                [...w].every(l => guessesLC.includes(l)) // every char in the word has been guessed
             ) { // guessed correct word
                 c.stop();
                 const embed = this.Embed.success()
@@ -93,7 +96,11 @@ export class kCommand extends Command {
                     ${wrong} wrong guess${plural(wrong, 'es')}.
                     Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                     `);
-                return void m.edit({ embeds: [embed] });
+                return void m.edit({
+                    content: null,
+                    embeds: [embed],
+                    components: []
+                });
             }
             
             if (
@@ -110,7 +117,11 @@ export class kCommand extends Command {
                         ${wrong} wrong guess${plural(wrong, 'es')}.
                         Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                         `)
-                    return void m.edit({ embeds: [embed] });
+                    return void m.edit({
+                        content: null,
+                        embeds: [embed],
+                        components: []
+                    });
                 }
 
                 const embed = this.Embed.success()
@@ -129,7 +140,7 @@ export class kCommand extends Command {
 
             const now = performance.now();
             const embed = this.Embed.success()
-                .setTitle(`"${m.content.slice(0, 10)}" is in the word!`)
+                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                 .setImage(images[wrong])
                 .setDescription(`
                 ${hide(word, guesses)}
