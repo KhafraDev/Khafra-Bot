@@ -1,11 +1,27 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
-import { stripIndents } from '../../../lib/Utility/Template.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { Message, MessageActionRow } from 'discord.js';
+import { once } from 'events';
 import fetch from 'undici-fetch';
 
-const isYesLike = (s: string) => ['1', 'yes', 'y', 'true'].includes(s.toLowerCase()) ? 1 : 0;
+
+interface StrawpollOptions {
+    priv: boolean
+    co: boolean
+    ma: boolean
+    mip: boolean
+    enter_name: boolean
+    deadline: Date | undefined
+    only_reg: boolean
+    vpn: boolean
+    captcha: boolean
+}
+
+const yes = (yes: boolean, ifYes = 'Yes', ifNo = 'No') =>
+    yes ? ifYes : ifNo;
+
+const hasOwn = Object.prototype.hasOwnProperty;
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -16,114 +32,155 @@ export class kCommand extends Command {
             ],
 			{
                 name: 'strawpoll',
-                aliases: [ 'createstrawpoll', 'newstrawpoll' ],
+                aliases: [ 'createstrawpoll' ],
                 folder: 'Server',
                 args: [0, 0],
-                ratelimit: 15,
-                guildOnly: true,
-                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
+                ratelimit: 300,
+                guildOnly: true
             }
         );
     }
 
     async init(message: Message) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.missing_perms(true);
+        const defaultOpts: StrawpollOptions = {
+            priv: true, ///false - Private or public
+            co: true, ///false - Allow Comments
+            ma: false, // - Multiple Answers allowed
+            mip: false, // - Multiple votes per IP allowed
+            enter_name: false, // - Voters have to enter their name (still in development)
+            deadline: undefined, // - Specific datetime of deadline in zulu time
+            only_reg: false, // - Allow only registered users to vote
+            vpn: false, //- Allow VPN users to vote
+            captcha: true //- Background reCAPTCHA solving
         }
 
-        const msg = await message.reply({ embeds: [this.Embed.success(`
-        Welcome to the Strawpoll creator. Due to the number of configurable options, this is a lengthy process.
+        const rows = [
+            new MessageActionRow().addComponents(
+                Components.approve('Public', 'priv'),
+                Components.primary('Comments', 'co'),
+                Components.approve('Registered', 'only_reg'),
+            ),
+            new MessageActionRow().addComponents(
+                Components.primary('Multiple', 'ma'),
+                Components.approve('Allow VPN', 'vpn'),
+                Components.primary('Captcha', 'captcha')
+            ),
+            new MessageActionRow().addComponents(
+                Components.deny('Cancel', 'cancel'),
+                Components.deny('Done', 'done')
+            )
+        ];
 
-        To start off, enter the \`\`title\`\` of the poll and the \`\`answers\`\`, all on different lines (press \`\`Shift+Enter\`\` to go to a new line).
-        An example is as follows:
-        \`\`\`${stripIndents`
-        What is your favorite fruit?
-        🍎 - Apples
-        🍌 - Bananas
-        🍇 - Grapes
-        something else
-        `}\`\`\`
-        `)] });
+        const makeEmbed = () => {
+            return this.Embed.success()
+                .setTitle('Poll Configuration')
+                .addFields(
+                    { name: '**Private:**', value: yes(defaultOpts.priv), inline: true },
+                    { name: '**Allow Comments:**', value: yes(defaultOpts.co), inline: true },
+                    { name: '**Only Registered:**', value: yes(defaultOpts.only_reg), inline: true },
+                    { name: '**Multiple Votes:**', value: yes(defaultOpts.ma), inline: true },
+                    { name: '**Allow VPN Votes:**', value: yes(defaultOpts.vpn), inline: true },
+                    { name: '**Captcha:**', value: yes(defaultOpts.captcha), inline: true }
+                )
+                .setDescription(`
+                Click on the buttons below to enable or disable settings.
 
-        const filter = (m: Message) => m.author.id === message.author.id && m.content?.split(/\r\n|\n/g).length > 1;
-        const collected = await message.channel.awaitMessages({ filter, max: 1, time: 60000 });
-        if (collected.size === 0) {
-            return;
+                Once you are done, click \`Done\` to start entering choices.
+                `);
         }
 
-        const opts: Record<string, number | string | Date> = {
-            priv: 1, // state
-            ma: 0, // multiple answers
-            mip: 0, // multiple votes per ip
-            co: 1, // comments
-            vpn: 0, // vpns can vote
-            enter_name: 0, // voters must enter name
-            only_reg: 0, // only registered users
-            captcha: 0, // captcha
-        };
-
-        const [title, ...choices] = collected.first().content.split(/\r\n|\n/g);
-        await msg.edit({ 
-            embeds: [this.Embed.success(`
-            Got a title and ${choices.length} answers. Let's configure options now.
-
-            Enter a \`\`1\`\` to enable an option and \`\`0\`\` to disable an option.
-            Some fields may differ in how to change its value, make sure to read each option!
-
-            To continue, enter each choice separated by a space, as shown below:
-            Invalid options will be set to a default value!
-            \`\`\`1 0 0 0 1 0 0 0\`\`\`
-            This would create a \`\`private\`\` poll where only 1 answer is allowed per IP, no comments allowed, anonymous voting, no captchas, and would end in 10 days.
-            `).addFields(
-                { name: '**State**',                 value: '1 - Private, 0 - Public',       inline: true },
-                { name: '**Multiple Answers:**',     value: 'Allow multiple answers.',       inline: true },
-                { name: '**Multiple Votes Per IP**', value: 'Allow multiple votes per IP.',  inline: true },
-                { name: '**Comments:**',             value: 'Allow comments.',               inline: true },
-                { name: '**VPN:**',                  value: 'Allow people on VPNs to vote.', inline: true },
-                { name: '**Enter Name:**',           value: 'Voters must enter their name.', inline: true },
-                { name: '**Registered:**',           value: 'Only allow registered users.',  inline: true },
-                { name: '**Captcha:**',              value: 'Background reCAPTCHA solving.', inline: true },
-            )]
+        const m = await message.reply({
+            embeds: [makeEmbed()],
+            components: rows
         });
 
-        const filterOpts = (m: Message) => m.author.id === message.author.id && m.content?.length <= 16;
-        const collectedOpts = await message.channel.awaitMessages({ filter: filterOpts, max: 1, time: 60000 });
-        if (collectedOpts.size === 0) {
-            return;
+        const c = m.createMessageComponentInteractionCollector({
+            filter: (i) => 
+                i.user.id === message.author.id &&
+                (hasOwn.call(defaultOpts, i.customID) || ['cancel', 'done'].includes(i.customID)),
+            max: 12,
+            time: 120_000
+        });
+
+        const status = await new Promise<'done' | null>(res => {
+            c.on('collect', async (interaction) => {
+                if (interaction.customID === 'cancel') {
+                    await interaction.update({
+                        embeds: [this.Embed.fail('Command was canceled!')],
+                        components: disableAll(m)
+                    });
+
+                    return res(null);
+                } else if (interaction.customID === 'done') {
+                    await interaction.update({
+                        embeds: [
+                            this.Embed.success()
+                                .setTitle('Setting Choices')
+                                .setDescription(`
+                                Send an individual message for each choice, the title will be the first message you send.
+                                `)
+                        ],
+                        components: []
+                    });
+
+                    return res('done');
+                } else {
+                    if (interaction.customID === 'ma') {
+                        defaultOpts['ma'] = !defaultOpts['ma'];
+                        defaultOpts['mip'] = !defaultOpts['mip'];
+                    } else {
+                        const key = interaction.customID as keyof typeof defaultOpts;
+                        (defaultOpts[key] as boolean) = !defaultOpts[key]; 
+                    }
+
+                    return interaction.update({ embeds: [makeEmbed()] });
+                }
+            });
+
+            c.on('end', () => res(null));
+        });
+
+        if (status === null) return; // command was canceled or poll config wasn't finished
+
+        const choices: string[] = [];
+        
+        const mc = m.channel.createMessageCollector({
+            filter: (m) => 
+                m.author.id === message.author.id &&
+                m.content.length > 0,
+            time: 240_000
+        });
+
+        mc.on('collect', (m: Message) => void choices.push(m.content));
+        
+        await once(mc, 'end');
+
+        if (choices.length === 0) {
+            return m.edit({
+                embeds: [
+                    this.Embed.fail('No answers were provided, canceling the poll creation!')
+                ],
+                components: []
+            });
         }
 
-        const opt = collectedOpts.first().content.split(/\s+/g).map(isYesLike);
-        const keys = Object.keys(opts);
-        for (let i = 0; i < keys.length; i++) {
-            opts[keys[i]] = Number(opt[i] ?? 0);
-        }
-
-        const res = await fetch('https://strawpoll.com/api/poll', {
+        const r = await fetch('https://strawpoll.com/api/poll', {
             method: 'POST',
             body: JSON.stringify({
-                poll: { title, answers: choices, ...opts }
+                poll: { 
+                    title: choices[0], 
+                    answers: choices.slice(1), 
+                    ...defaultOpts 
+                }
             })
         });
 
-        if (!res.ok) {
-            return this.Embed.fail(`
-            An unexpected error occurred! Received status ${res.status} (${res.statusText})!
-            `);
-        }
+        const j = await r.json() as { admin_key: string, content_id: string, success: 1 | 0 };
 
-        const json = await res.json();
-        await msg.edit({ 
-            embeds: [this.Embed.success(`${json.success === 1 ? `https://strawpoll.com/${json.content_id}` : 'An error occurred!'}`)]
+        return m.edit({
+            embeds: [
+                this.Embed.success(`https://strawpoll.com/${j.content_id}`)
+            ]
         });
-
-        if (json.success === 1) {
-            return void message.author.send({ 
-                embeds: [this.Embed.success(`
-                Created a poll: https://strawpoll.com/${json.content_id}
-
-                Admin ID: \`\`${json.admin_key}\`\`
-                `)]
-            });
-        }
     }
 }
