@@ -72,15 +72,18 @@ export class kCommand extends Command {
             idle: 30000
         });
 
-        c.on('collect', msg => {
-            if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
+        c.on('collect', (m: Message) => {
+            if (['stop', 'end', 'cancel'].includes(m.content.toLowerCase()))
                 return c.stop('requested');
         
-            guesses.push(msg.content);
+            guesses.push(m.content);
             const w = word.toLowerCase();
-            const t = msg.content.toLowerCase();
+            const t = m.content.toLowerCase();
             
-            if (t === w) { // guessed correct word
+            if (
+                t === w ||
+                [...w].every(l => guesses.includes(l)) // every char in the word has been guessed
+            ) { // guessed correct word
                 c.stop();
                 const embed = this.Embed.success()
                     .setTitle('You guessed the word!')
@@ -126,7 +129,7 @@ export class kCommand extends Command {
 
             const now = performance.now();
             const embed = this.Embed.success()
-                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
+                .setTitle(`"${m.content.slice(0, 10)}" is in the word!`)
                 .setImage(images[wrong])
                 .setDescription(`
                 ${hide(word, guesses)}
