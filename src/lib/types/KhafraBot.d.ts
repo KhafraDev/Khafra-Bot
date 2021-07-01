@@ -26,8 +26,9 @@ export interface WarningJoined {
 
 export interface Warning {
     id: number
-    k_guild_id: string
-    k_user_id: string
+    k_guild_id: Snowflake
+    k_user_id: Snowflake
     k_points: number
+    k_id: Snowflake
     k_ts: Date
 }

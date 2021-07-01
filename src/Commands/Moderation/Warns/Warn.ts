@@ -6,14 +6,11 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
 
-interface WarningRet {
-    total_points: string
-    k_id: number
-}
+type WarningRet = Pick<Warning, 'k_points' | 'k_id'>
 
 const range = Range(0, 32767, true);
 const logChannel = Permissions.FLAGS.SEND_MESSAGES | Permissions.FLAGS.EMBED_LINKS;
@@ -72,22 +69,21 @@ export class kCommand extends Command {
                 ) RETURNING k_points, k_id
             )
 
-            SELECT 
-                SUM(warns.k_points) + inserted.k_points AS total_points, 
-                inserted.k_id
-            FROM warns, inserted
-            GROUP BY inserted.k_points, inserted.k_id;
+            SELECT * FROM inserted
+
+            UNION ALL
+
+            SELECT * FROM warns;
         `, [message.guild.id, member.id, points]);
 
         if (rows.length === 0)
             return this.Embed.fail(`Yeah, I'm not really sure what happened. 🤯`);
-     
-        const { total_points, k_id } = rows.shift()!;
-        // parsing error/not parsed by pg correctly
-        const total = Number(total_points);
 
+        const totalPoints = rows.reduce((a, b) => a + b.k_points, 0);
+        const k_id = rows[0].k_id;
+     
         // old warnings should not be nullified, subsequent warnings will each result in a kick.
-        if (settings.max_warning_points <= total) {
+        if (settings.max_warning_points <= totalPoints) {
             try {
                 await member.kick();
             } catch {
@@ -96,12 +92,12 @@ export class kCommand extends Command {
 
             await message.reply({ embeds: [this.Embed.success(
                 `${member} was automatically kicked from the server for having ` + 
-                `${total.toLocaleString()} warning point${plural(total)} (#${k_id}).`
+                `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${k_id}).`
             )] });
         } else {
             await message.reply({ embeds: [this.Embed.success(`
             Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (#${k_id}).
-            Member has ${total.toLocaleString()} points total.
+            Member has ${totalPoints.toLocaleString()} points total.
             `)] });
         }
 
@@ -116,7 +112,7 @@ export class kCommand extends Command {
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}
             **Points:** ${points} warning point${plural(points)} given.
-            **Kicked:** ${settings.max_warning_points <= total ? 'Yes' : 'No'} (${total.toLocaleString()} total point${plural(total)}).
+            **Kicked:** ${settings.max_warning_points <= totalPoints ? 'Yes' : 'No'} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
             **ID:** #${k_id}
             `).setTitle('Member Warned')] });
         }
