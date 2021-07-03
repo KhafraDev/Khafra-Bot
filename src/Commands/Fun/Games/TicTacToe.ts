@@ -47,7 +47,7 @@ export class kCommand extends Command {
             components: makeRows(game.board)
         });
 
-        const c = m.createMessageComponentInteractionCollector({
+        const c = m.createMessageComponentCollector({
             filter: interaction => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&

@@ -81,7 +81,7 @@ export class kCommand extends Command {
             components: rows
         });
 
-        const c = m.createMessageComponentInteractionCollector({
+        const c = m.createMessageComponentCollector({
             filter: (interaction) => 
                 interaction.user.id === message.author.id,
             time: 120_000

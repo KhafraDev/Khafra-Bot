@@ -42,7 +42,7 @@ export class kCommand extends Command {
             await text.lockPermissions();
         } else {
             lockState = 'locked';
-            await text.overwritePermissions(
+            await text.permissionOverwrites.set(
                 [ { id: everyone.id, deny: [Permissions.FLAGS.SEND_MESSAGES] } ]
             );
         }

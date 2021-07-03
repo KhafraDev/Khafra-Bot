@@ -156,7 +156,7 @@ export class kCommand extends Command {
 
         c.on('end', () => void games.delete(message.author.id));
 
-        const r = m.createMessageComponentInteractionCollector({
+        const r = m.createMessageComponentCollector({
             filter: (interaction) => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&

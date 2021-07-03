@@ -59,7 +59,7 @@ export class kCommand extends Command {
             ['approve', 'deny', 'secondary'].includes(interaction.customID) && 
             interaction.user.id === message.author.id;
 
-        const collector = m.createMessageComponentInteractionCollector({ filter, time: 60000, max: item.length * 2 });
+        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
         collector.on('collect', i => {
             if (m.deleted) 
                 return collector.stop();

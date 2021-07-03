@@ -70,7 +70,7 @@ export class RSSReader<T extends unknown> {
                 setTimeout(ac.abort.bind(ac), 15000);
 
                 const res = await fetch(this.url, {
-                    signal: ac.signal as RequestInit['signal'],
+                    signal: ac.signal as unknown as RequestInit['signal'],
                     headers: { 
                         'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})` 
                     }

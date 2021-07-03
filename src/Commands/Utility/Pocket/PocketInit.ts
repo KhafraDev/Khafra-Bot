@@ -56,7 +56,7 @@ export class kCommand extends Command {
 
         let button: MessageComponentInteraction | null = null;
         try {
-            button = await msg.awaitMessageComponentInteraction({ filter, time: 120_000 });
+            button = await msg.awaitMessageComponent({ filter, time: 120_000 });
         } catch {
             return void msg.edit({
                 embeds: [this.Embed.fail('Canceled the command, took over 2 minutes.')],

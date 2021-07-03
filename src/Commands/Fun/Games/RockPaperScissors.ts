@@ -43,7 +43,7 @@ export class kCommand extends Command {
 
         let c: MessageComponentInteraction | null = null;
         try {
-            c = await m.awaitMessageComponentInteraction({
+            c = await m.awaitMessageComponent({
                 filter: (interaction) =>
                     ['rock', 'paper', 'scissors'].includes(interaction.customID) &&
                     interaction.user.id === message.author.id &&

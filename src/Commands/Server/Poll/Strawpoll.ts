@@ -94,7 +94,7 @@ export class kCommand extends Command {
             components: rows
         });
 
-        const c = m.createMessageComponentInteractionCollector({
+        const c = m.createMessageComponentCollector({
             filter: (i) => 
                 i.user.id === message.author.id &&
                 (hasOwn.call(defaultOpts, i.customID) || ['cancel', 'done'].includes(i.customID)),
