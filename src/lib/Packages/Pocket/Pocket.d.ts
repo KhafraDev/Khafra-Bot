@@ -64,7 +64,7 @@ export type PocketAddResults = {
         authors: Record<string, unknown[]>,
         top_image_url: string,
         resolved_normal_url: string,
-        domain_metadata: {
+        domain_metadata?: {
             name: string,
             logo: string,
             greyscale_logo: string
@@ -101,7 +101,7 @@ declare class Pocket {
     get requestAuthorization(): string;
     accessToken(): Promise<string | undefined>;
     getList(): Promise<PocketGetResults>;
-    add(url: string | import('url').URL, title?: string): Promise<unknown>;
+    add(url: string | import('url').URL, title?: string): Promise<PocketAddResults>;
     toObject(): {
         request_token: string | undefined;
         access_token: string | undefined;

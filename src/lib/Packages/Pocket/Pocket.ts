@@ -1,6 +1,6 @@
 import fetch, { Headers } from 'undici-fetch';
 import crypto from 'crypto';
-import type { PocketGetResults, PocketRateLimit } from './Pocket.d';
+import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './Pocket.d';
 
 const limits: PocketRateLimit = {
     'x-limit-user-limit':     -1,   // Current rate limit enforced per user
@@ -185,7 +185,7 @@ class Pocket {
             )
         }
     
-        return res.json();
+        return res.json() as Promise<PocketAddResults>;
     }
 
     encrypt = (text: string) => {

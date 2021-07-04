@@ -47,13 +47,12 @@ export class kCommand extends Command {
         if (article === null)
             return this.Embed.fail(`That's not an article URL, try again!`);
         const added = await pocket.add(article, args.slice(1).join(' ') || null);
-        console.log(added);
 
         return this.Embed.success()
             .setTitle(added.item.title)
             .setAuthor(
-                added.item.domain_metadata.name ?? message.author.username, 
-                added.item.domain_metadata.logo, 
+                added.item.domain_metadata?.name ?? message.author.username, 
+                added.item.domain_metadata?.logo, 
                 added.item.resolved_normal_url
             )
             .setDescription(`
