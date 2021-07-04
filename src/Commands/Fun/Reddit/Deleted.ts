@@ -15,12 +15,12 @@ const fetchDeleted = async (postId: string) => {
     if (Number.isNaN(id)) return null;
 
 	const query = { query: { term: { id } } };
-  	const elasticURL = `https://elastic.pushshift.io/rs/submissions/_search?source=${JSON.stringify(query)}`;
+    const elasticURL = `https://elastic.pushshift.io/rs/submissions/_search?source=${JSON.stringify(query)}`;
 
 	const r = await fetch(elasticURL, { headers });
-  	const j = await r.json() as PushShiftError | PushShiftGood;
+    const j = await r.json() as PushShiftError | PushShiftGood;
 
-  	return j;
+    return j;
 }
 
 interface PushShiftError {
