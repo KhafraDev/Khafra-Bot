@@ -1,9 +1,9 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '../../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme } from '@khaf/badmeme';
-import { isDM, isText } from '../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
+import { isDM, isText } from '../../../lib/types/Discord.js.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {

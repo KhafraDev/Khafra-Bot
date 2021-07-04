@@ -5,20 +5,31 @@ interface ValidURL {
     idx: number
 }
 
+interface FactoryOpts {
+    stripParams?: boolean
+}
+
+const defaultOpts: FactoryOpts = {
+    stripParams: true
+}
+
 /**
  * Checks if a string is a valid https or http link and returns a URL object if it is. 
  * Otherwise returns null.
  * 
  * Validates protocol and removes all search params.
  */
-export const URLFactory = (s: string) => {
+export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
     try {
         const url = new URL(s);
         if (url.protocol !== 'https:' && url.protocol !== 'http:')
             return null;
 
-        for (const key of Array.from(url.searchParams.keys()))
-            url.searchParams.delete(key);
+        if (opts.stripParams === true) {
+            for (const key of Array.from(url.searchParams.keys())) {
+                url.searchParams.delete(key);
+            }
+        }
         
         return url;
     } catch {

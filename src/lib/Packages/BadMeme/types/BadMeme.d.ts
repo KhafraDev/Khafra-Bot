@@ -155,7 +155,7 @@ interface IRedditBase {
     created: number
     link_flair_type: string
     wls: number
-    removed_by_category: unknown
+    removed_by_category: null | 'author' | 'moderator' | 'deleted'
     banned_by: unknown
     author_flair_type: string
     domain: string
