@@ -55,7 +55,7 @@ export class kCommand extends Command {
         } else if (type === 'newest') { // newest killed
             return embed(all.shift());
         } else if (/^\d{4}-\d{2}-\d{2}$/.test(type)) { // search by date
-            const { date } = type.match(/^(?<date>\d{4}-\d{2}-\d{2})$/).groups!;
+            const { date } = type.match(/^(?<date>\d{4}-\d{2}-\d{2})$/).groups;
             return embed(all.find(t => t.dateClose === date));
         } else if (all.some(i => i.name.toLowerCase() === type)) { // search by name
             return embed(all.find(i => i.name.toLowerCase() === type));

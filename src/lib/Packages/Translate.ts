@@ -71,6 +71,6 @@ export const translate = async (
 
 	if (!Array.isArray(j) || !Array.isArray(j[0]))
 		return 'Invalid response received!';
-	 
+
 	return j[0].map(tr => tr.shift()).join('');
 }

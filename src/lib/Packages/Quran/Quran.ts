@@ -30,8 +30,8 @@ export const parseQuran = async (): Promise<{ verses: Excerpt[], titles: Title[]
 
     const unzipped = await unzipAsync(buffer);
     const book = unzipped.toString();
-    const verses = [...book.matchAll(verseReg)].map(f => f.groups!) as unknown as Excerpt[];
-    const titles = [...book.matchAll(titleReg)].map(f => f.groups!) as unknown as Title[];
+    const verses = [...book.matchAll(verseReg)].map(f => f.groups) as unknown as Excerpt[];
+    const titles = [...book.matchAll(titleReg)].map(f => f.groups) as unknown as Title[];
 
     return { verses, titles };
 }

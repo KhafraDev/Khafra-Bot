@@ -1,4 +1,4 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command } from '../../../Structures/Command.js';
 import { Message, Permissions, Snowflake } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments) {
+    async init(message: Message) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
 
@@ -57,7 +57,7 @@ export class kCommand extends Command {
         const channel = message.guild.channels.cache.get(rows[0].rules_channel);
 
         if (!isText(channel)) // not possible but ts will not infer textchannel | newschannel, plus might as well be safe
-            return this.Embed.fail('You did the impossible. Change the channel (\`rulechannel\`) please.');
+            return this.Embed.fail('You did the impossible. Change the channel (`rulechannel`) please.');
         else if (!hasPerms(channel, message.guild.me, perms)) // doesn't have perms to post
             return this.Embed.fail('Give me permissions to read message history, embed links, manage channel, and send messages please!');
 

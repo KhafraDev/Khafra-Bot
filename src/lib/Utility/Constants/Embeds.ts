@@ -44,7 +44,7 @@ export const Embed = {
             One of us doesn't have the needed permissions!
 
             Both of us must have ${permResolvableToString(perms)} permissions to use this command!
-            ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
+            ${admin ? 'You must have ``ADMINISTRATOR`` perms to use this command!' : '' }
             `);
     },
 

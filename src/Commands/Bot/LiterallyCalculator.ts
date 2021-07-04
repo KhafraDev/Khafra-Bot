@@ -78,8 +78,8 @@ export class kCommand extends Command {
             interaction.user.id === message.author.id &&
             interaction.message.id === m.id;
 
-        let lastAction = '',
-            actions: string[] = [];
+        let lastAction = ''
+        const actions: string[] = [];
 
         const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 15 });
         collector.on('collect', i => {

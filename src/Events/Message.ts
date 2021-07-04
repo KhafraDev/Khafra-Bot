@@ -75,9 +75,9 @@ export class kEvent extends Event {
 
         if (!optionsMatch || typeof optionsMatch.groups === 'undefined') return;
         if (!name.startsWith(guild.prefix)) return;
-        if (!KhafraClient.Commands.has(optionsMatch.groups!.commandName.toLowerCase())) return;
+        if (!KhafraClient.Commands.has(optionsMatch.groups.commandName?.toLowerCase())) return;
 
-        const command = KhafraClient.Commands.get(optionsMatch.groups!.commandName.toLowerCase());
+        const command = KhafraClient.Commands.get(optionsMatch.groups.commandName.toLowerCase());
         // command cooldowns are based around the commands name, not aliases
         if (!commandLimit(command.settings.name, message.author.id)) return;
         
@@ -123,7 +123,7 @@ export class kEvent extends Event {
         }
 
         try {
-            const options = <Arguments> { args, ...optionsMatch.groups! };
+            const options = <Arguments> { args, ...optionsMatch.groups };
             const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;

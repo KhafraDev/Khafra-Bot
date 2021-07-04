@@ -4,6 +4,7 @@ import { delay } from './Constants/OneLiners.js';
 import config from '../../../package.json';
 import { validateNumber } from './Valid/Number.js';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop: (() => void | Promise<void>) = () => {};
 const syUpdateFrequency = ['hourly', 'daily', 'weekly', 'monthly', 'yearly'] as const;
 const ms = {
@@ -90,7 +91,7 @@ export class RSSReader<T extends unknown> {
 
     parse = async () => {
         const r = await this.forceFetch();
-        const xml = await r?.text()!;
+        const xml = await r?.text();
 
         const validXML = validate(xml);
         if (typeof xml !== 'string' || validXML !== true) {
@@ -99,7 +100,7 @@ export class RSSReader<T extends unknown> {
                 console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
             }
             console.log(`${this.url} has been disabled as invalid XML has been fetched.`);
-            return clearInterval(this.#interval!);
+            return clearInterval(this.#interval);
         } else if (r.redirected) {
             console.log(`${this.url} redirected you to ${r.url} (redirected=${r.redirected})`);
         }
@@ -109,7 +110,7 @@ export class RSSReader<T extends unknown> {
         const j = parse(xml, this.#options) as RSSJSON<T> | AtomJSON<T>;
 
         if (!('rss' in j) && !('feed' in j)) {
-            return clearInterval(this.#interval!);
+            return clearInterval(this.#interval);
         }
 
         // respects a feed's ttl or syndication frequency option if present.
@@ -117,7 +118,7 @@ export class RSSReader<T extends unknown> {
         // https://web.resource.org/rss/1.0/modules/syndication/
         if ('rss' in j) {
             if (typeof j.rss.channel?.ttl === 'number') {
-                clearInterval(this.#interval!);
+                clearInterval(this.#interval);
                 this.timeout = 60 * 1000 * j.rss.channel.ttl;
                 if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 

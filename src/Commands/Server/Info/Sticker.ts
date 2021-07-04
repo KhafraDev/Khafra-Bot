@@ -30,7 +30,7 @@ export class kCommand extends Command {
             .setTitle(`${sticker.name} - ${sticker.description}`)
             .setDescription(`
             **Tags:**
-            \`\`${sticker.tags.join('\`\`, \`\`')}\`\`
+            \`\`${sticker.tags.join('``, ``')}\`\`
             `)
             .addField('**Pack ID:**', `\`\`${sticker.packID}\`\``, true)
             .addField('**ID:**', `\`\`${sticker.id}\`\``)

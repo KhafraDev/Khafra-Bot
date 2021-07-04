@@ -31,7 +31,7 @@ const renderRow = (row: string[], columnWidths: number[]) => {
 		// of spaces we need while also left justifying the output.
 		out += `${' '.repeat(needed)}${cell}${' '.repeat(Math.ceil(needed))}`;
 		if (i !== row.length - 1)
-		    out += tableChars.middle;
+            out += tableChars.middle;
 	}
 	out += tableChars.right;
 	return out;
@@ -76,7 +76,7 @@ export const table = (obj: Record<string, string[]>) => {
                  `${tableChars.rightMiddle}\n`;
   
     for (const row of rows)
-      	result += `${renderRow(row, columnWidths)}\n`;
+        result += `${renderRow(row, columnWidths)}\n`;
   
 	result += `${tableChars.bottomLeft}${divider.join(tableChars.bottomMiddle)}${tableChars.bottomRight}`;
     return result;

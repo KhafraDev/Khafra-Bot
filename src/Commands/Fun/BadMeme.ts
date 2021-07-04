@@ -81,7 +81,7 @@ export class kCommand extends Command {
 
             return void i.update({ content: res.url[page] });
         });
-        collector.on('end', (_c) => {
+        collector.on('end', () => {
             return void m.edit({ components: disableAll(m) });
         });
     }

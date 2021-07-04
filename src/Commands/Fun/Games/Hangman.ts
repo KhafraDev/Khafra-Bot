@@ -51,7 +51,7 @@ export class kCommand extends Command {
 
         const word = presidents[await rand(presidents.length)];
         const embed = this.Embed.success()
-            .setDescription(word.replace(/[A-z0-9\.]/g, '☐'))
+            .setDescription(word.replace(/[A-z0-9.]/g, '☐'))
             .setImage(images[wrong]);
         const row = new MessageActionRow()
             .addComponents(Components.primary('Hint', 'hint'));

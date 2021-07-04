@@ -63,7 +63,7 @@ export class kCommand extends Command {
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
         const flags = user.flags?.bitfield
-            ? user.flags!.toArray()
+            ? user.flags.toArray()
             : [];
 
         const emojis = flags

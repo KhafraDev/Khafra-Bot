@@ -61,7 +61,7 @@ export class kCommand extends Command {
         if (!/\d{1,3}:\d{1,3}/.test(args[0]))
             return this.Embed.generic(this);
 
-        const { b, v } = args[0].match(/(?<b>\d{1,3}):(?<v>\d{1,3})/)!.groups!;
+        const { b, v } = args[0].match(/(?<b>\d{1,3}):(?<v>\d{1,3})/).groups;
         if (!Verses.has(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`))
             return this.Embed.fail(`Verse not found.`);
 

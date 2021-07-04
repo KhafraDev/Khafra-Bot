@@ -93,7 +93,7 @@ export class kCommand extends Command {
         const { url } = await channel.send({
             embeds: [
                 new MessageEmbed()
-                    .setColor(role.hexColor as `#${string}`)
+                    .setColor(role.hexColor)
                     .setDescription(content)
             ],
             components: [

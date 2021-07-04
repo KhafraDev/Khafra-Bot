@@ -49,7 +49,7 @@ export class kCommand extends Command {
                 return this.Embed.fail(`No unicode emojis were in the message!`);
 
             const codePoints = toCodePoints(parsed[0]!.text);
-            let emoji = parsed[0].text!;
+            let emoji = parsed[0].text;
 
             while (!Emojis[emoji as keyof typeof Emojis]) {
                 const codepoints = toCodePoints(emoji);

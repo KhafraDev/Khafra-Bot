@@ -70,7 +70,7 @@ export class kCommand extends Command {
             There were ${currencies.length} cryptocurrencies with that search query provided.
 
             If this is the wrong currency, try using one of the following IDs:
-            \`\`${currencies.map(c => c.id).join('\`\`, \`\`')}\`\`
+            \`\`${currencies.map(c => c.id).join('``, ``')}\`\`
             `.trim(),
             embeds: [embed],
             failIfNotExists: false

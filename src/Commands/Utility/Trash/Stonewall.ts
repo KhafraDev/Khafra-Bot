@@ -55,7 +55,7 @@ export class kCommand extends Command {
         super(
             [
                 'KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. ' +
-                'The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.'
+                'The `stonewall` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.'
             ],
             {
                 name: 'stonewall',

@@ -77,10 +77,11 @@ export const formatDate = (
             case 's':       // 0..59
             case 'ss':      // 00.59
                 return ('' + dateObj.getSeconds()).padStart(formatter.length, '0');
-            case 't':
+            case 't': {
                 const offset = new Date().getTimezoneOffset();
                 const realOffset = offset / (offset > 0 ? -60 : 60);
                 return 'GMT' + (realOffset > 0 ? '+' : '-') + Math.abs(realOffset);
+            }
             default:
                 throw new Error('Unexpected identifier ' + formatter);
         }
