@@ -38,10 +38,10 @@ interface PushShiftError {
 interface PushShiftGood {
     hits: {
         hits: {
-            _index: 'rs_deltae',
-            _type: 'submissions',
-            _id: '1473582565',
-            _score: 1,
+            _index: string
+            _type: string
+            _id: string
+            _score: number
             _source: RedditData['data']['children'][number]['data']
         }[]
     }
