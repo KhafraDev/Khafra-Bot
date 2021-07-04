@@ -17,7 +17,7 @@
     "redis": "^3.1.2",
     "search-mdn": "^1.0.0",
     "twemoji-parser": "^13.0.0",
-    "typescript": "^4.0.3",
+    "typescript": "^4.4.0-beta",
     "undici-fetch": "github:Ethan-Arrowood/undici-fetch"
   },
   "devDependencies": {

@@ -143,10 +143,12 @@ export class kEvent extends Event {
             
             return message.reply(param);
         } catch (e) {
+            if (!(e instanceof Error)) 
+                return;
             // if there's an error sending a message, we should probably
             // not send another message. in the future try figuring out
             // the error code and basing this check off of that.
-            if (e instanceof DiscordAPIError) 
+            else if (e instanceof DiscordAPIError) 
                 return;
 
             const error = e.name in command.errors 

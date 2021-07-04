@@ -57,7 +57,9 @@ export class kCommand extends Command {
                 { reason: `${message.author.id} (${message.author.tag}) requested.` }
             );
         } catch (e) {
-            return this.Embed.fail(e.message);
+            if (e instanceof Error) {
+                return this.Embed.fail(e.message);
+            }
         }
 
         return this.Embed.success(`Added ${e} to the guild emojis!`);

@@ -78,7 +78,9 @@ export class RSSReader<T extends unknown> {
 
                 return res;
             } catch (e) {
-                if (e.name === 'AbortError')
+                if (!(e instanceof Error))
+                    return;
+                else if (e.name === 'AbortError')
                     break;
 
                 await delay(1000);
