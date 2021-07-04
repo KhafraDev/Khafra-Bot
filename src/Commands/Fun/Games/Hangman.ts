@@ -1,17 +1,20 @@
-import { Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { join } from 'path';
-import { readFileSync } from 'fs';
+import { readdirSync } from 'fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { performance } from 'perf_hooks';
+import { extname } from 'path/posix';
+import { readFile } from 'fs/promises';
+
+const assets = join(process.cwd(), 'assets/Hangman');
 
 const games = new Set<Snowflake>();
-const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
-    .split(/\n\r|\n|\r/g)
-    .filter(l => !l.startsWith('#') && l.length > 0);
+const listsByName = readdirSync(assets).map(f => f.replace(extname(f), ''));
+const lists = new Map<string, string[]>();
 
 const images = [
     'https://i.imgur.com/OmbNNhr.png', // nothing 
@@ -36,20 +39,38 @@ export class kCommand extends Command {
 			{
                 name: 'hangman',
                 folder: 'Games',
-                args: [0, 0],
+                args: [0, 1],
                 ratelimit: 30
             }
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message, { args }: Arguments) {
         if (games.has(message.author.id))
             return this.Embed.fail('Finish your current game before starting another!');
+
+        const listName = args.length === 0 ? 'presidents' : args[0].toLowerCase();
+        let words: string[] | null = null;
+        if (lists.has(listName)) {
+            words = lists.get(listName);
+        } else {
+            if (listsByName.includes(listName)) {
+                const path = join(assets, `${listName}.txt`);
+                const text = await readFile(path, 'utf-8');
+
+                words = text
+                    .split(/\n\r|\n|\r/g)
+                    .filter(l => !l.startsWith('#') && l.length > 0);
+                lists.set(listName, words);
+            } else {
+                return this.Embed.fail('That list of words doesn\'t exist!');
+            }
+        }
 
         let wrong = 0; // number of wrong guesses
         const guesses: string[] = []; // guesses
 
-        const word = presidents[await rand(presidents.length)];
+        const word = words[await rand(words.length)];
         const embed = this.Embed.success()
             .setDescription(word.replace(/[A-z0-9.]/g, '☐'))
             .setImage(images[wrong]);
