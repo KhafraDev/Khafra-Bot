@@ -29,7 +29,7 @@ const _cooldownUsers = cooldown(10, 60000);
 
 @RegisterEvent
 export class kEvent extends Event {
-    name = 'message' as const;
+    name = 'messageCreate' as const;
     logger = new Logger('Message');
 
     async init(message: Message) {

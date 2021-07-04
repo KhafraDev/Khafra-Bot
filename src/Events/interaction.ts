@@ -8,7 +8,7 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 
 @RegisterEvent
 export class kEvent extends Event {
-    name = 'interaction' as const;
+    name = 'interactionCreate' as const;
 
     async init(interaction: Interaction) {
         if (interaction.isMessageComponent()) { // "react" roles
