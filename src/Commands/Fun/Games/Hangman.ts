@@ -181,7 +181,7 @@ export class kCommand extends Command {
             filter: (interaction) => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&
-                interaction.customID === 'hint',
+                interaction.customId === 'hint',
             max: 1, 
             time: 60000
         });

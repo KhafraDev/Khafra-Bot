@@ -45,7 +45,7 @@ export class kCommand extends Command {
         try {
             c = await m.awaitMessageComponent({
                 filter: (interaction) =>
-                    ['rock', 'paper', 'scissors'].includes(interaction.customID) &&
+                    ['rock', 'paper', 'scissors'].includes(interaction.customId) &&
                     interaction.user.id === message.author.id &&
                     interaction.message.id === m.id,
                 time: 20000
@@ -60,16 +60,16 @@ export class kCommand extends Command {
         }
 
         const botChoice = Object.keys(emojis)[Math.floor(Math.random() * 3)] as Keys;
-        let embed = this.Embed.success(`You lost - ${botChoice} beats ${c.customID}!`);
+        let embed = this.Embed.success(`You lost - ${botChoice} beats ${c.customId}!`);
 
-        if (c.customID === botChoice) {
+        if (c.customId === botChoice) {
             embed = this.Embed.success(`It's a tie - we both chose ${emojis[botChoice]}!`);
         } else if (
-            (c.customID === 'rock' && botChoice === 'scissors') || // rock beats scissors
-            (c.customID === 'paper' && botChoice === 'rock') || // paper beats rock
-            (c.customID === 'scissors' && botChoice === 'paper') // scissors beats paper
+            (c.customId === 'rock' && botChoice === 'scissors') || // rock beats scissors
+            (c.customId === 'paper' && botChoice === 'rock') || // paper beats rock
+            (c.customId === 'scissors' && botChoice === 'paper') // scissors beats paper
         ) {
-            embed = this.Embed.success(`You win with ${emojis[c.customID]}, I chose ${emojis[botChoice]}!`)
+            embed = this.Embed.success(`You win with ${emojis[c.customId]}, I chose ${emojis[botChoice]}!`)
         }
 
         return void c.update({

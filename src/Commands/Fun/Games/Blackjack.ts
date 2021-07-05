@@ -88,7 +88,7 @@ export class kCommand extends Command {
         });
 
         c.on('collect', (i) => {
-            if (i.customID === 'hit') {
+            if (i.customId === 'hit') {
                 const [card, suit] = deck.shift();
 
                 score.sucker.push([card, suit]);

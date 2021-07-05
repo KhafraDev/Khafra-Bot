@@ -32,13 +32,13 @@ export class kCommand extends Command {
             **Tags:**
             \`\`${sticker.tags.join('``, ``')}\`\`
             `)
-            .addField('**Pack ID:**', `\`\`${sticker.packID}\`\``, true)
+            .addField('**Pack ID:**', `\`\`${sticker.packId}\`\``, true)
             .addField('**ID:**', `\`\`${sticker.id}\`\``)
             // "If the sticker's format is LOTTIE, it returns the URL of the Lottie json file. 
             // Lottie json files must be converted in order to be displayed in Discord."
             .setImage(`${sticker.format}` !== 'LOTTIE'
                 ? sticker.url 
-                : `http://distok.top/stickers/${sticker.packID}/${sticker.id}.gif`
+                : `http://distok.top/stickers/${sticker.packId}/${sticker.id}.gif`
             );
     }
 }

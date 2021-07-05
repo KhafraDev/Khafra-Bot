@@ -97,21 +97,21 @@ export class kCommand extends Command {
         const c = m.createMessageComponentCollector({
             filter: (i) => 
                 i.user.id === message.author.id &&
-                (hasOwn.call(defaultOpts, i.customID) || ['cancel', 'done'].includes(i.customID)),
+                (hasOwn.call(defaultOpts, i.customId) || ['cancel', 'done'].includes(i.customId)),
             max: 12,
             time: 120_000
         });
 
         const status = await new Promise<'done' | null>(res => {
             c.on('collect', async (interaction) => {
-                if (interaction.customID === 'cancel') {
+                if (interaction.customId === 'cancel') {
                     await interaction.update({
                         embeds: [this.Embed.fail('Command was canceled!')],
                         components: disableAll(m)
                     });
 
                     return res(null);
-                } else if (interaction.customID === 'done') {
+                } else if (interaction.customId === 'done') {
                     await interaction.update({
                         embeds: [
                             this.Embed.success()
@@ -125,11 +125,11 @@ export class kCommand extends Command {
 
                     return res('done');
                 } else {
-                    if (interaction.customID === 'ma') {
+                    if (interaction.customId === 'ma') {
                         defaultOpts['ma'] = !defaultOpts['ma'];
                         defaultOpts['mip'] = !defaultOpts['mip'];
                     } else {
-                        const key = interaction.customID as keyof typeof defaultOpts;
+                        const key = interaction.customId as keyof typeof defaultOpts;
                         (defaultOpts[key] as boolean) = !defaultOpts[key]; 
                     }
 

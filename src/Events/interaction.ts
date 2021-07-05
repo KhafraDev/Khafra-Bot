@@ -12,7 +12,7 @@ export class kEvent extends Event {
 
     async init(interaction: Interaction) {
         if (interaction.isMessageComponent()) { // "react" roles
-            if (!validSnowflake(interaction.customID)) return;
+            if (!validSnowflake(interaction.customId)) return;
             if (interaction.message.author.id !== client.user.id) return;
             if (!(interaction.member instanceof GuildMember)) return;
             
@@ -20,15 +20,15 @@ export class kEvent extends Event {
             if (!(interaction.guild instanceof Guild)) {
                 try {
                     await interaction.defer({ ephemeral: true });
-                    guild = await client.guilds.fetch(interaction.guildID);
+                    guild = await client.guilds.fetch(interaction.guildId);
                 } catch {}
             } else {
                 guild = interaction.guild;
             }
 
-            if (!guild?.roles.cache.has(interaction.customID)) return;
+            if (!guild?.roles.cache.has(interaction.customId)) return;
 
-            const role = guild.roles.cache.get(interaction.customID);
+            const role = guild.roles.cache.get(interaction.customId);
             if (role.deleted || role.managed) return;
 
             try {

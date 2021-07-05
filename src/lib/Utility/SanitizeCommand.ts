@@ -15,7 +15,7 @@ const basic = new Permissions([
  */
 export const Sanitize = (message: Message) => {
     if (
-        message.webhookID || // author is null in webhook messages
+        message.webhookId || // author is null in webhook messages
         message.author.bot ||
         !['DEFAULT', 'REPLY'].includes(message.type) ||
         (message.guild && !message.guild.available) ||

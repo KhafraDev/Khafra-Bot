@@ -51,7 +51,7 @@ export class kCommand extends Command {
         
         const filter = (interaction: Interaction) => 
             interaction.isMessageComponent() &&
-            ['approve', 'deny'].includes(interaction.customID) && 
+            ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
         let button: MessageComponentInteraction | null = null;
@@ -66,7 +66,7 @@ export class kCommand extends Command {
 
         await button.deferUpdate();
 
-        if (button.customID === 'approve') {
+        if (button.customId === 'approve') {
             try {
                 await pocket.accessToken();
             } catch {

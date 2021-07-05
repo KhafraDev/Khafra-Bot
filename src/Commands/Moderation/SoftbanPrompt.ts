@@ -60,7 +60,7 @@ export class kCommand extends Command {
 
         const filter = (interaction: Interaction) => 
             interaction.isMessageComponent() &&
-            ['approve', 'deny'].includes(interaction.customID) && 
+            ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
         let button: MessageComponentInteraction | null = null;
@@ -73,7 +73,7 @@ export class kCommand extends Command {
             });
         }
 
-        if (button.customID === 'deny')
+        if (button.customId === 'deny')
             return button.update({
                 embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []

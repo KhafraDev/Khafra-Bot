@@ -51,14 +51,14 @@ export class kCommand extends Command {
             filter: interaction => 
                 interaction.message.id === m.id &&
                 interaction.user.id === message.author.id &&
-                /^empty,\d$/.test(interaction.customID),
+                /^empty,\d$/.test(interaction.customId),
             time: 120_000, 
             idle: 15_000, 
             max: 5
         });
 
         c.on('collect', i => {
-            const [, idx] = i.customID.split(',');
+            const [, idx] = i.customId.split(',');
             game.go(Number(idx));
             game.botGo();
 

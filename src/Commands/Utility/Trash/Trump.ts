@@ -56,18 +56,18 @@ export class kCommand extends Command {
 
         const filter = (interaction: Interaction) =>
             interaction.isMessageComponent() &&
-            ['approve', 'deny', 'secondary'].includes(interaction.customID) && 
+            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
         const collector = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
         collector.on('collect', i => {
             if (m.deleted) 
                 return collector.stop();
-            else if (i.customID === 'deny')
+            else if (i.customId === 'deny')
                 return collector.stop('deny');
 
             const old = page;
-            i.customID === 'approve' ? page++ : page--;
+            i.customId === 'approve' ? page++ : page--;
 
             if (page < 0) page = 0;
             if (page >= embeds.length) page = embeds.length - 1;

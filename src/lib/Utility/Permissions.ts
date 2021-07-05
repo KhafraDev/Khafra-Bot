@@ -27,7 +27,7 @@ export const hierarchy = (
     a: GuildMember,
     b: GuildMember
 ) => {
-    return a.guild.ownerID === a.id || // below check only checks the highest role
+    return a.guild.ownerId === a.id || // below check only checks the highest role
            a.roles.highest.comparePositionTo(b.roles.highest) > 0;
 }
 

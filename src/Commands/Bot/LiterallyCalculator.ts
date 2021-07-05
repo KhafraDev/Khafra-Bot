@@ -89,19 +89,19 @@ export class kCommand extends Command {
                     !Number.isInteger(Number(actions[actions.length - 1])) &&
                     lastAction.length === 0
                 ) && 
-                partialSymbols.test(i.customID)
+                partialSymbols.test(i.customId)
             ) {
                 return void i.update({ content: `Invalid action!` });
-            } else if (Number.isInteger(Number(i.customID))) { // used a number
-                lastAction += i.customID;
-            } else if (symbols.test(i.customID)) { // used a symbol
+            } else if (Number.isInteger(Number(i.customId))) { // used a number
+                lastAction += i.customId;
+            } else if (symbols.test(i.customId)) { // used a symbol
                 if (lastAction.length !== 0) {
                     const removeLeadingZeroes = lastAction.replace(leadingZero, '');
                     actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
 
                     lastAction = '';
                 }
-                actions.push(i.customID);
+                actions.push(i.customId);
             } else {
                 return collector.stop('stop');
             }
