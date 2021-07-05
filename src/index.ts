@@ -2,7 +2,7 @@ import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
-import { ClientEvents, Intents } from 'discord.js';
+import { Awaited, ClientEvents, Intents } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
     return (...args: ClientEvents[T]) => 
