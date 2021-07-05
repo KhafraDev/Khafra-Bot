@@ -28,7 +28,7 @@ export class kCommand extends Command {
         if (m.editable) {
             return m.edit({ content: edited });
         } else {
-            return this.Embed.fail(`Message wasn\'t editable!`);
+            return this.Embed.fail(`Message wasn't editable!`);
         }
     }
 }

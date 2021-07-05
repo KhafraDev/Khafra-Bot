@@ -9,7 +9,9 @@ import config from '../../../../config.json';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const formatPresence = (activities: Activity[]) => {
+    if (!Array.isArray(activities)) return null;
     const push: string[] = [];
+
     for (const activity of activities) {
         switch (activity.type) {
             case 'CUSTOM':
@@ -60,6 +62,9 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         const user = await getMentions(message, 'users') ?? message.author;
+        const member = user.equals(message.author) 
+            ? message.member 
+            : message.guild.members.resolve(user);
 
         const snowflake = SnowflakeUtil.deconstruct(user.id);
         const flags = user.flags?.bitfield
@@ -70,7 +75,7 @@ export class kCommand extends Command {
             .filter(f => getEmojis().has(f))
             .map(f => getEmojis().get(f));
 
-        return this.Embed.success(formatPresence(user.presence.activities))
+        return this.Embed.success(member ? formatPresence(member.presence?.activities) : null)
             .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user.displayAvatarURL())
             .addField('**Username:**', user.username, true)
             .addField('**ID:**', user.id, true)
