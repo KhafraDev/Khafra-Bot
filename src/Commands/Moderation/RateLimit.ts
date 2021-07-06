@@ -59,7 +59,7 @@ export class kCommand extends Command {
             return this.Embed.fail('An error prevented the rate-limit from being set.');
         }
 
-        message.reply({ 
+        void message.reply({ 
             embeds: [this.Embed.success(`Slow-mode set in ${channel} for ${secs} second${plural(secs)}!`)]
         });
 

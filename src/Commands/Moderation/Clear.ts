@@ -54,7 +54,7 @@ export class kCommand extends Command {
 
         const m = await message.reply({ embeds: [embed] });
         setTimeout(() => {
-            if (m.deletable) m.delete()
+            if (m.deletable) void m.delete();
         }, 5000);
     }
 }

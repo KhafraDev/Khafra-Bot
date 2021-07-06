@@ -44,7 +44,7 @@ export class kEvent extends Event {
             const exists = await client.exists(message.guild.id) as 0 | 1;
             if (exists === 1) {
                 const row = await client.get(message.guild.id);
-                guild = Object.assign({ ...defaultSettings }, JSON.parse(row));
+                guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
             } else {
                 const { rows } = await pool.query<kGuild>(`
                     SELECT * 
@@ -53,7 +53,7 @@ export class kEvent extends Event {
                     LIMIT 1;
                 `, [message.guild.id]);
 
-                client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
                 guild = Object.assign({ ...defaultSettings }, rows.shift());
             }

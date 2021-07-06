@@ -6,6 +6,7 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
+import { kGuild } from '../lib/types/KhafraBot.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -33,7 +34,7 @@ export class kEvent extends Event {
         let item: { welcome_channel: Snowflake } | null = null
 
         if (cached) {
-            item = JSON.parse(await client.get(oldMember.guild.id));
+            item = JSON.parse(await client.get(oldMember.guild.id)) as Pick<kGuild, 'welcome_channel'>;
         } else {
             const { rows } = await pool.query<{ welcome_channel: Snowflake }>(`
                 SELECT welcome_channel

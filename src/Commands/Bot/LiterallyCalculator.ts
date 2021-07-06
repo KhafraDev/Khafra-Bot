@@ -135,8 +135,15 @@ export class kCommand extends Command {
             
             let eq: number | string = 'Invalid input!'; 
             try {
-                eq = runInContext(equation, context);
+                eq = runInContext(equation, context) as number;
             } catch {}
+
+            if (eq !== 'Invalid input!' && typeof eq !== 'number') {
+                return void c.last()[r !== 'stop' ? 'editReply' : 'update']({
+                    content: 'Invalid calculations...',
+                    components: disableAll(m)
+                });
+            }
 
             const length = 6 + actions.join(' ').length + 3 + `${eq}`.length;
             const sentence = length > 30 // approximate number of chars to go "off" the screen

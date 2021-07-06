@@ -40,7 +40,7 @@ export class KhafraClient extends Client {
 
     async loadCommands() {
         const commands = await this.walk('build/src/Commands', p => p.endsWith('.js'));
-        const importPromise = commands.map<Promise<Command>>(command => import(pathToFileURL(command).href));
+        const importPromise = commands.map(command => import(pathToFileURL(command).href) as Promise<Command>);
         const settled = await Promise.allSettled(importPromise);
 
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
@@ -53,7 +53,7 @@ export class KhafraClient extends Client {
 
     async loadEvents() {
         const events = await this.walk('build/src/Events', p => p.endsWith('.js'));
-        const importPromise = events.map<Promise<Event>>(event => import(pathToFileURL(event).href));
+        const importPromise = events.map(event => import(pathToFileURL(event).href) as Promise<Event>);
         await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${KhafraClient.Events.size} events!`);
@@ -62,7 +62,7 @@ export class KhafraClient extends Client {
 
     async loadInteractions() {
         const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
-        const importPromise = interactions.map<Promise<Interactions>>(int => import(pathToFileURL(int).href));
+        const importPromise = interactions.map(int => import(pathToFileURL(int).href) as Promise<Interactions>);
         await Promise.allSettled(importPromise);
 
         console.log(`Loaded ${importPromise.length} global interactions!`);

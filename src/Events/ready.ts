@@ -28,6 +28,6 @@ export class kEvent extends Event {
             }
         }
 
-        client.loadInteractions();
+        void client.loadInteractions();
     }
 }

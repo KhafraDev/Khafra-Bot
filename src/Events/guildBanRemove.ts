@@ -23,7 +23,7 @@ export class kEvent extends Event {
         let item: kGuild | null = null
 
         if (cached) {
-            item = JSON.parse(await client.get(guild.id));
+            item = JSON.parse(await client.get(guild.id)) as kGuild;
         } else {
             const { rows } = await pool.query<kGuild>(`
                 SELECT mod_log_channel FROM kbGuild

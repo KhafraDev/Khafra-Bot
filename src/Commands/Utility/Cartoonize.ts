@@ -30,7 +30,7 @@ export class kCommand extends Command {
         if (message.attachments.size === 0)
             return this.Embed.generic(this, 'No image attached!');
 
-        message.channel.startTyping();
+        void message.channel.startTyping();
         
         const cartoon = await cartoonize(message.attachments.first());
         message.channel.stopTyping(true);

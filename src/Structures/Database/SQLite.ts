@@ -87,5 +87,5 @@ for (const file of sql) {
         .filter(l => l.length > 0);
 
     for (const query of queries)
-        asyncQuery(`${query};`, { run: true });
+        void asyncQuery(`${query};`, { run: true });
 }

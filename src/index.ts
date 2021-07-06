@@ -38,4 +38,4 @@ export const client = new KhafraClient({
     .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
     .on('rateLimit',            emitted('rateLimit'));
 
-client.init();
+void client.init();

@@ -1,7 +1,7 @@
 type Turn = 'X' | 'O' | null;
 
 export class TicTacToe {
-    public board: Turn[] = Array(9).fill(null);
+    public board: Turn[] = Array(9).fill(null) as Turn[];
     public turn: Turn = 'X';
 
     /** Go at a given position (0-8) */
