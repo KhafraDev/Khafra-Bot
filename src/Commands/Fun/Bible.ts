@@ -63,7 +63,7 @@ export class kCommand extends Command {
             return this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', '));
         }
 
-        const book = args.join(' ').match(titleRegex)?.[0].toLowerCase();
+        const book = titleRegex.exec(args.join(' '))?.[0].toLowerCase();
         // if an invalid book name was used
         if (!book)
             return this.Embed.fail(`
@@ -112,8 +112,8 @@ export class kCommand extends Command {
         // Example: 13:1-5
         // Get verses 1 to 5 from Exodus chapter 13
         if (R.BETWEEN.test(locationUnformatted)) {
-            const [, chapter, ...verses] = locationUnformatted
-                .match(R.BETWEEN)! // not null since it matches the pattern
+            const [, chapter, ...verses] = R.BETWEEN
+                .exec(locationUnformatted)! // not null since it matches the pattern
                 .map(Number); // Not NaN because the regex checks for numbers
 
             // prevent >10 verses from being sent at a time
@@ -145,8 +145,8 @@ export class kCommand extends Command {
 
         // only one verse; doesn't fit criteria for other cases
         if (R.GENERIC.test(locationUnformatted)) {
-            const [, chapter, verse] = locationUnformatted
-                .match(R.GENERIC)
+            const [, chapter, verse] = R.GENERIC
+                .exec(locationUnformatted)
                 .map(Number);
 
             const { rows } = await pool.query<IBibleVerse>(`

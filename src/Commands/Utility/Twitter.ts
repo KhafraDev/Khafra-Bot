@@ -30,7 +30,7 @@ export class kCommand extends Command {
         if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname))
             return this.Embed.fail(`Invalid Twitter status!`);
 
-        const id = pathname.match(/\/(\d+)$/)[1];
+        const id = /\/(\d+)$/.exec(pathname)[1];
         const media = await getTwitterMediaURL(id);
 
         if (!media)

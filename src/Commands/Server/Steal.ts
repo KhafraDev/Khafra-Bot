@@ -26,7 +26,7 @@ export class kCommand extends Command {
             return this.Embed.fail('Invalid Emoji provided!');
         }
 
-        const [,, name, id] = args[0].match(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/);
+        const [,, name, id] = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/.exec(args[0]);
         if (!name || !id) {
             return this.Embed.fail('Invalid guild emoji provided!');
         }

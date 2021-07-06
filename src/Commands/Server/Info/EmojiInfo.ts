@@ -41,7 +41,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { content }: Arguments) {
-        const guildEmoji = content.match(guildEmojiRegex);
+        const guildEmoji = guildEmojiRegex.exec(content);
 
         if (guildEmoji === null || guildEmoji.groups === undefined) {
             const parsed = parse(content, { assetType: 'png' });

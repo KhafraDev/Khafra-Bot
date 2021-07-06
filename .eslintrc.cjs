@@ -42,7 +42,6 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'error',
         '@typescript-eslint/prefer-as-const': 'error',
         '@typescript-eslint/prefer-namespace-keyword': 'error',
-        // look into this rule
-        // '@typescript-eslint/prefer-regexp-exec': 'error'
+        '@typescript-eslint/prefer-regexp-exec': 'error'
     }
 };

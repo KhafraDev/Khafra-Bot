@@ -71,7 +71,7 @@ export class kEvent extends Event {
             'si'
         );
         // there should be no case in which this is null, but we are dealing with regexes
-        const optionsMatch = message.content.match(optre)!;
+        const optionsMatch = optre.exec(message.content);
 
         if (!optionsMatch || typeof optionsMatch.groups === 'undefined') return;
         if (!name.startsWith(guild.prefix)) return;

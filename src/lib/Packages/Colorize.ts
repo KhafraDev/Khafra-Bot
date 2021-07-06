@@ -16,12 +16,13 @@ class AlgorithmiaError extends Error {
 // otherwise this isnt required
 const genUA = () => {
     const platforms = [
-        'Windows NT 10.0; Win64; x64; rv:84.0', 'Macintosh; Intel Mac OS X 11.1; rv:84.0', 'X11; Linux i686; rv:84.0', 
-        'Linux x86_64; rv:84.0', 'X11; Ubuntu; Linux i686; rv:84.0', 'X11; Ubuntu; Linux x86_64; rv:84.0',
-        'X11; Fedora; Linux x86_64; rv:84.0'
+        'Windows NT 10.0; Win64; x64', 'Macintosh; Intel Mac OS X 11.1', 'X11; Linux i686', 
+        'Linux x86_64', 'X11; Ubuntu; Linux i686', 'X11; Ubuntu; Linux x86_64',
+        'X11; Fedora; Linux x86_64'
     ];
+    
     const platform = platforms[Math.floor(Math.random() * platforms.length)];
-    const version = platform.match(/rv:(.*)$/)[1];
+    const version = Math.floor(Math.random() * (99 - 84 + 1) + 84);
 
     return `Mozilla/5.0 (${platform}; rv:${version}) Gecko/20100101 Firefox/${version}`;
 }

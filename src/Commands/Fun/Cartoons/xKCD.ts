@@ -40,6 +40,6 @@ export class kCommand extends Command {
         return this.Embed.success()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
-            .setImage(`${comic.description.match(/src="(.*?)"/)[1]}`);
+            .setImage(`${/src="(.*?)"/.exec(comic.description)[1]}`);
     }
 }

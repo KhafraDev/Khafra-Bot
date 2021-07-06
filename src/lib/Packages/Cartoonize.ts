@@ -35,7 +35,7 @@ export const cartoonize = async (attachment: MessageAttachment) => {
         return null;
 
     const html = await cartoonizeRes.text();
-    const image = decodeXML(html.match(R)[1]);
+    const image = decodeXML(R.exec(html)[1]);
 
     return image;
 }

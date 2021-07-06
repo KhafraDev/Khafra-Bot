@@ -34,7 +34,7 @@ interface Comic {
 
 const rss = new RSSReader<ITrashHuman>(async () => {
     const comics = [...rss.results.values()].map(item => {
-        const { origin, pathname } = new URL(item['content:encoded'].match(/src="(.*?)"/)[1]);
+        const { origin, pathname } = new URL(/src="(.*?)"/.exec(item['content:encoded'])[1]);
         return {
             href: item.link,
             title: decodeXML(item.title),
@@ -74,7 +74,7 @@ export class kCommand extends Command {
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift();
-            const { origin, pathname } = new URL(trash['content:encoded'].match(/src="(.*?)"/)[1]);
+            const { origin, pathname } = new URL(/src="(.*?)"/.exec(trash['content:encoded'])[1]);
 
             return this.Embed.success()
                 .setDescription(`
