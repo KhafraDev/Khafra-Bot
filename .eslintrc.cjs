@@ -20,6 +20,7 @@ module.exports = {
         '@typescript-eslint/no-empty-function': 'off',
         'no-empty': 'off',
 
+        'no-unsafe-optional-chaining': 'error',
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',
         '@typescript-eslint/await-thenable': 'error',
         '@typescript-eslint/adjacent-overload-signatures': 'error',
