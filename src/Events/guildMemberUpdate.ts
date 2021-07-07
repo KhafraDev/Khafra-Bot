@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, Channel, Permissions, Snowflake } from 'discord.js';
+import { GuildMember, Channel, Permissions } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -13,6 +13,8 @@ const basic = new Permissions([
     'EMBED_LINKS',
     'VIEW_CHANNEL'
 ]);
+
+type welcomeChannel = Pick<kGuild, 'welcome_channel'>;
 
 @RegisterEvent
 export class kEvent extends Event {
@@ -31,18 +33,19 @@ export class kEvent extends Event {
             return;
 
         const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: { welcome_channel: Snowflake } | null = null
+        let item: welcomeChannel | null = null
 
         if (cached) {
-            item = JSON.parse(await client.get(oldMember.guild.id)) as Pick<kGuild, 'welcome_channel'>;
+            item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<{ welcome_channel: Snowflake }>(`
+            const { rows } = await pool.query<welcomeChannel>(`
                 SELECT welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [oldMember.guild.id]);
             
+            void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);
             item = rows[0];
         }
 

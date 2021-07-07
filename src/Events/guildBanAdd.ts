@@ -13,6 +13,8 @@ import { client } from '../Structures/Database/Redis.js';
 
 const guildBanAddLogger = new Logger('guildBanAdd');
 
+type modLogChannel = Pick<kGuild, 'mod_log_channel'>;
+
 @RegisterEvent
 export class kEvent extends Event {
     name = 'guildBanAdd' as const;
@@ -20,17 +22,18 @@ export class kEvent extends Event {
     async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
         const cached = await client.exists(guild.id) === 1;
-        let item: kGuild | null = null
+        let item: modLogChannel | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<kGuild>(`
+            const { rows } = await pool.query<modLogChannel>(`
                 SELECT mod_log_channel FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [guild.id]);
 
+            void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
             item = rows[0];
         }
 
