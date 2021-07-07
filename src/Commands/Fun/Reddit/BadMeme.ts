@@ -27,23 +27,26 @@ export class kCommand extends Command {
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
         
-        if (res === null)
+        if (res === null) {
+            if (isText(message.channel) && message.channel.nsfw) {
+                return this.Embed.fail(`This channel isn't marked as NSFW!`);
+            }
+
             return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
-        else if ('error' in res) {
-            if (res.reason === 'private')
-                return this.Embed.fail('Subreddit is set as private!');
-            else if (res.reason === 'banned') // r/the_donald
-                return this.Embed.fail('Subreddit is banned!');
-            else if (res.reason === 'quarantined') // r/spacedicks (all others are just banned now)
-                return this.Embed.fail('Subreddit is quarantined!');
-                
-            return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`);
-        } else if (res.url.length === 0)
+        } else if ('error' in res) {
+            switch (res.reason) {
+                case 'banned': return this.Embed.fail('Subreddit is banned!');
+                case 'private': return this.Embed.fail('Subreddit is set as private!');
+                case 'quarantined': return this.Embed.fail('Subreddit is quarantined!');
+                default: return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`)
+            }
+        } else if (res.url.length === 0) {
             return this.Embed.fail(`
             No image posts found in this subreddit.
             
             If the channel isn't set to NSFW, adult subreddits won't work!
             `);
+        }
 
         if (!Array.isArray(res.url))
             return res.url;
