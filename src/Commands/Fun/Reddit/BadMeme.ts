@@ -84,7 +84,11 @@ export class kCommand extends Command {
 
             return void i.update({ content: res.url[page] });
         });
-        collector.on('end', () => {
+        collector.on('end', (c, r) => {
+            if (r === 'deny') {
+                return c.last().update({ components: disableAll(m) });
+            }
+
             return void m.edit({ components: disableAll(m) });
         });
     }
