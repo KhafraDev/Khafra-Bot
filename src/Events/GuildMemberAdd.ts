@@ -63,7 +63,7 @@ export class kEvent extends Event {
         
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member.user} (${member.user.tag}) joined the server!`);
+            .setDescription(`${member} (${member.user.tag}) joined the server!`);
 
         try {
             return channel.send({ embeds: [embed] });
