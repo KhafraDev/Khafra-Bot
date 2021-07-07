@@ -7,7 +7,7 @@ import type { RateLimitData } from 'discord.js';
 const logger = new Logger('RateLimit');
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'rateLimit'> {
     name = 'rateLimit' as const;
 
     async init(data: RateLimitData) {

@@ -28,7 +28,7 @@ const _cooldownGuild = cooldown(30, 60000);
 const _cooldownUsers = cooldown(10, 60000);
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
     logger = new Logger('Message');
 

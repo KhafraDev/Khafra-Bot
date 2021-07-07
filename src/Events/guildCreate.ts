@@ -5,7 +5,7 @@ import config from '../../config.json';
 import { RegisterEvent } from '../Structures/Decorator.js';
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
 
     async init(guild: Guild) {

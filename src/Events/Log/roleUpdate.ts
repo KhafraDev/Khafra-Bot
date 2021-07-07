@@ -20,7 +20,7 @@ const yes = (b: boolean) => b ? 'Yes' : 'No';
 type LogChannel = Pick<kGuild, 'complete_log_channel'>;
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'roleUpdate'> {
     name = 'roleUpdate' as const;
 
     async init(oldRole: Role, newRole: Role) {

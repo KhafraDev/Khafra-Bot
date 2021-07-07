@@ -18,7 +18,7 @@ const basic = new Permissions([
 type LogChannel = Pick<kGuild, 'complete_log_channel'>;
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'emojiDelete'> {
     name = 'emojiDelete' as const;
 
     async init(emoji: GuildEmoji) {

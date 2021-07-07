@@ -17,7 +17,7 @@ const basic = new Permissions([
 type welcomeChannel = Pick<kGuild, 'welcome_channel'>;
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildMemberRemove'> {
     name = 'guildMemberRemove' as const;
 
     async init(member: GuildMember) {

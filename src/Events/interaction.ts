@@ -7,7 +7,7 @@ import { client } from '../index.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'interactionCreate'> {
     name = 'interactionCreate' as const;
 
     async init(interaction: Interaction) {

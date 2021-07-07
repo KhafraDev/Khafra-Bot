@@ -16,7 +16,7 @@ const guildBanRemoveLogger = new Logger('guildBanRemove');
 type modLogChannel = Pick<kGuild, 'mod_log_channel'>;
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildBanRemove'> {
     name = 'guildBanRemove' as const;
 
     async init({ guild, user, reason }: GuildBan) {
