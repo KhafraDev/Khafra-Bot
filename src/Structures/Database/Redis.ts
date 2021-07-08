@@ -13,9 +13,7 @@ type RedisExists<R = unknown> = OverloadedCommand<string, number, R>;
 type RedisHSet<R = unknown> = OverloadedSetCommand<string, number, R>;
 type RedisHGet<R = unknown> = (key: string, field: string) => R;
 
-const user = process.env.REDIS_USER ?? '';
-const pass = process.env.REDIS_PASS ? `:${process.env.REDIS_PASS}@` : '';
-const connect = `redis://${user}${pass}localhost:6379`;
+const connect = `redis://localhost:6379`;
 
 const messageClient = redis.createClient(`${connect}/1`);
 
