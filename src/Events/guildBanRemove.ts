@@ -52,21 +52,22 @@ export class kEvent extends Event<'guildBanRemove'> {
         // and I would mostly agree with you. This event is propagated
         // right after the unban and it's entirely possible for the event to fire
         // before the cache is set.
-        let i = 0;
-        while (!unbans.has(key) && i++ < 10) {
+        for (let i = 0; i < 10; i++) {
+            if (unbans.has(key)) break;
             await delay(1000);
         }
 
         const unban = unbans.has(key) ? unbans.get(key) : null;
+        const reasonStr = reason ?? unban?.reason ?? 'Unknown';
 
         try {
             await channel.send({ embeds: [
                 Embed.success(`
                 **User:** ${user} (${user.tag})
                 **ID:** ${user.id}
-                **Staff:** ${unban ?? 'Unknown'}
+                **Staff:** ${unban?.member ?? 'Unknown'}
                 **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
-                **Reason:** \`\`${reason?.length > 1500 ? reason.slice(1500) + '...' : (reason ?? 'Unknown')}\`\`
+                **Reason:** \`\`${reasonStr.length > 1500 ? `${reasonStr.slice(1500)}...` : reasonStr}\`\`
                 `).setTitle('Member Unbanned') 
             ] });
         } catch (e) {

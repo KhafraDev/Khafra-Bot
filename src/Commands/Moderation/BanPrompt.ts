@@ -35,6 +35,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const user = await getMentions(message, 'users');
         const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
+        const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
@@ -80,12 +81,12 @@ export class kCommand extends Command {
         try {
             await message.guild.members.ban(user, {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
-                reason: args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ')
+                reason
             });
 
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, message.member);
+                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return button.editReply({
                 embeds: [this.Embed.fail(`${user} isn't bannable!`)],

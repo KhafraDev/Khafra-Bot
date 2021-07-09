@@ -30,12 +30,14 @@ export class kCommand extends Command {
         if (!user) 
             return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
+        const reason = args.slice(1).join(' ');
+
         try {
-            await message.guild.members.unban(user, args.slice(1).join(' '));
+            await message.guild.members.unban(user, reason);
 
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!unbans.has(`${message.guild.id},${user.id}`))
-                    unbans.set(`${message.guild.id},${user.id}`, message.member);
+                    unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch (e) {
             return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
         }

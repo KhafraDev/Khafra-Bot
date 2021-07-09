@@ -34,15 +34,15 @@ export class kCommand extends Command {
         if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))
             return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
 
+        const reason = `Force-ban by ${message.author.id} (${message.author.tag}).`;
+
         const promiseArr = ids.map(id => {
             return async () => {
-                const type = await message.guild.members.ban(id, {
-                    reason: `Force-ban by ${message.author.id} (${message.author.tag}).`
-                });
+                const type = await message.guild.members.ban(id, { reason });
 
                 if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                     if (!bans.has(`${message.guild.id},${id}`)) // not in the cache already, just to be sure
-                        bans.set(`${message.guild.id},${id}`, message.member);
+                        bans.set(`${message.guild.id},${id}`, { member: message.member, reason });
 
                 return type;
             }

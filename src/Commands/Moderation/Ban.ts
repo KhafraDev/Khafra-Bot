@@ -52,7 +52,7 @@ export class kCommand extends Command {
             // TODO(@KhafraDev): check if this perm requires any intents/perms
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, message.member);
+                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return this.Embed.fail(`${user} isn't bannable!`);
         }
