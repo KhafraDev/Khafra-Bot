@@ -1,5 +1,6 @@
 import './lib/Utility/load.env.js';
 import './lib/Utility/Rejections.js';
+import './lib/Utility/Timers/Giveaways.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { Awaited, ClientEvents, Intents } from 'discord.js';
@@ -16,7 +17,6 @@ export const client = new KhafraClient({
     messageSweepInterval: 1800, // defaults to never..
     partials: [ 'REACTION', 'MESSAGE', 'USER' ],
     intents: [ 
-        Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_BANS,
         Intents.FLAGS.GUILD_EMOJIS,

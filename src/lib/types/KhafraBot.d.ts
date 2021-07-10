@@ -12,19 +12,6 @@ export interface kGuild {
     reactRoleChannel: Snowflake | null
 }
 
-/**
- * Warning row when the kbGuild and kbWarns are joined.
- */
-export interface WarningJoined {
-    id: number
-    guild_id: Snowflake
-    max_warning_points: number
-    k_guild_id: Snowflake
-    k_user_id: Snowflake
-    k_points: number
-    k_ts: Date
-}
-
 export interface Warning {
     id: number
     k_guild_id: Snowflake
@@ -32,4 +19,15 @@ export interface Warning {
     k_points: number
     k_id: Snowflake
     k_ts: Date
+}
+
+export interface Giveaway {
+    id: number
+    guildid: Snowflake
+    messageid: Snowflake
+    channelid: Snowflake
+    initiator: Snowflake
+    enddate: Date
+    prize: string
+    winners: number
 }
