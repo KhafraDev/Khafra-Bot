@@ -89,7 +89,7 @@ export class kCommand extends Command {
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
                 !guesses.includes(m.content.toLowerCase()),
-            time: 60000, 
+            time: 120_000, 
             idle: 30000
         });
 
