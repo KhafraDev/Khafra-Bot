@@ -9,13 +9,22 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms, permResolvableToString } from '../../../lib/Utility/Permissions.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText } from '../../../lib/types/Discord.js.js';
-import { Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { 
+    Message,
+    MessageActionRow,
+    MessageComponentInteraction,
+    NewsChannel,
+    Permissions,
+    TextChannel,
+    Channel
+} from 'discord.js';
 import { bold, inlineCode } from '@discordjs/builders';
 
 interface GiveawaySettings {
     endDate: Date | null
     prize: string
     winners: number
+    channel: TextChannel | NewsChannel
 }
 
 const description = 
@@ -45,7 +54,7 @@ export class kCommand extends Command {
                 name: 'giveaway:create',
                 folder: 'Giveaways',
                 aliases: ['giveaways:create'],
-                args: [1, 1],
+                args: [0, 0],
                 guildOnly: true
             }
         );
@@ -57,32 +66,63 @@ export class kCommand extends Command {
             return this.Embed.missing_perms(true);
         }
 
-        const channel = await getMentions(message, 'channels', { idx: 2 });
-
         const settings: GiveawaySettings = {
+            channel: null,
             endDate: null,
             prize: null,
-            winners: 1
+            winners: 1,
         };
-
-        if (!isText(channel)) {
-            return this.Embed.fail(`${channel ?? 'Unknown channel'} isn't a text channel!`);
-        } else if (!hasPerms(channel, message.guild.me, perms)) {
-            return this.Embed.fail(`I don't have one or more of these ${permResolvableToString(perms)} permissions in ${channel}.`);
-        }
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.success(`${description}${bold('Do you want more than 1 winner?')}`)
-                    .addField(`${bold('Channel:')}`, `${channel}`, true)
-            ],
-            components: [
-                new MessageActionRow().addComponents(
-                    Components.approve('Yes', 'winners'),
-                    Components.deny('No', 'deny')
-                )
+                this.Embed.success(`${description}${bold('Enter the channel where the giveaway should be hosted.')}`)
             ]
         });
+
+        { // set the channel where the giveaway will occur
+            const channelSetting = await message.channel.awaitMessages({
+                max: 1,
+                time: 60 * 1000 * 5,
+                filter: (m: Message) =>
+                    m.author.id === message.author.id &&
+                    m.content.length > 0
+            });
+
+            if (channelSetting.size === 0) {
+                return void m.edit({
+                    embeds: [this.Embed.fail(`Didn't respond in time, giveaway canceled.`)]
+                });
+            }
+
+            const msg = channelSetting.first();
+            let channel: Channel | null = null;
+            if (msg.mentions.channels.size !== 0) {
+                channel = msg.mentions.channels.first();
+            } else {
+                channel = await getMentions(msg, 'channels', { splice: false });
+            }
+
+            if (!isText(channel)) {
+                return this.Embed.fail(`${channel ?? 'Unknown channel'} isn't a text channel!`);
+            } else if (!hasPerms(channel, message.guild.me, perms)) {
+                return this.Embed.fail(`I don't have one or more of these ${permResolvableToString(perms)} permissions in ${channel}.`);
+            }
+
+            settings.channel = channel;
+
+            const embed = this.Embed.success()
+                .setDescription(bold('Should there be more than 1 winner?'));
+
+            await m.edit({ 
+                embeds: [embed],
+                components: [
+                    new MessageActionRow().addComponents(
+                        Components.approve('Yes', 'winners'),
+                        Components.deny('No', 'deny')
+                    )
+                ]
+            });
+        }
 
         { // handle # of winners
             let moreWinnersInteraction: MessageComponentInteraction | null = null;
@@ -106,8 +146,7 @@ export class kCommand extends Command {
             if (moreWinnersInteraction.customId === 'winners') {
                 await m.edit({
                     embeds: [
-                        this.Embed.success(`${description}${bold('How many winners should there be?')}`)
-                            .addField(`${bold('Channel:')}`, `${channel}`, true)
+                        this.Embed.success(bold('How many winners should there be?'))
                     ],
                     components: []
                 });
@@ -131,9 +170,7 @@ export class kCommand extends Command {
             }
 
             const embed = this.Embed.success()
-                .setDescription(`${description}${bold('What should the prize be? (5 minutes)')}`)
-                .addField(`${bold('Channel:')}`, `${channel}`, true)
-                .addField(bold(`Winner${plural(settings.winners)}:`), `${settings.winners} user${plural(settings.winners)}`, true);
+                .setDescription(bold('What should the prize be? (5 minutes)'));
 
             await m.edit({
                 embeds: [embed],
@@ -160,10 +197,6 @@ export class kCommand extends Command {
 
             const embed = m.embeds[0]
                 .setDescription(`
-                ${description}
-                ${bold('Prize:')}
-                ${inlineCode(settings.prize.length > 500 ? `${settings.prize.slice(0, 500)}...` : settings.prize)}
-                
                 ${bold('When should the giveaway end?')}
                 
                 Valid formats are similar but not limited to ${inlineCode(`1h 30m`)} and ${inlineCode(`2w 3d 1h`)}.
@@ -195,7 +228,7 @@ export class kCommand extends Command {
             settings.endDate = new Date(Date.now() + endStr);
         }
 
-        const sent = await channel.send({
+        const sent = await settings.channel.send({
             embeds: [
                 this.Embed.success()
                     .setTitle(`A giveaway is starting!`)
@@ -232,7 +265,7 @@ export class kCommand extends Command {
         `, [
             message.guild.id, 
             sent.id,
-            channel.id,
+            settings.channel.id,
             message.member.id, 
             settings.endDate, 
             settings.prize, 
@@ -241,7 +274,7 @@ export class kCommand extends Command {
 
         await m.edit({
             embeds: [
-                this.Embed.success(`Started a giveaway in ${channel}.`)
+                this.Embed.success(`Started a giveaway in ${settings.channel}.`)
                     .setFooter('Ends on')
                     .setTimestamp(settings.endDate)
             ]

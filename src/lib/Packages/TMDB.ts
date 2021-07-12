@@ -1,4 +1,4 @@
-import fetch, { Headers } from 'undici-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 interface ITMDBSearch {
@@ -162,10 +162,10 @@ const base = {
     detail: 'https://api.themoviedb.org/3/movie/',
     detail_tv: 'https://api.themoviedb.org/3/tv/'
 } as const;
-const headers = new Headers({
+const headers = {
     'Authorization': `Bearer ${process.env.TMDB}`,
     'Content-Type': 'application/json;charset=utf-8'
-});
+};
 
 export const searchMovie = async (
     query: string,
