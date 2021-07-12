@@ -13,9 +13,6 @@ export const RegisterCommand = <T extends new (...args: unknown[]) => Command>(
 
     cmd.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, cmd));
 
-    if (cmd.help.length < 2) // fill array to min length 2
-        cmd.help = [...cmd.help, ...Array<string>(2 - cmd.help.length).fill('')];
-
     CommandCooldown.set(cmd.settings.name.toLowerCase(), new Set());
 }
 

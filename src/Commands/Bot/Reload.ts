@@ -95,8 +95,5 @@ export class kCommand extends Command {
         CommandCooldown.set(commandName, new Set()); // add back to cache
 
         command.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, command));
-
-        if (command.help.length < 2) // fill array to min length 2
-            command.help = [...command.help, ...Array<string>(2 - command.help.length).fill('')];
     }
 }

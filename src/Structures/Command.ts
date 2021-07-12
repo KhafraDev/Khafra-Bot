@@ -40,26 +40,28 @@ interface ICommand {
 }
 
 export abstract class Command implements ICommand {
-    logger = new Logger('Command');
-    errors = Errors;
-    Embed = Embed;
+    readonly logger = new Logger('Command');
+    readonly errors = Errors;
+    readonly Embed = Embed;
 
     /*** Description and example usage. */
-    help: string[];
+    readonly help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    permissions: PermissionResolvable[] = [ 
+    readonly permissions: PermissionResolvable[] = [ 
         Permissions.FLAGS.SEND_MESSAGES,
         Permissions.FLAGS.EMBED_LINKS,
         Permissions.FLAGS.VIEW_CHANNEL, 
         Permissions.FLAGS.READ_MESSAGE_HISTORY 
     ];
-    settings: ICommand['settings'];
+    readonly settings: ICommand['settings'];
     
     constructor(
         help: string[],
         settings: ICommand['settings']
     ) {
-        this.help = help;
+        this.help = help.length < 2
+            ? [...help, ...Array<string>(2 - help.length).fill('')]
+            : help;
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];

@@ -68,14 +68,15 @@ export class kCommand extends Command {
         }
 
         const { settings, help } = KhafraClient.Commands.get(name);
+
         return this.Embed.success(`
         The \`\`${settings.name}\`\` command:
-        \`\`\`${help[0]}\`\`\`
+        \`\`\`${help.shift()}\`\`\`
 
         Aliases: ${settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
 
         Example(s):
-        ${help.slice(1).map(c => `\`\`${settings.name} ${c || '​'}\`\``.trim()).join('\n')}
+        ${help.map(c => `\`\`${settings.name} ${c || '​'}\`\``.trim()).join('\n')}
         `)
         .addFields(
             { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
