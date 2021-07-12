@@ -12,30 +12,30 @@ import { kGuild } from '../lib/types/KhafraBot.js';
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */
-    args: string[]
+    readonly args: string[]
     /** Command used. */
-    commandName: string
+    readonly commandName: string
     /** Text unformatted, removes prefix+command with leading whitespace. */
-    content: string
+    readonly content: string
     /** Prefix used */
-    prefix: string
+    readonly prefix: string
 }
 
 interface ICommand {
-    logger: Logger
-    help: string[]
-    permissions: PermissionResolvable
-    settings: {
-        name: string
-        folder: string
-        args: [number, number?]
+    readonly logger: Logger
+    readonly help: string[]
+    readonly permissions: PermissionResolvable
+    readonly settings: {
+        readonly name: string
+        readonly folder: string
+        readonly args: [number, number?]
         /** Ratelimit in seconds, defaults to 5 */
         ratelimit?: number
-        permissions?: PermissionResolvable
+        readonly permissions?: PermissionResolvable
         aliases?: string[]
-        guildOnly?: boolean
-        ownerOnly?: boolean
-        errors?: Record<string, string>
+        readonly guildOnly?: boolean
+        readonly ownerOnly?: boolean
+        readonly errors?: Record<string, string>
     }
 }
 

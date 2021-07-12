@@ -22,7 +22,7 @@ export interface Warning {
 }
 
 export interface Giveaway {
-    id: number
+    id: string
     guildid: Snowflake
     messageid: Snowflake
     channelid: Snowflake

@@ -19,6 +19,9 @@ import {
     Channel
 } from 'discord.js';
 import { bold, inlineCode } from '@discordjs/builders';
+import { Giveaway } from '../../../lib/types/KhafraBot.js';
+
+type GiveawayId = Pick<Giveaway, 'id'>;
 
 interface GiveawaySettings {
     endDate: Date | null
@@ -46,9 +49,7 @@ export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Giveaway: create a giveaway that ends after a given time!',
-                '#general',
-                '12345678901234567'
+                'Giveaway: create a giveaway that ends after a given time!'
             ],
 			{
                 name: 'giveaway:create',
@@ -244,7 +245,7 @@ export class kCommand extends Command {
 
         void sent.react('🎉');
 
-        await pool.query(`
+        const { rows } = await pool.query<GiveawayId>(`
             INSERT INTO kbGiveaways (
                 guildId, 
                 messageId,
@@ -261,7 +262,8 @@ export class kCommand extends Command {
                 $5::timestamp,
                 $6::text,
                 $7::smallint
-            ) ON CONFLICT DO NOTHING;
+            ) ON CONFLICT DO NOTHING
+            RETURNING id;
         `, [
             message.guild.id, 
             sent.id,
@@ -274,9 +276,13 @@ export class kCommand extends Command {
 
         await m.edit({
             embeds: [
-                this.Embed.success(`Started a giveaway in ${settings.channel}.`)
-                    .setFooter('Ends on')
-                    .setTimestamp(settings.endDate)
+                this.Embed.success(`
+                Started a giveaway in ${settings.channel}.
+
+                ID: ${inlineCode(rows[0].id)}
+                `)
+                .setFooter('Ends on')
+                .setTimestamp(settings.endDate)
             ]
         });
     }

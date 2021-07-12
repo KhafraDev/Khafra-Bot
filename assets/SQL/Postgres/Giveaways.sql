@@ -1,5 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS kbGiveaways (
-    id SERIAL PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     guildId TEXT NOT NULL,
     messageId TEXT NOT NULL,
     channelId TEXT NOT NULL,

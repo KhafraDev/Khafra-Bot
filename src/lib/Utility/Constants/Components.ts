@@ -30,3 +30,13 @@ export const disableAll = ({ components }: Component) => {
 
     return components;
 }
+
+export const enableAll = ({ components }: Component) => {
+    for (const component of components) {
+        for (const button of component.components) {
+            button.setDisabled(false);
+        }
+    }
+
+    return components;
+}
