@@ -1,5 +1,5 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
-import fetch, { RequestInit } from 'node-fetch';
+import fetch from 'undici-fetch';
 import { delay } from './Constants/OneLiners.js';
 import config from '../../../package.json';
 import { validateNumber } from './Valid/Number.js';
@@ -44,7 +44,7 @@ export class RSSReader<T extends unknown> {
     #interval: NodeJS.Timeout | null = null;
     #options: X2jOptionsOptional = {};
 
-    public results = new Set<T>();
+    public readonly results = new Set<T>();
     public timeout = 60 * 1000 * 60;
     public save = 10;
     public url = 'https://google.com/';
@@ -71,7 +71,7 @@ export class RSSReader<T extends unknown> {
                 setTimeout(ac.abort.bind(ac), 15000);
 
                 const res = await fetch(this.url, {
-                    signal: ac.signal as unknown as RequestInit['signal'],
+                    signal: ac.signal,
                     headers: { 
                         'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})` 
                     }
