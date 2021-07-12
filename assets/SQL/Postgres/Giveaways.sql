@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS kbGiveaways (
     messageId TEXT NOT NULL,
     channelId TEXT NOT NULL,
     initiator TEXT NOT NULL,
-    endDate TIME NOT NULL,
+    endDate TIMESTAMP NOT NULL,
     prize TEXT DEFAULT 'Nothing',
     winners SMALLINT DEFAULT 1
 );

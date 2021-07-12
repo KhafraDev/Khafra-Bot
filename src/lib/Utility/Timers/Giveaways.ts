@@ -15,7 +15,7 @@ const Giveaways: GiveawayEmitter = new EventEmitter();
 setInterval(async () => {
     const { rows } = await pool.query<Giveaway>(`
         DELETE FROM kbGiveaways 
-        WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP::time
+        WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP
         RETURNING *;
     `);
 
