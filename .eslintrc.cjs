@@ -18,9 +18,14 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-empty-function': 'off',
-        'no-empty': 'off',
 
+        'no-empty': 'off',
+        'no-loss-of-precision': 'error',
+        'no-promise-executor-return': 'error',
+        'no-unreachable-loop': 'error',
         'no-unsafe-optional-chaining': 'error',
+        'no-useless-backreference': 'error',
+
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',
         '@typescript-eslint/await-thenable': 'error',
         '@typescript-eslint/adjacent-overload-signatures': 'error',
