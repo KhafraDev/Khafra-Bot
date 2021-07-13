@@ -103,7 +103,6 @@ export class kCommand extends Command {
                 else
                     components.push(m.components[m.components.length - 1]);
 
-                console.log(pages[page], page, pages);
                 return i.update({ 
                     embeds: [pages[page]],
                     components

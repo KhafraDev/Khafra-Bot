@@ -1,8 +1,10 @@
 import FormData from '@discordjs/form-data';
 import { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
+import https from 'https';
 import { lookup } from 'mime-types';
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
+import { URL } from 'url';
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/;
@@ -13,29 +15,32 @@ const R = /<div class="image">\s+<img src="(.*?)">/;
  * @throws {TypeError | AssertionError | FetchError}
  */
 export const cartoonize = async (attachment: MessageAttachment) => {
-    const mime = lookup(attachment.name) + '';
+    const m = `${lookup(attachment.name)}`;
+    const r = await fetch(attachment.proxyURL);
+    const f = new FormData();
 
-    const res = await fetch(attachment.proxyURL);
-    if (!res.ok)    
-        return null;
-
-    const form = new FormData();
-    form.append('image', res.body, {
+    f.append('image', await r.arrayBuffer(), {
         filename: attachment.name,
-        contentType: mime
+        contentType: m
     });
 
-    const cartoonizeRes = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
-        method: 'POST',
-        headers: form.getHeaders(),
-        body: form
+    return new Promise<string>((done, reject) => {
+        const request = https.request(new URL('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize'), {
+            method: 'POST',
+            headers: f.getHeaders()
+        }, async (res) => {
+            let data = '';
+            
+            for await (const chunk of res) {
+                data += chunk.toString();
+            }
+
+            return done(decodeXML(R.exec(data)[1]));
+        });
+        
+        f.pipe(request);
+        
+        request.end();
+        request.once('error', reject);
     });
-
-    if (!cartoonizeRes.ok)
-        return null;
-
-    const html = await cartoonizeRes.text();
-    const image = decodeXML(R.exec(html)[1]);
-
-    return image;
 }
