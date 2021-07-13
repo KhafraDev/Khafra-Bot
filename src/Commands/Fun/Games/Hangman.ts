@@ -1,14 +1,13 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Message, MessageActionRow, Snowflake } from 'discord.js';
-import { join } from 'path';
-import { readdirSync } from 'fs';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { plural } from '../../../lib/Utility/String.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { performance } from 'perf_hooks';
-import { extname } from 'path/posix';
+import { plural } from '../../../lib/Utility/String.js';
+import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
+import { inlineCode } from '@discordjs/builders';
 import { readFile } from 'fs/promises';
+import { join, extname } from 'path';
+import { readdirSync } from 'fs';
 
 const assets = join(process.cwd(), 'assets/Hangman');
 
@@ -27,7 +26,7 @@ const images = [
 ];
 
 const hide = (word: string, guesses: string[]) =>
-    word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')} ]`, 'gi'), '☐');
+    word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')}]`, 'gi'), '☐');
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -68,114 +67,103 @@ export class kCommand extends Command {
         }
 
         let wrong = 0; // number of wrong guesses
-        const guesses: string[] = []; // guesses
-
+        const guesses = [' ']; // guesses
         const word = words[await rand(words.length)];
-        const embed = this.Embed.success()
-            .setDescription(word.replace(/[A-z0-9.]/g, '☐'))
-            .setImage(images[wrong]);
-        const row = new MessageActionRow()
-            .addComponents(Components.primary('Hint', 'hint'));
-        
-        const m = await message.reply({
-            embeds: [embed],
-            components: [row]
-        });
 
-        const start = performance.now();
+        const m = await message.reply({
+            embeds: [
+                this.Embed.success()
+                    .setDescription(hide(word, guesses))
+                    .setImage(images[wrong])
+            ],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.primary('Hint', 'hint').setEmoji('❓')
+                )
+            ]
+        });
 
         const c = message.channel.createMessageCollector({
             filter: m =>
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
                 !guesses.includes(m.content.toLowerCase()),
-            time: 120_000, 
-            idle: 30000
+            time: 120_000
         });
 
         c.on('collect', (msg: Message) => {
-            if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
-                return c.stop('requested');
-        
-            guesses.push(msg.content);
-            const w = word.toLowerCase();
-            const t = msg.content.toLowerCase();
-            
-            const guessesLC = guesses.map(g => g.toLowerCase());
-            if (!guessesLC.includes(' ')) guessesLC.push(' ');
+            const guess = msg.content.toLowerCase();
+            const wordLc = word.toLowerCase();
+            guesses.push(guess);
 
-            if (
-                t === w ||
-                [...w].every(l => guessesLC.includes(l)) // every char in the word has been guessed
-            ) { // guessed correct word
+            const opts = {
+                content: null,
+                embeds: []
+            } as MessageEditOptions;
+
+            if ( // win case
+                [...wordLc].every(char => guesses.includes(char.toLowerCase())) || // every char guessed
+                guess === wordLc // guess is the word
+            ) {
                 c.stop();
-                const embed = this.Embed.success()
+                opts.content = null;
+                opts.components = disableAll(m);
+                opts.embeds.push(this.Embed.success()
                     .setTitle('You guessed the word!')
                     .setImage(images[wrong])
                     .setDescription(`
-                    ${word}
-                    ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `);
-                return void m.edit({
-                    content: null,
-                    embeds: [embed],
-                    components: []
-                });
-            }
-            
-            if (
-                !w.includes(t) || // letter isn't in the word
-                (w.includes(t) && w !== t && t.length > 1) // partially correct
+                    ${word}\n${wrong} wrong guess${plural(wrong, 'es')}.
+                    Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
+                    `)
+                );
+            } else if ( // wrong guess
+                (guess.length === 1 && !wordLc.includes(guess)) || // word doesn't include character
+                guess.length > 1 // guess isn't a single character
             ) {
-                if (++wrong >= 6) { // game lost
-                    c.stop();
-                    const embed = this.Embed.success()
-                        .setTitle(`You lost! The word was "${word}"!`)
+                if (++wrong >= 6) {
+                    opts.content = null;
+                    opts.components = disableAll(m);
+                    opts.embeds = [
+                        this.Embed.success()
+                            .setTitle(`You lost! The word was "${word}"!`)
+                            .setImage(images[wrong])
+                            .setDescription(`
+                            ${hide(word, guesses)}
+                            ${wrong} wrong guess${plural(wrong, 'es')}.
+                            Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                            `)
+                    ];
+                } else {
+                    opts.content = guess.length > 1 ? '❗ Partial guesses do not count.' : null;
+                    opts.embeds.push(this.Embed.success()
+                        .setTitle(`That guess is incorrect!`)
                         .setImage(images[wrong])
                         .setDescription(`
                         ${hide(word, guesses)}
                         ${wrong} wrong guess${plural(wrong, 'es')}.
-                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                        Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                         `)
-                    return void m.edit({
-                        content: null,
-                        embeds: [embed],
-                        components: []
-                    });
+                    );
                 }
-
-                const embed = this.Embed.success()
+            } else { // guess is correct, didn't win or lose
+                opts.content = null;
+                opts.embeds.push(this.Embed.success()
+                    .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
+                    .setImage(images[wrong])
                     .setDescription(`
                     ${hide(word, guesses)}
                     ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                     `)
-                    .setImage(images[wrong]);
-
-                if (w.includes(t) && w !== t)
-                    embed.setTitle('Partial guesses are marked as incorrect!');
-
-                return void m.edit({ embeds: [embed] });
+                );
             }
 
-            const now = performance.now();
-            const embed = this.Embed.success()
-                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
-                .setImage(images[wrong])
-                .setDescription(`
-                ${hide(word, guesses)}
-                ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                `);
-
-            return void m.edit({
-                content: `⏰ Time remaining: ${(60 - ((now - start) / 1000)).toFixed(2)} seconds!`,
-                embeds: [embed]
-            });
+            try {
+                return void m.edit(opts);
+            } catch {}
         });
 
-        c.on('end', () => void games.delete(message.author.id));
+        c.once('end', () => void games.delete(message.author.id));
 
         const r = m.createMessageComponentCollector({
             filter: (interaction) => 
@@ -187,7 +175,12 @@ export class kCommand extends Command {
         });
 
         r.once('collect', i => {
-            wrong++; // hint = 1 wrong guess added
+            if (wrong + 1 >= 6) {
+                return void i.update({
+                    content: 'Guessing right now would cause you to lose the game!',
+                    components: disableAll(m)
+                });
+            }
 
             // filter out all guessed letters
             const guessesLC = [...guesses, ' ']
@@ -199,14 +192,15 @@ export class kCommand extends Command {
 
             const embed = this.Embed.success()
                 .setTitle(`"${letter}" is the hint!`)
-                .setImage(images[wrong])
+                .setImage(images[++wrong])
                 .setDescription(`
                 ${hide(word, guesses)}
                 ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                 `);
             
             return void i.update({
+                content: null,
                 embeds: [embed],
                 components: disableAll(m)
             });
