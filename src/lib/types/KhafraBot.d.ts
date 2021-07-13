@@ -1,5 +1,7 @@
 import { Snowflake } from 'discord.js';
 
+type UUID4 = `${string}-${string}-${string}-${string}-${string}`;
+
 export interface kGuild {
     id: number
     guild_id: Snowflake
@@ -13,16 +15,15 @@ export interface kGuild {
 }
 
 export interface Warning {
-    id: number
+    id: UUID4
     k_guild_id: Snowflake
     k_user_id: Snowflake
     k_points: number
-    k_id: Snowflake
     k_ts: Date
 }
 
 export interface Giveaway {
-    id: string
+    id: UUID4
     guildid: Snowflake
     messageid: Snowflake
     channelid: Snowflake

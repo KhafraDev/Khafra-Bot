@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS kbGuild (
     id SERIAL PRIMARY KEY,
     guild_id TEXT NOT NULL,
@@ -11,12 +13,11 @@ CREATE TABLE IF NOT EXISTS kbGuild (
 );
 
 CREATE TABLE IF NOT EXISTS kbWarns (
-    id SERIAL PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     k_guild_id TEXT NOT NULL,
     k_user_id TEXT NOT NULL,
     k_points SMALLINT DEFAULT 1 NOT NULL,
-    k_ts TIMESTAMP DEFAULT now(),
-    k_id SMALLINT NOT NULL,
+    k_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (k_guild_id) REFERENCES kbGuild(guild_id) ON DELETE CASCADE
 );
 
