@@ -32,7 +32,7 @@ export const cartoonize = async (attachment: MessageAttachment) => {
             let data = '';
             
             for await (const chunk of res) {
-                data += chunk.toString();
+                data += `${chunk}`;
             }
 
             return done(decodeXML(R.exec(data)[1]));
