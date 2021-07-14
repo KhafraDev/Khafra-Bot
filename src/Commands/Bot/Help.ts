@@ -3,7 +3,7 @@ import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'disc
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { chunkSafe } from '../../lib/Utility/Array.js';
-import { bold, inlineCode, hyperlink } from '@discordjs/builders';
+import { bold, inlineCode, hyperlink, codeBlock } from '@discordjs/builders';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 
@@ -15,7 +15,8 @@ export class kCommand extends Command {
         super(
             [
                 'Display examples and description of a command!',
-                'say', '', 'Fun'
+                'say',
+                ''
             ],
 			{
                 name: 'help',
@@ -27,8 +28,36 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _: Arguments, settings: kGuild) {
+    async init(message: Message, { args }: Arguments, settings: kGuild) {
         folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
+
+        if (args.length !== 0) {
+            const commandName = args[0].toLowerCase();
+            if (!KhafraClient.Commands.has(commandName))
+                return this.Embed.fail(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
+
+            const { settings, help } = KhafraClient.Commands.get(commandName);
+            const helpF = help.length === 2 && help[1] === ''
+                ? [help[0], '[No arguments]']
+                : help;
+            const aliases = settings.aliases.length === 0
+                ? ['No aliases!']
+                : settings.aliases;
+
+            return this.Embed.success(`
+            The ${inlineCode(settings.name)} command:
+            ${codeBlock(help.shift())}
+
+            Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
+            Example:
+            ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}
+            `)
+            .addFields(
+                { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
+                { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+                { name: '**Rate-Limit:**', value: `${settings.ratelimit} seconds`, inline: true}
+            );
+        }
 
         const m = await message.channel.send({
             embeds: [
