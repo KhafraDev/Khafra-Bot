@@ -93,6 +93,8 @@ export class kCommand extends Command {
         });
 
         c.on('collect', (msg: Message) => {
+            if (wrong > 6 || m.deleted || !m.editable) return c.stop();
+
             const guess = msg.content.toLowerCase();
             const wordLc = word.toLowerCase();
             guesses.push(guess);
