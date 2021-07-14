@@ -68,7 +68,7 @@ export class RSSReader<T extends unknown> {
         for (let i = 0; i < 10; i++) {
             try {
                 const ac = new AbortController();
-                setTimeout(ac.abort.bind(ac), 15000);
+                setTimeout(ac.abort.bind(ac), 15000).unref();
 
                 const res = await fetch(this.url, {
                     signal: ac.signal,
@@ -125,7 +125,7 @@ export class RSSReader<T extends unknown> {
                 this.#interval = setInterval(
                     this.parse.bind(this), 
                     this.timeout
-                );
+                ).unref();
             } else if (
                 typeof j.rss.channel?.['sy:updateFrequency'] === 'string' && 
                 typeof j.rss.channel?.['sy:updatePeriod'] === 'number'
@@ -146,7 +146,7 @@ export class RSSReader<T extends unknown> {
                 this.#interval = setInterval(
                     this.parse.bind(this),
                     time
-                );
+                ).unref();
             }
         }
 
@@ -173,6 +173,6 @@ export class RSSReader<T extends unknown> {
         this.#interval = setInterval(
             this.parse.bind(this),
             this.timeout
-        );
+        ).unref();
     }
 }

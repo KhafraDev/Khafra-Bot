@@ -45,5 +45,5 @@ const safeFetchHN = async () => fetchEntries().catch(() => {});
 
 export const fetchHN = once(async () => {
     await safeFetchHN();
-    return setInterval(safeFetchHN, 60 * 1000 * 10);
+    return setInterval(safeFetchHN, 60 * 1000 * 10).unref();
 });

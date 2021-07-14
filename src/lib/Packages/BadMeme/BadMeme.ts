@@ -113,4 +113,4 @@ setInterval(() => {
             after.delete(subreddit);
         }
     });
-}, 60 * 1000 * 10);
+}, 60 * 1000 * 10).unref();

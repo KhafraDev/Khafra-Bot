@@ -19,7 +19,7 @@ export const cooldown = (max: number, ms: number) => {
                 m.set(k, f);
             }
         })
-    }, 1000 * 60 * 10); // 10 minutes
+    }, 1000 * 60 * 10).unref(); // 10 minutes
 
     return (id: string) => {
         const now = Date.now();

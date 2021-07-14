@@ -21,7 +21,7 @@ setInterval(async () => {
 
     for (const row of rows)
         Giveaways.emit('giveaway', row);
-}, 30 * 1000);
+}, 30 * 1000).unref();
 
 Giveaways.on('giveaway', async (giveaway) => {
     try {

@@ -77,5 +77,5 @@ export const apodFetchDaily = async () => {
         if (!r.ok) return;
         const j = await r.json() as IAPOD;
         return nasaInsert({ title: j.title, link: j.hdurl ?? j.url, copyright: j.copyright ?? null });
-    }, 60 * 1000 * 60);
+    }, 60 * 1000 * 60).unref();
 }

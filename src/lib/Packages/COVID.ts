@@ -102,7 +102,7 @@ export const start = async () => {
     try { await fetchCOVIDStats() } catch {}
     return setInterval(async () => {
         try { await fetchCOVIDStats() } catch {}
-    }, 60 * 1000 * 10);
+    }, 60 * 1000 * 10).unref();
 }
 
 // cities.get('new york') // string[] - list of cities in state/province

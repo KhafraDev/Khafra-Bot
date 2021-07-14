@@ -1,7 +1,8 @@
 import { randomInt } from 'crypto';
 import { promisify } from 'util';
+import { setTimeout } from 'timers/promises';
 
-export const delay = promisify(setTimeout);
+export const delay = (ms: number, value?: unknown) => setTimeout(ms, value, { ref: false });
 /**
  * Generate a random number!
  *  

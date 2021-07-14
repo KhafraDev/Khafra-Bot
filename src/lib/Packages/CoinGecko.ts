@@ -116,5 +116,5 @@ export const setCryptoInterval = async () => {
         try {
             await all();
         } catch {}
-    }, 60 * 1000 * 15);
+    }, 60 * 1000 * 15).unref();
 }

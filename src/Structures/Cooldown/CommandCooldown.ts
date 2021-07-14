@@ -16,6 +16,6 @@ export const commandLimit = (name: string, user: Snowflake): boolean => {
 
     // somewhat interesting, we use the callback version rather than a promisifed function
     // so this isn't blocking the return statement.
-    setTimeout(() => commandCooldown.delete(user), command.settings.ratelimit * 1000);
+    setTimeout(() => commandCooldown.delete(user), command.settings.ratelimit * 1000).unref();
     return true;
 }
