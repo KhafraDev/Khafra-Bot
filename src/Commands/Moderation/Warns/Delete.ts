@@ -56,8 +56,8 @@ export class kCommand extends Command {
                 kbWarns.id = $1::uuid AND
                 kbWarns.k_guild_id = $2::text AND
                 kbWarns.k_user_id = $3::text
-            RETURNING k_id, k_points
-        `, [args[0].toLowerCase(), message.guild.id, member.id]);
+            RETURNING id, k_points
+        `, [args[1].toLowerCase(), message.guild.id, member.id]);
 
         if (deleted.length === 0)
             return this.Embed.fail('No warning with that ID could be found in the guild!');
