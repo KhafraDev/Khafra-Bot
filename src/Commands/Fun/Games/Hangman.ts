@@ -87,7 +87,8 @@ export class kCommand extends Command {
             filter: m =>
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
-                !guesses.includes(m.content.toLowerCase()),
+                !guesses.includes(m.content.toLowerCase()) &&
+                wrong < 6,
             time: 120_000
         });
 
