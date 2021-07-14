@@ -58,7 +58,7 @@ export class kCommand extends Command {
             LIMIT 1;
         `, [message.guild.id, user.id]);
 
-        if (rows.length === 0 || rows[0].dates.length === 0 || rows[0].ids.length === 0)
+        if (rows.length === 0 || !rows[0].dates?.length || !rows[0].ids?.length)
             return this.Embed.success(`${user} has no warning points! 👍`);
 
         const { dates, ids, points, total_points } = rows.shift()!;
