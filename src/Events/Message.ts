@@ -10,11 +10,12 @@ import { isDM } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
-import { commandLimit } from '../Structures/Cooldown/CommandCooldown.js';
+import { commandLimit, notified } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
+import { upperCase } from '../lib/Utility/String.js';
 
 const defaultSettings: Partial<kGuild> = {
     prefix: config.prefix,
@@ -79,7 +80,17 @@ export class kEvent extends Event<'messageCreate'> {
 
         const command = KhafraClient.Commands.get(optionsMatch.groups.commandName.toLowerCase());
         // command cooldowns are based around the commands name, not aliases
-        if (!commandLimit(command.settings.name, message.author.id)) return;
+        const limited = !commandLimit(command.settings.name, message.author.id);
+        if (limited) {
+            if (notified.has(message.author.id)) return;
+
+            notified.add(message.author.id);
+            return message.reply({
+                content: 
+                    `${upperCase(command.settings.name)} has a ${command.settings.ratelimit} second rate limit! ` +
+                    `Please wait a little bit longer to use the command again`
+            });
+        }
         
         if (command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
             return message.reply({ embeds: [Embed.fail(`
