@@ -1,5 +1,5 @@
 import { Message, Permissions } from 'discord.js';
-import { isText } from '../types/Discord.js.js';
+import { isDM } from '../types/Discord.js.js';
 import { hasPerms } from './Permissions.js';
 
 const basic = new Permissions([
@@ -22,13 +22,11 @@ export const Sanitize = (message: Message) => {
         message.system ||
         message.partial ||
         message.tts || 
-        message.content.length === 0
+        message.content.length === 0 ||
+        isDM(message.channel)
     ) { 
         return false;
     }
 
-    if (isText(message.channel))
-        return hasPerms(message.channel, message.guild.me, basic);
-    
-    return true;
+    return hasPerms(message.channel, message.guild.me, basic);
 }

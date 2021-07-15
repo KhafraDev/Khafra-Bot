@@ -6,7 +6,6 @@ import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import config from '../../config.json';
-import { isDM } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
@@ -16,6 +15,7 @@ import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
 import { upperCase } from '../lib/Utility/String.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const defaultSettings: Partial<kGuild> = {
     prefix: config.prefix,
@@ -39,25 +39,21 @@ export class kEvent extends Event<'messageCreate'> {
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild: Partial<kGuild> | kGuild | null = null;
-        if (isDM(message.channel))
-            guild = defaultSettings;
-        else {
-            const exists = await client.exists(message.guild.id) as 0 | 1;
-            if (exists === 1) {
-                const row = await client.get(message.guild.id);
-                guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
-            } else {
-                const { rows } = await pool.query<kGuild>(`
-                    SELECT * 
-                    FROM kbGuild
-                    WHERE guild_id = $1::text
-                    LIMIT 1;
-                `, [message.guild.id]);
+        const exists = await client.exists(message.guild.id) as 0 | 1;
+        if (exists === 1) {
+            const row = await client.get(message.guild.id);
+            guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
+        } else {
+            const { rows } = await pool.query<kGuild>(`
+                SELECT * 
+                FROM kbGuild
+                WHERE guild_id = $1::text
+                LIMIT 1;
+            `, [message.guild.id]);
 
-                void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+            void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
-                guild = Object.assign({ ...defaultSettings }, rows.shift());
-            }
+            guild = Object.assign({ ...defaultSettings }, rows.shift());
         }
 
         // matches the start of the string with the prefix defined above
@@ -85,32 +81,30 @@ export class kEvent extends Event<'messageCreate'> {
             if (notified.has(message.author.id)) return;
 
             notified.add(message.author.id);
-            return message.reply({
+            return dontThrow(message.reply({
                 content: 
                     `${upperCase(command.settings.name)} has a ${command.settings.ratelimit} second rate limit! ` +
-                    `Please wait a little bit longer to use the command again`
-            });
+                    `Please wait a little bit longer to use the command again. ❤️`
+            }));
         }
         
         if (command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
-            return message.reply({ embeds: [Embed.fail(`
-            \`\`${command.settings.name}\`\` is only available to the bot owner!
-            `)] });
-        } else if (command.settings.guildOnly && isDM(message.channel)) {
-            return message.reply({ embeds: [Embed.fail(`
-            \`\`${command.settings.name}\`\` is only available in guilds!
-            `)] });
-        } 
+            return dontThrow(message.reply({ 
+                embeds: [
+                    Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
+                ] 
+            }));
+        }
 
         const [min, max] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return message.reply({ embeds: [Embed.fail(`
+            return dontThrow(message.reply({ embeds: [Embed.fail(`
             Incorrect number of arguments provided.
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
             Example(s):
             ${command.help.slice(1).map(c => `\`\`${guild.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
-            `)] });
+            `)] }));
         }
         
         this.logger.log(trim`
@@ -122,15 +116,11 @@ export class kEvent extends Event<'messageCreate'> {
         `);
 
         if (!_cooldownUsers(message.author.id)) {
-            return message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] });
-        } else if (!isDM(message.channel)) {
-            if (!_cooldownGuild(message.guild.id)) {
-                return message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] });
-            } 
-        }
-
-        if (!hasPerms(message.channel, message.member, command.permissions)) {
-            return message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] });
+            return dontThrow(message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
+        } else if (!_cooldownGuild(message.guild.id)) {
+            return dontThrow(message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] }));
+        } else if (!hasPerms(message.channel, message.member, command.permissions)) {
+            return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
         }
 
         try {
@@ -166,11 +156,10 @@ export class kEvent extends Event<'messageCreate'> {
                 ? command.errors[e.name as keyof typeof command.errors] 
                 : command.errors.default;
                 
-            return message.reply({ 
+            return dontThrow(message.reply({ 
                 embeds: [Embed.fail(error)],
                 failIfNotExists: false
-            })
-                .catch(() => {});
+            }));
         }
     }
 }
