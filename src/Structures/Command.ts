@@ -4,7 +4,6 @@ import {
     Permissions,
     PermissionResolvable
 } from 'discord.js';
-import { Logger } from './Logger.js';
 import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -22,7 +21,6 @@ export interface Arguments {
 }
 
 interface ICommand {
-    readonly logger: Logger
     readonly help: string[]
     readonly permissions: PermissionResolvable
     readonly settings: {
@@ -40,7 +38,6 @@ interface ICommand {
 }
 
 export abstract class Command implements ICommand {
-    readonly logger = new Logger('Command');
     readonly errors = Errors;
     readonly Embed = Embed;
 
