@@ -7,6 +7,7 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -66,13 +67,17 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             return;
 
         if (oldHas && !newHas) { // lost role
-            return channel.send({ embeds: [
-                Embed.fail(`${newMember} is no longer boosting the server! 😨`)
-            ] }).catch(() => {});
+            const embed = Embed.fail(`${newMember} is no longer boosting the server! 😨`);
+            if (newMember.user)
+                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+
+            return dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
-            return channel.send({ embeds: [
-                Embed.success(`${newMember} just boosted the server! 🥳`)
-            ] }).catch(() => {});
+            const embed = Embed.success(`${newMember} just boosted the server! 🥳`);
+            if (newMember.user)
+                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+
+            return dontThrow(channel.send({ embeds: [embed] }));
         }
     }
 }
