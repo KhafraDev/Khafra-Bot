@@ -8,6 +8,9 @@ import { client } from '../../../index.js';
 import config from '../../../../config.json';
 import { once } from '../../../lib/Utility/Memoize.js';
 
+// found some of these images on a 3 year old reddit post
+// https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
+
 const formatPresence = (activities: Activity[]) => {
     if (!Array.isArray(activities)) return null;
     const push: string[] = [];
@@ -42,6 +45,8 @@ const getEmojis = once(() => {
 // 84484653687267328 -> Certified moderator; early supporter; partnered server owner; early verified bot owner; brilliance
 // 173547401905176585 -> Discord employee; bravery
 // 104360151208706048 -> balance
+// 140214425276776449 -> bug hunter 1
+// 73193882359173120 -> hypesquad events; bug hunter 2
 
 @RegisterCommand
 export class kCommand extends Command {
