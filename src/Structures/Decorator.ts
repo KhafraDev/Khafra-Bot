@@ -1,5 +1,6 @@
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { client } from '../index.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { Command } from './Command.js';
 import { CommandCooldown } from './Cooldown/CommandCooldown.js';
 import { Event } from './Event.js';
@@ -28,13 +29,11 @@ export const RegisterInteraction = <T extends new (...args: unknown[]) => Intera
 ) => {
     const interaction = new InteractionObject();
 
-    client.application.commands.create(interaction.data)
-        .catch(() => {});
+    void dontThrow(client.application.commands.create(interaction.data));
 
     // There isn't a better way to check if a bot can make a slash command "yet".
     // https://discord.com/channels/222078108977594368/824410868505903114/848343604308475934
-    client.guilds.cache.get('503024525076725771').commands.create(interaction.data)
-        .catch(() => {});
+    void dontThrow(client.guilds.cache.get('503024525076725771')?.commands.create(interaction.data));
 
     KhafraClient.Interactions.set(interaction.data.name, interaction);
 }
