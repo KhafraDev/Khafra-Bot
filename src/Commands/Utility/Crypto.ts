@@ -1,10 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
-import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
+import { time } from '@discordjs/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 const mw = once(setCryptoInterval);
@@ -52,11 +52,11 @@ export class kCommand extends Command {
 
                 { name: '**All Time High:**', value: f(currency.ath), inline: true },
                 { name: '**% Change ATH:**',  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATH Date:**',      value: formatDate('MMM. Do, YYYY', currency.ath_date), inline: true },
+                { name: '**ATH Date:**',      value: time(new Date(currency.ath_date), 'D'), inline: true },
 
                 { name: '**All Time Low:**',  value: f(currency.atl), inline: true },
                 { name: '**% Change ATL:**',  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATL Date:**',      value: formatDate('MMM. Do, YYYY', currency.atl_date), inline: true },
+                { name: '**ATL Date:**',      value: time(new Date(currency.atl_date), 'D'), inline: true },
 
                 { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
                 { name: '**% Change 24H:**',  value: `${currency.price_change_percentage_24h}%`, inline: true }

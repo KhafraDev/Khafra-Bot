@@ -31,7 +31,7 @@ interface CoinGeckoRes {
     ath_date: string,
     atl: number,
     atl_change_percentage: number,
-    atl_date: Date,
+    atl_date: string,
     roi?: {
         times: number,
         currency: string,
