@@ -4,10 +4,9 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Warning } from '../../../lib/types/KhafraBot.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode, time } from '@discordjs/builders';
 
 interface Total {
     total_points: string
@@ -71,7 +70,7 @@ export class kCommand extends Command {
         // embeds can have a maximum of 25 fields
         for (const [id, date, p] of mapped.slice(0, 25)) {
             const points = p.toLocaleString(message.guild.preferredLocale);
-            embed.addField(`**${formatDate('MMMM Do, YYYY', date)}:**`, `${inlineCode(id)}: ${points} point${plural(p)}.`, true);
+            embed.addField(`**${time(date)}:**`, `${inlineCode(id)}: ${points} point${plural(p)}.`, true);
         }
 
         return embed;

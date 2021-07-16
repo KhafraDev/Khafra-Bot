@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 const formatPresence = (activities: Activity[]) => {
     const push: string[] = [];
@@ -59,10 +59,10 @@ export class kCommand extends Command {
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(
                 { name: '**Role Color:**', value: member.displayHexColor, inline: true },
-                { name: '**Joined Guild:**', value: formatDate('MMM. Do, YYYY hh:mm:ssA t', member.joinedAt), inline: false },
+                { name: '**Joined Guild:**', value: time(member.joinedAt), inline: false },
                 { 
                     name: '**Boosting Since:**', 
-                    value: member.premiumSince ? formatDate('MMM. Do, YYYY hh:mm:ssA t', member.premiumSince) : 'Not boosting', 
+                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting', 
                     inline: true 
                 },
             )

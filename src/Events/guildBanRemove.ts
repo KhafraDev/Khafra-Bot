@@ -6,7 +6,7 @@ import { kGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';
-import { formatDate } from '../lib/Utility/Date.js';
+import { time } from '@discordjs/builders';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
 import { Logger } from '../Structures/Logger.js';
 import { client } from '../Structures/Database/Redis.js';
@@ -66,7 +66,7 @@ export class kEvent extends Event<'guildBanRemove'> {
                 **User:** ${user} (${user.tag})
                 **ID:** ${user.id}
                 **Staff:** ${unban?.member ?? 'Unknown'}
-                **Time:** ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}
+                **Time:** ${time(new Date())}
                 **Reason:** \`\`${reasonStr.length > 1500 ? `${reasonStr.slice(1500)}...` : reasonStr}\`\`
                 `).setTitle('Member Unbanned') 
             ] });

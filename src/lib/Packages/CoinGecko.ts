@@ -28,7 +28,7 @@ interface CoinGeckoRes {
     max_supply?: number | null,
     ath: number,
     ath_change_percentage: number,
-    ath_date: Date,
+    ath_date: string,
     atl: number,
     atl_change_percentage: number,
     atl_date: Date,

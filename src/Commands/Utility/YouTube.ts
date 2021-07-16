@@ -1,10 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageActionRow, Interaction } from 'discord.js';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
-import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { time } from '@discordjs/builders';
 
 function* format(items: YouTubeSearchResults, embed = Embed.success) {
     for (let i = 0; i < items.items.length; i++) {
@@ -14,7 +14,7 @@ function* format(items: YouTubeSearchResults, embed = Embed.success) {
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
-            .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', new Date(video.publishTime)))
+            .addField('**Published:**', time(new Date(video.publishTime)))
             .addField('**URL:**', `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
             
         yield Embed;

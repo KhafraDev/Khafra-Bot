@@ -5,6 +5,7 @@
   "main": "build/src/index.js",
   "type": "module",
   "dependencies": {
+    "@discordjs/builders": "^0.2.0",
     "@khaf/badmeme": "file:src/lib/Packages/BadMeme",
     "adm-zip": "^0.4.16",
     "better-sqlite3": "^7.4.0",

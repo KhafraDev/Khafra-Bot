@@ -1,8 +1,8 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message, Role } from 'discord.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -43,7 +43,7 @@ export class kCommand extends Command {
             `)
             .addField('**Name:**', role.name, true)
             .addField('**Color:**', role.hexColor, true)
-            .addField('**Created:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', role.createdAt), true)
+            .addField('**Created:**', time(role.createdAt), true)
             .addField('**Mentionable:**', role.mentionable ? 'Yes' : 'No', true)
             .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
             .addField('**Position:**', `${role.position}`, true)

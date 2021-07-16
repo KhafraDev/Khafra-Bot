@@ -4,8 +4,8 @@ import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { DiscordAPIError, Message } from 'discord.js';
 import { hyperlink, inlineCode } from '@discordjs/builders';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { isText } from '../../../lib/types/Discord.js.js';
+import { time } from '@discordjs/builders';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 
@@ -44,7 +44,7 @@ export class kCommand extends Command {
                 const url = `https://discord.com/channels/${row.guildid}/${row.channelid}/${row.messageid}`;
                 str +=
                     `ID: ${inlineCode(row.id)}: ${hyperlink('URL', url)} ` +
-                    formatDate('MMM Do, YYYY hh:mm:ssA', row.enddate) + ' ' +
+                    time(row.enddate) + ' ' +
                     // uuid = 36 chars long, discord message is ~85
                     inlineCode(row.prize.length > 50 ? `${row.prize.slice(0, 50)}...` : row.prize)
                     + '\n';

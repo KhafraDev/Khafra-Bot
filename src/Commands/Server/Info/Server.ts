@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -41,7 +41,7 @@ export class kCommand extends Command {
                 { name: '**Tier:**', value: `${message.guild.premiumTier}`, inline: true },
                 { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
                 { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },
-                { name: '**Created:**', value: formatDate('MMMM Do, YYYY hh:mm:ss A t', message.guild.createdAt), inline: false }
+                { name: '**Created:**', value: time(message.guild.createdAt), inline: false }
             );
     }
 }

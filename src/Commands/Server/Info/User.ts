@@ -1,12 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity, SnowflakeUtil, Snowflake } from 'discord.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { UserFlagsString } from 'discord.js';
 import { client } from '../../../index.js';
 import config from '../../../../config.json';
 import { once } from '../../../lib/Utility/Memoize.js';
+import { time } from '@discordjs/builders';
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
@@ -87,6 +87,6 @@ export class kCommand extends Command {
             .addField('**Discriminator:**', `#${user.discriminator}`, true)
             .addField('**Bot:**', user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
             .addField('**Badges:**', `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-            .addField('**Account Created:**', formatDate('MMM. Do, YYYY hh:mm:ssA t', snowflake.date), true);
+            .addField('**Account Created:**', time(snowflake.date), true);
     }
 }
