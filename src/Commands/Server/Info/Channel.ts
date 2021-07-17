@@ -1,9 +1,10 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { formatDate } from '../../../lib/Utility/Date.js';
 import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -29,6 +30,10 @@ export class kCommand extends Command {
             await getMentions(message, 'channels') ?? 
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
             message.channel;
+
+        if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
+            return this.Embed.fail('No channel with that name was found!'); 
+        }
 
         const embed = this.Embed.success()
             .addFields(
