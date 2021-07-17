@@ -6,6 +6,7 @@ import { chunkSafe } from '../../lib/Utility/Array.js';
 import { bold, inlineCode, hyperlink, codeBlock } from '@discordjs/builders';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 let folders: string[] | null = null;
 
@@ -87,8 +88,7 @@ export class kCommand extends Command {
         const c = m.createMessageComponentCollector({
             time: 60_000,
             max: 10,
-            filter: (interaction) =>
-                interaction.user.id === message.author.id
+            filter: (interaction) => interaction.user.id === message.author.id
         });
 
         c.on('collect', (i) => {
@@ -132,22 +132,34 @@ export class kCommand extends Command {
                 else
                     components.push(m.components[m.components.length - 1]);
 
-                return i.update({ 
+                return void dontThrow(i.update({ 
                     embeds: [pages[page]],
                     components
-                });
+                }));
             } else {
                 if (i.customId === 'stop') {
                     c.stop();
-                    return i.update({ components: disableAll(m) });
+                    return void dontThrow(i.update({ components: disableAll(m) }));
                 } else if (i.customId === 'previous') {
                     page = --page < 0 ? pages.length - 1 : page;
                 } else {
                     page = ++page >= pages.length ? 0 : page;
                 }
 
-                return i.update({ embeds: [pages[page]] });
+                return void dontThrow(i.update({ embeds: [pages[page]] }));
             }
+        });
+
+        c.once('end', () => {
+            for (const { components } of m.components) {
+                for (const component of components) {
+                    if (component.disabled) return;
+                }
+            }
+            
+            return void dontThrow(m.edit({
+                components: disableAll(m)
+            }));
         });
     }
 }
