@@ -4,7 +4,7 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { table } from '../../../lib/Utility/CLITable.js';
-import { time } from '@discordjs/builders';
+import { formatDate } from '../../../lib/Utility/Date.js';
 
 interface Insights {
     k_date: Date
@@ -53,7 +53,7 @@ export class kCommand extends Command {
 
         const locale = message.guild.preferredLocale;
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(time(row.k_date, 'D'));
+            red.Dates.push(formatDate('MMMM Do, YYYY', row.k_date));
             red.Joins.push(row.k_joined.toLocaleString(locale));
             red.Leaves.push(row.k_left.toLocaleString(locale));
 
