@@ -67,7 +67,7 @@ export class kEvent extends Event<'guildMemberAdd'> {
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`${member} (${member.user.tag}) joined the server!`)
-            .addField('Account Created:', time(member.user.createdAt, 'R'), true);
+            .addField('Account Created:', time(member.user.createdAt), true);
 
         return dontThrow(channel.send({ embeds: [embed] }));
     }
