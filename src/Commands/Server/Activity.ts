@@ -72,6 +72,10 @@ export class kCommand extends Command {
                 ],
                 components: disableAll(m)
             }));
+        } else {
+            void dontThrow(interaction.update({
+                components: disableAll(m)
+            }));
         }
 
         const [fetchError, r] = await dontThrow(fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
@@ -97,7 +101,7 @@ export class kCommand extends Command {
 
         const invite = await r.json() as APIInvite;
 
-        return this.Embed.fail(`
+        return this.Embed.success(`
         ${hyperlink('Click Here', `<https://discord.gg/${invite.code}>`)} to open ${invite.target_application.name} in ${channel}!
         `);
     }
