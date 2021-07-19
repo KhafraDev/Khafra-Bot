@@ -35,8 +35,9 @@ export const cartoonize = async (attachment: MessageAttachment) => {
         }, async (res) => {
             let data = '';
             
+            res.setEncoding('utf-8');
             for await (const chunk of res) {
-                data += `${chunk}`;
+                data += chunk;
             }
 
             return done(decodeXML(R.exec(data)[1]));
