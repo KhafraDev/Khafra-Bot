@@ -27,7 +27,10 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const search = interaction.options.first()!.value as string;
+        const search = interaction.options.get('input', true).value;
+        if (typeof search !== 'string')
+            return 'Invalid option received!';
+            
         const result = await fetchMDN(search);
 
         if ('errors' in result) {

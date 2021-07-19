@@ -20,9 +20,9 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const subreddit = interaction.options.size === 0
-            ? 'dankmemes'
-            : `${interaction.options.first()!.value}`.toLowerCase();
+        const subreddit = interaction.options.get('subreddit')?.value ?? 'dankmemes';
+        if (typeof subreddit !== 'string')
+            return 'Invalid option received!';
 
         if (!cache.has(subreddit))
             await interaction.defer();
