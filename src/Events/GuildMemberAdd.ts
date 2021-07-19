@@ -7,6 +7,8 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
+import { time } from '@discordjs/builders';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -54,11 +56,9 @@ export class kEvent extends Event<'guildMemberAdd'> {
         if (member.guild.channels.cache.has(item.welcome_channel)) {
             channel = member.guild.channels.cache.get(item.welcome_channel);
         } else {
-            try {
-                channel = await member.guild.client.channels.fetch(item.welcome_channel);
-            } catch (e) {
-                return;
-            }
+            const [err, c] = await dontThrow(member.guild.client.channels.fetch(item.welcome_channel));
+            if (err !== null) return;
+            channel = c;
         }
 
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
@@ -66,10 +66,9 @@ export class kEvent extends Event<'guildMemberAdd'> {
         
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member} (${member.user.tag}) joined the server!`);
+            .setDescription(`${member} (${member.user.tag}) joined the server!`)
+            .addField('Account Created:', time(member.user.createdAt, 'R'), true);
 
-        try {
-            return channel.send({ embeds: [embed] });
-        } catch {}
+        return dontThrow(channel.send({ embeds: [embed] }));
     }
 }
