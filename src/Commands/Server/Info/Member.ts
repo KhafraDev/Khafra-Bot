@@ -5,6 +5,8 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { time } from '@discordjs/builders';
 
 const formatPresence = (activities: Activity[]) => {
+    if (!Array.isArray(activities)) return '';
+    
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
@@ -51,10 +53,10 @@ export class kCommand extends Command {
             .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`
             ${member} on *${member.guild.name}*.
-            ${formatPresence(member.presence.activities)}
+            ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${member.roles.cache.filter(r => r.name !== '@everyone').array()?.slice(0, 20).join(', ')}
+            ${member.roles.cache.filter(r => r.name !== '@everyone').array().slice(0, 20).join(', ')}
             `)
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(
