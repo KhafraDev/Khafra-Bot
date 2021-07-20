@@ -16,7 +16,7 @@ export class kCommand extends Command {
                 folder: 'Server',
                 args: [1, 1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS ]
+                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
             }
         );
     }

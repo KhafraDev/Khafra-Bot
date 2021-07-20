@@ -17,7 +17,7 @@ export class kCommand extends Command {
                 folder: 'Pocket',
                 args: [0, 0],
                 ratelimit: 300,
-                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS ]
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
             }
         );
     }
