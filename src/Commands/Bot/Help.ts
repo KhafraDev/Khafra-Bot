@@ -110,7 +110,10 @@ export class kCommand extends Command {
                 for (const chunk of chunkSafe(all, 20)) {
                     let desc = '';
                     for (const { settings, help } of chunk) {
-                        desc += `${bold(settings.name)}: ${inlineCode(help[0].slice(0, 190 - settings.name.length))}\n`;
+                        if (help[0])
+                            desc += `${bold(settings.name)}: ${inlineCode(help[0].slice(0, 190 - settings.name.length))}\n`;
+                        else
+                            desc += `${bold(settings.name)}: ${inlineCode('No description')}`
                     }
 
                     pages.push(this.Embed.success(desc));

@@ -1,7 +1,7 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { InviteTargetType, APIInvite } from 'discord-api-types/v8';
+import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody } from 'discord-api-types/v8';
 import fetch from 'undici-fetch';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { isVoice } from '../../lib/types/Discord.js.js';
@@ -85,10 +85,10 @@ export class kCommand extends Command {
                 'Content-Type': 'application/json' 
             },
             body: JSON.stringify({
-                max_age: 0,
+                max_age: 86400,
                 target_type: InviteTargetType.EMBEDDED_APPLICATION,
                 target_application_id: interaction.customId
-            })
+            } as RESTPostAPIChannelInviteJSONBody)
         }));
 
         if (fetchError !== null || !r.ok) {
