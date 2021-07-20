@@ -4,6 +4,7 @@ import { badmeme } from '@khaf/badmeme';
 import { isDM, isText } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -82,14 +83,14 @@ export class kCommand extends Command {
             if (page < 0) page = res.url.length - 1;
             if (page >= res.url.length) page = 0;
 
-            return void i.update({ content: res.url[page] });
+            return void dontThrow(i.update({ content: res.url[page] }));
         });
         collector.on('end', (c, r) => {
             if (r === 'deny') {
-                return c.last().update({ components: disableAll(m) });
+                return void dontThrow(c.last().update({ components: disableAll(m) }));
             }
 
-            return void m.edit({ components: disableAll(m) });
+            return void dontThrow(m.edit({ components: disableAll(m) }));
         });
     }
 }

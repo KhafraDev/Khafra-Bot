@@ -8,10 +8,8 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';
 import { time } from '@discordjs/builders';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
-import { Logger } from '../Structures/Logger.js';
 import { client } from '../Structures/Database/Redis.js';
-
-const guildBanRemoveLogger = new Logger('guildBanRemove');
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 type modLogChannel = Pick<kGuild, 'mod_log_channel'>;
 
@@ -60,8 +58,8 @@ export class kEvent extends Event<'guildBanRemove'> {
         const unban = unbans.has(key) ? unbans.get(key) : null;
         const reasonStr = reason ?? unban?.reason ?? 'Unknown';
 
-        try {
-            await channel.send({ embeds: [
+        await dontThrow(channel.send({ 
+            embeds: [
                 Embed.success(`
                 **User:** ${user} (${user.tag})
                 **ID:** ${user.id}
@@ -69,11 +67,9 @@ export class kEvent extends Event<'guildBanRemove'> {
                 **Time:** ${time(new Date())}
                 **Reason:** \`\`${reasonStr.length > 1500 ? `${reasonStr.slice(1500)}...` : reasonStr}\`\`
                 `).setTitle('Member Unbanned') 
-            ] });
-        } catch (e) {
-            guildBanRemoveLogger.log(e);
-        } finally {
-            unbans.delete(key);
-        }
+            ]
+        }));
+
+        unbans.delete(key);
     }
 }

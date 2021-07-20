@@ -3,6 +3,7 @@ import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -62,11 +63,11 @@ export class kCommand extends Command {
             if (page < 0) page = icons.icons.length - 1;
             if (page >= icons.icons.length) page = 0;
 
-            return void i.update({ embeds: [this.Embed.success().setImage(icons.icons[page].preview_url)] });
+            return void dontThrow(i.update({ embeds: [this.Embed.success().setImage(icons.icons[page].preview_url)] }));
         });
         collector.on('end', (_c, reason) => {
             if (reason === 'deny' || reason === 'time' || reason === 'limit') 
-                return void m.edit({ components: [] });
+                return void dontThrow(m.edit({ components: [] }));
         });
     }
 }

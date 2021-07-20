@@ -8,6 +8,7 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -54,11 +55,9 @@ export class kEvent extends Event<'roleUpdate'> {
         if (oldRole.guild.channels.cache.has(item.complete_log_channel)) {
             channel = oldRole.guild.channels.cache.get(item.complete_log_channel);
         } else {
-            try {
-                channel = await oldRole.guild.client.channels.fetch(item.complete_log_channel);
-            } catch (e) {
-                return;
-            }
+            const [err, chan] = await dontThrow(oldRole.guild.client.channels.fetch(item.complete_log_channel));
+            if (err !== null) return;
+            channel = chan;
         }
 
         if (!isText(channel) || !hasPerms(channel, oldRole.guild.me, basic))
@@ -100,8 +99,6 @@ export class kEvent extends Event<'roleUpdate'> {
             }
         }
 
-        try {
-            return channel.send({ embeds: [embed] });
-        } catch {}
+        return dontThrow(channel.send({ embeds: [embed] }));
     }
 }

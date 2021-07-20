@@ -4,6 +4,7 @@ import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
 import Trump from '../../../../assets/Trump.json';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {    
@@ -73,18 +74,18 @@ export class kCommand extends Command {
             if (page >= embeds.length) page = embeds.length - 1;
 
             if (page !== old)
-                return void i.update({ 
+                return void dontThrow(i.update({ 
                     content: null,
                     embeds: [embeds[page]] 
-                });
+                }));
             else 
-                return void i.update({ 
+                return void dontThrow(i.update({ 
                     content: page === 0 ? 'No previous items!' : 'No more items!' 
-                });
+                }));
         });
         collector.on('end', (_c, reason) => {
             if (reason === 'deny' || reason === 'time' || reason === 'limit') 
-                return void m.edit({ content: null, components: [] });
+                return void dontThrow(m.edit({ content: null, components: [] }));
         });
     }
 }

@@ -1,9 +1,11 @@
 import { Event } from '../Structures/Event.js';
-import { MessageEmbed, Snowflake } from 'discord.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
 import config from '../../config.json';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../lib/Utility/Mentions.js';
 
 @RegisterEvent
 export class kEvent extends Event<'ready'> {
@@ -14,16 +16,16 @@ export class kEvent extends Event<'ready'> {
         console.log(s);
         
         if (typeof config.botOwner === 'string') {
-            try {
-                const user = await client.users.fetch(config.botOwner as Snowflake);
-                await user.send({ 
-                    embeds: [
-                        new MessageEmbed()
-                            .setDescription(s)
-                            .setColor(config.embed.success as `#${string}`)
-                    ]
-                }); 
-            } catch {
+            if (!validSnowflake(config.botOwner)) {
+                return console.log('Logged in, configuration bot owner is not a valid Snowflake!');
+            }
+            
+            const user = await client.users.fetch(config.botOwner);
+            const [err] = await dontThrow(user.send({ 
+                embeds: [Embed.success(s)]
+            }));
+        
+            if (err !== null) {
                 console.log(`Logged in! Could not send message to the bot owner.`);
             }
         }

@@ -7,6 +7,7 @@ import { pool } from '../../Structures/Database/Postgres.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -41,11 +42,9 @@ export class kEvent extends Event<'emojiCreate'> {
         if (emoji.guild.channels.cache.has(item.complete_log_channel)) {
             channel = emoji.guild.channels.cache.get(item.complete_log_channel);
         } else {
-            try {
-                channel = await emoji.guild.client.channels.fetch(item.complete_log_channel);
-            } catch (e) {
-                return;
-            }
+            const [err, chan] = await dontThrow(emoji.guild.client.channels.fetch(item.complete_log_channel));
+            if (err !== null) return;
+            channel = chan;
         }
 
         if (!isText(channel) || !hasPerms(channel, emoji.guild.me, basic))
@@ -63,8 +62,6 @@ export class kEvent extends Event<'emojiCreate'> {
 
         embed.setThumbnail(emoji.url);
 
-        try {
-            return channel.send({ embeds: [embed] });
-        } catch {}
+        return dontThrow(channel.send({ embeds: [embed] }));
     }
 }

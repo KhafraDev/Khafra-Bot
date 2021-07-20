@@ -5,6 +5,7 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 const range = Range(0, 32767, true); // smallint
 
@@ -74,7 +75,7 @@ export class kCommand extends Command {
             time: 60 * 1000 * 5 
         });
 
-        collector.on('collect', async (m: Message) => {
+        collector.on('collect', async (m) => {
             if (msg?.deleted)
                 return collector.stop();
             else if (m.content.toLowerCase() === 'stop')
@@ -87,6 +88,7 @@ export class kCommand extends Command {
 
         collector.on('end', async (_collection, reason) => {
             if (reason === '1') { // stopped by user
+                // TODO(@KhafraDev): rewrite this
                 // https://node-postgres.com/features/transactions
                 const client = await pool.connect();
 
@@ -114,7 +116,7 @@ export class kCommand extends Command {
                     client.release();
                 }
 
-                return void msg.edit({ 
+                return void dontThrow(msg.edit({ 
                     embeds: [this.Embed.success(`
                     Added ${rules.size} rules!
 
@@ -122,7 +124,7 @@ export class kCommand extends Command {
                     To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
                     To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
                     `)]
-                });
+                }));
             }
         });
     }

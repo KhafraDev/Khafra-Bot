@@ -8,6 +8,7 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { upperCase } from '../../lib/Utility/String.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -42,11 +43,9 @@ export class kEvent extends Event<'channelDelete'> {
         if (channel.guild.channels.cache.has(item.complete_log_channel)) {
             logChannel = channel.guild.channels.cache.get(item.complete_log_channel);
         } else {
-            try {
-                logChannel = await channel.guild.client.channels.fetch(item.complete_log_channel);
-            } catch (e) {
-                return;
-            }
+            const [err, chan] = await dontThrow(channel.guild.client.channels.fetch(item.complete_log_channel));
+            if (err !== null) return;
+            logChannel = chan;
         }
 
         if (!isText(logChannel) || !hasPerms(logChannel, channel.guild.me, basic))
@@ -55,8 +54,6 @@ export class kEvent extends Event<'channelDelete'> {
         const embed = Embed.success(`${upperCase(channel.type)} channel ${channel} (${channel.name}, ${channel.id}) was deleted!`)
             .setTitle('Channel Deleted');
 
-        try {
-            return logChannel.send({ embeds: [embed] });
-        } catch {}
+        return dontThrow(logChannel.send({ embeds: [embed] }));
     }
 }

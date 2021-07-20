@@ -34,6 +34,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
+        // TODO(@KhafraDev): rewrite
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         }
@@ -60,37 +61,36 @@ export class kCommand extends Command {
 
         const lines: { emoji: string, text: string }[] = []
 
-        const collector = message.channel.createMessageCollector({
+        const c = message.channel.createMessageCollector({
             filter,
             max: 5,
             time: 60 * 1000 * 3
         });
-        collector
-            .on('collect', (m: Message) => {
-                if (m.content.toLowerCase() === 'cancel')
-                    return collector.stop('cancel');
-                if (m.content.toLowerCase() === 'stop')
-                    return collector.stop('stop');
+        c.on('collect', (m) => {
+            if (m.content.toLowerCase() === 'cancel')
+                return c.stop('cancel');
+            if (m.content.toLowerCase() === 'stop')
+                return c.stop('stop');
 
-                const parsed = parse(m.content);
-                if (parsed.length === 0) return;
-                const reg = new RegExp(`^${parsed[0].text} .*`);
-                if (!reg.test(m.content)) return;
+            const parsed = parse(m.content);
+            if (parsed.length === 0) return;
+            const reg = new RegExp(`^${parsed[0].text} .*`);
+            if (!reg.test(m.content)) return;
 
-                const text = m.content.replace(new RegExp(`^${parsed[0].text}`), '');
-                lines.push({ emoji: parsed[0].text, text });
-            })
-            .on('end', async (_c, r) => {
-                if (r === 'cancel' || lines.length === 0)
-                    return;
+            const text = m.content.replace(new RegExp(`^${parsed[0].text}`), '');
+            lines.push({ emoji: parsed[0].text, text });
+        });
+        c.on('end', async (_c, r) => {
+            if (r === 'cancel' || lines.length === 0)
+                return;
 
-                try {
-                    const m = await channel.send({ embeds: [this.Embed.success(
-                        lines.map(l => `${l.emoji}: ${l.text}`).join('\n')
-                    )] });
+            try {
+                const m = await channel.send({ embeds: [this.Embed.success(
+                    lines.map(l => `${l.emoji}: ${l.text}`).join('\n')
+                )] });
 
-                    await Promise.allSettled(lines.map(l => m.react(l.emoji)));
-                } catch {}
-            });
+                await Promise.allSettled(lines.map(l => m.react(l.emoji)));
+            } catch {}
+        });
     }
 }

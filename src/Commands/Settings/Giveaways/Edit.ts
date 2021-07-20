@@ -9,6 +9,7 @@ import { parseStrToMs } from '../../../lib/Utility/ms.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { time } from '@discordjs/builders';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 type GiveawayEdit = Pick<Giveaway, 'id'>;
@@ -112,7 +113,7 @@ export class kCommand extends Command {
             } else if (i.customId === 'save') { 
                 return c.stop('save');
             } else if (i.customId === 'endDate') {
-                await i.update({
+                await dontThrow(i.update({
                     embeds: [
                         this.Embed.success(`
                         ${bold('When should the giveaway end?')}
@@ -122,7 +123,7 @@ export class kCommand extends Command {
                         `)
                     ],
                     components: disableAll(m)
-                });
+                }));
 
                 let endStr: number | null = null;
                 const end = await message.channel.awaitMessages({
@@ -137,16 +138,16 @@ export class kCommand extends Command {
                 });
     
                 if (end.size === 0) {
-                    return void m.edit({
+                    return void dontThrow(m.edit({
                         embeds: [this.Embed.fail(`Didn't respond with a valid time, time wasn't changed.`)],
                         components: enableAll(m)
-                    });
+                    }));
                 }
     
                 sql.push(`endDate = $${$++}::timestamp`);
                 params.push(new Date(Date.now() + endStr));
 
-                return void m.edit({
+                return void dontThrow(m.edit({
                     embeds: [
                         this.Embed.success(
                         `Changed ending to ${time(new Date(Date.now() + endStr))}, ` + 
@@ -155,14 +156,14 @@ export class kCommand extends Command {
                         )
                     ],
                     components: enableAll(m)
-                });
+                }));
             } else if (i.customId === 'prize') {
-                await i.update({
+                await dontThrow(i.update({
                     embeds: [
                         this.Embed.success(`${bold('What is the new prize?')}`)
                     ],
                     components: disableAll(m)
-                });
+                }));
 
                 const prize = await message.channel.awaitMessages({
                     max: 1,
@@ -173,16 +174,16 @@ export class kCommand extends Command {
                 });
     
                 if (prize.size === 0) {
-                    return void m.edit({
+                    return void dontThrow(m.edit({
                         embeds: [this.Embed.fail(`Didn't respond in time, prize wasn't changed.`)],
                         components: enableAll(m)
-                    });
+                    }));
                 }
     
                 sql.push(`prize = $${$++}::text`);
                 params.push(prize.first().content);
     
-                return void m.edit({ 
+                return void dontThrow(m.edit({ 
                     embeds: [
                         this.Embed.success(`
                         The prize was changed.
@@ -191,14 +192,14 @@ export class kCommand extends Command {
                         `)
                     ],
                     components: enableAll(m)
-                });
+                }));
             } else if (i.customId === 'winners') {
-                await i.update({
+                await dontThrow(i.update({
                     embeds: [
                         this.Embed.success(`${bold('How many winners should there be now?')}`)
                     ],
                     components: disableAll(m)
-                });
+                }));
 
                 const winners = await message.channel.awaitMessages({
                     max: 1,
@@ -210,16 +211,16 @@ export class kCommand extends Command {
                 });
     
                 if (winners.size === 0) {
-                    return void m.edit({
+                    return void dontThrow(m.edit({
                         embeds: [this.Embed.fail(`Didn't respond in time, number of winners wasn't changed.`)],
                         components: enableAll(m)
-                    });
+                    }));
                 }
     
                 sql.push(`winners = $${$++}::smallint`);
                 params.push(Number(winners.first().content));
     
-                return void m.edit({ 
+                return void dontThrow(m.edit({ 
                     embeds: [
                         this.Embed.success(`
                         Number of winners will be changed to ${winners.first().content}!
@@ -228,18 +229,18 @@ export class kCommand extends Command {
                         `)
                     ],
                     components: enableAll(m)
-                });
+                }));
             }
         });
         
         c.on('end', async (c, r) => {
             if (r === 'cancel') {
-                return c.last().update({
+                return void dontThrow(c.last().update({
                     embeds: [this.Embed.fail('Edit canceled, giveaway is unchanged!')],
                     components: []
-                });
+                }));
             } else if (r === 'save') {
-                await c.last().defer();
+                await dontThrow(c.last().defer());
                 params.push(message.guild.id, message.member.id, id);
                 
                 const { rows } = await pool.query<GiveawayEdit>(`
@@ -253,11 +254,11 @@ export class kCommand extends Command {
                     RETURNING id;
                 `, params);
                 
-                return void c.last().editReply({
+                return void dontThrow(c.last().editReply({
                     embeds: [
                         this.Embed.success(`Giveaway ${inlineCode(rows[0].id)} has been edited successfully!`)
                     ]
-                });
+                }));
             }
         });
     }

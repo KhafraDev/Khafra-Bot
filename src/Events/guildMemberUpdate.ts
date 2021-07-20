@@ -56,11 +56,9 @@ export class kEvent extends Event<'guildMemberUpdate'> {
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
             channel = oldMember.guild.channels.cache.get(item.welcome_channel)!;
         } else {
-            try {
-                channel = await oldMember.guild.me.client.channels.fetch(item.welcome_channel);
-            } catch {
-                return;
-            }
+            const [err, chan] = await dontThrow(oldMember.guild.me.client.channels.fetch(item.welcome_channel));
+            if (err !== null) return;
+            channel = chan;
         }
 
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 

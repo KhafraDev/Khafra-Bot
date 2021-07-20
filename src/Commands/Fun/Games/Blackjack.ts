@@ -1,6 +1,7 @@
 import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { shuffle } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -95,12 +96,12 @@ export class kCommand extends Command {
                 const total = getTotal(score.sucker);
 
                 if (total > 21) { // player lost
-                    return i.update({
+                    return void dontThrow(i.update({
                         embeds: [makeEmbed(`You went over 21, you lose!`, false)],
                         components: disableAll(m)
-                    });
+                    }));
                 } else { // continue playing
-                    return i.update({ embeds: [makeEmbed()] });
+                    return void dontThrow(i.update({ embeds: [makeEmbed()] }));
                 }
             } else {
                 const totalPlayer = getTotal(score.sucker);
@@ -112,15 +113,15 @@ export class kCommand extends Command {
                 const totalDealer = getTotal(score.dealer);
 
                 if (totalDealer > 21) { // dealer goes over 21
-                    return i.update({
+                    return void dontThrow(i.update({
                         embeds: [makeEmbed(`You win, I went over 21!`, false)],
                         components: disableAll(m)
-                    });
+                    }));
                 } else if (totalDealer >= totalPlayer) { // dealer wins
-                    return i.update({
+                    return void dontThrow(i.update({
                         embeds: [makeEmbed(`You lose!`, false)],
                         components: disableAll(m)
-                    });
+                    }));
                 }
             }
         });

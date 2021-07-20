@@ -2,6 +2,7 @@ import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import { TicTacToe } from '../../../lib/Packages/TicTacToe.js';
 import { chunkSafe } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -64,31 +65,31 @@ export class kCommand extends Command {
 
             if (game.winner()) {
                 c.stop();
-                return void i.update({ 
+                return void dontThrow(i.update({ 
                     content: `Game over - ${game.turn} won!`,
                     components: disableAll({
                         components: makeRows(game.board)
                     })
-                });
+                }));
             } else if (game.isFull()) {
                 c.stop();
-                return void i.update({ 
+                return void dontThrow(i.update({ 
                     content: `Looks like it's a tie!`,
                     components: disableAll({
                         components: makeRows(game.board)
                     })
-                });
+                }));
             }
 
-            return void i.update({ components: makeRows(game.board) });
+            return void dontThrow(i.update({ components: makeRows(game.board) }));
         });
 
         c.on('end', (_c, r) => {
             if (r === 'time') {
-                return void m.edit({
+                return void dontThrow(m.edit({
                     content: `Game took too long, play a little faster next time!`,
                     components: disableAll(m)
-                });
+                }));
             }
         });
     }

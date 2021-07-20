@@ -4,6 +4,7 @@ import { Components, disableAll } from '../../../lib/Utility/Constants/Component
 import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
 import fetch from 'undici-fetch';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 
 interface StrawpollOptions {
@@ -105,14 +106,14 @@ export class kCommand extends Command {
         const status = await new Promise<'done' | null>(res => {
             c.on('collect', async (interaction) => {
                 if (interaction.customId === 'cancel') {
-                    await interaction.update({
+                    await dontThrow(interaction.update({
                         embeds: [this.Embed.fail('Command was canceled!')],
                         components: disableAll(m)
-                    });
+                    }));
 
                     return res(null);
                 } else if (interaction.customId === 'done') {
-                    await interaction.update({
+                    await dontThrow(interaction.update({
                         embeds: [
                             this.Embed.success()
                                 .setTitle('Setting Choices')
@@ -121,7 +122,7 @@ export class kCommand extends Command {
                                 `)
                         ],
                         components: []
-                    });
+                    }));
 
                     return res('done');
                 } else {
@@ -133,7 +134,7 @@ export class kCommand extends Command {
                         (defaultOpts[key] as boolean) = !defaultOpts[key]; 
                     }
 
-                    return interaction.update({ embeds: [makeEmbed()] });
+                    return void dontThrow(interaction.update({ embeds: [makeEmbed()] }));
                 }
             });
 

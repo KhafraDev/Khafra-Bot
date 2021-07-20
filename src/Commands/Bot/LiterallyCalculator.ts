@@ -3,6 +3,7 @@ import { Components, disableAll } from '../../lib/Utility/Constants/Components.j
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const symbols = /^-|\+|\*|\/|\.|\(|\)$/;
 /** Symbols an input is not allowed to start with */
@@ -91,7 +92,7 @@ export class kCommand extends Command {
                 ) && 
                 partialSymbols.test(i.customId)
             ) {
-                return void i.update({ content: `Invalid action!` });
+                return void dontThrow(i.update({ content: `Invalid action!` }));
             } else if (Number.isInteger(Number(i.customId))) { // used a number
                 lastAction += i.customId;
             } else if (symbols.test(i.customId)) { // used a symbol
@@ -108,7 +109,7 @@ export class kCommand extends Command {
 
             const display = `${actions.join(' ')} ${lastAction}`;
 
-            return void i.update({ 
+            return void dontThrow(i.update({ 
                 content: null,
                 embeds: [
                     this.Embed.success(`
@@ -117,7 +118,7 @@ export class kCommand extends Command {
                     ${squiggles}
                     `)
                 ] 
-            });
+            }));
         });
 
         collector.on('end', (c, r) => {
@@ -139,10 +140,10 @@ export class kCommand extends Command {
             } catch {}
 
             if (eq !== 'Invalid input!' && typeof eq !== 'number') {
-                return void c.last()[r !== 'stop' ? 'editReply' : 'update']({
+                return void dontThrow(c.last()[r !== 'stop' ? 'editReply' : 'update']({
                     content: 'Invalid calculations...',
                     components: disableAll(m)
-                });
+                }));
             }
 
             const length = 6 + actions.join(' ').length + 3 + `${eq}`.length;
@@ -155,7 +156,7 @@ export class kCommand extends Command {
                 .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
                 .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
 
-            return void c.last()[r !== 'stop' ? 'editReply' : 'update']({
+            return void dontThrow(c.last()[r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
                 components: disableAll(m),
                 embeds: [
@@ -165,7 +166,7 @@ export class kCommand extends Command {
                     ${squiggles}
                     `)
                 ]
-            });
+            }));
         });
     }
 }

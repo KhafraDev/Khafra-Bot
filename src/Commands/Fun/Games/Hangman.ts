@@ -8,6 +8,7 @@ import { inlineCode } from '@discordjs/builders';
 import { readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { readdirSync } from 'fs';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 const assets = join(process.cwd(), 'assets/Hangman');
 
@@ -92,7 +93,7 @@ export class kCommand extends Command {
             time: 120_000
         });
 
-        c.on('collect', (msg: Message) => {
+        c.on('collect', (msg) => {
             if (wrong > 6 || m.deleted || !m.editable) return c.stop();
 
             const guess = msg.content.toLowerCase();
@@ -161,9 +162,7 @@ export class kCommand extends Command {
                 );
             }
 
-            try {
-                return void m.edit(opts);
-            } catch {}
+            return void dontThrow(m.edit(opts));
         });
 
         c.once('end', () => void games.delete(message.author.id));
@@ -179,10 +178,10 @@ export class kCommand extends Command {
 
         r.once('collect', i => {
             if (wrong + 1 >= 6) {
-                return void i.update({
+                return void dontThrow(i.update({
                     content: 'Guessing right now would cause you to lose the game!',
                     components: disableAll(m)
-                });
+                }));
             }
 
             // filter out all guessed letters
@@ -202,11 +201,11 @@ export class kCommand extends Command {
                 Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                 `);
             
-            return void i.update({
+            return void dontThrow(i.update({
                 content: null,
                 embeds: [embed],
                 components: disableAll(m)
-            });
+            }));
         });
     }
 }
