@@ -1,9 +1,9 @@
-import { Snowflake } from 'discord.js';
+import type { Snowflake } from 'discord.js';
 
 type UUID4 = `${string}-${string}-${string}-${string}-${string}`;
 
 export interface kGuild {
-    id: number
+    id: UUID4
     guild_id: Snowflake
     prefix: string
     max_warning_points: number

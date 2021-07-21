@@ -16,4 +16,15 @@ BEGIN
         ALTER TABLE kbWarns ADD COLUMN id uuid DEFAULT uuid_generate_v4();
     END IF;
 END
+$do$;
+
+DO
+$do$
+BEGIN
+    IF (SELECT (CASE WHEN (pg_typeof("id") = 'uuid'::regtype) THEN FALSE ELSE TRUE END) FROM kbGuild LIMIT 1) THEN
+        ALTER TABLE kbGuild DROP COLUMN IF EXISTS id;
+        ALTER TABLE kbGuild ADD COLUMN id uuid DEFAULT uuid_generate_v4();
+        ALTER TABLE kbGuild ADD PRIMARY KEY (id);
+    END IF;
+END
 $do$
