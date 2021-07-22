@@ -4,6 +4,7 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import Emojis from '../../../../assets/Emojis.json';
 import { plural } from '../../../lib/Utility/String.js';
+import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 
@@ -96,7 +97,7 @@ export class kCommand extends Command {
                 }
             }
 
-            return embed;
+            return padEmbedFields(embed);
         } else if (!message.guild.emojis.cache.has(guildEmoji.groups.id as Snowflake)) {
             return this.Embed.fail(`Emoji isn't cached, whoops!`);
         }

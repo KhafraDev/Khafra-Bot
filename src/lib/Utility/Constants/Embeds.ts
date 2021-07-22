@@ -71,3 +71,11 @@ export const Embed = {
             );
     }
 }
+
+export const padEmbedFields = (embed: MessageEmbed) => {
+    while (embed.fields.length % 3 !== 0 && embed.fields.length !== 0) {
+        embed.addField('\u200b', '\u200b', true);
+    }
+
+    return embed;
+}

@@ -5,6 +5,7 @@ import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.j
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { bold, time } from '@discordjs/builders';
+import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -65,6 +66,6 @@ export class kCommand extends Command {
                 .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
         }
 
-        return embed;
+        return padEmbedFields(embed);
     }
 }
