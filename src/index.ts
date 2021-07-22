@@ -3,11 +3,12 @@ import './lib/Utility/Rejections.js';
 import './lib/Utility/Timers/Giveaways.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
-import { Awaited, ClientEvents, Intents } from 'discord.js';
+import { ClientEvents, Intents } from 'discord.js';
+import { dontThrow } from './lib/Utility/Don\'tThrow.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]) => 
-        KhafraClient.Events.get(name)?.init(...args) as Awaited<void>;
+    return (...args: ClientEvents[T]): void => 
+        void dontThrow(KhafraClient.Events.get(name)?.init(...args));
 }
 
 export const client = new KhafraClient({
