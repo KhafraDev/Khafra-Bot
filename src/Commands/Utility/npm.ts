@@ -1,8 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { formatDate } from '../../lib/Utility/Date.js';
 import { npm } from '@khaf/npm';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -40,8 +40,8 @@ export class kCommand extends Command {
             .addField('**Version:**', dist.version, true)
             .addField('**License:**', dist.license, true)
             .addField('**Author:**', _package.author?.name ?? 'N/A', true)
-            .addField('**Last Modified:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', _package.time?.modified), true)
-            .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', _package.time?.created), true)
+            .addField('**Last Modified:**', time(new Date(_package.time?.modified ?? Date.now()), 'f'), true)
+            .addField('**Published:**', time(new Date(_package.time?.created ?? Date.now())), true)
             .addField('**Homepage:**', _package.homepage ?? 'None', true)
             .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
     }

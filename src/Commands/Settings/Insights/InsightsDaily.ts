@@ -4,13 +4,15 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { table } from '../../../lib/Utility/CLITable.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 
 interface Insights {
     k_date: Date
     k_left: number 
     k_joined: number
 }
+
+const intl = Intl.DateTimeFormat('en-US', { dateStyle: 'long' });
+const dateFormat = (time: Date) => intl.format(time);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -53,7 +55,7 @@ export class kCommand extends Command {
 
         const locale = message.guild.preferredLocale;
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(formatDate('MMMM Do, YYYY', row.k_date));
+            red.Dates.push(dateFormat(row.k_date));
             red.Joins.push(row.k_joined.toLocaleString(locale));
             red.Leaves.push(row.k_left.toLocaleString(locale));
 

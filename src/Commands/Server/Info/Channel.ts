@@ -1,10 +1,10 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { bold, time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -38,9 +38,9 @@ export class kCommand extends Command {
         const embed = this.Embed.success()
             .addFields(
                 { name: '**ID:**', value: channel.id, inline: true },
-                { name: '**Type:**', value: channel.type, inline: true }
-            )
-            .setFooter(`Created ${formatDate('MMM. Do, YYYY hh:mm:ssA t', channel.createdTimestamp)}`);
+                { name: '**Type:**', value: channel.type, inline: true },
+                { name: bold('Created:'), value: time(channel.createdAt, 'f'), inline: true }
+            );
 
         if (isText(channel)) {
             embed
