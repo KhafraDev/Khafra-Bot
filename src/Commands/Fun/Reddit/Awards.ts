@@ -33,7 +33,7 @@ export class kCommand extends Command {
         if (
             url.origin !== 'https://www.reddit.com' ||
             // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
-            !/^\/r\/[A-z0-9_]{3,21}$/.test(url.pathname)
+            !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
         ) {
             return this.Embed.fail(`
             Not a valid reddit URL!
