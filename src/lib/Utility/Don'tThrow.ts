@@ -12,7 +12,7 @@ type FromPromise<T extends unknown> = T extends Promise<infer U>
  */
 export const dontThrow = async <T extends Promise<unknown> | unknown>(promise: T): Promise<[Error | null, FromPromise<T> | null]> => {
     try {
-        const ret: FromPromise<T> = types.isPromise(promise) ? await promise : promise;
+        const ret = (types.isPromise(promise) ? await promise : promise) as FromPromise<T>;
         return [null, ret];
     } catch (e) {
         return [e, null];

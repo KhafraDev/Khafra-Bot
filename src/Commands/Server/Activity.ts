@@ -1,14 +1,14 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody } from 'discord-api-types/v8';
-import fetch from 'undici-fetch';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { isVoice } from '../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { hyperlink } from '@discordjs/builders';
+import { Message, MessageActionRow, Permissions } from 'discord.js';
+import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
+import fetch from 'undici-fetch';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -78,7 +78,7 @@ export class kCommand extends Command {
             }));
         }
 
-        const [fetchError, r] = await dontThrow(fetch(`https://discord.com/api/v8/channels/${channel.id}/invites`, {
+        const [fetchError, r] = await dontThrow(fetch(`https://discord.com/api/v${APIVersion}/channels/${channel.id}/invites`, {
             method: 'POST',
             headers: { 
                 'Authorization': `Bot ${process.env.TOKEN}`, 
@@ -86,7 +86,7 @@ export class kCommand extends Command {
             },
             body: JSON.stringify({
                 max_age: 86400,
-                target_type: InviteTargetType.EMBEDDED_APPLICATION,
+                target_type: InviteTargetType.EmbeddedApplication,
                 target_application_id: interaction.customId
             } as RESTPostAPIChannelInviteJSONBody)
         }));
