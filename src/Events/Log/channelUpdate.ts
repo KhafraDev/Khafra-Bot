@@ -85,7 +85,11 @@ export class kEvent extends Event<'channelUpdate'> {
                 embed.addField(bold('NSFW:'), `${yes(oldChannel.nsfw)} -> ${yes(newChannel.nsfw)}`, true);
 
             if (oldChannel.topic !== newChannel.topic)
-                embed.addField(bold('Topic:'), `${oldChannel.topic.slice(0, 500)} -> ${newChannel.topic.slice(0, 500)}`, true);
+                embed.addField(
+                    bold('Topic:'), 
+                    `${oldChannel.topic?.slice(0, 500) ?? 'None'} -> ${newChannel.topic?.slice(0, 500) ?? 'None'}`, 
+                    true
+                );
 
             if (isExplicitText(oldChannel) && isExplicitText(newChannel)) {
                 if (oldChannel.rateLimitPerUser !== newChannel.rateLimitPerUser)
