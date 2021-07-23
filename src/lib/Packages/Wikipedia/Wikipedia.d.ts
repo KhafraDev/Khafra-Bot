@@ -12,83 +12,29 @@ export interface WikipediaSearch {
             height: number
             duration?: number
             url: string
-        }
+        } | null
     }[]
 }
 
-export interface WikipediaError {
-    error: string,
-    name: string
-    value: string
-    failureCode: string
-    failureData?: {
-        min: number
-        curmax: number
-        max: number
-        highmax: number
-    }
-    messageTranslations: Record<string, string>
-    httpCode: number
-    httpReason: string
-}
-
-export interface WikipediaArticle {
-    type: string
-    title: string
-    displaytitle: string
-    namespace: {
-        id: number
-        text: string
-    }
-    wikibase_item: string
-    titles: {
-        canonical: string
-        normalized: string
-        display: string
-    }
-    pageid: number
-    thumbnail: {
-        source: string
-        width: number
-        height: number
-    }
-    originalimage: {
-        source: string
-        width: number
-        height: number
-    }
-    lang: string
-    dir: string
-    revision: string
-    tid: string
-    timestamp: Date
-    description: string
-    description_source: string
-    content_urls: {
-        desktop: {
-            page: string
-            revisions: string
-            edit: string
-            talk: string
-        }
-        mobile: {	
-            page: string
-            revisions: string
-            edit: string
-            talk: string
+export interface WikipediaSummary<T extends number> {
+    batchcomplete: string
+    query: {
+        pages: {
+            [key: string]: {
+                pageid: T
+                ns: number
+                title: string
+                extract: string
+            }
         }
     }
-    extract: string
-    extract_html: string
 }
 
-export interface WikipediaArticleNotFound {
-    type: string
-    title: string
-    method: 'get'
-    detail: string
-    uri: string
-}
-
-declare const Wikipedia: (q: string, language?: string, limit?: number | undefined) => 
-    Promise<WikipediaError | WikipediaSearch | WikipediaArticle | WikipediaArticleNotFound>
+/**
+ * Search wikipedia using a given query. Returns an empty { pages: [...] } array if no results were found
+ */
+export declare const search: (query: string) => Promise<WikipediaSearch>;
+/**
+ * Using a pageid, get an article's summary
+ */
+export declare const getArticleById: (id: number) => Promise<WikipediaSummary<typeof id>>;
