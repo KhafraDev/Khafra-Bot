@@ -101,5 +101,13 @@ export class kCommand extends Command {
                 embeds: [embed]
             }));
         });
+
+        c.once('end', () => {
+            if (m.components[0].components[0].disabled === false) {
+                void dontThrow(m.edit({
+                    components: disableAll(m)
+                }));
+            }
+        });
     }
 }
