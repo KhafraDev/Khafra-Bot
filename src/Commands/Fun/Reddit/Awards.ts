@@ -4,6 +4,7 @@ import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
 import fetch from 'undici-fetch';
+import { inlineCode } from '@discordjs/builders';
 
 const PER_COIN = 1.99 / 500;
 
@@ -44,17 +45,20 @@ export class kCommand extends Command {
         const res = await fetch(`${url.href.replace(/.json$/, '')}.json`);
         const json = await res.json() as [RedditData, RedditData];
 
-        const post = json[0]?.data?.children?.[0]?.data;
+        const post = json[0].data.children[0].data;
         if (!post) {
             return this.Embed.fail(this.errors.FetchError);
         }
 
         const coins = post.all_awardings.reduce((p, c) => p + (c.coin_price * c.count), 0);
         const price = (coins * PER_COIN).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-        const number = post.all_awardings.reduce((p, c) => p + c.count, 0);
+        const count = post.all_awardings.reduce((p, c) => p + c.count, 0);
 
-        return this.Embed.success(`
-        Post has been awarded \`\`${number}\`\` times, estimating around \`\`${price}\`\` USD (at a rate of $1.99 per 500 coins).
-        `);
+        return this.Embed.success()
+            .setDescription(
+                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` + 
+                `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
+            )
+            .setFooter('Free awards are counted in the cost!');
     }
 }
