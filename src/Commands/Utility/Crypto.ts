@@ -2,12 +2,10 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { once } from '../../lib/Utility/Memoize.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
 import { time } from '@discordjs/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
-const mw = once(setCryptoInterval);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -27,7 +25,7 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        await mw();
+        await setCryptoInterval();
         
         if (!cache.has(args.join('-').toLowerCase()))
             return this.Embed.fail(`

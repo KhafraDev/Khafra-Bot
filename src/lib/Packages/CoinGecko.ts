@@ -1,5 +1,7 @@
 import fetch, { Response } from 'undici-fetch';
 import { chunkSafe } from '../Utility/Array.js';
+import { dontThrow } from '../Utility/Don\'tThrow.js';
+import { once } from '../Utility/Memoize.js';
 
 interface CGCrypto {
     id: string
@@ -54,7 +56,11 @@ const defaults = [
 ] as const;
 
 const list = async () => {
-    const r = await fetch(defaults[0]);
+    const [err, r] = await dontThrow(fetch(defaults[0]));
+    
+    if (err !== null || !r!.ok) 
+        throw new Error(`Received status ${r.status}!`);
+
     const j = await r.json() as CGCrypto[];
 
     for (const { id, symbol } of j) {
@@ -68,53 +74,46 @@ const all = async () => {
     if (symbolCache.size === 0)
         await list();
 
-    // so something here can error out, be completely ignored by the try/catch
-    // and give no useful stack traces. Highly doubt this fixes it.
-    try { 
-        const reqs = chunkSafe([...strictlyIDs], 250)
-            .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
-        const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
+    const chunk = chunkSafe([...strictlyIDs], 250);
+    const reqs = chunk.map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
+    const reqsChunk = chunkSafe(reqs, 5);
 
-        for (const all of reqsChunk) {
-            const success = (await Promise.allSettled(all))
-                .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
-                .filter(r => r.value.ok)
-                .map(r => r.value.json() as Promise<CoinGeckoRes[]>);
+    for (const all of reqsChunk) {
+        const success = await Promise.allSettled(all.map(p => dontThrow(p)));
+        const filtered = success
+            .filter((r): r is PromiseFulfilledResult<[Error, Response]> => r.status === 'fulfilled')
+            .filter(r => r.value[0] === null && r.value[1].ok)
+            .map(r => r.value[1].json() as Promise<CoinGeckoRes[]>);
 
-            const json = await Promise.all(success);
+        const json = await Promise.all(filtered);
 
-            for (const currList of json) {
-                for (const curr of currList) {
-                    // there are nearly 1,000 duplicate symbols but name and ids are all unique
-                    if (cache.has(curr.symbol)) {
-                        const item = cache.get(curr.symbol)!;
-                        const idx = Array.isArray(item) 
-                            ? item.findIndex(i => i.id === curr.id)
-                            : -1;
+        for (const currList of json) {
+            for (const curr of currList) {
+                // there are nearly 1,000 duplicate symbols but name and ids are all unique
+                if (cache.has(curr.symbol)) {
+                    const item = cache.get(curr.symbol)!;
+                    const idx = Array.isArray(item) 
+                        ? item.findIndex(i => i.id === curr.id)
+                        : -1;
 
-                        if (idx !== -1 && Array.isArray(item)) {
-                            item[idx] = curr;
-                            cache.set(curr.symbol, item);
-                        } else {
-                            cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
-                        }
+                    if (idx !== -1 && Array.isArray(item)) {
+                        item[idx] = curr;
+                        cache.set(curr.symbol, item);
                     } else {
-                        cache.set(curr.symbol, curr);
+                        cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
                     }
-
-                    cache.set(curr.id, curr);
+                } else {
+                    cache.set(curr.symbol, curr);
                 }
+
+                cache.set(curr.id, curr);
             }
         }
-    } catch {}
+    }
 }
 
-export const setCryptoInterval = async () => {
-    try { await all() } catch {}
+export const setCryptoInterval = once(async () => {
+    await dontThrow(all());
 
-    setInterval(async () => {
-        try {
-            await all();
-        } catch {}
-    }, 60 * 1000 * 15).unref();
-}
+    return setInterval(() => void dontThrow(all()), 60 * 1000 * 15).unref();
+});
