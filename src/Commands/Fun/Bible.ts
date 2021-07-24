@@ -86,7 +86,7 @@ export class kCommand extends Command {
             if (R.CHAPTER.test(locationUnformatted)) {
                 const { rows } = await pool.query<IBibleVerse>(`
                     SELECT * FROM kbBible
-                    WHERE book = $1 AND chapter = $2
+                    WHERE book = $1::text AND chapter = $2::smallint
                     ORDER BY verse DESC
                     LIMIT 1;
                 `, [upperCase(bookAcronym[1]), Number(locationUnformatted)]);
@@ -99,7 +99,7 @@ export class kCommand extends Command {
             // if not chapter is provided, get the number of chapters in the book
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible 
-                WHERE book = $1
+                WHERE book = $1::text
                 ORDER BY chapter DESC
                 LIMIT 1;
             `, [upperCase(bookAcronym[1])]);
@@ -125,9 +125,9 @@ export class kCommand extends Command {
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1 AND
-                    chapter = $2 AND
-                    verse BETWEEN $3 AND $4
+                    book = $1::text AND
+                    chapter = $2::smallint AND
+                    verse BETWEEN $3::smallint AND $4::smallint
                 LIMIT 10;
             `, [upperCase(bookAcronym.pop()), chapter, ...versesDiff]);
 
@@ -152,9 +152,9 @@ export class kCommand extends Command {
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1 AND
-                    chapter = $2 AND
-                    verse = $3
+                    book = $1::text AND
+                    chapter = $2::smallint AND
+                    verse = $3::smallint
                 LIMIT 1;
             `, [upperCase(bookAcronym[1]), chapter, verse]);
 
