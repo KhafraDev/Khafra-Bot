@@ -15,6 +15,8 @@ interface Params {
 const assets = join(process.cwd(), 'assets/khafrabot.db');
 const db = BetterSQLite3(assets);
 
+db.pragma('journal_mode = WAL');
+
 parentPort.on('message', ({ sql, parameters, opts }: Params) => {
     try {
         const result = opts?.run
