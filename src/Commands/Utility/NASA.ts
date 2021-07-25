@@ -23,7 +23,7 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (cache.length === 0) {
-            message.channel.sendTyping();
+            void message.channel.sendTyping();
         }
         
         const [err, result] = await dontThrow(NASAGetRandom());
