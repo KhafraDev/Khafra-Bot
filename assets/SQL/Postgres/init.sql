@@ -6,13 +6,6 @@ CREATE TABLE IF NOT EXISTS kbBible (
     content TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS kbAPOD (
-    apod_key SERIAL PRIMARY KEY,
-    title TEXT NOT NULL,
-    link TEXT NOT NULL,
-    copyright TEXT DEFAULT NULL
-);
-
 CREATE TABLE IF NOT EXISTS kbPocket (
     id SERIAL PRIMARY KEY,
     user_id TEXT UNIQUE NOT NULL,
