@@ -1,12 +1,12 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
-import { isVoice } from '../../lib/types/Discord.js.js';
+import { isVoice, Message } from '../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { hyperlink } from '@discordjs/builders';
-import { Message, MessageActionRow, Permissions } from 'discord.js';
+import { MessageActionRow, Permissions } from 'discord.js';
 import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
 import fetch from 'undici-fetch';
 
@@ -102,7 +102,7 @@ export class kCommand extends Command {
         const invite = await r.json() as APIInvite;
 
         return this.Embed.success(`
-        ${hyperlink('Click Here', `<https://discord.gg/${invite.code}>`)} to open ${invite.target_application.name} in ${channel}!
+        ${hyperlink('Click Here', `<https://discord.gg/${invite.code}>`)} to open ${invite.target_application!.name} in ${channel}!
         `);
     }
 }

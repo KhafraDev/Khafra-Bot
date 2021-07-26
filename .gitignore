@@ -3,6 +3,8 @@ build
 *.js
 !scripts/*.js
 assets/*.db
+assets/*.db-shm
+assets/*.db-wal
 *.rdb
 
 # Logs

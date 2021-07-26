@@ -27,6 +27,7 @@ Giveaways.on('giveaway', async (giveaway) => {
     try {
         const channel = await client.channels.fetch(giveaway.channelid);
         if (!isText(channel)) return;
+        if (!client.user) return;
 
         const message = await channel.messages.fetch(giveaway.messageid);
         const reactions = message.reactions.cache;
@@ -34,7 +35,7 @@ Giveaways.on('giveaway', async (giveaway) => {
         if (message.author.id !== client.user.id) return;
         if (!reactions.has('🎉')) return;
 
-        const { users, count } = reactions.get('🎉');
+        const { users, count } = reactions.get('🎉')!;
         if (users.cache.size !== count) {
             await users.fetch();
         }
@@ -48,7 +49,7 @@ Giveaways.on('giveaway', async (giveaway) => {
 
                 winners.push(random);
             }
-        } else if (count === 1 && users.cache.first().id === client.user.id) { // no one entered
+        } else if (count === 1 && users.cache.first()?.id === client.user.id) { // no one entered
             if (message.editable) {
                 return message.edit({
                     content: 'No one entered the giveaway!'

@@ -21,6 +21,10 @@ export class kCommand extends Command {
     async init() {
         const stats = await Kongregate();
 
+        if (stats === null) {
+            return this.Embed.fail('Failed to fetch the stats!');
+        }
+
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
         return this.Embed.success()
             .setTitle('Synergism Stats (Kongregate)')

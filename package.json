@@ -10,7 +10,7 @@
     "adm-zip": "^0.4.16",
     "better-sqlite3": "^7.4.0",
     "discord-api-types": "^0.19.0",
-    "discord.js": "^13.0.0-dev.4886ae2.1627171445",
+    "discord.js": "^13.0.0-dev.4886ae2.1627214570",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
     "ms": "^2.1.2",
@@ -37,6 +37,7 @@
   },
   "scripts": {
     "dev:check": "npx -p typescript tsc",
+    "dev:watch": "npx -p typescript tsc --watch",
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --experimental-json-modules build/src/index",

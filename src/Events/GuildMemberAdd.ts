@@ -52,9 +52,9 @@ export class kEvent extends Event<'guildMemberAdd'> {
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel;
+        let channel: Channel | null = null;
         if (member.guild.channels.cache.has(item.welcome_channel)) {
-            channel = member.guild.channels.cache.get(item.welcome_channel);
+            channel = member.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
             const [err, c] = await dontThrow(member.guild.client.channels.fetch(item.welcome_channel));
             if (err !== null) return;

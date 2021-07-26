@@ -50,8 +50,8 @@ export class kCommand extends Command {
             // basically the same as bookAcronym down below
             const book = Object 
                 .entries(titles)
-                .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())
-                .shift();
+                .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
+                .shift()!;
 
             return this.Embed.success()
                 .setTitle(`${book} ${rows[0].chapter}:${rows[0].verse}`)
@@ -74,7 +74,7 @@ export class kCommand extends Command {
         // get the acronym of the book, for example "Prayer of Azariah" -> "aza"
         const bookAcronym = Object
             .entries(titles)
-            .find(([n, acr]) => n.toLowerCase() === book || acr === book);
+            .find(([n, acr]) => n.toLowerCase() === book || acr === book)!;
 
         // get the chapter+verse
         const locationUnformatted = args
@@ -129,7 +129,7 @@ export class kCommand extends Command {
                     chapter = $2::smallint AND
                     verse BETWEEN $3::smallint AND $4::smallint
                 LIMIT 10;
-            `, [upperCase(bookAcronym.pop()), chapter, ...versesDiff]);
+            `, [upperCase(bookAcronym.pop()!), chapter, ...versesDiff]);
 
             if (rows.length === 0)
                 return this.Embed.fail(`
@@ -146,7 +146,7 @@ export class kCommand extends Command {
         // only one verse; doesn't fit criteria for other cases
         if (R.GENERIC.test(locationUnformatted)) {
             const [, chapter, verse] = R.GENERIC
-                .exec(locationUnformatted)
+                .exec(locationUnformatted)!
                 .map(Number);
 
             const { rows } = await pool.query<IBibleVerse>(`

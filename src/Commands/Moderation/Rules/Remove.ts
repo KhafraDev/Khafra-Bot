@@ -65,7 +65,7 @@ export class kCommand extends Command {
         if (rows.length === 0)
             return this.Embed.fail(`Rule #${args[0]} doesn't exist, couldn't remove it.`);
 
-        const { rule_id, rule } = rows.shift();
+        const { rule_id, rule } = rows.shift()!;
 
         return this.Embed.success(`
         Removed rule \`\`#${rule_id}\`\`

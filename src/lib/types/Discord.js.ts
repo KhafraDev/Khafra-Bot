@@ -16,3 +16,8 @@ export const isVoice = <T extends unknown>(c: T): c is T & VoiceChannel => c ins
 export const isCategory = <T extends unknown>(c: T): c is T & CategoryChannel => c instanceof CategoryChannel;
 export const isStage = <T extends unknown>(c: T): c is T & StageChannel => c instanceof StageChannel;
 export const isThread = <T extends unknown>(c: T): c is T & ThreadChannel => c instanceof ThreadChannel;
+
+export type Message = import('discord.js').Message
+    & { guild: import('discord.js').Guild }
+    & { member: import('discord.js').GuildMember }
+;

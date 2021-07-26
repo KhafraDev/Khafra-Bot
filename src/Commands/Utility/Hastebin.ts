@@ -31,7 +31,7 @@ export class kCommand extends Command {
             ${keys.map(k => `\`\`${k}\`\``).join(', ')}
             `);
 
-        const paste = pasteAliases.get(command);
+        const paste = pasteAliases.get(command)!;
         const pasteLink = await paste(content);
 
         if (!pasteLink)

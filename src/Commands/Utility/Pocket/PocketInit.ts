@@ -24,7 +24,7 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         const pocket = new Pocket();
-        pocket.redirect_uri = `https://discord.com/channels/${message.guild.id}/${message.channel.id}`;
+        pocket.redirect_uri = `https://discord.com/channels/${message.guild!.id}/${message.channel.id}`;
 
         await pocket.requestCode();
 
@@ -95,7 +95,7 @@ export class kCommand extends Command {
             return button.editReply({
                 embeds: [
                     this.Embed.success(`
-                    You have authorized ${message.guild.me}!
+                    You have authorized ${message.guild!.me}!
 
                     Try adding an article with \`\`pocketadd\`\` now. 👍
                     `)

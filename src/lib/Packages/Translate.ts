@@ -51,8 +51,12 @@ export const translate = async (
 	text: string, 
 	opts: Opts = { to: 'en', from: 'auto' }
 ): Promise<string> => {
-	opts.from = langs.includes(opts.from?.toLowerCase()) ? opts.from.toLowerCase() : 'auto';
-	opts.to = langs.includes(opts.to?.toLowerCase()) ? opts.to.toLowerCase() : 'en';
+	opts.from = typeof opts.from === 'string' && langs.includes(opts.from.toLowerCase()) 
+		? opts.from.toLowerCase() 
+		: 'auto';
+	opts.to = typeof opts.to === 'string' && langs.includes(opts.to?.toLowerCase()) 
+		? opts.to.toLowerCase() 
+		: 'en';
 
 	const url = 'https://translate.google.com/translate_a/single?';
 	const params = new URLSearchParams(staticParams);

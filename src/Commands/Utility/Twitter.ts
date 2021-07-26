@@ -27,10 +27,10 @@ export class kCommand extends Command {
             return this.Embed.fail('Not a Twitter status!');
         // Your username can only contain letters, numbers and '_'
         // Your username must be shorter than 15 characters.
-        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname))
+        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname ?? ''))
             return this.Embed.fail(`Invalid Twitter status!`);
 
-        const id = /\/(\d+)$/.exec(pathname)[1];
+        const id = /\/(\d+)$/.exec(pathname!)![1];
         const media = await getTwitterMediaURL(id);
 
         if (!media)

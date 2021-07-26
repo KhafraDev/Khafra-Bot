@@ -41,7 +41,7 @@ export class kCommand extends Command {
         
         if (!isText(channel)) {
             return this.Embed.fail(`${channel} is not a text channel!`);
-        } else if (!hasPerms(channel, message.guild.me, basic)) {
+        } else if (!hasPerms(channel, message.guild!.me, basic)) {
             return this.Embed.fail(`
             I am missing one or more of ${basic.toArray().map(p => `\`\`${p}\`\``).join(', ')} permissions!
             `);
@@ -51,9 +51,9 @@ export class kCommand extends Command {
             UPDATE kbGuild
             SET welcome_channel = $1::text
             WHERE guild_id = $2::text;
-        `, [channel.id, message.guild.id]);
+        `, [channel.id, message.guild!.id]);
 
-        await client.set(message.guild.id, JSON.stringify({
+        await client.set(message.guild!.id, JSON.stringify({
             ...settings,
             welcome_channel: channel.id
         } as kGuild));

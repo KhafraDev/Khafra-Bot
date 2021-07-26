@@ -17,9 +17,10 @@ type DNE =
     | 'person'
 
 export const thisDoesNotExist = async (type: DNE) => {
-    const url = formatURL.get(type)(type);
+    const url = formatURL.get(type)!(type);
 
     const res = await fetch(url);
+    if (!res.body) return null;
     const attach = new MessageAttachment(res.body.data as unknown as Stream, `t${type}dne.jpeg`);
 
     return {

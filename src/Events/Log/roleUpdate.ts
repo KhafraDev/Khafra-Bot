@@ -9,6 +9,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../../lib/Utility/Mentions.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -51,9 +52,11 @@ export class kEvent extends Event<'roleUpdate'> {
             item = rows[0];
         }
 
+        if (!validSnowflake(item.complete_log_channel)) return;
+
         let channel: Channel | null = null;
         if (oldRole.guild.channels.cache.has(item.complete_log_channel)) {
-            channel = oldRole.guild.channels.cache.get(item.complete_log_channel);
+            channel = oldRole.guild.channels.cache.get(item.complete_log_channel) ?? null;
         } else {
             const [err, chan] = await dontThrow(oldRole.guild.client.channels.fetch(item.complete_log_channel));
             if (err !== null) return;

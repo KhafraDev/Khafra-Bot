@@ -19,7 +19,7 @@ const ratelimit = {
     firstRequest: -1
 };
 
-export const cache: { copyright: string, link: string, title: string }[] = [];
+export const cache: { copyright: string | undefined, link: string, title: string }[] = [];
 
 export const NASAGetRandom = async () => {
     const params = new URLSearchParams({

@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Permissions, Snowflake } from 'discord.js';
+import { Permissions, Snowflake } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { chunkSafe } from '../../../lib/Utility/Array.js';
 

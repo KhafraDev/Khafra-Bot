@@ -1,7 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { time } from '@discordjs/builders';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -24,9 +24,9 @@ export class kCommand extends Command {
         const locale = message.guild.preferredLocale;
 
         return this.Embed.success()
-            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
+            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
             .setTimestamp()
-            .setThumbnail(message.guild.bannerURL())
+            .setThumbnail(message.guild.bannerURL()!)
             .setDescription(`
             *${message.guild.name}*
             \`\`${message.guild.description?.length ? message.guild.description : 'No description set'}\`\`
@@ -37,7 +37,7 @@ export class kCommand extends Command {
                 { name: '**Partnered:**', value: message.guild.partnered ? 'Yes' : 'No', inline: true },
                 { name: '**Members:**', value: message.guild.memberCount.toLocaleString(locale), inline: true },
                 { name: '**Owner:**', value: `<@!${message.guild.ownerId}>`, inline: true },
-                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount.toLocaleString(locale), inline: true },
+                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
                 { name: '**Tier:**', value: `${message.guild.premiumTier}`, inline: true },
                 { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
                 { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },

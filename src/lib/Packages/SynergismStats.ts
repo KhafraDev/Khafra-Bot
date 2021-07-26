@@ -13,10 +13,15 @@ interface KongregateMetrics {
     quicklinks_user_rating: string
 }
 
-const cache = {
-    lastFetched: -1,
-    res: null as KongregateMetrics
+interface KongCache {
+    lastFetched: number
+    res: KongregateMetrics | null
 }
+
+const cache: KongCache = {
+    lastFetched: -1,
+    res: null
+};
 
 export const Kongregate = async () => {
     if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {

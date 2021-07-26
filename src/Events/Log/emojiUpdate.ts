@@ -8,6 +8,7 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../../lib/Utility/Mentions.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -48,9 +49,11 @@ export class kEvent extends Event<'emojiUpdate'> {
             item = rows[0];
         }
 
+        if (!validSnowflake(item.complete_log_channel)) return;
+
         let channel: Channel | null = null;
         if (oldEmoji.guild.channels.cache.has(item.complete_log_channel)) {
-            channel = oldEmoji.guild.channels.cache.get(item.complete_log_channel);
+            channel = oldEmoji.guild.channels.cache.get(item.complete_log_channel) ?? null;
         } else {
             const [err, chan] = await dontThrow(oldEmoji.guild.client.channels.fetch(item.complete_log_channel));
             if (err !== null) return;
@@ -65,7 +68,8 @@ export class kEvent extends Event<'emojiUpdate'> {
 
         if (newEmoji.author || oldEmoji.author) {
             const author = newEmoji.author ?? oldEmoji.author;
-            embed.setAuthor(author.username, author.displayAvatarURL());
+            if (author !== null)
+                embed.setAuthor(author.username, author.displayAvatarURL());
         }
 
         if (oldEmoji.name !== newEmoji.name) {

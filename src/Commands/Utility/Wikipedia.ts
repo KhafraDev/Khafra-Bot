@@ -63,7 +63,7 @@ export class kCommand extends Command {
         c.on('collect', async (i: SelectMenuInteraction) => {
             await dontThrow(i.deferUpdate());
 
-            const article = wiki.pages.find(p => i.values.includes(`${p.id}`));
+            const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!;
             const [err, summaryRes] = await dontThrow(getArticleById(article.id));
 
             if (err) {

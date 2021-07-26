@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';

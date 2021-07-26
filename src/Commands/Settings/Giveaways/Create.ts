@@ -8,9 +8,8 @@ import { parseStrToMs } from '../../../lib/Utility/ms.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms, permResolvableToString } from '../../../lib/Utility/Permissions.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { 
-    Message,
     MessageActionRow,
     MessageComponentInteraction,
     NewsChannel,
@@ -25,9 +24,9 @@ type GiveawayId = Pick<Giveaway, 'id'>;
 
 interface GiveawaySettings {
     endDate: Date | null
-    prize: string
+    prize: string | null
     winners: number
-    channel: TextChannel | NewsChannel
+    channel: TextChannel | NewsChannel | null
 }
 
 const description = 
@@ -84,7 +83,7 @@ export class kCommand extends Command {
             const channelSetting = await message.channel.awaitMessages({
                 max: 1,
                 time: 60 * 1000 * 5,
-                filter: (m: Message) =>
+                filter: (m) =>
                     m.author.id === message.author.id &&
                     m.content.length > 0
             });
@@ -95,10 +94,10 @@ export class kCommand extends Command {
                 });
             }
 
-            const msg = channelSetting.first();
+            const msg = channelSetting.first()!;
             let channel: Channel | null = null;
             if (msg.mentions.channels.size !== 0) {
-                channel = msg.mentions.channels.first();
+                channel = msg.mentions.channels.first() ?? null;
             } else {
                 channel = await getMentions(msg, 'channels', { splice: false });
             }
@@ -167,7 +166,7 @@ export class kCommand extends Command {
                     });
                 }
 
-                settings.winners = Number(w.first().content);
+                settings.winners = Number(w.first()!.content);
             }
 
             const embed = this.Embed.success()
@@ -183,7 +182,7 @@ export class kCommand extends Command {
             const prize = await message.channel.awaitMessages({
                 max: 1,
                 time: 60 * 1000 * 5,
-                filter: (m: Message) =>
+                filter: (m) =>
                     m.author.id === message.author.id &&
                     m.content.length > 0
             });
@@ -194,7 +193,7 @@ export class kCommand extends Command {
                 });
             }
 
-            settings.prize = prize.first().content;
+            settings.prize = prize.first()!.content;
 
             const embed = m.embeds[0]
                 .setDescription(`
@@ -212,7 +211,7 @@ export class kCommand extends Command {
             const end = await message.channel.awaitMessages({
                 max: 1,
                 time: 30_000,
-                filter: (m: Message) =>
+                filter: (m) =>
                     m.author.id === message.author.id &&
                     (endStr = parseStrToMs(m.content)) !== null &&
                     endStr >= 0 && // not negative
@@ -226,7 +225,7 @@ export class kCommand extends Command {
                 });
             }
 
-            settings.endDate = new Date(Date.now() + endStr);
+            settings.endDate = new Date(Date.now() + endStr!);
         }
 
         const sent = await settings.channel.send({

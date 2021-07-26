@@ -31,7 +31,7 @@ export class kCommand extends Command {
             return this.Embed.fail('No books found on OpenLibrary!');
         }
 
-        const book = books.docs.shift();
+        const book = books.docs.shift()!;
 
         const embed = this.Embed.success(`
         *${book.title}* by ${book.author_name.join(' and ')}
@@ -46,7 +46,7 @@ export class kCommand extends Command {
         
         **[Donate to the Internet Archive](https://archive.org/donate/?platform=ol)**
         `);
-        embed.description = embed.description.replace(/^(\s*\r?\n){2,}/gm, '\n');
+        embed.description = embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n');
 
         return embed;
     }

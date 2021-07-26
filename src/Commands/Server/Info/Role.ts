@@ -1,8 +1,9 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Message, Role } from 'discord.js';
+import { Role } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { time } from '@discordjs/builders';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {

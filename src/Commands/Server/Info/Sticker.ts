@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { bold, inlineCode } from '@discordjs/builders';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {

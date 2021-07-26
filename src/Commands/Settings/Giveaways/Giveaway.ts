@@ -41,7 +41,7 @@ export class kCommand extends Command {
             );
         }
 
-        const command = KhafraClient.Commands.get(commandName.toLowerCase());
+        const command = KhafraClient.Commands.get(commandName.toLowerCase())!;
 
         return command.init(message, argument, settings);
     }

@@ -1,10 +1,11 @@
-import { Message, Snowflake } from 'discord.js';
+import { Snowflake } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import Emojis from '../../../../assets/Emojis.json';
 import { plural } from '../../../lib/Utility/String.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 
@@ -105,7 +106,7 @@ export class kCommand extends Command {
         const emoji = message.guild.emojis.cache.get(guildEmoji.groups.id as Snowflake)!;
 
         return this.Embed.success(`${emoji}`)
-            .setTitle(emoji.name)
+            .setTitle(emoji.name ?? 'Unknown')
             .setImage(emoji.url)
             .addFields(
                 { name: '**ID:**', value: emoji.id, inline: true },

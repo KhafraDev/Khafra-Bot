@@ -44,8 +44,8 @@ const spawn = () => {
     const takeWork = () => {
         if (!job && queue.length) {
             // If there's a job in the queue, send it to the worker
-            job = queue.shift();
-            worker.postMessage(job.message);
+            job = queue.shift() ?? null;
+            worker.postMessage(job?.message);
         }
     }
 
@@ -55,7 +55,7 @@ const spawn = () => {
             takeWork();
         })
         .on('message', (result) => {
-            job.event.emit('result', result);
+            job?.event.emit('result', result);
             job = null;
             takeWork(); // Check if there's more work to do
         })

@@ -48,10 +48,10 @@ export class kCommand extends Command {
 
         if (args.length === 0) {
             const chapter = `${await rand(1, 114 + 1)}`; // [1, 114]
-            const verse = `${await rand(1, Max.get(Number(chapter)) + 1)}`;
+            const verse = `${await rand(1, Max.get(Number(chapter))! + 1)}`;
 
-            const excerpt = Verses.get(`${chapter.padStart(3, '0')}-${verse.padStart(3, '0')}`);
-            const title = Titles.get(chapter);
+            const excerpt = Verses.get(`${chapter.padStart(3, '0')}-${verse.padStart(3, '0')}`)!;
+            const title = Titles.get(chapter)!;
 
             return this.Embed.success(`
             ${chapter}:${verse} - \`\`${excerpt.content}\`\`
@@ -61,12 +61,12 @@ export class kCommand extends Command {
         if (!/\d{1,3}:\d{1,3}/.test(args[0]))
             return this.Embed.generic(this);
 
-        const { b, v } = /(?<b>\d{1,3}):(?<v>\d{1,3})/.exec(args[0]).groups;
+        const { b = '', v = '' } = /(?<b>\d{1,3}):(?<v>\d{1,3})/.exec(args[0])?.groups ?? {};
         if (!Verses.has(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`))
             return this.Embed.fail(`Verse not found.`);
 
-        const excerpt = Verses.get(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`);
-        const title = Titles.get(`${Number(excerpt.book)}`);
+        const excerpt = Verses.get(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`)!;
+        const title = Titles.get(`${Number(excerpt.book)}`)!;
 
         return this.Embed.success(`
         ${b}:${v} \`\`${excerpt.content}\`\`

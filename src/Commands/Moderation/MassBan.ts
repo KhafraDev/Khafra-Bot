@@ -1,9 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions, GuildMember, User, Snowflake } from 'discord.js';
+import { Permissions, GuildMember, User, Snowflake } from 'discord.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -28,7 +29,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const ids = args.map(id => /^\d{17,19}$/.test(id) 
             ? <Snowflake>id 
-            : message.mentions.members.get(id.replace(/[^\d]/g, '') as Snowflake)
+            : message.mentions.members!.get(id.replace(/[^\d]/g, '') as Snowflake)!
         );
 
         if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))

@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { plural, upperCase } from '../../../lib/Utility/String.js';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {

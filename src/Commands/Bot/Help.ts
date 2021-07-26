@@ -37,17 +37,17 @@ export class kCommand extends Command {
             if (!KhafraClient.Commands.has(commandName))
                 return this.Embed.fail(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
 
-            const { settings, help } = KhafraClient.Commands.get(commandName);
+            const { settings, help } = KhafraClient.Commands.get(commandName)!;
             const helpF = help.length === 2 && help[1] === ''
                 ? [help[0], '[No arguments]']
                 : help;
-            const aliases = settings.aliases.length === 0
+            const aliases = settings.aliases!.length === 0
                 ? ['No aliases!']
-                : settings.aliases;
+                : settings.aliases!;
 
             return this.Embed.success(`
             The ${inlineCode(settings.name)} command:
-            ${codeBlock(help.shift())}
+            ${codeBlock(help.shift()!)}
 
             Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
             Example:
@@ -94,7 +94,7 @@ export class kCommand extends Command {
         c.on('collect', (i) => {
             if (i.isSelectMenu()) {
                 const category = i.values[0];
-                if (!folders.includes(category)) return;
+                if (!folders!.includes(category)) return;
 
                 pages = [];
                 page = 0;

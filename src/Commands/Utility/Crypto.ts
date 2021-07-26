@@ -32,7 +32,7 @@ export class kCommand extends Command {
             No cryptocurrency with that name or ID was found!
             `);
 
-        const currencies = cache.get(args.join('-').toLowerCase());
+        const currencies = cache.get(args.join('-').toLowerCase())!;
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
         const embed = this.Embed.success()

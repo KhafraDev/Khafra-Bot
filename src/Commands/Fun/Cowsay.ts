@@ -55,7 +55,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`Format not found! Use the command \`cowsay list\` to list all formats!`);
 
         const split = content.join(' ')
-            .match(/.{1,38}/g) // split every 38 characters; removes new lines
+            .match(/.{1,38}/g)! // split every 38 characters; removes new lines
             .map((value, index, arr) => {
                 if (index === 0) // first item in array
                     return `/ ${value.trim().padEnd(38, ' ')} \\`;

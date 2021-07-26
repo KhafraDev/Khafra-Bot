@@ -2,7 +2,7 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { Message, MessageActionRow } from 'discord.js';
+import { MessageActionRow } from 'discord.js';
 import { hyperlink, inlineCode, bold } from '@discordjs/builders';
 import { Components, disableAll, enableAll } from '../../../lib/Utility/Constants/Components.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
@@ -10,6 +10,7 @@ import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { time } from '@discordjs/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 type GiveawayEdit = Pick<Giveaway, 'id'>;
@@ -129,7 +130,7 @@ export class kCommand extends Command {
                 const end = await message.channel.awaitMessages({
                     max: 1,
                     time: 30_000,
-                    filter: (m: Message) =>
+                    filter: (m) =>
                         m.author.id === message.author.id &&
                         (endStr = parseStrToMs(m.content)) !== null &&
                         endStr >= 0 && // not negative
@@ -145,12 +146,12 @@ export class kCommand extends Command {
                 }
     
                 sql.push(`endDate = $${$++}::timestamp`);
-                params.push(new Date(Date.now() + endStr));
+                params.push(new Date(Date.now() + endStr!));
 
                 return void dontThrow(m.edit({
                     embeds: [
                         this.Embed.success(
-                        `Changed ending to ${time(new Date(Date.now() + endStr))}, ` + 
+                        `Changed ending to ${time(new Date(Date.now() + endStr!))}, ` + 
                         `confirm the changes by pressing the done button or continue.\n` +
                         `To disregard changes, ignore the prompt and the changes will eventually be canceled.`
                         )
@@ -168,7 +169,7 @@ export class kCommand extends Command {
                 const prize = await message.channel.awaitMessages({
                     max: 1,
                     time: 60 * 1000 * 5,
-                    filter: (m: Message) =>
+                    filter: (m) =>
                         m.author.id === message.author.id &&
                         m.content.length > 0
                 });
@@ -181,7 +182,7 @@ export class kCommand extends Command {
                 }
     
                 sql.push(`prize = $${$++}::text`);
-                params.push(prize.first().content);
+                params.push(prize.first()!.content);
     
                 return void dontThrow(m.edit({ 
                     embeds: [
@@ -204,7 +205,7 @@ export class kCommand extends Command {
                 const winners = await message.channel.awaitMessages({
                     max: 1,
                     time: 20_000,
-                    filter: (m: Message) =>
+                    filter: (m) =>
                         m.author.id === message.author.id &&
                         validateNumber(Number(m.content)) &&
                         winnersRange.isInRange(Number(m.content))
@@ -218,12 +219,12 @@ export class kCommand extends Command {
                 }
     
                 sql.push(`winners = $${$++}::smallint`);
-                params.push(Number(winners.first().content));
+                params.push(Number(winners.first()!.content));
     
                 return void dontThrow(m.edit({ 
                     embeds: [
                         this.Embed.success(`
-                        Number of winners will be changed to ${winners.first().content}!
+                        Number of winners will be changed to ${winners.first()!.content}!
 
                         Click the ${inlineCode('save')} button to save these changes!
                         `)
@@ -235,12 +236,12 @@ export class kCommand extends Command {
         
         c.on('end', async (c, r) => {
             if (r === 'cancel') {
-                return void dontThrow(c.last().update({
+                return void dontThrow(c.last()!.update({
                     embeds: [this.Embed.fail('Edit canceled, giveaway is unchanged!')],
                     components: []
                 }));
             } else if (r === 'save') {
-                await dontThrow(c.last().defer());
+                await dontThrow(c.last()!.defer());
                 params.push(message.guild.id, message.member.id, id);
                 
                 const { rows } = await pool.query<GiveawayEdit>(`
@@ -254,7 +255,7 @@ export class kCommand extends Command {
                     RETURNING id;
                 `, params);
                 
-                return void dontThrow(c.last().editReply({
+                return void dontThrow(c.last()!.editReply({
                     embeds: [
                         this.Embed.success(`Giveaway ${inlineCode(rows[0].id)} has been edited successfully!`)
                     ]

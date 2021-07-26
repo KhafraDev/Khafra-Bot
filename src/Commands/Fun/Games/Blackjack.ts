@@ -90,7 +90,7 @@ export class kCommand extends Command {
 
         c.on('collect', (i) => {
             if (i.customId === 'hit') {
-                const [card, suit] = deck.shift();
+                const [card, suit] = deck.shift()!;
 
                 score.sucker.push([card, suit]);
                 const total = getTotal(score.sucker);
@@ -107,7 +107,7 @@ export class kCommand extends Command {
                 const totalPlayer = getTotal(score.sucker);
 
                 while (getTotal(score.dealer) < totalPlayer) {
-                    score.dealer.push(deck.shift());
+                    score.dealer.push(deck.shift()!);
                 }
 
                 const totalDealer = getTotal(score.dealer);

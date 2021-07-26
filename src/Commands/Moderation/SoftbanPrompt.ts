@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -9,6 +9,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 const range = Range(0, 7, true);
 

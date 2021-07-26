@@ -9,6 +9,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../../lib/Utility/Mentions.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -18,7 +19,7 @@ const basic = new Permissions([
 
 type LogChannel = Pick<kGuild, 'complete_log_channel'>;
 
-const yes = (y: boolean) => y ? 'Yes' : 'No';
+const yes = (y: unknown) => y ? 'Yes' : 'No';
 
 @RegisterEvent
 export class kEvent extends Event<'channelUpdate'> {
@@ -52,9 +53,11 @@ export class kEvent extends Event<'channelUpdate'> {
             item = rows[0];
         }
 
+        if (!validSnowflake(item.complete_log_channel)) return;
+
         let logChannel: Channel | null = null;
         if (oldChannel.guild.channels.cache.has(item.complete_log_channel)) {
-            logChannel = oldChannel.guild.channels.cache.get(item.complete_log_channel);
+            logChannel = oldChannel.guild.channels.cache.get(item.complete_log_channel) ?? null;
         } else {
             const [err, chan] = await dontThrow(oldChannel.guild.client.channels.fetch(item.complete_log_channel));
             if (err !== null) return;

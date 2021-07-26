@@ -1,4 +1,4 @@
-import { Channel, GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
+import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
 import { inlineCode } from '@discordjs/builders';
 import { isText, isVoice } from '../types/Discord.js.js';
 
@@ -6,15 +6,16 @@ import { isText, isVoice } from '../types/Discord.js.js';
  * Check if a user or role has permissions in a channel.
  */
 export const hasPerms = (
-    channel: Channel, 
-    userOrRole: GuildMember | Role, 
+    channel: unknown, 
+    userOrRole: unknown, 
     perms: PermissionResolvable
 ) => {
     if (typeof channel === 'undefined' || channel === null)
         return false;
-        
     if (!isText(channel) && !isVoice(channel))
         return true;
+    if (!(userOrRole instanceof GuildMember) && !(userOrRole instanceof Role))
+        return false;
 
     return channel.permissionsFor(userOrRole).has(perms);
 }

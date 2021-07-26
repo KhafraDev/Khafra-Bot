@@ -1,7 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { GuildEmoji, Message, MessageAttachment, Permissions } from 'discord.js';
+import { GuildEmoji, MessageAttachment, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { validURL } from '../../lib/Utility/Valid/URL.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -32,7 +33,7 @@ export class kCommand extends Command {
 
         if (args.length === 1) {
             name = args[0];
-            link = message.attachments.first();
+            link = message.attachments.first() ?? null;
         } else {
             const info = validURL(args);
             if (info.length === 0 || info[0].url === null)
@@ -47,6 +48,8 @@ export class kCommand extends Command {
                 return this.Embed.fail(`Guild emojis can only be a maximum of 256kb! Try a smaller image!`);
 
             link = link.url;
+        } else if (typeof link !== 'string') {
+            return this.Embed.fail('Invalid link!');
         }
 
         let e: GuildEmoji | null = null;

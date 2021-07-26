@@ -17,14 +17,14 @@ const db = BetterSQLite3(assets);
 
 db.pragma('journal_mode = WAL');
 
-parentPort.on('message', ({ sql, parameters, opts }: Params) => {
+parentPort!.on('message', ({ sql, parameters, opts }: Params) => {
     try {
         const result = opts?.run
             ? db.prepare<unknown[]>(sql).run(...parameters)
             : db.prepare<unknown[]>(sql).all(...parameters);
-        parentPort.postMessage(result);
+        parentPort!.postMessage(result);
     } catch (e) {
         console.log(e);
-        parentPort.postMessage(null);
+        parentPort!.postMessage(null);
     }
 });

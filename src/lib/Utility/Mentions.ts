@@ -38,16 +38,18 @@ export async function getMentions(
     if (options.splice)
         args.splice(0, 1); // normal prefixed command
 
-    if (REGEX[type].test(args[options.idx])) {
-        const id = args[options.idx].replace(/[^0-9]/g, ''); // replace non-numeric characters
+    if (REGEX[type].test(args[options.idx!])) {
+        const id = args[options.idx!].replace(/[^0-9]/g, ''); // replace non-numeric characters
         if (!validSnowflake(id)) return null;
         // sometimes, especially for users, they might not be cached/auto fetched
         // for the bot, so no items will be in the collection
-        const item = mentions[type].get(id) ?? id;
+        const item = mentions[type]?.get(id) ?? id;
 
         // if it's not a string, no need to fetch it; we can just return it!
         if (typeof item !== 'string')
             return item;
+        if (guild === null)
+            return null;
 
         if (type === 'members' || type === 'roles') {
             try {
@@ -69,7 +71,7 @@ export async function getMentions(
     }
 }
 
-export const validSnowflake = (id: Snowflake | string): id is Snowflake => {
+export const validSnowflake = (id: unknown): id is Snowflake => {
     if (typeof id !== 'string')
         return false;
     else if (!/^\d{17,19}$/.test(id))

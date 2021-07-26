@@ -9,6 +9,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { upperCase } from '../../lib/Utility/String.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../../lib/Utility/Mentions.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -39,9 +40,11 @@ export class kEvent extends Event<'channelDelete'> {
             item = rows[0];
         }
 
+        if (!validSnowflake(item.complete_log_channel)) return;
+
         let logChannel: Channel | null = null;
         if (channel.guild.channels.cache.has(item.complete_log_channel)) {
-            logChannel = channel.guild.channels.cache.get(item.complete_log_channel);
+            logChannel = channel.guild.channels.cache.get(item.complete_log_channel) ?? null;
         } else {
             const [err, chan] = await dontThrow(channel.guild.client.channels.fetch(item.complete_log_channel));
             if (err !== null) return;

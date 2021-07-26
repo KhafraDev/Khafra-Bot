@@ -33,7 +33,7 @@ export class kCommand extends Command {
             return this.Embed.fail(results.Type);
         }
 
-        const first = results.observations.location?.[0].observation?.[0];
+        const first = results.observations?.location?.[0].observation?.[0];
         if (first === undefined) {
             return this.Embed.fail('No location found!');
         }

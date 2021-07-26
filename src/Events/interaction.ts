@@ -13,11 +13,11 @@ export class kEvent extends Event<'interactionCreate'> {
     async init(interaction: Interaction) {
         if (interaction.isMessageComponent()) { // "react" roles
             if (!validSnowflake(interaction.customId)) return;
-            if (interaction.message.author.id !== client.user.id) return;
+            if (interaction.message.author.id !== client.user!.id) return;
             if (!(interaction.member instanceof GuildMember)) return;
             
             let guild: Guild | null = null; // guild can be null here
-            if (!(interaction.guild instanceof Guild)) {
+            if (!(interaction.guild instanceof Guild) && typeof interaction.guildId === 'string') {
                 try {
                     await interaction.defer({ ephemeral: true });
                     guild = await client.guilds.fetch(interaction.guildId);
@@ -29,7 +29,7 @@ export class kEvent extends Event<'interactionCreate'> {
             if (!guild?.roles.cache.has(interaction.customId)) return;
 
             const role = guild.roles.cache.get(interaction.customId);
-            if (role.deleted || role.managed) return;
+            if (!role || role.deleted || role.managed) return;
 
             try {
                 if (interaction.member.partial)
@@ -42,8 +42,8 @@ export class kEvent extends Event<'interactionCreate'> {
                     await interaction.member.roles.add(role);
 
                 const opts: InteractionReplyOptions = { embeds: [] };
-                if (had) opts.embeds.push(Embed.success(`Removed role ${role} from you!`));
-                else opts.embeds.push(Embed.success(`Granted you the ${role} role!`));
+                if (had) opts.embeds!.push(Embed.success(`Removed role ${role} from you!`));
+                else opts.embeds!.push(Embed.success(`Granted you the ${role} role!`));
 
                 return interaction.deferred
                     ? interaction.editReply(opts)
@@ -65,7 +65,7 @@ export class kEvent extends Event<'interactionCreate'> {
         if (!interaction.isCommand()) return;
         if (!KhafraClient.Interactions.has(interaction.commandName)) return;
 
-        const command = KhafraClient.Interactions.get(interaction.commandName);
+        const command = KhafraClient.Interactions.get(interaction.commandName)!;
 
         try {
             if (command.options?.defer)

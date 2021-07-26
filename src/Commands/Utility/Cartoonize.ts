@@ -32,7 +32,7 @@ export class kCommand extends Command {
 
         void message.channel.sendTyping();
         
-        const cartoon = await cartoonize(message.attachments.first());
+        const cartoon = await cartoonize(message.attachments.first()!);
         if (!cartoon)
             return this.Embed.fail('Failed to extract the image from the HTML. 😕');
         

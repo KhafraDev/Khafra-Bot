@@ -12,7 +12,7 @@ export const RegisterCommand = <T extends new (...args: unknown[]) => Command>(
     const cmd = new CommandConstructor();
     KhafraClient.Commands.set(cmd.settings.name.toLowerCase(), cmd);
 
-    cmd.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, cmd));
+    cmd.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, cmd));
 
     CommandCooldown.set(cmd.settings.name.toLowerCase(), new Set());
 }
@@ -29,7 +29,7 @@ export const RegisterInteraction = <T extends new (...args: unknown[]) => Intera
 ) => {
     const interaction = new InteractionObject();
 
-    void dontThrow(client.application.commands.create(interaction.data));
+    void dontThrow(client.application?.commands.create(interaction.data));
 
     // There isn't a better way to check if a bot can make a slash command "yet".
     // https://discord.com/channels/222078108977594368/824410868505903114/848343604308475934

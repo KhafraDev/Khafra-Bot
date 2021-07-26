@@ -60,7 +60,7 @@ export const Embed = {
             .setDescription(`
             ${r}
 
-            Aliases: ${settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
+            Aliases: ${settings.aliases!.map(a => `\`\`${a}\`\``).join(', ')}
 
             Example Usage:
             ${help.slice(1).map((e: string) => `\`\`${settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}

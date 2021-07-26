@@ -140,7 +140,7 @@ export class kCommand extends Command {
             } catch {}
 
             if (eq !== 'Invalid input!' && typeof eq !== 'number') {
-                return void dontThrow(c.last()[r !== 'stop' ? 'editReply' : 'update']({
+                return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                     content: 'Invalid calculations...',
                     components: disableAll(m)
                 }));
@@ -156,7 +156,7 @@ export class kCommand extends Command {
                 .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
                 .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
 
-            return void dontThrow(c.last()[r !== 'stop' ? 'editReply' : 'update']({
+            return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
                 components: disableAll(m),
                 embeds: [

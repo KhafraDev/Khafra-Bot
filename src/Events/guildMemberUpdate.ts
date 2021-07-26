@@ -52,11 +52,11 @@ export class kEvent extends Event<'guildMemberUpdate'> {
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel;
+        let channel: Channel | null = null;
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
-            channel = oldMember.guild.channels.cache.get(item.welcome_channel)!;
+            channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
-            const [err, chan] = await dontThrow(oldMember.guild.me.client.channels.fetch(item.welcome_channel));
+            const [err, chan] = await dontThrow(oldMember.guild.me!.client.channels.fetch(item.welcome_channel));
             if (err !== null) return;
             channel = chan;
         }

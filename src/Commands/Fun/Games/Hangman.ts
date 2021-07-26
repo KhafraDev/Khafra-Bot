@@ -52,7 +52,7 @@ export class kCommand extends Command {
         const listName = args.length === 0 ? 'presidents' : args[0].toLowerCase();
         let words: string[] | null = null;
         if (lists.has(listName)) {
-            words = lists.get(listName);
+            words = lists.get(listName)!;
         } else {
             if (listsByName.includes(listName)) {
                 const path = join(assets, `${listName}.txt`);
@@ -112,7 +112,7 @@ export class kCommand extends Command {
                 c.stop();
                 opts.content = null;
                 opts.components = disableAll(m);
-                opts.embeds.push(this.Embed.success()
+                opts.embeds!.push(this.Embed.success()
                     .setTitle('You guessed the word!')
                     .setImage(images[wrong])
                     .setDescription(`
@@ -139,7 +139,7 @@ export class kCommand extends Command {
                     ];
                 } else {
                     opts.content = guess.length > 1 ? '❗ Partial guesses do not count.' : null;
-                    opts.embeds.push(this.Embed.success()
+                    opts.embeds!.push(this.Embed.success()
                         .setTitle(`That guess is incorrect!`)
                         .setImage(images[wrong])
                         .setDescription(`
@@ -151,7 +151,7 @@ export class kCommand extends Command {
                 }
             } else { // guess is correct, didn't win or lose
                 opts.content = null;
-                opts.embeds.push(this.Embed.success()
+                opts.embeds!.push(this.Embed.success()
                     .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                     .setImage(images[wrong])
                     .setDescription(`

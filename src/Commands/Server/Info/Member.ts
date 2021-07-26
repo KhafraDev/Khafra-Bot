@@ -4,7 +4,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { time } from '@discordjs/builders';
 
-const formatPresence = (activities: Activity[]) => {
+const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
     
     const push: string[] = [];
@@ -61,7 +61,7 @@ export class kCommand extends Command {
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(
                 { name: '**Role Color:**', value: member.displayHexColor, inline: true },
-                { name: '**Joined Guild:**', value: time(member.joinedAt), inline: false },
+                { name: '**Joined Guild:**', value: time(member.joinedAt ?? new Date()), inline: false },
                 { 
                     name: '**Boosting Since:**', 
                     value: member.premiumSince ? time(member.premiumSince) : 'Not boosting', 

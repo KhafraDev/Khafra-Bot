@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -7,7 +7,7 @@ import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { inlineCode } from '@discordjs/builders';
 
@@ -58,7 +58,7 @@ export class kCommand extends Command {
             return this.Embed.fail('Failed to fetch the member, sorry. 😕\n Are they in the guild?');
         else if (!hierarchy(message.member, member))
             return this.Embed.fail(`You can't warn ${member}! 🤣`);
-        else if (!hierarchy(message.guild.me, member))
+        else if (!hierarchy(message.guild.me!, member))
             return this.Embed.fail(`I can't warn ${member}! 😦`);
 
         const { rows } = await pool.query<WarnInsert>(`

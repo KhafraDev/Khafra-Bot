@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -7,6 +7,7 @@ import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Warning } from '../../../lib/types/KhafraBot.js';
 import { inlineCode, time } from '@discordjs/builders';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 interface Total {
     total_points: string

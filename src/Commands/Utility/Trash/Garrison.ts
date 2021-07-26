@@ -35,7 +35,7 @@ const rss = new RSSReader<ISchizophrenia>(async () => {
     const comics = [...rss.results.values()].map(item => ({
         href: item.link,
         title: decodeXML(item.title),
-        link: /src="(.*?)"/.exec(item['content:encoded'])[1]
+        link: /src="(.*?)"/.exec(item['content:encoded'])![1]
     }));
 
     await garrisonTransaction(comics);
@@ -68,11 +68,11 @@ export class kCommand extends Command {
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
-            const comic = [...rss.results.values()].shift();
+            const comic = [...rss.results.values()].shift()!;
             return this.Embed.success()
                 .setTitle(decodeXML(comic.title))
                 .setURL(comic.link)
-                .setImage(/src="(.*?)"/.exec(comic['content:encoded'])[1]);
+                .setImage(/src="(.*?)"/.exec(comic['content:encoded'])![1]);
         }
 
         const { 0: comic } = await asyncQuery<Comic>(`

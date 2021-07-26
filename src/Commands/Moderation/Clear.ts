@@ -43,7 +43,7 @@ export class kCommand extends Command {
         const deleted = await channel.bulkDelete(toDelete > 100 ? 100 : toDelete, true);
 
         const embed = this.Embed.success()
-            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
+            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)
             .setDescription(`

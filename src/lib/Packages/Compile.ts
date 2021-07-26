@@ -36,7 +36,7 @@ export const compile = (fileNames: string[], options: ts.CompilerOptions) => {
 
     for (const diagnostic of allDiagnostics) {
         if (diagnostic.file) {
-            const { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start);
+            const { line, character } = ts.getLineAndCharacterOfPosition(diagnostic.file, diagnostic.start!);
             const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
             diagnostics.push(`${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
         } else {

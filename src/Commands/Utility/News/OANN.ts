@@ -51,7 +51,7 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()].map(p => {
-            const u = URLFactory(p.link);
+            const u = URLFactory(p.link)!;
             p.link = u.toString();
             return p;
         });

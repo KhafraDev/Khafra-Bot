@@ -41,9 +41,9 @@ export class kCommand extends Command {
 
         const embed = this.Embed.success()
             .setTitle(movies.original_title ?? movies.title)
-            .setDescription(movies.overview)
+            .setDescription(movies.overview ?? '')
             .addField('**Genres:**', movies.genres.map(g => g.name).join(', '), true)
-            .addField('**Runtime:**', formatMS(movies.runtime * 60000), true)
+            .addField('**Runtime:**', formatMS(Number(movies.runtime) * 60000), true)
             .addField('**Status:**', movies.status, true)
             .addField('**Released:**', movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
             .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)

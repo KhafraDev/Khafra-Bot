@@ -27,7 +27,7 @@ export const cooldown = (max: number, ms: number) => {
             m.set(id, [now]);
             return true;
         } else {
-            const i = m.get(id).filter(d => now - d < ms);
+            const i = m.get(id)!.filter(d => now - d < ms);
             if (i.length >= max) {
                 return false;
             } else {

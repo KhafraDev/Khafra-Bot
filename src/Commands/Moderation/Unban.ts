@@ -1,9 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 @RegisterCommand
 export class kCommand extends Command {

@@ -58,8 +58,8 @@ const defaults = [
 const list = async () => {
     const [err, r] = await dontThrow(fetch(defaults[0]));
     
-    if (err !== null || !r.ok) 
-        throw new Error(`Received status ${r.status}!`);
+    if (err !== null) 
+        throw err;
 
     const j = await r.json() as CGCrypto[];
 

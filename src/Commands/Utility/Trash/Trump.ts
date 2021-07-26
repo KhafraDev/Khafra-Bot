@@ -30,7 +30,7 @@ export class kCommand extends Command {
         if (!item || item.length === 0) {
             return this.Embed.fail('Wow! No atrocities on that day.');
         } else if (item.length === 1) {
-            const { text, color, emojis } = item.shift();
+            const { text, color, emojis } = item.shift()!;
             return new MessageEmbed()
                 .setColor(color as `#${string}`)
                 .setDescription(`${emojis.join('')} ${text}`);

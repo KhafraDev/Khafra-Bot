@@ -2,9 +2,9 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { DiscordAPIError, Message } from 'discord.js';
+import { DiscordAPIError } from 'discord.js';
 import { hyperlink, inlineCode } from '@discordjs/builders';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { time } from '@discordjs/builders';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;

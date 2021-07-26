@@ -22,7 +22,7 @@ const messageClient = redis.createClient(`${connect}/1`);
  */
 const Promisify = (client: RedisClient) => {
     const set: RedisSet = promisify(client.set).bind(client);
-    const get: RedisGet = promisify(client.get).bind(client);
+    const get = promisify(client.get).bind(client) as RedisGet;
     /** https://redis.io/commands/exists */
     const exists: RedisExists = promisify(client.exists).bind(client);
     const hset = promisify(client.hset).bind(client) as RedisHSet;

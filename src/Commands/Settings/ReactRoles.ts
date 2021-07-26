@@ -1,11 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, MessageActionRow, MessageEmbed, Permissions, Role } from 'discord.js';
+import { MessageActionRow, MessageEmbed, Permissions, Role } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { upperCase } from '../../lib/Utility/String.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText, Message } from '../../lib/types/Discord.js.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
@@ -86,7 +86,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`${args[0]} isn't a role! Try again!`);
         } else if (role.deleted || role.managed) {
             return this.Embed.fail(`Can't use ${role} as a react role!`);
-        } else if (role.comparePositionTo(message.guild.me.roles.highest) > 0) {
+        } else if (role.comparePositionTo(message.guild.me!.roles.highest) > 0) {
             return this.Embed.fail(`Role supercedes my highest role - I don't have permissions to manage this role!`);
         }
 

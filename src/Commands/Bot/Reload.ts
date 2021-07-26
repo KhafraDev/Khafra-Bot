@@ -41,7 +41,7 @@ export class kCommand extends Command {
                 compareTwoStrings(b.toLowerCase(), args[0].toLowerCase()) 
                 - compareTwoStrings(a.toLowerCase(), args[0].toLowerCase())
             )
-            .shift();
+            .shift()!;
         
         const files = await client.walk(join(basePath, closest), () => true);
         const mapped = files
@@ -74,7 +74,7 @@ export class kCommand extends Command {
         if (c.size === 0)
             return this.Embed.fail('Command canceled!');
 
-        const cmd = mapped.find(({ base }) => base === c.first().content);
+        const cmd = mapped.find(({ base }) => base === c.first()!.content)!;
         const outDir = cmd.dir.replace(`${sep}src${sep}`, `${sep}build${sep}src${sep}`);
 
         const compiled = compile(
@@ -94,6 +94,6 @@ export class kCommand extends Command {
         KhafraClient.Commands.set(commandName, command); // add back to cache
         CommandCooldown.set(commandName, new Set()); // add back to cache
 
-        command.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, command));
+        command.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, command));
     }
 }

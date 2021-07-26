@@ -18,11 +18,11 @@ export const cartoonize = async (attachment: MessageAttachment) => {
     const f = new FormData();
     const a = new AbortController();
     const r = await fetch(attachment.proxyURL);
-    const m = `${lookup(attachment.name)}`;
+    const m = `${lookup(attachment.name ?? attachment.url)}`;
     
     setTimeout(() => a.abort(), 60000).unref();
     f.append('image', await r.arrayBuffer(), {
-        filename: attachment.name,
+        filename: attachment.name ?? `image.${m.split('/')[1]}`,
         contentType: m
     });
 
@@ -40,7 +40,7 @@ export const cartoonize = async (attachment: MessageAttachment) => {
                 data += chunk;
             }
 
-            return done(decodeXML(R.exec(data)[1]));
+            return done(decodeXML(R.exec(data)![1]));
         });
         
         f.pipe(req);

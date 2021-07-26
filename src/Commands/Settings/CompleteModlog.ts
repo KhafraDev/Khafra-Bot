@@ -1,9 +1,9 @@
 import { Arguments, Command } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText, Message } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { client } from '../../Structures/Database/Redis.js';

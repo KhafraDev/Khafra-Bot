@@ -1,7 +1,7 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText, isVoice, isExplicitText } from '../../../lib/types/Discord.js.js';
+import { isText, isVoice, isExplicitText, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { bold, time } from '@discordjs/builders';

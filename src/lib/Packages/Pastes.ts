@@ -124,7 +124,7 @@ const ghostbin = async (text: string) => {
     });
 
     if (r.status === 303)
-        return new URL(r.headers.get('location'), 'https://ghostbin.co').toString();
+        return new URL(r.headers.get('location')!, 'https://ghostbin.co').toString();
 }
 
 /**

@@ -1,8 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -54,15 +54,13 @@ export class kCommand extends Command {
         You can also cancel the command using \`\`cancel\`\`.
         `)] });
 
-        const filter = (m: Message) =>
-            m.author.id === message.author.id &&
-            parse(m.content).length > 0 ||
-            ['stop', 'cancel'].includes(m.content.toLowerCase());
-
         const lines: { emoji: string, text: string }[] = []
 
         const c = message.channel.createMessageCollector({
-            filter,
+            filter: (m) =>
+                m.author.id === message.author.id &&
+                parse(m.content).length > 0 ||
+                ['stop', 'cancel'].includes(m.content.toLowerCase()),
             max: 5,
             time: 60 * 1000 * 3
         });

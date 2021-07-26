@@ -10,10 +10,12 @@ export const notified = new Set<Snowflake>();
  */
 export const commandLimit = (name: string, user: Snowflake): boolean => {
     const commandCooldown = CommandCooldown.get(name);
+    if (!commandCooldown)
+        return false;
     if (commandCooldown.has(user))
         return false;
 
-    const command = KhafraClient.Commands.get(name);
+    const command = KhafraClient.Commands.get(name)!;
     commandCooldown.add(user);
 
     // somewhat interesting, we use the callback version rather than a promisifed function
@@ -21,6 +23,6 @@ export const commandLimit = (name: string, user: Snowflake): boolean => {
     setTimeout(() => {
         commandCooldown.delete(user);
         notified.delete(user);
-    }, command.settings.ratelimit * 1000).unref();
+    }, command.settings.ratelimit! * 1000).unref();
     return true;
 }

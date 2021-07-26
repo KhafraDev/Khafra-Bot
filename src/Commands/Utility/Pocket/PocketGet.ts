@@ -32,7 +32,7 @@ export class kCommand extends Command {
             FROM kbPocket
             WHERE user_id = $1::text
             LIMIT 1;
-        `, [message.member.id]);
+        `, [message.member!.id]);
 
         if (rows.length === 0)
             return this.Embed.fail(`
@@ -41,7 +41,7 @@ export class kCommand extends Command {
             Try using the \`\`pocket\`\` command for more information.
             `);
 
-        const pocket = new Pocket(rows.shift()!);
+        const pocket = new Pocket(rows.shift());
         const latest = await pocket.getList();
 
         const formatted = Object.values(latest.list)

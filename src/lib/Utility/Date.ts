@@ -27,7 +27,7 @@ export const formatDate = (
     const dateObj = new Date(date);
 
     const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?|t/g;
-    const replace = format.replace(formatRegex, formatter => {
+    const replace = format.replace(formatRegex, (formatter): string => {
         switch (formatter) {
             case 'YYYY':    // 2020
                 return '' + dateObj.getFullYear();
@@ -56,7 +56,7 @@ export const formatDate = (
                 return dateObj.toLocaleString(locale, { 
                     hour12: formatter[0] !== 'H', 
                     hour: 'numeric' 
-                }).split(' ').shift().padStart(formatter.length, '0');
+                }).split(' ').shift()!.padStart(formatter.length, '0');
             case 'A':
             case 'a':
             case 'p':
@@ -67,7 +67,7 @@ export const formatDate = (
                 return dateObj.toLocaleString(locale, { 
                     hour12: true, 
                     hour: 'numeric' 
-                }).split(' ').pop();
+                }).split(' ').pop()!;
             case 'k':       // 1..24
             case 'kk':      // 01..24
                 return ('' + dateObj.getHours()).padStart(formatter.length, '0');

@@ -1,9 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { table } from '../../../lib/Utility/CLITable.js';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 interface Insights {
     k_date: Date
@@ -61,9 +62,9 @@ export class kCommand extends Command {
 
             return red;
         }, {
-            Dates: [],
-            Joins: [],
-            Leaves: []
+            Dates: [] as string[],
+            Joins: [] as string[],
+            Leaves: [] as string[]
         });
 
         const t = table({ Dates, Joins, Leaves });

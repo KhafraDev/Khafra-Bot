@@ -23,7 +23,8 @@ export const Sanitize = (message: Message) => {
         message.partial ||
         message.tts || 
         message.content.length === 0 ||
-        isDM(message.channel)
+        isDM(message.channel) ||
+        !message.guild
     ) { 
         return false;
     }

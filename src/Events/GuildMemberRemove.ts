@@ -52,9 +52,9 @@ export class kEvent extends Event<'guildMemberRemove'> {
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel;
+        let channel: Channel | null = null;
         if (member.guild.channels.cache.has(item.welcome_channel)) {
-            channel = member.guild.channels.cache.get(item.welcome_channel);
+            channel = member.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
             const [err, c] = await dontThrow(member.guild.client.channels.fetch(item.welcome_channel));
             if (err !== null) return;
@@ -68,7 +68,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`${member} (${member.user.tag}) has left the server!`)
             .addFields([
-                { name: 'Originally Joined:', value: time(member.joinedAt), inline: true },
+                { name: 'Originally Joined:', value: time(member.joinedAt ?? new Date()), inline: true },
                 { name: 'Account Created:', value: time(member.user.createdAt), inline: true }
             ]);
 
