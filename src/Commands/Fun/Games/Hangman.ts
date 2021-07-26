@@ -90,7 +90,7 @@ export class kCommand extends Command {
                 m.content.length > 0 &&
                 !guesses.includes(m.content.toLowerCase()) &&
                 wrong < 6,
-            time: 120_000
+            idle: 30_000
         });
 
         c.on('collect', (msg) => {
@@ -165,7 +165,15 @@ export class kCommand extends Command {
             return void dontThrow(m.edit(opts));
         });
 
-        c.once('end', () => void games.delete(message.author.id));
+        c.once('end', () => {
+            games.delete(message.author.id);
+            r.stop();
+
+            return void dontThrow(m.edit({
+                content: `Game over!`,
+                components: disableAll(m)
+            }));
+        });
 
         const r = m.createMessageComponentCollector({
             filter: (interaction) => 
