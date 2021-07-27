@@ -56,7 +56,7 @@ export class kEvent extends Event<'guildBanRemove'> {
         }
 
         const unban = unbans.has(key) ? unbans.get(key) : null;
-        const reasonStr = reason ?? unban?.reason ?? 'Unknown';
+        const reasonStr = reason ?? (unban?.reason || 'Unknown');
 
         await dontThrow(channel.send({ 
             embeds: [

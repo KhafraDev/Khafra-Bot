@@ -47,7 +47,7 @@ export class kCommand extends Command {
         try {
             await message.guild.members.ban(user, {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
-                reason
+                reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
             });
             
             // TODO(@KhafraDev): check if this perm requires any intents/perms

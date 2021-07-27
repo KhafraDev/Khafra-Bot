@@ -56,7 +56,7 @@ export class kEvent extends Event<'guildBanAdd'> {
         }
 
         const ban = bans.has(key) ? bans.get(key) : null;
-        const reasonStr = reason ?? ban?.reason ?? 'Unknown';
+        const reasonStr = reason ?? (ban?.reason || 'Unknown');
 
         await dontThrow(channel.send({ 
             embeds: [
