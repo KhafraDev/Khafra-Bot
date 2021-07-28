@@ -72,10 +72,6 @@ export class kCommand extends Command {
             ? message.member 
             : message.guild.members.resolve(user);
 
-        if (!member) {
-            return this.Embed.fail(`Member couldn't be found!`);
-        }
-
         const snowflake = SnowflakeUtil.deconstruct(user.id);
         const flags = user.flags?.bitfield
             ? user.flags.toArray()
@@ -85,7 +81,7 @@ export class kCommand extends Command {
             .filter(f => getEmojis().has(f))
             .map(f => getEmojis().get(f));
 
-        return this.Embed.success(formatPresence(member.presence?.activities) ?? undefined)
+        return this.Embed.success(formatPresence(member?.presence?.activities) ?? undefined)
             .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user!.displayAvatarURL())
             .addField('**Username:**', user.username, true)
             .addField('**ID:**', user.id, true)
