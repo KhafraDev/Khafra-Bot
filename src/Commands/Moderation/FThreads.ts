@@ -88,12 +88,14 @@ export class kCommand extends Command {
                 if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.MANAGE_CHANNELS)) continue;
                 if (!hasPerms(channel, message.member, Permissions.FLAGS.MANAGE_CHANNELS)) continue;
 
-                pr.push(channel.permissionOverwrites.set([
+                pr.push(channel.permissionOverwrites.edit(
+                    message.guild.roles.everyone,
                     {
-                        id: message.guild.roles.everyone.id,
-                        deny: threadPerms
+                        USE_PUBLIC_THREADS: false,
+                        USE_PRIVATE_THREADS: false,
+                        MANAGE_THREADS: false
                     }
-                ], `Khafra-Bot: FThreads used.`));
+                ));
             }
         }
 
