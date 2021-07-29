@@ -35,7 +35,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments, settings: kGuild) {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
-        const channel = channelFirst 
+        const guildChannel = channelFirst 
             ? (await getMentions(message, 'channels') ?? message.channel)
             : message.channel;
 
@@ -48,11 +48,11 @@ export class kCommand extends Command {
             return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
-        if (!isExplicitText(channel))
+        if (!isExplicitText(guildChannel))
             return this.Embed.fail('Rate-limits can only be set in text channels!');
 
         try {
-            await channel.setRateLimitPerUser(secs, 
+            await guildChannel.setRateLimitPerUser(secs, 
                 `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
             );
         } catch {
@@ -60,7 +60,7 @@ export class kCommand extends Command {
         }
 
         void message.reply({ 
-            embeds: [this.Embed.success(`Slow-mode set in ${channel} for ${secs} second${plural(secs)}!`)]
+            embeds: [this.Embed.success(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
         });
 
         if (settings.mod_log_channel !== null) {
@@ -69,11 +69,15 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send({ embeds: [this.Embed.success(`
-            **Channel:** ${channel} (${channel.id}, ${channel.type}).
-            **Staff:** ${message.member}
-            **Duration:** ${secs} second${plural(secs)}
-            `).setTitle('Channel Rate-Limited')] });
+            return channel.send({
+                embeds: [
+                    this.Embed.success(`
+                    **Channel:** ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
+                    **Staff:** ${message.member}
+                    **Duration:** ${secs} second${plural(secs)}
+                    `).setTitle('Channel Rate-Limited')
+                ]
+            });
         }
     }
 }
