@@ -1,11 +1,16 @@
 import { Event } from '../Structures/Event.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
-import config from '../../config.json';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { validSnowflake } from '../lib/Utility/Mentions.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 @RegisterEvent
 export class kEvent extends Event<'ready'> {

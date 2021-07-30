@@ -4,7 +4,12 @@ import { client } from '../../index.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
 import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import config from '../../../config.json';
+import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 const emoji = client.emojis.cache.get(config.interactions.mdn as Snowflake);
 

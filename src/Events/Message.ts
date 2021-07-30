@@ -5,7 +5,6 @@ import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-import config from '../../config.json';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
@@ -16,6 +15,12 @@ import { kGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
 import { upperCase } from '../lib/Utility/String.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 const defaultSettings: Partial<kGuild> = {
     prefix: config.prefix,

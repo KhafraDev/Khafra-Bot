@@ -4,10 +4,15 @@ import {
     Permissions,
     PermissionResolvable
 } from 'discord.js';
-import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */

@@ -4,10 +4,16 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { UserFlagsString } from 'discord.js';
 import { client } from '../../../index.js';
-import config from '../../../../config.json';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { time } from '@discordjs/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
+
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl

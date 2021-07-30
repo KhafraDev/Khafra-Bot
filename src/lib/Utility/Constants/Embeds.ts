@@ -1,8 +1,13 @@
 import { MessageEmbed, PermissionResolvable, Permissions } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
-import config from '../../../../config.json';
 import { permResolvableToString } from '../Permissions.js';
 import { plural } from '../String.js';
+import { createFileWatcher } from '../FileWatcher.js';
+import { cwd } from './Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 type PartialCommand = {
     settings: Command['settings'],

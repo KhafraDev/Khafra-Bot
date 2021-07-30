@@ -1,8 +1,13 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
 import fetch from 'undici-fetch';
 import { delay } from './Constants/OneLiners.js';
-import config from '../../../package.json';
 import { validateNumber } from './Valid/Number.js';
+import { createFileWatcher } from './FileWatcher.js';
+import { cwd } from './Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../../package.json');
+createFileWatcher(config, join(cwd, 'package.json'));
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop: (() => void | Promise<void>) = () => {};

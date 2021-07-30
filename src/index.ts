@@ -8,7 +8,7 @@ import { dontThrow } from './lib/Utility/Don\'tThrow.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
     return (...args: ClientEvents[T]): void => 
-        void dontThrow(KhafraClient.Events.get(name)?.init(...args));
+        void dontThrow(KhafraClient.Events.get(name)!.init(...args) as Promise<unknown>);
 }
 
 export const client = new KhafraClient({

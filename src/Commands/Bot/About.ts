@@ -1,7 +1,12 @@
 import { version } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import pkg from '../../../package.json';
+import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const pkg = {} as typeof import('../../../package.json');
+createFileWatcher(pkg, join(cwd, 'package.json'));
 
 @RegisterCommand
 export class kCommand extends Command {
