@@ -56,7 +56,7 @@ export class kCommand extends Command {
             ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${member.roles.cache.filter(r => r.name !== '@everyone').array().slice(0, 20).join(', ')}
+            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
             `)
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(

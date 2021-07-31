@@ -78,10 +78,10 @@ export class kEvent extends Event<'emojiUpdate'> {
         
         if (oldEmoji.roles.cache.size !== newEmoji.roles.cache.size) {
             if (oldEmoji.roles.cache.size < newEmoji.roles.cache.size) {
-                const gainedAccess = newEmoji.roles.cache.filter(r => !oldEmoji.roles.cache.has(r.id)).array();
+                const gainedAccess = [...newEmoji.roles.cache.filter(r => !oldEmoji.roles.cache.has(r.id)).values()];
                 embed.addField('**Gained Access:**', gainedAccess.join(', '), true);
             } else {
-                const lostAccess = oldEmoji.roles.cache.filter(r => !newEmoji.roles.cache.has(r.id)).array();
+                const lostAccess = [...oldEmoji.roles.cache.filter(r => !newEmoji.roles.cache.has(r.id)).values()];
                 embed.addField('**Lost Access:**', lostAccess.join(', '), true);
             }
         }
