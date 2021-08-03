@@ -1,4 +1,3 @@
-import { Snowflake } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
@@ -99,11 +98,11 @@ export class kCommand extends Command {
             }
 
             return padEmbedFields(embed);
-        } else if (!message.guild.emojis.cache.has(guildEmoji.groups.id as Snowflake)) {
+        } else if (!message.guild.emojis.cache.has(guildEmoji.groups.id)) {
             return this.Embed.fail(`Emoji isn't cached, whoops!`);
         }
 
-        const emoji = message.guild.emojis.cache.get(guildEmoji.groups.id as Snowflake)!;
+        const emoji = message.guild.emojis.cache.get(guildEmoji.groups.id)!;
 
         return this.Embed.success(`${emoji}`)
             .setTitle(emoji.name ?? 'Unknown')

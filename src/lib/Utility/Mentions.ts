@@ -77,7 +77,7 @@ export const validSnowflake = (id: unknown): id is Snowflake => {
     else if (!/^\d{17,19}$/.test(id))
         return false;
         
-    const snowflake = SnowflakeUtil.deconstruct(id as Snowflake);
+    const snowflake = SnowflakeUtil.deconstruct(id);
     if ( 
         snowflake.date.getTime() === epoch.getTime()
         || snowflake.binary === zeroBinary

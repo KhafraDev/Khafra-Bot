@@ -10,7 +10,7 @@
     "adm-zip": "^0.4.16",
     "better-sqlite3": "^7.4.0",
     "discord-api-types": "^0.19.0",
-    "discord.js": "^13.0.0-dev.t1627732975.331a9d3",
+    "discord.js": "^13.0.0-dev.t1627906063.6e0ea02",
     "entities": "^2.1.0",
     "fast-xml-parser": "^3.17.6",
     "ms": "^2.1.2",
@@ -18,6 +18,7 @@
     "redis": "^3.1.2",
     "search-mdn": "^1.0.0",
     "twemoji-parser": "^13.0.0",
+    "undici": "github:nodejs/undici",
     "undici-fetch": "github:Ethan-Arrowood/undici-fetch"
   },
   "devDependencies": {

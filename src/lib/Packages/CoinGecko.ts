@@ -1,4 +1,4 @@
-import fetch, { Response } from 'undici-fetch';
+import { Dispatcher, request } from 'undici';
 import { chunkSafe } from '../Utility/Array.js';
 import { dontThrow } from '../Utility/Don\'tThrow.js';
 import { once } from '../Utility/Memoize.js';
@@ -55,35 +55,55 @@ const defaults = [
     'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false'
 ] as const;
 
-const list = async () => {
-    const [err, r] = await dontThrow(fetch(defaults[0]));
-    
-    if (err !== null) 
-        throw err;
+const list = once(async () => {
+    const [err, r] = await dontThrow((async () => {
+        const ac = new AbortController();
+        setTimeout(() => ac.abort(), 30000);
+        
+        return request(defaults[0], {
+            method: 'GET',
+            signal: ac.signal,
+            headersTimeout: 60000
+        });
+    })());
 
-    const j = await r.json() as CGCrypto[];
+    if (err !== null) {
+        console.log(`CoinGecko: ${err.message}`);
+        return;
+    }
+
+    const j = await r.body.json() as CGCrypto[];
 
     for (const { id, symbol } of j) {
         symbolCache.add(id);
         symbolCache.add(symbol);
         strictlyIDs.add(id);
     }
-}
+});
 
 const all = async () => {
-    if (symbolCache.size === 0)
-        await list();
+    
+    await list();
 
     const chunk = chunkSafe([...strictlyIDs], 250);
-    const reqs = chunk.map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
+    const reqs = chunk.map(r => (async () => {
+        const ac = new AbortController();
+        setTimeout(() => ac.abort(), 30000);
+
+        return request(`${defaults[1]}&ids=${r.join(',')}`, {
+            method: 'GET',
+            signal: ac.signal,
+            headersTimeout: 60000
+        });
+    })());
     const reqsChunk = chunkSafe(reqs, 5);
 
     for (const all of reqsChunk) {
         const success = await Promise.allSettled(all.map(p => dontThrow(p)));
         const filtered = success
-            .filter((r): r is PromiseFulfilledResult<[Error, Response]> => r.status === 'fulfilled')
-            .filter(r => r.value[0] === null && r.value[1].ok)
-            .map(r => r.value[1].json() as Promise<CoinGeckoRes[]>);
+            .filter((r): r is PromiseFulfilledResult<[Error, Dispatcher.ResponseData]> => r.status === 'fulfilled')
+            .filter(r => r.value[0] === null && r.value[1].statusCode === 200)
+            .map(r => r.value[1].body.json() as Promise<CoinGeckoRes[]>);
 
         const json = await Promise.all(filtered);
 
@@ -115,5 +135,5 @@ const all = async () => {
 export const setCryptoInterval = once(async () => {
     await dontThrow(all());
 
-    return setInterval(() => void dontThrow(all()), 60 * 1000 * 15).unref();
+    return setInterval(() => void dontThrow(all()), 60 * 1000 * 30).unref();
 });

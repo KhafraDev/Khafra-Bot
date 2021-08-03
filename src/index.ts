@@ -3,7 +3,7 @@ import './lib/Utility/Rejections.js';
 import './lib/Utility/Timers/Giveaways.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
-import { ClientEvents, Intents, Options, SweptCollection } from 'discord.js';
+import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
 import { dontThrow } from './lib/Utility/Don\'tThrow.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
@@ -16,14 +16,14 @@ export const client = new KhafraClient({
     presence: { status: 'online' },
     makeCache: Options.cacheWithLimits({
         MessageManager: {
-            sweepFilter: SweptCollection.filterByLifetime({
+            sweepFilter: LimitedCollection.filterByLifetime({
                 lifetime: 1800
             }),
             sweepInterval: 1800
         },
         ThreadManager: {
-            sweepFilter: SweptCollection.filterByLifetime({
-                excludeFromSweep: (thread) => !(thread as import('discord.js').ThreadChannel).archived,
+            sweepFilter: LimitedCollection.filterByLifetime({
+                excludeFromSweep: (thread) => !thread.archived,
             }),
             sweepInterval: 1800
         }

@@ -24,8 +24,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments) {
+        const timeout = setTimeout(() => message.channel.sendTyping(), 1000);
         await setCryptoInterval();
+        clearTimeout(timeout);
         
         if (!cache.has(args.join('-').toLowerCase()))
             return this.Embed.fail(`

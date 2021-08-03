@@ -1,4 +1,4 @@
-import { CommandInteraction, Snowflake } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { fetchMDN } from 'search-mdn';
 import { client } from '../../index.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
@@ -11,7 +11,7 @@ import { join } from 'path';
 const config = {} as typeof import('../../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
 
-const emoji = client.emojis.cache.get(config.interactions.mdn as Snowflake);
+const emoji = client.emojis.cache.get(config.interactions.mdn);
 
 @RegisterInteraction
 export class kInteraction extends Interactions {
