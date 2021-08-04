@@ -28,7 +28,7 @@ export const client = new KhafraClient({
             sweepInterval: 1800
         }
     }),
-    partials: [ 'REACTION', 'MESSAGE', 'USER' ],
+    partials: [ 'MESSAGE', 'USER' ],
     intents: [ 
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_BANS,
