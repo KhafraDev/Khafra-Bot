@@ -3,8 +3,13 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
-import Trump from '../../../../assets/Trump.json';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const Trump = [] as typeof import('../../../../assets/Trump.json');
+createFileWatcher(Trump, join(cwd, 'assets/Trump.json'));
 
 @RegisterCommand
 export class kCommand extends Command {    

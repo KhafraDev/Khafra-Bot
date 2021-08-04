@@ -1,12 +1,16 @@
 import { parse, toCodePoints } from 'twemoji-parser';
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import Emojis from '../../../../assets/Emojis.json';
 import { plural } from '../../../lib/Utility/String.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { Message } from '../../../lib/types/Discord.js.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
+const Emojis = {} as typeof import('../../../../assets/Emojis.json');
+createFileWatcher(Emojis, join(cwd, 'assets/Emojis.json'));
 
 interface BaseUnicodeEmoji {
     names: string[]
