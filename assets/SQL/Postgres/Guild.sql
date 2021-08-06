@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS kbGuild (
     max_warning_points SMALLINT DEFAULT 20,
     mod_log_channel TEXT DEFAULT NULL,
     welcome_channel TEXT DEFAULT NULL,
-    rules_channel TEXT DEFAULT NULL,
     reactRoleChannel TEXT DEFAULT NULL,
     UNIQUE (guild_id)
 );
@@ -18,14 +17,6 @@ CREATE TABLE IF NOT EXISTS kbWarns (
     k_user_id TEXT NOT NULL,
     k_points SMALLINT DEFAULT 1 NOT NULL,
     k_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (k_guild_id) REFERENCES kbGuild(guild_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS kbRules (
-    id SERIAL PRIMARY KEY,
-    k_guild_id TEXT NOT NULL,
-    rule TEXT NOT NULL,
-    rule_id SMALLINT NOT NULL,
     FOREIGN KEY (k_guild_id) REFERENCES kbGuild(guild_id) ON DELETE CASCADE
 );
 

@@ -1,132 +1,216 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { Command } from '../../../Structures/Command.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
+import { hyperlink, inlineCode } from '@discordjs/builders';
+import { once } from 'events';
 
-const range = Range(0, 32767, true); // smallint
+const perms = new Permissions([
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.VIEW_CHANNEL
+]);
 
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Set the rules to the server, or get a rule with a known id.',
-                '', '69'
+                'Creates and posts rules for the server.'
             ],
 			{
-                name: 'rules',
-                aliases: [ 'setrules', 'rule', 'ruleboard', 'rulesboard' ],
-                folder: 'Rules',
-                args: [0, 1],
+                name: 'rules', 
+                folder: 'Moderation',
+                aliases: [ 'rule' ],
+                args: [0, 0],
                 guildOnly: true,
-                ratelimit: 60 * 1000 * 5
+                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
-        if ( // get existing rule with a given id
-            !hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR) || 
-            args.length === 1
-        ) {
-            if (args.length === 0)
-                return this.Embed.fail(`You can't set the rules, so you have to provide a rule id to view.`);
+    async init(message: Message) {
+        const m = await message.reply({
+            embeds: [
+                this.Embed.success()
+                    .setDescription(`Please enter the channel where rules should be posted, or click the ${inlineCode('cancel')} button to cancel.`)
+                    .setTitle('Rule Editor') 
+            ],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.deny('Cancel', 'cancel')
+                )
+            ]
+        });
 
-            const id = Number(args[0]);
-            if (!validateNumber(id) || !range.isInRange(id))
-                return this.Embed.fail(`Try giving me an actual rule id this time.`);
-
-            const { rows } = await pool.query<{ rule: string }>(`
-                SELECT rule FROM kbRules
-                WHERE 
-                    rule_id = $1::smallint AND
-                    k_guild_id = $2::text
-                LIMIT 1;
-            `, [id, message.guild.id]);
-
-            if (rows.length === 0)
-                return this.Embed.fail(`No rule with that ID was found.`);
-
-            return this.Embed.success(`\`\`\`${rows[0].rule}\`\`\``)
-                .setTitle(`Rule #${id}`);
-        }
-
-        const msg = await message.reply({ embeds: [this.Embed.success(`
-        **Rule Board:**
-        Steps:
-            1. Enter the rules one at a time.
-            2. Once all the rules are entered, send a \`\`stop\`\` message.
-            3. Set a channel to post the rules to using the \`\`channel\`\` command!
-
-            - To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
-            - To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
-            - To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
-
-        Make sure the rules are already written down - you have 5 minutes to enter all of them.
-        `)] });
+        let channel!: GuildChannel;
+        const rules: string[] = [];
         
-        const rules = new Set<string>();
-        const collector = message.channel.createMessageCollector({
-            filter: (m) => m.author.id === message.author.id && rules.size <= 20,
-            time: 60 * 1000 * 5 
-        });
+        {
+            const cancelCollector = m.createMessageComponentCollector({
+                max: 1,
+                time: 30_000,
+                filter: (interaction) => 
+                    interaction.user.id === message.author.id && 
+                    interaction.customId === 'cancel'
+            });
+            const channelCollector = m.channel.createMessageCollector({
+                max: 1,
+                time: 30_000,
+                filter: (m) =>
+                    m.author.id === message.author.id &&
+                    m.mentions.channels.size > 0 ||
+                    /\d{17,19}/.test(m.content)
+            });
 
-        collector.on('collect', async (m) => {
-            if (msg?.deleted)
-                return collector.stop();
-            else if (m.content.toLowerCase() === 'stop')
-                return collector.stop('1');
-            else if (rules.size === 20)
-                return collector.stop('1');
+            const race = await Promise.race<Promise<[[Snowflake, ButtonInteraction | Message] | [], string][]>>([
+                once(cancelCollector, 'end'),
+                once(channelCollector, 'end')
+            ]);
 
-            rules.add(m.content);
-        });
-
-        collector.on('end', async (_collection, reason) => {
-            if (reason === '1') { // stopped by user
-                // TODO(@KhafraDev): rewrite this
-                // https://node-postgres.com/features/transactions
-                const client = await pool.connect();
-
-                try {
-                    await client.query('BEGIN');
-
-                    for (const rule of rules) {
-                        await client.query(`
-                            INSERT INTO kbRules (
-                                k_guild_id, 
-                                rule, 
-                                rule_id
-                            ) VALUES (
-                                $1::text, 
-                                $2::text, 
-                                (SELECT COUNT(kbRules.id) FROM kbRules WHERE kbRules.k_guild_id = $1::text) + 1
-                            ) ON CONFLICT DO NOTHING;
-                        `, [message.guild.id, rule]);
-                    }
-
-                    await client.query('COMMIT');
-                } catch {
-                    await client.query('ROLLBACK');
-                } finally {
-                    client.release();
-                }
-
-                return void dontThrow(msg.edit({ 
-                    embeds: [this.Embed.success(`
-                    Added ${rules.size} rules!
-
-                    To post the rules, use the \`\`postrules\`\` command (\`\`help postrules\`\` for examples).
-                    To edit a rule, use the \`\`editrule\`\` command (\`\`help editrule\`\` for examples).
-                    To remove a rule, use the \`\`deleterule\`\` command (\`\`help deleterule\`\` for examples).
-                    `)]
+            if (!cancelCollector.ended) cancelCollector.stop();
+            if (!channelCollector.ended) channelCollector.stop();
+            
+            const [coll, reason] = race.shift()!;
+            if (coll.length === 0 || reason === 'time') {
+                return void dontThrow(m.edit({
+                    embeds: [this.Embed.fail('Command was canceled!')],
+                    components: disableAll(m)
+                }));
+            } else if (coll[1] instanceof ButtonInteraction) {
+                return void dontThrow(coll[1].update({
+                    embeds: [this.Embed.fail('Command was canceled!')],
+                    components: disableAll(m)
                 }));
             }
-        });
+
+            channel = 
+                coll[1].mentions.channels.first() as GuildChannel || 
+                await getMentions(coll[1], 'channels', { idx: 0 });
+
+            if (!isText(channel)) {
+                return void dontThrow(m.edit({
+                    embeds: [
+                        this.Embed.fail('Channel must be a text channel or a news channel!')
+                    ],
+                    components: []
+                }));
+            } else if (!hasPerms(channel, message.guild.me, perms)) {
+                return void dontThrow(m.edit({
+                    embeds: [
+                        this.Embed.fail(`I do not have permission to send messages in ${channel}!`)
+                    ],
+                    components: []
+                }));
+            }
+        }
+
+        await dontThrow(m.edit({
+            embeds: [
+                this.Embed.success(`
+                Send an individual message for each rule, or send them all together. I recommend using ` + 
+                `${hyperlink('markdown', 'https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-')} ` +
+                `to separate messages and make rule titles more noticeable.\n\n` +
+                `**You have to enter each rule within 2.5 minutes or the command will cancel!**`
+                )
+            ],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.approve('Finished', 'done'),
+                    Components.deny('Cancel', 'cancel')
+                )
+            ]
+        }));
+
+        {
+            const buttonCollector = m.createMessageComponentCollector({
+                max: 1,
+                filter: (interaction) => 
+                    interaction.user.id === message.author.id && 
+                    interaction.customId === 'cancel' ||
+                    interaction.customId === 'done'
+            });
+            const messageCollector = m.channel.createMessageCollector({
+                idle: 60 * 1000 * 2.5,
+                filter: (m) =>
+                    m.author.id === message.author.id &&
+                    m.content.length > 0
+            });
+
+            buttonCollector.once('collect', (i) => {
+                if (!buttonCollector.ended) buttonCollector.stop();
+                if (!messageCollector.ended) messageCollector.stop();
+
+                if (i.customId === 'done' && rules.length === 0) {
+                    return void dontThrow(i.update({
+                        embeds: [
+                            this.Embed.fail('No rules were entered, command was canceled!')
+                        ],
+                        components: []
+                    }));
+                } else if (i.customId === 'cancel') {
+                    return void dontThrow(i.update({
+                        embeds: [
+                            this.Embed.fail('Command was canceled!')
+                        ],
+                        components: []
+                    }));
+                } else {
+                    void dontThrow(i.update({
+                        embeds: [
+                            this.Embed.success(`Posting rules to ${channel} now!`)
+                        ],
+                        components: disableAll(m)
+                    }));
+                }
+            });
+
+            messageCollector.on('collect', (m) => void rules.push(m.content));
+
+            await once(messageCollector, 'end');
+            if (!buttonCollector.ended) buttonCollector.stop();
+            if (!messageCollector.ended) messageCollector.stop();
+
+            if (rules.length === 0) {
+                return void dontThrow(m.edit({
+                    embeds: [
+                        this.Embed.fail('No rules were entered, command was canceled!')
+                    ],
+                    components: []
+                }));
+            }
+        }
+
+        {
+            const embeds: MessageEmbed[] = [];
+
+            for (const rule of rules) {
+                const embed = embeds[embeds.length - 1];
+                const line = rule.endsWith('\n') ? `${rule}\n` : `${rule}\n\n`;
+
+                if (embeds.length === 0) {
+                    const embed = this.Embed.success(line)
+                        .setTitle(`${message.guild.name} Rules`)
+                        .setThumbnail(message.guild.iconURL()!)
+                    
+                    embeds.push(embed);
+                } else if (embed.description!.length >= 2048) {
+                    embeds.push(this.Embed.success(line));
+                } else {
+                    const desc = embed.description!;
+
+                    if (desc.length + line.length > 2048) {
+                        embeds.push(this.Embed.success(line));
+                    } else {
+                        embed.description += line;
+                    }
+                }
+            }
+
+            await dontThrow(channel.send({ embeds }));
+        }
     }
 }

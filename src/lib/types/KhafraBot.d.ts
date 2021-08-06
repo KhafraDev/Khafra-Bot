@@ -8,9 +8,7 @@ export interface kGuild {
     prefix: string
     max_warning_points: number
     mod_log_channel: Snowflake | null
-    complete_log_channel: Snowflake | null
     welcome_channel: Snowflake | null
-    rules_channel: Snowflake | null
     reactRoleChannel: Snowflake | null
 }
 

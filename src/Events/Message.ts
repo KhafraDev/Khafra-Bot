@@ -27,7 +27,6 @@ const defaultSettings: Partial<kGuild> = {
     max_warning_points: 20,
     mod_log_channel: null,
     welcome_channel: null,
-    rules_channel: null
 };
 
 const _cooldownGuild = cooldown(30, 60000);
