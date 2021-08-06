@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS kbBranco;
 DROP TABLE IF EXISTS kbGarrison;
 DROP TABLE IF EXISTS kbStonewall;
 
-ALTER TABLE kbGuild ADD COLUMN IF NOT EXISTS complete_log_channel TEXT DEFAULT NULL;
+ALTER TABLE kbGuild DROP COLUMN IF EXISTS complete_log_channel;
 
 DO
 $do$

@@ -49,16 +49,6 @@ export const client = new KhafraClient({
     .on('guildMemberAdd',       emitted('guildMemberAdd'))
     .on('guildMemberRemove',    emitted('guildMemberRemove'))
     .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
-    .on('rateLimit',            emitted('rateLimit'))
-
-    .on('channelCreate',        emitted('channelCreate'))
-    .on('channelDelete',        emitted('channelDelete'))
-    .on('channelUpdate',        emitted('channelUpdate'))
-    .on('emojiCreate',          emitted('emojiCreate'))
-    .on('emojiDelete',          emitted('emojiDelete'))
-    .on('emojiUpdate',          emitted('emojiUpdate'))
-    .on('roleCreate',           emitted('roleCreate'))
-    .on('roleDelete',           emitted('roleDelete'))
-    .on('roleUpdate',           emitted('roleUpdate'))
+    .on('rateLimit',            emitted('rateLimit'));
 
 void client.init();
