@@ -19,7 +19,7 @@ export class kEvent extends Event<'interactionCreate'> {
             let guild: Guild | null = null; // guild can be null here
             if (!(interaction.guild instanceof Guild) && typeof interaction.guildId === 'string') {
                 try {
-                    await interaction.defer({ ephemeral: true });
+                    await interaction.deferReply({ ephemeral: true });
                     guild = await client.guilds.fetch(interaction.guildId);
                 } catch {}
             } else {
@@ -69,7 +69,7 @@ export class kEvent extends Event<'interactionCreate'> {
 
         try {
             if (command.options?.defer)
-                await interaction.defer();
+                await interaction.deferReply();
 
             const result = await command.init(interaction);
 

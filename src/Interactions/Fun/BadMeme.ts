@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
             return 'Invalid option received!';
 
         if (!cache.has(subreddit))
-            await interaction.defer();
+            await interaction.deferReply();
 
         const item = await badmeme(subreddit, false);
 

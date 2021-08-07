@@ -16,7 +16,8 @@ export class kCommand extends Command {
         super(
             [
                 'Play a game in VC!',
-                '866022233330810930'
+                '866022233330810930 [channel id]',
+                '#general [channel mention]'
             ],
 			{
                 name: 'activity',

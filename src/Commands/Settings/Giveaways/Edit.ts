@@ -241,7 +241,7 @@ export class kCommand extends Command {
                     components: []
                 }));
             } else if (r === 'save') {
-                await dontThrow(c.last()!.defer());
+                await dontThrow(c.last()!.deferReply());
                 params.push(message.guild.id, message.member.id, id);
                 
                 const { rows } = await pool.query<GiveawayEdit>(`
