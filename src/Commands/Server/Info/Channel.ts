@@ -64,6 +64,7 @@ export class kCommand extends Command {
                 .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
                 .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
                 .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
+                .addField('**Region:**', channel.rtcRegion ?? 'Auto', true);
         }
 
         return padEmbedFields(embed);
