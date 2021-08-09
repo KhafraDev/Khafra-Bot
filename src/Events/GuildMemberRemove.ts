@@ -66,11 +66,13 @@ export class kEvent extends Event<'guildMemberRemove'> {
 
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member} (${member.user.tag}) has left the server!`)
-            .addFields([
-                { name: 'Originally Joined:', value: time(member.joinedAt ?? new Date()), inline: true },
-                { name: 'Account Created:', value: time(member.user.createdAt), inline: true }
-            ]);
+            .setDescription(`
+            ${member} (${member.user.tag}) has left the server!
+            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
+            • Left: ${time(new Date())} (${time(new Date(), 'R')})
+            `)
+            .setFooter('User left');
 
         return dontThrow(channel.send({ embeds: [embed] }));
     }
