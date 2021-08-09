@@ -1,4 +1,5 @@
 import { Message, Permissions } from 'discord.js';
+import { Message as kMessage } from '../types/Discord.js.js';
 import { isDM } from '../types/Discord.js.js';
 import { hasPerms } from './Permissions.js';
 
@@ -13,7 +14,7 @@ const basic = new Permissions([
  * Check message for required criteria.
  * @param message 
  */
-export const Sanitize = (message: Message) => {
+export const Sanitize = (message: Message): message is kMessage => {
     if (
         message.webhookId || // author is null in webhook messages
         message.author.bot ||

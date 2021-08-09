@@ -43,9 +43,9 @@ export class kEvent extends Event<'messageCreate'> {
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild: Partial<kGuild> | kGuild | null = null;
-        const exists = await client.exists(message.guild!.id) as 0 | 1;
+        const exists = await client.exists(message.guild.id) as 0 | 1;
         if (exists === 1) {
-            const row = await client.get(message.guild!.id);
+            const row = await client.get(message.guild.id);
             guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
         } else {
             const { rows } = await pool.query<kGuild>(`
@@ -53,9 +53,9 @@ export class kEvent extends Event<'messageCreate'> {
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
-            `, [message.guild!.id]);
+            `, [message.guild.id]);
 
-            void client.set(message.guild!.id, JSON.stringify(rows[0]), 'EX', 600);
+            void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
             guild = Object.assign({ ...defaultSettings }, rows.shift());
         }
@@ -121,7 +121,7 @@ export class kEvent extends Event<'messageCreate'> {
 
         if (!_cooldownUsers(message.author.id)) {
             return dontThrow(message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
-        } else if (!_cooldownGuild(message.guild!.id)) {
+        } else if (!_cooldownGuild(message.guild.id)) {
             return dontThrow(message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] }));
         } else if (!hasPerms(message.channel, message.member, command.permissions)) {
             return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
