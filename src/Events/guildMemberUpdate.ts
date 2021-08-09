@@ -6,7 +6,7 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
-import { kGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
@@ -15,7 +15,7 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-type welcomeChannel = Pick<kGuild, 'welcome_channel'>;
+type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
 @RegisterEvent
 export class kEvent extends Event<'guildMemberUpdate'> {
@@ -34,13 +34,13 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             return;
 
         const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: welcomeChannel | null = null
+        let item: WelcomeChannel | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<welcomeChannel>(`
-                SELECT welcome_channel
+            const { rows } = await pool.query<WelcomeChannel>(`
+                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;

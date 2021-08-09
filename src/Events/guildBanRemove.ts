@@ -2,7 +2,7 @@ import { Event } from '../Structures/Event.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { GuildBan } from 'discord.js';
 import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';
@@ -11,7 +11,7 @@ import { delay } from '../lib/Utility/Constants/OneLiners.js';
 import { client } from '../Structures/Database/Redis.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
-type modLogChannel = Pick<kGuild, 'mod_log_channel'>;
+type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
 @RegisterEvent
 export class kEvent extends Event<'guildBanRemove'> {
@@ -20,13 +20,13 @@ export class kEvent extends Event<'guildBanRemove'> {
     async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
         const cached = await client.exists(guild.id) === 1;
-        let item: modLogChannel | null = null
+        let item: ModLogChannel | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<modLogChannel>(`
-                SELECT mod_log_channel FROM kbGuild
+            const { rows } = await pool.query<ModLogChannel>(`
+                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [guild.id]);

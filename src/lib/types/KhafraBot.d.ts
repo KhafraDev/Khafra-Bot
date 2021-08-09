@@ -30,3 +30,5 @@ export interface Giveaway {
     prize: string
     winners: number
 }
+
+export type PartialGuild = Pick<kGuild, 'prefix' | 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;

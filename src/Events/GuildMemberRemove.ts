@@ -6,7 +6,7 @@ import { hasPerms } from '../lib/Utility/Permissions.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
-import { kGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { time } from '@discordjs/builders';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
@@ -16,7 +16,7 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
-type welcomeChannel = Pick<kGuild, 'welcome_channel'>;
+type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
 @RegisterEvent
 export class kEvent extends Event<'guildMemberRemove'> {
@@ -34,13 +34,13 @@ export class kEvent extends Event<'guildMemberRemove'> {
         `, [member.guild.id]);
 
         const cached = await client.exists(member.guild.id) === 1;
-        let item: welcomeChannel | null = null
+        let item: WelcomeChannel | null = null
 
         if (cached) {
             item = JSON.parse(await client.get(member.guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<welcomeChannel>(`
-                SELECT welcome_channel
+            const { rows } = await pool.query<WelcomeChannel>(`
+                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
