@@ -11,7 +11,7 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit, notified } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
 import { upperCase } from '../lib/Utility/String.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
@@ -22,7 +22,7 @@ import { join } from 'path';
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
 
-const defaultSettings: Partial<kGuild> = {
+const defaultSettings: PartialGuild = {
     prefix: config.prefix,
     max_warning_points: 20,
     mod_log_channel: null,
