@@ -1,35 +1,42 @@
-import redis, { OverloadedCommand, OverloadedSetCommand, RedisClient } from 'redis';
-import { promisify } from 'util';
-
-type RedisSet<R = unknown> =
-    & ((key: string, value: string) => Promise<R>)
-    & ((key: string, value: string, flag: string) => Promise<R>)
-    & ((key: string, value: string, mode: string, duration: number) => Promise<R>)
-    & ((key: string, value: string, mode: string, duration: number, flag: string) => Promise<R>)
-    & ((key: string, value: string, flag: string, mode: string, duration: number) => Promise<R>);
-
-type RedisGet = (...args: [string]) => Promise<string>;
-type RedisExists<R = unknown> = OverloadedCommand<string, number, R>;
-type RedisHSet<R = unknown> = OverloadedSetCommand<string, number, R>;
-type RedisHGet<R = unknown> = (key: string, field: string) => R;
+import redis from 'redis';
 
 const connect = `redis://localhost:6379`;
-
 const messageClient = redis.createClient(`${connect}/1`);
 
-/**
- * Promisifies some redisclient methods, retaining *good enough* typings.
- */
-const Promisify = (client: RedisClient) => {
-    const set: RedisSet = promisify(client.set).bind(client);
-    const get = promisify(client.get).bind(client) as RedisGet;
-    /** https://redis.io/commands/exists */
-    const exists: RedisExists = promisify(client.exists).bind(client);
-    const hset = promisify(client.hset).bind(client) as RedisHSet;
-    const hget: RedisHGet = promisify(client.hget).bind(client);
-    const hgetAll: RedisHGet = promisify(client.hgetall).bind(client);
+export const client = {
+    get: (key: string) => {
+        return new Promise<string>((res, rej) => {
+            messageClient.get(key, (err, reply) => {
+                if (err !== null) return rej(err);
 
-    return { get, set, exists, hset, hget, hgetAll };
+                return res(reply!);
+            });
+        });
+    },
+    set: (key: string, value: string, mode?: string, duration?: number) => {
+        return new Promise<'OK'>((res, rej) => {
+            if (typeof mode === 'string' && typeof duration === 'number') {
+                messageClient.set(key, value, mode, duration, (err, reply) => {
+                    if (err !== null) return rej(err);
+
+                    return res(reply!);
+                });
+            } else {
+                messageClient.set(key, value, (err, reply) => {
+                    if (err !== null) return rej(err);
+
+                    return res(reply);
+                });
+            }
+        });
+    },
+    exists: (key: string) => {
+        return new Promise<0 | 1>((res, rej) => {
+            messageClient.exists(key, (err, reply) => {
+                if (err !== null) return rej(err);
+
+                return res(reply as 0 | 1);
+            });
+        });
+    }
 }
-
-export const client = Promisify(messageClient);
