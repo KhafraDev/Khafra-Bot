@@ -2,33 +2,29 @@ import { CommandInteraction } from 'discord.js';
 import { fetchMDN } from 'search-mdn';
 import { client } from '../../index.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
-import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 const config = {} as typeof import('../../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
 
 const emoji = client.emojis.cache.get(config.interactions.mdn);
 
-@RegisterInteraction
 export class kInteraction extends Interactions {
     constructor() {
-        super({
-            type: 'STRING',
-            name: 'mdn',
-            description: 'Searches MDN and returns the top result!',
-            options: [{
-                name: 'input',
-                type: 'STRING',
-                description: 'Your search query on MDN',
-                required: true
-            }]
-        }, {
-            defer: true
-        });
+        const sc = new SlashCommandBuilder()
+            .setName('mdn')
+            .addStringOption(option => option
+                .setName('input')
+                .setDescription('Your search query on MDN')
+                .setRequired(true)    
+            )
+            .setDescription('Searches MDN and returns the top result!');
+
+        super(sc, { defer: true });
     }
 
     async init(interaction: CommandInteraction) {

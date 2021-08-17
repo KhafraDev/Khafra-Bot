@@ -1,22 +1,20 @@
+import { SlashCommandBuilder } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
 import { CommandInteraction } from 'discord.js';
-import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
 
-@RegisterInteraction
 export class kInteraction extends Interactions {
     constructor() {
-        super({
-            type: 'STRING',
-            name: 'badmeme',
-            description: 'Get a horrible meme',
-            options: [{
-                name: 'subreddit',
-                type: 'STRING',
-                description: 'Subreddit to get a bad meme on!',
-                required: false
-            }]
-        });
+        const sc = new SlashCommandBuilder()
+            .setName('badmeme')
+            .addStringOption(option => option
+                .setName('subreddit')
+                .setDescription('Subreddit to get a bad meme on.')
+                .setRequired(false)    
+            )
+            .setDescription('Get a horrible meme!')
+
+        super(sc);
     }
 
     async init(interaction: CommandInteraction) {

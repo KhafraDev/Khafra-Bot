@@ -1,5 +1,5 @@
-import { RegisterInteraction } from '../../Structures/Decorator.js';
 import { Interactions } from '../../Structures/Interaction.js';
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 const boomer1984 = `
 ⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
@@ -16,14 +16,13 @@ const boomer1984 = `
 ⢧⠀⠀⠀⠀⠀⠀⠀⠈⠣⣀⠀⠀⡰⠋⠀
 `;
 
-@RegisterInteraction
 export class kInteraction extends Interactions {
     constructor() {
-        super({
-            type: 'STRING',
-            name: '1984',
-            description: 'It\'s literally 1984'
-        });
+        const sc = new SlashCommandBuilder()
+            .setName('1984')
+            .setDescription(`It's literally 1984`)
+        
+        super(sc);
     }
 
     async init() {

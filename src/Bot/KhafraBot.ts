@@ -2,11 +2,18 @@ import { Command } from '../Structures/Command.js';
 import { Event } from '../Structures/Event.js';
 import { Interactions } from '../Structures/Interaction.js';
 import { once } from '../lib/Utility/Memoize.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
 import { Client, ClientEvents } from 'discord.js';
-import { resolve } from 'path';
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
+import { join, resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { performance } from 'perf_hooks';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -61,11 +68,40 @@ export class KhafraClient extends Client {
     }
 
     async loadInteractions() {
-        const interactions = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
-        const importPromise = interactions.map(int => import(pathToFileURL(int).href) as Promise<Interactions>);
-        await Promise.allSettled(importPromise);
+        const interactionPaths = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
+        const importPromise = interactionPaths.map(
+            int => import(pathToFileURL(int).href) as Promise<{ kInteraction: new () => Interactions }>
+        );
+        const imported = await Promise.allSettled(importPromise);
 
-        console.log(`Loaded ${importPromise.length} global interactions!`);
+        const rest = new REST({ version: '9' }).setToken(process.env.TOKEN!);
+        const loaded: Interactions[] = [];
+
+        for (const interaction of imported) {
+            if (interaction.status === 'fulfilled') {
+                const int = new interaction.value.kInteraction();
+                KhafraClient.Interactions.set(int.data.name, int);
+                loaded.push(int);
+            }
+        }
+
+        if (loaded.length !== 0) {
+            const scs = loaded.map(i => i.data.toJSON());
+
+            // debugging in guild
+            await rest.put(
+                Routes.applicationGuildCommands(config.botId, config.guildId),
+                { body: scs }
+            );
+
+            // globally
+            await rest.put(
+                Routes.applicationCommands(config.botId),
+                { body: scs }
+            );
+        }
+
+        console.log(`Loaded ${loaded.length} interactions!`);
         return KhafraClient.Interactions;
     }
 
