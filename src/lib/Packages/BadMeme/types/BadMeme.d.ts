@@ -28,7 +28,7 @@ type RedditVideo = {
 type RedditImagePreview = {
     source: RedditVideoData
     resolutions: RedditVideoData[]
-    variants: any
+    variants: unknown
     id: string
 }
 
@@ -111,7 +111,7 @@ interface IRedditBase {
     gilded: number
     clicked: boolean
     title: string
-    link_flair_richtext: any[]
+    link_flair_richtext: unknown[]
     subreddit_name_prefixed: string
     hidden: boolean
     pwls: number
@@ -129,16 +129,16 @@ interface IRedditBase {
     subreddit_type: 'public'
     ups: number
     total_awards_received: number
-    media_embed: any
+    media_embed: unknown
     thumbnail_width: null | number
     author_flair_template_id: unknown
     is_original_content: boolean
-    user_reports: any[]
+    user_reports: unknown[]
     secure_media: unknown
     is_reddit_media_domain: boolean
     is_meta: boolean
     category: unknown
-    secure_media_embed: any
+    secure_media_embed: unknown
     link_flair_text: unknown
     can_mod_post: boolean
     score: number
@@ -147,15 +147,15 @@ interface IRedditBase {
     thumbnail: string
     edited: number
     author_flair_css_class: unknown
-    author_flair_richtext: any[]
-    gildings: any
+    author_flair_richtext: unknown[]
+    gildings: unknown
     content_categories: unknown
     is_self: boolean
     mod_note: unknown
     created: number
     link_flair_type: string
     wls: number
-    removed_by_category: unknown
+    removed_by_category: null | 'author' | 'moderator' | 'deleted'
     banned_by: unknown
     author_flair_type: string
     domain: string
@@ -277,7 +277,7 @@ export type RedditData = {
 }
 
 export interface IRedditBadResp {
-    reason: string
+    reason: 'private' | 'quarantined' | 'banned'
     message: string
     error: number
 }

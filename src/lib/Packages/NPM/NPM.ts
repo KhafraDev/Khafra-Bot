@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { INPMPackage } from './NPM.d';
 
 export const npm = async (package_name: string) => {

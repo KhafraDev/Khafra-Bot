@@ -1,12 +1,13 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Range.js';
 import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { client } from '../../../Structures/Database/Redis.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { Message } from '../../../lib/types/Discord.js.js';
 
 const range = Range(0, 32767, true); // small int
 

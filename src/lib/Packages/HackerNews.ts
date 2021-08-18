@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
+import { dontThrow } from '../Utility/Don\'tThrow.js';
 import { once } from '../Utility/Memoize.js';
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json';
@@ -41,9 +42,7 @@ const fetchEntries = async () => {
     return stories;
 }
 
-const safeFetchHN = async () => fetchEntries().catch(() => {});
-
 export const fetchHN = once(async () => {
-    await safeFetchHN();
-    return setInterval(safeFetchHN, 60 * 1000 * 10);
+    await dontThrow(fetchEntries());
+    return setInterval(() => dontThrow(fetchEntries()), 60 * 1000 * 10).unref();
 });

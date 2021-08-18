@@ -1,10 +1,12 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, MessageReaction, User, MessageEmbed } from 'discord.js';
+import { Message, MessageActionRow, Interaction } from 'discord.js';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
-import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { time } from '@discordjs/builders';
 
-function* format(items: YouTubeSearchResults, embed: (reason?: string) => MessageEmbed) {
+function* format(items: YouTubeSearchResults, embed = Embed.success) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const Embed = embed()
@@ -12,7 +14,7 @@ function* format(items: YouTubeSearchResults, embed: (reason?: string) => Messag
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
-            .addField('**Published:**', formatDate('MMMM Do, YYYY hh:mm:ss A t', new Date(video.publishTime)))
+            .addField('**Published:**', time(new Date(video.publishTime)))
             .addField('**URL:**', `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
             
         yield Embed;
@@ -48,38 +50,44 @@ export class kCommand extends Command {
             No results found!
             `);
         }
-
-        const embeds = [...format(results, this.Embed.success)];
-        let idx = 0;
-        const m = await message.reply(embeds[0]);
         
-        await m.react('▶️');
-        await m.react('◀️');
-        await m.react('⏹️');
+        const embeds = [...format(results)];
+        let page = 0;
+        
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Next'),
+                Components.secondary('Previous'),
+                Components.deny('Stop')
+            );
 
-        const filter = (reaction: MessageReaction, user: User) => 
-            user.id === message.author.id && ['▶️', '◀️', '⏹️'].indexOf(reaction.emoji.name) > -1;
-        const collector = m.createReactionCollector(filter, { time: 60000 });
+        const m = await message.channel.send({ 
+            embeds: [embeds[0]],
+            components: [row]
+        });
 
-        collector.on('collect', async r => {
-            if (m.deleted) {
-                collector.stop();
-                return;
-            }
+        const filter = (interaction: Interaction) =>
+            interaction.isMessageComponent() &&
+            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+            interaction.user.id === message.author.id;
 
-            if (r.emoji.name === '⏹️') {
-                await m.reactions.removeAll();
-            } else if (r.emoji.name === '▶️') {
-                if (embeds[idx + 1]) {
-                    idx++;
-                    return m.edit(embeds[idx]);
-                }
-            } else {
-                if (embeds[idx - 1]) {
-                    idx--;
-                    return m.edit(embeds[idx]);
-                }
-            }
+        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
+        collector.on('collect', i => {
+            if (m.deleted) 
+                return collector.stop();
+            else if (i.customId === 'deny')
+                return collector.stop('deny');
+
+            i.customId === 'approve' ? page++ : page--;
+
+            if (page < 0) page = embeds.length - 1;
+            if (page >= embeds.length) page = 0;
+
+            return void i.update({ embeds: [embeds[page]] });
+        });
+        collector.on('end', (_c, reason) => {
+            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
+                return void m.edit({ components: [] });
         });
     }
 }

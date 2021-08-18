@@ -3,7 +3,7 @@ const ordinal = (num = 0) => {
         return 'th';
     }
 
-    switch(num % 10) {
+    switch (num % 10) {
         case 1: return 'st';
         case 2: return 'nd';
         case 3: return 'rd';
@@ -27,8 +27,8 @@ export const formatDate = (
     const dateObj = new Date(date);
 
     const formatRegex = /(A|a|P|p)(m|M)?|MM?(MM?)?|D(D|o)?|YY(YY)?|dddd?|Q|HH?|hh?|kk?|mm?|ss?|t/g;
-    const replace = format.replace(formatRegex, formatter => {
-        switch(formatter) {
+    const replace = format.replace(formatRegex, (formatter): string => {
+        switch (formatter) {
             case 'YYYY':    // 2020
                 return '' + dateObj.getFullYear();
             case 'YY':      // 2010 -> 10
@@ -56,7 +56,7 @@ export const formatDate = (
                 return dateObj.toLocaleString(locale, { 
                     hour12: formatter[0] !== 'H', 
                     hour: 'numeric' 
-                }).split(' ').shift().padStart(formatter.length, '0');
+                }).split(' ').shift()!.padStart(formatter.length, '0');
             case 'A':
             case 'a':
             case 'p':
@@ -67,7 +67,7 @@ export const formatDate = (
                 return dateObj.toLocaleString(locale, { 
                     hour12: true, 
                     hour: 'numeric' 
-                }).split(' ').pop();
+                }).split(' ').pop()!;
             case 'k':       // 1..24
             case 'kk':      // 01..24
                 return ('' + dateObj.getHours()).padStart(formatter.length, '0');
@@ -77,10 +77,11 @@ export const formatDate = (
             case 's':       // 0..59
             case 'ss':      // 00.59
                 return ('' + dateObj.getSeconds()).padStart(formatter.length, '0');
-            case 't':
+            case 't': {
                 const offset = new Date().getTimezoneOffset();
                 const realOffset = offset / (offset > 0 ? -60 : 60);
                 return 'GMT' + (realOffset > 0 ? '+' : '-') + Math.abs(realOffset);
+            }
             default:
                 throw new Error('Unexpected identifier ' + formatter);
         }

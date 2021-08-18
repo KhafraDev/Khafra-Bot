@@ -6,10 +6,7 @@
   "types": "./Pocket.d.ts",
   "type": "module",
   "dependencies": {
-    "node-fetch": "2.6.1"
-  },
-  "devDependencies": {
-    "@types/node-fetch": "^1.6.9"
+    "undici-fetch": "^1.0.0-rc.3"
   },
   "repository": {
     "type": "git",

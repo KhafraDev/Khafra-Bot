@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://www.bellingcat.com/category/news/feed',
+    rss: 'https://www.bellingcat.com/category/news/feed/',
     main: 'https://www.bellingcat.com/',
     command: ['bellingcat', 'belling'],
     author: ['Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg']

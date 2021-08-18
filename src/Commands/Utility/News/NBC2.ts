@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://nbc-2.com/category/news/feed',
+    rss: 'https://nbc-2.com/category/news/feed/',
     main: 'https://nbc-2.com',
     command: ['nbc2', 'nbc-2'],
     author: ['NBC-2', 'https://pbs.twimg.com/profile_images/1018899598029606912/lomPmdG3_400x400.jpg']

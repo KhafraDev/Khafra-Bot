@@ -1,12 +1,12 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { URL } from 'url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
+import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 const settings = {
-    rss: 'https://www.oann.com/feed',
+    rss: 'https://www.oann.com/feed/',
     main: 'https://oann.com',
     command: ['oann'],
     author: ['OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg']
@@ -51,8 +51,7 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()].map(p => {
-            const u = new URL(p.link);
-            u.hash = u.search = '';
+            const u = URLFactory(p.link)!;
             p.link = u.toString();
             return p;
         });

@@ -1,19 +1,21 @@
-import { Channel, GuildMember, PermissionFlags, PermissionResolvable, Permissions, Role } from 'discord.js';
+import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
+import { inlineCode } from '@discordjs/builders';
 import { isText, isVoice } from '../types/Discord.js.js';
 
 /**
  * Check if a user or role has permissions in a channel.
  */
 export const hasPerms = (
-    channel: Channel, 
-    userOrRole: GuildMember | Role, 
+    channel: unknown, 
+    userOrRole: unknown, 
     perms: PermissionResolvable
 ) => {
     if (typeof channel === 'undefined' || channel === null)
         return false;
-        
     if (!isText(channel) && !isVoice(channel))
         return true;
+    if (!(userOrRole instanceof GuildMember) && !(userOrRole instanceof Role))
+        return false;
 
     return channel.permissionsFor(userOrRole).has(perms);
 }
@@ -27,17 +29,17 @@ export const hierarchy = (
     a: GuildMember,
     b: GuildMember
 ) => {
-    return a.guild.ownerID === a.id || // below check only checks the highest role
+    return a.guild.ownerId === a.id || // below check only checks the highest role
            a.roles.highest.comparePositionTo(b.roles.highest) > 0;
 }
 
-const PermEntry = Object.entries(Permissions.FLAGS);
 export const permResolvableToString = (perms: PermissionResolvable) => {
-    perms = Array.isArray(perms) ? perms : [perms];
+    const permissions = new Permissions(perms);
+    const str: string[] = [];
 
-    const permString = (perms as (bigint | keyof PermissionFlags)[])
-        .map(perm => PermEntry.find(p => p[0] === perm || p[1] === perm).shift())
-        .join('``, ``');
+    for (const [perm, has] of Object.entries(permissions.serialize())) {
+        if (has) str.push(inlineCode(perm));
+    }
 
-    return `\`\`${permString}\`\``;
+    return str.join(', ');
 }

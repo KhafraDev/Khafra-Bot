@@ -1,5 +1,5 @@
+import fetch from 'undici-fetch';
 import { URLSearchParams } from 'url';
-import { fetch } from '../../Structures/Fetcher.js';
 
 interface YouTubeError {
     error: {
@@ -47,9 +47,8 @@ export const YouTube = async (q: string[]) => {
     params.append('key', process.env.GOOGLE_API!);
 
 
-    const res = await fetch()
-        .get(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
-        .json<YouTubeSearchResults | YouTubeError>();
+    const r = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
+    const j = await r.json() as YouTubeSearchResults | YouTubeError;
     
-    return res;
+    return j;
 }

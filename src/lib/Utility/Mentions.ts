@@ -1,8 +1,9 @@
-import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel } from 'discord.js';
+import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel, Snowflake } from 'discord.js';
 import { client } from '../../index.js';
 
 interface Options {
-    splice: boolean
+    splice?: boolean
+    idx?: number
 }
 
 type MessageMentionTypes = 
@@ -20,13 +21,14 @@ const REGEX = {
 const epoch = new Date('January 1, 2015 GMT-0');
 const zeroBinary = '0'.repeat(64);
 const opts: Options = {
-    splice: true
+    splice: true,
+    idx: 0
 }
 
-export async function getMentions(message: Message, type: 'roles'): Promise<Role>;
-export async function getMentions(message: Message, type: 'users'): Promise<User>;
-export async function getMentions(message: Message, type: 'members'): Promise<GuildMember>;
-export async function getMentions(message: Message, type: 'channels'): Promise<GuildChannel>;
+export async function getMentions(message: Message, type: 'roles', options?: Options): Promise<Role>;
+export async function getMentions(message: Message, type: 'users', options?: Options): Promise<User>;
+export async function getMentions(message: Message, type: 'members', options?: Options): Promise<GuildMember>;
+export async function getMentions(message: Message, type: 'channels', options?: Options): Promise<GuildChannel>;
 export async function getMentions(
     { mentions, content, guild }: Message, 
     type: MessageMentionTypes,
@@ -36,15 +38,18 @@ export async function getMentions(
     if (options.splice)
         args.splice(0, 1); // normal prefixed command
 
-    if (REGEX[type].test(args[0])) {
-        const id = args[0].replace(/[^0-9]/g, ''); // replace non-numeric characters
+    if (REGEX[type].test(args[options.idx!])) {
+        const id = args[options.idx!].replace(/[^0-9]/g, ''); // replace non-numeric characters
+        if (!validSnowflake(id)) return null;
         // sometimes, especially for users, they might not be cached/auto fetched
         // for the bot, so no items will be in the collection
-        const item = mentions[type].get(id) ?? id;
+        const item = mentions[type]?.get(id) ?? id;
 
         // if it's not a string, no need to fetch it; we can just return it!
         if (typeof item !== 'string')
             return item;
+        if (guild === null)
+            return null;
 
         if (type === 'members' || type === 'roles') {
             try {
@@ -66,7 +71,12 @@ export async function getMentions(
     }
 }
 
-export const validSnowflake = (id: string) => {
+export const validSnowflake = (id: unknown): id is Snowflake => {
+    if (typeof id !== 'string')
+        return false;
+    else if (!/^\d{17,19}$/.test(id))
+        return false;
+        
     const snowflake = SnowflakeUtil.deconstruct(id);
     if ( 
         snowflake.date.getTime() === epoch.getTime()

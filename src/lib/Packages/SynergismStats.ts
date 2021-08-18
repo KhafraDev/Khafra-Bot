@@ -1,4 +1,4 @@
-import { fetch } from '../../Structures/Fetcher.js';
+import fetch from 'undici-fetch';
 
 interface KongregateMetrics {
     gameplays_count: number
@@ -13,18 +13,23 @@ interface KongregateMetrics {
     quicklinks_user_rating: string
 }
 
-const cache = {
-    lastFetched: -1,
-    res: null as KongregateMetrics
+interface KongCache {
+    lastFetched: number
+    res: KongregateMetrics | null
 }
+
+const cache: KongCache = {
+    lastFetched: -1,
+    res: null
+};
 
 export const Kongregate = async () => {
     if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
         return cache.res;
     }
 
-    const json = await fetch('http://www.kongregate.com/games/Platonic/synergism/metrics.json')
-        .json<KongregateMetrics>();
+    const res = await fetch('http://www.kongregate.com/games/Platonic/synergism/metrics.json');
+    const json = await res.json() as KongregateMetrics;
 
     cache.res = json;
     cache.lastFetched = Date.now();

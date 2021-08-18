@@ -27,7 +27,7 @@ export interface NounSearch {
             name: string
             permalink: string
             slug: string
-            sponsor: {}
+            sponsor: unknown
             sponsor_campaign_link: string
             sponsor_id: string
             tags: { id: number, slug: string }[]
@@ -43,7 +43,7 @@ export interface NounSearch {
         preview_url: string
         preview_url_42: string
         preview_url_84: string
-        sponsor: {}
+        sponsor: unknown
         sponsor_campaign_link: string | null
         sponsor_id: string
         tags: { id: number, slug: string }[]

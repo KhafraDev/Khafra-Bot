@@ -1,5 +1,7 @@
-import fetch, { Response } from 'node-fetch';
+import { Dispatcher, request } from 'undici';
 import { chunkSafe } from '../Utility/Array.js';
+import { dontThrow } from '../Utility/Don\'tThrow.js';
+import { once } from '../Utility/Memoize.js';
 
 interface CGCrypto {
     id: string
@@ -28,10 +30,10 @@ interface CoinGeckoRes {
     max_supply?: number | null,
     ath: number,
     ath_change_percentage: number,
-    ath_date: Date,
+    ath_date: string,
     atl: number,
     atl_change_percentage: number,
-    atl_date: Date,
+    atl_date: string,
     roi?: {
         times: number,
         currency: string,
@@ -44,9 +46,8 @@ interface CoinGeckoRes {
  * Cache of all symbols and ids of supported cryptocurrencies on Coingecko
  */
 export const symbolCache = new Set<string>();
+export const cache = new Map<string, CoinGeckoRes | CoinGeckoRes[]>();
 const strictlyIDs = new Set<string>();
-
-export const cache = new Map<string, CoinGeckoRes>();
 
 const defaults = [
     // list all currencies
@@ -54,56 +55,85 @@ const defaults = [
     'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&sparkline=false'
 ] as const;
 
-const list = async () => {
-    const r = await fetch(defaults[0], {
-        headers: {
-            'Accept': 'application/json'
-        }
-    });
-    const j = await r.json() as CGCrypto[];
+const list = once(async () => {
+    const [err, r] = await dontThrow((async () => {
+        const ac = new AbortController();
+        setTimeout(() => ac.abort(), 30000);
+        
+        return request(defaults[0], {
+            method: 'GET',
+            signal: ac.signal,
+            headersTimeout: 60000
+        });
+    })());
+
+    if (err !== null) {
+        console.log(`CoinGecko: ${err.message}`);
+        return;
+    }
+
+    const j = await r.body.json() as CGCrypto[];
 
     for (const { id, symbol } of j) {
         symbolCache.add(id);
         symbolCache.add(symbol);
         strictlyIDs.add(id);
     }
-}
+});
 
 const all = async () => {
-    if (symbolCache.size === 0)
-        await list();
+    
+    await list();
 
-    // so something here can error out, be completely ignored by the try/catch
-    // and give no useful stack traces. Highly doubt this fixes it.
-    try { 
-        const reqs = chunkSafe([...strictlyIDs], 250)
-            .map(r => fetch(`${defaults[1]}&ids=${r.join(',')}`));
-        const reqsChunk = chunkSafe(reqs, 5) // await Promise.allSettled(reqs);
+    const chunk = chunkSafe([...strictlyIDs], 250);
+    const reqs = chunk.map(r => (async () => {
+        const ac = new AbortController();
+        setTimeout(() => ac.abort(), 30000);
 
-        for (const all of reqsChunk) {
-            const success = (await Promise.allSettled(all))
-                .filter((r): r is PromiseFulfilledResult<Response> => r.status === 'fulfilled')
-                .filter(r => r.value.ok)
-                .map(r => r.value.json() as Promise<CoinGeckoRes[]>);
+        return request(`${defaults[1]}&ids=${r.join(',')}`, {
+            method: 'GET',
+            signal: ac.signal,
+            headersTimeout: 60000
+        });
+    })());
+    const reqsChunk = chunkSafe(reqs, 5);
 
-            const json = await Promise.all(success);
+    for (const all of reqsChunk) {
+        const success = await Promise.allSettled(all.map(p => dontThrow(p)));
+        const filtered = success
+            .filter((r): r is PromiseFulfilledResult<[Error, Dispatcher.ResponseData]> => r.status === 'fulfilled')
+            .filter(r => r.value[0] === null && r.value[1].statusCode === 200)
+            .map(r => r.value[1].body.json() as Promise<CoinGeckoRes[]>);
 
-            for (const currList of json) {
-                for (const curr of currList) {
+        const json = await Promise.all(filtered);
+
+        for (const currList of json) {
+            for (const curr of currList) {
+                // there are nearly 1,000 duplicate symbols but name and ids are all unique
+                if (cache.has(curr.symbol)) {
+                    const item = cache.get(curr.symbol)!;
+                    const idx = Array.isArray(item) 
+                        ? item.findIndex(i => i.id === curr.id)
+                        : -1;
+
+                    if (idx !== -1 && Array.isArray(item)) {
+                        item[idx] = curr;
+                        cache.set(curr.symbol, item);
+                    } else {
+                        cache.set(curr.symbol, Array.isArray(item) ? [...item, curr] : [item, curr]);
+                    }
+                } else {
                     cache.set(curr.symbol, curr);
-                    cache.set(curr.id, curr);
                 }
+
+                cache.set(curr.id, curr);
             }
         }
-    } catch {}
+    }
 }
 
-export const setCryptoInterval = async () => {
-    try { await all() } catch {}
+export const setCryptoInterval = once(async () => {
+    await dontThrow(all());
 
-    setInterval(async () => {
-        try {
-            await all();
-        } catch {}
-    }, 60 * 1000 * 15);
-}
+    return setInterval(() => void dontThrow(all()), 60 * 1000 * 30).unref();
+});

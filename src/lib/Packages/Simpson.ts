@@ -1,7 +1,7 @@
 // https://www.thisfuckeduphomerdoesnotexist.com/
 // had to include this one
 
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 interface ISimpson {
     url: string
@@ -19,7 +19,7 @@ export const fetchOGKey = async () => {
     const res = await fetch(url);
     const text = await res.text();
 
-    key = text.match(/"next_item_key": "(.*?)"/)[1];
+    key = /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
 }
 
 export const thisSimpsonDoesNotExist = async () => {

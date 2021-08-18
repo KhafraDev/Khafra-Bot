@@ -41,7 +41,7 @@ export class kCommand extends Command {
                 compareTwoStrings(b.toLowerCase(), args[0].toLowerCase()) 
                 - compareTwoStrings(a.toLowerCase(), args[0].toLowerCase())
             )
-            .shift();
+            .shift()!;
         
         const files = await client.walk(join(basePath, closest), () => true);
         const mapped = files
@@ -60,20 +60,21 @@ export class kCommand extends Command {
             description += str;
         }
 
-        const m = await message.reply(this.Embed
+        const m = await message.reply({ embeds: [this.Embed
             .success(description)
             .setTitle('Which file should be reloaded?')
-        );
+        ]});
 
-        const c = await m.channel.awaitMessages(
-            (msg: Message) => mapped.some(({ base }) => base === msg.content),
-            { max: 1, time: 30000 }
-        );
+        const c = await m.channel.awaitMessages({ 
+            filter: m => mapped.some(({ base }) => base === m.content) && super.isBotOwner(m.author.id),
+            max: 1, 
+            time: 30000
+        });
 
         if (c.size === 0)
             return this.Embed.fail('Command canceled!');
 
-        const cmd = mapped.find(({ base }) => base === c.first().content);
+        const cmd = mapped.find(({ base }) => base === c.first()!.content)!;
         const outDir = cmd.dir.replace(`${sep}src${sep}`, `${sep}build${sep}src${sep}`);
 
         const compiled = compile(
@@ -81,7 +82,7 @@ export class kCommand extends Command {
             { outDir: join(process.cwd(), 'build') }
         );
 
-        await m.edit(this.Embed.success(compiled.join('\n').slice(0, 2048))); 
+        await m.edit({ embeds: [this.Embed.success(compiled.join('\n').slice(0, 2048))] }); 
 
         const { href } = pathToFileURL(join(outDir, cmd.base.replace(/\.(.*?)$/, '.js')));
         const { kCommand } = await import(href) as typeof import('./Reload');
@@ -93,9 +94,6 @@ export class kCommand extends Command {
         KhafraClient.Commands.set(commandName, command); // add back to cache
         CommandCooldown.set(commandName, new Set()); // add back to cache
 
-        command.settings.aliases.forEach(alias => KhafraClient.Commands.set(alias, command));
-
-        if (command.help.length < 2) // fill array to min length 2
-            command.help = [...command.help, ...Array<string>(2 - command.help.length).fill('')];
+        command.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, command));
     }
 }

@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
@@ -7,6 +7,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 const range = Range(0, 7, true);
 
@@ -46,15 +47,15 @@ export class kCommand extends Command {
         try {
             await message.guild.members.ban(user, {
                 days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
-                reason
+                reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
             });
-        } catch {
-            return this.Embed.fail(`${user} isn't bannable!`);
-        } finally {
-            // not sure if the event is fired without permission to view audit logs
+            
+            // TODO(@KhafraDev): check if this perm requires any intents/perms
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, message.member);
+                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
+        } catch {
+            return this.Embed.fail(`${user} isn't bannable!`);
         }
 
         return this.Embed.success(`

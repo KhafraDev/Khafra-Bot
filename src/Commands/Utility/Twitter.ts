@@ -1,8 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { URL } from 'url';
 import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -22,13 +22,15 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        const { hostname, pathname } = new URL(args[0]);
+        const { hostname, pathname } = URLFactory(args[0]) ?? {};
         if (hostname !== 'twitter.com')
             return this.Embed.fail('Not a Twitter status!');
-        if (!/\/[A-z0-9]+\/status\/\d+$/.test(pathname))
+        // Your username can only contain letters, numbers and '_'
+        // Your username must be shorter than 15 characters.
+        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname ?? ''))
             return this.Embed.fail(`Invalid Twitter status!`);
 
-        const id = pathname.match(/\/(\d+)$/)[1];
+        const id = /\/(\d+)$/.exec(pathname!)![1];
         const media = await getTwitterMediaURL(id);
 
         if (!media)

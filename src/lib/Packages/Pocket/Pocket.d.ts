@@ -21,7 +21,7 @@ export type PocketArticle = {
     lang: string,
     time_to_read: number,
     top_image_url: string,
-    domain_metadata: [Object],
+    domain_metadata: unknown[]
     listen_duration_estimate: number
 }
 
@@ -61,10 +61,10 @@ export type PocketAddResults = {
         used_fallback: string,
         lang: string,
         time_first_parsed: string,
-        authors: Record<string, Object[]>,
+        authors: Record<string, unknown[]>,
         top_image_url: string,
         resolved_normal_url: string,
-        domain_metadata: {
+        domain_metadata?: {
             name: string,
             logo: string,
             greyscale_logo: string
@@ -101,7 +101,7 @@ declare class Pocket {
     get requestAuthorization(): string;
     accessToken(): Promise<string | undefined>;
     getList(): Promise<PocketGetResults>;
-    add(url: string | import('url').URL, title?: string): Promise<any>;
+    add(url: string | import('url').URL, title?: string): Promise<PocketAddResults>;
     toObject(): {
         request_token: string | undefined;
         access_token: string | undefined;

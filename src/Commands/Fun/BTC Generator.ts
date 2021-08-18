@@ -32,7 +32,7 @@ export class kCommand extends Command {
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
-        const msg = await message.reply(embed);
+        const msg = await message.reply({ embeds: [embed] });
         
         await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
 
@@ -41,6 +41,6 @@ export class kCommand extends Command {
         const embed2 = this.Embed.success()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return void msg.edit(embed2);
+        return void msg.edit({ embeds: [embed2] });
     }
 }

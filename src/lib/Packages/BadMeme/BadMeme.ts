@@ -1,5 +1,5 @@
 import { decodeXML } from 'entities';
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URLSearchParams } from 'url';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 
@@ -10,21 +10,25 @@ export interface IBadMemeCache {
     url: string | string[]
 }
 
-const cache = new Map<string, Set<IBadMemeCache>>();
+export const cache = new Map<string, Set<IBadMemeCache>>();
 const lastUsed = new Map<string, number>();
 const after = new Map<string, string>();
 
-const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCache | null => {
-    if (!cache.has(subreddit))
+const getItemRespectNSFW = (
+    subreddit: string, 
+    allowNSFW: boolean,
+    cachedItems = cache.get(subreddit)
+): IBadMemeCache | null => {
+    if (!cachedItems || cachedItems.size === 0) {
         return null;
+    }
 
-    const cached = cache.get(subreddit);
-    const item = [...cached].find(p => allowNSFW || !p.nsfw);
+    const item = [...cachedItems].find(p => allowNSFW || !p.nsfw);
     if (item) {
-        cached.delete(item);
-        cached.size === 0 
+        cachedItems.delete(item);
+        cachedItems.size === 0 
             ? cache.delete(subreddit)
-            : cache.set(subreddit, cached);
+            : cache.set(subreddit, cachedItems);
     }
 
     lastUsed.set(subreddit, Date.now());
@@ -33,7 +37,7 @@ const getItemRespectNSFW = (subreddit: string, allowNSFW: boolean): IBadMemeCach
 
 // no, doing <post>.domain === 'gfycat.com' does not work.
 // I tried.
-const isgfycat = (p: RedditData['data']['children'][0]['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
+const isgfycat = (p: RedditData['data']['children'][number]['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
 
 export const badmeme = async (
     subreddit = 'dankmemes',
@@ -57,60 +61,56 @@ export const badmeme = async (
         return j;
     }
 
-    const urls: IBadMemeCache[] = j.data.children
-        .map(child => child.data)
-        .filter(post => post.is_self === false && !('crosspost_parent' in post))
-        .map(post => {
-            if ('is_gallery' in post && post.is_gallery === true) {
-                const galleryImages = Object
-                    .values(post.media_metadata)
-                    .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid')
-                    .map(k => decodeXML(k.s.u));
+    const urls: IBadMemeCache[] = [];
 
-                return { nsfw: post.over_18, url: galleryImages };
+    for (const { data } of j.data.children) {
+        if (data.is_self === true && 'crosspost_parent' in data) {
+            continue;
+        } else if ('is_gallery' in data && data.is_gallery === true) {
+            const galleryImages = Object
+                .values(data.media_metadata)
+                .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid')
+                .map(k => decodeXML(k.s.u));
+
+            urls.push({ nsfw: data.over_18, url: galleryImages });
+        } else if (isgfycat(data)) {
+            if (!data.secure_media && !data.preview?.reddit_video_preview?.fallback_url) {
+                urls.push({ nsfw: data.over_18, url: `${data.url}.mp4` });
+            } else {
+                urls.push({ 
+                    nsfw: data.over_18, 
+                    url: data.secure_media 
+                        ? data.secure_media.oembed.thumbnail_url
+                        : data.preview.reddit_video_preview.fallback_url
+                });
             }
-
-            if (isgfycat(post)) {
-                if (!post.secure_media && !post.preview?.reddit_video_preview?.fallback_url)
-                    return { nsfw: post.over_18, url: `${post.url}.mp4` };
-
-                return { 
-                    nsfw: post.over_18, 
-                    url: post.secure_media 
-                        ? post.secure_media.oembed.thumbnail_url
-                        : post.preview.reddit_video_preview.fallback_url
-                };
-            }
-
-            if (post.domain === 'redgifs.com')
-                return { nsfw: post.over_18, url: post.url };
-
+        } else if (data.domain === 'redgifs.com') {
+            urls.push({ nsfw: data.over_18, url: data.url });
+        } else if ('post_hint' in data && data.post_hint === 'hosted:video') {
             // reddit separates the video from the audio, so the best we can do is get the video
             // not gonna waste resources combining audio + video.
             // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
-            if ('post_hint' in post && post.post_hint === 'hosted:video')
-                return { nsfw: post.over_18, url: post.media.reddit_video.fallback_url };
-
-            return { nsfw: post.over_18, url: post.url };
-        });
+            urls.push({ nsfw: data.over_18, url: data.media.reddit_video.fallback_url });
+        } else {
+            urls.push({ nsfw: data.over_18, url: data.url });
+        }
+    }
 
     const last = j.data.children[j.data.children.length - 1].data.name;
+    const cachedSet = new Set(urls);
     after.set(subreddit, last);
-    cache.set(subreddit, new Set(urls));
+    cache.set(subreddit, cachedSet);
 
-    return getItemRespectNSFW(subreddit, nsfw);
+    return getItemRespectNSFW(subreddit, nsfw, cachedSet);
 }
 
 setInterval(() => {
     const now = Date.now();
     lastUsed.forEach((time, subreddit) => {
-        if (
-            !cache.has(subreddit) || // can be deleted if cache is depleted
-            now - time >= 60 * 1000 * 10 // 10 mins
-        ) { // 10 mins
+        if (now - time >= 60 * 1000 * 10) { // 10 mins
             lastUsed.delete(subreddit);
             cache.delete(subreddit);
             after.delete(subreddit);
         }
     });
-}, 60 * 1000 * 10);
+}, 60 * 1000 * 10).unref();

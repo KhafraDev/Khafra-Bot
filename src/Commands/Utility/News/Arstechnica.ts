@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'https://arstechnica.com/rss/',
+    rss: 'https://arstechnica.com/feed/',
     main: 'https://arstechnica.com/',
     command: ['ars', 'arstechnica'],
     author: ['Arstechnica', 'https://i.imgur.com/NpeaohK.png']

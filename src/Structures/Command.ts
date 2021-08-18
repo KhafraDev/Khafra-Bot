@@ -2,69 +2,68 @@ import {
     Message, 
     Snowflake,
     Permissions,
-    PermissionResolvable,
-    MessageEmbed
+    PermissionResolvable
 } from 'discord.js';
-import { Logger } from './Logger.js';
-import config from '../../config.json';
 import { Errors } from '../lib/Utility/Constants/Errors.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { kGuild } from '../lib/types/Warnings.js';
+import { kGuild } from '../lib/types/KhafraBot.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */
-    args: string[]
+    readonly args: string[]
     /** Command used. */
-    commandName: string
+    readonly commandName: string
     /** Text unformatted, removes prefix+command with leading whitespace. */
-    content: string
+    readonly content: string
     /** Prefix used */
-    prefix: string
+    readonly prefix: string
 }
 
 interface ICommand {
-    logger: Logger
-    help: string[]
-    permissions: PermissionResolvable
-    settings: {
-        name: string
-        folder: string
-        args: [number, number?]
+    readonly help: string[]
+    readonly permissions: PermissionResolvable
+    readonly settings: {
+        readonly name: string
+        readonly folder: string
+        readonly args: [number, number?]
         /** Ratelimit in seconds, defaults to 5 */
         ratelimit?: number
-        permissions?: PermissionResolvable
+        readonly permissions?: PermissionResolvable
         aliases?: string[]
-        guildOnly?: boolean
-        ownerOnly?: boolean
-        errors?: Record<string, string>
+        readonly guildOnly?: boolean
+        readonly ownerOnly?: boolean
+        readonly errors?: Record<string, string>
     }
 }
 
-type Reply = ReturnType<Message['reply']>;
-type Promisify<T> = T extends Promise<infer U>
-    ? U | T
-    : T | Promise<T>;
-
 export abstract class Command implements ICommand {
-    logger = new Logger('Command');
-    errors = Errors;
+    readonly errors = Errors;
+    readonly Embed = Embed;
 
     /*** Description and example usage. */
-    help: string[];
+    readonly help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    permissions: PermissionResolvable[] = [ 
+    readonly permissions: PermissionResolvable[] = [ 
         Permissions.FLAGS.SEND_MESSAGES,
         Permissions.FLAGS.EMBED_LINKS,
         Permissions.FLAGS.VIEW_CHANNEL, 
         Permissions.FLAGS.READ_MESSAGE_HISTORY 
     ];
-    settings: ICommand['settings'];
+    readonly settings: ICommand['settings'];
     
     constructor(
         help: string[],
         settings: ICommand['settings']
     ) {
-        this.help = help;
+        this.help = help.length < 2
+            ? [...help, ...Array<string>(2 - help.length).fill('')]
+            : help;
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];
@@ -73,11 +72,9 @@ export abstract class Command implements ICommand {
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
-        Reply | Promisify<void> | Promisify<MessageEmbed> | Promisify<unknown>;
+        Promise<unknown> | unknown;
 
-    isBotOwner (id: Snowflake) {
-        return Array.isArray(config.botOwner) ? config.botOwner.includes(id) : config.botOwner === id;
-    }
-
-    get Embed () { return Embed; }
+    isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 
+        ? config.botOwner.includes(id) 
+        : config.botOwner === id;
 }

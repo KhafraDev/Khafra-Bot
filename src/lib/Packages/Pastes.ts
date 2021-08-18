@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
@@ -124,7 +124,7 @@ const ghostbin = async (text: string) => {
     });
 
     if (r.status === 303)
-        return new URL(r.headers.get('location'), 'https://ghostbin.co').toString();
+        return new URL(r.headers.get('location')!, 'https://ghostbin.co').toString();
 }
 
 /**

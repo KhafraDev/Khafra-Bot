@@ -4,7 +4,7 @@
  * that removes the token entirely.
  */
 
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 import { URL, URLSearchParams } from 'url';
 
 type Opts = { to?: string, from?: string };
@@ -51,8 +51,12 @@ export const translate = async (
 	text: string, 
 	opts: Opts = { to: 'en', from: 'auto' }
 ): Promise<string> => {
-	opts.from = langs.includes(opts.from?.toLowerCase()) ? opts.from.toLowerCase() : 'auto';
-	opts.to = langs.includes(opts.to?.toLowerCase()) ? opts.to.toLowerCase() : 'en';
+	opts.from = typeof opts.from === 'string' && langs.includes(opts.from.toLowerCase()) 
+		? opts.from.toLowerCase() 
+		: 'auto';
+	opts.to = typeof opts.to === 'string' && langs.includes(opts.to?.toLowerCase()) 
+		? opts.to.toLowerCase() 
+		: 'en';
 
 	const url = 'https://translate.google.com/translate_a/single?';
 	const params = new URLSearchParams(staticParams);
@@ -71,6 +75,6 @@ export const translate = async (
 
 	if (!Array.isArray(j) || !Array.isArray(j[0]))
 		return 'Invalid response received!';
-	 
+
 	return j[0].map(tr => tr.shift()).join('');
 }

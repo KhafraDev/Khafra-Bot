@@ -19,7 +19,7 @@ export const cooldown = (max: number, ms: number) => {
                 m.set(k, f);
             }
         })
-    }, 1000 * 60 * 10); // 10 minutes
+    }, 1000 * 60 * 10).unref(); // 10 minutes
 
     return (id: string) => {
         const now = Date.now();
@@ -27,7 +27,7 @@ export const cooldown = (max: number, ms: number) => {
             m.set(id, [now]);
             return true;
         } else {
-            const i = m.get(id).filter(d => now - d < ms);
+            const i = m.get(id)!.filter(d => now - d < ms);
             if (i.length >= max) {
                 return false;
             } else {

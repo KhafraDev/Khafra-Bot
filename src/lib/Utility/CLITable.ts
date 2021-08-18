@@ -31,7 +31,7 @@ const renderRow = (row: string[], columnWidths: number[]) => {
 		// of spaces we need while also left justifying the output.
 		out += `${' '.repeat(needed)}${cell}${' '.repeat(Math.ceil(needed))}`;
 		if (i !== row.length - 1)
-		    out += tableChars.middle;
+            out += tableChars.middle;
 	}
 	out += tableChars.right;
 	return out;
@@ -39,13 +39,10 @@ const renderRow = (row: string[], columnWidths: number[]) => {
   
 /** 
  * @example
-    const t = table(
-        ['Date', 'joins'],
-        [
-            ['a', 'b', 'c'],
-            ['1', '2', 'hello']
-        ]
-    );
+    const t = table({
+        Date: ['a', 'b', 'c'],
+        joins: ['1', '2', 'hello']
+    });
     // ┌──────┬───────┐
     // │ Date │ joins │
     // ├──────┼───────┤
@@ -54,7 +51,10 @@ const renderRow = (row: string[], columnWidths: number[]) => {
     // │  c   │ hello │
     // └──────┴───────┘
 */
-export const table = (head: string[], columns: string[][]) => {
+export const table = (obj: Record<string, string[]>) => {
+    const head = Object.keys(obj);
+    const columns = Object.values(obj);
+
     const rows: string[][] = [];
     const columnWidths = head.map(h => h.length);
     const longestColumn = Math.max(...columns.map(h => h.length));
@@ -62,9 +62,7 @@ export const table = (head: string[], columns: string[][]) => {
     for (let i = 0; i < head.length; i++) {
         const column = columns[i];
         for (let j = 0; j < longestColumn; j++) {
-            rows[j] ??= [];
-    
-            const value = rows[j][i] = hasOwnProperty.call(column, j) ? column[j] : '';
+            const value = (rows[j] ??= [])[i] = hasOwnProperty.call(column, j) ? column[j] : '';
             const width = columnWidths[i] || 0;
             columnWidths[i] = Math.max(width, value.length);
         }
@@ -78,7 +76,7 @@ export const table = (head: string[], columns: string[][]) => {
                  `${tableChars.rightMiddle}\n`;
   
     for (const row of rows)
-      	result += `${renderRow(row, columnWidths)}\n`;
+        result += `${renderRow(row, columnWidths)}\n`;
   
 	result += `${tableChars.bottomLeft}${divider.join(tableChars.bottomMiddle)}${tableChars.bottomRight}`;
     return result;

@@ -30,10 +30,9 @@ export class kCommand extends Command {
         if (message.attachments.size === 0)
             return this.Embed.generic(this, 'No image attached!');
 
-        message.channel.startTyping();
+        void message.channel.sendTyping();
         
-        const cartoon = await cartoonize(message.attachments.first());
-        message.channel.stopTyping(true);
+        const cartoon = await cartoonize(message.attachments.first()!);
         if (!cartoon)
             return this.Embed.fail('Failed to extract the image from the HTML. 😕');
         

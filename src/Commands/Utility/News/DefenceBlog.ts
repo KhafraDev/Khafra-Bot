@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
-    rss: 'http://defence-blog.com/feed',
+    rss: 'http://defence-blog.com/feed/',
     main: 'https://defence-blog.com',
     command: ['defenceblog', 'defence-blog'],
     author: ['DefenceBlog', 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png']

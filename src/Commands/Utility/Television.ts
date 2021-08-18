@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
 import { searchTV } from '../../lib/Packages/TMDB.js';
-import { isDM } from '../../lib/types/Discord.js.js';
-import { formatDate } from '../../lib/Utility/Date.js';
+import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -21,7 +21,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const tv = await searchTV(
             args.join(' '), 
-            isDM(message.channel) || message.channel.nsfw
+            isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
         
         if (!tv)
@@ -32,9 +32,9 @@ export class kCommand extends Command {
             .setDescription(tv.overview)
             .addField('**Genres:**', tv.genres.map(g => g.name).join(', '), true)
             .addField('**Status:**', tv.status, true)
-            .addField('**Premiered:**', tv.first_air_date ? formatDate('MMMM Do, YYYY', tv.first_air_date) : 'Unknown', true)
-            .addField('**Seasons:**', tv.number_of_seasons, true)
-            .addField('**Episodes:**', tv.number_of_episodes, true)
+            .addField('**Premiered:**', tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
+            .addField('**Seasons:**', `${tv.number_of_seasons}`, true)
+            .addField('**Episodes:**', `${tv.number_of_episodes}`, true)
             .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             

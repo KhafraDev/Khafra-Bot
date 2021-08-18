@@ -30,11 +30,10 @@ export class kCommand extends Command {
         );
     }
 
-    init(_message: Message, { args }: Arguments) {     
-        const blocks = args
-            .join(' ')
-            .replace(/[A-z\s+]/g, e => e in letters ? letters[e] + ' ' : '')
-            .slice(0, 2048);
+    init(_message: Message, { content }: Arguments) {     
+        const blocks = [...content]
+            .map(l => letters[l.toLowerCase()] ?? l)
+            .join(' ');
 
         return this.Embed.success(blocks);
     }

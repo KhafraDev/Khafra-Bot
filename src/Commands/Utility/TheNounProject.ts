@@ -1,7 +1,9 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, MessageReaction, User } from 'discord.js';
+import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Components } from '../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -30,26 +32,42 @@ export class kCommand extends Command {
             return this.Embed.fail('No icons found for that search!');
         }
 
-        let i = 0;
-        const format = () => {
-            if (!icons.icons[i]) {
-                this.Embed.success().setImage(icons.icons[0].preview_url)
-            }
-            return this.Embed.success().setImage(icons.icons[i].preview_url);
-        }
-        const m = await message.reply(format());
+        let page = 0;
+        
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Next'),
+                Components.secondary('Previous'),
+                Components.deny('Stop')
+            );
 
-        await m.react('▶️');
-        await m.react('◀️');
-
-        const collector = m.createReactionCollector(
-            (r: MessageReaction, u: User) => ['▶️', '◀️'].includes(r.emoji.name) && u.id === message.author.id,
-            { max: 10, time: 60000 } 
-        );
-        collector.on('collect', r => {
-            r.emoji.name === '▶️' ? i++ : i--;
-            return m.edit(format());
+        const m = await message.channel.send({ 
+            embeds: [this.Embed.success().setImage(icons.icons[page].preview_url)],
+            components: [row]
         });
-        collector.on('end', () => m.reactions.removeAll());
+
+        const filter = (interaction: Interaction) =>
+            interaction.isMessageComponent() &&
+            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+            interaction.user.id === message.author.id;
+
+        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
+        collector.on('collect', i => {
+            if (m.deleted) 
+                return collector.stop();
+            else if (i.customId === 'deny')
+                return collector.stop('deny');
+
+            i.customId === 'approve' ? page++ : page--;
+
+            if (page < 0) page = icons.icons.length - 1;
+            if (page >= icons.icons.length) page = 0;
+
+            return void dontThrow(i.update({ embeds: [this.Embed.success().setImage(icons.icons[page].preview_url)] }));
+        });
+        collector.on('end', (_c, reason) => {
+            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
+                return void dontThrow(m.edit({ components: [] }));
+        });
     }
 }

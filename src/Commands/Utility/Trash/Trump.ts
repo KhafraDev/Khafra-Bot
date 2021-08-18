@@ -1,9 +1,15 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Message, MessageEmbed, MessageReaction, Permissions, User } from 'discord.js';
-import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import Trump from '../../../../assets/Trump.json';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
+import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const Trump = [] as typeof import('../../../../assets/Trump.json');
+createFileWatcher(Trump, join(cwd, 'assets/Trump.json'));
 
 @RegisterCommand
 export class kCommand extends Command {    
@@ -16,7 +22,7 @@ export class kCommand extends Command {
 			{
                 name: 'trump',
                 folder: 'Trash',
-                args: [0, 3] // 0 = random, 3 = February 10, 2017
+                args: [0, 3] // 0 = random, 3, ie = February 10, 2017
             }
         );
     }
@@ -28,45 +34,63 @@ export class kCommand extends Command {
             
         if (!item || item.length === 0) {
             return this.Embed.fail('Wow! No atrocities on that day.');
-        } else if (item.length === 1 || !hasPerms(message.channel, message.guild.me, Permissions.FLAGS.MANAGE_MESSAGES)) {
-            const { text, color, emojis } = item.shift();
+        } else if (item.length === 1) {
+            const { text, color, emojis } = item.shift()!;
             return new MessageEmbed()
-                .setColor(color)
+                .setColor(color as `#${string}`)
                 .setDescription(`${emojis.join('')} ${text}`);
         }
 
         const embeds = item.map(atro => new MessageEmbed()
-            .setColor(atro.color)
+            .setColor(atro.color as `#${string}`)
             .setDescription(`${atro.emojis.join('')} ${atro.text}`)
         );
 
         let page = 0;
 
-        const m = await message.reply(embeds[page]);
-        await m.react('▶️');
-        await m.react('◀️');
-        await m.react('🗑️');
-        
-        const filter = (r: MessageReaction, u: User) => 
-            ['▶️', '◀️', '🗑️'].includes(r.emoji.name) && 
-            u.id === message.author.id;
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Next'),
+                Components.secondary('Previous'),
+                Components.deny('Stop')
+            );
 
-        const collector = m.createReactionCollector(filter, { max: item.length * 2, time: 60000 });
-        collector.on('collect', async reaction => {
-            if (m.deleted) return collector.stop();
+        const m = await message.reply({ 
+            embeds: [embeds[page]],
+            components: [row]
+        });
 
-            if (reaction.emoji.name === '🗑️')
+        const filter = (interaction: Interaction) =>
+            interaction.isMessageComponent() &&
+            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+            interaction.user.id === message.author.id;
+
+        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
+        collector.on('collect', i => {
+            if (m.deleted) 
                 return collector.stop();
+            else if (i.customId === 'deny')
+                return collector.stop('deny');
 
             const old = page;
-            reaction.emoji.name === '▶️' ? page++ : page--;
+            i.customId === 'approve' ? page++ : page--;
 
             if (page < 0) page = 0;
             if (page >= embeds.length) page = embeds.length - 1;
 
             if (page !== old)
-                return m.edit(embeds[page]);
+                return void dontThrow(i.update({ 
+                    content: null,
+                    embeds: [embeds[page]] 
+                }));
+            else 
+                return void dontThrow(i.update({ 
+                    content: page === 0 ? 'No previous items!' : 'No more items!' 
+                }));
         });
-        collector.on('end', () => m.reactions.removeAll());
+        collector.on('end', (_c, reason) => {
+            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
+                return void dontThrow(m.edit({ content: null, components: [] }));
+        });
     }
 }

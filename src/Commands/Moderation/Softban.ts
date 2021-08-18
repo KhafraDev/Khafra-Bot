@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -7,6 +7,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Message } from '../../lib/types/Discord.js.js';
 
 const range = Range(0, 7, true);
 
@@ -46,12 +47,12 @@ export class kCommand extends Command {
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
-        } catch {
-            return this.Embed.fail(`${member} isn't bannable!`);
-        } finally {
+
             if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
                 if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${member.id}`, message.member);
+                    bans.set(`${message.guild.id},${member.id}`, { member: message.member, reason });
+        } catch {
+            return this.Embed.fail(`${member} isn't bannable!`);
         }
 
         return this.Embed.success(`

@@ -5,11 +5,7 @@
   "main": "TheNounProject",
   "types": "types/Noun.d.ts",
   "type": "module",
-  "dependencies": {
-    "node-fetch": "2.6.1"
-  },
   "devDependencies": {
-    "@types/node-fetch": "1.6.9",
     "typescript": "3.4.3"
   },
   "repository": {
@@ -31,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/khafradev/Khafra-Bot/issues"
   },
-  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "dependencies": {
+    "undici-fetch": "^1.0.0-rc.4"
+  }
 }

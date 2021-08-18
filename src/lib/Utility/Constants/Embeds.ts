@@ -1,8 +1,13 @@
 import { MessageEmbed, PermissionResolvable, Permissions } from 'discord.js';
 import { Command } from '../../../Structures/Command.js';
-import config from '../../../../config.json';
 import { permResolvableToString } from '../Permissions.js';
 import { plural } from '../String.js';
+import { createFileWatcher } from '../FileWatcher.js';
+import { cwd } from './Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 type PartialCommand = {
     settings: Command['settings'],
@@ -14,11 +19,11 @@ const defaultPerms = [
     Permissions.FLAGS.EMBED_LINKS,
     Permissions.FLAGS.VIEW_CHANNEL, 
     Permissions.FLAGS.READ_MESSAGE_HISTORY 
-]
+];
 
 export const Embed = {
     fail: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.fail);
+        const Embed = new MessageEmbed().setColor(config.embed.fail as `#${string}`);
         reason && Embed.setDescription(reason);
         
         return Embed;
@@ -28,7 +33,7 @@ export const Embed = {
      * An embed for a command being successfully executed!
      */
     success: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.success); 
+        const Embed = new MessageEmbed().setColor(config.embed.success as `#${string}`); 
         reason && Embed.setDescription(reason);
         
         return Embed;
@@ -39,12 +44,12 @@ export const Embed = {
      */
     missing_perms: (admin?: boolean, perms: PermissionResolvable = defaultPerms) => {
         return new MessageEmbed()
-            .setColor(config.embed.fail)
+            .setColor(config.embed.fail as `#${string}`)
             .setDescription(`
             One of us doesn't have the needed permissions!
 
             Both of us must have ${permResolvableToString(perms)} permissions to use this command!
-            ${admin ? 'You must have \`\`ADMINISTRATOR\`\` perms to use this command!' : '' }
+            ${admin ? 'You must have ``ADMINISTRATOR`` perms to use this command!' : '' }
             `);
     },
 
@@ -52,15 +57,15 @@ export const Embed = {
      * A generic help embed useful for most situations.
      */
     generic: ({ settings, help }: PartialCommand, reason?: string) => {
-        const [min, max] = settings.args;
+        const [min, max = 'no'] = settings.args;
         const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
         
         return new MessageEmbed()
-            .setColor(config.embed.fail)
+            .setColor(config.embed.fail as `#${string}`)
             .setDescription(`
             ${r}
 
-            Aliases: ${settings.aliases.map(a => `\`\`${a}\`\``).join(', ')}
+            Aliases: ${settings.aliases!.map(a => `\`\`${a}\`\``).join(', ')}
 
             Example Usage:
             ${help.slice(1).map((e: string) => `\`\`${settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
@@ -70,4 +75,12 @@ export const Embed = {
                 { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
             );
     }
+}
+
+export const padEmbedFields = (embed: MessageEmbed) => {
+    while (embed.fields.length % 3 !== 0 && embed.fields.length !== 0) {
+        embed.addField('\u200b', '\u200b', true);
+    }
+
+    return embed;
 }

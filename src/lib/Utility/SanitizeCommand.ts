@@ -1,5 +1,6 @@
 import { Message, Permissions } from 'discord.js';
-import { isText } from '../types/Discord.js.js';
+import { Message as kMessage } from '../types/Discord.js.js';
+import { isDM } from '../types/Discord.js.js';
 import { hasPerms } from './Permissions.js';
 
 const basic = new Permissions([
@@ -13,22 +14,21 @@ const basic = new Permissions([
  * Check message for required criteria.
  * @param message 
  */
-export const Sanitize = (message: Message) => {
+export const Sanitize = (message: Message): message is kMessage => {
     if (
-        message.webhookID || // author is null in webhook messages
+        message.webhookId || // author is null in webhook messages
         message.author.bot ||
         !['DEFAULT', 'REPLY'].includes(message.type) ||
         (message.guild && !message.guild.available) ||
         message.system ||
         message.partial ||
         message.tts || 
-        message.content.length === 0
+        message.content.length === 0 ||
+        isDM(message.channel) ||
+        !message.guild
     ) { 
         return false;
     }
 
-    if (isText(message.channel))
-        return hasPerms(message.channel, message.guild.me, basic);
-    
-    return true;
+    return hasPerms(message.channel, message.guild.me, basic);
 }

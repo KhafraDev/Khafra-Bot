@@ -1,16 +1,20 @@
-import { Command } from '../../../Structures/Command.js';
-import { Message, MessageReaction, Snowflake, User } from 'discord.js';
-import { join } from 'path';
-import { readFileSync } from 'fs';
+import { Arguments, Command } from '../../../Structures/Command.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { plural } from '../../../lib/Utility/String.js';
+import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
+import { inlineCode } from '@discordjs/builders';
+import { readFile } from 'fs/promises';
+import { join, extname } from 'path';
+import { readdirSync } from 'fs';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+
+const assets = join(process.cwd(), 'assets/Hangman');
 
 const games = new Set<Snowflake>();
-const presidents = readFileSync(join(process.cwd(), 'assets/Hangman/presidents.txt'), 'utf-8')
-    .split(/\n\r|\n|\r/g)
-    .filter(l => !l.startsWith('#') && l.length > 0);
+const listsByName = readdirSync(assets).map(f => f.replace(extname(f), ''));
+const lists = new Map<string, string[]>();
 
 const images = [
     'https://i.imgur.com/OmbNNhr.png', // nothing 
@@ -23,7 +27,7 @@ const images = [
 ];
 
 const hide = (word: string, guesses: string[]) =>
-    word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')} ]`, 'gi'), '☐');
+    word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')}]`, 'gi'), '☐');
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -35,134 +39,181 @@ export class kCommand extends Command {
 			{
                 name: 'hangman',
                 folder: 'Games',
-                args: [0, 0],
+                args: [0, 1],
                 ratelimit: 30
             }
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message, { args }: Arguments) {
         if (games.has(message.author.id))
             return this.Embed.fail('Finish your current game before starting another!');
 
-        
+        const listName = args.length === 0 ? 'presidents' : args[0].toLowerCase();
+        let words: string[] | null = null;
+        if (lists.has(listName)) {
+            words = lists.get(listName)!;
+        } else {
+            if (listsByName.includes(listName)) {
+                const path = join(assets, `${listName}.txt`);
+                const text = await readFile(path, 'utf-8');
+
+                words = text
+                    .split(/\n\r|\n|\r/g)
+                    .filter(l => !l.startsWith('#') && l.length > 0);
+                lists.set(listName, words);
+            } else {
+                return this.Embed.fail('That list of words doesn\'t exist!');
+            }
+        }
+
         let wrong = 0; // number of wrong guesses
-        const guesses: string[] = []; // guesses
+        const guesses = [' ']; // guesses
+        const word = words[await rand(words.length)];
 
-        const word = presidents[await rand(presidents.length)];
-        const m = await message.reply(this.Embed.success()
-            .setDescription(word.replace(/[A-z0-9\.]/g, '☐'))
-            .setImage(images[wrong])
-        );
+        const m = await message.reply({
+            embeds: [
+                this.Embed.success()
+                    .setDescription(hide(word, guesses))
+                    .setImage(images[wrong])
+            ],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.primary('Hint', 'hint').setEmoji('❓')
+                )
+            ]
+        });
 
-        const c = message.channel.createMessageCollector(
-            (m: Message) =>
+        const c = message.channel.createMessageCollector({
+            filter: m =>
                 m.author.id === message.author.id &&
                 m.content.length > 0 &&
-                !guesses.includes(m.content.toLowerCase()),
-            { time: 60000, idle: 30000 }
-        );
+                !guesses.includes(m.content.toLowerCase()) &&
+                wrong < 6,
+            idle: 30_000
+        });
 
-        c.on('collect', (msg: Message) => {
-            if (['stop', 'end', 'cancel'].includes(msg.content.toLowerCase()))
-                return c.stop('requested');
-        
-            guesses.push(msg.content);
-            const w = word.toLowerCase();
-            const t = msg.content.toLowerCase();
-            
-            if (t === w) { // guessed correct word
-                c.stop();
-                return m.edit(this.Embed.success()
-                    .setTitle('You guessed the word!')
-                    .setDescription(`
-                    ${word}
-                    ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                    `)
-                    .setImage(images[wrong])
-                );
-            }
+        c.on('collect', (msg) => {
+            if (wrong > 6 || m.deleted || !m.editable) return c.stop();
 
-            if (
-                !w.includes(t) || // letter isn't in the word
-                (w.includes(t) && w !== t && t.length > 1) // partially correct
+            const guess = msg.content.toLowerCase();
+            const wordLc = word.toLowerCase();
+            guesses.push(guess);
+
+            const opts = {
+                content: null,
+                embeds: []
+            } as MessageEditOptions;
+
+            if ( // win case
+                [...wordLc].every(char => guesses.includes(char.toLowerCase())) || // every char guessed
+                guess === wordLc // guess is the word
             ) {
-                if (++wrong >= 6) { // game lost
-                    c.stop();
-                    return m.edit(this.Embed.success()
-                        .setTitle(`You lost! The word was "${word}"!`)
+                c.stop();
+                opts.content = null;
+                opts.components = disableAll(m);
+                opts.embeds!.push(this.Embed.success()
+                    .setTitle('You guessed the word!')
+                    .setImage(images[wrong])
+                    .setDescription(`
+                    ${word}\n${wrong} wrong guess${plural(wrong, 'es')}.
+                    Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
+                    `)
+                );
+            } else if ( // wrong guess
+                (guess.length === 1 && !wordLc.includes(guess)) || // word doesn't include character
+                guess.length > 1 // guess isn't a single character
+            ) {
+                if (++wrong >= 6) {
+                    opts.content = null;
+                    opts.components = disableAll(m);
+                    opts.embeds = [
+                        this.Embed.success()
+                            .setTitle(`You lost! The word was "${word}"!`)
+                            .setImage(images[wrong])
+                            .setDescription(`
+                            ${hide(word, guesses)}
+                            ${wrong} wrong guess${plural(wrong, 'es')}.
+                            Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                            `)
+                    ];
+                } else {
+                    opts.content = guess.length > 1 ? '❗ Partial guesses do not count.' : null;
+                    opts.embeds!.push(this.Embed.success()
+                        .setTitle(`That guess is incorrect!`)
+                        .setImage(images[wrong])
                         .setDescription(`
                         ${hide(word, guesses)}
                         ${wrong} wrong guess${plural(wrong, 'es')}.
-                        Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                        Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                         `)
-                        .setImage(images[wrong])
                     );
                 }
-
-                const embed = this.Embed.success()
+            } else { // guess is correct, didn't win or lose
+                opts.content = null;
+                opts.embeds!.push(this.Embed.success()
+                    .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
+                    .setImage(images[wrong])
                     .setDescription(`
                     ${hide(word, guesses)}
                     ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
                     `)
-                    .setImage(images[wrong]);
-
-                if (w.includes(t) && w !== t)
-                    embed.setTitle('Partial guesses are marked as incorrect!');
-
-                return m.edit(embed);
+                );
             }
 
-            return m.edit(this.Embed.success()
-                .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
-                .setDescription(`
-                ${hide(word, guesses)}
-                ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                `)
-                .setImage(images[wrong])
-            );
+            return void dontThrow(m.edit(opts));
         });
 
-        c.on('end', () => games.delete(message.author.id));
+        c.once('end', () => {
+            games.delete(message.author.id);
+            r.stop();
 
-        try { await m.react('❓') } catch {} // ignore error
+            return void dontThrow(m.edit({
+                content: `Game over!`,
+                components: disableAll(m)
+            }));
+        });
 
-        const r = m.createReactionCollector(
-            (react: MessageReaction, user: User) => 
-                user.id === message.author.id &&
-                react.emoji.name === '❓',
-            { max: 1, time: 60000 }
-        );
+        const r = m.createMessageComponentCollector({
+            filter: (interaction) => 
+                interaction.message.id === m.id &&
+                interaction.user.id === message.author.id &&
+                interaction.customId === 'hint',
+            max: 1, 
+            time: 60000
+        });
 
-        r.on('collect', async () => {
-            wrong++; // hint = 1 wrong guess added
+        r.once('collect', i => {
+            if (wrong + 1 >= 6) {
+                return void dontThrow(i.update({
+                    content: 'Guessing right now would cause you to lose the game!',
+                    components: disableAll(m)
+                }));
+            }
 
             // filter out all guessed letters
             const guessesLC = [...guesses, ' ']
                 .filter(l => l.length === 1)
                 .map(l => l.toLowerCase());
             const letters = [...word.toLowerCase()].filter(letter => !guessesLC.includes(letter));
-            const letter = letters[await rand(letters.length)];
-
+            const letter = letters[Math.floor(Math.random() * letters.length)];
             guesses.push(letter);
-            return m.edit(this.Embed.success()
+
+            const embed = this.Embed.success()
                 .setTitle(`"${letter}" is the hint!`)
+                .setImage(images[++wrong])
                 .setDescription(`
                 ${hide(word, guesses)}
                 ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
-                `)
-                .setImage(images[wrong])
-            );
-        });
-
-        r.on('end', () => {
-            if (hasPerms(message.channel, m.guild.me, 'MANAGE_MESSAGES')) 
-                return m.reactions.removeAll()
-                    .catch(() => {});
+                Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                `);
+            
+            return void dontThrow(i.update({
+                content: null,
+                embeds: [embed],
+                components: disableAll(m)
+            }));
         });
     }
 }

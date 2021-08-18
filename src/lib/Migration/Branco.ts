@@ -1,7 +1,8 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { pool } from '../../Structures/Database/Postgres.js';
+import { asyncQuery } from '../../Structures/Database/SQLite.js';
 
+type Ret = { 'EXISTS(SELECT 1 from kbBranco)': number };
 interface Comic {
     href: string
     title: string
@@ -11,8 +12,9 @@ interface Comic {
 const PATH = join(process.cwd(), 'assets/Branco.json');
 
 export const migrateBranco = async () => {
-    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbBranco);`);
-    if (rows[0].exists === false) {
+    const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbBranco);`);
+
+    if (r[0]['EXISTS(SELECT 1 from kbBranco)'] === 0) {
         const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
         await brancoTransaction(file);
     }
@@ -21,25 +23,13 @@ export const migrateBranco = async () => {
 }
 
 export const brancoTransaction = async (comics: Comic[]) => {
-    const client = await pool.connect();
-
-    try {
-        await client.query('BEGIN');
-
-        for (const comic of comics) {
-            await client.query(`
-                INSERT INTO kbBranco (
-                    href, link, title
-                ) VALUES (
-                    $1, $2, $3
-                ) ON CONFLICT DO NOTHING;
-            `, [comic.href, comic.link, comic.title]);
-        }
-
-        await client.query('COMMIT');
-    } catch {
-        await client.query('ROLLBACK');
-    } finally {
-        client.release();
+    for (const comic of comics) {
+        await asyncQuery(`
+            INSERT OR IGNORE INTO kbBranco (
+                href, link, title
+            ) VALUES (
+                ?, ?, ?
+            );
+        `, { run: true }, comic.href, comic.link, comic.title);
     }
 }

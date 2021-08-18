@@ -1,14 +1,16 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
-import { formatDate } from '../../../lib/Utility/Date.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
-const formatPresence = (activities: Activity[]) => {
+const formatPresence = (activities: Activity[] | undefined) => {
+    if (!Array.isArray(activities)) return '';
+    
     const push: string[] = [];
     for (const activity of activities) {
-        switch(activity.type) {
-            case 'CUSTOM_STATUS':
+        switch (activity.type) {
+            case 'CUSTOM':
                 push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
                 break;
             case 'LISTENING':
@@ -51,18 +53,18 @@ export class kCommand extends Command {
             .setAuthor(member.displayName, member.user.displayAvatarURL())
             .setDescription(`
             ${member} on *${member.guild.name}*.
-            ${formatPresence(member.presence.activities)}
+            ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${member.roles.cache.filter(r => r.name !== '@everyone').array()?.slice(0, 20).join(', ')}
+            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
             `)
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(
                 { name: '**Role Color:**', value: member.displayHexColor, inline: true },
-                { name: '**Joined Guild:**', value: formatDate('MMM. Do, YYYY hh:mm:ssA t', member.joinedAt), inline: false },
+                { name: '**Joined Guild:**', value: time(member.joinedAt ?? new Date()), inline: false },
                 { 
                     name: '**Boosting Since:**', 
-                    value: member.premiumSince ? formatDate('MMM. Do, YYYY hh:mm:ssA t', member.premiumSince) : 'Not boosting', 
+                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting', 
                     inline: true 
                 },
             )

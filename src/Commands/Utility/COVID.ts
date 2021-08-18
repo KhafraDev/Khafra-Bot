@@ -22,7 +22,7 @@ export class kCommand extends Command {
     async init(message: Message, { content }: Arguments) {
         await mw();
 
-        const locale = message.guild.preferredLocale;
+        const locale = message.guild!.preferredLocale;
         
         // providing a lone city name will no longer be valid,
         // a state *must* also be provided from now on.

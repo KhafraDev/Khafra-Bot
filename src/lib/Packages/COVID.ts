@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 interface JHURes {
     type: 'FeatureCollection'
@@ -46,7 +46,7 @@ const keys = [
 
 type Good = Pick<JHURes['features'][0]['properties'], typeof keys[number]>;
 
-type ReturnValue = { type: 'city', result: Good } | { type: 'country' | 'state,province', result: Good[] }
+type ReturnValue = { type: 'city', result: Good | undefined } | { type: 'country' | 'state,province', result: Good[] }
 
 const cache = {
     countries: new Map<string, Good[]>(),
@@ -72,7 +72,7 @@ const fetchCOVIDStats = async () => {
         const countryName = properties.Country_Region.toLowerCase();
         if (countries.has(countryName)) {
             const item = countries.get(countryName);
-            countries.set(countryName, [...item, properties]);
+            countries.set(countryName, [...item!, properties]);
 
             // now we parse states/provinces
             const provStateName = properties.Province_State?.toLowerCase();
@@ -80,10 +80,10 @@ const fetchCOVIDStats = async () => {
             if (!provStateName) {
                 continue;
             } else if (cities.has(provStateName)) {
-                cities.set(provStateName, [
-                    ...cities.get(provStateName),
-                    cityName
-                ]);
+                const all = cities.get(provStateName);
+                if (Array.isArray(all) && typeof cityName === 'string') {
+                    cities.set(provStateName, [ ...all, cityName ]);
+                }
             } else {
                 provStates.set(provStateName, countryName);
                 if (cityName) cities.set(provStateName, [cityName]);
@@ -102,7 +102,7 @@ export const start = async () => {
     try { await fetchCOVIDStats() } catch {}
     return setInterval(async () => {
         try { await fetchCOVIDStats() } catch {}
-    }, 60 * 1000 * 10);
+    }, 60 * 1000 * 10).unref();
 }
 
 // cities.get('new york') // string[] - list of cities in state/province
@@ -117,7 +117,7 @@ export const start = async () => {
  * await fromCache('new york'); // result
  * await fromCache('us'); // result[]
  */
-export const fromCache = (search: string): ReturnValue => {
+export const fromCache = (search: string): ReturnValue | null => {
     search = search.toLowerCase();
     const { countries, provStates, cities } = cache;
 
@@ -129,7 +129,7 @@ export const fromCache = (search: string): ReturnValue => {
 
         return { 
             type: 'state,province', 
-            result: country.filter(ps => ps.Province_State.toLowerCase() === search) 
+            result: country.filter(ps => ps.Province_State!.toLowerCase() === search) 
         };
     } else if (!search.includes(',')) { // no split between city/state or province
         return null;
@@ -141,7 +141,7 @@ export const fromCache = (search: string): ReturnValue => {
 
     // check if the city is actually a city in the state/province provided
     const city = cities
-        .get(stateProvName.trim())
+        .get(stateProvName.trim())!
         .find(name => name === cityName);
     
     if (!city)

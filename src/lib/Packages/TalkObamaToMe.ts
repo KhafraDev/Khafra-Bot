@@ -1,5 +1,5 @@
-import fetch from 'node-fetch';
-import { deepStrictEqual } from 'assert';
+import fetch from 'undici-fetch';
+import { URL } from 'url';
 
 export const talkObamaToMe = async (q: string) => {
     q = encodeURIComponent(q);
@@ -16,6 +16,8 @@ export const talkObamaToMe = async (q: string) => {
         }
     });
 
-    deepStrictEqual(res.status, 302);
-    return res.headers.get('Location');
+    const location = res.headers.get('Location')!;
+	const u = new URL(location).searchParams.get('speech_key');
+
+	return `http://talkobamato.me/synth/output/${u}/obama.mp4`;
 }

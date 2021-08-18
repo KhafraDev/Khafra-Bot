@@ -1,12 +1,19 @@
 import { Event } from '../Structures/Event.js';
-import { MessageEmbed } from 'discord.js';
 import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
-import config from '../../config.json';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { validSnowflake } from '../lib/Utility/Mentions.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'ready'> {
     name = 'ready' as const;
 
     async init() {
@@ -14,14 +21,20 @@ export class kEvent extends Event {
         console.log(s);
         
         if (typeof config.botOwner === 'string') {
-            try {
-                const user = await client.users.fetch(config.botOwner);
-                await user.send(new MessageEmbed().setDescription(s).setColor('#ffe449')); 
-            } catch {
+            if (!validSnowflake(config.botOwner)) {
+                return console.log('Logged in, configuration bot owner is not a valid Snowflake!');
+            }
+            
+            const user = await client.users.fetch(config.botOwner);
+            const [err] = await dontThrow(user.send({ 
+                embeds: [Embed.success(s)]
+            }));
+        
+            if (err !== null) {
                 console.log(`Logged in! Could not send message to the bot owner.`);
             }
         }
 
-        client.loadInteractions();
+        void client.loadInteractions();
     }
 }

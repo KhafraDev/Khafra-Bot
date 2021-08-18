@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch from 'undici-fetch';
 
 export interface IOpenLib {
     cover_i: number
@@ -71,7 +71,7 @@ interface IOpenLibRes {
 
 export const openLibrary = async (q: string) => {
     q = encodeURIComponent(q.replace(/\s+/g, '+'));
-    const res = await fetch(`https://openlibrary.org/search.json?q=${q}&has_fulltext=true`);
+    const res = await fetch(`https://openlibrary.org/search.json?q=${q}&has_fulltext=true&limit=1`);
     const json = await res.json() as IOpenLibRes;
 
     return json;

@@ -6,6 +6,9 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { time } from '@discordjs/builders';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -13,8 +16,10 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
+type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
+
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildMemberAdd'> {
     name = 'guildMemberAdd' as const;
 
     async init(member: GuildMember) {  
@@ -29,32 +34,31 @@ export class kEvent extends Event {
         `, [member.guild.id]);
 
         const cached = await client.exists(member.guild.id) === 1;
-        let item: { welcome_channel: string } | null = null
+        let item: WelcomeChannel | null = null
 
         if (cached) {
-            item = JSON.parse(await client.get(member.guild.id));
+            item = JSON.parse(await client.get(member.guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<{ welcome_channel: string }>(`
-                SELECT welcome_channel
+            const { rows } = await pool.query<WelcomeChannel>(`
+                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [member.guild.id]);
             
+            void client.set(member.guild.id, JSON.stringify(rows[0]), 'EX', 600);
             item = rows[0];
         }
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel;
+        let channel: Channel | null = null;
         if (member.guild.channels.cache.has(item.welcome_channel)) {
-            channel = member.guild.channels.cache.get(item.welcome_channel);
+            channel = member.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
-            try {
-                channel = await member.guild.client.channels.fetch(item.welcome_channel);
-            } catch (e) {
-                return;
-            }
+            const [err, c] = await dontThrow(member.guild.client.channels.fetch(item.welcome_channel));
+            if (err !== null) return;
+            channel = c;
         }
 
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
@@ -62,10 +66,13 @@ export class kEvent extends Event {
         
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
-            .setDescription(`${member.user} (${member.user.tag}) joined the server!`);
+            .setDescription(`
+            ${member} (${member.user.tag}) joined the server!
+            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
+            `)
+            .setFooter('User joined');
 
-        try {
-            return channel.send(embed);
-        } catch {}
+        return dontThrow(channel.send({ embeds: [embed] }));
     }
 }

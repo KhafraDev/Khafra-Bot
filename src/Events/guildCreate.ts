@@ -1,11 +1,16 @@
 import { Event } from '../Structures/Event.js';
 import { pool } from '../Structures/Database/Postgres.js'; 
 import { Guild } from 'discord.js';
-import config from '../../config.json';
 import { RegisterEvent } from '../Structures/Decorator.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { join } from 'path';
+
+const config = {} as typeof import('../../config.json');
+createFileWatcher(config, join(cwd, 'config.json'));
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
 
     async init(guild: Guild) {

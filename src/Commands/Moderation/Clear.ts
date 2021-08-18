@@ -43,7 +43,7 @@ export class kCommand extends Command {
         const deleted = await channel.bulkDelete(toDelete > 100 ? 100 : toDelete, true);
 
         const embed = this.Embed.success()
-            .setAuthor(message.client.user.username, message.client.user.displayAvatarURL())
+            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)
             .setDescription(`
@@ -52,7 +52,9 @@ export class kCommand extends Command {
             \`\`If this number isn't correct, it is because messages older than 2 weeks cannot be cleared and your input message has also been deleted.\`\`
             `);
 
-        const m = await message.reply(embed);
-        setTimeout(() => m.delete(), 5000);
+        const m = await message.reply({ embeds: [embed] });
+        setTimeout(() => {
+            if (m.deletable) void m.delete();
+        }, 5000).unref();
     }
 }

@@ -1,8 +1,9 @@
 import { Command } from '../../../Structures/Command.js';
-import { Message, MessageReaction, User, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -16,14 +17,14 @@ export class kCommand extends Command {
                 folder: 'Pocket',
                 args: [0, 0],
                 ratelimit: 300,
-                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS ]
+                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
             }
         );
     }
 
     async init(message: Message) {
         const pocket = new Pocket();
-        pocket.redirect_uri = `https://discord.com/channels/${message.guild.id}/${message.channel.id}`;
+        pocket.redirect_uri = `https://discord.com/channels/${message.guild!.id}/${message.channel.id}`;
 
         await pocket.requestCode();
 
@@ -31,29 +32,48 @@ export class kCommand extends Command {
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
-        After authorizing react with ✅ to confirm or ❌ to cancel. 
+        After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
         
         **Command will be canceled after 2 minutes automatically.**
         `)
         .setTitle('Pocket');
 
-        const msg = await message.reply(embed);
-        await Promise.allSettled([msg.react('✅'), msg.react('❌')]);
+        const row = new MessageActionRow()
+			.addComponents(
+                Components.approve('Approve'),
+                Components.deny('Cancel')
+            );
 
-        const filter = (reaction: MessageReaction, user: User) => 
-            ['✅', '❌'].includes(reaction.emoji.name) && 
-            user.id === message.author.id;
-        const collector = msg.createReactionCollector(filter, { time: 120000, max: 1 });
+        const msg = await message.reply({
+            embeds: [embed],
+            components: [row]
+        });
+        
+        const filter = (interaction: Interaction) => 
+            interaction.isMessageComponent() &&
+            ['approve', 'deny'].includes(interaction.customId) && 
+            interaction.user.id === message.author.id;
 
-        collector.on('collect', async r => {
-            if (r.emoji.name === '❌') {
-                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized, command was canceled by user.'));
-            }
+        let button: MessageComponentInteraction | null = null;
+        try {
+            button = await msg.awaitMessageComponent({ filter, time: 120_000 });
+        } catch {
+            return void msg.edit({
+                embeds: [this.Embed.fail('Canceled the command, took over 2 minutes.')],
+                components: []
+            });
+        }
 
+        await button.deferUpdate();
+
+        if (button.customId === 'approve') {
             try {
                 await pocket.accessToken();
             } catch {
-                return msg.edit(this.Embed.fail('Khafra-Bot wasn\'t authorized.'));
+                return button.editReply({
+                    embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized.')], 
+                    components: []
+                });
             }
 
             const { access_token, request_token, username } = pocket.toObject();
@@ -72,13 +92,21 @@ export class kCommand extends Command {
                 ;
             `, [message.author.id, access_token, request_token, username]);
 
-            return msg.edit(this.Embed.success(`
-            You have authorized ${message.guild.me}!
+            return button.editReply({
+                embeds: [
+                    this.Embed.success(`
+                    You have authorized ${message.guild!.me}!
 
-            Try adding an article with \`\`pocketadd\`\` now. 👍
-            `));
+                    Try adding an article with \`\`pocketadd\`\` now. 👍
+                    `)
+                ],
+                components: disableAll(msg)
+            });
+        }
+
+        return button.editReply({
+            embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized, command was canceled!')],
+            components: disableAll(msg)
         });
-
-        collector.on('end', () => msg.reactions.removeAll());
     }
 }

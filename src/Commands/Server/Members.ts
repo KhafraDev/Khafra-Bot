@@ -1,5 +1,5 @@
+import { Message } from '../../lib/types/Discord.js.js';
 import { Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand

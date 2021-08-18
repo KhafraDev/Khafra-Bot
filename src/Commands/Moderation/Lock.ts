@@ -1,10 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { kGuild } from '../../lib/types/Warnings.js';
+import { kGuild } from '../../lib/types/KhafraBot.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -42,14 +42,14 @@ export class kCommand extends Command {
             await text.lockPermissions();
         } else {
             lockState = 'locked';
-            await text.overwritePermissions(
+            await text.permissionOverwrites.set(
                 [ { id: everyone.id, deny: [Permissions.FLAGS.SEND_MESSAGES] } ]
             );
         }
 
-        await message.reply(this.Embed.success(`
+        await message.reply({ embeds: [this.Embed.success(`
         ${text} has been ${lockState} for ${everyone}!
-        `));
+        `)] });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -57,10 +57,10 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send(this.Embed.success(`
+            return channel.send({ embeds: [this.Embed.success(`
             **Channel:** ${text} (${text.id}).
             **Staff:** ${message.member}
-            `).setTitle('Channel Locked'));
+            `).setTitle('Channel Locked')] });
         }
     }
 }

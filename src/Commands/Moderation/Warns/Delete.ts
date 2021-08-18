@@ -1,22 +1,25 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { GuildMember, Message, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { kGuild } from '../../../lib/types/Warnings.js';
+import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
+import { inlineCode } from '@discordjs/builders';
 
 interface WarningDel {
-    k_id: number
-    k_points: number
+    id: Warning['id']
+    k_points: Warning['k_points']
 }
 
-const logChannel = Permissions.FLAGS.SEND_MESSAGES | Permissions.FLAGS.EMBED_LINKS;
-const range = Range(1, 1e6, true);
+const perms = new Permissions([
+    Permissions.FLAGS.READ_MESSAGE_HISTORY,
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.VIEW_CHANNEL
+]);
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -39,54 +42,47 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments, settings: kGuild) {
-        const id = Number(args[1].replace(/^#/, ''));
-        if (!validateNumber(id) || !range.isInRange(id)) 
-            return this.Embed.fail(`Invalid ID, list all of the warn IDs with the \`\`warns\`\` command!`);
+        if (!uuidRegex.test(args[1])) {
+            return this.Embed.fail('UUID is not formatted correctly, please use a valid ID next time!');
+        }
 
         const member = await getMentions(message, 'members');
-        if (!member || !(member instanceof GuildMember))
+        if (!member)
             return this.Embed.fail(`No member was mentioned. Try again!`);
 
         const { rows: deleted } = await pool.query<WarningDel>(`
-            WITH deleted AS (
-                DELETE FROM kbWarns
-                WHERE 
-                    kbWarns.k_id = $1::smallint AND
-                    kbWarns.k_guild_id = $2::text AND
-                    kbWarns.k_user_id = $3::text
-                RETURNING k_id, k_points
-            ), updated AS (
-                UPDATE kbWarns
-                SET k_id = k_id - 1
-                WHERE k_id > (SELECT k_id FROM deleted)
-                RETURNING k_id, k_points
-            )
-
-            SELECT k_id, k_points FROM deleted
-
-            UNION ALL
-
-            SELECT k_id, k_points FROM updated;
-        `, [id, message.guild.id, member.id]);
+            DELETE FROM kbWarns
+            WHERE 
+                kbWarns.id = $1::uuid AND
+                kbWarns.k_guild_id = $2::text AND
+                kbWarns.k_user_id = $3::text
+            RETURNING id, k_points
+        `, [args[1].toLowerCase(), message.guild.id, member.id]);
 
         if (deleted.length === 0)
             return this.Embed.fail('No warning with that ID could be found in the guild!');
 
-        await message.reply(this.Embed.success(`
-        Warning #${deleted[0].k_id} was removed from ${member}!
-        `));
+        await message.reply({ 
+            embeds: [
+                this.Embed.success(`Warning ${inlineCode(deleted[0].id)} was removed from ${member}!`)
+            ]
+        });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, logChannel))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
-            return channel.send(this.Embed.success(`
-            **Removed From:** ${member}
-            **Staff:** ${message.member}
-            **Points:** ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
-            **ID:** #${id}
-            `).setTitle('Warning Removed'));
+            return channel.send({ 
+                embeds: [
+                    this.Embed.success(`
+                    **Removed From:** ${member}
+                    **Staff:** ${message.member}
+                    **Points:** ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
+                    **ID:** ${inlineCode(args[1])}
+                    `).setTitle('Warning Removed')
+                ]
+            });
         }
     }
 }

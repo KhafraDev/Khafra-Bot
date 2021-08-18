@@ -1,8 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { weather } from '@khaf/hereweather';
-import { formatDate } from '../../lib/Utility/Date.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
 
@@ -33,12 +33,12 @@ export class kCommand extends Command {
             return this.Embed.fail(results.Type);
         }
 
-        const first = results.observations.location?.[0].observation?.[0];
+        const first = results.observations?.location?.[0].observation?.[0];
         if (first === undefined) {
             return this.Embed.fail('No location found!');
         }
 
-        const embed = this.Embed.success(first.description)
+        const embed = this.Embed.success(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .addField('**Temperature:**', `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)
@@ -47,7 +47,7 @@ export class kCommand extends Command {
             .addField('**Humidity:**', `${first.humidity}%`, true)
             .addField('**Wind:**', `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, true)
             .addField('**Coordinates:**', `(${first.latitude}, ${first.longitude})`, true)
-            .setFooter(`Last updated ${formatDate('MMMM Do, YYYY hh:mm:ss A t', first.utcTime)}\n© 2020 HERE`)
+            .setFooter(`© 2020 HERE`);
 
         return embed;
     }

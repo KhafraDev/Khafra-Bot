@@ -50,8 +50,8 @@ export class kCommand extends Command {
             // basically the same as bookAcronym down below
             const book = Object 
                 .entries(titles)
-                .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())
-                .shift();
+                .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
+                .shift()!;
 
             return this.Embed.success()
                 .setTitle(`${book} ${rows[0].chapter}:${rows[0].verse}`)
@@ -63,7 +63,7 @@ export class kCommand extends Command {
             return this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', '));
         }
 
-        const book = args.join(' ').match(titleRegex)?.[0].toLowerCase();
+        const book = titleRegex.exec(args.join(' '))?.[0].toLowerCase();
         // if an invalid book name was used
         if (!book)
             return this.Embed.fail(`
@@ -74,7 +74,7 @@ export class kCommand extends Command {
         // get the acronym of the book, for example "Prayer of Azariah" -> "aza"
         const bookAcronym = Object
             .entries(titles)
-            .find(([n, acr]) => n.toLowerCase() === book || acr === book);
+            .find(([n, acr]) => n.toLowerCase() === book || acr === book)!;
 
         // get the chapter+verse
         const locationUnformatted = args
@@ -86,7 +86,7 @@ export class kCommand extends Command {
             if (R.CHAPTER.test(locationUnformatted)) {
                 const { rows } = await pool.query<IBibleVerse>(`
                     SELECT * FROM kbBible
-                    WHERE book = $1 AND chapter = $2
+                    WHERE book = $1::text AND chapter = $2::smallint
                     ORDER BY verse DESC
                     LIMIT 1;
                 `, [upperCase(bookAcronym[1]), Number(locationUnformatted)]);
@@ -99,7 +99,7 @@ export class kCommand extends Command {
             // if not chapter is provided, get the number of chapters in the book
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible 
-                WHERE book = $1
+                WHERE book = $1::text
                 ORDER BY chapter DESC
                 LIMIT 1;
             `, [upperCase(bookAcronym[1])]);
@@ -112,8 +112,8 @@ export class kCommand extends Command {
         // Example: 13:1-5
         // Get verses 1 to 5 from Exodus chapter 13
         if (R.BETWEEN.test(locationUnformatted)) {
-            const [, chapter, ...verses] = locationUnformatted
-                .match(R.BETWEEN)! // not null since it matches the pattern
+            const [, chapter, ...verses] = R.BETWEEN
+                .exec(locationUnformatted)! // not null since it matches the pattern
                 .map(Number); // Not NaN because the regex checks for numbers
 
             // prevent >10 verses from being sent at a time
@@ -125,11 +125,11 @@ export class kCommand extends Command {
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1 AND
-                    chapter = $2 AND
-                    verse BETWEEN $3 AND $4
+                    book = $1::text AND
+                    chapter = $2::smallint AND
+                    verse BETWEEN $3::smallint AND $4::smallint
                 LIMIT 10;
-            `, [upperCase(bookAcronym.pop()), chapter, ...versesDiff]);
+            `, [upperCase(bookAcronym.pop()!), chapter, ...versesDiff]);
 
             if (rows.length === 0)
                 return this.Embed.fail(`
@@ -145,16 +145,16 @@ export class kCommand extends Command {
 
         // only one verse; doesn't fit criteria for other cases
         if (R.GENERIC.test(locationUnformatted)) {
-            const [, chapter, verse] = locationUnformatted
-                .match(R.GENERIC)
+            const [, chapter, verse] = R.GENERIC
+                .exec(locationUnformatted)!
                 .map(Number);
 
             const { rows } = await pool.query<IBibleVerse>(`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1 AND
-                    chapter = $2 AND
-                    verse = $3
+                    book = $1::text AND
+                    chapter = $2::smallint AND
+                    verse = $3::smallint
                 LIMIT 1;
             `, [upperCase(bookAcronym[1]), chapter, verse]);
 

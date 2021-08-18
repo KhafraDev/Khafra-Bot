@@ -6,6 +6,8 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',
@@ -13,8 +15,10 @@ const basic = new Permissions([
     'VIEW_CHANNEL'
 ]);
 
+type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
+
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildMemberUpdate'> {
     name = 'guildMemberUpdate' as const;
 
     async init(oldMember: GuildMember, newMember: GuildMember) {
@@ -30,45 +34,48 @@ export class kEvent extends Event {
             return;
 
         const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: { welcome_channel: string } | null = null
+        let item: WelcomeChannel | null = null
 
         if (cached) {
-            item = JSON.parse(await client.get(oldMember.guild.id));
+            item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
         } else {
-            const { rows } = await pool.query<{ welcome_channel: string }>(`
-                SELECT welcome_channel
+            const { rows } = await pool.query<WelcomeChannel>(`
+                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [oldMember.guild.id]);
             
+            void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);
             item = rows[0];
         }
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel;
+        let channel: Channel | null = null;
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
-            channel = oldMember.guild.channels.cache.get(item.welcome_channel)!;
+            channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
-            try {
-                channel = await oldMember.guild.me.client.channels.fetch(item.welcome_channel);
-            } catch {
-                return;
-            }
+            const [err, chan] = await dontThrow(oldMember.guild.me!.client.channels.fetch(item.welcome_channel));
+            if (err !== null) return;
+            channel = chan;
         }
 
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 
             return;
 
         if (oldHas && !newHas) { // lost role
-            return channel.send(Embed.fail(`
-            ${newMember} is no longer boosting the server! 😨
-            `)).catch(() => {});
+            const embed = Embed.fail(`${newMember} is no longer boosting the server! 😨`);
+            if (newMember.user)
+                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+
+            return dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
-            return channel.send(Embed.success(`
-            ${newMember} just boosted the server! 🥳
-            `)).catch(() => {});
+            const embed = Embed.success(`${newMember} just boosted the server! 🥳`);
+            if (newMember.user)
+                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+
+            return dontThrow(channel.send({ embeds: [embed] }));
         }
     }
 }

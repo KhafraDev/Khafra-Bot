@@ -1,9 +1,9 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { URL } from 'url';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 interface PocketUser {
     access_token: string 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
             FROM kbPocket
             WHERE user_id = $1::text
             LIMIT 1;
-        `, [message.member.id]);
+        `, [message.member!.id]);
 
         if (rows.length === 0)
             return this.Embed.fail(`
@@ -42,14 +42,17 @@ export class kCommand extends Command {
             Try using the \`\`pocket\`\` command for more information.
             `);
 
-        const pocket = new Pocket(rows.shift()!);
-        const added = await pocket.add(new URL(args[0]), args.slice(1).join(' ') || null);
+        const pocket = new Pocket(rows.shift());
+        const article = URLFactory(args[0]);
+        if (article === null)
+            return this.Embed.fail(`That's not an article URL, try again!`);
+        const added = await pocket.add(article, args.slice(1)?.join(' '));
 
         return this.Embed.success()
             .setTitle(added.item.title)
             .setAuthor(
-                added.item.domain_metadata.name ?? message.author.username, 
-                added.item.domain_metadata.logo, 
+                added.item.domain_metadata?.name ?? message.author.username, 
+                added.item.domain_metadata?.logo, 
                 added.item.resolved_normal_url
             )
             .setDescription(`

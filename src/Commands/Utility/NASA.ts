@@ -1,20 +1,9 @@
-import { apodFetchDaily } from '../../lib/Packages/NASA.js';
-import { nasaDBTransaction } from '../../lib/Migration/NASA.js';
-import { once } from '../../lib/Utility/Memoize.js';
+import { inlineCode } from '@discordjs/builders';
+import { Message } from 'discord.js';
+import { NASAGetRandom, cache } from '../../lib/Packages/NASA.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../Structures/Command.js';
-import { pool } from '../../Structures/Database/Postgres.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-
-interface APOD {
-    title: string
-    link: string
-    copyright: string | null
-}
-
-const mw = once(async () => {
-    await apodFetchDaily();
-    await nasaDBTransaction();
-});
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -32,21 +21,27 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await mw();
+    async init(message: Message) {
+        if (cache.length === 0) {
+            void message.channel.sendTyping();
+        }
         
-        const { rows } = await pool.query<APOD>(`
-            SELECT * FROM kbAPOD TABLESAMPLE BERNOULLI(.5) ORDER BY random() LIMIT 1;
-        `);
+        const [err, result] = await dontThrow(NASAGetRandom());
 
-        if (rows.length === 0)
-            return this.Embed.fail('Entries are being fetched from NASA, give it a few minutes. :)');
+        if (err !== null) {
+            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}`);
+        } else if (result === null) {
+            return this.Embed.fail('No images were fetched, try again?');
+        }
 
         const embed = this.Embed.success()
-            .setTitle(rows[0].title)
-            .setImage(rows[0].link);
+            .setTitle(result.title)
+            .setImage(result.link);
             
-        rows[0].copyright !== null && embed.setFooter(`© ${rows[0].copyright}`);
+        if (typeof result.copyright === 'string') {
+            embed.setFooter(`© ${result.copyright}`);
+        }
+
         return embed;
     }
 }

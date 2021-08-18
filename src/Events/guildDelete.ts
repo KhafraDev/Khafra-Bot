@@ -4,7 +4,7 @@ import { Guild } from 'discord.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 
 @RegisterEvent
-export class kEvent extends Event {
+export class kEvent extends Event<'guildDelete'> {
     name = 'guildDelete' as const;
 
     async init(guild: Guild) {

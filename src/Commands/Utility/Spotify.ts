@@ -22,7 +22,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        const presence = message.author.presence.activities.filter(activity => 
+        const presence = message.member!.presence?.activities.filter(activity => 
             activity.type === 'LISTENING' && activity.name === 'Spotify'
         ).pop();
 

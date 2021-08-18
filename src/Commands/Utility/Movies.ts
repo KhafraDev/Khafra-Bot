@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
 import { searchMovie } from '../../lib/Packages/TMDB.js';
-import { isDM } from '../../lib/types/Discord.js.js';
-import { formatDate } from '../../lib/Utility/Date.js';
+import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { time } from '@discordjs/builders';
 
 const formatMS = (ms: number) => {
     return Object.entries({
@@ -33,7 +33,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const movies = await searchMovie(
             args.join(' '), 
-            isDM(message.channel) || message.channel.nsfw
+            isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
         
         if (!movies)
@@ -41,11 +41,11 @@ export class kCommand extends Command {
 
         const embed = this.Embed.success()
             .setTitle(movies.original_title ?? movies.title)
-            .setDescription(movies.overview)
+            .setDescription(movies.overview ?? '')
             .addField('**Genres:**', movies.genres.map(g => g.name).join(', '), true)
-            .addField('**Runtime:**', formatMS(movies.runtime * 60000), true)
+            .addField('**Runtime:**', formatMS(Number(movies.runtime) * 60000), true)
             .addField('**Status:**', movies.status, true)
-            .addField('**Released:**', movies.release_date ? formatDate('MMMM Do, YYYY', movies.release_date) : 'Unknown', true)
+            .addField('**Released:**', movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
             .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             

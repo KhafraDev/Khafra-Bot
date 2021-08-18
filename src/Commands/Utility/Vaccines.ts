@@ -32,7 +32,7 @@ export class kCommand extends Command {
 
         const available = await fetchAppointments(zipcode, rad ? Number(rad) as Radius : undefined);
 
-        if (!available.providers?.length)
+        if (!available || !available.providers?.length)
             return this.Embed.fail(`No locations near you were found in a ${rad} mile radius.`);
 
         let desc = '', i = 0;
