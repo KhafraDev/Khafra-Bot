@@ -49,7 +49,7 @@ Giveaways.on('giveaway', async (giveaway) => {
 
                 winners.push(random);
             }
-        } else if (count === 1 && users.cache.first()?.id === client.user.id) { // no one entered
+        } else if (count === 1 && users.cache.first()!.id === client.user.id) { // no one entered
             if (message.editable) {
                 return message.edit({
                     content: 'No one entered the giveaway!'
@@ -60,7 +60,7 @@ Giveaways.on('giveaway', async (giveaway) => {
                 });
             }
         } else if (count <= giveaway.winners) { // less entered than number of winners
-            for (const [, user] of users.cache) {
+            for (const user of users.cache.values()) {
                 if (user.bot) continue;
                 winners.push(user);
             }
