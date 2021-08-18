@@ -55,7 +55,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`The first argument must be a link to a message!`);
         }
 
-        const match = messageURL.pathname.match(channelsURLReg)!.groups!;
+        const match = channelsURLReg.exec(messageURL.pathname)!.groups!;
         const { guildId, channelId, messageId } = match;
 
         if (

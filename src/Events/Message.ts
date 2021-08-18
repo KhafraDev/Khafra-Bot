@@ -43,7 +43,7 @@ export class kEvent extends Event<'messageCreate'> {
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild: Partial<kGuild> | kGuild | null = null;
-        const exists = await client.exists(message.guild.id) as 0 | 1;
+        const exists = await client.exists(message.guild.id);
         if (exists === 1) {
             const row = await client.get(message.guild.id);
             guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
