@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
-import { badmeme } from '@khaf/badmeme';
+import { badmeme, cache } from '@khaf/badmeme';
 import { isDM, isText } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
@@ -11,7 +11,7 @@ export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Get a bad meme! Idea from NotSoBot.',
+                'Get a bad meme!',
                 'pewdiepiesubmissions', ''
             ],
 			{
@@ -22,7 +22,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {        
+    async init(message: Message, { args }: Arguments) {
+        if (!cache.has(args[0].toLowerCase())) {
+            void message.channel.sendTyping();
+        }
+        
         const res = await badmeme(
             args[0], 
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
