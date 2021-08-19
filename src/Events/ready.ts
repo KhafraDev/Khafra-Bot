@@ -1,5 +1,4 @@
 import { Event } from '../Structures/Event.js';
-import { formatDate } from '../lib/Utility/Date.js';
 import { client } from '../index.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -17,7 +16,7 @@ export class kEvent extends Event<'ready'> {
     name = 'ready' as const;
 
     async init() {
-        const s = `Logged in at ${formatDate('MMMM Do, YYYY hh:mm:ssA', new Date())}`;
+        const s = `Logged in at ${new Date()}`;
         console.log(s);
         
         if (typeof config.botOwner === 'string') {
