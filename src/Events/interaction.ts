@@ -8,6 +8,7 @@ import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { upperCase } from '../lib/Utility/String.js';
 import { bold } from '@discordjs/builders';
+import { Command } from '../Structures/Command.js';
 
 @RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
@@ -74,7 +75,7 @@ export class kEvent extends Event<'interactionCreate'> {
 
         const command = KhafraClient.Interactions.get(interaction.commandName)!;
 
-        if (command.options.ownerOnly) {
+        if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
             }));

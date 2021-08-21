@@ -66,7 +66,7 @@ export class kCommand extends Command {
         ]});
 
         const c = await m.channel.awaitMessages({ 
-            filter: m => mapped.some(({ base }) => base === m.content) && super.isBotOwner(m.author.id),
+            filter: m => mapped.some(({ base }) => base === m.content) && Command.isBotOwner(m.author.id),
             max: 1, 
             time: 30000
         });

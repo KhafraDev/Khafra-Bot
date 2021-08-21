@@ -9,7 +9,7 @@ import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { commandLimit, notified } from '../Structures/Cooldown/CommandCooldown.js';
-import { Arguments } from '../Structures/Command.js';
+import { Arguments, Command } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
@@ -92,7 +92,7 @@ export class kEvent extends Event<'messageCreate'> {
             }));
         }
         
-        if (command.settings.ownerOnly && !command.isBotOwner(message.author.id)) {
+        if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
             return dontThrow(message.reply({ 
                 embeds: [
                     Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
