@@ -74,14 +74,14 @@ export class kEvent extends Event<'interactionCreate'> {
 
         const command = KhafraClient.Interactions.get(interaction.commandName)!;
 
-        if (command.options?.ownerOnly) {
+        if (command.options.ownerOnly) {
             return void dontThrow(interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
             }));
         }
 
         try {
-            if (command.options?.defer)
+            if (command.options.defer)
                 await interaction.deferReply();
 
             const result = await command.init(interaction);
@@ -103,6 +103,9 @@ export class kEvent extends Event<'interactionCreate'> {
                 param.files = [result];
             else 
                 Object.assign(param, result);
+
+            if (command.options.replyOpts)
+                Object.assign(param, command.options.replyOpts);
 
             if (interaction.deferred)
                 return void interaction.editReply(param);
