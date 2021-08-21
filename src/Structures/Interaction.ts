@@ -2,7 +2,8 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { Interaction } from 'discord.js';
 
 interface InteractionOptions {
-    defer: boolean
+    defer?: boolean
+    ownerOnly?: boolean
 }
 
 export abstract class Interactions {
