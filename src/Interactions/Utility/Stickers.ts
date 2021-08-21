@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
             )
             .setDescription('Use a sticker!');
 
-        super(sc);
+        super(sc, { ownerOnly: true });
     }
 
     async init(interaction: CommandInteraction) {
