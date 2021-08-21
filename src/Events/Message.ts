@@ -110,14 +110,6 @@ export class kEvent extends Event<'messageCreate'> {
             ${command.help.slice(1).map(c => `\`\`${guild!.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
             `)] }));
         }
-        
-        this.logger.log(trim`
-        Command: ${command.settings.name} 
-        | Author: ${message.author.id} 
-        | URL: ${message.url} 
-        | Guild: ${message.guild?.id ?? 'DMs'} 
-        | Input: ${message.content}
-        `);
 
         if (!_cooldownUsers(message.author.id)) {
             return dontThrow(message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
@@ -164,6 +156,14 @@ export class kEvent extends Event<'messageCreate'> {
                 embeds: [Embed.fail(error)],
                 failIfNotExists: false
             }));
+        } finally { 
+            this.logger.log(trim`
+            Command: ${command.settings.name} 
+            | Author: ${message.author.id} 
+            | URL: ${message.url} 
+            | Guild: ${message.guild?.id ?? 'DMs'} 
+            | Input: ${message.content}
+            `);
         }
     }
 }

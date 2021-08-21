@@ -23,7 +23,8 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        if (!cache.has(args[0].toLowerCase())) {
+        const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
+        if (!cache.has(subreddit)) {
             void message.channel.sendTyping();
         }
         
