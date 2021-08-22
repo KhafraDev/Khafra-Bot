@@ -10,6 +10,7 @@ export interface kGuild {
     mod_log_channel: Snowflake | null
     welcome_channel: Snowflake | null
     reactRoleChannel: Snowflake | null
+    ticketChannel: Snowflake | null
 }
 
 export interface Warning {
