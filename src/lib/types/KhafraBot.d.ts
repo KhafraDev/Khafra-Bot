@@ -9,8 +9,8 @@ export interface kGuild {
     max_warning_points: number
     mod_log_channel: Snowflake | null
     welcome_channel: Snowflake | null
-    reactRoleChannel: Snowflake | null
-    ticketChannel: Snowflake | null
+    reactrolechannel: Snowflake | null
+    ticketchannel: Snowflake | null
 }
 
 export interface Warning {

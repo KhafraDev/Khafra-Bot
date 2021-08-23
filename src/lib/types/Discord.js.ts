@@ -5,12 +5,13 @@ import {
     VoiceChannel,
     CategoryChannel,
     StageChannel,
-    ThreadChannel
+    ThreadChannel,
+    PartialDMChannel
 } from 'discord.js';
 
 export const isText = <T extends unknown>(c: T): c is T & (TextChannel | NewsChannel) => 
     c instanceof TextChannel || c instanceof NewsChannel;
-export const isDM = <T extends unknown>(c: T): c is T & DMChannel => c instanceof DMChannel
+export const isDM = <T extends unknown>(c: T): c is T & DMChannel | T & PartialDMChannel => c instanceof DMChannel
 export const isExplicitText = <T extends unknown>(c: T): c is T & TextChannel => c instanceof TextChannel;
 export const isVoice = <T extends unknown>(c: T): c is T & VoiceChannel => c instanceof VoiceChannel;
 export const isCategory = <T extends unknown>(c: T): c is T & CategoryChannel => c instanceof CategoryChannel;

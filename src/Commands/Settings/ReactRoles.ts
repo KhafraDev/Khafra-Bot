@@ -38,7 +38,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.fail(`This command is only available for server admins!`);
-        } else if (settings.reactRoleChannel === null || args.length === 1) {
+        } else if (settings.reactrolechannel === null || args.length === 1) {
             if (args.length !== 1) {
                 return this.Embed.fail(`
                 ${upperCase(message.guild.name)} does not have a set channel for react roles!
@@ -60,7 +60,7 @@ export class kCommand extends Command {
 
             await client.set(message.guild.id, JSON.stringify({
                 ...settings,
-                reactRoleChannel: channel.id
+                reactrolechannel: channel.id
             }));
 
             return this.Embed.success(`
@@ -72,7 +72,7 @@ export class kCommand extends Command {
             `);
         }
 
-        const channel = message.guild.channels.cache.get(settings.reactRoleChannel);
+        const channel = message.guild.channels.cache.get(settings.reactrolechannel);
         if (!isText(channel)) {
             return this.Embed.fail(`Couldn't find ${channel}, was it deleted?`);
         } else if (!hasPerms(channel, message.guild.me, perms)) {
