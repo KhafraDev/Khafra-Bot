@@ -51,7 +51,7 @@ export class kCommand extends Command {
             RETURNING *;
         `, [ticketChannel.id, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
         return this.Embed.success(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
     }

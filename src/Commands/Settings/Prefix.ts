@@ -38,7 +38,7 @@ export class kCommand extends Command {
             RETURNING *;
         `, [args[0]!, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
         return this.Embed.success(`Updated the guild's prefix to \`\`${args[0]}\`\``);
     }

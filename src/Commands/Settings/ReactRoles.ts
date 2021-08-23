@@ -59,7 +59,7 @@ export class kCommand extends Command {
                 RETURNING *;
             `, [channel.id, message.guild.id]);
 
-            await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
+            await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
             return this.Embed.success(`
             Set the react role channel to ${channel}!

@@ -54,7 +54,7 @@ export class kCommand extends Command {
             RETURNING *;
         `, [channel.id, message.guild!.id]);
 
-        await client.set(message.guild!.id, JSON.stringify({ ...rows[0] }));
+        await client.set(message.guild!.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
         
         return this.Embed.success(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!

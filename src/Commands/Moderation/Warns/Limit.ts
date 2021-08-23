@@ -46,7 +46,7 @@ export class kCommand extends Command {
             RETURNING *;
         `, [newAmount, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
         return this.Embed.success(`Set the max warning points limit to \`\`${newAmount.toLocaleString()}\`\`!`);
     }
