@@ -1,4 +1,4 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -32,7 +32,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _: Arguments, settings: kGuild) {
+    async init(message: Message) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } 
@@ -47,16 +47,14 @@ export class kCommand extends Command {
             `);
         }
 
-        await pool.query(`
+        const { rows } = await pool.query<kGuild>(`
             UPDATE kbGuild
             SET welcome_channel = $1::text
-            WHERE guild_id = $2::text;
+            WHERE guild_id = $2::text
+            RETURNING *;
         `, [channel.id, message.guild!.id]);
 
-        await client.set(message.guild!.id, JSON.stringify({
-            ...settings,
-            welcome_channel: channel.id
-        } as kGuild));
+        await client.set(message.guild!.id, JSON.stringify({ ...rows[0] }));
         
         return this.Embed.success(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!

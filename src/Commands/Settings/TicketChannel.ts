@@ -44,16 +44,14 @@ export class kCommand extends Command {
             return this.Embed.fail(`This guild cannot use private threads, please use a category channel instead!`);
         }
 
-        await pool.query(`
+        const { rows } = await pool.query<kGuild>(`
             UPDATE kbGuild
             SET ticketChannel = $1::text
-            WHERE guild_id = $2::text;
+            WHERE guild_id = $2::text
+            RETURNING *;
         `, [ticketChannel.id, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify(<kGuild>{
-            ...settings,
-            ticketchannel: ticketChannel.id
-        })); // TODO(@KhafraDev): add durations to all of these client.sets!!!
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
 
         return this.Embed.success(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
     }

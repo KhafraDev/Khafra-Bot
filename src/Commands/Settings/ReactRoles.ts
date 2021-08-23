@@ -52,16 +52,14 @@ export class kCommand extends Command {
                 return this.Embed.fail(`Channel must be a news or text channel!`);
             }
 
-            await pool.query(`
+            const { rows } = await pool.query<kGuild>(`
                 UPDATE kbGuild
                 SET reactRoleChannel = $1::text
-                WHERE kbGuild.guild_id = $2::text;
+                WHERE kbGuild.guild_id = $2::text
+                RETURNING *;
             `, [channel.id, message.guild.id]);
 
-            await client.set(message.guild.id, JSON.stringify({
-                ...settings,
-                reactrolechannel: channel.id
-            }));
+            await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
 
             return this.Embed.success(`
             Set the react role channel to ${channel}!

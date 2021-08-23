@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message, { args }: Arguments) {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
@@ -39,16 +39,14 @@ export class kCommand extends Command {
         else if (!range.isInRange(newAmount) || !validateNumber(newAmount)) 
             return this.Embed.fail(`An invalid number of points was provided, try with a positive whole number instead!`);
 
-        await pool.query(`
+        const { rows } = await pool.query<kGuild>(`
             UPDATE kbGuild
             SET max_warning_points = $1::smallint
-            WHERE guild_id = $2::text;
+            WHERE guild_id = $2::text
+            RETURNING *;
         `, [newAmount, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({
-            ...settings,
-            max_warning_points: newAmount
-        }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
 
         return this.Embed.success(`Set the max warning points limit to \`\`${newAmount.toLocaleString()}\`\`!`);
     }

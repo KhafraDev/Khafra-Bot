@@ -25,22 +25,20 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message, { args }: Arguments) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.missing_perms(true);
         else if (args[0].length > 100)
             return this.Embed.fail(`Maximum prefix length is 100 characters!`);
 
-        await pool.query(`
+        const { rows } = await pool.query<kGuild>(`
             UPDATE kbGuild
             SET prefix = $1::text
-            WHERE guild_id = $2::text;
+            WHERE guild_id = $2::text
+            RETURNING *;
         `, [args[0]!, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({
-            ...settings,
-            prefix: args[0]!
-        }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
 
         return this.Embed.success(`Updated the guild's prefix to \`\`${args[0]}\`\``);
     }

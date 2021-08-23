@@ -1,4 +1,4 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Command } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _: Arguments, settings: kGuild) {
+    async init(message: Message) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);
         } 
@@ -37,16 +37,14 @@ export class kCommand extends Command {
             return this.Embed.fail(`Channel isn't cached or the ID is incorrect.`);
         }
 
-        await pool.query(`
+        const { rows } = await pool.query<kGuild>(`
             UPDATE kbGuild 
             SET mod_log_channel = $1::text
-            WHERE kbGuild.guild_id = $2::text;
+            WHERE kbGuild.guild_id = $2::text
+            RETURNING *;
         `, [channel.id, message.guild.id]);
 
-        await client.set(message.guild.id, JSON.stringify({
-            ...settings,
-            mod_log_channel: channel.id
-        }));
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }));
 
         return this.Embed.success(`
         Set public mod-logging channel to ${channel}!
