@@ -4,7 +4,7 @@ import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
-import { pool } from '../Structures/Database/Postgres.js';
+import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
@@ -40,7 +40,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
         } else {
             const { rows } = await pool.query<WelcomeChannel>(`
-                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
+                SELECT ${defaultKGuild}
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;

@@ -98,7 +98,7 @@ export class kCommand extends Command {
             ],
             components: [
                 new MessageActionRow().addComponents(
-                    Components.approve(`Get ${role.name}`, role.id)
+                    Components.approve(`Get ${role.name}`.slice(0, 80), role.id)
                 )
             ]
         });

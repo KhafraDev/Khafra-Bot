@@ -1,7 +1,7 @@
 import { Event } from '../Structures/Event.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { GuildBan } from 'discord.js';
-import { pool } from '../Structures/Database/Postgres.js';
+import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -26,7 +26,7 @@ export class kEvent extends Event<'guildBanAdd'> {
             item = JSON.parse(await client.get(guild.id)) as kGuild;
         } else {
             const { rows } = await pool.query<ModLogChannel>(`
-                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel FROM kbGuild
+                SELECT ${defaultKGuild} FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
             `, [guild.id]);

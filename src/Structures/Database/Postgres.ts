@@ -2,6 +2,15 @@ import { readdir, readFile } from 'fs/promises';
 import { join, resolve } from 'path';
 import pg from 'pg';
 
+export const defaultKGuild = [
+    'prefix',
+    'mod_log_channel',
+    'max_warning_points',
+    'welcome_channel',
+    'reactRoleChannel',
+    'ticketChannel'
+].join(', ');
+
 const dir = await readdir(join(process.cwd(), 'assets/SQL/Postgres'));
 
 export const pool = new pg.Pool({

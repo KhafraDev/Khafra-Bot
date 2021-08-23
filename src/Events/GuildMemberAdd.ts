@@ -1,6 +1,6 @@
 import { Event } from '../Structures/Event.js';
 import { GuildMember, Channel, Permissions } from 'discord.js';
-import { pool } from '../Structures/Database/Postgres.js';
+import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
@@ -40,7 +40,7 @@ export class kEvent extends Event<'guildMemberAdd'> {
             item = JSON.parse(await client.get(member.guild.id)) as kGuild;
         } else {
             const { rows } = await pool.query<WelcomeChannel>(`
-                SELECT prefix, mod_log_channel, max_warning_points, welcome_channel
+                SELECT ${defaultKGuild}
                 FROM kbGuild
                 WHERE guild_id = $1::text
                 LIMIT 1;
