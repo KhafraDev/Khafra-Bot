@@ -38,9 +38,9 @@ export class kCommand extends Command {
         /** guild can use private threads */
         const privateThreads = /^TIER_[2-9]$/.test(message.guild.premiumTier);
 
-        const ret = message.guild.channels.cache.has(settings.ticketchannel!)
-            ? message.guild.channels.cache.get(settings.ticketchannel!)!
-            : await dontThrow(message.guild.channels.fetch(settings.ticketchannel!));
+        const ret = message.guild.channels.cache.has(settings.ticketchannel)
+            ? message.guild.channels.cache.get(settings.ticketchannel)!
+            : await dontThrow(message.guild.channels.fetch(settings.ticketchannel));
 
         let channel!: TicketChannelTypes;
         if (Array.isArray(ret)) {

@@ -140,6 +140,7 @@ export class kEvent extends Event<'messageCreate'> {
             
             return message.reply(param);
         } catch (e) {
+            console.log(e);
             if (!(e instanceof Error)) 
                 return;
             // if there's an error sending a message, we should probably

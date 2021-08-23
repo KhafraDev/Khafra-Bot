@@ -37,17 +37,26 @@ export class kCommand extends Command {
             return this.Embed.fail(`This is not a ticket channel.`);
         }
 
-        const perms = (message.channel as GuildChannel).permissionOverwrites.cache;
-        if (!perms.has(message.author.id) || !perms.get(message.guild.roles.everyone.id)) {
-            return this.Embed.fail(`Incorrect permissions setup for ${message.channel}!`);
-        } else {
-            const memberPerms = perms.get(message.author.id)!;
-            const everyonePerms = perms.get(message.guild.roles.everyone.id)!;
+        const everyoneId = message.guild.roles.everyone.id;
 
-            if (!memberPerms.allow.has(memberPermsExpected)) {
-                return this.Embed.fail(`You are missing some required permissions in this channel.`);
-            } else if (!everyonePerms.deny.has(Permissions.FLAGS.VIEW_CHANNEL)) {
-                return this.Embed.fail(`This channel is not private!`);
+        if (isThread(message.channel)) {
+            if (message.channel.permissionsFor(everyoneId)?.has(Permissions.FLAGS.VIEW_CHANNEL)) {
+                return this.Embed.fail(`${message.channel} is not private!`);
+            }
+        } else {
+            const perms = (message.channel as GuildChannel).permissionOverwrites.cache;
+
+            if (!perms.has(message.author.id) || !perms.get(everyoneId)) {
+                return this.Embed.fail(`Incorrect permissions setup for ${message.channel}!`);
+            } else {
+                const memberPerms = perms.get(message.author.id)!;
+                const everyonePerms = perms.get(everyoneId)!;
+
+                if (!memberPerms.allow.has(memberPermsExpected)) {
+                    return this.Embed.fail(`You are missing some required permissions in this channel.`);
+                } else if (!everyonePerms.deny.has(Permissions.FLAGS.VIEW_CHANNEL)) {
+                    return this.Embed.fail(`This channel is not private!`);
+                }
             }
         }
 
