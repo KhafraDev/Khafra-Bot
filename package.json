@@ -19,8 +19,7 @@
     "redis": "^3.1.2",
     "search-mdn": "^1.0.0",
     "twemoji-parser": "^13.0.0",
-    "undici": "github:nodejs/undici",
-    "undici-fetch": "github:Ethan-Arrowood/undici-fetch"
+    "undici": "github:nodejs/undici"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.33",

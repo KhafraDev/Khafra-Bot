@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { promisify } from 'util';
 import { createHash } from 'crypto';
 import { unzip } from 'zlib';

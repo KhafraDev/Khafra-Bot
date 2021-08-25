@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 
 interface KongregateMetrics {
     gameplays_count: number

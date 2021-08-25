@@ -1,5 +1,5 @@
 import { decodeXML } from 'entities';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
 import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
 

@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import AdmZip from 'adm-zip';
 import { pool } from '../../Structures/Database/Postgres.js';
 

@@ -3,7 +3,7 @@ import { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
 import { request, Agent } from 'https';
 import { lookup } from 'mime-types';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { URL } from 'url';
 
 /*** Get the image from the html */

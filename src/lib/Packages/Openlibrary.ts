@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 
 export interface IOpenLib {
     cover_i: number

@@ -5,9 +5,6 @@
   "main": "./HereWeather.js",
   "types": "./HereWeather.d.ts",
   "type": "module",
-  "dependencies": {
-    "undici-fetch": "github:Ethan-Arrowood/undici-fetch"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/khafradev/Khafra-Bot.git",
@@ -27,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/khafradev/Khafra-Bot/issues"
   },
-  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "dependencies": {
+    "undici": "^4.4.7"
+  }
 }

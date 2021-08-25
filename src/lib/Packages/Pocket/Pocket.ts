@@ -1,4 +1,4 @@
-import fetch, { Headers } from 'undici-fetch';
+import { fetch, Headers } from 'undici';
 import crypto from 'crypto';
 import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './Pocket.d';
 
@@ -64,7 +64,7 @@ class Pocket {
             )
         }
 
-        const body = await res.json();
+        const body = await res.json() as { code: string };
         this.request_token = body.code;
         return this.request_token;
     }
@@ -108,7 +108,7 @@ class Pocket {
             )
         }
     
-        const body = await res.json();
+        const body = await res.json() as { access_token: string, username: string };
         this.access_token = body.access_token;
         this.username =     body.username;
         return this.access_token;
@@ -148,7 +148,7 @@ class Pocket {
             )
         }
     
-        return res.json();
+        return await res.json() as PocketGetResults;
     }
 
     async add(url: string | import('url').URL, title?: string) {

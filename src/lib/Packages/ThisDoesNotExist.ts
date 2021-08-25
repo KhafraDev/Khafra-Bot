@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Embed } from '../Utility/Constants/Embeds.js';
 import { Stream } from 'stream';

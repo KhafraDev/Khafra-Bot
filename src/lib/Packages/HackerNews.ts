@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { dontThrow } from '../Utility/Don\'tThrow.js';
 import { once } from '../Utility/Memoize.js';
 

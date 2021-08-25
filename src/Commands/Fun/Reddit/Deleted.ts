@@ -3,7 +3,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 
 const headers = {
 	'Content-Type': 'application/json',

@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { URL } from 'url';
 import { deepStrictEqual, doesNotThrow } from 'assert';
 

@@ -3,7 +3,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 

@@ -1,4 +1,4 @@
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
 import { SpotifyResult } from './Spotify.d';
 

@@ -26,6 +26,6 @@
   },
   "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
   "dependencies": {
-    "undici-fetch": "^1.0.0-rc.3"
+    "undici": "^4.4.7"
   }
 }

@@ -8,7 +8,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { hyperlink } from '@discordjs/builders';
 import { MessageActionRow, Permissions } from 'discord.js';
 import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 
 @RegisterCommand
 export class kCommand extends Command {

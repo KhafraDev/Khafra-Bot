@@ -1,5 +1,5 @@
 import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
-import fetch from 'undici-fetch';
+import { fetch } from 'undici';
 import { delay } from './Constants/OneLiners.js';
 import { validateNumber } from './Valid/Number.js';
 import { createFileWatcher } from './FileWatcher.js';
