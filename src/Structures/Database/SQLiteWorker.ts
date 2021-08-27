@@ -2,8 +2,9 @@ import { parentPort } from 'worker_threads';
 import BetterSQLite3 from 'better-sqlite3';
 import { join } from 'path/posix';
 
-interface Opts {
-    run: boolean
+export interface Opts {
+    run?: boolean,
+    get?: boolean
 }
 
 interface Params {
@@ -17,11 +18,17 @@ const db = BetterSQLite3(assets);
 
 db.pragma('journal_mode = WAL');
 
-parentPort!.on('message', ({ sql, parameters, opts }: Params) => {
+parentPort!.on('message', ({ sql, parameters, opts }: Params) => {    
     try {
-        const result = opts?.run
-            ? db.prepare<unknown[]>(sql).run(...parameters)
-            : db.prepare<unknown[]>(sql).all(...parameters);
+        const result: unknown[] = [];
+        if (opts?.get) {
+            result.push(db.prepare<unknown[]>(sql).get(...parameters));
+        } else if (opts?.run) {
+            result.push(db.prepare<unknown[]>(sql).run(...parameters));
+        } else {
+            result.push(...db.prepare<unknown[]>(sql).all(...parameters));
+        }
+
         parentPort!.postMessage(result);
     } catch (e) {
         console.log(e);

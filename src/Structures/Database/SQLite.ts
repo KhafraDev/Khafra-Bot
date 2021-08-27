@@ -9,16 +9,18 @@ import { readdir, readFile } from 'fs/promises';
 type Message = { 
     sql: string
     parameters: Parameters<Statement['run']> 
-    opts?: {
-        run: boolean
-    }
-};
-type Queue = { event: EventEmitter, message: Message };
+    opts?: import('./SQLiteWorker').Opts
+}
+type Queue = { event: EventEmitter, message: Message }
 
 const queue: Queue[] = [];
 const workers = new Map<number, { takeWork: () => void }>();
 
-export const asyncQuery = <T extends unknown>(sql: string, opts?: Message['opts'], ...parameters: Message['parameters']) => {
+export const asyncQuery = <T extends unknown>(
+    sql: string, 
+    opts?: Message['opts'], 
+    ...parameters: Message['parameters']
+) => {
     return new Promise<T[]>((resolve, reject) => {
         const event = new EventEmitter();
         event.on('result', resolve);
