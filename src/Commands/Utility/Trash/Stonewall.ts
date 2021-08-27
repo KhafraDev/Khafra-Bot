@@ -95,6 +95,15 @@ export class kCommand extends Command {
             
             if (comics[0] === undefined) {
                 return this.Embed.fail(`No comics with that query could be found. Omit the query for a random comic!`);
+            } else if (comics.length === 1) {
+                return this.Embed.success()
+                    .setDescription(`
+                    KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
+                    The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
+                    `)
+                    .setTitle(comics[9].title)
+                    .setURL(comics[0].href)
+                    .setImage(comics[0].link);
             }
 
             let idx = 0;
@@ -120,8 +129,6 @@ export class kCommand extends Command {
 
             if (err !== null) {
                 return this.Embed.fail(`Could not send message.`);
-            } else if (comics.length === 1) {
-                return;
             }
 
             const c = m.createMessageComponentCollector({
