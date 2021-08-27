@@ -101,7 +101,7 @@ export class kCommand extends Command {
                     KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                     The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
                     `)
-                    .setTitle(comics[9].title)
+                    .setTitle(comics[0].title)
                     .setURL(comics[0].href)
                     .setImage(comics[0].link);
             }
