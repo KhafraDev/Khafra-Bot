@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { setCryptoInterval, cache } from '../../lib/Packages/CoinGecko.js';
+import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
@@ -25,16 +25,14 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        const timeout = setTimeout(() => message.channel.sendTyping(), 1000);
-        await setCryptoInterval();
-        clearTimeout(timeout);
-        
-        if (!cache.has(args.join('-').toLowerCase()))
-            return this.Embed.fail(`
-            No cryptocurrency with that name or ID was found!
-            `);
+        const currencies = await CoinGecko.get(args.join(' '), () => {
+            void message.channel.sendTyping();
+        });
 
-        const currencies = cache.get(args.join('-').toLowerCase())!;
+        if (currencies === undefined) {
+            return this.Embed.fail(`No currency with that name or id could be found!`);
+        }
+        
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
         const embed = this.Embed.success()
@@ -66,7 +64,7 @@ export class kCommand extends Command {
             return embed;
 
         return {
-            content: stripIndents`
+            content: currencies.length === 1 ? null : stripIndents`
             There were ${currencies.length} cryptocurrencies with that search query provided.
 
             If this is the wrong currency, try using one of the following IDs:
