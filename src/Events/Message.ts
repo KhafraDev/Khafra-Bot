@@ -118,7 +118,7 @@ export class kEvent extends Event<'messageCreate'> {
 
             const param = {
                 failIfNotExists: false
-            } as ReplyMessageOptions & { split?: false };
+            } as ReplyMessageOptions;
             
             if (typeof returnValue === 'string')
                 param.content = returnValue;
@@ -131,7 +131,6 @@ export class kEvent extends Event<'messageCreate'> {
             
             return message.reply(param);
         } catch (e) {
-            console.log(e);
             if (!(e instanceof Error)) 
                 return;
             // if there's an error sending a message, we should probably
