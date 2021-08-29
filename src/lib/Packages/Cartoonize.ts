@@ -1,52 +1,42 @@
-import FormData from '@discordjs/form-data';
-import { MessageAttachment } from 'discord.js';
+import type { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
-import { request, Agent } from 'https';
-import { lookup } from 'mime-types';
-import { fetch } from 'undici';
-import { URL } from 'url';
+import { basename } from 'path';
+import { fetch, FormData } from 'undici';
+import { dontThrow } from '../Utility/Don\'tThrow.js';
+import { URLFactory } from '../Utility/Valid/URL.js';
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/;
-const agent = new Agent({ keepAlive: true });
 
 /**
- * Cartoonize an image using AI from an "unofficial API".
- * Involves HTML scraping.
+ * Cartoonize an image using AI from an unofficial API.
  */
-export const cartoonize = async (attachment: MessageAttachment) => {
-    const f = new FormData();
-    const a = new AbortController();
-    const r = await fetch(attachment.proxyURL);
-    const m = `${lookup(attachment.name ?? attachment.url)}`;
-    
-    setTimeout(() => a.abort(), 60000).unref();
-    f.append('image', await r.arrayBuffer(), {
-        filename: attachment.name ?? `image.${m.split('/')[1]}`,
-        contentType: m
-    });
+export class Cartoonize {
+    static async blobFromUrl(url: string) {
+        const u = URLFactory(url)!;
+        if (u === null) return null;
+        
+        const [err, res] = await dontThrow(fetch(u));
+        if (err === null) return await res.blob();
 
-    return new Promise<string>((done, reject) => {
-        const req = request(new URL('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize'), {
+        return null;
+    }
+
+    static async cartoonize(attachment: MessageAttachment) {
+        const form = new FormData();
+        const blob = await Cartoonize.blobFromUrl(attachment.proxyURL);
+        
+        if (blob === null) return null;
+        form.append('image', blob, basename(attachment.proxyURL));
+
+        const r = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
             method: 'POST',
-            headers: f.getHeaders(),
-            agent,
-            abort: a.signal
-        }, async (res) => {
-            let data = '';
-            
-            res.setEncoding('utf-8');
-            for await (const chunk of res) {
-                data += chunk;
-            }
-
-            return done(decodeXML(R.exec(data)![1]));
+            body: form
         });
-        
-        f.pipe(req);
-        
-        req.end();
-        req.once('error', reject);
-        req.once('abort', reject);
-    });
+
+        const j = await r.text();
+        const url = R.exec(j)![1];
+
+        return decodeXML(url);
+    }
 }

@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { cartoonize } from '../../lib/Packages/Cartoonize.js';
+import { Cartoonize } from '../../lib/Packages/Cartoonize.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 @RegisterCommand
@@ -32,7 +32,7 @@ export class kCommand extends Command {
 
         void message.channel.sendTyping();
         
-        const cartoon = await cartoonize(message.attachments.first()!);
+        const cartoon = await Cartoonize.cartoonize(message.attachments.first()!);
         if (!cartoon)
             return this.Embed.fail('Failed to extract the image from the HTML. 😕');
         
