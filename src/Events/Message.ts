@@ -60,27 +60,18 @@ export class kEvent extends Event<'messageCreate'> {
             guild = Object.assign({ ...defaultSettings }, rows.shift());
         }
 
-        // matches the start of the string with the prefix defined above
-        // captures the command name following the prefix up to a whitespace or end of string
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Groups_and_Ranges#using_named_groups
-        const optre = new RegExp(
-            // start of string, match the escaped guild's prefix
-            `^(?<prefix>${guild.prefix!.replace(/([^A-z0-9])/g, '\\$1')})` + 
-            // command name is anything up to a whitespace
-            // content is everything after the whitespace
-            `(?<commandName>[^\\s]+)\\s?(?<content>.*?)$`, 
-            'si'
-        );
-        // there should be no case in which this is null, but we are dealing with regexes
-        const optionsMatch = optre.exec(message.content);
+        const prefix = guild.prefix ?? config.prefix;
+        const commandName = name.slice(prefix.length).toLowerCase();
+        // !say hello world -> hello world
+        const content = message.content.slice(prefix.length + commandName.length + 1);
 
-        if (!optionsMatch || typeof optionsMatch.groups === 'undefined') return;
-        if (!name.startsWith(guild.prefix!)) return;
-        if (!KhafraClient.Commands.has(optionsMatch.groups.commandName.toLowerCase())) return;
+        if (!name.startsWith(prefix)) return;
+        if (!KhafraClient.Commands.has(commandName)) return;
 
-        const command = KhafraClient.Commands.get(optionsMatch.groups.commandName.toLowerCase())!;
+        const command = KhafraClient.Commands.get(commandName)!;
         // command cooldowns are based around the commands name, not aliases
         const limited = !commandLimit(command.settings.name, message.author.id);
+
         if (limited) {
             if (notified.has(message.author.id)) return;
 
@@ -120,7 +111,7 @@ export class kEvent extends Event<'messageCreate'> {
         }
 
         try {
-            const options = <Arguments> { args, ...optionsMatch.groups };
+            const options: Arguments = { args, commandName, content, prefix };
             const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
