@@ -1,5 +1,5 @@
 import { fetch } from 'undici';
-import AdmZip from 'adm-zip';
+import { ZipFile } from '../Utility/Unzip.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 
 export const titles = {
@@ -106,8 +106,8 @@ export const parseBible = async () => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
     const buffer = await res.arrayBuffer();
     
-    const zip = new AdmZip(buffer);
-    const bible = zip.getEntries().shift()!.getData().toString('utf-8');
+    const zip = ZipFile(buffer);
+    const bible = zip.shift()!.getData().toString('utf-8');
 
     const lines = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse
