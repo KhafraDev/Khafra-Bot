@@ -2,10 +2,12 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Message } from 'discord.js';
+import { Message, MessageActionRow } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
 import { fetch } from 'undici';
 import { decodeXML } from 'entities';
+import { split } from '../../../lib/Utility/String.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 
 const fetchDeleted = async (postId: string) => {
     const ac = new AbortController();
@@ -113,15 +115,73 @@ export class kCommand extends Command {
         const title = post.title.slice(0, 256);
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
-        const embed = this.Embed.success()
-            .setTitle(title)
-            // TODO(@KhafraDev): add pagination
-            .setDescription(decodeXML(post.selftext.slice(0, 2048) || post.url));
+        let idx = 0;
+        const chunks = split(post.selftext, 2048);
+        const makeEmbed = () => {
+            const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[idx]);
+            const embed = this.Embed.success()
+                .setTitle(title)
+                .setDescription(desc);
 
-        if (thumbnail) {
-            embed.setThumbnail(post.thumbnail);
+            if (thumbnail) {
+                embed.setThumbnail(post.thumbnail);
+            }
+
+            return embed;
         }
 
-        return embed;
+        if (post.selftext.length > 2048) {
+            const [e, m] = await dontThrow(message.reply({
+                embeds: [makeEmbed()],
+                components: [
+                    new MessageActionRow().addComponents(
+                        Components.approve('Next', 'next'),
+                        Components.primary('Back', 'back'),
+                        Components.deny('Stop', 'stop')
+                    )
+                ]
+            }));
+
+            if (e !== null) return;
+
+            const c = m.createMessageComponentCollector({
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id,
+                time: 300_000,
+                max: chunks.length,
+                idle: 60_000
+            });
+
+            c.on('collect', (i) => {
+                if (i.customId === 'deny' || c.total >= chunks.length) {
+                    return c.stop();
+                }
+
+                i.customId === 'approve' ? idx++ : idx--;
+
+                if (idx < 0) idx = chunks.length - 1;
+                if (idx >= chunks.length) idx = 0;
+
+                return void dontThrow(i.update({
+                    embeds: [makeEmbed()]
+                }));
+            });
+
+            c.once('end', (i) => {
+                if (i.size === 0 || i.last()!.replied) {
+                    return void dontThrow(m.edit({
+                        components: disableAll(m)
+                    }));
+                }
+
+                if (i.last()!.replied) return; 
+                
+                return void dontThrow(i.last()!.update({
+                    components: disableAll(m)
+                }));
+            });
+        } else {
+            return makeEmbed();
+        }
     }
 }
