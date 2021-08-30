@@ -49,7 +49,8 @@ export class kCommand extends Command {
         if (messageURL === null) {
             return this.Embed.fail(`The first argument must be a discord.com link!`);
         } else if (
-            messageURL.hostname !== 'discord.com' || // TODO(@KhafraDev): canary?
+            messageURL.hostname !== 'discord.com' &&
+            messageURL.hostname !== 'canary.discord.com' ||
             !channelsURLReg.test(messageURL.pathname)
         ) {
             return this.Embed.fail(`The first argument must be a link to a message!`);
