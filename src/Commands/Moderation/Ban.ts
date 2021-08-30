@@ -2,7 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
 import ms from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Range.js';
@@ -50,10 +50,8 @@ export class kCommand extends Command {
                 reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
             });
             
-            // TODO(@KhafraDev): check if this perm requires any intents/perms
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
+            if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return this.Embed.fail(`${user} isn't bannable!`);
         }

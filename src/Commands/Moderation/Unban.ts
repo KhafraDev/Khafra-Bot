@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
@@ -36,9 +35,8 @@ export class kCommand extends Command {
         try {
             await message.guild.members.unban(user, reason);
 
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!unbans.has(`${message.guild.id},${user.id}`))
-                    unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
+            if (!unbans.has(`${message.guild.id},${user.id}`))
+                unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch (e) {
             return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
         }
