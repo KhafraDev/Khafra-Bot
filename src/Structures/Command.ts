@@ -10,6 +10,7 @@ import { kGuild } from '../lib/types/KhafraBot.js';
 import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
 
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
@@ -23,6 +24,8 @@ export interface Arguments {
     readonly content: string
     /** Prefix used */
     readonly prefix: string
+    /** Any cli arguments provided by the user */
+    readonly cli: Minimalist
 }
 
 interface ICommand {

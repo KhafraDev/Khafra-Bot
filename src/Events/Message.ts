@@ -18,6 +18,7 @@ import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
 
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
@@ -64,6 +65,7 @@ export class kEvent extends Event<'messageCreate'> {
         const commandName = name.slice(prefix.length).toLowerCase();
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);
+        const cli = new Minimalist(content);
 
         if (!name.startsWith(prefix)) return;
         if (!KhafraClient.Commands.has(commandName)) return;
@@ -111,7 +113,7 @@ export class kEvent extends Event<'messageCreate'> {
         }
 
         try {
-            const options: Arguments = { args, commandName, content, prefix };
+            const options: Arguments = { args, commandName, content, prefix, cli };
             const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message || message.deleted) 
                 return;
