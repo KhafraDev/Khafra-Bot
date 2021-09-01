@@ -55,8 +55,7 @@ export class kCommand extends Command {
         let clear = 7, usedMs = false;
 
         if (cli.has('days') || cli.has('time')) {
-            const arg = cli.get('days') || cli.get('time');
-            const time = Array.isArray(arg) ? Number(arg[0]) : Number(arg);
+            const time = Number(cli.get('days') || cli.get('time'));
 
             if (validateNumber(time) && range.isInRange(time)) {
                 clear = time;
@@ -75,10 +74,8 @@ export class kCommand extends Command {
         if (cli.has('reason') || cli.has('r')) {
             const str = cli.get('reason') || cli.get('r');
 
-            if (typeof str === 'string' || Array.isArray(str)) {
-                reason = typeof str === 'string'
-                    ? str
-                    : str.join(' ');
+            if (typeof str === 'string') {
+                reason = str;
             }
         } else if (usedMs) {
             // ban @user 3d reason here -> reason here

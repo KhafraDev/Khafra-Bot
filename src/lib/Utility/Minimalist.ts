@@ -1,4 +1,4 @@
-type Value = true | string | string[];
+type Value = true | string;
 
 export class Minimalist extends Map<string, Value> {
     constructor(s: string) {
@@ -31,7 +31,7 @@ export class Minimalist extends Map<string, Value> {
                     value.push(token);
                 }
                 
-                super.set(token.slice(toSlice), value.length === 1 ? value[0] : value);
+                super.set(token.slice(toSlice), value.join(' '));
             }
         }
     }

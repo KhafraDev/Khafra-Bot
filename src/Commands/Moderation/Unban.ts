@@ -12,7 +12,8 @@ export class kCommand extends Command {
             [
                 'Unban a user from the guild.',
                 '1234567891234567 for apologizing',
-                '9876543217654321'
+                '9876543217654321',
+                '1234567891234567 --reason apologized nicely :)'
             ],
 			{
                 name: 'unban',
@@ -24,13 +25,17 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args, cli }: Arguments) {
         const user = await getMentions(message, 'users');
 
         if (!user) 
             return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
-        const reason = args.slice(1).join(' ');
+        const reasonAny = cli.has('reason') || cli.has('r')
+            ? (cli.get('reason') || cli.get('r'))
+            : args.slice(1).join(' ');
+
+        const reason = typeof reasonAny === 'string' ? reasonAny : '';
 
         try {
             await message.guild.members.unban(user, reason);
