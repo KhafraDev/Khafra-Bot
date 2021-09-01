@@ -33,6 +33,8 @@ const defaultSettings: PartialGuild = {
 const _cooldownGuild = cooldown(30, 60000);
 const _cooldownUsers = cooldown(10, 60000);
 
+const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+
 @RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
@@ -133,13 +135,18 @@ export class kEvent extends Event<'messageCreate'> {
             
             return message.reply(param);
         } catch (e) {
-            if (!(e instanceof Error)) 
+            if (processArgs.get('dev') === true) {
+                console.log(e);
+            }
+            
+            if (!(e instanceof Error)) { 
                 return;
-            // if there's an error sending a message, we should probably
-            // not send another message. in the future try figuring out
-            // the error code and basing this check off of that.
-            else if (e instanceof DiscordAPIError) 
+            } else if (e instanceof DiscordAPIError) {
+                // if there's an error sending a message, we should probably
+                // not send another message. in the future try figuring out
+                // the error code and basing this check off of that.
                 return;
+            }
 
             const error = e.name in command.errors 
                 ? command.errors[e.name as keyof typeof command.errors] 
