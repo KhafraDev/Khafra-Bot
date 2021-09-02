@@ -9,7 +9,7 @@ import { readdir, readFile } from 'fs/promises';
 type Message = { 
     sql: string
     parameters: Parameters<Statement['run']> 
-    opts?: import('./SQLiteWorker').Opts
+    opts: import('./SQLiteWorker').Opts | undefined
 }
 type Queue = { event: EventEmitter, message: Message }
 

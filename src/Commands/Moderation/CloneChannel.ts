@@ -77,8 +77,7 @@ export class kCommand extends Command {
             bitrate: isStage(channel) || isVoice(channel) ? channel.bitrate : undefined,
             userLimit: isStage(channel) || isVoice(channel) ? channel.userLimit : undefined,
             rateLimitPerUser: isExplicitText(channel) ? channel.rateLimitPerUser : undefined,
-            position: channel.position,
-            reason: undefined,
+            position: channel.position
         } as GuildChannelCloneOptions;
 
         const clone = GuildChannel.prototype.clone.bind({
