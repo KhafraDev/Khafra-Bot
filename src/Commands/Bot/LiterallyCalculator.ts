@@ -87,7 +87,7 @@ export class kCommand extends Command {
             if ( // used a symbol when there were no previous actions or previous action wasn't a number
                 (
                     actions.length === 0 &&
-                    !Number.isInteger(Number(actions[actions.length - 1])) &&
+                    !Number.isInteger(Number(actions.at(-1))) &&
                     lastAction.length === 0
                 ) && 
                 partialSymbols.test(i.customId)
@@ -125,7 +125,7 @@ export class kCommand extends Command {
             const removeLeadingZeroes = lastAction.replace(leadingZero, '');
             actions.push(removeLeadingZeroes.length === 0 ? lastAction : removeLeadingZeroes);
 
-            if (symbols.test(actions[actions.length - 1]))
+            if (symbols.test(actions.at(-1)!))
                 actions.pop();
 
             const equation = actions.join('')

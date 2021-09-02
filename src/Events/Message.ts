@@ -1,6 +1,6 @@
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { Event } from '../Structures/Event.js';
-import { Sanitize } from '../lib/Utility/SanitizeCommand.js';
+import { Sanitize } from '../lib/Utility/MessageEvent/SanitizeCommand.js';
 import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
@@ -19,6 +19,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { Imgur } from '../lib/Utility/MessageEvent/ImgurAlbum.js';
 
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
@@ -69,7 +70,28 @@ export class kEvent extends Event<'messageCreate'> {
         const content = message.content.slice(prefix.length + commandName.length + 1);
         const cli = new Minimalist(content);
 
-        if (!name.startsWith(prefix)) return;
+        if (!name.startsWith(prefix)) {
+            const imgur = await Imgur.album([name, ...args]);
+            if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length === 0) return;
+
+            let desc = `${imgur.u.length.toLocaleString()} Total Images\n`;
+            for (const image of imgur.u) {
+                const line = `${image}, `;
+                if (desc.length + line.length > 2048) break;
+
+                desc += line;
+            }
+
+            return void dontThrow(message.reply({
+                content: 
+                    `You posted an Imgur album, which don't embed correctly! ` + 
+                    `Here are all the images in the album:`,
+                embeds: [
+                    Embed.success(desc.trim()).setTitle(imgur.t)
+                ]
+            }));
+        }
+
         if (!KhafraClient.Commands.has(commandName)) return;
 
         const command = KhafraClient.Commands.get(commandName)!;

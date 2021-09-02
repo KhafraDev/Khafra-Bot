@@ -1,7 +1,7 @@
 import { Message, Permissions } from 'discord.js';
-import { Message as kMessage } from '../types/Discord.js.js';
-import { isDM } from '../types/Discord.js.js';
-import { hasPerms } from './Permissions.js';
+import { Message as kMessage } from '../../types/Discord.js.js';
+import { isDM } from '../../types/Discord.js.js';
+import { hasPerms } from '../Permissions.js';
 
 const basic = new Permissions([
     'SEND_MESSAGES',

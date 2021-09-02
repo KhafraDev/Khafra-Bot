@@ -41,6 +41,7 @@ POSTGRES_PASS=
 REDIS_USER=
 REDIS_PASS=
 TMDB=
+IMGUR_CLIENT_ID=
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 

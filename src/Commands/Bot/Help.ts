@@ -133,7 +133,7 @@ export class kCommand extends Command {
                 if (m.components.length === 1)
                     components.push(...m.components);
                 else
-                    components.push(m.components[m.components.length - 1]);
+                    components.push(m.components.at(-1)!);
 
                 return void dontThrow(i.update({ 
                     embeds: [pages[page]],

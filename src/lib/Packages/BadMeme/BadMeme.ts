@@ -96,7 +96,7 @@ export const badmeme = async (
         }
     }
 
-    const last = j.data.children[j.data.children.length - 1].data.name;
+    const last = j.data.children.at(-1)!.data.name;
     const cachedSet = new Set(urls);
     after.set(subreddit, last);
     cache.set(subreddit, cachedSet);

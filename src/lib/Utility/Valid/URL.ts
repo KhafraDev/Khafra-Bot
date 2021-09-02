@@ -17,12 +17,14 @@ const defaultOpts: FactoryOpts = {
  * Checks if a string is a valid https or http link and returns a URL object if it is. 
  * Otherwise returns null.
  * 
- * Validates protocol and removes all search params.
+ * Validates protocol, username, and password, and removes all search params.
  */
 export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
     try {
         const url = new URL(s);
         if (url.protocol !== 'https:' && url.protocol !== 'http:')
+            return null;
+        else if (url.username !== '' || url.password !== '')
             return null;
 
         if (opts.stripParams === true) {

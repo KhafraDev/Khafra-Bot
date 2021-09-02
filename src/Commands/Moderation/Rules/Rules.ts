@@ -188,7 +188,7 @@ export class kCommand extends Command {
             const embeds: MessageEmbed[] = [];
 
             for (const rule of rules) {
-                const embed = embeds[embeds.length - 1];
+                const embed = embeds.at(-1)!;
                 const line = rule.endsWith('\n') ? `${rule}\n` : `${rule}\n\n`;
 
                 if (embeds.length === 0) {
