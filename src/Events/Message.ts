@@ -20,6 +20,7 @@ import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { Imgur } from '../lib/Utility/MessageEvent/ImgurAlbum.js';
+import { Stats } from '../lib/Utility/Stats.js';
 
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
@@ -42,6 +43,8 @@ export class kEvent extends Event<'messageCreate'> {
     logger = new Logger('Message');
 
     async init(message: Message) {
+        Stats.messages++;
+
         if (!Sanitize(message)) return;
 
         const [name, ...args] = message.content.split(/\s+/g);
@@ -135,6 +138,8 @@ export class kEvent extends Event<'messageCreate'> {
         } else if (!hasPerms(message.channel, message.member, command.permissions)) {
             return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
         }
+
+        Stats.session++;
 
         try {
             const options: Arguments = { args, commandName, content, prefix, cli };
