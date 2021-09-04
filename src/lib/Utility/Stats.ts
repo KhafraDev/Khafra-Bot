@@ -20,7 +20,6 @@ export class Stats {
     }
 
     static write = once(() => {
-        console.log('stats ??');
         setInterval(async () => {
             const {
                 globalCommandsUsed,
