@@ -30,11 +30,14 @@ export class kCommand extends Command {
         const totalGuilds = guilds.size.toLocaleString();
 
         return this.Embed.success()
+            .setTitle(`Bot Statistics`)
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },
                 { name: bold('Members:'), value: totalMembers, inline: true },
+                { name: '\u200b', value: '\u200b', inline: true },
                 { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
-                { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true }
+                { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
+                { name: '\u200b', value: '\u200b', inline: true }
             );
     }
 }
