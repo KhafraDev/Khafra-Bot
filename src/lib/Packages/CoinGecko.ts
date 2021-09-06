@@ -87,11 +87,15 @@ export class CoinGecko {
             const j = await r.json() as CoinGeckoRes[];
 
             for (const currency of j) {
+                if (CoinGecko.cache.has(currency.id)) {
+                    CoinGecko.cache.delete(currency.id);
+                }
+
                 CoinGecko.cache.set(currency.id, currency);
             }
         }
 
-        if (!CoinGecko.int) CoinGecko.interval();
+        CoinGecko.interval();
 
         return true;
     }
