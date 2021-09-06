@@ -7,8 +7,11 @@ import { client } from '../index.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { upperCase } from '../lib/Utility/String.js';
-import { bold } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import { Command } from '../Structures/Command.js';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
+
+const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 
 @RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
@@ -86,24 +89,28 @@ export class kEvent extends Event<'interactionCreate'> {
                 await interaction.deferReply();
 
             const result = await command.init(interaction);
+            const param = {} as InteractionReplyOptions;
 
             if (
                 typeof result !== 'string' &&
                 (typeof result !== 'object' || result === null) &&
                 !(result instanceof MessageEmbed) &&
                 !(result instanceof MessageAttachment)
-            )
-                return void interaction.deleteReply();
-
-            const param = {} as InteractionReplyOptions;
-            if (typeof result === 'string')
-                param.content = result;
-            else if (result instanceof MessageEmbed)
-                param.embeds = [result];
-            else if (result instanceof MessageAttachment)
-                param.files = [result];
-            else 
-                Object.assign(param, result);
+            ) {
+                const type = result == null ? `${result}` : Object.prototype.toString.call(result);
+                param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
+                param.ephemeral = true;
+            } else {
+                if (typeof result === 'string') {
+                    param.content = result;
+                } else if (result instanceof MessageEmbed) {
+                    param.embeds = [result];
+                } else if (result instanceof MessageAttachment) {
+                    param.files = [result];
+                } else {
+                    Object.assign(param, result);
+                }
+            }
 
             if (command.options.replyOpts)
                 Object.assign(param, command.options.replyOpts);
@@ -112,8 +119,10 @@ export class kEvent extends Event<'interactionCreate'> {
                 return void interaction.editReply(param);
 
             return void interaction.reply(param);
-        } catch {
-            // do nothing
+        } catch (e) {
+            if (processArgs.get('dev') === true) {
+                console.log(e);
+            }
         }
     }
 } 

@@ -27,19 +27,18 @@ export class kInteraction extends Interactions {
 
         const item = await badmeme(subreddit, false);
 
-        if (item === null)
+        if (item === null) {
             return '❌ No posts in this subreddit were found. This command doesn\'t work on NSFW subreddits!';
-        else if ('error' in item) {
-            if (item.reason === 'private')
-                return '❌ Subreddit is set as private!';
-            else if (item.reason === 'banned') // r/the_donald
-                return '❌ Subreddit is banned!';
-            else if (item.reason === 'quarantined') // r/spacedicks (all others are just banned now)
-                return '❌ Subreddit is quarantined!';
-                
-            return `❌ Subreddit is blocked for reason "${item.reason}"!`;
-        } else if (item.url.length === 0)
+        } else if ('error' in item) {
+            switch (item.reason) {
+                case 'banned': return '❌ Subreddit is banned!';
+                case 'private': return '❌ Subreddit is set as private!';
+                case 'quarantined': return '❌ Subreddit is quarantined!';
+                default: return `❌ Subreddit is blocked for reason "${item.reason}"!`;
+            }
+        } else if (item.url.length === 0) {
             return '❌ No valid posts in this subreddit!';
+        }
 
         return Array.isArray(item.url) ? item.url[0] : item.url;
     }
