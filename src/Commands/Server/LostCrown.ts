@@ -9,9 +9,7 @@ export class kCommand extends Command {
     constructor() {
         super(
             [
-                'Play a game in VC!',
-                '866022233330810930 [channel id]',
-                '#general [channel mention]'
+                'Find out why the server owner doesn\'t have a crown!'
             ],
 			{
                 name: 'lostcrown',

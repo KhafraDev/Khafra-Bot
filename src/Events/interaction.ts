@@ -91,7 +91,9 @@ export class kEvent extends Event<'interactionCreate'> {
             const result = await command.init(interaction);
             const param = {} as InteractionReplyOptions;
 
-            if (
+            if (interaction.replied) {
+                return;
+            } else if (
                 typeof result !== 'string' &&
                 (typeof result !== 'object' || result === null) &&
                 !(result instanceof MessageEmbed) &&

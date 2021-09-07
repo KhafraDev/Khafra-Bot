@@ -39,10 +39,11 @@ export interface YouTubeSearchResults {
     }[]
 }
 
-export const YouTube = async (q: string[]) => {
+export const YouTube = async (q: string[] | string) => {
+    const query = Array.isArray(q) ? q.join(' ') : q;
     const params = new URLSearchParams();
     params.append('part', 'snippet');
-    params.append('q', encodeURIComponent(q.join(' ').replace(/\s+/, '+')));
+    params.append('q', encodeURIComponent(query.replace(/\s+/, '+')));
     params.append('type', 'video');
     params.append('key', process.env.GOOGLE_API!);
 
