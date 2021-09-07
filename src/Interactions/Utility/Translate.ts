@@ -11,7 +11,7 @@ export class kInteraction extends Interactions {
             .addStringOption(option => option
                 .setName('text')
                 .setDescription('text to translate')
-                .setRequired(true)    
+                .setRequired(true)
             )
             .addStringOption(option => option
                 .setName('to')
