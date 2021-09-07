@@ -1,9 +1,9 @@
-import { Message } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
+import { Interactions } from '../../Structures/Interaction.js';
+import { SlashCommandBuilder, time } from '@discordjs/builders';
 import { searchMovie } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
-import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
+import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 
 const formatMS = (ms: number) => {
     return Object.entries({
@@ -17,29 +17,30 @@ const formatMS = (ms: number) => {
         .join(' ');
 }
 
-@RegisterCommand
-export class kCommand extends Command {
+export class kInteraction extends Interactions {
     constructor() {
-        super([
-            'Get information about a movie!'
-        ], {
-            name: 'movies',
-            folder: 'Utility',
-            args: [0],
-            aliases: ['movie', 'tmdb']
-        });
+        const sc = new SlashCommandBuilder()
+            .setName('movie')
+            .addStringOption(option => option
+                .setName('name')
+                .setDescription('Movie to get info about.')
+                .setRequired(true)
+            )
+            .setDescription('Get information about a movie!');
+
+        super(sc, { defer: true });
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(interaction: CommandInteraction) {
         const movies = await searchMovie(
-            args.join(' '), 
-            isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
+            interaction.options.getString('name', true),
+            isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
         
         if (!movies)
-            return this.Embed.fail('No movies found!');
+            return '❌ No movie with that name was found!';
 
-        const embed = this.Embed.success()
+        const embed = Embed.success()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
             .addField('**Genres:**', movies.genres.map(g => g.name).join(', '), true)
@@ -59,4 +60,4 @@ export class kCommand extends Command {
 
         return embed;
     }
-}
+} 
