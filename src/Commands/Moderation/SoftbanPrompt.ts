@@ -75,7 +75,7 @@ export class kCommand extends Command {
         }
 
         if (button.customId === 'deny')
-            return button.update({
+            return void button.update({
                 embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             }); 
@@ -93,13 +93,13 @@ export class kCommand extends Command {
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
-            return button.editReply({
+            return void button.editReply({
                 embeds: [this.Embed.fail(`${user} isn't bannable!`)],
                 components: []
             });
         }
 
-        return button.editReply({
+        return void button.editReply({
             embeds: [this.Embed.success(`${user} has been soft-banned from the guild!`)],
             components: disableAll(msg)
         });

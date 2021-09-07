@@ -55,7 +55,7 @@ export class kCommand extends Command {
                 return;
 
             const reason = args.slice(1).join(' ');
-            return channel.send({ embeds: [this.Embed.success(`
+            return void channel.send({ embeds: [this.Embed.success(`
             **Offender:** ${member}
             **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             **Staff:** ${message.member}

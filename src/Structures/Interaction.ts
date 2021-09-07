@@ -7,6 +7,13 @@ interface InteractionOptions {
     replyOpts?: InteractionReplyOptions
 }
 
+type HandlerReturn =
+    | string
+    | import('discord.js').MessageEmbed
+    | import('discord.js').MessageAttachment
+    | import('discord.js').InteractionReplyOptions
+    | void;
+
 export abstract class Interactions {
     constructor(
         public data: SlashCommandBuilder, 
@@ -16,5 +23,5 @@ export abstract class Interactions {
         this.options = options;
     }
     
-    abstract init(arg: Interaction): Promise<unknown> | unknown;
+    abstract init(arg: Interaction): HandlerReturn | Promise<HandlerReturn>;
 }

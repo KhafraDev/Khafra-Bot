@@ -70,7 +70,7 @@ export class kCommand extends Command {
             try {
                 await pocket.accessToken();
             } catch {
-                return button.editReply({
+                return void button.editReply({
                     embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized.')], 
                     components: []
                 });
@@ -92,7 +92,7 @@ export class kCommand extends Command {
                 ;
             `, [message.author.id, access_token, request_token, username]);
 
-            return button.editReply({
+            return void button.editReply({
                 embeds: [
                     this.Embed.success(`
                     You have authorized ${message.guild!.me}!
@@ -104,7 +104,7 @@ export class kCommand extends Command {
             });
         }
 
-        return button.editReply({
+        return void button.editReply({
             embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized, command was canceled!')],
             components: disableAll(msg)
         });

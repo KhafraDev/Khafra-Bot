@@ -93,12 +93,7 @@ export class kEvent extends Event<'interactionCreate'> {
 
             if (interaction.replied) {
                 return;
-            } else if (
-                typeof result !== 'string' &&
-                (typeof result !== 'object' || result === null) &&
-                !(result instanceof MessageEmbed) &&
-                !(result instanceof MessageAttachment)
-            ) {
+            } else if (result == null) {
                 const type = result == null ? `${result}` : Object.prototype.toString.call(result);
                 param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
                 param.ephemeral = true;

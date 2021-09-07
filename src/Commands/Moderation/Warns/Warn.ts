@@ -124,7 +124,7 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
-            return channel.send({ 
+            return void channel.send({ 
                 embeds: [
                     this.Embed.success(`
                     **Offender:** ${member}

@@ -69,7 +69,7 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send({
+            return void channel.send({
                 embeds: [
                     this.Embed.success(`
                     **Channel:** ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).

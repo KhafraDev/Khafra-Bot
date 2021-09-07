@@ -157,7 +157,7 @@ export class kCommand extends Command {
         await once(mc, 'end');
 
         if (choices.length === 0) {
-            return m.edit({
+            return void m.edit({
                 embeds: [
                     this.Embed.fail('No answers were provided, canceling the poll creation!')
                 ],
@@ -178,7 +178,7 @@ export class kCommand extends Command {
 
         const j = await r.json() as { admin_key: string, content_id: string, success: 1 | 0 };
 
-        return m.edit({
+        return void m.edit({
             embeds: [
                 this.Embed.success(`https://strawpoll.com/${j.content_id}`)
             ]

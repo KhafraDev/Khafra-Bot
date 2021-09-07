@@ -26,7 +26,7 @@ export class kCommand extends Command {
         const m = await message.reply({ content: clean });
 
         if (m.editable) {
-            return m.edit({ content: edited });
+            return void m.edit({ content: edited });
         } else {
             return this.Embed.fail(`Message wasn't editable!`);
         }

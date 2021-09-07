@@ -60,7 +60,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message): Promise<unknown> {
+    async init(message: Message) {
         // TODO(@KhafraDev): wtf perms should this be available for?
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.missing_perms(true);

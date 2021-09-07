@@ -45,6 +45,14 @@ interface ICommand {
     }
 }
 
+type HandlerReturn =
+    | string
+    | import('discord.js').MessageAttachment
+    | import('discord.js').MessageEmbed
+    | import('discord.js').ReplyMessageOptions
+    | void
+    | null;
+
 export abstract class Command implements ICommand {
     readonly errors = Errors;
     readonly Embed = Embed;
@@ -75,7 +83,7 @@ export abstract class Command implements ICommand {
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
-        Promise<unknown> | unknown;
+        HandlerReturn | Promise<HandlerReturn>
 
     static isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 
         ? config.botOwner.includes(id) 

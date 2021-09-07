@@ -67,7 +67,7 @@ export class kCommand extends Command {
         }));
 
         if (discordError !== null) {
-            return dontThrow(m.edit({
+            return void dontThrow(m.edit({
                 embeds: [
                     this.Embed.success('No response, canceled the command.')
                 ],

@@ -57,7 +57,7 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return channel.send({ embeds: [this.Embed.success(`
+            return void channel.send({ embeds: [this.Embed.success(`
             **Channel:** ${text} (${text.id}).
             **Staff:** ${message.member}
             `).setTitle('Channel Locked')] });
