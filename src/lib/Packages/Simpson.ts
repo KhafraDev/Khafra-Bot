@@ -19,11 +19,11 @@ export const fetchOGKey = async () => {
     const res = await fetch(url);
     const text = await res.text();
 
-    key = /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
+    return /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
 }
 
 export const thisSimpsonDoesNotExist = async () => {
-    if (!key) await fetchOGKey();
+    key ??= await fetchOGKey();
 
     const res = await fetch(`${url}item/${key}`);
     const json = await res.json() as ISimpson;

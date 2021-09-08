@@ -1,5 +1,4 @@
 import { fetch } from 'undici';
-import { deepStrictEqual } from 'assert';
 
 interface NonexistentWord {
     word: {
@@ -16,16 +15,14 @@ interface NonexistentWord {
     permalink_url: string
 }
 
-export const thisWordDoesNotExist = async (): Promise<NonexistentWord> => {
-    try {
-        const res = await fetch('https://www.thisworddoesnotexist.com/api/random_word.json');
-        deepStrictEqual(res.status, 200);
-        const json = await res.json() as Promise<NonexistentWord>;
-        if (!('word' in json) || !('permalink_url' in json)) {
-            return Promise.reject();
-        }
-        return json;
-    } catch(e) {
-        return Promise.reject(e);
+export const thisWordDoesNotExist = async () => {
+    const res = await fetch('https://www.thisworddoesnotexist.com/api/random_word.json');
+    if (!res.ok) return null;
+    const json = await res.json() as NonexistentWord;
+
+    if (!('word' in json) || !('permalink_url' in json)) {
+        return null;
     }
+
+    return json;
 }

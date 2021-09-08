@@ -22,6 +22,10 @@ export class kCommand extends Command {
     async init() {
         const word = await thisWordDoesNotExist();
 
+        if (word === null) {
+            return this.Embed.fail(`Failed to get a word, try again!`);
+        }
+
         return this.Embed.success(`
         **${word.word.word.toUpperCase()}** - ${word.word.pos}
         *${word.word.syllables.join(' − ')}*

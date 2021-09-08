@@ -15,7 +15,7 @@ const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 export class kInteraction extends Interactions {
     constructor() {
         const sc = new SlashCommandBuilder()
-            .setName('ban')
+            .setName('unban')
             .addUserOption(option => option
                 .setName('member')
                 .setDescription('Member ID to unban.')
