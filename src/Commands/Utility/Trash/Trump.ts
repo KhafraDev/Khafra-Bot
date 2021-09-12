@@ -3,10 +3,10 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
 
 const Trump = [] as typeof import('../../../../assets/Trump.json');
 createFileWatcher(Trump, join(cwd, 'assets/Trump.json'));
@@ -65,32 +65,7 @@ export class kCommand extends Command {
             ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
-        collector.on('collect', i => {
-            if (m.deleted) 
-                return collector.stop();
-            else if (i.customId === 'deny')
-                return collector.stop('deny');
-
-            const old = page;
-            i.customId === 'approve' ? page++ : page--;
-
-            if (page < 0) page = 0;
-            if (page >= embeds.length) page = embeds.length - 1;
-
-            if (page !== old)
-                return void dontThrow(i.update({ 
-                    content: null,
-                    embeds: [embeds[page]] 
-                }));
-            else 
-                return void dontThrow(i.update({ 
-                    content: page === 0 ? 'No previous items!' : 'No more items!' 
-                }));
-        });
-        collector.on('end', (_c, reason) => {
-            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
-                return void dontThrow(m.edit({ content: null, components: [] }));
-        });
+        const c = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
+        return Paginate(c, m, item.length * 2, embeds);
     }
 }

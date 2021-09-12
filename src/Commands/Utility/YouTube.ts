@@ -9,6 +9,7 @@ import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { time } from '@discordjs/builders';
+import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 
 // after 90 days of inactivity, Google deactives the key.
 // to prevent this, once a day the bot will use the api
@@ -67,15 +68,12 @@ export class kCommand extends Command {
             `);
         }
         
-        const embeds = [...format(results)];
-        let page = 0;
-        
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Next'),
-                Components.secondary('Previous'),
-                Components.deny('Stop')
-            );
+        const embeds = [...format(results)];        
+        const row = new MessageActionRow().addComponents(
+            Components.approve('Next'),
+            Components.secondary('Previous'),
+            Components.deny('Stop')
+        );
 
         const m = await message.channel.send({ 
             embeds: [embeds[0]],
@@ -87,23 +85,7 @@ export class kCommand extends Command {
             ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
-        collector.on('collect', i => {
-            if (m.deleted) 
-                return collector.stop();
-            else if (i.customId === 'deny')
-                return collector.stop('deny');
-
-            i.customId === 'approve' ? page++ : page--;
-
-            if (page < 0) page = embeds.length - 1;
-            if (page >= embeds.length) page = 0;
-
-            return void i.update({ embeds: [embeds[page]] });
-        });
-        collector.on('end', (_c, reason) => {
-            if (reason === 'deny' || reason === 'time' || reason === 'limit') 
-                return void m.edit({ components: [] });
-        });
+        const c = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
+        return Paginate(c, m, embeds.length, embeds);
     }
 }

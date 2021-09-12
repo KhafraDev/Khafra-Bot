@@ -11,7 +11,8 @@ import { once } from '../../../lib/Utility/Memoize.js';
 import { cpus } from 'os';
 import { asyncQuery } from '../../../Structures/Database/SQLite.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
 
 interface ITrashHuman {
     title: string
@@ -106,15 +107,14 @@ export class kCommand extends Command {
                     .setImage(comics[0].link);
             }
 
-            let idx = 0;
-            const makeEmbed = () => this.Embed.success()
+            const makeEmbed = (page = 0) => this.Embed.success()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
                 `)
-                .setTitle(comics[idx].title)
-                .setURL(comics[idx].href)
-                .setImage(comics[idx].link);
+                .setTitle(comics[page].title)
+                .setURL(comics[page].href)
+                .setImage(comics[page].link);
 
             const [err, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
@@ -138,34 +138,7 @@ export class kCommand extends Command {
                     interaction.user.id === message.author.id
             });
 
-            c.on('collect', i => {
-                if (i.customId === 'deny' || c.total >= comics.length * 2) {
-                    return c.stop();
-                }
-
-                i.customId === 'approve' ? idx++ : idx--;
-
-                if (idx < 0) idx = comics.length - 1;
-                if (idx >= comics.length) idx = 0;
-
-                return void dontThrow(i.update({
-                    embeds: [makeEmbed()]
-                }));
-            });
-
-            c.once('end', (i) => {
-                if (i.size === 0 || i.last()!.replied) {
-                    return void dontThrow(m.edit({
-                        components: disableAll(m)
-                    }));
-                }
-
-                if (i.last()!.replied) return; 
-                
-                return void dontThrow(i.last()!.update({
-                    components: disableAll(m)
-                }));
-            });
+            return Paginate(c, m, comics.length * 2, makeEmbed);
         } else {
             const { 0: comic } = await asyncQuery<Comic>(`
                 SELECT * FROM kbStonewall ORDER BY RANDOM() LIMIT 1;

@@ -75,7 +75,7 @@ export class kEvent extends Event<'messageCreate'> {
 
         if (!name.startsWith(prefix)) {
             const imgur = await Imgur.album([name, ...args]);
-            if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length === 0) return;
+            if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length < 2) return;
 
             let desc = `${imgur.u.length.toLocaleString()} Total Images\n`;
             for (const image of imgur.u) {

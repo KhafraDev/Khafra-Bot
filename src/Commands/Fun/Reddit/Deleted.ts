@@ -7,7 +7,8 @@ import { RedditData } from '@khaf/badmeme';
 import { fetch } from 'undici';
 import { decodeXML } from 'entities';
 import { split } from '../../../lib/Utility/String.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { Components } from '../../../lib/Utility/Constants/Components.js';
+import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
 
 const fetchDeleted = async (postId: string) => {
     const ac = new AbortController();
@@ -115,10 +116,9 @@ export class kCommand extends Command {
         const title = post.title.slice(0, 256);
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
-        let idx = 0;
         const chunks = split(post.selftext, 2048);
-        const makeEmbed = () => {
-            const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[idx]);
+        const makeEmbed = (page = 0) => {
+            const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
             const embed = this.Embed.success()
                 .setTitle(title)
                 .setDescription(desc);
@@ -152,34 +152,7 @@ export class kCommand extends Command {
                 idle: 60_000
             });
 
-            c.on('collect', (i) => {
-                if (i.customId === 'deny' || c.total >= chunks.length) {
-                    return c.stop();
-                }
-
-                i.customId === 'approve' ? idx++ : idx--;
-
-                if (idx < 0) idx = chunks.length - 1;
-                if (idx >= chunks.length) idx = 0;
-
-                return void dontThrow(i.update({
-                    embeds: [makeEmbed()]
-                }));
-            });
-
-            c.once('end', (i) => {
-                if (i.size === 0 || i.last()!.replied) {
-                    return void dontThrow(m.edit({
-                        components: disableAll(m)
-                    }));
-                }
-
-                if (i.last()!.replied) return; 
-                
-                return void dontThrow(i.last()!.update({
-                    components: disableAll(m)
-                }));
-            });
+            return Paginate(c, m, chunks.length, makeEmbed);
         } else {
             return makeEmbed();
         }
