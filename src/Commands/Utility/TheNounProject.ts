@@ -4,6 +4,7 @@ import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounP
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -26,18 +27,17 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { content }: Arguments) {
-        const icons = await theNounProjectSearch(content);
+        const [err, icons] = await dontThrow(theNounProjectSearch(content));
         
-        if (icons.icons.length === 0) {
+        if (err !== null || icons === null || icons.icons.length === 0) {
             return this.Embed.fail('No icons found for that search!');
         }
         
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Next'),
-                Components.secondary('Previous'),
-                Components.deny('Stop')
-            );
+        const row = new MessageActionRow().addComponents(
+            Components.approve('Next'),
+            Components.secondary('Previous'),
+            Components.deny('Stop')
+        );
 
         const m = await message.channel.send({ 
             embeds: [this.Embed.success().setImage(icons.icons[0].preview_url)],
