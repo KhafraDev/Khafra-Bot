@@ -10,6 +10,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { time } from '@discordjs/builders';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
+import { decodeXML } from 'entities';
 
 // after 90 days of inactivity, Google deactives the key.
 // to prevent this, once a day the bot will use the api
@@ -27,7 +28,7 @@ function* format(items: YouTubeSearchResults, embed = Embed.success) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const Embed = embed()
-            .setTitle(video.title)
+            .setTitle(decodeXML(video.title))
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
