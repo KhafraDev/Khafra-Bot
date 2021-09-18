@@ -46,8 +46,6 @@ export class kCommand extends Command {
             .setDescription(`${atro.emojis.join('')} ${atro.text}`)
         );
 
-        let page = 0;
-
         const row = new MessageActionRow()
 			.addComponents(
                 Components.approve('Next'),
@@ -56,7 +54,7 @@ export class kCommand extends Command {
             );
 
         const m = await message.reply({ 
-            embeds: [embeds[page]],
+            embeds: [embeds[0]],
             components: [row]
         });
 
