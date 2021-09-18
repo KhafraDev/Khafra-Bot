@@ -75,13 +75,6 @@ export class kEvent extends Event<'messageCreate'> {
 
         const prefix = guild.prefix ?? config.prefix;
         const commandName = name.slice(prefix.length).toLowerCase();
-        
-        if (disabled.includes(commandName)) {
-            return void dontThrow(message.reply({
-                content: `${inlineCode(commandName)} is temporarily disabled!`
-            }));
-        }
-        
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);
         const cli = new Minimalist(content);
@@ -122,6 +115,10 @@ export class kEvent extends Event<'messageCreate'> {
                 content: 
                     `${upperCase(command.settings.name)} has a ${command.settings.ratelimit} second rate limit! ` +
                     `Please wait a little bit longer to use the command again. ❤️`
+            }));
+        } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
+            return void dontThrow(message.reply({
+                content: `${inlineCode(commandName)} is temporarily disabled!`
             }));
         }
         
