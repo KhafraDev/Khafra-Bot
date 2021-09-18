@@ -24,6 +24,7 @@ export class kCommand extends Command {
     async init(message: Message) {
         let desc = `For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n`;
         const next = `It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!`;
+        let amount = 0;
 
         for (const role of message.guild.roles.cache.values()) {
             if (
@@ -33,7 +34,12 @@ export class kCommand extends Command {
                 const line = `${role}\n`;
                 if (desc.length + next.length + line.length > 2048) break;
                 desc += line;
+                amount++;
             }
+        }
+
+        if (amount === 0) {
+            return this.Embed.fail(`The server owner already has a crown! Refresh your client to see it. 👑`);
         }
 
         desc += next;
