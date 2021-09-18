@@ -12,6 +12,11 @@ import { Command } from '../Structures/Command.js';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const disabled = typeof processArgs.get('disabled') === 'string'
+    ? (processArgs.get('disabled') as string)
+        .split(',')
+        .map(c => c.toLowerCase())
+    : [];
 
 @RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
@@ -81,6 +86,10 @@ export class kEvent extends Event<'interactionCreate'> {
         if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
+            }));
+        } else if (disabled.includes(interaction.commandName)) {
+            return void dontThrow(interaction.reply({
+                content: `${inlineCode(interaction.commandName)} is temporarily disabled!`
             }));
         }
 
