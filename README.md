@@ -56,32 +56,6 @@ All values are required, as there is no guarantee that there is error handling f
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``
 
-Optional steps:
-
-## Setup a systemctl service to restart the bot when the host restarts (Linux only):
-1. `touch /etc/systemd/system/khafrabot.service` - creates a file in the path.
-2. `nano /etc/systemd/system/khafrabot.service` - opens the file in the nano text editor.
-3. Input the following into the file and save.
-```bash
-[Unit]
-Description=startsbot
-
-[Service]
-WorkingDirectory=/var/Khafra-Bot
-
-ExecStart=-npm run dev:build
-ExecStart=-npm run prod:run
-
-Type=oneshot
-RemainAfterExit=yes
-
-[Install]
-WantedBy=multi-user.target
-```
-4. `sudo systemctl daemon-reload`
-5. `sudo systemctl enable khafrabot.service` (or `sudo systemctl restart khafrabot.service` if you previously attempted to).
-6. On system startup, the bot will automatically start.
-
 ## Migrating Versions
 
 ### v1.0.9 -> v1.10
@@ -91,3 +65,7 @@ WantedBy=multi-user.target
 4. Open postgres shell and `ALTER TABLE kbGuild ADD COLUMN reactRoleChannel TEXT DEFAULT NULL;`
     - Windows tutorial [here](https://www.tutorialkart.com/postgresql/postgresql-sql-shell-psql/)!
     - Linux: `sudo -u postgres psql`, `\c kb`, run the command above, `\q`.
+
+## CLI Args
+- `--prod` (none): runs the bot in production mode
+- `--disabled` (string[]): disables commands listed

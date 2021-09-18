@@ -21,6 +21,7 @@ import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { Imgur } from '../lib/Utility/MessageEvent/ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
+import { inlineCode } from '@discordjs/builders';
 
 const config = {} as typeof import('../../config.json');
 createFileWatcher(config, join(cwd, 'config.json'));
@@ -36,6 +37,11 @@ const _cooldownGuild = cooldown(30, 60000);
 const _cooldownUsers = cooldown(10, 60000);
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const disabled = typeof processArgs.get('disabled') === 'string'
+    ? (processArgs.get('disabled') as string)
+        .split(',')
+        .map(c => c.toLowerCase())
+    : [];
 
 @RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
@@ -69,6 +75,13 @@ export class kEvent extends Event<'messageCreate'> {
 
         const prefix = guild.prefix ?? config.prefix;
         const commandName = name.slice(prefix.length).toLowerCase();
+        
+        if (disabled.includes(commandName)) {
+            return void dontThrow(message.reply({
+                content: `${inlineCode(commandName)} is temporarily disabled!`
+            }));
+        }
+        
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);
         const cli = new Minimalist(content);
