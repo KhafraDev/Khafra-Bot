@@ -10,9 +10,9 @@ import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
-    'SEND_MESSAGES',
-    'EMBED_LINKS',
-    'VIEW_CHANNEL'
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS,
+    Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;

@@ -4,10 +4,11 @@ import { isDM } from '../../types/Discord.js.js';
 import { hasPerms } from '../Permissions.js';
 
 const basic = new Permissions([
-    'SEND_MESSAGES',
-    'EMBED_LINKS',
-    'VIEW_CHANNEL',
-    'READ_MESSAGE_HISTORY'
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS,
+    Permissions.FLAGS.VIEW_CHANNEL,
+    // TODO(@KhafraDev): do we really need this perm?
+    Permissions.FLAGS.READ_MESSAGE_HISTORY
 ]);
 
 /**
