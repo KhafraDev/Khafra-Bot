@@ -1,6 +1,6 @@
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { Event } from '../Structures/Event.js';
-import { Sanitize } from '../lib/Utility/MessageEvent/SanitizeCommand.js';
+import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
 import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { trim } from '../lib/Utility/Template.js';
@@ -19,7 +19,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { Imgur } from '../lib/Utility/MessageEvent/ImgurAlbum.js';
+import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
 import { inlineCode } from '@discordjs/builders';
 

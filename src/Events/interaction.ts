@@ -1,15 +1,13 @@
 import { Event } from '../Structures/Event.js';
-import { Guild, GuildMember, Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
+import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
-import { validSnowflake } from '../lib/Utility/Mentions.js';
-import { client } from '../index.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { upperCase } from '../lib/Utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import { Command } from '../Structures/Command.js';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interaction_ReactRoles.js';
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -24,58 +22,7 @@ export class kEvent extends Event<'interactionCreate'> {
 
     async init(interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
-            if (!validSnowflake(interaction.customId)) return;
-            if (interaction.message.author.id !== client.user!.id) return;
-            if (!(interaction.member instanceof GuildMember)) return;
-            
-            let guild: Guild | null = null; // guild can be null here
-            if (!(interaction.guild instanceof Guild) && typeof interaction.guildId === 'string') {
-                try {
-                    await interaction.deferReply({ ephemeral: true });
-                    guild = await client.guilds.fetch(interaction.guildId);
-                } catch {}
-            } else {
-                guild = interaction.guild;
-            }
-
-            if (!guild?.roles.cache.has(interaction.customId)) return;
-
-            const role = guild.roles.cache.get(interaction.customId);
-            if (!role || role.deleted || role.managed) return;
-
-            try {
-                if (interaction.member.partial)
-                    await interaction.member.fetch();
-                
-                const had = interaction.member.roles.cache.has(role.id);
-                if (had)
-                    await interaction.member.roles.remove(role);
-                else 
-                    await interaction.member.roles.add(role);
-
-                const opts = { embeds: [] as MessageEmbed[] };
-                if (had) {
-                    opts.embeds.push(Embed.success(`Removed role ${role} from you!`));
-                } else {
-                    opts.embeds.push(Embed.success(`Granted you the ${role} role!`));
-                }
-
-                const pr = interaction.deferred
-                    ? interaction.editReply(opts)
-                    : interaction.reply({ ephemeral: true, ...opts});
-
-                return void dontThrow(pr);
-            } catch {                
-                const opts = { 
-                    embeds: [ Embed.fail(`An error prevented me from granting you the role!`) ]
-                }
-
-                const pr = interaction.deferred
-                    ? interaction.editReply(opts)
-                    : interaction.reply({ ephemeral: true, ...opts });
-                    
-                return void dontThrow(pr);
-            }
+            return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
         }
         
         if (!interaction.isCommand()) return;
