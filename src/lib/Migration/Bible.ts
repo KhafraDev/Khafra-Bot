@@ -100,7 +100,7 @@ export const titles = {
     'Revelation': 'rev'
 };
 
-export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'gi');
+export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i');
 
 export const parseBible = async () => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');

@@ -5,6 +5,8 @@ import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js'
 import { pool } from '../../Structures/Database/Postgres.js';
 import { upperCase } from '../../lib/Utility/String.js';
 import { once } from '../../lib/Utility/Memoize.js';
+import { inlineCode } from '@discordjs/builders';
+import { kGuild } from '../../lib/types/KhafraBot.js';
 
 interface IBibleVerse {
     idx: number
@@ -38,7 +40,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init(_message: Message, { args, content }: Arguments, settings: kGuild) {
         await mw();
 
         // no arguments provided, get a random entry
@@ -59,27 +61,24 @@ export class kCommand extends Command {
         }
 
         // list all books available to the bot
-        if (args[0]?.toLowerCase() === 'list') {
-            return this.Embed.success(Object.keys(titles).map(t => `\`\`${t}\`\``).join(', '));
+        if (args[0].toLowerCase() === 'list') {
+            return this.Embed.success(Object.keys(titles).map(t => inlineCode(t)).join(', '));
+        } else if (!titleRegex.test(content)) {
+            return this.Embed.fail(`
+            No book with that name was found!
+
+            Use ${inlineCode(`${settings.prefix}${this.settings.name} list`)} to list all of the supported book names!
+            `);
         }
 
-        const book = titleRegex.exec(args.join(' '))?.[0].toLowerCase();
-        // if an invalid book name was used
-        if (!book)
-            return this.Embed.fail(`
-            No book found with that name! Were you using an acronym?
-            KhafraBot only supports the full names of the books, which you can view using \`bible list\`!
-            `);
-
+        const book = content.match(titleRegex)![0].toLowerCase().trim();
         // get the acronym of the book, for example "Prayer of Azariah" -> "aza"
         const bookAcronym = Object
             .entries(titles)
             .find(([n, acr]) => n.toLowerCase() === book || acr === book)!;
 
         // get the chapter+verse
-        const locationUnformatted = args
-            .join(' ')
-            .replace(new RegExp(`(.*?)${book}(\\s+)?`, 'gi'), '');
+        const locationUnformatted = content.split(book).at(-1)!.trim();
 
         if (!R.GENERIC.test(locationUnformatted)) {
             // get verses in chapter
@@ -136,8 +135,9 @@ export class kCommand extends Command {
                 No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
                 `);
 
+            const [first, last] = [rows.at(0)!, rows.at(-1)!];
             return this.Embed.success()
-                .setTitle(`${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}`)
+                .setTitle(`${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`)
                 .setDescription(`
                 ${rows.map(v => v.content).join('\n')}
                 `.slice(0, 2048));
