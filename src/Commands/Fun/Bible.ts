@@ -71,7 +71,7 @@ export class kCommand extends Command {
             `);
         }
 
-        const book = content.match(titleRegex)![0].toLowerCase().trim();
+        const book = titleRegex.exec(content)![0].toLowerCase().trim();
         // get the acronym of the book, for example "Prayer of Azariah" -> "aza"
         const bookAcronym = Object
             .entries(titles)
