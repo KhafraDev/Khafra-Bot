@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import ms from 'ms';
+import ms, { StringValue } from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -61,7 +61,7 @@ export class kCommand extends Command {
                 clear = time;
             }
         } else if (typeof args[1] === 'string') {
-            const time = Math.ceil(ms(args[1]) / 86_400_000); // ms -> days
+            const time = Math.ceil(ms(args[1] as StringValue) / 86_400_000); // ms -> days
 
             if (validateNumber(time) && range.isInRange(time)) {
                 clear = time;

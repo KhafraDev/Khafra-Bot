@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandGroupsOnlyBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder, SlashCommandSubcommandGroupBuilder } from '@discordjs/builders';
 import { Interaction, InteractionReplyOptions } from 'discord.js';
 
 interface InteractionOptions {
@@ -12,12 +12,12 @@ type HandlerReturn =
     | import('discord.js').MessageEmbed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
-    | import('@discordjs/builders').SlashCommandSubcommandGroupsOnlyBuilder
+    | import('@discordjs/builders').SlashCommandSubcommandGroupBuilder
     | void;
 
 export abstract class Interactions {
     constructor(
-        public data: SlashCommandBuilder | SlashCommandSubcommandGroupsOnlyBuilder, 
+        public data: SlashCommandBuilder | SlashCommandSubcommandGroupBuilder, 
         public options: InteractionOptions = {}
     ) {
         this.data = data;

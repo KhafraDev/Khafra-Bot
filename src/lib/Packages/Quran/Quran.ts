@@ -24,7 +24,7 @@ export const parseQuran = async (): Promise<{ verses: Excerpt[], titles: Title[]
     const res = await fetch('https://sacred-texts.com/isl/pick/pick.txt.gz');
     const buffer = await res.arrayBuffer();
 
-    const sha256 = createHash('sha256').update(buffer).digest('hex');
+    const sha256 = createHash('sha256').update(Buffer.from(buffer)).digest('hex');
     if (sha256 !== hash)
         throw new Error(`File hash: ${sha256}, expected ${hash}.`);
 

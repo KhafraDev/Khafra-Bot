@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import ms from 'ms';
+import ms, { StringValue } from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -38,8 +38,8 @@ export class kCommand extends Command {
             return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
         }
 
-        const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1]) / 86400000) : 7;
-        const reason = args.slice(args[1] && ms(args[1]) ? 2 : 1).join(' ');
+        const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1] as StringValue) / 86400000) : 7;
+        const reason = args.slice(args[1] && ms(args[1] as StringValue) ? 2 : 1).join(' ');
 
         try {
             await message.guild.members.ban(member, {

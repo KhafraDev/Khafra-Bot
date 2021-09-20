@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import ms from 'ms';
+import ms, { StringValue } from 'ms';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isExplicitText, isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -42,7 +42,7 @@ export class kCommand extends Command {
         // if a channel is mentioned in the first argument, 
         // seconds must be the second argument + vice versa.
         // by default, reset the ratelimit (0s).
-        const secs = ms((channelFirst ? args[1] : args[0]) ?? '0s') / 1000;
+        const secs = ms((channelFirst ? args[1] : args[0]) as StringValue ?? '0s') / 1000;
 
         if (typeof secs !== 'number' || secs < 0 || secs > MAX_SECS)
             return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);

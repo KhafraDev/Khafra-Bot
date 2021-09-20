@@ -106,7 +106,7 @@ export const parseBible = async () => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
     const buffer = await res.arrayBuffer();
     
-    const zip = ZipFile(buffer);
+    const zip = ZipFile(Buffer.from(buffer));
     const bible = zip.shift()!.getData().toString('utf-8');
 
     const lines = bible
