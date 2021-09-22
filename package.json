@@ -32,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^4.31.2",
     "@typescript-eslint/parser": "^4.31.2",
     "eslint": "^7.30.0",
+    "husky": "^7.0.2",
     "typescript": "^4.3.5"
   },
   "scripts": {
@@ -42,7 +43,8 @@
     "dev:run": "node build/src/index --dev",
     "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- build/src/index --prod",
     "v1.10": "npm run dev:build && node scripts/dump",
-    "lint": "npx eslint . --ext .ts"
+    "lint": "npx eslint . --ext .ts",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
