@@ -3,7 +3,15 @@ import { readFile } from 'fs/promises';
 import { dirname, basename, join } from 'path';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-export const createFileWatcher = <F extends Record<string, unknown> | unknown[]>(storage: F, path: string) => {
+type Watcher = Record<string, unknown> | unknown[];
+
+const watchers = new Map<string, Watcher>();
+
+export const createFileWatcher = <F extends Watcher>(storage: F, path: string) => {
+    if (watchers.has(path)) {
+        return watchers.get(path)!;
+    }
+
     const dir = dirname(path);
     const base = basename(path);
     const descriptors: PropertyDescriptor = { enumerable: true, configurable: true, writable: true };
@@ -48,5 +56,6 @@ export const createFileWatcher = <F extends Record<string, unknown> | unknown[]>
         }
     });
 
+    watchers.set(path, storage);
     return storage;
 }
