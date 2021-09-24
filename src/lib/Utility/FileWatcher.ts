@@ -9,7 +9,7 @@ const watchers = new Map<string, Watcher>();
 
 export const createFileWatcher = <F extends Watcher>(storage: F, path: string) => {
     if (watchers.has(path)) {
-        return watchers.get(path)!;
+        return watchers.get(path)! as F;
     }
 
     const dir = dirname(path);

@@ -31,8 +31,7 @@ const formatPresence = (activities: Activity[] | undefined) => {
     return push.join('\n');
 }
 
-const config = {} as typeof import('../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 
 const emojis = new Map<UserFlagsString, string | undefined>();
 // lazy load emojis

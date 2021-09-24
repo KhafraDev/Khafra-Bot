@@ -23,8 +23,7 @@ import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
 import { inlineCode } from '@discordjs/builders';
 
-const config = {} as typeof import('../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 const defaultSettings: PartialGuild = {
     prefix: config.prefix,

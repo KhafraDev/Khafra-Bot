@@ -6,8 +6,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 
-const config = {} as typeof import('../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 @RegisterEvent
 export class kEvent extends Event<'guildCreate'> {

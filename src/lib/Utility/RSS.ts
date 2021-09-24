@@ -6,8 +6,7 @@ import { createFileWatcher } from './FileWatcher.js';
 import { cwd } from './Constants/Path.js';
 import { join } from 'path';
 
-const config = {} as typeof import('../../../package.json');
-createFileWatcher(config, join(cwd, 'package.json'));
+const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop: (() => void | Promise<void>) = () => {};

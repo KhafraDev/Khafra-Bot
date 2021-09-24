@@ -9,8 +9,7 @@ import { cwd } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
-const Emojis = {} as typeof import('../../../../assets/JSON/Emojis.json');
-createFileWatcher(Emojis, join(cwd, 'assets/JSON/Emojis.json'));
+const Emojis = createFileWatcher({} as typeof import('../../../../assets/JSON/Emojis.json'), join(cwd, 'assets/JSON/Emojis.json'));
 
 interface BaseUnicodeEmoji {
     names: string[]

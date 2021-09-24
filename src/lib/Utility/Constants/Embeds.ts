@@ -6,8 +6,7 @@ import { createFileWatcher } from '../FileWatcher.js';
 import { cwd } from './Path.js';
 import { join } from 'path';
 
-const config = {} as typeof import('../../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
 type PartialCommand = {
     settings: Command['settings'],

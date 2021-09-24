@@ -8,8 +8,7 @@ import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { SlashCommandBuilder } from '@discordjs/builders';
 
-const config = {} as typeof import('../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 
 const emoji = client.emojis.cache.get(config.interactions.mdn);
 

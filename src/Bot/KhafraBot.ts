@@ -12,8 +12,7 @@ import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { performance } from 'perf_hooks';
 
-const config = {} as typeof import('../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();

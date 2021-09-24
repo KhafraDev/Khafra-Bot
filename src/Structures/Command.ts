@@ -12,8 +12,7 @@ import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 
-const config = {} as typeof import('../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */

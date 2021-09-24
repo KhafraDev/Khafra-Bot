@@ -1,4 +1,5 @@
 import { Message } from 'discord.js';
+import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -31,8 +32,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
-        return this.Embed.success(`
+    init(message: Message) {
+        return Embed.success(`
         ⏰ \`\`${getUptime(message.client.uptime ?? 0)}\`\`
         `).setTitle('Khafra-Bot has been online for:');
     }
