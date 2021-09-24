@@ -9,7 +9,7 @@ interface Comic {
     link: string
 }
 
-const PATH = join(process.cwd(), 'assets/Stonewall.json');
+const PATH = join(process.cwd(), 'assets/JSON/Stonewall.json');
 
 export const migrateStonewall = async () => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbStonewall);`);

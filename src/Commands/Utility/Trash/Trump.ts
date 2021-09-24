@@ -8,8 +8,8 @@ import { cwd } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
 
-const Trump = [] as typeof import('../../../../assets/Trump.json');
-createFileWatcher(Trump, join(cwd, 'assets/Trump.json'));
+const Trump = [] as typeof import('../../../../assets/JSON/Trump.json');
+createFileWatcher(Trump, join(cwd, 'assets/JSON/Trump.json'));
 
 @RegisterCommand
 export class kCommand extends Command {    

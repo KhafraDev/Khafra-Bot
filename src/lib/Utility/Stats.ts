@@ -4,8 +4,8 @@ import { cwd } from './Constants/Path.js';
 import { createFileWatcher } from './FileWatcher.js';
 import { once } from './Memoize.js';
 
-const config = {} as typeof import('../../../assets/stats.json');
-const path = join(cwd, 'assets/stats.json');
+const config = {} as typeof import('../../../assets/JSON/stats.json');
+const path = join(cwd, 'assets/JSON/stats.json');
 createFileWatcher(config, path);
 
 export class Stats {

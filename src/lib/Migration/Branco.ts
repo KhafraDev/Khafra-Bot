@@ -9,7 +9,7 @@ interface Comic {
     link: string
 }
 
-const PATH = join(process.cwd(), 'assets/Branco.json');
+const PATH = join(process.cwd(), 'assets/JSON/Branco.json');
 
 export const migrateBranco = async () => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbBranco);`);
