@@ -6,7 +6,7 @@ import { KhafraClient } from '../../Bot/KhafraBot.js';
 enum BotInfo {
     UPTIME = 'uptime',
     ABOUT = 'about'
-};
+}
 
 export class kInteraction extends Interactions {
     constructor() {

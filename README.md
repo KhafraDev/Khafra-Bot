@@ -10,15 +10,15 @@ A Discord.js framework and bot that is extendable and fast.
 * The bot currently supports v15.4.0 or above, although the *latest* version of Node is recommended.
 
 # Privacy
-```md
-When using Khafra-Bot some information about you and the command used will be temporarily stored. The purpose of these logs is to provide debug info if errors or misuse occur. A complete log entry looks like:
+When using the bot, a correlating log entry will be generated. Actions are only logged when directly interacting with the bot (such as using a command).
 
-``[08-26-2020 09:42:09PM] Message: "Command: minesweeper | Author: 267774648622645249 | URL: https://discord.com/channels/677271830838640680/733157666737881149/748356650515300394 | Guild: 677271830838640680 | Input: !minesweeper"``
-
-These logs are temporary and only stored when using the bot (whether that is reacting for a role or using a command).
-Read through the terms of service for bot developers at https://discord.com/developers/docs/legal (collecting logs falls under section 2-A).
+An example log is saved as follows:
 ```
-Excerpted from [here](https://discord.com/channels/677271830838640680/705894525473784303/748361427328303175).
+[Fri Sep 24 2021 17:31:56 GMT-0400 (Eastern Daylight Time)] Message: "Command: about | Author: 267774648622645249 | URL: https://discord.com/channels/503024525076725771/503024525076725775/891074503252250714 | Guild: 503024525076725771 | Input: !!about"
+```
+The only personally identifiable information kept is your Discord user id, which is publicly available to any Discord user.
+
+Logs are used in order to debug errors and are never sent to a third party.
 
 # Setup
 1. Install dependencies using ``npm i``.
@@ -50,8 +50,6 @@ All values are required, as there is no guarantee that there is error handling f
 5. Install Postgres and Redis. For Windows development, setup WSL and install redis from there.
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
 7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
-8. Open redis-cli and run 
-    - `ACL SETUSER [username] on >[password] allkeys allcommands`
 8. Run the bot:
     - Windows: ``npm run dev:run``
     - Linux/Mac(?): ``npm run prod:run``
