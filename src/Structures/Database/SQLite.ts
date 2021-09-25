@@ -4,7 +4,8 @@ import { EventEmitter } from 'events';
 import { Statement } from 'better-sqlite3';
 import { fileURLToPath } from 'url';
 import { join, resolve } from 'path';
-import { readdir, readFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 type Message = { 
     sql: string
@@ -46,8 +47,8 @@ const spawn = () => {
     const takeWork = () => {
         if (!job && queue.length) {
             // If there's a job in the queue, send it to the worker
-            job = queue.shift() ?? null;
-            worker.postMessage(job?.message);
+            job = queue.shift()!;
+            worker.postMessage(job.message);
         }
     }
 
@@ -78,8 +79,7 @@ const spawn = () => {
 
 cpus().forEach(spawn);
 
-const dir = await readdir(join(process.cwd(), 'assets/SQL/SQLite'));
-const sql = dir.map(f => resolve(process.cwd(), 'assets/SQL/SQLite', f));
+const sql = await KhafraClient.walk(join(process.cwd(), 'assets/SQL/SQLite'), p => p.endsWith('.sql'));
 
 for (const file of sql) {
     const text = await readFile(file, 'utf-8');

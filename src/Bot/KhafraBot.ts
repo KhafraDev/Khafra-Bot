@@ -22,7 +22,7 @@ export class KhafraClient extends Client {
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
      */
-    walk = async (dir: string, fn: (path: string) => boolean) => {
+    static async walk(dir: string, fn: (path: string) => boolean) {
         const ini = new Set<string>(await readdir(dir));
         const files = new Set<string>(); 
     
@@ -45,7 +45,7 @@ export class KhafraClient extends Client {
     }
 
     async loadCommands() {
-        const commands = await this.walk('build/src/Commands', p => p.endsWith('.js'));
+        const commands = await KhafraClient.walk('build/src/Commands', p => p.endsWith('.js'));
         const importPromise = commands.map(command => import(pathToFileURL(command).href) as Promise<Command>);
         const settled = await Promise.allSettled(importPromise);
 
@@ -58,7 +58,7 @@ export class KhafraClient extends Client {
     }
 
     async loadEvents() {
-        const events = await this.walk('build/src/Events', p => p.endsWith('.js'));
+        const events = await KhafraClient.walk('build/src/Events', p => p.endsWith('.js'));
         const importPromise = events.map(event => import(pathToFileURL(event).href) as Promise<Event>);
         await Promise.allSettled(importPromise);
 
@@ -67,7 +67,7 @@ export class KhafraClient extends Client {
     }
 
     async loadInteractions() {
-        const interactionPaths = await this.walk('build/src/Interactions', p => p.endsWith('.js'));
+        const interactionPaths = await KhafraClient.walk('build/src/Interactions', p => p.endsWith('.js'));
         const importPromise = interactionPaths.map(
             int => import(pathToFileURL(int).href) as Promise<{ kInteraction: new () => Interactions }>
         );

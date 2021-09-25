@@ -5,7 +5,6 @@ import { readdir } from 'fs/promises';
 import { join, parse, sep } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { client } from '../../index.js';
 import { compile } from '../../lib/Packages/Compile.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
 import { Command, Arguments } from '../../Structures/Command.js';
@@ -43,7 +42,7 @@ export class kCommand extends Command {
             )
             .shift()!;
         
-        const files = await client.walk(join(basePath, closest), () => true);
+        const files = await KhafraClient.walk(join(basePath, closest), () => true);
         const mapped = files
             .map(p => parse(p))
             .map(p => ({ 

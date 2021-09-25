@@ -1,6 +1,7 @@
-import { readdir, readFile } from 'fs/promises';
-import { join, resolve } from 'path';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import pg from 'pg';
+import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 export const defaultKGuild = [
     'prefix',
@@ -11,16 +12,13 @@ export const defaultKGuild = [
     'ticketChannel'
 ].join(', ');
 
-const dir = await readdir(join(process.cwd(), 'assets/SQL/Postgres'));
+const sql = await KhafraClient.walk(join(process.cwd(), 'assets/SQL/Postgres'), p => p.endsWith('.sql'));
 
 export const pool = new pg.Pool({
     user: process.env.POSTGRES_USER!,
     password: process.env.POSTGRES_PASS!,
     database: 'kb'
 });
-
-// create tables and other defaults if needed
-const sql = dir.map(f => resolve(process.cwd(), 'assets/SQL/Postgres', f));
 
 for (const file of sql) {
     const text = await readFile(file, 'utf-8');
