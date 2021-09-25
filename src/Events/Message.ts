@@ -54,8 +54,9 @@ export class kEvent extends Event<'messageCreate'> {
 
         const [name, ...args] = message.content.split(/\s+/g);
     
-        let guild: typeof defaultSettings | kGuild | null = null;
+        let guild!: typeof defaultSettings | kGuild;
         const exists = await client.exists(message.guild.id);
+        
         if (exists === 1) {
             const row = await client.get(message.guild.id);
             guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
@@ -71,6 +72,8 @@ export class kEvent extends Event<'messageCreate'> {
                 void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
                 guild = Object.assign({ ...defaultSettings }, rows.shift());
+            } else {
+                guild = { ...defaultSettings };
             }
         }
 
@@ -139,7 +142,7 @@ export class kEvent extends Event<'messageCreate'> {
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
             Example(s):
-            ${command.help.slice(1).map(c => `\`\`${guild!.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
+            ${command.help.slice(1).map(c => `\`\`${guild.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
             `)] }));
         }
 
