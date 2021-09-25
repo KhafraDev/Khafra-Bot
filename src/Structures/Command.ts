@@ -81,7 +81,7 @@ export abstract class Command implements ICommand {
         this.errors = Object.assign({ ...this.errors }, this.settings.errors);
     }
 
-    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
+    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild> | null): 
         HandlerReturn | Promise<HandlerReturn>
 
     static isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 

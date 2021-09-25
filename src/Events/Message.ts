@@ -54,7 +54,7 @@ export class kEvent extends Event<'messageCreate'> {
 
         const [name, ...args] = message.content.split(/\s+/g);
     
-        let guild: Partial<kGuild> | kGuild | null = null;
+        let guild: typeof defaultSettings | kGuild | null = null;
         const exists = await client.exists(message.guild.id);
         if (exists === 1) {
             const row = await client.get(message.guild.id);
@@ -67,12 +67,15 @@ export class kEvent extends Event<'messageCreate'> {
                 LIMIT 1;
             `, [message.guild.id]);
 
-            void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+            if (rows.length !== 0) {
+                void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
-            guild = Object.assign({ ...defaultSettings }, rows.shift());
+                guild = Object.assign({ ...defaultSettings }, rows.shift());
+            }
         }
 
-        const prefix = guild.prefix ?? config.prefix;
+        const prefix = guild?.prefix ?? config.prefix;
+        console.log({ guild, prefix })
         const commandName = name.slice(prefix.length).toLowerCase();
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);

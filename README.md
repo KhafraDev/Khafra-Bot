@@ -7,7 +7,7 @@ A Discord.js framework and bot that is extendable and fast.
 # Environment
 * Khafra-Bot has been tested on both Windows 10 and Ubuntu. 
 * Khafra-Bot will always support and use new features and will not support old versions of Node.
-* The bot currently supports v15.4.0 or above, although the *latest* version of Node is recommended.
+* The bot currently supports v16.10.0 or above, although the *latest* version of Node is recommended.
 
 # Privacy
 When using the bot, a correlating log entry will be generated. Actions are only logged when directly interacting with the bot (such as using a command).
@@ -47,12 +47,17 @@ All values are required, as there is no guarantee that there is error handling f
 
 4. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-5. Install Postgres and Redis. For Windows development, setup WSL and install redis from there.
+5. Install Postgres and Redis. For Windows:
+    - Download and setup WSL2
+    - [Installing Redis](https://redis.io/download#from-the-official-ubuntu-ppa)
+    - [Installing Postgres with WSL2](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database#install-postgresql)
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
-7. Open the psql shell and run `ALTER USER [account name] PASSWORD '[password]';`.
-8. Run the bot:
-    - Windows: ``npm run dev:run``
-    - Linux/Mac(?): ``npm run prod:run``
+    - `sudo -u postgres psql`
+    - `CREATE USER [username] WITH PASSWORD '[password]';`
+    - `ALTER USER [username] WITH SUPERUSER;`
+7. Run the bot:
+    - dev: `npm run dev:build && npm run dev:run`
+    - prod: `npm run dev:build && npm run prod:run`
 
 ## Migrating Versions
 

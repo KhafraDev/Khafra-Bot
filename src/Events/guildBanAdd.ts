@@ -31,8 +31,10 @@ export class kEvent extends Event<'guildBanAdd'> {
                 LIMIT 1;
             `, [guild.id]);
 
-            void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
-            item = rows[0];
+            if (rows.length !== 0) {
+                void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                item = rows[0];
+            }
         }
 
         if (

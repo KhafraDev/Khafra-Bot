@@ -46,8 +46,10 @@ export class kEvent extends Event<'guildMemberUpdate'> {
                 LIMIT 1;
             `, [oldMember.guild.id]);
             
-            void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);
-            item = rows[0];
+            if (rows.length !== 0) {
+                void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                item = rows[0];
+            }
         }
 
         if (!item || item.welcome_channel === null) return;
