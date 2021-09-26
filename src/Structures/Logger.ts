@@ -7,10 +7,9 @@ const logPath = join(process.cwd(), 'assets/Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories
 
 export class Logger {
-    name: string;
     stream: WriteStream;
 
-    constructor(name: string) {
+    constructor(public name: string) {
         this.name = name;
         this.stream = createWriteStream(join(logPath, this.name + '.log'), { 
             flags: 'a',

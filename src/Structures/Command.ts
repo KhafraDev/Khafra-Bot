@@ -56,8 +56,6 @@ export abstract class Command implements ICommand {
     readonly errors = Errors;
     readonly Embed = Embed;
 
-    /*** Description and example usage. */
-    readonly help: string[];
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     readonly permissions: PermissionResolvable[] = [ 
         Permissions.FLAGS.SEND_MESSAGES,
@@ -65,11 +63,10 @@ export abstract class Command implements ICommand {
         Permissions.FLAGS.VIEW_CHANNEL, 
         Permissions.FLAGS.READ_MESSAGE_HISTORY 
     ];
-    readonly settings: ICommand['settings'];
     
     constructor(
-        help: string[],
-        settings: ICommand['settings']
+        public readonly help: string[],
+        public readonly settings: ICommand['settings']
     ) {
         this.help = help.length < 2
             ? [...help, ...Array<string>(2 - help.length).fill('')]

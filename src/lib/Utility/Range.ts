@@ -1,9 +1,9 @@
 class Ranger {
-    min = -Number.MAX_SAFE_INTEGER;
-    max = Number.MAX_SAFE_INTEGER;
-    inclusive = false;
-
-    constructor (min: number, max: number, inclusive = false) {
+    constructor (
+        public min = -Number.MAX_SAFE_INTEGER,
+        public max = Number.MAX_SAFE_INTEGER, 
+        public inclusive = false
+    ) {
         if (
             typeof min !== 'number' || typeof max !== 'number'
             || Number.isNaN(min) || Number.isNaN(max) // neither is NaN
