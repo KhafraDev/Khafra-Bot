@@ -94,7 +94,7 @@ export class kCommand extends Command {
         }));
 
         if (fetchError !== null || !r.ok) {
-            if (!r.ok) {
+            if (r && !r.ok) {
                 void consumeBody(r);
                 return this.Embed.fail(`Received a ${r.status} status trying to create the invite!`);
             } else {

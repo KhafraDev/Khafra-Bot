@@ -85,7 +85,7 @@ export class CoinGecko {
         for (const idChunk of chunkSafe(ids, 250)) {
             const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
             if (e !== null || !r.ok) {
-                void consumeBody(r);
+                if (r) void consumeBody(r);
                 break;
             }
 
