@@ -4,7 +4,7 @@ import { URLSearchParams } from 'url';
 import { 
     WikipediaSearch,
     WikipediaSummary
-} from './Wikipedia.d';
+} from './types/Wikipedia';
 
 /**
  * Search wikipedia using a given query. Returns an empty { pages: [...] } array if no results were found

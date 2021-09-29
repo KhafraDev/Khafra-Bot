@@ -1,5 +1,5 @@
 import { fetch, Response } from 'undici';
-import { HereResult } from './HereWeather.d';
+import { HereResult } from './types/HereWeather';
 
 const consumeBody = async (res: Response) => {
     if (res.body === null) return;

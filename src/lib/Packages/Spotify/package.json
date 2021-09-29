@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Search Spotify for songs!",
   "main": "./Spotify.js",
-  "types": "./Spotify.d.ts",
+  "types": "./types/Spotify.d.ts",
   "type": "module",
   "repository": {
     "type": "git",

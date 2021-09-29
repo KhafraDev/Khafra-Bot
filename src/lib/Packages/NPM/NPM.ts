@@ -1,5 +1,5 @@
 import { fetch } from 'undici';
-import { INPMPackage } from './NPM.d';
+import { INPMPackage } from './types/NPM';
 
 export const npm = async (package_name: string) => {
     try {

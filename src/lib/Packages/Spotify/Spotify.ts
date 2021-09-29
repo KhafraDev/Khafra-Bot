@@ -1,6 +1,6 @@
 import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
-import { SpotifyResult } from './Spotify.d';
+import { SpotifyResult } from './types/Spotify';
 
 type Token = { 
     access_token: string;

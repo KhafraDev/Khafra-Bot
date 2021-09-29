@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Get the weather from Here.com!",
   "main": "./HereWeather.js",
-  "types": "./HereWeather.d.ts",
+  "types": "./types/HereWeather.d.ts",
   "type": "module",
   "repository": {
     "type": "git",

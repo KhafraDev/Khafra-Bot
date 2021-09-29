@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Search NPM for a package.",
   "main": "./NPM.js",
-  "types": "./NPM.d.ts",
+  "types": "./types/NPM.d.ts",
   "type": "module",
   "repository": {
     "type": "git",

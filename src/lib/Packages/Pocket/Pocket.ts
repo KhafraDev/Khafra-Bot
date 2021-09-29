@@ -1,6 +1,6 @@
 import { fetch, Headers } from 'undici';
 import crypto from 'crypto';
-import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './Pocket.d';
+import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
     'x-limit-user-limit':     -1,   // Current rate limit enforced per user

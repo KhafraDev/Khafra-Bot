@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Manage a user's articles (add and retrieve) and authenticate with Pocket OAuth!",
   "main": "./Pocket.js",
-  "types": "./Pocket.d.ts",
+  "types": "./types/Pocket.d.ts",
   "type": "module",
   "repository": {
     "type": "git",

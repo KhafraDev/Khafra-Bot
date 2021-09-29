@@ -57,6 +57,10 @@ export class kInteraction extends Interactions {
         const name = interaction.options.getString('voice', true);
         const text = interaction.options.getString('text', true);
 
+        if (text.length < 5) {
+            return `❌ Minimum of 5 characters required!`;
+        }
+
         const key = keys.find(k => k.toLowerCase() === subcommand)!;
         const obj = characters[key].find(n => n.name === name)!;
 

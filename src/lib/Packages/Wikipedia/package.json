@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Search Wikipedia.",
   "main": "./Wikipedia.js",
-  "types": "./Wikipedia.d.ts",
+  "types": "./types/Wikipedia.d.ts",
   "type": "module",
   "repository": {
     "type": "git",

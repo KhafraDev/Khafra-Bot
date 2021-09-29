@@ -5,5 +5,5 @@
   },
   "include": [
       "./*.ts"
-  ]
+, "types/Wikipedia.d.ts"  ]
 }
