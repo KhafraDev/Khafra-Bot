@@ -1,5 +1,12 @@
-import { fetch } from 'undici';
+import { fetch, Response } from 'undici';
 import { NounSearch } from './types/Noun.d';
+
+const consumeBody = async (res: Response) => {
+    if (res.body === null) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for await (const _chunk of res.body) {}
+}
 
 export const theNounProjectSearch = async (q: string): Promise<NounSearch | null> => {
     const res = await fetch(`https://thenounproject.com/search/json/icon/?q=${encodeURIComponent(q)}&page=1&limit=10&raw_html=false`, {
@@ -13,7 +20,11 @@ export const theNounProjectSearch = async (q: string): Promise<NounSearch | null
         }
     });
     
-    if (!res.ok) return null;
+    if (!res.ok) {
+        void consumeBody(res);
+
+        return null
+    }
     
     return await res.json() as NounSearch;
 }

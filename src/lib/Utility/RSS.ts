@@ -97,9 +97,9 @@ export class RSSReader<T extends unknown> {
         const r = await this.forceFetch();
         const xml = await r?.text();
 
-        const validXML = validate(xml!);
+        const validXML = xml ? validate(xml) : false;
         if (typeof xml !== 'string' || validXML !== true) {
-            if (validXML !== true) {
+            if (validXML !== true && validXML !== false) {
                 const { line, msg, code } = validXML.err;
                 console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
             }

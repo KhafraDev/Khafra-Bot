@@ -1,5 +1,6 @@
 import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
+import { consumeBody } from '../Utility/FetchUtils.js';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 
@@ -50,6 +51,8 @@ const hatebin = async (text: string) => {
     });
 
     if (r.ok) return `https://hatebin.com/${(await r.text()).trim()}`;
+
+    void consumeBody(r);
 }
 
 /**
@@ -67,7 +70,9 @@ const sourcebin = async (text: string) => {
     if (r.ok) {
         const j = await r.json() as ISourcebin;
         return `https://sourceb.in/${j.key}`;
-    } 
+    }
+
+    void consumeBody(r);
 }
 
 /**
@@ -83,7 +88,9 @@ const nomsy = async (text: string) => {
     if (r.ok) {
         const j = await r.json() as HasteServer;
         return `https://paste.nomsy.net/${j.key}`;
-    } 
+    }
+
+    void consumeBody(r);
 }
 
 /**
@@ -105,6 +112,8 @@ const pastegg = async (text: string) => {
         if (j.status === 'success')
             return `https://paste.gg/anonymous/${j.result.id}`;
     }
+
+    void consumeBody(r);
 }
 
 /**
@@ -125,6 +134,8 @@ const ghostbin = async (text: string) => {
 
     if (r.status === 303)
         return new URL(r.headers.get('location')!, 'https://ghostbin.co').toString();
+
+    void consumeBody(r);
 }
 
 /**

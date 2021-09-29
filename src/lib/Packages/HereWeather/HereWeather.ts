@@ -1,5 +1,12 @@
-import { fetch } from 'undici';
+import { fetch, Response } from 'undici';
 import { HereResult } from './HereWeather.d';
+
+const consumeBody = async (res: Response) => {
+    if (res.body === null) return;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for await (const _chunk of res.body) {}
+}
 
 export const weather = async (q: string) => {
     q = encodeURIComponent(q);
@@ -10,6 +17,7 @@ export const weather = async (q: string) => {
     if (res.status === 200) {
         return res.json() as Promise<HereResult>;
     } else {
+        void consumeBody(res);
         return res;
     }
 }

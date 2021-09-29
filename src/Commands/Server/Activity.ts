@@ -9,6 +9,7 @@ import { hyperlink } from '@discordjs/builders';
 import { MessageActionRow, Permissions } from 'discord.js';
 import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
 import { fetch } from 'undici';
+import { consumeBody } from '../../lib/Utility/FetchUtils.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -94,6 +95,7 @@ export class kCommand extends Command {
 
         if (fetchError !== null || !r.ok) {
             if (!r.ok) {
+                void consumeBody(r);
                 return this.Embed.fail(`Received a ${r.status} status trying to create the invite!`);
             } else {
                 return this.Embed.fail(`An error occurred trying to create the invite! :(`);

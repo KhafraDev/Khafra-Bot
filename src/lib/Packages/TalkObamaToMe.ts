@@ -1,5 +1,6 @@
 import { fetch } from 'undici';
 import { URL } from 'url';
+import { consumeBody } from '../Utility/FetchUtils.js';
 
 export const talkObamaToMe = async (q: string) => {
     q = encodeURIComponent(q);
@@ -18,6 +19,8 @@ export const talkObamaToMe = async (q: string) => {
 
     const location = res.headers.get('Location')!;
 	const u = new URL(location).searchParams.get('speech_key');
+
+    void consumeBody(res);
 
 	return `http://talkobamato.me/synth/output/${u}/obama.mp4`;
 }

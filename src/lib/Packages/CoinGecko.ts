@@ -2,6 +2,7 @@ import { fetch } from 'undici';
 import { once } from '../Utility/Memoize.js';
 import { dontThrow } from '../Utility/Don\'tThrow.js';
 import { chunkSafe } from '../Utility/Array.js';
+import { consumeBody } from '../Utility/FetchUtils.js';
 
 interface CoinGeckoRes {
     id: string,
@@ -63,7 +64,8 @@ export class CoinGecko {
 
     static async ping() {
         const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/ping`));
-        
+        void consumeBody(r);
+
         return e === null && r.ok;
     }
 
@@ -82,7 +84,10 @@ export class CoinGecko {
 
         for (const idChunk of chunkSafe(ids, 250)) {
             const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
-            if (e !== null || !r.ok) break;
+            if (e !== null || !r.ok) {
+                void consumeBody(r);
+                break;
+            }
 
             const j = await r.json() as CoinGeckoRes[];
 

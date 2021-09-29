@@ -1,5 +1,6 @@
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
+import { consumeBody } from '../Utility/FetchUtils.js';
 
 interface IAPOD {
     copyright?: string
@@ -42,7 +43,10 @@ export const NASAGetRandom = async () => {
         ratelimit.firstRequest = -1;
     }
 
-    if (!r.ok) return cache.shift() ?? null;
+    if (!r.ok) {
+        void consumeBody(r);
+        return cache.shift() ?? null;
+    }
 
     const j = await r.json() as IAPOD[];
     
