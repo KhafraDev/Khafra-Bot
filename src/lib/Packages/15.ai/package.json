@@ -1,0 +1,21 @@
+{
+  "name": "@khaf/15.ai",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "15.ai api wrapper",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KhafraDev/Khafra-Bot.git"
+  },
+  "author": "Khafra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KhafraDev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/KhafraDev/Khafra-Bot#readme"
+}

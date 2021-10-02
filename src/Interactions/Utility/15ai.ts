@@ -4,7 +4,7 @@ import { CommandInteraction } from 'discord.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { join } from 'path';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
-import { FifteenDotAI } from '../../lib/Packages/15.ai/index.js';
+import { FifteenDotAI } from '@khaf/15.ai';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 
