@@ -82,8 +82,8 @@ export class kInteraction extends Interactions {
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
-            const confidence = `${voice.scores[i].toFixed(2)}%`;
-            embed.description += `${hyperlink(`Option ${i + 1}`, url)} [Confidence: ${confidence}]\n`;
+            const confidence = `${(voice.scores[i] * 100).toFixed(2)}%`;
+            embed.description += `${url} [Confidence: ${confidence}]\n`;
         }
 
         return embed;

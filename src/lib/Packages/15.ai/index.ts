@@ -14,13 +14,16 @@ interface Batch {
 export class FifteenDotAI {
     static async getWav(
         character: string,
-        text: string,
+        content: string,
         emotion: string
     ) {
+        const ac = new AbortController();
+        const timeout = setTimeout(() => ac.abort(), 60_000);
+
         const {
             body,
             statusCode
-        } = await request('https://api.15.ai/app/getAudioFile4', {
+        } = await request('https://api.15.ai/app/getAudioFile5', {
             method: 'POST',
             headers: {
                 'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot, v1.10)',
@@ -30,11 +33,14 @@ export class FifteenDotAI {
             },
             body: JSON.stringify({
                 character,
-                text,
+                text: content,
                 emotion
             }),
-            headersTimeout: 1000 * 60 * 2
+            headersTimeout: 1000 * 60 * 2,
+            signal: ac.signal
         });
+
+        clearTimeout(timeout);
         
         if (statusCode === 200) {
             return await json(body) as Batch;

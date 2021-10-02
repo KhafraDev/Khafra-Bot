@@ -8,6 +8,6 @@ interface Batch {
     dict_exists: string[][];
 }
 export declare class FifteenDotAI {
-    static getWav(character: string, text: string): Promise<Batch | null>;
+    static getWav(character: string, content: string, emotion: string): Promise<Batch | null>;
 }
 export {};
