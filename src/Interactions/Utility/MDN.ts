@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js';
-import { fetchMDN } from 'search-mdn';
+import { fetchMDN } from '@khaf/mdn';
 import { client } from '../../index.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
 import { Interactions } from '../../Structures/Interaction.js';

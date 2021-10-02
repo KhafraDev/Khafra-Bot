@@ -15,7 +15,6 @@
     "ms": "^3.0.0-canary.1",
     "pg": "^8.7.1",
     "redis": "^3.1.2",
-    "search-mdn": "^1.0.0",
     "twemoji-parser": "^13.1.0",
     "undici": "^4.7.0"
   },
@@ -67,6 +66,7 @@
     "src/lib/Packages/NPM",
     "src/lib/Packages/Pocket",
     "src/lib/Packages/Vaccines",
-    "src/lib/Packages/15.ai"
+    "src/lib/Packages/15.ai",
+    "src\\lib\\Packages\\MDN"
   ]
 }
