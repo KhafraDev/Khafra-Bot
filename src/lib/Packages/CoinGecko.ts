@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { once } from '../Utility/Memoize.js';
 import { dontThrow } from '../Utility/Don\'tThrow.js';
 import { chunkSafe } from '../Utility/Array.js';
@@ -38,35 +38,21 @@ interface CoinGeckoRes {
 }
 
 export class CoinGecko {
-    static cache = new Map<string, CoinGeckoRes>();
-    static cache2: { id: string, name: string, symbol: string }[] = [];
-
+    public static cache = new Map<string, CoinGeckoRes>();
     private static last: number;
-    private static int: NodeJS.Timer;
-
-    static interval = once(() => {
-        if (!CoinGecko.int) {
-            CoinGecko.int = setInterval(
-                () => void dontThrow(CoinGecko.fetchAll()),
-                60 * 1000 * 30
-            ).unref();
-        }
-    });
 
     static list = once(async () => {
-        const r = await fetch('https://api.coingecko.com/api/v3/coins/list?include_platform=false');
-        const j = await r.json() as typeof CoinGecko.cache2;
-
-        CoinGecko.cache2.push(...j);
+        const r = await request('https://api.coingecko.com/api/v3/coins/list?include_platform=false');
+        const j = await r.body.json() as { id: string, name: string, symbol: string }[];
 
         return j;
     });
 
     static async ping() {
-        const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/ping`));
-        void consumeBody(r);
+        const [e, r] = await dontThrow(request(`https://api.coingecko.com/api/v3/ping`));
+        await consumeBody(r);
 
-        return e === null && r.ok;
+        return e === null && r.statusCode === 200;
     }
 
     static async fetchAll() {
@@ -83,39 +69,35 @@ export class CoinGecko {
         const ids = list.map(i => i.id);
 
         for (const idChunk of chunkSafe(ids, 250)) {
-            const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
-            if (e !== null || !r.ok) {
+            const [e, r] = await dontThrow(request(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
+            if (e !== null || r.statusCode !== 200) {
                 if (r) void consumeBody(r);
                 break;
             }
 
-            const j = await r.json() as CoinGeckoRes[];
+            const j = await r.body.json() as CoinGeckoRes[];
 
             for (const currency of j) {
-                if (CoinGecko.cache.has(currency.id)) {
-                    CoinGecko.cache.delete(currency.id);
-                }
-
                 CoinGecko.cache.set(currency.id, currency);
             }
         }
-
-        CoinGecko.interval();
 
         return true;
     }
 
     static async get(query: string, cb = () => {}) {
-        if (CoinGecko.cache2.length === 0 || CoinGecko.cache.size === 0) {
+        if (CoinGecko.cache.size === 0) {
             cb();
             const success = await CoinGecko.fetchAll();
             if (success !== true) return;
         }
 
+        const list = await CoinGecko.list();
+
         const found: CoinGeckoRes[] = [];
         const q = query.toLowerCase();
 
-        for (const { id, name, symbol } of CoinGecko.cache2) {
+        for (const { id, name, symbol } of list) {
             if (id === q || symbol === q || name.toLowerCase() === q) {
                 found.push(CoinGecko.cache.get(id)!);
             }
@@ -124,3 +106,8 @@ export class CoinGecko {
         return found;
     }
 }
+
+setInterval(
+    () => void dontThrow(CoinGecko.fetchAll()),
+    60 * 1000 * 30
+).unref();
