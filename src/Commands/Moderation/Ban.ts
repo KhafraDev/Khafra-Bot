@@ -1,6 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import ms, { StringValue } from 'ms';
+import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -61,7 +61,11 @@ export class kCommand extends Command {
                 clear = time;
             }
         } else if (typeof args[1] === 'string') {
-            const time = Math.ceil(ms(args[1] as StringValue) / 86_400_000); // ms -> days
+            // I know I'll forget this in the future, so:
+            // this uses a trick that when `null` is coerced to a number,
+            // by performing a math op on it, it coerces to 0.
+            // If it couldn't be parsed, the `time` will default to 0.
+            const time = Math.ceil(parseStrToMs(args[1])! / 86_400_000); // ms -> days
 
             if (validateNumber(time) && range.isInRange(time)) {
                 clear = time;

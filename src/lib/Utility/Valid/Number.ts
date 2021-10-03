@@ -4,13 +4,15 @@ type Disallow =
     | 'zero'
     | 'float'
     | 'unsafe'
+    | 'nan'
 
 const strictDefaultChecks: Disallow[] = [
     'infinity',
     'negative',
     'zero',
     'float',
-    'unsafe'
+    'unsafe',
+    'nan'
 ];
 
 /**
@@ -19,8 +21,9 @@ const strictDefaultChecks: Disallow[] = [
  * @param num Number to check
  * @param disallow array of checks, defaults to all
  */
-export const validateNumber = (num: number, disallow: Disallow[] = strictDefaultChecks) => {
-    return !(
+export const validateNumber = (num: unknown, disallow: Disallow[] = strictDefaultChecks): num is number => {
+    return typeof num === 'number' && !(
+        (disallow.includes('nan') && Number.isNaN(num)) || // disallow NaN
         (disallow.includes('infinity') && !Number.isFinite(num)) || // +/- infinity disallowed
         (disallow.includes('negative') && num < 0) || // negative numbers disallowed
         (disallow.includes('zero') && num === 0) || // zero disallowed

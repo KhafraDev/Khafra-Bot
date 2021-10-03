@@ -1,7 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import ms, { StringValue } from 'ms';
+import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Range.js';
@@ -35,8 +35,8 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         const user = await getMentions(message, 'users');
-        const clear = typeof args[1] === 'string' ? Math.ceil(ms(args[1] as StringValue) / 86400000) : 7;
-        const reason = args.slice(args[1] && ms(args[1] as StringValue) ? 2 : 1).join(' ');
+        const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
+        const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {

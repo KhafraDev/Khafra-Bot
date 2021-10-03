@@ -1,14 +1,17 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import ms, { StringValue } from 'ms';
+import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isExplicitText, isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
+import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Range.js';
 
-const MAX_SECS = ms('6h') / 1000;
+const MAX_SECS = parseStrToMs('6h')! / 1000;
+const range = Range(0, MAX_SECS, true);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -42,9 +45,9 @@ export class kCommand extends Command {
         // if a channel is mentioned in the first argument, 
         // seconds must be the second argument + vice versa.
         // by default, reset the ratelimit (0s).
-        const secs = ms((channelFirst ? args[1] : args[0]) as StringValue ?? '0s') / 1000;
+        const secs = parseStrToMs((channelFirst ? args[1] : args[0]) ?? '0s')! / 1000;
 
-        if (typeof secs !== 'number' || secs < 0 || secs > MAX_SECS)
+        if (!validateNumber(secs) || !range.isInRange(secs))
             return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
