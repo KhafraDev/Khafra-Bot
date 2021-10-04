@@ -1,4 +1,5 @@
 import { fetch } from 'undici';
+import { dontThrow } from '../Utility/Don\'tThrow';
 
 interface JHURes {
     type: 'FeatureCollection'
@@ -99,9 +100,10 @@ const fetchCOVIDStats = async () => {
 }
 
 export const start = async () => {
-    try { await fetchCOVIDStats() } catch {}
-    return setInterval(async () => {
-        try { await fetchCOVIDStats() } catch {}
+    await dontThrow(fetchCOVIDStats());
+    
+    return setInterval(() => {
+        void dontThrow(fetchCOVIDStats())
     }, 60 * 1000 * 10).unref();
 }
 

@@ -44,5 +44,5 @@ const fetchEntries = async () => {
 
 export const fetchHN = once(async () => {
     await dontThrow(fetchEntries());
-    return setInterval(() => dontThrow(fetchEntries()), 60 * 1000 * 10).unref();
+    return setInterval(() => void dontThrow(fetchEntries()), 60 * 1000 * 10).unref();
 });

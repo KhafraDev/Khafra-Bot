@@ -127,7 +127,7 @@ export class RSSReader<T extends unknown> {
                 if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 
                 this.#interval = setInterval(
-                    this.parse.bind(this), 
+                    () => void this.parse(), 
                     this.timeout
                 ).unref();
             } else if (
@@ -148,7 +148,7 @@ export class RSSReader<T extends unknown> {
                 } 
 
                 this.#interval = setInterval(
-                    this.parse.bind(this),
+                    () => void this.parse(),
                     time
                 ).unref();
             }
@@ -175,7 +175,7 @@ export class RSSReader<T extends unknown> {
 
         await this.parse();
         this.#interval = setInterval(
-            this.parse.bind(this),
+            () => void this.parse(),
             this.timeout
         ).unref();
     }

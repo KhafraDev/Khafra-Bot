@@ -6,22 +6,22 @@ import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
-import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { time } from '@discordjs/builders';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { decodeXML } from 'entities';
+import { readFileSync } from 'fs';
 
 // after 90 days of inactivity, Google deactives the key.
 // to prevent this, once a day the bot will use the api
-setInterval(async () => {
-    const file = await readFile(join(assets, 'Hangman/countries.txt'), 'utf-8');
+const file = readFileSync(join(assets, 'Hangman/countries.txt'), 'utf-8');
+setInterval(() => {
     const lines = file
         .split(/\n\r|\n|\r/g)
         .filter(l => !l.startsWith('#') && l.length > 0);
     const search = lines[Math.floor(Math.random() * lines.length)];
 
-    await dontThrow(YouTube([search]));
+    void dontThrow(YouTube([search]));
 }, 1000 * 60 * 60 * 24);
 
 function* format(items: YouTubeSearchResults, embed = Embed.success) {

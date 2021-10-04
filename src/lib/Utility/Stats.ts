@@ -19,13 +19,13 @@ export class Stats {
     }
 
     static write = once(() => {
-        setInterval(async () => {
+        setInterval(() => {
             const {
                 globalCommandsUsed,
                 globalMessages
             } = Stats.stats;
 
-            await writeFile(path, JSON.stringify({
+            void writeFile(path, JSON.stringify({
                 globalCommandsUsed: globalCommandsUsed + Stats.session,
                 globalMessages: globalMessages + Stats.messages
             } as typeof config));

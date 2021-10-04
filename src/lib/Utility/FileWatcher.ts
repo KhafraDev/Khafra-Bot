@@ -29,6 +29,7 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string) =
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     watch(path, async (event, filename) => {
         if (event !== 'change') return;
         if (base !== filename) return;
