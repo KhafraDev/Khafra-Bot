@@ -2,8 +2,9 @@ import { join } from 'path';
 import { mkdirSync, createWriteStream, WriteStream } from 'fs';
 import { inspect } from 'util';
 import { EOL } from 'os';
+import { assets } from '../lib/Utility/Constants/Path.js';
 
-const logPath = join(process.cwd(), 'assets/Logger');
+const logPath = join(assets, 'Logger');
 mkdirSync(logPath, { recursive: true }); // make all missing directories
 
 export class Logger {

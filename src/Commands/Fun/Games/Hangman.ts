@@ -9,11 +9,12 @@ import { readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { readdirSync } from 'fs';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { assets } from '../../../lib/Utility/Constants/Path.js';
 
-const assets = join(process.cwd(), 'assets/Hangman');
+const assetsPath = join(assets, 'Hangman');
 
 const games = new Set<Snowflake>();
-const listsByName = readdirSync(assets).map(f => f.replace(extname(f), ''));
+const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
 const lists = new Map<string, string[]>();
 
 const images = [
@@ -55,7 +56,7 @@ export class kCommand extends Command {
             words = lists.get(listName)!;
         } else {
             if (listsByName.includes(listName)) {
-                const path = join(assets, `${listName}.txt`);
+                const path = join(assetsPath, `${listName}.txt`);
                 const text = await readFile(path, 'utf-8');
 
                 words = text

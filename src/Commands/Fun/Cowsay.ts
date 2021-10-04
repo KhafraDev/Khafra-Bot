@@ -3,8 +3,9 @@ import { Message } from 'discord.js';
 import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { assets } from '../../lib/Utility/Constants/Path.js';
 
-const dir = join(process.cwd(), 'assets/Cowsay');
+const dir = join(assets, 'Cowsay');
 const start = `
  ________________________________________
 `;

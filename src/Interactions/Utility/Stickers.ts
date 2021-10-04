@@ -4,7 +4,7 @@ import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
 import { client } from '../../index.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { readFile } from 'fs/promises';
-import { join } from 'path/posix';
+import { join } from 'path';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 
 const stickers: Sticker[] = [];

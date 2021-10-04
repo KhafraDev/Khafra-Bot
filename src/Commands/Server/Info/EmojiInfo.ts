@@ -5,11 +5,14 @@ import { plural } from '../../../lib/Utility/String.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { Message } from '../../../lib/types/Discord.js.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { assets } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
-const Emojis = createFileWatcher({} as typeof import('../../../../assets/JSON/Emojis.json'), join(cwd, 'assets/JSON/Emojis.json'));
+const Emojis = createFileWatcher(
+    {} as typeof import('../../../../assets/JSON/Emojis.json'),
+    join(assets, 'JSON/Emojis.json')
+);
 
 interface BaseUnicodeEmoji {
     names: string[]

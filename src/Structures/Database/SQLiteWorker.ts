@@ -1,6 +1,7 @@
 import { parentPort } from 'worker_threads';
 import BetterSQLite3 from 'better-sqlite3';
-import { join } from 'path/posix';
+import { join } from 'path';
+import { assets } from '../../lib/Utility/Constants/Path.js';
 
 export interface Opts {
     run?: boolean,
@@ -13,8 +14,8 @@ interface Params {
     opts: Opts | undefined
 }
 
-const assets = join(process.cwd(), 'assets/khafrabot.db');
-const db = BetterSQLite3(assets);
+const assetsPath = join(assets, 'khafrabot.db');
+const db = BetterSQLite3(assetsPath);
 
 db.pragma('journal_mode = WAL');
 

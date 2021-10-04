@@ -4,11 +4,14 @@ import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { assets } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
 
-const Trump = createFileWatcher([] as typeof import('../../../../assets/JSON/Trump.json'), join(cwd, 'assets/JSON/Trump.json'));
+const Trump = createFileWatcher(
+    [] as typeof import('../../../../assets/JSON/Trump.json'),
+    join(assets, 'JSON/Trump.json')
+);
 
 @RegisterCommand
 export class kCommand extends Command {    

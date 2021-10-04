@@ -9,9 +9,10 @@ import { Components, disableAll } from '../../lib/Utility/Constants/Components.j
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { plural } from '../../lib/Utility/String.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { assets } from '../../lib/Utility/Constants/Path.js';
 
-const assets = join(process.cwd(), 'assets/Hangman');
-const listsByName = readdirSync(assets).map(f => f.replace(extname(f), ''));
+const assetsPath = join(assets, 'Hangman');
+const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
 const cachedLists = new Map<string, string[]>();
 const currentGames = new Set<Snowflake>();
 const images = [
@@ -184,7 +185,7 @@ export class kInteraction extends Interactions {
         if (cachedLists.has(listName)) {
             words = cachedLists.get(listName)!;
         } else {
-            const path = join(assets, `${listName}.txt`);
+            const path = join(assetsPath, `${listName}.txt`);
             const text = await readFile(path, 'utf-8');
 
             words = text

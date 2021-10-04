@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import { join, resolve } from 'path';
 import { readFile } from 'fs/promises';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
+import { assets } from '../../lib/Utility/Constants/Path.js';
 
 type Message = { 
     sql: string
@@ -79,7 +80,7 @@ const spawn = () => {
 
 cpus().forEach(spawn);
 
-const sql = await KhafraClient.walk(join(process.cwd(), 'assets/SQL/SQLite'), p => p.endsWith('.sql'));
+const sql = await KhafraClient.walk(join(assets, 'SQL/SQLite'), p => p.endsWith('.sql'));
 
 for (const file of sql) {
     const text = await readFile(file, 'utf-8');

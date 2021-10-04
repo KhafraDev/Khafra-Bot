@@ -1,10 +1,10 @@
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
-import { cwd } from './Constants/Path.js';
+import { assets } from './Constants/Path.js';
 import { createFileWatcher } from './FileWatcher.js';
 import { once } from './Memoize.js';
 
-const path = join(cwd, 'assets/JSON/stats.json');
+const path = join(assets, 'JSON/stats.json');
 const config = createFileWatcher({} as typeof import('../../../assets/JSON/stats.json'), path);
 
 export class Stats {

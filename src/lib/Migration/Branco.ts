@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { asyncQuery } from '../../Structures/Database/SQLite.js';
+import { assets } from '../Utility/Constants/Path.js';
 
 type Ret = { 'EXISTS(SELECT 1 from kbBranco)': number };
 interface Comic {
@@ -9,7 +10,7 @@ interface Comic {
     link: string
 }
 
-const PATH = join(process.cwd(), 'assets/JSON/Branco.json');
+const PATH = join(assets, 'JSON/Branco.json');
 
 export const migrateBranco = async () => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbBranco);`);
