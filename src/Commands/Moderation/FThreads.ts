@@ -9,9 +9,9 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 const threadPerms = new Permissions([
     Permissions.FLAGS.MANAGE_THREADS,
-    Permissions.FLAGS.USE_PUBLIC_THREADS,
-    Permissions.FLAGS.USE_PRIVATE_THREADS
-    // TODO(@KhafraDev): add send messages in thread permission when released
+    Permissions.FLAGS.CREATE_PUBLIC_THREADS,
+    Permissions.FLAGS.CREATE_PRIVATE_THREADS,
+    Permissions.FLAGS.SEND_MESSAGES_IN_THREADS
 ]);
 
 @RegisterCommand
