@@ -35,7 +35,7 @@ export class kCommand extends Command {
             return this.Embed.fail('Role has been deleted.');
         }
 
-        return this.Embed.success()
+        const embed = this.Embed.success()
             .setDescription(`
             ${role}
             
@@ -49,5 +49,11 @@ export class kCommand extends Command {
             .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
             .addField('**Position:**', `${role.position}`, true)
             .addField('**Managed:**', role.managed ? 'Yes' : 'No');
+
+        if (role.icon) {
+            embed.setImage(role.iconURL()!);
+        }
+        
+        return embed;
     }
 }

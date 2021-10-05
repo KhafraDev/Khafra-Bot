@@ -83,7 +83,7 @@ export class kInteraction extends Interactions {
                 )
                 .setFooter('For general user info use the /user command!');
         } else if (option instanceof Role) {
-            return Embed.success()
+            const embed = Embed.success()
                 .setDescription(`
                 ${option}
                 
@@ -97,6 +97,12 @@ export class kInteraction extends Interactions {
                 .addField(bold('Hoisted:'), option.hoist ? 'Yes' : 'No', true)
                 .addField(bold('Position:'), `${option.position}`, true)
                 .addField(bold('Managed:'), option.managed ? 'Yes' : 'No');
+
+            if (option.icon) {
+                embed.setImage(option.iconURL()!);
+            }
+
+            return embed;
         } else if (option instanceof User) {
             const member = option.equals(interaction.user) 
                 ? interaction.member
