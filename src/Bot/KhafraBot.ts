@@ -11,6 +11,7 @@ import { join, resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { performance } from 'perf_hooks';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -86,12 +87,15 @@ export class KhafraClient extends Client {
 
         if (loaded.length !== 0) {
             const scs = loaded.map(i => i.data.toJSON());
-
-            // debugging in guild
-            await rest.put(
-                Routes.applicationGuildCommands(config.botId, config.guildId),
-                { body: scs }
-            );
+            const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+            
+            if (processArgs.get('dev') === true) {
+                // debugging in guild
+                await rest.put(
+                    Routes.applicationGuildCommands(config.botId, config.guildId),
+                    { body: scs }
+                );
+            }
 
             // globally
             await rest.put(
