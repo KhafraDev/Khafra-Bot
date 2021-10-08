@@ -1,6 +1,6 @@
 import { Interactions } from '../../Structures/Interaction.js';
 import { bold, hyperlink, inlineCode, italic, SlashCommandBuilder, underscore } from '@discordjs/builders';
-import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { thisDoesNotExist, DNE } from '../../lib/Packages/ThisDoesNotExist.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { thisWordDoesNotExist } from '../../lib/Packages/ThisWordDoesNotExist.js';
@@ -59,10 +59,7 @@ export class kInteraction extends Interactions {
                 return `❌ Not yet implemented or an error occurred!`;
             }
 
-            return {
-                embeds: image.embeds,
-                files: image.files,
-            } as InteractionReplyOptions;
+            return image;
         }
     }
 } 

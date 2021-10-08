@@ -21,8 +21,7 @@ export const thisDoesNotExist = async (type: DNE) => {
     const url = formatURL.get(type)!(type);
 
     const res = await fetch(url);
-    const buffer = Buffer.from(await res.arrayBuffer());
-    const attach = new MessageAttachment(buffer, `t${type}dne.jpeg`);
+    const attach = new MessageAttachment(await res.blob(), `t${type}dne.jpeg`);
 
     return {
         embeds: [

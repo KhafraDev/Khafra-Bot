@@ -30,8 +30,7 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
         }
 
-        const qr = Buffer.from(await r.arrayBuffer());
-        const attachment = new MessageAttachment(qr, 'qr.png');
+        const attachment = new MessageAttachment(await r.blob(), 'qr.png');
 
         return {
             files: [attachment]
