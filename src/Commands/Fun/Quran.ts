@@ -4,6 +4,7 @@ import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
+import { inlineCode } from '@discordjs/builders';
 
 const Titles = new Map<string, string>();
 const Verses = new Map<string, { book: string, verse: string, content: string}>();
@@ -54,7 +55,7 @@ export class kCommand extends Command {
             const title = Titles.get(chapter)!;
 
             return this.Embed.success(`
-            ${chapter}:${verse} - \`\`${excerpt.content}\`\`
+            ${chapter}:${verse} - ${inlineCode(excerpt.content)}
             `).setTitle(title);
         }
 
@@ -69,7 +70,7 @@ export class kCommand extends Command {
         const title = Titles.get(`${Number(excerpt.book)}`)!;
 
         return this.Embed.success(`
-        ${b}:${v} \`\`${excerpt.content}\`\`
+        ${b}:${v} ${inlineCode(excerpt.content)}
         `).setTitle(title);
     }
 }

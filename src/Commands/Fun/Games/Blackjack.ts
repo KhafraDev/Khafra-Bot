@@ -1,3 +1,4 @@
+import { bold, inlineCode } from '@discordjs/builders';
 import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { shuffle } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
@@ -68,12 +69,12 @@ export class kCommand extends Command {
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
             return this.Embed.success(desc)
                 .addField(
-                    `**Dealer${dealerTotal}**`, 
-                    dealerCards.map(c => `\`\`${getName(c[0])} of ${c[1]}\`\``).join(', ')
+                    bold(`Dealer${dealerTotal}`), 
+                    dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
                 )
                 .addField(
-                    `**Player (${getTotal(score.sucker)}):**`, 
-                    score.sucker.map(c => `\`\`${getName(c[0])} of ${c[1]}\`\``).join(', ')
+                    bold(`Player (${getTotal(score.sucker)}):`), 
+                    score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
                 );
         }
 

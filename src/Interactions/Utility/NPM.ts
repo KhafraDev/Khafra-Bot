@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, SlashCommandBuilder, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 
@@ -44,15 +44,15 @@ export class kInteraction extends Interactions {
             .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
-            \`\`${p.description.slice(0, 2000)}\`\`
+            ${inlineCode(p.description.slice(0, 2000))}
             `)
-            .addField('**Version:**', dist.version, true)
-            .addField('**License:**', dist.license, true)
-            .addField('**Author:**', p.author?.name ?? 'N/A', true)
-            .addField('**Last Modified:**', time(new Date(p.time?.modified ?? Date.now()), 'f'), true)
-            .addField('**Published:**', time(new Date(p.time?.created ?? Date.now())), true)
-            .addField('**Homepage:**', p.homepage ?? 'None', true)
-            .addField('**Maintainers:**', maintainers, false)
+            .addField(bold('Version:'), dist.version, true)
+            .addField(bold('License:'), dist.license, true)
+            .addField(bold('Author:'), p.author?.name ?? 'N/A', true)
+            .addField(bold('Last Modified:'), time(new Date(p.time?.modified ?? Date.now()), 'f'), true)
+            .addField(bold('Published:'), time(new Date(p.time?.created ?? Date.now())), true)
+            .addField(bold('Homepage:'), p.homepage ?? 'None', true)
+            .addField(bold('Maintainers:'), maintainers, false)
     
     }
 } 

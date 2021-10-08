@@ -5,6 +5,7 @@ import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { bold } from '@discordjs/builders';
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
@@ -26,12 +27,12 @@ export class kCommand extends Command {
 
         return Embed.success()
             .setDescription(`
-            **Dependencies:**
+            ${bold('Dependencies')}
             ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}
             `)
-            .addField('**Memory**', `${memoryMB.toFixed(2)} MB`, false)
-            .addField(`**Khafra-Bot:**`, `v${pkg.version}`, true)
-            .addField('**Discord.js**', `v${version}`, true)
-            .addField('**NodeJS**', process.version, true);
+            .addField(bold('Memory'), `${memoryMB.toFixed(2)} MB`, false)
+            .addField(bold('Khafra-Bot:'), `v${pkg.version}`, true)
+            .addField(bold('Discord.js'), `v${version}`, true)
+            .addField(bold('NodeJS'), process.version, true);
     }
 }

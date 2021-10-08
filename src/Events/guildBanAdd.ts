@@ -6,10 +6,11 @@ import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { bans } from '../lib/Cache/Bans.js';
-import { time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
 import { client } from '../Structures/Database/Redis.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { ellipsis } from '../lib/Utility/String.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
@@ -63,11 +64,11 @@ export class kEvent extends Event<'guildBanAdd'> {
         await dontThrow(channel.send({ 
             embeds: [
                 Embed.success(`
-                **User:** ${user} (${user.tag})
-                **ID:** ${user.id}
-                **Staff:** ${ban?.member ?? 'Unknown'}
-                **Time:** ${time(new Date())}
-                **Reason:** \`\`${reasonStr.length > 1500 ? `${reasonStr.slice(1500)}...` : reasonStr}\`\`
+                ${bold('User:')} ${user} (${user.tag})
+                ${bold('ID:')} ${user.id}
+                ${bold('Staff:')} ${ban?.member ?? 'Unknown'}
+                ${bold('Time:')} ${time(new Date())}
+                ${bold('Reason:')} ${inlineCode(ellipsis(reasonStr, 1500))}
                 `).setTitle('Member Banned') 
             ] 
         }));

@@ -4,7 +4,7 @@ import { isCategory, isStage, isThread, isVoice, Message } from '../../lib/types
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { inlineCode } from '@discordjs/builders';
+import { bold, inlineCode, italic } from '@discordjs/builders';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 const threadPerms = new Permissions([
@@ -19,7 +19,7 @@ export class kCommand extends Command {
     constructor() {
         super(
             [
-                'By default, Discord threads are allowed to be created by *anyone*. This command disables all 3 default permissions.',
+                `By default, Discord threads are allowed to be created by ${italic('anyone')}. This command disables all 3 default permissions.`,
             ],
 			{
                 name: 'fthreads',
@@ -113,7 +113,7 @@ export class kCommand extends Command {
             .setAuthor(message.guild.name, message.guild.bannerURL() ?? undefined);
 
         if (success.length > 0)
-            embed.description = '**Success:**\n';
+            embed.description = `${bold('Success:')}\n`;
 
         while (success.length !== 0 && embed.description!.length < 2048) {
             const { value } = success.shift()!;
@@ -124,8 +124,8 @@ export class kCommand extends Command {
             embed.description += line;
         }
 
-        if (rejected.length > 0 && embed.description!.length + '\n\n**Rejected!**\n'.length <= 2048) 
-            embed.description += '\n**Rejected!**\n';
+        if (rejected.length > 0 && embed.description!.length + `\n\n${bold('Rejected!')}\n`.length <= 2048) 
+            embed.description += `\n${bold('Rejected!')}\n`;
 
         while (rejected.length !== 0 && embed.description!.length < 2048) {
             const { reason } = rejected.shift()! as { reason: Error };

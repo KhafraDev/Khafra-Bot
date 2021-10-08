@@ -4,6 +4,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { inlineCode } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -43,7 +44,7 @@ export class kCommand extends Command {
             if (!unbans.has(`${message.guild.id},${user.id}`))
                 unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch (e) {
-            return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
+            return this.Embed.fail(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
         return this.Embed.success(`${user} is now unbanned!`);

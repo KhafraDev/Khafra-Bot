@@ -9,6 +9,7 @@ import { isText, Message } from '../../lib/types/Discord.js.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
+import { inlineCode } from '@discordjs/builders';
 
 const perms = [
     Permissions.FLAGS.SEND_MESSAGES, 
@@ -65,8 +66,8 @@ export class kCommand extends Command {
             Set the react role channel to ${channel}!
 
             Use this command but specify the channel and the message to send along with it!
-            \`\`@role This role grants you absolutely nothing!\`\`
-            \`\`504431559252639773 This role grants you admin powers 😱\`\`
+            ${inlineCode('@role This role grants you absolutely nothing!')}
+            ${inlineCode('504431559252639773 This role grants you admin powers 😱')}
             `);
         }
 

@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { openLibrary } from '../../lib/Packages/Openlibrary.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { bold, hyperlink, inlineCode, italic } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -34,9 +35,9 @@ export class kCommand extends Command {
         const book = books.docs.shift()!;
 
         const embed = this.Embed.success(`
-        *${book.title}* by ${book.author_name.join(' and ')}
+        ${italic(book.title)} by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
-        ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: \`\`${book.isbn[0]}\`\`` : ''}
+        ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: ${inlineCode(book.isbn[0])}` : ''}
 
         [Download (PDF)](https://archive.org/download/${book.ia[0]}/${book.ia[0]}.pdf)
         [OpenLibrary](https://openlibrary.org${book.key}/)
@@ -44,7 +45,7 @@ export class kCommand extends Command {
         ${book.id_goodreads?.[0] ? `[GoodReads](https://www.goodreads.com/book/show/${book.id_goodreads[0]})` : ''}
         ${book.id_google?.[0] ? `[Google Books](https://books.google.com/books?id=${book.id_google[0]})` : ''}
         
-        **[Donate to the Internet Archive](https://archive.org/donate/?platform=ol)**
+        ${bold(hyperlink('Donate to the Internet Archive', 'https://archive.org/donate/'))}
         `);
         embed.description = embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n');
 

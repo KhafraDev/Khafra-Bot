@@ -9,6 +9,7 @@ import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Range } from '../../lib/Utility/Range.js';
+import { bold } from '@discordjs/builders';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const range = Range(0, MAX_SECS, true);
@@ -75,9 +76,9 @@ export class kCommand extends Command {
             return void channel.send({
                 embeds: [
                     this.Embed.success(`
-                    **Channel:** ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
-                    **Staff:** ${message.member}
-                    **Duration:** ${secs} second${plural(secs)}
+                    ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
+                    ${bold('Staff:')} ${message.member}
+                    ${bold('Duration:')} ${secs} second${plural(secs)}
                     `).setTitle('Channel Rate-Limited')
                 ]
             });

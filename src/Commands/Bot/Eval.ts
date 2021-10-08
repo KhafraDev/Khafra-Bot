@@ -1,3 +1,4 @@
+import { codeBlock } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
@@ -35,7 +36,7 @@ export class kCommand extends Command {
 
         const text = inspect(ret, true, 1, false);
         return this.Embed.success(`
-        \`\`\`js\n${text.slice(0, 2004).trim()}\`\`\`
+        ${codeBlock('js', text.slice(0, 2004).trim())}
         `);
     }
 }

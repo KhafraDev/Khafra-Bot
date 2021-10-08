@@ -8,6 +8,7 @@ import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { client } from '../../../Structures/Database/Redis.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { Message } from '../../../lib/types/Discord.js.js';
+import { inlineCode } from '@discordjs/builders';
 
 const range = Range(0, 32767, true); // small int
 
@@ -48,6 +49,6 @@ export class kCommand extends Command {
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
-        return this.Embed.success(`Set the max warning points limit to \`\`${newAmount.toLocaleString()}\`\`!`);
+        return this.Embed.success(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`);
     }
 }

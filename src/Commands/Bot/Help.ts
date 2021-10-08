@@ -54,9 +54,9 @@ export class kCommand extends Command {
             ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}
             `)
             .addFields(
-                { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-                { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-                { name: '**Rate-Limit:**', value: `${settings.ratelimit} seconds`, inline: true}
+                { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
+                { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+                { name: bold('Rate-Limit:'), value: `${settings.ratelimit} seconds`, inline: true}
             );
         }
 

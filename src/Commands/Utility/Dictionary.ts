@@ -2,6 +2,7 @@ import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { bold, italic } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -31,9 +32,9 @@ export class kCommand extends Command {
         }
 
         return this.Embed.success(`
-        **${word.word}** ${word.pronunciation ? `(${word.pronunciation})` : ''}
+        ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
         ${word.definitions
-            .map(w => `*${w.type}* - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
+            .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
             .join('\n')
             .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
         }

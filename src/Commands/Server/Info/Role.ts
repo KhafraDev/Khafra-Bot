@@ -2,7 +2,7 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { Role } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand
@@ -40,15 +40,15 @@ export class kCommand extends Command {
             ${role}
             
             Permissions: 
-            \`\`${role.permissions.toArray().join(', ')}\`\`
+            ${inlineCode(role.permissions.toArray().join(', '))}
             `)
-            .addField('**Name:**', role.name, true)
-            .addField('**Color:**', role.hexColor, true)
-            .addField('**Created:**', time(role.createdAt), true)
-            .addField('**Mentionable:**', role.mentionable ? 'Yes' : 'No', true)
-            .addField('**Hoisted:**', role.hoist ? 'Yes' : 'No', true)
-            .addField('**Position:**', `${role.position}`, true)
-            .addField('**Managed:**', role.managed ? 'Yes' : 'No');
+            .addField(bold('Name:'), role.name, true)
+            .addField(bold('Color:'), role.hexColor, true)
+            .addField(bold('Created:'), time(role.createdAt), true)
+            .addField(bold('Mentionable:'), role.mentionable ? 'Yes' : 'No', true)
+            .addField(bold('Hoisted:'), role.hoist ? 'Yes' : 'No', true)
+            .addField(bold('Position:'), `${role.position}`, true)
+            .addField(bold('Managed:'), role.managed ? 'Yes' : 'No');
 
         if (role.icon) {
             embed.setImage(role.iconURL()!);

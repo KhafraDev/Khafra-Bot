@@ -7,7 +7,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 
 interface WarningDel {
     id: Warning['id']
@@ -76,10 +76,10 @@ export class kCommand extends Command {
             return void channel.send({ 
                 embeds: [
                     this.Embed.success(`
-                    **Removed From:** ${member}
-                    **Staff:** ${message.member}
-                    **Points:** ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
-                    **ID:** ${inlineCode(args[1])}
+                    ${bold('Removed From:')} ${member}
+                    ${bold('Staff:')} ${message.member}
+                    ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
+                    ${bold('ID:')} ${inlineCode(args[1])}
                     `).setTitle('Warning Removed')
                 ]
             });

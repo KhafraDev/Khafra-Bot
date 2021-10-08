@@ -1,3 +1,4 @@
+import { italic } from '@discordjs/builders';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
@@ -22,7 +23,7 @@ export class kCommand extends Command {
         return this.Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`
-            Reviews by *real* people:
+            Reviews by ${italic('real')} people:
 
             [Consumer Affairs](https://www.consumeraffairs.com/cable_tv/optimum.html) - 1 ⭐
             [Moneysavingpro](https://www.moneysavingpro.com/internet-providers/optimum-reviews/) - 2 ⭐

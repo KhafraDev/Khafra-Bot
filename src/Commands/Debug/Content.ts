@@ -1,6 +1,7 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
+import { codeBlock } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -20,6 +21,6 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { content }: Arguments) {
-        return this.Embed.success(`\`\`\`${content}\`\`\``);
+        return this.Embed.success(codeBlock(content));
     }
 }

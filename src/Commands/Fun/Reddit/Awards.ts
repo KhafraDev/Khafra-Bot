@@ -38,7 +38,7 @@ export class kCommand extends Command {
         ) {
             return this.Embed.fail(`
             Not a valid reddit URL!
-            Make sure it's from \`\`https://www.reddit.com\`\` and it's a post!
+            Make sure it's from ${inlineCode('https://www.reddit.com')} and it's a post!
             `);
         }
         

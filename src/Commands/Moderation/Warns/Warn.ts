@@ -9,7 +9,7 @@ import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -127,12 +127,12 @@ export class kCommand extends Command {
             return void channel.send({ 
                 embeds: [
                     this.Embed.success(`
-                    **Offender:** ${member}
-                    **Reason:** ${inlineCode(reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
-                    **Staff:** ${message.member}
-                    **Points:** ${points} warning point${plural(points)} given.
-                    **Kicked:** ${settings.max_warning_points <= totalPoints ? 'Yes' : 'No'} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
-                    **ID:** ${inlineCode(k_id)}
+                    ${bold('Offender:')} ${member}
+                    ${bold('Reason:')} ${inlineCode(reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
+                    ${bold('Staff:')} ${message.member}
+                    ${bold('Points:')} ${points} warning point${plural(points)} given.
+                    ${bold('Kicked:')} ${settings.max_warning_points <= totalPoints ? 'Yes' : 'No'} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
+                    ${bold('ID:')} ${inlineCode(k_id)}
                     `).setTitle('Member Warned')
                 ] 
             });

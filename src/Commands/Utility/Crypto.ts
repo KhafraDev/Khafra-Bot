@@ -3,7 +3,7 @@ import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
-import { time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
@@ -40,24 +40,24 @@ export class kCommand extends Command {
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)
             .addFields(
-                { name: '**Current Price:**', value: f(currency.current_price), inline: true },
-                { name: '**High 24H:**',      value: f(currency.high_24h), inline: true },
-                { name: '**Low 24H:**',       value: f(currency.low_24h), inline: true },
+                { name: bold('Current Price:'), value: f(currency.current_price), inline: true },
+                { name: bold('High 24H:'),      value: f(currency.high_24h), inline: true },
+                { name: bold('Low 24H:'),       value: f(currency.low_24h), inline: true },
 
-                { name: '**Market Cap:**',    value: currency.market_cap.toLocaleString(), inline: true },
-                { name: '**Total Volume:**',  value: currency.total_volume.toLocaleString(), inline: true },
-                { name: '**Circulating:**',   value: currency.circulating_supply.toLocaleString(), inline: true },
+                { name: bold('Market Cap:'),    value: currency.market_cap.toLocaleString(), inline: true },
+                { name: bold('Total Volume:'),  value: currency.total_volume.toLocaleString(), inline: true },
+                { name: bold('Circulating:'),   value: currency.circulating_supply.toLocaleString(), inline: true },
 
-                { name: '**All Time High:**', value: f(currency.ath), inline: true },
-                { name: '**% Change ATH:**',  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATH Date:**',      value: time(new Date(currency.ath_date), 'D'), inline: true },
+                { name: bold('All Time High:'), value: f(currency.ath), inline: true },
+                { name: bold('% Change ATH:'),  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
+                { name: bold('ATH Date:'),      value: time(new Date(currency.ath_date), 'D'), inline: true },
 
-                { name: '**All Time Low:**',  value: f(currency.atl), inline: true },
-                { name: '**% Change ATL:**',  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATL Date:**',      value: time(new Date(currency.atl_date), 'D'), inline: true },
+                { name: bold('All Time Low:'),  value: f(currency.atl), inline: true },
+                { name: bold('% Change ATL:'),  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
+                { name: bold('ATL Date:'),      value: time(new Date(currency.atl_date), 'D'), inline: true },
 
-                { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
-                { name: '**% Change 24H:**',  value: `${currency.price_change_percentage_24h}%`, inline: true }
+                { name: bold('Change 24H:'),    value: f(currency.price_change_24h), inline: true },
+                { name: bold('% Change 24H:'),  value: `${currency.price_change_percentage_24h}%`, inline: true }
             );
 
         if (!Array.isArray(currencies))
@@ -68,7 +68,7 @@ export class kCommand extends Command {
             There were ${currencies.length} cryptocurrencies with that search query provided.
 
             If this is the wrong currency, try using one of the following IDs:
-            \`\`${currencies.map(c => c.id).join('``, ``')}\`\`
+            ${currencies.map(c => inlineCode(c.id)).join(', ')}
             `.trim(),
             embeds: [embed],
             failIfNotExists: false

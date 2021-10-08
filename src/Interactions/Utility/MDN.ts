@@ -6,7 +6,7 @@ import { Interactions } from '../../Structures/Interaction.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 
@@ -43,9 +43,14 @@ export class kInteraction extends Interactions {
 
         const document = result.documents[0]!;
 
+        const hy = hyperlink(
+            document.title,
+            hideLinkEmbed(`https://developer.mozilla.org/${document.locale}/docs/${document.slug}`)
+        );
+
         return stripIndents`    
-        ${emoji ?? 'MDN'} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
-        \`\`${document.summary.replace(/\s+/g, ' ')}\`\`
+        ${emoji ?? 'MDN'} ${hy}
+        ${inlineCode(document.summary.replace(/\s+/g, ' '))}
         `;
     }
 } 

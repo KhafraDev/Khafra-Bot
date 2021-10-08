@@ -4,6 +4,7 @@ import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { bold, inlineCode } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -34,7 +35,7 @@ export class kCommand extends Command {
         [Click Here](${pocket.requestAuthorization})!
         After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
         
-        **Command will be canceled after 2 minutes automatically.**
+        ${bold('Command will be canceled after 2 minutes automatically.')}
         `)
         .setTitle('Pocket');
 
@@ -97,7 +98,7 @@ export class kCommand extends Command {
                     this.Embed.success(`
                     You have authorized ${message.guild!.me}!
 
-                    Try adding an article with \`\`pocketadd\`\` now. 👍
+                    Try adding an article with ${inlineCode('pocketadd')} now. 👍
                     `)
                 ],
                 components: disableAll(msg)

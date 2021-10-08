@@ -2,7 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { npm } from '@khaf/npm';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         if ('code' in _package) {
             return this.Embed.fail('No package with that name was found!');
         } else if ('error' in _package) {
-            return this.Embed.fail(`Received error \`\`${_package.error}\`\`.`);
+            return this.Embed.fail(`Received error ${inlineCode(_package.error)}.`);
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
@@ -35,14 +35,14 @@ export class kCommand extends Command {
             .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
-            \`\`${_package.description.slice(0, 2000)}\`\`
+            ${inlineCode(_package.description.slice(0, 2000))}
             `)
-            .addField('**Version:**', dist.version, true)
-            .addField('**License:**', dist.license, true)
-            .addField('**Author:**', _package.author?.name ?? 'N/A', true)
-            .addField('**Last Modified:**', time(new Date(_package.time?.modified ?? Date.now()), 'f'), true)
-            .addField('**Published:**', time(new Date(_package.time?.created ?? Date.now())), true)
-            .addField('**Homepage:**', _package.homepage ?? 'None', true)
-            .addField('**Maintainers:**', dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
+            .addField(bold('Version:'), dist.version, true)
+            .addField(bold('License:'), dist.license, true)
+            .addField(bold('Author:'), _package.author?.name ?? 'N/A', true)
+            .addField(bold('Last Modified:'), time(new Date(_package.time?.modified ?? Date.now()), 'f'), true)
+            .addField(bold('Published:'), time(new Date(_package.time?.created ?? Date.now())), true)
+            .addField(bold('Homepage:'), _package.homepage ?? 'None', true)
+            .addField(bold('Maintainers:'), dist.maintainers.slice(0, 10).map(u => u.name).join(', '), false)
     }
 }

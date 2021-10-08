@@ -5,6 +5,7 @@ import { isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
+import { bold } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -58,8 +59,8 @@ export class kCommand extends Command {
                 return;
 
             return void channel.send({ embeds: [this.Embed.success(`
-            **Channel:** ${text} (${text.id}).
-            **Staff:** ${message.member}
+            ${bold('Channel:')} ${text} (${text.id}).
+            ${bold('Staff:')} ${message.member}
             `).setTitle('Channel Locked')] });
         }
     }

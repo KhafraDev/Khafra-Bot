@@ -4,7 +4,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, isVoice, isExplicitText, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { bold, time } from '@discordjs/builders';
+import { bold, codeBlock, time } from '@discordjs/builders';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 
 @RegisterCommand
@@ -38,8 +38,8 @@ export class kCommand extends Command {
 
         const embed = this.Embed.success()
             .addFields(
-                { name: '**ID:**', value: channel.id, inline: true },
-                { name: '**Type:**', value: channel.type, inline: true },
+                { name: bold('ID:'), value: channel.id, inline: true },
+                { name: bold('Type:'), value: channel.type, inline: true },
                 { name: bold('Created:'), value: time(channel.createdAt, 'f'), inline: true }
             );
 
@@ -47,24 +47,24 @@ export class kCommand extends Command {
             embed
                 .setDescription(`
                 ${channel}
-                ${channel.topic ? `\`\`\`${channel.topic}\`\`\`` : ''}
+                ${channel.topic ? codeBlock(`${channel.topic}`) : ''}
                 `)
                 .addFields(
-                    { name: '**Name:**', value: channel.name, inline: true },
-                    { name: '**Parent:**', value: channel.parent ? `${channel.parent}` : 'None', inline: true },
-                    { name: '**NSFW:**', value: channel.nsfw ? 'Yes' : 'No', inline: true },
-                    { name: '**Position:**', value: `${channel.position}`, inline: true },
+                    { name: bold('Name:'), value: channel.name, inline: true },
+                    { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
+                    { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
+                    { name: bold('Position:'), value: `${channel.position}`, inline: true },
                 );
 
             if (isExplicitText(channel)) {
-                embed.addField('**Rate-Limit:**', channel.rateLimitPerUser + ' seconds', true);
+                embed.addField(bold('Rate-Limit:'), channel.rateLimitPerUser + ' seconds', true);
             }
         } else if (isVoice(channel)) {
             embed
-                .addField('**Bitrate:**',   channel.bitrate.toLocaleString(), true)
-                .addField('**Full:**',      channel.full ? 'Yes' : 'No', true)
-                .addField('**Max Users:**', channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
-                .addField('**Region:**', channel.rtcRegion ?? 'Auto', true);
+                .addField(bold('Bitrate:'),   channel.bitrate.toLocaleString(), true)
+                .addField(bold('Full:'),      channel.full ? 'Yes' : 'No', true)
+                .addField(bold('Max Users:'), channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
+                .addField(bold('Region:'), channel.rtcRegion ?? 'Auto', true);
         }
 
         return padEmbedFields(embed);

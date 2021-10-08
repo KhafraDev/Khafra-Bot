@@ -2,6 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Message } from 'discord.js';
 import { fetchAppointments } from '@khaf/vaccines';
+import { bold, inlineCode } from '@discordjs/builders';
 
 type Radius = Parameters<typeof fetchAppointments>[1]
 const radius = [1, 5, 15, 20, 25];
@@ -39,7 +40,7 @@ export class kCommand extends Command {
         while (desc.length < 2048) {
             const loc = available.providers[i++];
             if (!loc.in_stock) continue;
-            const chunk = `[**${loc.distance} miles**]: \`\`${loc.name.split(' #')[0]}\`\`; ${loc.address1} ${loc.city}, ${loc.zip}.\n`
+            const chunk = `[${bold(`${loc.distance} miles`)}]: ${inlineCode(loc.name.split(' #', 1)[0])}; ${loc.address1} ${loc.city}, ${loc.zip}.\n`
             if (chunk.length + desc.length > 2048) break;
 
             desc += chunk;

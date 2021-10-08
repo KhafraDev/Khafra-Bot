@@ -135,7 +135,7 @@ export class kCommand extends Command {
                             .setDescription(`
                             ${hide(word, guesses)}
                             ${wrong} wrong guess${plural(wrong, 'es')}.
-                            Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                            Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
                             `)
                     ];
                 } else {
@@ -146,7 +146,7 @@ export class kCommand extends Command {
                         .setDescription(`
                         ${hide(word, guesses)}
                         ${wrong} wrong guess${plural(wrong, 'es')}.
-                        Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                        Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
                         `)
                     );
                 }
@@ -158,7 +158,7 @@ export class kCommand extends Command {
                     .setDescription(`
                     ${hide(word, guesses)}
                     ${wrong} wrong guess${plural(wrong, 'es')}.
-                    Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                    Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
                     `)
                 );
             }
@@ -207,7 +207,7 @@ export class kCommand extends Command {
                 .setDescription(`
                 ${hide(word, guesses)}
                 ${wrong} wrong guess${plural(wrong, 'es')}.
-                Guessed ${guesses.slice(1).map(l => `\`\`${l}\`\``).join(', ').slice(0, 250)}
+                Guessed ${guesses.slice(1).map(l => inlineCode(l)).join(', ').slice(0, 250)}
                 `);
             
             return void dontThrow(i.update({

@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { bold, italic, SlashCommandBuilder } from '@discordjs/builders';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 
 export class kInteraction extends Interactions {
@@ -26,9 +26,9 @@ export class kInteraction extends Interactions {
         }
 
         return `
-        **${word.word}** ${word.pronunciation ? `(${word.pronunciation})` : ''}
+        ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
         ${word.definitions
-            .map(w => `*${w.type}* - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
+            .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
             .join('\n')
             .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
         }

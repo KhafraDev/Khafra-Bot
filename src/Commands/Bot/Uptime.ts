@@ -1,3 +1,4 @@
+import { inlineCode } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../Structures/Command.js';
@@ -34,7 +35,7 @@ export class kCommand extends Command {
 
     init(message: Message) {
         return Embed.success(`
-        ⏰ \`\`${getUptime(message.client.uptime ?? 0)}\`\`
+        ⏰ ${inlineCode(getUptime(message.client.uptime ?? 0))}
         `).setTitle('Khafra-Bot has been online for:');
     }
 }

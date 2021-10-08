@@ -7,6 +7,7 @@ import { Message } from '../../../lib/types/Discord.js.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
 import { assets } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { bold, inlineCode } from '@discordjs/builders';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const Emojis = createFileWatcher(
@@ -72,29 +73,29 @@ export class kCommand extends Command {
             const embed = this.Embed.success()
                 .setImage(parsed[0].url)
                 .setURL(`http://www.get-emoji.com/${encodeURIComponent(parsed[0].text)}`)
-                .addField(`**Code Points:**`, `\\u${codePoints.join('\\u')}`, true);
+                .addField(bold('Code Points:'), `\\u${codePoints.join('\\u')}`, true);
 
             const e = (<Emojis>Emojis)[emoji];
             if (typeof e !== 'undefined') {
                 if (emoji === parsed[0].text) { // top level emoji
                     if ('diversityChildren' in e && e.diversityChildren.length > 0) // has diversity
                         embed.setDescription(`
-                        **Names:** \`\`${e.names.join('``/``')}\`\`
-                        **Diversity/Children:** \`\`${e.diversityChildren.map(d => d.surrogates).join('``, ``')}\`\`
+                        ${bold('Names:')} ${inlineCode(e.names.join('``/``'))}
+                        ${bold('Diversity/Children:')} ${inlineCode(e.diversityChildren.map(d => d.surrogates).join('``, ``'))}
                         `);
                     else 
-                        embed.setDescription(`**Names:** \`\`${e.names.join('``/``')}\`\``);
+                        embed.setDescription(`${bold('Names:')} ${inlineCode(e.names.join('``/``'))}`);
                 } else if ('hasDiversity' in e) { // just so I don't have to keep casting the value
                     // has to exist because of the check above
                     const child = e.diversityChildren.find(c => c.surrogates === parsed[0].text)!;
 
                     embed.setDescription(`
-                    **Names:** \`\`${child.names.join('``/``')}\`\`
-                    **Similar:** \`\`${e.diversityChildren.map(c => c.surrogates).join('``/``')}\`\`
+                    ${bold('Names:')} ${inlineCode(child.names.join('``/``'))}
+                    ${bold('Similar:')} ${inlineCode(e.diversityChildren.map(c => c.surrogates).join('``/``'))}
                     `);
 
                     embed.addField(
-                        `**Tone${plural(child.diversity.length)}:**`,
+                        `${bold(`Tone${plural(child.diversity.length)}:`)}`,
                         child.diversity.length === 0
                             ? 'None' 
                             : child.diversity.map(d => String.fromCodePoint(Number.parseInt(d, 16))).join(', '),
@@ -114,9 +115,9 @@ export class kCommand extends Command {
             .setTitle(emoji.name ?? 'Unknown')
             .setImage(emoji.url)
             .addFields(
-                { name: '**ID:**', value: emoji.id, inline: true },
-                { name: '**Animated:**', value: emoji.animated ? 'Yes' : 'No', inline: true },
-                { name: '**Managed:**', value: emoji.managed ? 'Yes' : 'No', inline: true }
+                { name: bold('ID:'), value: emoji.id, inline: true },
+                { name: bold('Animated:'), value: emoji.animated ? 'Yes' : 'No', inline: true },
+                { name: bold('Managed:'), value: emoji.managed ? 'Yes' : 'No', inline: true }
             );
     }
 }

@@ -1,6 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { thisWordDoesNotExist } from '../../../lib/Packages/ThisWordDoesNotExist.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -27,12 +28,12 @@ export class kCommand extends Command {
         }
 
         return this.Embed.success(`
-        **${word.word.word.toUpperCase()}** - ${word.word.pos}
-        *${word.word.syllables.join(' − ')}*
-        \`\`${word.word.definition}\`\`
-        ${word.word.example ? `*__${word.word.example}__*` : ''}
+        ${bold(word.word.word.toUpperCase())} - ${word.word.pos}
+        ${italic(word.word.syllables.join(' − '))}
+        ${inlineCode(word.word.definition)}
+        ${word.word.example ? italic(underscore(word.word.example)) : ''}
 
-        [View Online](${word.permalink_url}).
+        ${hyperlink('View Online', word.permalink_url)}
         `);
     }
 }

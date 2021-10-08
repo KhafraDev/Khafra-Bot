@@ -10,6 +10,7 @@ import { Range } from '../../lib/Utility/Range.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { bold } from '@discordjs/builders';
 
 const range = Range(0, 7, true);
 
@@ -56,7 +57,7 @@ export class kCommand extends Command {
             embeds: [this.Embed.success(`
             Are you sure you want to soft-ban ${user}? 
     
-            This will delete ${clear} day${plural(clear)} worth of messages from them, but they **will be** allowed to rejoin the guild.
+            This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
             `)],
             components: [row]
         });

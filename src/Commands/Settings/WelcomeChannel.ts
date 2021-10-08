@@ -7,6 +7,7 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { client } from '../../Structures/Database/Redis.js';
+import { inlineCode } from '@discordjs/builders';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -43,7 +44,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild!.me, basic)) {
             return this.Embed.fail(`
-            I am missing one or more of ${basic.toArray().map(p => `\`\`${p}\`\``).join(', ')} permissions!
+            I am missing one or more of ${basic.toArray().map(p => inlineCode(p)).join(', ')} permissions!
             `);
         }
 

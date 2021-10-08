@@ -3,6 +3,7 @@ import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
+import { inlineCode } from '@discordjs/builders';
 
 interface PocketUser {
     access_token: string 
@@ -38,7 +39,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`
             You haven't set-up Pocket integration!
 
-            Try using the \`\`pocket\`\` command for more information.
+            Try using the ${inlineCode('pocket')} command for more information.
             `);
 
         const pocket = new Pocket(rows.shift());

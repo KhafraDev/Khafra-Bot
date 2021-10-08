@@ -37,7 +37,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`
             Received: ${toDelete}, this command requires a valid integer!
 
-            Example: \`\`${this.settings.name} 100\`\`
+            Example: ${inlineCode(`${this.settings.name} 100`)}
             `);
         } else if (!range.isInRange(toDelete)) {
             return this.Embed.fail(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);

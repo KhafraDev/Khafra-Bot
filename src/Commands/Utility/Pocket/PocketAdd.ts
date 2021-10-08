@@ -4,6 +4,7 @@ import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
+import { codeBlock, inlineCode } from '@discordjs/builders';
 
 interface PocketUser {
     access_token: string 
@@ -39,7 +40,7 @@ export class kCommand extends Command {
             return this.Embed.fail(`
             You haven't set-up Pocket integration!
 
-            Try using the \`\`pocket\`\` command for more information.
+            Try using the ${inlineCode('pocket')} command for more information.
             `);
 
         const pocket = new Pocket(rows.shift());
@@ -57,7 +58,7 @@ export class kCommand extends Command {
             )
             .setDescription(`
             Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
-            \`\`\`${added.item.excerpt?.slice(0, 1024) ?? 'N/A'}\`\`\`
+            ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}
             `)
             .setTimestamp(new Date(added.item.date_published))
             .setFooter('Published');

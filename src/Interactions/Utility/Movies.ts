@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
 import { searchMovie } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -43,15 +43,15 @@ export class kInteraction extends Interactions {
         const embed = Embed.success()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
-            .addField('**Genres:**', movies.genres.map(g => g.name).join(', '), true)
-            .addField('**Runtime:**', formatMS(Number(movies.runtime) * 60000), true)
-            .addField('**Status:**', movies.status, true)
-            .addField('**Released:**', movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
-            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
+            .addField(bold('Genres:'), movies.genres.map(g => g.name).join(', '), true)
+            .addField(bold('Runtime:'), formatMS(Number(movies.runtime) * 60000), true)
+            .addField(bold('Status:'), movies.status, true)
+            .addField(bold('Released:'), movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
+            .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             
         movies.homepage && embed.setURL(movies.homepage);
-        movies.imdb_id && embed.addField('**IMDB:**', `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`, true);
+        movies.imdb_id && embed.addField(bold('IMDB:'), `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`, true);
         
         if (movies.poster_path) 
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);

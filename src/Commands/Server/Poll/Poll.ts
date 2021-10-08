@@ -5,6 +5,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { inlineCode } from '@discordjs/builders';
 
 //const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
 const basic = [ 
@@ -49,9 +50,9 @@ export class kCommand extends Command {
         await message.reply({ embeds: [this.Embed.success(`
         Setting up a poll now!
 
-        Enter all of the options in separate messages in the form \`\`[emoji] [text]\`\` to get started.
-        Once you're done, post \`\`stop\`\` (it will stop after 5 options automatically).
-        You can also cancel the command using \`\`cancel\`\`.
+        Enter all of the options in separate messages in the form ${inlineCode('[emoji] [text]')} to get started.
+        Once you're done, post ${inlineCode('stop')} (it will stop after 5 options automatically).
+        You can also cancel the command using ${inlineCode('cancel')}.
         `)] });
 
         const lines: { emoji: string, text: string }[] = []

@@ -4,6 +4,7 @@ import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
+import { codeBlock } from '@discordjs/builders';
 
 const dir = join(assets, 'Cowsay');
 const start = `
@@ -75,7 +76,7 @@ export class kCommand extends Command {
         }
 
         const art = bases.get(format)!;
-        const formatted = `\`\`\`${start}${split.join('\n')}\n${art}\`\`\``;
+        const formatted = codeBlock(`${start}${split.join('\n')}\n${art}`);
 
         if (formatted.length > 2048)
             return this.Embed.fail('Message is too long, trim it down!');

@@ -5,6 +5,7 @@ import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
 import { fetch } from 'undici';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { bold } from '@discordjs/builders';
 
 
 interface StrawpollOptions {
@@ -76,12 +77,12 @@ export class kCommand extends Command {
             return this.Embed.success()
                 .setTitle('Poll Configuration')
                 .addFields(
-                    { name: '**Private:**', value: yes(defaultOpts.priv), inline: true },
-                    { name: '**Allow Comments:**', value: yes(defaultOpts.co), inline: true },
-                    { name: '**Only Registered:**', value: yes(defaultOpts.only_reg), inline: true },
-                    { name: '**Multiple Votes:**', value: yes(defaultOpts.ma), inline: true },
-                    { name: '**Allow VPN Votes:**', value: yes(defaultOpts.vpn), inline: true },
-                    { name: '**Captcha:**', value: yes(defaultOpts.captcha), inline: true }
+                    { name: bold('Private:'), value: yes(defaultOpts.priv), inline: true },
+                    { name: bold('Allow Comments:'), value: yes(defaultOpts.co), inline: true },
+                    { name: bold('Only Registered:'), value: yes(defaultOpts.only_reg), inline: true },
+                    { name: bold('Multiple Votes:'), value: yes(defaultOpts.ma), inline: true },
+                    { name: bold('Allow VPN Votes:'), value: yes(defaultOpts.vpn), inline: true },
+                    { name: bold('Captcha:'), value: yes(defaultOpts.captcha), inline: true }
                 )
                 .setDescription(`
                 Click on the buttons below to enable or disable settings.

@@ -1,3 +1,4 @@
+import { inlineCode } from '@discordjs/builders';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -23,9 +24,9 @@ export class kCommand extends Command {
             Connect your Pocket account to Khafra-Bot to get updates on the latest news.
             
             Examples:
-            \`\`pocketinit\`\` - Start the process of authorizing your Pocket account.
-            \`\`pocketget\`\` - List your favorited articles.
-            \`\`pocketadd [article] [optional title]\`\`
+            ${inlineCode('pocketinit')} - Start the process of authorizing your Pocket account.
+            ${inlineCode('pocketget')} - List your favorited articles.
+            ${inlineCode('pocketadd [article] [optional title]')}
             `);
     }
 }

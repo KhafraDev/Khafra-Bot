@@ -115,11 +115,11 @@ export class kCommand extends Command {
         } else if (count === 1 && users.cache.first()!.id === message.client.user!.id) { // no one entered
             if (m.editable) {
                 return void dontThrow(m.edit({
-                    content: '**Re-rolled:** No one entered the giveaway!'
+                    content: `${bold('Re-rolled:')} No one entered the giveaway!`
                 }));
             } else {
                 return void dontThrow(m.channel.send({
-                    content: '**Re-Rolled:** No one entered the giveaway!'
+                    content: `${bold('Re-Rolled:')} No one entered the giveaway!`
                 }));
             }
         } else if (count <= numWinners) { // less entered than number of winners

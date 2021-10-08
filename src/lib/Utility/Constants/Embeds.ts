@@ -5,6 +5,7 @@ import { plural } from '../String.js';
 import { createFileWatcher } from '../FileWatcher.js';
 import { cwd } from './Path.js';
 import { join } from 'path';
+import { bold, inlineCode } from '@discordjs/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
@@ -64,14 +65,14 @@ export const Embed = {
             .setDescription(`
             ${r}
 
-            Aliases: ${settings.aliases!.map(a => `\`\`${a}\`\``).join(', ')}
+            Aliases: ${settings.aliases!.map(a => inlineCode(a)).join(', ')}
 
             Example Usage:
-            ${help.slice(1).map((e: string) => `\`\`${settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
+            ${help.slice(1).map((e: string) => inlineCode(`${settings.name}${e.length > 0 ? ` ${e}` : ''}`)).join('\n')}
             `)
             .addFields(
-                { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-                { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
+                { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
+                { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
             );
     }
 }

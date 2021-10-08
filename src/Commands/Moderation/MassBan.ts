@@ -5,6 +5,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { inlineCode } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -51,7 +52,7 @@ export class kCommand extends Command {
 
         const resolved = await Promise.allSettled(promiseArr.map(p => p()));
         const good = resolved.filter(p => p.status === 'fulfilled') as PromiseFulfilledResult<string | User | GuildMember>[];
-        const goodFormat = good.map(x => typeof x.value === 'string' ? `\`\`${x.value}\`\`` : `${x.value}`).join(', ');
+        const goodFormat = good.map(x => typeof x.value === 'string' ? inlineCode(x.value) : `${x.value}`).join(', ');
 
         return this.Embed.success(`
         Banned ${good.length} members (out of ${args.length} requested).

@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { UserFlagsString } from 'discord.js';
 import { client } from '../../../index.js';
 import { once } from '../../../lib/Utility/Memoize.js';
-import { time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@discordjs/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
@@ -25,11 +25,11 @@ const formatPresence = (activities: Activity[] | undefined) => {
     for (const activity of activities) {
         switch (activity.type) {
             case 'CUSTOM':
-                push.push(`${activity.emoji ?? ''}${activity.state ? ` \`\`${activity.state}\`\`` : ''}`); break;
+                push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`); break;
             case 'LISTENING':
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); break;
             case 'PLAYING':
-                push.push(`Playing *${activity.name}*.`); break;
+                push.push(`Playing ${italic(activity.name)}.`); break;
             default:
                 console.log(activity);
         }
@@ -89,11 +89,11 @@ export class kCommand extends Command {
 
         return this.Embed.success(formatPresence(member?.presence?.activities) ?? undefined)
             .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user!.displayAvatarURL())
-            .addField('**Username:**', user.username, true)
-            .addField('**ID:**', user.id, true)
-            .addField('**Discriminator:**', `#${user.discriminator}`, true)
-            .addField('**Bot:**', user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
-            .addField('**Badges:**', `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-            .addField('**Account Created:**', time(snowflake.date), true);
+            .addField(bold('Username:'), user.username, true)
+            .addField(bold('ID:'), user.id, true)
+            .addField(bold('Discriminator:'), `#${user.discriminator}`, true)
+            .addField(bold('Bot:'), user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
+            .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
+            .addField(bold('Account Created:'), time(snowflake.date), true);
     }
 }

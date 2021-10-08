@@ -1,5 +1,5 @@
 import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
-import { bold, inlineCode, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, SlashCommandBuilder, time } from '@discordjs/builders';
 import { join } from 'path';
 import { Interactions } from '../../Structures/Interaction.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -15,13 +15,13 @@ const formatPresence = (activities: Activity[] | undefined) => {
     for (const activity of activities) {
         switch (activity.type) {
             case 'CUSTOM':
-                push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
+                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
                 break;
             case 'LISTENING':
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
                 break;
             case 'PLAYING':
-                push.push(`Playing *${activity.name}*.`); 
+                push.push(`Playing ${italic(activity.name)}.`); 
                 break;
             default:
                 console.log(activity);
@@ -65,7 +65,7 @@ export class kInteraction extends Interactions {
             return Embed.success()
                 .setAuthor(option.displayName, option.user.displayAvatarURL())
                 .setDescription(`
-                ${option} on *${option.guild.name}*.
+                ${option} on ${italic(option.guild.name)}.
                 ${formatPresence(option.presence?.activities)}
                 
                 Roles:

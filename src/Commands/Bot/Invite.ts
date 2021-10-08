@@ -1,3 +1,4 @@
+import { bold } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -21,15 +22,15 @@ export class kCommand extends Command {
 
         return this.Embed.success()
             .addField(
-                '**Basic Permissions:**', 
+                bold('Basic Permissions:'), 
                 `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=117824)`
             )
             .addField(
-                '**Everything:**',
+                bold('Everything:'),
                 `[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=1074654294)`
             )
             .addField(
-                '**Enable slash commands and buttons:**',
+                bold('Enable slash commands and buttons:'),
                 `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=applications.commands%20bot)`
             );
     }

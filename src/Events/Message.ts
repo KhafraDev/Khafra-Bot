@@ -141,7 +141,7 @@ export class kEvent extends Event<'messageCreate'> {
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
             Example(s):
-            ${command.help.slice(1).map(c => `\`\`${guild.prefix}${command.settings.name} ${c || '​'}\`\``.trim()).join('\n')}
+            ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
             `)] }));
         }
 

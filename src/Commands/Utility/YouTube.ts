@@ -7,7 +7,7 @@ import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { time } from '@discordjs/builders';
+import { bold, time } from '@discordjs/builders';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { decodeXML } from 'entities';
 import { readFileSync } from 'fs';
@@ -32,8 +32,8 @@ function* format(items: YouTubeSearchResults, embed = Embed.success) {
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
-            .addField('**Published:**', time(new Date(video.publishTime)))
-            .addField('**URL:**', `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
+            .addField(bold('Published:'), time(new Date(video.publishTime)))
+            .addField(bold('URL:'), `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
             
         yield Embed;
     }

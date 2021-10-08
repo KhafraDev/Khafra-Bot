@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
@@ -15,8 +15,8 @@ function* format(items: YouTubeSearchResults) {
             .setAuthor(video.channelTitle)
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
-            .addField('**Published:**', time(new Date(video.publishTime)))
-            .addField('**URL:**', `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
+            .addField(bold('Published:'), time(new Date(video.publishTime)))
+            .addField(bold('URL:'), `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
             
         yield embed;
     }

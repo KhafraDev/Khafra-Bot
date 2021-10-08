@@ -2,6 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { pasteAliases } from '../../lib/Packages/Pastes.js';
+import { inlineCode } from '@discordjs/builders';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
 
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         if (command === 'pastebin' || content.length == 0) 
             return this.Embed.success(`
             Here is a list of the sites currently supported by this command:
-            ${keys.map(k => `\`\`${k}\`\``).join(', ')}
+            ${keys.map(k => inlineCode(k)).join(', ')}
             `);
 
         const paste = pasteAliases.get(command)!;

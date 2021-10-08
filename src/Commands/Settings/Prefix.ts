@@ -6,6 +6,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { inlineCode } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -40,6 +41,6 @@ export class kCommand extends Command {
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
-        return this.Embed.success(`Updated the guild's prefix to \`\`${args[0]}\`\``);
+        return this.Embed.success(`Updated the guild's prefix to ${inlineCode(args[0])}`);
     }
 }

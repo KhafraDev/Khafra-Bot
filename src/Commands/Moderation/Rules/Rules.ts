@@ -6,7 +6,7 @@ import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
-import { hyperlink, inlineCode } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { once } from 'events';
 
 const perms = new Permissions([
@@ -114,7 +114,7 @@ export class kCommand extends Command {
                 Send an individual message for each rule, or send them all together. I recommend using ` + 
                 `${hyperlink('markdown', 'https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-')} ` +
                 `to separate messages and make rule titles more noticeable.\n\n` +
-                `**You have to enter each rule within 2.5 minutes or the command will cancel!**`
+                bold('You have to enter each rule within 2.5 minutes or the command will cancel!')
                 )
             ],
             components: [

@@ -1,3 +1,4 @@
+import { bold } from '@discordjs/builders';
 import { Message } from '../../lib/types/Discord.js.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -22,7 +23,7 @@ export class kCommand extends Command {
 
     init(message: Message) {
         return this.Embed.success(`
-        There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
+        There are ${bold(message.guild.memberCount.toLocaleString())} members in ${message.guild.name}!
         `);
     }
 }

@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
 import { searchTV } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -31,12 +31,12 @@ export class kInteraction extends Interactions {
         const embed = Embed.success()
             .setTitle(tv.name)
             .setDescription(tv.overview)
-            .addField('**Genres:**', tv.genres.map(g => g.name).join(', '), true)
-            .addField('**Status:**', tv.status, true)
-            .addField('**Premiered:**', tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
-            .addField('**Seasons:**', `${tv.number_of_seasons}`, true)
-            .addField('**Episodes:**', `${tv.number_of_episodes}`, true)
-            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
+            .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)
+            .addField(bold('Status:'), tv.status, true)
+            .addField(bold('Premiered:'), tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
+            .addField(bold('Seasons:'), `${tv.number_of_seasons}`, true)
+            .addField(bold('Episodes:'), `${tv.number_of_episodes}`, true)
+            .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
             .setFooter('Data provided by https://www.themoviedb.org/')
             
         tv.homepage && embed.setURL(tv.homepage);

@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { codeBlock, SlashCommandBuilder } from '@discordjs/builders';
 
 const boomer1984 = `
 ⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
@@ -26,6 +26,6 @@ export class kInteraction extends Interactions {
     }
 
     async init() {
-        return `\`\`\`${boomer1984}\`\`\``;
+        return codeBlock(boomer1984);
     }
 } 

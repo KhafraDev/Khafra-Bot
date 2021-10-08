@@ -5,6 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { table } from '../../../lib/Utility/CLITable.js';
 import { Message } from '../../../lib/types/Discord.js.js';
+import { codeBlock } from '@discordjs/builders';
 
 interface Insights {
     k_date: Date
@@ -69,6 +70,6 @@ export class kCommand extends Command {
 
         const t = table({ Dates, Joins, Leaves });
 
-        return this.Embed.success(`\`\`\`${t}\`\`\``);
+        return this.Embed.success(codeBlock(t));
     }
 }

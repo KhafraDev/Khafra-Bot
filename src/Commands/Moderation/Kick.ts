@@ -5,6 +5,7 @@ import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../lib/types/Discord.js.js';
+import { bold } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -56,9 +57,9 @@ export class kCommand extends Command {
 
             const reason = args.slice(1).join(' ');
             return void channel.send({ embeds: [this.Embed.success(`
-            **Offender:** ${member}
-            **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
-            **Staff:** ${message.member}
+            ${bold('Offender:')} ${member}
+            ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+            ${bold('Staff:')} ${message.member}
             `).setTitle('Member Kicked')] });
         }
     }

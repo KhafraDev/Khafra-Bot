@@ -6,7 +6,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Warning } from '../../../lib/types/KhafraBot.js';
-import { inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 interface Total {
@@ -71,7 +71,7 @@ export class kCommand extends Command {
         // embeds can have a maximum of 25 fields
         for (const [id, date, p] of mapped.slice(0, 25)) {
             const points = p.toLocaleString(message.guild.preferredLocale);
-            embed.addField(`**${time(date)}:**`, `${inlineCode(id)}: ${points} point${plural(p)}.`, true);
+            embed.addField(`${bold(time(date))}:`, `${inlineCode(id)}: ${points} point${plural(p)}.`, true);
         }
 
         return embed;

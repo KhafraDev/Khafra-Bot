@@ -36,9 +36,9 @@ export class kCommand extends Command {
         return this.Embed.success()
             .setTitle('Synergism Stats (Kongregate)')
             .setDescription(`
-            **Plays:**: ${stats.gameplays_count.toLocaleString()}
-            **Favorites:** ${stats.favorites_count.toLocaleString()}
-            Synergism averages **${average}**/5 ⭐ from **${ratings}** ratings! 
+            ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
+            ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
+            Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
             `)
             .addField(bold('Quark Bonus:'), `${quarks.bonus}%`, true);
     }

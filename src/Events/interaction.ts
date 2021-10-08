@@ -69,9 +69,9 @@ export class kEvent extends Event<'interactionCreate'> {
                 Object.assign(param, command.options.replyOpts);
 
             if (interaction.deferred)
-                return void interaction.editReply(param);
+                return void await interaction.editReply(param);
 
-            return void interaction.reply(param);
+            return void await interaction.reply(param);
         } catch (e) {
             if (processArgs.get('dev') === true) {
                 console.log(e);
