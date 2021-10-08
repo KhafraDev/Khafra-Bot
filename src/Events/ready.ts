@@ -7,6 +7,7 @@ import { validSnowflake } from '../lib/Utility/Mentions.js';
 import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
+import { yellow } from '../lib/Utility/Colors.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -16,7 +17,7 @@ export class kEvent extends Event<'ready'> {
 
     async init() {
         const s = `Logged in at ${new Date()}`;
-        console.log(s);
+        console.log(yellow(s));
         
         if (typeof config.botOwner === 'string') {
             if (!validSnowflake(config.botOwner)) {

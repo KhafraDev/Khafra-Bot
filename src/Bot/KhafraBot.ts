@@ -12,6 +12,7 @@ import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { performance } from 'perf_hooks';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { bright, green, magenta } from '../lib/Utility/Colors.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -54,7 +55,7 @@ export class KhafraClient extends Client {
         for (const reject of rejected)
             console.log(reject.reason);
 
-        console.log(`Loaded ${commands.length - rejected.length}/${settled.length} commands!`);
+        console.log(green(`Loaded ${bright(commands.length - rejected.length)}/${settled.length} commands!`));
         return KhafraClient.Commands;
     }
 
@@ -63,7 +64,7 @@ export class KhafraClient extends Client {
         const importPromise = events.map(event => import(pathToFileURL(event).href) as Promise<Event>);
         await Promise.allSettled(importPromise);
 
-        console.log(`Loaded ${KhafraClient.Events.size} events!`);
+        console.log(green(`Loaded ${bright(KhafraClient.Events.size)} events!`));
         return KhafraClient.Events;
     }
 
@@ -104,7 +105,7 @@ export class KhafraClient extends Client {
             );
         }
 
-        console.log(`Loaded ${loaded.length} interactions!`);
+        console.log(green(`Loaded ${bright(loaded.length)} interactions!`));
         return KhafraClient.Interactions;
     }
 
@@ -113,6 +114,6 @@ export class KhafraClient extends Client {
         await this.loadEvents();
         await this.loadCommands();
         await this.login(process.env.TOKEN);
-        console.log(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`);
+        console.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`));
     });
 }
