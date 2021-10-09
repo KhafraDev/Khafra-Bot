@@ -5,7 +5,7 @@ import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { Permissions, User } from 'discord.js';
+import { GuildChannel, Permissions, ThreadChannel, User, Channel } from 'discord.js';
 import { bold, hyperlink } from '@discordjs/builders';
 import { plural } from '../../../lib/Utility/String.js';
 
@@ -71,9 +71,10 @@ export class kCommand extends Command {
             return this.Embed.fail(`Cannot re-roll a giveaway that isn't from this guild!`);
         }
 
-        const channel = 
-            message.guild.channels.cache.get(channelId) ??
-            await dontThrow(message.client.channels.fetch(channelId)).then(c => c[1]);
+        let channel: GuildChannel | ThreadChannel | null | Channel = message.guild.channels.cache.get(channelId) ?? null;
+        if (!channel) {
+            ([, channel] = await dontThrow(message.client.channels.fetch(channelId)));
+        }
 
         if (!isText(channel)) {
             return this.Embed.fail(`${channel} isn't a text or news channel! You can't have a giveaway here.`);

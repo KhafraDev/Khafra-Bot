@@ -25,32 +25,31 @@ class Spotify {
         }).toString().replace(/\+/g, '%20');
 
         const token = await this.getTokenHeader();
-
-        return fetch(new URL(params, 'https://api.spotify.com/v1/search'), {
+        const r = await fetch(new URL(params, 'https://api.spotify.com/v1/search'), {
             headers: { 
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 ...token
             }
         })
-        .then(res => res.json() as Promise<SpotifyResult>);
+
+        return await r.json() as SpotifyResult;
     }
   
     async setToken() {
         const params = new URLSearchParams({ grant_type: 'client_credentials' });
 
-        return fetch('https://accounts.spotify.com/api/token', {
+        const r = await fetch('https://accounts.spotify.com/api/token', {
             method: 'POST',
             body: params,
             headers: {
                 Authorization: `Basic ${Buffer.from(`${this.#id}:${this.#secret}`).toString('base64')}`
             }
-        })
-        .then(res => res.json() as Promise<Token>)
-        .then(creds => {
-            this.#token = creds;
-            this.#expires_in = Date.now() + creds.expires_in * 1000; // in milliseconds
         });
+
+        const j = await r.json() as Token;
+        this.#token = j;
+        this.#expires_in = Date.now() + j.expires_in * 1000; // in milliseconds
     }
   
     async getTokenHeader() {
