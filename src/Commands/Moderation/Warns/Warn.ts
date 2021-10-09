@@ -19,7 +19,6 @@ type WarnInsert = {
 
 const range = Range(0, 32767, true);
 const perms = new Permissions([
-    Permissions.FLAGS.READ_MESSAGE_HISTORY,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
 ]);

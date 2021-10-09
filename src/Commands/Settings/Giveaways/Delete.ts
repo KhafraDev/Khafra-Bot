@@ -2,10 +2,11 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { DiscordAPIError } from 'discord.js';
+import { DiscordAPIError, Permissions } from 'discord.js';
 import { hyperlink, inlineCode } from '@discordjs/builders';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { time } from '@discordjs/builders';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 
@@ -24,7 +25,10 @@ export class kCommand extends Command {
                 folder: 'Giveaways',
                 aliases: ['giveaways:delete'],
                 args: [0, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY
+                ]
             }
         );
     }
@@ -74,12 +78,14 @@ export class kCommand extends Command {
         try {
             const channel = await message.guild.channels.fetch(rows[0].channelid);
             if (!isText(channel)) return; // not possible
-            const msg = await channel.messages.fetch(rows[0].messageid);
+            if (hasPerms(channel, message.guild.me, Permissions.FLAGS.READ_MESSAGE_HISTORY)) {
+                const msg = await channel.messages.fetch(rows[0].messageid);
 
-            if (!msg.deletable)
-                return this.Embed.fail(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
+                if (!msg.deletable)
+                    return this.Embed.fail(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
 
-            await msg.delete();
+                await msg.delete();
+            }
         } catch (e) {
             if (e instanceof DiscordAPIError) {
                 const name = e.code || e.name;

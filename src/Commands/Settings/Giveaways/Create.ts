@@ -55,7 +55,10 @@ export class kCommand extends Command {
                 folder: 'Giveaways',
                 aliases: ['giveaways:create'],
                 args: [0, 0],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY
+                ]
             }
         );
     }

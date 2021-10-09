@@ -3,7 +3,8 @@ import { Giveaway } from '../../types/KhafraBot.js';
 import { client } from '../../../index.js';
 import { isText } from '../../types/Discord.js.js';
 import { EventEmitter } from 'events';
-import { User } from 'discord.js';
+import { Permissions, User } from 'discord.js';
+import { hasPerms } from '../Permissions.js';
 
 interface GiveawayEmitter extends EventEmitter {
     on(event: 'giveaway', listener: (giveaway: Giveaway) => void | Promise<void>): this;
@@ -26,7 +27,12 @@ setInterval(async () => {
 
 Giveaways.on('giveaway', async (giveaway) => {
     try {
-        const channel = await client.channels.fetch(giveaway.channelid);
+        const guild = await client.guilds.fetch(giveaway.guildid);
+        const channel = 
+            guild.channels.cache.get(giveaway.channelid) ??
+            await client.channels.fetch(giveaway.channelid);
+
+        if (!hasPerms(channel, guild.me, Permissions.FLAGS.READ_MESSAGE_HISTORY)) return;
         if (!isText(channel)) return;
         if (!client.user) return;
 

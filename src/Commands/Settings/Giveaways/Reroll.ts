@@ -29,7 +29,11 @@ export class kCommand extends Command {
                 folder: 'Giveaways',
                 aliases: ['giveaways:reroll'],
                 args: [1, 1],
-                guildOnly: true
+                guildOnly: true,
+                permissions: [
+                    // need to fetch an uncached message
+                    Permissions.FLAGS.READ_MESSAGE_HISTORY
+                ]
             }
         );
     }

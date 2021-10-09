@@ -60,8 +60,7 @@ export abstract class Command implements ICommand {
     readonly permissions: PermissionResolvable[] = [ 
         Permissions.FLAGS.SEND_MESSAGES,
         Permissions.FLAGS.EMBED_LINKS,
-        Permissions.FLAGS.VIEW_CHANNEL, 
-        Permissions.FLAGS.READ_MESSAGE_HISTORY 
+        Permissions.FLAGS.VIEW_CHANNEL
     ];
     
     constructor(

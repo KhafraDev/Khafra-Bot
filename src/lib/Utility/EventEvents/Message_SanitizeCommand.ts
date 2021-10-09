@@ -6,9 +6,7 @@ import { hasPerms } from '../Permissions.js';
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS,
-    Permissions.FLAGS.VIEW_CHANNEL,
-    // TODO(@KhafraDev): do we really need this perm?
-    Permissions.FLAGS.READ_MESSAGE_HISTORY
+    Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
 /**

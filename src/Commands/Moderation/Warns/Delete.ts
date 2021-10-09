@@ -15,7 +15,6 @@ interface WarningDel {
 }
 
 const perms = new Permissions([
-    Permissions.FLAGS.READ_MESSAGE_HISTORY,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
 ]);

@@ -9,8 +9,7 @@ type TicketChannelTypes = TextChannel | CategoryChannel;
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i;
 const memberPermsExpected = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.READ_MESSAGE_HISTORY
+    Permissions.FLAGS.SEND_MESSAGES
 ]);
 
 @RegisterCommand
