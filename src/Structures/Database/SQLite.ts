@@ -8,6 +8,8 @@ import { readFile } from 'fs/promises';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
 
+// TODO: move to esqlite once it's more mature
+
 type Message = { 
     sql: string
     parameters: Parameters<Statement['run']> 

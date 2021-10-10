@@ -1,11 +1,16 @@
 import { readFileSync, watch } from 'fs';
-import { readFile } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import { dirname, basename, join } from 'path';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 type Watcher = Record<string, unknown> | unknown[];
 
 const watchers = new Map<string, Watcher>();
+
+const exists = async (file: string) => {
+    const [err] = await dontThrow(stat(file));
+    return err === null;
+}
 
 export const createFileWatcher = <F extends Watcher>(storage: F, path: string) => {
     if (watchers.has(path)) {
@@ -33,6 +38,7 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string) =
     watch(path, async (event, filename) => {
         if (event !== 'change') return;
         if (base !== filename) return;
+        if (!await exists(join(dir, filename))) return;
 
         const [err, file] = await dontThrow<F>(JSON.parse, [await readFile(join(dir, filename), 'utf-8')]);
         
