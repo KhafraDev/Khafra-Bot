@@ -16,6 +16,17 @@ import {
 import { REST } from '@discordjs/rest';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 
+const enum Activities {
+    POKER = '755827207812677713',
+    BETRAYALIO = '773336526917861400',
+    YOUTUBE_TOGETHER = '755600276941176913',
+    FISHINGTONIO = '814288819477020702',
+    CHESS = '832012774040141894',
+    DOODLECREW = '878067389634314250',
+    WORDSNACKS = '879863976006127627',
+    LETTERTILE = '879863686565621790'
+}
+
 const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
 
 @RegisterCommand
@@ -59,11 +70,16 @@ export class kCommand extends Command {
             ],
             components: [
                 new MessageActionRow().addComponents(
-                    Components.approve('Poker', '755827207812677713'),
-                    Components.deny('Betrayal.io', '773336526917861400'),
-                    Components.primary('YouTube Together', '755600276941176913'),
-                    Components.secondary('Fishington.io', '814288819477020702'),
-                    Components.approve('Chess in the Park', '832012774040141894')
+                    Components.approve('Poker', Activities.POKER),
+                    Components.deny('Betrayal.io', Activities.BETRAYALIO),
+                    Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
+                    Components.secondary('Fishington.io', Activities.FISHINGTONIO),
+                    Components.approve('Chess in the Park', Activities.CHESS)
+                ),
+                new MessageActionRow().addComponents(
+                    Components.approve('Doodle Crew', Activities.DOODLECREW),
+                    Components.deny('WordSnacks', Activities.WORDSNACKS),
+                    Components.primary('LetterTile', Activities.LETTERTILE)
                 )
             ]
         });
