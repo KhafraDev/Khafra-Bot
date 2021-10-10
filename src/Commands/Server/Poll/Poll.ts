@@ -1,19 +1,36 @@
 import { Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { parse } from 'twemoji-parser';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { isText, isThread, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
+import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { ellipsis } from '../../../lib/Utility/String.js';
+import { setTimeout } from 'timers/promises';
 
-//const emojis = ['🟡', '⚪', '🔴', '🟣', '🟠', '🟢', '🟤', '🔵', '⚫'];
-const basic = [ 
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.ADD_REACTIONS,
+interface Settings {
+    channel: TextBasedChannels | null
+    options: string[]
+}
+
+enum Actions {
+    ADD = 'add',
+    POST = 'post',
+    CHANNEL = 'channel',
+    CANCEL = 'cancel'
+}
+
+const emojis = [
+    '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
+	'6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
+] as const;
+const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
+    Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
-];
+]);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -26,70 +43,142 @@ export class kCommand extends Command {
 			{
                 name: 'poll',
                 folder: 'Server',
-                args: [1, 1],
+                args: [0, 0],
                 ratelimit: 30,
-                guildOnly: true,
-                permissions: [ Permissions.FLAGS.ADD_REACTIONS ]
+                guildOnly: true
             }
         );
     }
 
     async init(message: Message) {
-        // TODO(@KhafraDev): rewrite
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.missing_perms(true);
+        // the current option the user is setting
+        let currentOption: `${Actions}` | null = null;
+        const settings: Settings = {
+            channel: null,
+            options: []
+        };
+ 
+        const m = await message.reply({
+            embeds: [
+                this.Embed.success(`
+                Press a button below to make selections:
+                • ${inlineCode('Add Option')}: Once pressing, type the option in chat to add it (cut off after 200 characters).
+                • ${inlineCode('Post Poll')}: Posts the poll to the selected channel.
+                • ${inlineCode('Add Channel')}: Once pressing, mention the channel to post the poll to.
+                • ${inlineCode('Cancel')}: Cancels the current creation.
+                `)
+            ],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.approve('Add Option', Actions.ADD),
+                    Components.primary('Post Poll', Actions.POST),
+                    Components.secondary('Add Channel', Actions.CHANNEL),
+                    Components.deny('Cancel', Actions.CANCEL)
+                )
+            ]
+        });
+
+        const interactionCollector = m.createMessageComponentCollector({
+            filter: (interaction) => 
+                interaction.user.id === message.author.id &&
+                currentOption === null,
+            idle: 60_000,
+            max: 10
+        });
+
+        const messageCollector = m.channel.createMessageCollector({
+            filter: (mm) =>
+                mm.author.id === message.author.id &&
+                currentOption !== null &&
+                !m.deleted,
+            time: 60_000 * 5,
+            max: 10
+        });
+
+        interactionCollector.on('collect', async (i) => {
+            currentOption = i.customId as `${Actions}`;
+
+            if (currentOption === Actions.POST) {
+                if (settings.channel === null || settings.options.length === 0) {
+                    return void dontThrow(m.edit({
+                        content: `No channel or options were present. Canceled the poll creation!`,
+                        embeds: [],
+                        components: disableAll(m)
+                    }));
+                }
+
+                const embed = this.Embed.success()
+                    .setTitle('Poll')
+                    .setAuthor(message.author.username, message.author.displayAvatarURL());
+
+                for (let i = 0; i < settings.options.length; i++) {
+                    const option = settings.options[i];
+                    const emoji = emojis[i];
+                    
+                    embed.description ??= '';
+                    embed.description += `${emoji}. ${option}\n`;
+                }
+
+                const [err, pollMessage] = await dontThrow(settings.channel.send({
+                    embeds: [embed]
+                }));
+
+                if (err === null) {
+                    const prs = settings.options.reduce((a, _b, i) => {
+                        a.push(pollMessage.react(emojis[i]));
+                        a.push(setTimeout(1500));
+                        return a;
+                    }, [] as Promise<unknown>[]);
+                    void Promise.allSettled(prs);
+                }
+            }
+
+            void dontThrow(i.update({}));
+        });
+
+        messageCollector.on('collect', async (msg) => {
+            if (currentOption === Actions.CANCEL) {
+                return messageCollector.stop();
+            } else if (currentOption === Actions.CHANNEL) {
+                const channel = await getMentions(msg, 'channels', { idx: 0 });
+
+                if (!isText(channel) && !isThread(channel)) {
+                    return void dontThrow(m.edit({
+                        content: `Only text, news, and thread channels are allowed to be poll channels!`
+                    }));
+                } else if (!hasPerms(channel, message.guild.me, perms)) {
+                    return void dontThrow(m.edit({
+                        content: `I don't have enough permissions to create a poll in this channel!`
+                    }));
+                }
+
+                settings.channel = channel;
+                await dontThrow(m.edit({
+                    content: `The poll channel is now set to ${channel}!`
+                }));
+                currentOption = null;
+            } else if (currentOption === Actions.ADD) {
+                const option = ellipsis(msg.content, 200);
+                settings.options.push(option);
+                await dontThrow(m.edit({
+                    content: `${inlineCode(option)} has been added as a poll option!`
+                }));
+                currentOption = null;
+            }
+        });
+
+        const end = () => {
+            if (!interactionCollector.ended) interactionCollector.stop();
+            if (!messageCollector.ended) messageCollector.stop();
+
+            return void dontThrow(m.edit({
+                embeds: [],
+                content: `Poll creation canceled!`,
+                components: disableAll(m)
+            }))
         }
 
-        const channel = await getMentions(message, 'channels') ?? message.channel;
-        if (!isText(channel) || !message.guild.channels.resolve(channel)) {
-            return this.Embed.fail(`Polls can only be sent to text or news channels.`);
-        } else if (!hasPerms(channel, message.guild.me, basic)) {
-            return this.Embed.missing_perms(false, basic);
-        }
-
-        await message.reply({ embeds: [this.Embed.success(`
-        Setting up a poll now!
-
-        Enter all of the options in separate messages in the form ${inlineCode('[emoji] [text]')} to get started.
-        Once you're done, post ${inlineCode('stop')} (it will stop after 5 options automatically).
-        You can also cancel the command using ${inlineCode('cancel')}.
-        `)] });
-
-        const lines: { emoji: string, text: string }[] = []
-
-        const c = message.channel.createMessageCollector({
-            filter: (m) =>
-                m.author.id === message.author.id &&
-                parse(m.content).length > 0 ||
-                ['stop', 'cancel'].includes(m.content.toLowerCase()),
-            max: 5,
-            time: 60 * 1000 * 3
-        });
-        c.on('collect', (m) => {
-            if (m.content.toLowerCase() === 'cancel')
-                return c.stop('cancel');
-            if (m.content.toLowerCase() === 'stop')
-                return c.stop('stop');
-
-            const parsed = parse(m.content);
-            if (parsed.length === 0) return;
-            const reg = new RegExp(`^${parsed[0].text} .*`);
-            if (!reg.test(m.content)) return;
-
-            const text = m.content.replace(new RegExp(`^${parsed[0].text}`), '');
-            lines.push({ emoji: parsed[0].text, text });
-        });
-        c.on('end', async (_c, r) => {
-            if (r === 'cancel' || lines.length === 0)
-                return;
-
-            try {
-                const m = await channel.send({ embeds: [this.Embed.success(
-                    lines.map(l => `${l.emoji}: ${l.text}`).join('\n')
-                )] });
-
-                await Promise.allSettled(lines.map(l => m.react(l.emoji)));
-            } catch {}
-        });
+        interactionCollector.on('end', end);
+        messageCollector.on('end', end);
     }
 }
