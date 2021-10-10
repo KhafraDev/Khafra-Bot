@@ -6,7 +6,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { Client, ClientEvents } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { APIVersion, Routes } from 'discord-api-types/v9';
 import { join, resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
@@ -75,7 +75,7 @@ export class KhafraClient extends Client {
         );
         const imported = await Promise.allSettled(importPromise);
 
-        const rest = new REST({ version: '9' }).setToken(process.env.TOKEN!);
+        const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
         const loaded: Interactions[] = [];
 
         for (const interaction of imported) {

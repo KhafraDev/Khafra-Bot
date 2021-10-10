@@ -5,11 +5,18 @@ import { isVoice, Message } from '../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { hyperlink } from '@discordjs/builders';
 import { MessageActionRow, Permissions } from 'discord.js';
-import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
-import { fetch } from 'undici';
-import { consumeBody } from '../../lib/Utility/FetchUtils.js';
+import {
+    InviteTargetType,
+    RESTPostAPIChannelInviteJSONBody,
+    APIVersion,
+    Routes,
+    APIInvite
+} from 'discord-api-types/v9';
+import { REST } from '@discordjs/rest';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+
+const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -26,7 +33,8 @@ export class kCommand extends Command {
                 args: [1, 1],
                 ratelimit: 10,
                 permissions: [
-                    Permissions.FLAGS.CREATE_INSTANT_INVITE
+                    Permissions.FLAGS.CREATE_INSTANT_INVITE,
+                    Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
                 ]
             }
         );
@@ -80,32 +88,25 @@ export class kCommand extends Command {
             }));
         }
 
-        const [fetchError, r] = await dontThrow(fetch(`https://discord.com/api/v${APIVersion}/channels/${channel.id}/invites`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bot ${process.env.TOKEN}`, 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-                max_age: 86400,
-                target_type: InviteTargetType.EmbeddedApplication,
-                target_application_id: interaction.customId
-            } as RESTPostAPIChannelInviteJSONBody)
-        }));
-
-        if (fetchError !== null || !r.ok) {
-            if (r && !r.ok) {
-                void consumeBody(r);
-                return this.Embed.fail(`Received a ${r.status} status trying to create the invite!`);
-            } else {
-                return this.Embed.fail(`An error occurred trying to create the invite! :(`);
+        const [fetchError, invite] = await dontThrow(rest.post(
+            Routes.channelInvites(channel.id),
+            {
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    max_age: 86400,
+                    target_type: InviteTargetType.EmbeddedApplication,
+                    target_application_id: interaction.customId
+                } as RESTPostAPIChannelInviteJSONBody
             }
+        ) as Promise<APIInvite>);
+
+        if (fetchError !== null) {
+            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
         }
 
-        const invite = await r.json() as APIInvite;
+        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
+        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
 
-        return this.Embed.success(`
-        ${hyperlink('Click Here', `<https://discord.gg/${invite.code}>`)} to open ${invite.target_application!.name} in ${channel}!
-        `);
+        return this.Embed.success(str);
     }
 }
