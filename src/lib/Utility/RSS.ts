@@ -19,7 +19,7 @@ const ms = {
     yearly: 3.154e+10
 } as const;
 
-interface RSSJSON<T extends unknown> {
+interface RSSJSON<T> {
     rss: {
         channel: {
             title: string
@@ -34,7 +34,7 @@ interface RSSJSON<T extends unknown> {
     }
 }
 
-interface AtomJSON<T extends unknown> {
+interface AtomJSON<T> {
     feed: {
         id: string
         title: string
@@ -44,7 +44,7 @@ interface AtomJSON<T extends unknown> {
     }
 }
 
-export class RSSReader<T extends unknown> {
+export class RSSReader<T> {
     #interval: NodeJS.Timeout | null = null;
     #options: X2jOptionsOptional = {};
 

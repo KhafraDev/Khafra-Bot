@@ -7,7 +7,6 @@ import { once } from '../../../lib/Utility/Memoize.js';
 import { Message } from 'discord.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { cpus } from 'os';
 import { asyncQuery } from '../../../Structures/Database/SQLite.js';
 
 interface ISchizophrenia {
@@ -61,10 +60,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
-        if (cpus().length === 1) 
-            return this.Embed.fail(`This command will not work on this host! Ask the bot maintainer to change their host!`);
-            
+    async init(_message: Message, { args }: Arguments) {  
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {

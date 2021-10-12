@@ -1,96 +1,43 @@
-import { Worker } from 'worker_threads';
-import { cpus } from 'os';
-import { EventEmitter } from 'events';
-import { Statement } from 'better-sqlite3';
-import { fileURLToPath } from 'url';
-import { join, resolve } from 'path';
+import { Database } from 'esqlite';
+import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
+import { once } from '../../lib/Utility/Memoize.js';
 
-// TODO: move to esqlite once it's more mature
+const dbPath = join(assets, 'khafrabot.db');
+const db = new Database(dbPath);
+db.open();
 
-type Message = { 
+type Message<T extends unknown[]> = { 
     sql: string
-    parameters: Parameters<Statement['run']> 
-    opts: import('./SQLiteWorker').Opts | undefined
+    parameters: T
 }
-type Queue = { event: EventEmitter, message: Message }
 
-const queue: Queue[] = [];
-const workers = new Map<number, { takeWork: () => void }>();
-
-export const asyncQuery = <T extends unknown>(
+export const asyncQuery = async <T, P extends unknown[] = string[]>(
     sql: string, 
-    opts?: Message['opts'], 
-    ...parameters: Message['parameters']
+    ...parameters: Message<P>['parameters']
 ) => {
-    return new Promise<T[]>((resolve, reject) => {
-        const event = new EventEmitter();
-        event.on('result', resolve);
-        event.on('error', reject);
-
-        queue.push({
-            event,
-            message: { sql, opts, parameters },
+    await load();
+    
+    return new Promise<T[]>((res, rej) => {
+        db.query<T>(sql, parameters, (err, rows) => {
+            return err !== null ? rej(err) : res(rows);
         });
-
-        for (const [, worker] of workers)
-            worker.takeWork();
     });
 }
 
-const spawn = () => {
-    const url = resolve(fileURLToPath(import.meta.url), '../SQLiteWorker.js');
-    const worker = new Worker(url);
+export const load = once(async () => {
+    const sql = await KhafraClient.walk(join(assets, 'SQL/SQLite'), p => p.endsWith('.sql'));
 
-    let job: Queue | null = null; // Current item from the queue
-    let error: Error | null = null; // Error that caused the worker to crash
-
-    const takeWork = () => {
-        if (!job && queue.length) {
-            // If there's a job in the queue, send it to the worker
-            job = queue.shift()!;
-            worker.postMessage(job.message);
-        }
+    for (const file of sql) {
+        const text = await readFile(file, 'utf-8');
+        const queries = text
+            .split(';')
+            .map(l => l.trim())
+            .filter(l => l.length > 0);
+    
+        for (const query of queries)
+            void asyncQuery(`${query};`);
     }
-
-    worker
-        .on('online', () => {
-            workers.set(worker.threadId, { takeWork });
-            takeWork();
-        })
-        .on('message', (result) => {
-            job?.event.emit('result', result);
-            job = null;
-            takeWork(); // Check if there's more work to do
-        })
-        .on('error', (err) => {
-            error = err;
-            job?.event.emit('error', err);
-        })
-        .on('exit', (code) => {
-            workers.delete(worker.threadId);
-            job?.event.emit('error', error || new Error('worker died'));
-            
-            if (code !== 0) {
-                console.error(`worker exited with code ${code}`);
-                spawn(); // Worker died, so spawn a new one
-            }
-        });
-}
-
-cpus().forEach(spawn);
-
-const sql = await KhafraClient.walk(join(assets, 'SQL/SQLite'), p => p.endsWith('.sql'));
-
-for (const file of sql) {
-    const text = await readFile(file, 'utf-8');
-    const queries = text
-        .split(';')
-        .map(l => l.trim())
-        .filter(l => l.length > 0);
-
-    for (const query of queries)
-        void asyncQuery(`${query};`, { run: true });
-}
+});

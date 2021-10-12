@@ -2,7 +2,7 @@
 
 import { types } from 'util';
 
-type FromPromise<T extends unknown> = T extends Promise<infer U> ? U : T;
+type FromPromise<T> = T extends Promise<infer U> ? U : T;
 
 /**
  * Resolves a promise without throwing an error.
@@ -10,7 +10,7 @@ type FromPromise<T extends unknown> = T extends Promise<infer U> ? U : T;
  * declare const message: import('discord.js').Message;
  * const [err, res] = await dontThrow(message.channel.send({ content: 'Hello, world!' })); 
  */
-export async function dontThrow<Ret extends unknown>(fn: Function, args: unknown[]): Promise<[Error, Ret]>;
+export async function dontThrow<Ret>(fn: Function, args: unknown[]): Promise<[Error, Ret]>;
 export async function dontThrow(param: undefined): Promise<[null, undefined]>;
 export async function dontThrow<T extends Promise<unknown>>(promise: T): Promise<[Error, FromPromise<T>]>;
 export async function dontThrow<T extends Promise<unknown>>(promise: T | Function, args?: unknown[]) {
