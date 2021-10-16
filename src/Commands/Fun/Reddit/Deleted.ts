@@ -29,6 +29,7 @@ const fetchDeleted = async (postId: string) => {
 
     clearTimeout(timeout);
     if (err !== null) return null;
+    if (!r.ok) return null;
 
     return await r.json() as PushShiftError | PushShiftGood;
 }
