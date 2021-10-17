@@ -55,11 +55,10 @@ export class kEvent extends Event<'messageCreate'> {
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild!: typeof defaultSettings | kGuild;
-        const exists = await client.exists(message.guild.id);
+        const row = await client.get(message.guild.id);
 
-        if (exists === 1) {
-            const row = await client.get(message.guild.id);
-            guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
+        if (row) {
+            guild = { ...defaultSettings, ...JSON.parse(row) as kGuild };
         } else {
             const { rows } = await pool.query<kGuild>(`
                 SELECT * 

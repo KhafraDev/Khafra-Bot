@@ -20,12 +20,10 @@ export class kEvent extends Event<'guildBanRemove'> {
 
     async init({ guild, user, reason }: GuildBan) {
         const key = `${guild.id},${user.id}`;
-        const cached = await client.exists(guild.id) === 1;
-        let item: ModLogChannel | null = null
+        const row = await client.get(guild.id);
+        let item: ModLogChannel = JSON.parse(row!) as kGuild;
 
-        if (cached) {
-            item = JSON.parse(await client.get(guild.id)) as kGuild;
-        } else {
+        if (!item) {
             const { rows } = await pool.query<ModLogChannel>(`
                 SELECT ${defaultKGuild} FROM kbGuild
                 WHERE guild_id = $1::text

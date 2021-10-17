@@ -33,12 +33,10 @@ export class kEvent extends Event<'guildMemberUpdate'> {
         if (oldHas === newHas)
             return;
 
-        const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: WelcomeChannel | null = null
+        const row = await client.get(oldMember.guild.id);
+        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
 
-        if (cached) {
-            item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
-        } else {
+        if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
                 SELECT ${defaultKGuild}
                 FROM kbGuild

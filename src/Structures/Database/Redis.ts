@@ -5,11 +5,11 @@ const messageClient = redis.createClient(`${connect}/1`);
 
 export const client = {
     get: (key: string) => {
-        return new Promise<string>((res, rej) => {
+        return new Promise<string | null>((res, rej) => {
             messageClient.get(key, (err, reply) => {
                 if (err !== null) return rej(err);
 
-                return res(reply!);
+                return res(reply);
             });
         });
     },
@@ -28,15 +28,6 @@ export const client = {
                     return res(reply);
                 });
             }
-        });
-    },
-    exists: (key: string) => {
-        return new Promise<0 | 1>((res, rej) => {
-            messageClient.exists(key, (err, reply) => {
-                if (err !== null) return rej(err);
-
-                return res(reply as 0 | 1);
-            });
         });
     }
 }

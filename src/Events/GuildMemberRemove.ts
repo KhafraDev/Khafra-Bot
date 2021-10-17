@@ -33,12 +33,10 @@ export class kEvent extends Event<'guildMemberRemove'> {
                 WHERE kbInsights.k_guild_id = $1::text;
         `, [member.guild.id]);
 
-        const cached = await client.exists(member.guild.id) === 1;
-        let item: WelcomeChannel | null = null
-
-        if (cached) {
-            item = JSON.parse(await client.get(member.guild.id)) as kGuild;
-        } else {
+        const row = await client.get(member.guild.id);
+        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
+        
+        if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
