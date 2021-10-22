@@ -76,7 +76,7 @@ export abstract class Command implements ICommand {
         this.settings = settings;
         this.settings.aliases ??= [];
         this.rateLimit = new Cooldown(settings.ratelimit ?? 5);
-        this.errors = Object.assign({ ...this.errors }, this.settings.errors);
+        this.errors = { ...this.errors, ...this.settings.errors };
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 

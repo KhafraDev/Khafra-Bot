@@ -69,7 +69,7 @@ export class kEvent extends Event<'messageCreate'> {
             if (rows.length !== 0) {
                 void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
-                guild = Object.assign({ ...defaultSettings }, rows.shift());
+                guild = { ...defaultSettings, ...rows.shift() };
             } else {
                 guild = { ...defaultSettings };
             }
