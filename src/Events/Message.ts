@@ -8,12 +8,11 @@ import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { RegisterEvent } from '../Structures/Decorator.js';
-import { commandLimit, notified } from '../Structures/Cooldown/CommandCooldown.js';
 import { Arguments, Command } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { client } from '../Structures/Database/Redis.js';
-import { upperCase } from '../lib/Utility/String.js';
+import { plural, upperCase } from '../lib/Utility/String.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
@@ -108,21 +107,26 @@ export class kEvent extends Event<'messageCreate'> {
 
         const command = KhafraClient.Commands.get(commandName)!;
         // command cooldowns are based around the commands name, not aliases
-        const limited = !commandLimit(command.settings.name, message.author.id);
+        const limited = command.rateLimit.isRateLimited(message.author.id);
 
         if (limited) {
-            if (notified.has(message.author.id)) return;
+            if (command.rateLimit.isNotified(message.author.id)) return;
 
-            notified.add(message.author.id);
+            const cooldownInfo = command.rateLimit.get(message.author.id)!;
+            const rateLimitSeconds = command.rateLimit.rateLimitSeconds;
+            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000);
+
             return dontThrow(message.reply({
                 content: 
-                    `${upperCase(command.settings.name)} has a ${command.settings.ratelimit} second rate limit! ` +
-                    `Please wait a little bit longer to use the command again. ❤️`
+                    `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
+                    `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
             }));
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
             return void dontThrow(message.reply({
                 content: `${inlineCode(commandName)} is temporarily disabled!`
             }));
+        } else if (!limited) {
+            command.rateLimit.rateLimitUser(message.author.id);
         }
         
         if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {

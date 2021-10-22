@@ -8,7 +8,6 @@ import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { compile } from '../../lib/Packages/Compile.js';
 import { compareTwoStrings } from '../../lib/Utility/CompareStrings.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { CommandCooldown } from '../../Structures/Cooldown/CommandCooldown.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const basePath = join(process.cwd(), 'src/Commands');
@@ -89,9 +88,7 @@ export class kCommand extends Command {
         const commandName = command.settings.name.toLowerCase();
 
         KhafraClient.Commands.delete(commandName); // remove from command cache
-        CommandCooldown.delete(commandName); // remove from individual command cooldown
         KhafraClient.Commands.set(commandName, command); // add back to cache
-        CommandCooldown.set(commandName, new Set()); // add back to cache
 
         command.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, command));
     }

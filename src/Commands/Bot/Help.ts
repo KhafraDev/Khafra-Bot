@@ -37,7 +37,7 @@ export class kCommand extends Command {
             if (!KhafraClient.Commands.has(commandName))
                 return this.Embed.fail(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
 
-            const { settings, help } = KhafraClient.Commands.get(commandName)!;
+            const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!;
             const helpF = help.length === 2 && help[1] === ''
                 ? [help[0], '[No arguments]']
                 : help;
@@ -56,7 +56,7 @@ export class kCommand extends Command {
             .addFields(
                 { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
                 { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-                { name: bold('Rate-Limit:'), value: `${settings.ratelimit} seconds`, inline: true}
+                { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
             );
         }
 

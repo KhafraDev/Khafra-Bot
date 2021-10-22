@@ -1,28 +1,63 @@
 import { Snowflake } from 'discord.js';
-import { KhafraClient } from '../../Bot/KhafraBot.js';
 
-export const CommandCooldown = new Map<string, Set<Snowflake>>();
-export const notified = new Set<Snowflake>();
+type UserCooldown = {
+    added: number,
+    notified?: boolean
+}
 
-/**
- * Check if a command is ratelimited for a user, set limit otherwise, and remove limit when applicable
- * @return {boolean} false if the user is limited, true otherwise
- */
-export const commandLimit = (name: string, user: Snowflake): boolean => {
-    const commandCooldown = CommandCooldown.get(name);
-    if (!commandCooldown)
+export class Cooldown extends Map<Snowflake, UserCooldown> {
+    /** @type {number} */
+    #maxAge: number;
+
+    /**
+     * Max age of an item in seconds
+     * @param {number} maxAge 
+     */
+    constructor(maxAge: number) {
+        super();
+        this.#maxAge = maxAge * 1_000;
+        this.#createClearInterval();
+    }
+
+    #createClearInterval() {
+        setInterval(() => {
+            const maxAgeMs = this.#maxAge;
+            const now = Date.now();
+
+            for (const [id, { added }] of this.entries()) {
+                if ((now - added) >= maxAgeMs) {
+                    this.delete(id);
+                }
+            }
+        }, this.#maxAge / 2);
+    }
+
+    isRateLimited(id: Snowflake): boolean {
+        return this.has(id);
+    }
+
+    rateLimitUser(id: Snowflake): boolean {
+        this.set(id, { added: Date.now() });
+        return true;
+    }
+
+    /**
+     * Whether or not a user has been notified that they're on cooldown. If they are haven't been, sets that they have been.
+     * @param {Snowflake} id 
+     * @returns {boolean} true if the user has been notified, false if they haven't been, null if not on cooldown
+     */
+    isNotified(id: Snowflake): boolean | null {
+        const info = this.get(id);
+        if (!info) return null;
+        if (info.notified) return true;
+
+        info.notified = true;
+        this.set(id, info);
+        
         return false;
-    if (commandCooldown.has(user))
-        return false;
+    }
 
-    const command = KhafraClient.Commands.get(name)!;
-    commandCooldown.add(user);
-
-    // somewhat interesting, we use the callback version rather than a promisifed function
-    // so this isn't blocking the return statement.
-    setTimeout(() => {
-        commandCooldown.delete(user);
-        notified.delete(user);
-    }, command.settings.ratelimit! * 1000).unref();
-    return true;
+    get rateLimitSeconds(): number {
+        return this.#maxAge / 1000;
+    }
 }
