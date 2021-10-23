@@ -29,11 +29,21 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
                     this.delete(id);
                 }
             }
-        }, this.#maxAge / 2);
+        }, 30_000);
     }
 
     isRateLimited(id: Snowflake): boolean {
-        return this.has(id);
+        const maxAgeMs = this.#maxAge;
+        const info = this.get(id);
+
+        if (!info) return false; // not cached
+
+        if ((Date.now() - info.added) >= maxAgeMs) {
+            this.delete(id);
+            return false;
+        } 
+
+        return true;
     }
 
     rateLimitUser(id: Snowflake): boolean {
