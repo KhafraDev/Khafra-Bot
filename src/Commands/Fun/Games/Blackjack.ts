@@ -40,7 +40,7 @@ export class kCommand extends Command {
                 name: 'blackjack',
                 folder: 'Games',
                 args: [0, 0],
-                ratelimit: 30, 
+                ratelimit: 10, 
                 aliases: ['bj']
             }
         );

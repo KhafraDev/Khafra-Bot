@@ -20,7 +20,7 @@ export class kCommand extends Command {
             name: 'rockpaperscissors',
             folder: 'Games',
             args: [0, 0],
-            ratelimit: 10,
+            ratelimit: 5,
             aliases: ['rps'],
             permissions: [Permissions.FLAGS.ADD_REACTIONS]
         });

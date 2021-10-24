@@ -7,7 +7,7 @@ export class TicTacToe {
     /** Go at a given position (0-8) */
     public go(at: number) {
         if (this.winner())
-            return this.winner();
+            return this.turn;
 
         this.board[at] = this.turn;
 

@@ -8,17 +8,17 @@ export const talkObamaToMe = async (q: string) => {
     const res = await fetch('http://talkobamato.me/synthesize.py', {
         method: 'POST',
         body: `input_text=${q}`,
-        // don't redirect; allows us to extract Location header!
-        // we could also remove this and check `res.redirected` and `res.url`.
-        redirect: 'manual',
         headers: {
             'Referer': 'http://talkobamato.me/',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
     });
 
-    const location = res.headers.get('Location')!;
-	const u = new URL(location).searchParams.get('speech_key');
+    if (!res.redirected) {
+        throw new Error('Request wasn\'t redirected!');
+    }
+
+	const u = new URL(res.url).searchParams.get('speech_key');
 
     void consumeBody(res);
 

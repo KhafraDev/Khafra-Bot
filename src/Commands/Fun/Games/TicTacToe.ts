@@ -13,10 +13,11 @@ const makeRows = (turns: Board) => {
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
+
         if (row === 'X')
-            rows.push(Components.approve('X', 'X'));
+            rows.push(Components.approve('X', `X,${i}`));
         else if (row === 'O')
-            rows.push(Components.primary('O', 'O'));
+            rows.push(Components.primary('O', `O,${i}`));
         else 
             rows.push(Components.secondary('\u200b', `empty,${i}`));
     }
