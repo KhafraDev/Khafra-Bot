@@ -1,5 +1,6 @@
-import { Message, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { Message, MessageActionRow, Permissions } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 
@@ -41,16 +42,15 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        let c: MessageComponentInteraction | null = null;
-        try {
-            c = await m.awaitMessageComponent({
-                filter: (interaction) =>
-                    ['rock', 'paper', 'scissors'].includes(interaction.customId) &&
-                    interaction.user.id === message.author.id &&
-                    interaction.message.id === m.id,
-                time: 20000
-            });
-        } catch {
+        const [canceled, c] = await dontThrow(m.awaitMessageComponent({
+            filter: (interaction) =>
+                ['rock', 'paper', 'scissors'].includes(interaction.customId) &&
+                interaction.user.id === message.author.id &&
+                interaction.message.id === m.id,
+            time: 20000
+        }));
+
+        if (canceled !== null) {
             return void m.edit({
                 embeds: [
                     this.Embed.fail(`Game was canceled! Play again another time.`)

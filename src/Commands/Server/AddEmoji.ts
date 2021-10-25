@@ -1,8 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { GuildEmoji, MessageAttachment, Permissions } from 'discord.js';
+import { MessageAttachment, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { validURL } from '../../lib/Utility/Valid/URL.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { inlineCode } from '@discordjs/builders';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -52,17 +54,14 @@ export class kCommand extends Command {
             return this.Embed.fail('Invalid link!');
         }
 
-        let e: GuildEmoji | null = null;
-        try {
-            e = await message.guild.emojis.create(
-                link,
-                name,
-                { reason: `${message.author.id} (${message.author.tag}) requested.` }
-            );
-        } catch (e) {
-            if (e instanceof Error) {
-                return this.Embed.fail(e.message);
-            }
+        const [createError, e] = await dontThrow(message.guild.emojis.create(
+            link,
+            name,
+            { reason: `${message.author.id} (${message.author.tag}) requested.` }
+        ));
+
+        if (createError !== null) {
+            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(createError.message)}`);
         }
 
         return this.Embed.success(`Added ${e} to the guild emojis!`);

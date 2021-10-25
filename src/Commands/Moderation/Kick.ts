@@ -5,7 +5,8 @@ import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../lib/types/Discord.js.js';
-import { bold } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -39,12 +40,10 @@ export class kCommand extends Command {
             return this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`);
         }
 
-        try {
-            await member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`);
-        } catch {
-            return this.Embed.fail(`
-            An unexpected error occurred!
-            `);
+        const [kickError] = await dontThrow(member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`));
+
+        if (kickError !== null) {
+            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(kickError.message)}`);
         }
 
         await message.reply({ embeds: [this.Embed.fail(`Kicked ${member} from the server!`)] });

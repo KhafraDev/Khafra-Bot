@@ -11,7 +11,6 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { 
     MessageActionRow,
-    MessageComponentInteraction,
     NewsChannel,
     Permissions,
     TextChannel,
@@ -19,6 +18,7 @@ import {
 } from 'discord.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 
@@ -128,15 +128,14 @@ export class kCommand extends Command {
         }
 
         { // handle # of winners
-            let moreWinnersInteraction: MessageComponentInteraction | null = null;
-            try {
-                moreWinnersInteraction = await m.awaitMessageComponent({
-                    time: 20_000,
-                    filter: (interaction) =>
-                        interaction.user.id === message.author.id &&
-                        ['winners', 'deny'].includes(interaction.customId)
-                });
-            } catch {
+            const [moreWinnersError, moreWinnersInteraction] = await dontThrow(m.awaitMessageComponent({
+                time: 20_000,
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id &&
+                    ['winners', 'deny'].includes(interaction.customId)
+            }));
+
+            if (moreWinnersError !== null) {
                 return void m.edit({
                     embeds: [
                         this.Embed.fail('No response within 20 seconds, giveaway canceled.')

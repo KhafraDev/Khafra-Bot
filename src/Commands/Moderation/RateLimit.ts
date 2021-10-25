@@ -9,7 +9,8 @@ import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Range } from '../../lib/Utility/Range.js';
-import { bold } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const range = Range(0, MAX_SECS, true);
@@ -55,12 +56,12 @@ export class kCommand extends Command {
         if (!isExplicitText(guildChannel))
             return this.Embed.fail('Rate-limits can only be set in text channels!');
 
-        try {
-            await guildChannel.setRateLimitPerUser(secs, 
-                `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
-            );
-        } catch {
-            return this.Embed.fail('An error prevented the rate-limit from being set.');
+        const [rlError] = await dontThrow(guildChannel.setRateLimitPerUser(secs, 
+            `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
+        ));
+
+        if (rlError !== null) {
+            return this.Embed.fail(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
         }
 
         void message.reply({ 

@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { Interaction, MessageActionRow, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
@@ -11,6 +11,7 @@ import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { bold } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const range = Range(0, 7, true);
 
@@ -67,10 +68,9 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        let button: MessageComponentInteraction | null = null;
-        try {
-            button = await msg.awaitMessageComponent({ filter, time: 20_000 });
-        } catch {
+        const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({ filter, time: 20_000 }));
+
+        if (buttonError !== null) {
             return void msg.edit({
                 embeds: [this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []

@@ -5,6 +5,7 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -38,14 +39,14 @@ export class kCommand extends Command {
 
         const reason = typeof reasonAny === 'string' ? reasonAny : '';
 
-        try {
-            await message.guild.members.unban(user, reason);
+        const [e] = await dontThrow(message.guild.members.unban(user, reason));
 
-            if (!unbans.has(`${message.guild.id},${user.id}`))
-                unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
-        } catch (e) {
+        if (e !== null) {
             return this.Embed.fail(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
+
+        if (!unbans.has(`${message.guild.id},${user.id}`))
+            unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
         return this.Embed.success(`${user} is now unbanned!`);
     }

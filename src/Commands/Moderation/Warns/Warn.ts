@@ -10,6 +10,7 @@ import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -93,9 +94,9 @@ export class kCommand extends Command {
      
         // old warnings should not be nullified, subsequent warnings will each result in a kick.
         if (settings.max_warning_points <= totalPoints) {
-            try {
-                await member.kick(reason || undefined);
-            } catch {
+            const [kickError] = await dontThrow(member.kick(reason || undefined));
+            
+            if (kickError !== null) {
                 return this.Embed.fail(`Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`);
             }
 

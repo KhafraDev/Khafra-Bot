@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { Interaction, MessageActionRow, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
@@ -9,6 +9,7 @@ import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Message } from '../../lib/types/Discord.js.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const range = Range(0, 7, true);
 
@@ -61,10 +62,11 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        let button: MessageComponentInteraction | null = null;
-        try {
-            button = await msg.awaitMessageComponent({ filter, time: 20_000 });
-        } catch {
+        const [pressedError, button] = await dontThrow(msg.awaitMessageComponent({
+            filter, time: 20_000
+        }));
+
+        if (pressedError !== null) {
             return void msg.edit({
                 embeds: [this.Embed.fail(`Didn't get confirmation to ban ${user}!`)],
                 components: []
@@ -79,20 +81,20 @@ export class kCommand extends Command {
 
         await button.deferUpdate();
 
-        try {
-            await message.guild.members.ban(user, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
-                reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
-            });
+        const [banError] = await dontThrow(message.guild.members.ban(user, {
+            days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+            reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
+        }));
 
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
-        } catch {
+        if (banError !== null) {
             return void button.editReply({
                 embeds: [this.Embed.fail(`${user} isn't bannable!`)],
                 components: []
             });
+        } else {
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         }
 
         await button.editReply({
