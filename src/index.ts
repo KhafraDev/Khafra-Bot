@@ -29,7 +29,8 @@ export const client = new KhafraClient({
         }
     }),
     partials: [ 'MESSAGE', 'USER' ],
-    intents: [ 
+    intents: [
+        Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_BANS,
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,

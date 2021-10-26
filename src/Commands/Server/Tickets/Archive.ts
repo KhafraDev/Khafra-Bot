@@ -24,7 +24,8 @@ export class kCommand extends Command {
                 folder: 'Server',
                 aliases: ['tickets:archive', 'tickets:delete', 'tickets:delete'],
                 args: [0, 0],
-                ratelimit: 30
+                ratelimit: 30,
+                guildOnly: true
             }
         );
     }

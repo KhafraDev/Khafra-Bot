@@ -1,6 +1,5 @@
 import { Message, Permissions } from 'discord.js';
 import { Message as kMessage } from '../../types/Discord.js.js';
-import { isDM } from '../../types/Discord.js.js';
 import { hasPerms } from '../Permissions.js';
 
 const basic = new Permissions([
@@ -23,7 +22,6 @@ export const Sanitize = (message: Message): message is kMessage => {
         message.partial ||
         message.tts || 
         message.content.length === 0 ||
-        isDM(message.channel) ||
         !message.guild
     ) { 
         return false;

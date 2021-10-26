@@ -67,7 +67,8 @@ export class kCommand extends Command {
                 name: 'user',
                 folder: 'Server',
                 args: [0, 1],
-                aliases: [ 'userinfo' ]
+                aliases: [ 'userinfo' ],
+                guildOnly: true
             }
         );
     }

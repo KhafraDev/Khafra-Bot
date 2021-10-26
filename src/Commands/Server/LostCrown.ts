@@ -16,7 +16,8 @@ export class kCommand extends Command {
                 folder: 'Server',
                 aliases: ['crown', 'crownlost'],
                 args: [0, 0],
-                ratelimit: 3
+                ratelimit: 3,
+                guildOnly: true
             }
         );
     }

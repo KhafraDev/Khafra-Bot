@@ -23,7 +23,8 @@ export class kCommand extends Command {
                 folder: 'Server',
                 aliases: ['tickets:create'],
                 args: [0],
-                ratelimit: 30
+                ratelimit: 30,
+                guildOnly: true
             }
         );
     }

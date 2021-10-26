@@ -23,7 +23,8 @@ export class kCommand extends Command {
                 folder: 'Settings',
                 aliases: ['ticketchannels'],
                 args: [1, 1],
-                ratelimit: 10
+                ratelimit: 10,
+                guildOnly: true
             }
         );
     }

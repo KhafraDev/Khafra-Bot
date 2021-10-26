@@ -19,7 +19,8 @@ export class kCommand extends Command {
                 folder: 'Fun',
                 args: [1, 5],
                 ratelimit: 3,
-                permissions: [ Permissions.FLAGS.ATTACH_FILES ]
+                permissions: [ Permissions.FLAGS.ATTACH_FILES ],
+                guildOnly: true
             }
         );
     }

@@ -21,6 +21,7 @@ import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
 import { inlineCode } from '@discordjs/builders';
+import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -49,6 +50,7 @@ export class kEvent extends Event<'messageCreate'> {
     async init(message: Message) {
         Stats.messages++;
 
+        if (message.channel.type === 'DM') return DM(message);
         if (!Sanitize(message)) return;
 
         const [name, ...args] = message.content.split(/\s+/g);

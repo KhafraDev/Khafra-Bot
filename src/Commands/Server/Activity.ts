@@ -46,7 +46,8 @@ export class kCommand extends Command {
                 permissions: [
                     Permissions.FLAGS.CREATE_INSTANT_INVITE,
                     Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
-                ]
+                ],
+                guildOnly: true
             }
         );
     }
