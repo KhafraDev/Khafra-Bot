@@ -102,7 +102,7 @@ export class kCommand extends Command {
         }
 
         const { count, users } = m.reactions.cache.get('🎉')!;
-        const numWinners = Number(/^(\d+)\s/.exec(m.embeds[0].footer!.text!)![1]);
+        const numWinners = Number(/^(\d+)\s/.exec(m.embeds[0].footer!.text)![1]);
         const winners: User[] = [];
         
         if (count !== users.cache.size) {
@@ -112,6 +112,7 @@ export class kCommand extends Command {
         if (count > numWinners) {
             while (winners.length < numWinners) {
                 const random = users.cache.random();
+                if (!random) break;
                 if (random.bot) continue;
                 if (winners.some(u => u.id === random.id)) continue;
 

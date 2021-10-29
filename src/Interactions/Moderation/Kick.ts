@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
 
         const [err, guild] = interaction.guild
             ? [null, interaction.guild]
-            : await dontThrow(interaction.client.guilds.fetch(interaction.guildId!));
+            : await dontThrow(interaction.client.guilds.fetch(interaction.guildId));
 
         if (err !== null) {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;

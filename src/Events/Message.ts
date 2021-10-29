@@ -20,7 +20,7 @@ import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
-import { inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
@@ -178,6 +178,16 @@ export class kEvent extends Event<'messageCreate'> {
                 param.files = [returnValue];
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);
+            
+            if ([...command.settings.aliases!, command.settings.name].some(n => KhafraClient.Interactions.has(n))) {
+                const toAdd = `${bold('Tip: use the slash command version of this command!')}\n\n`;
+                
+                if (param.content && param.content.length + toAdd.length <= 2048) {
+                    param.content = `${toAdd}${param.content}`;
+                } else {
+                    param.content ??= toAdd;
+                }
+            }
             
             return message.reply(param);
         } catch (e) {
