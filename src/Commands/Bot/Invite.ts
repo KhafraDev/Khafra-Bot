@@ -3,6 +3,8 @@ import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
+const scope = `bot%20applications.commands`;
+
 @RegisterCommand
 export class kCommand extends Command {
     constructor() {
@@ -23,15 +25,15 @@ export class kCommand extends Command {
         return this.Embed.success()
             .addField(
                 bold('Basic Permissions:'), 
-                `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=117824)`
+                `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`
             )
             .addField(
                 bold('Everything:'),
-                `[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=bot&permissions=1074654294)`
+                `[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=1074654294)`
             )
             .addField(
                 bold('Enable slash commands and buttons:'),
-                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=applications.commands%20bot)`
+                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=${scope})`
             );
     }
 }
