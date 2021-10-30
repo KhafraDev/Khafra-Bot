@@ -1,11 +1,12 @@
 import { CommandInteraction, Permissions } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
@@ -14,19 +15,23 @@ const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('unban')
-            .addUserOption(option => option
-                .setName('member')
-                .setDescription('Member ID to unban.')
-                .setRequired(true)    
-            )
-            .addStringOption(option => option
-                .setName('reason')
-                .setDescription('The reason to unban the member for.')
-                .setRequired(false)    
-            )
-            .setDescription('Unban someone!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'unban',
+            description: 'Unban someone!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.User,
+                    name: 'member',
+                    description: 'Member to unban.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'reason',
+                    description: 'The reason you are unbanning the member for.'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }

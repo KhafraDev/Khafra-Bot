@@ -1,14 +1,16 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { NASAGetRandom } from '../../lib/Packages/NASA.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('nasa')
-            .setDescription('Get a random image of space from NASA!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'nasa',
+            description: 'Gets a random image of space from NASA!'
+        };
 
         super(sc, { defer: true });
     }

@@ -69,8 +69,8 @@ export const badmeme = async (
         } else if ('is_gallery' in data && data.is_gallery === true) {
             const galleryImages = Object
                 .values(data.media_metadata)
-                .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid')
-                .map(k => decodeXML(k.s.u));
+                .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid' && !!k.s.u)
+                .map(k => decodeXML(k.s.u!));
 
             urls.push({ nsfw: data.over_18, url: galleryImages });
         } else if (isgfycat(data)) {

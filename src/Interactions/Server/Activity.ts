@@ -1,8 +1,17 @@
 import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { hideLinkEmbed, hyperlink, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { APIInvite, APIVersion, ChannelType, InviteTargetType, RESTPostAPIChannelInviteJSONBody, Routes } from 'discord-api-types/v9';
+import { 
+    APIInvite,
+    APIVersion,
+    ChannelType,
+    InviteTargetType,
+    RESTPostAPIChannelInviteJSONBody,
+    Routes,
+    ApplicationCommandOptionType,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
@@ -28,21 +37,26 @@ const Activities = {
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('activity')
-            .addStringOption(option => option
-                .setName('name')
-                .setDescription('Name of the game to play')
-                .addChoices(Object.entries(Activities))
-                .setRequired(true)
-            )
-            .addChannelOption(option => option
-                .setName('channel')
-                .setDescription('Channel to play the activity in!')
-                .addChannelTypes([ ChannelType.GuildVoice ])
-                .setRequired(true)
-            )
-            .setDescription('Play a game in VC!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'activity',
+            description: 'Play a game in VC!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'name',
+                    description: 'Name of the game to play.',
+                    required: true,
+                    choices: Object.entries(Activities).map(([name, value]) => ({ name, value }))
+                },
+                {
+                    type: ApplicationCommandOptionType.Channel,
+                    name: 'channel',
+                    description: 'Channel to play the game in!',
+                    channel_types: [ ChannelType.GuildVoice ],
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }

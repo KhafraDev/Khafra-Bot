@@ -1,5 +1,5 @@
 import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
-import { bold, inlineCode, italic, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@discordjs/builders';
 import { join } from 'path';
 import { Interactions } from '../../Structures/Interaction.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -7,6 +7,7 @@ import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { client } from '../../index.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
@@ -46,14 +47,18 @@ const getEmojis = once(() => {
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('info')
-            .addMentionableOption(option => option
-                .setName('type')
-                .setDescription('Information to fetch.')
-                .setRequired(true)    
-            )
-            .setDescription('Get info about a user, guild member, channel, or role.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'info',
+            description: 'Gets info about a user, guild member, channel, or role.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.Mentionable,
+                    name: 'type',
+                    description: 'Type of Discord object to get information for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }

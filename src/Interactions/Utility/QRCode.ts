@@ -1,19 +1,24 @@
 import { CommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { fetch } from 'undici';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('qr')
-            .addStringOption(option => option
-                .setName('input')
-                .setDescription('text to get a QR code for')
-                .setRequired(true)
-            )
-            .setDescription('Get the QR code for some text.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'qr',
+            description: 'Gets the QR code for some text.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'input',
+                    description: 'Text to get a QR code for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }

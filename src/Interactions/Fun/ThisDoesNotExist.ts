@@ -1,29 +1,36 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, hyperlink, inlineCode, italic, SlashCommandBuilder, underscore } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 import { thisDoesNotExist, DNE } from '../../lib/Packages/ThisDoesNotExist.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { thisWordDoesNotExist } from '../../lib/Packages/ThisWordDoesNotExist.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { thisSimpsonDoesNotExist } from '../../lib/Packages/Simpson.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('thisdoesnotexist')
-            .addStringOption(option => option
-                .setName('type')
-                .setDescription('Type of image to get.')
-                .setRequired(true)
-                .addChoice('artwork', 'tdne_artwork')
-                .addChoice('cat', 'tdne_cat')
-                .addChoice('fucked up homer', 'tdne_fuhomer')
-                .addChoice('horse', 'tdne_horse')
-                .addChoice('person', 'tdne_person')
-                .addChoice('word', 'tdne_word')
-            )
-            .setDescription(`Get an AI generated picture of a person or item that doesn't exist!`);
-        
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'thisdoesnotexist',
+            description: `Get an AI generated picture of a person or item that doesn't exist!`,
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'type',
+                    description: 'Type of image to get.',
+                    required: true,
+                    choices: [
+                        { name: 'artwork', value: 'tdne_artwork' },
+                        { name: 'cat', value: 'tdne_cat' },
+                        { name: 'fucked up homer', value: 'tdne_fuhomer' },
+                        { name: 'horse', value: 'tdne_horse' },
+                        { name: 'person', value: 'tdne_person' },
+                        { name: 'word', value: 'tdne_word' }
+                    ]
+                }
+            ]
+        }
+
         super(sc);
     }
 

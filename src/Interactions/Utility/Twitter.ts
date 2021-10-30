@@ -1,20 +1,24 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('twitter')
-            .addStringOption(option => option
-                .setName('twitter')
-                .setDescription('Twitter URL to get media of')
-                .setRequired(true)
-            )
-            .setDescription('Get a list of media embedded in a Tweet!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'twitter',
+            description: 'Gets a list of media embedded in a tweet!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'tweet',
+                    description: 'Twitter URL to get the media of.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }

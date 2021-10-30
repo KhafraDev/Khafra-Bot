@@ -1,11 +1,12 @@
 import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { plural } from '../../lib/Utility/String.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
@@ -14,24 +15,28 @@ const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('ban')
-            .addUserOption(option => option
-                .setName('member')
-                .setDescription('Member to ban.')
-                .setRequired(true)    
-            )
-            .addIntegerOption(option => option
-                .setName('days')
-                .setDescription(`Days of messages to clear (default to 7).`)
-                .setRequired(false)    
-            )
-            .addStringOption(option => option
-                .setName('reason')
-                .setDescription('The reason to ban the member for.')
-                .setRequired(false)    
-            )
-            .setDescription('Ban someone!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'ban',
+            description: 'Ban someone!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.User,
+                    name: 'member',
+                    description: 'Member to ban.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Integer,
+                    name: 'days',
+                    description: 'Days of messages to clear (default is 7).'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'reason',
+                    description: 'The reason you are banning the member for.'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }

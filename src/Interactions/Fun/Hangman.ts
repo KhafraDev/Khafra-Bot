@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { extname, join } from 'path';
 import { readdirSync } from 'fs';
@@ -10,6 +10,7 @@ import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { plural } from '../../lib/Utility/String.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const assetsPath = join(assets, 'Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
@@ -145,18 +146,25 @@ class Hangman {
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('hangman')
-            .addBooleanOption(option => option
-                .setName('list')
-                .setDescription('list of words that you can use.')
-            )
-            .addStringOption(option => option
-                .setName('play')
-                .addChoices(listsByName.map(word => [word, word]))
-                .setDescription('choose a list of words to play with.')    
-            )
-            .setDescription(`Play a game of hangman!`)
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'hangman',
+            description: `Play a game of hangman!`,
+            options: [
+                {
+                    // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: 'list',
+                    description: 'list of words that you can use.',
+                    required: false
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'play',
+                    description: 'choose a list of words to play with.',
+                    choices: listsByName.map(word => ({ name: word, value: word })),
+                }
+            ]
+        };
         
         super(sc, { defer: true });
     }

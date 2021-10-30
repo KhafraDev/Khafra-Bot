@@ -1,5 +1,6 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { codeBlock, SlashCommandBuilder } from '@discordjs/builders';
+import { codeBlock } from '@discordjs/builders';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const boomer1984 = `
 ⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
@@ -18,9 +19,10 @@ const boomer1984 = `
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('1984')
-            .setDescription(`It's literally 1984`)
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: '1984',
+            description: `It's literally 1984`
+        };
         
         super(sc);
     }

@@ -87,7 +87,7 @@ export class KhafraClient extends Client {
         }
 
         if (loaded.length !== 0) {
-            const scs = loaded.map(i => i.data.toJSON());
+            const scs = loaded.map(i => 'toJSON' in i.data ? i.data.toJSON() : i.data);
             const processArgs = new Minimalist(process.argv.slice(2).join(' '));
             
             if (processArgs.get('dev') === true) {

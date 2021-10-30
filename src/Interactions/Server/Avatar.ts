@@ -1,33 +1,37 @@
 import { AllowedImageFormat, AllowedImageSize, CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const sizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const formats = ['webp', 'png', 'jpg', 'jpeg'];
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('avatar')
-            .addUserOption(option => option
-                .setName('user')
-                .setDescription('User to get avatar of.')
-                .setRequired(true)
-            )
-            .addStringOption(option => option
-                .setName('size')
-                .addChoices(sizes.map(s => [`${s}`, `${s}`]))
-                .setDescription('Set the size of the avatar to get.')
-                .setRequired(false)
-            )
-            .addStringOption(option => option
-                .setName('format')
-                .addChoices(formats.map(f => [f, f]))
-                .setDescription('Image format')
-                .setRequired(false)
-            )
-            .setDescription('Get a user\'s avatar!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'avatar',
+            description: 'Get someone\'s avatar!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.User,
+                    name: 'user',
+                    description: 'User to get the avatar of.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'size',
+                    description: 'Set the size of the avatar image.',
+                    choices: sizes.map(s => ({ name: `${s}`, value: `${s}` }))
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'format',
+                    description: 'Set the image type of the avatar.',
+                    choices: formats.map(f => ({ name: f, value: f }))
+                }
+            ]
+        };
 
         super(sc);
     }

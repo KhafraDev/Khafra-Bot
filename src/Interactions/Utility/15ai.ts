@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { hyperlink, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { join } from 'path';
@@ -7,6 +7,7 @@ import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { FifteenDotAI } from '@khaf/15.ai';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 type Characters = typeof import('../../lib/Packages/15.ai/Characters.json');
 
@@ -14,34 +15,40 @@ const characters = createFileWatcher({}, join(cwd, 'src/lib/Packages/15.ai/Chara
 const keys = Object.keys(characters) as (keyof typeof characters)[];
 
 const factory = () => {
-    const sc = new SlashCommandBuilder()
-        .setName('15ai')
-        .setDescription('15.ai: natural TTS.')
+    const sc: RESTPostAPIApplicationCommandsJSONBody = {
+        name: '15ai',
+        description: '15.ai: natural TTS.',
+        options: []
+    };
 
     for (const key of keys.slice(0, 25)) {
-        const choices: [string, string][] = [];
+        const choices: { name: string, value: string }[] = [];
 
         for (const choice of characters[key].slice(0, 25)) {
-            choices.push([choice.name, choice.name]);
+            choices.push({ name: choice.name, value: choice.name });
         }
 
         const name = key.toLowerCase();
-
-        sc.addSubcommand(command => command
-            .setName(name)
-            .addStringOption(option => option
-                .setName('voice')
-                .setDescription('Voice to choose TTS from.')
-                .setRequired(true)
-                .addChoices(choices)
-            )
-            .addStringOption(option => option
-                .setName('text')
-                .setDescription('text to convert to speech.')
-                .setRequired(true)    
-            )
-            .setDescription(`${key} voice`)
-        );
+        sc.options!.push({
+            type: ApplicationCommandOptionType.Subcommand,
+            name: name,
+            description: `${key}'s voice.`,
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'voice',
+                    description: 'Voice to choose TTS from.',
+                    required: true,
+                    choices: choices
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'text',
+                    description: 'Text to convert to speech.',
+                    required: true
+                }
+            ]
+        });
     }
 
     return sc;

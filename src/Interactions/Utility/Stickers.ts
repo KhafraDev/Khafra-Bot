@@ -1,30 +1,35 @@
 import { CommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { client } from '../../index.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const stickers: Sticker[] = [];
 const mw = once(() => client.fetchPremiumStickerPacks());
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('sticker')
-            .addStringOption(option => option
-                .setName('name')
-                .setDescription('the name of the sticker you want to use')
-                .setRequired(true)    
-            )
-            .addIntegerOption(option => option
-                .setName('offset')
-                .setDescription('there may be more than 1 sticker with that name, this chooses which one should be displayed')
-                .setRequired(false)
-            )
-            .setDescription('Use a sticker!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'sticker',
+            description: 'Uses a default sticker!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'name',
+                    description: 'The name of the sticker to use.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Integer,
+                    name: 'offset',
+                    description: 'Offset of the sticker name to use.'
+                }
+            ]
+        };
 
         super(sc, { ownerOnly: true });
     }
