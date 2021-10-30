@@ -5,7 +5,7 @@
   "main": "build/src/index.js",
   "type": "module",
   "dependencies": {
-    "@discordjs/builders": "^0.7.0",
+    "@discordjs/builders": "^0.8.2",
     "@discordjs/rest": "^0.1.0-canary.0",
     "discord-api-types": "^0.24.0",
     "discord.js": "github:KhafraDev/discord.js",
