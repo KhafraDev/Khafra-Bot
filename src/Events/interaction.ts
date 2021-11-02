@@ -1,13 +1,14 @@
-import { Event } from '../Structures/Event.js';
+import { bold, inlineCode } from '@discordjs/builders';
 import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { upperCase } from '../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { Command } from '../Structures/Command.js';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { autoCompleteHandler } from '../lib/Utility/EventEvents/Interaction_AutoComplete.js';
 import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interaction_ReactRoles.js';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { upperCase } from '../lib/Utility/String.js';
+import { Command } from '../Structures/Command.js';
+import { RegisterEvent } from '../Structures/Decorator.js';
+import { Event } from '../Structures/Event.js';
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -23,6 +24,8 @@ export class kEvent extends Event<'interactionCreate'> {
     async init(interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
             return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
+        } else if (interaction.isAutocomplete()) {
+            return autoCompleteHandler(interaction);
         }
         
         if (!interaction.isCommand()) return;
