@@ -6,8 +6,7 @@ import { MessageActionRow } from 'discord.js';
 import { hyperlink, inlineCode, bold } from '@discordjs/builders';
 import { Components, disableAll, enableAll } from '../../../lib/Utility/Constants/Components.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
+import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { time } from '@discordjs/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Message } from '../../../lib/types/Discord.js.js';
@@ -18,7 +17,7 @@ type GiveawayEdit = Pick<Giveaway, 'id'>;
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const monthMs = 60 * 1000 * 60 * 24 * 30;
-const winnersRange = Range(1, 100);
+const winnersRange = Range({ min: 1, max: 100, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -207,8 +206,7 @@ export class kCommand extends Command {
                     time: 20_000,
                     filter: (m) =>
                         m.author.id === message.author.id &&
-                        validateNumber(Number(m.content)) &&
-                        winnersRange.isInRange(Number(m.content))
+                        winnersRange(Number(m.content))
                 });
     
                 if (winners.size === 0) {

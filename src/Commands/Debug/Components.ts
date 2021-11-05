@@ -1,11 +1,10 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message, MessageActionRow } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Range } from '../../lib/Utility/Range.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 
-const range = Range(1, 5, true);
+const inRange = Range({ min: 1, max: 5, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -27,7 +26,7 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         const amount = Number(args[0]);
-        if (!validateNumber(amount) || !range.isInRange(amount))
+        if (!inRange(amount))
             return this.Embed.fail(`Invalid number of buttons to add!`);
 
         const row = new MessageActionRow();

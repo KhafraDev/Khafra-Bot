@@ -1,33 +1,25 @@
-type Disallow =
-    | 'infinity'
-    | 'negative'
-    | 'zero'
-    | 'float'
-    | 'unsafe'
-    | 'nan'
-
-const strictDefaultChecks: Disallow[] = [
-    'infinity',
-    'negative',
-    'zero',
-    'float',
-    'unsafe',
-    'nan'
-];
+export const validateNumber = (num: unknown): num is number => {
+    return (
+        typeof num === 'number' &&
+        Number.isInteger(num) &&
+        num >= 1 &&
+        num <= Number.MAX_SAFE_INTEGER
+    );
+}
 
 /**
- * Make sure user input is a valid number.
- * By default, disallows `infinity`/`negatives`/`zero`/`floats`/`unsafe integers`.
- * @param num Number to check
- * @param disallow array of checks, defaults to all
+ * Ensures a value is a number, an integer, and between min-max values. 
  */
-export const validateNumber = (num: unknown, disallow: Disallow[] = strictDefaultChecks): num is number => {
-    return typeof num === 'number' && !(
-        (disallow.includes('nan') && Number.isNaN(num)) || // disallow NaN
-        (disallow.includes('infinity') && !Number.isFinite(num)) || // +/- infinity disallowed
-        (disallow.includes('negative') && num < 0) || // negative numbers disallowed
-        (disallow.includes('zero') && num === 0) || // zero disallowed
-        (disallow.includes('float') && !Number.isInteger(num)) || // floats disallowed
-        (disallow.includes('unsafe') && !Number.isSafeInteger(num)) // unsafe integers
-    );
+export const Range = ({ min = 0, max = 0, inclusive = false } = {}) => {
+    min = inclusive ? min : min + 1;
+    max = inclusive ? max : max - 1;
+
+    return (value: number): boolean => {
+        return (
+            typeof value === 'number' &&
+            Number.isInteger(value) &&
+            value >= min &&
+            value <= max
+        );
+    }
 }

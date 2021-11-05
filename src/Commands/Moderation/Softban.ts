@@ -5,11 +5,10 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Message } from '../../lib/types/Discord.js.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -45,7 +44,7 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.ban(member, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+                days: inRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);

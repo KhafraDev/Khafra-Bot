@@ -4,14 +4,13 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -82,7 +81,7 @@ export class kCommand extends Command {
         await button.deferUpdate();
 
         const [banError] = await dontThrow(message.guild.members.ban(user, {
-            days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+            days: inRange(clear) ? clear : 7,
             reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
         }));
 

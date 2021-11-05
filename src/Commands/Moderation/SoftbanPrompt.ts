@@ -6,14 +6,13 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { bold } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -87,7 +86,7 @@ export class kCommand extends Command {
         
         try {
             await message.guild.members.ban(user, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+                days: inRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);

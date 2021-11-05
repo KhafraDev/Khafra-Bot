@@ -2,14 +2,13 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 
-const range = Range(1, 100, true);
+const inRange = Range({ min: 1, max: 100, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -33,13 +32,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const toDelete = Number(args[0]);
 
-        if (!validateNumber(toDelete)) {
-            return this.Embed.fail(`
-            Received: ${toDelete}, this command requires a valid integer!
-
-            Example: ${inlineCode(`${this.settings.name} 100`)}
-            `);
-        } else if (!range.isInRange(toDelete)) {
+        if (!inRange(toDelete)) {
             return this.Embed.fail(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 

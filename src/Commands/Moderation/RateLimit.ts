@@ -7,13 +7,12 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Range } from '../../lib/Utility/Range.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
-const range = Range(0, MAX_SECS, true);
+const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -49,7 +48,7 @@ export class kCommand extends Command {
         // by default, reset the ratelimit (0s).
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) ?? '0s')! / 1000;
 
-        if (!validateNumber(secs) || !range.isInRange(secs))
+        if (!inRange(secs))
             return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)

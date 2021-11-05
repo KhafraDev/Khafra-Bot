@@ -1,8 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
+import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
@@ -34,7 +33,7 @@ const description =
     `that you may wish to tweak, so we're going to go through the list. ` +
     `Follow the instructions and it'll be done quickly. :) \n\n`;
 
-const winnersRange = Range(1, 100);
+const winnersRange = Range({ min: 1, max: 100, inclusive: true });
 const monthMs = 60 * 1000 * 60 * 24 * 30;
 const perms = new Permissions([
     Permissions.FLAGS.ADD_REACTIONS,
@@ -158,8 +157,7 @@ export class kCommand extends Command {
                     time: 20_000,
                     filter: (m) => 
                         m.author.id === message.author.id &&
-                        validateNumber(Number(m.content)) &&
-                        winnersRange.isInRange(Number(m.content))
+                        winnersRange(Number(m.content))
                 });
 
                 if (w.size === 0) {

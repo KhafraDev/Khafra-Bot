@@ -4,8 +4,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
+import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
@@ -18,7 +17,7 @@ type WarnInsert = {
     k_ts: Warning['k_ts']
 }
 
-const range = Range(0, 32767, true);
+const inRange = Range({ min: 0, max: 32767, inclusive: true });
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
@@ -48,7 +47,7 @@ export class kCommand extends Command {
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.KICK_MEMBERS))
             return this.Embed.missing_perms(false, Permissions.FLAGS.KICK_MEMBERS);
-        else if (!validateNumber(points) || !range.isInRange(points))
+        else if (!inRange(points))
             return this.Embed.fail(`An invalid number of points was provided, user wasn't warned!`);
         
         const reason = args.slice(2).join(' ');

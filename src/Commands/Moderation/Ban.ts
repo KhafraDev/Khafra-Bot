@@ -5,14 +5,13 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 
 @RegisterCommand
@@ -57,7 +56,7 @@ export class kCommand extends Command {
         if (cli.has('days') || cli.has('time')) {
             const time = Number(cli.get('days') || cli.get('time'));
 
-            if (validateNumber(time) && range.isInRange(time)) {
+            if (inRange(time)) {
                 clear = time;
             }
         } else if (typeof args[1] === 'string') {
@@ -67,7 +66,7 @@ export class kCommand extends Command {
             // If it couldn't be parsed, the `time` will default to 0.
             const time = Math.ceil(parseStrToMs(args[1])! / 86_400_000); // ms -> days
 
-            if (validateNumber(time) && range.isInRange(time)) {
+            if (inRange(time)) {
                 clear = time;
                 usedMs = true;
             }
