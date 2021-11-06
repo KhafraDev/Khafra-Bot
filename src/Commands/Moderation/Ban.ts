@@ -60,13 +60,10 @@ export class kCommand extends Command {
                 clear = time;
             }
         } else if (typeof args[1] === 'string') {
-            // I know I'll forget this in the future, so:
-            // this uses a trick that when `null` is coerced to a number,
-            // by performing a math op on it, it coerces to 0.
-            // If it couldn't be parsed, the `time` will default to 0.
-            const time = Math.ceil(parseStrToMs(args[1])! / 86_400_000); // ms -> days
+            const ms = parseStrToMs(args[1]);
+            const time = Math.ceil(ms! / 86_400_000); // ms -> days
 
-            if (inRange(time)) {
+            if (ms && inRange(time)) {
                 clear = time;
                 usedMs = true;
             }
