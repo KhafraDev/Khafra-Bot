@@ -1,19 +1,16 @@
-import { Command } from '../../../Structures/Command.js';
-import { SnowflakeUtil, Snowflake, Activity } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { UserFlagsString } from 'discord.js';
-import { client } from '../../../index.js';
-import { once } from '../../../lib/Utility/Memoize.js';
 import { bold, inlineCode, italic, time } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
-
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { Activity, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
+import { client } from '../../../index.js';
+import { Message } from '../../../lib/types/Discord.js.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { Command } from '../../../Structures/Command.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-const config = {} as typeof import('../../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
