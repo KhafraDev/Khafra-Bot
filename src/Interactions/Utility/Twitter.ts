@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const url = interaction.options.getString('twitter', true);
+        const url = interaction.options.getString('tweet', true);
         const { hostname, pathname } = URLFactory(url) ?? {};
 
         if (hostname !== 'twitter.com' || !pathname)
