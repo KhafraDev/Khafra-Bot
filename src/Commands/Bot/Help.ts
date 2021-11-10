@@ -3,7 +3,7 @@ import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'disc
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { chunkSafe } from '../../lib/Utility/Array.js';
-import { bold, inlineCode, hyperlink, codeBlock } from '@discordjs/builders';
+import { bold, inlineCode, hyperlink, codeBlock } from '@khaf/builders';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';

@@ -6,7 +6,7 @@ import { validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { GuildChannel, Permissions, ThreadChannel, User, Channel } from 'discord.js';
-import { bold, hyperlink } from '@discordjs/builders';
+import { bold, hyperlink } from '@khaf/builders';
 import { plural } from '../../../lib/Utility/String.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;

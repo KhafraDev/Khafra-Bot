@@ -5,7 +5,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { table } from '../../../lib/Utility/CLITable.js';
 import { Message } from '../../../lib/types/Discord.js.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 
 interface Insights {
     k_date: Date

@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { stripIndents } from '../../lib/Utility/Template.js';

@@ -4,7 +4,7 @@ import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const Titles = new Map<string, string>();
 const Verses = new Map<string, { book: string, verse: string, content: string}>();

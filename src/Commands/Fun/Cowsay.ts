@@ -4,7 +4,7 @@ import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 
 const dir = join(assets, 'Cowsay');
 const start = `

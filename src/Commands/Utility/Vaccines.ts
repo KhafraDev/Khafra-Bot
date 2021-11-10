@@ -2,7 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Message } from 'discord.js';
 import { fetchAppointments } from '@khaf/vaccines';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 type Radius = Parameters<typeof fetchAppointments>[1]
 const radius = [1, 5, 15, 20, 25];

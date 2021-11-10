@@ -20,7 +20,7 @@ import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
 import { Stats } from '../lib/Utility/Stats.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));

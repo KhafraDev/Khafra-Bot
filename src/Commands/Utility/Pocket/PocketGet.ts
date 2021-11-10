@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 interface PocketUser {
     access_token: string 

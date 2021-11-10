@@ -7,7 +7,7 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { time } from '@discordjs/builders';
+import { time } from '@khaf/builders';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([

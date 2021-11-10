@@ -4,7 +4,7 @@ import { Pocket } from '@khaf/pocket';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
-import { codeBlock, inlineCode } from '@discordjs/builders';
+import { codeBlock, inlineCode } from '@khaf/builders';
 
 interface PocketUser {
     access_token: string 

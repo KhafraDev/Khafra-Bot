@@ -4,7 +4,7 @@ import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 
 const symbols = /^-|\+|\*|\/|\.|\(|\)$/;
 /** Symbols an input is not allowed to start with */

@@ -1,6 +1,6 @@
 import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { 
     APIInvite,

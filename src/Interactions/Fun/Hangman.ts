@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { extname, join } from 'path';
 import { readdirSync } from 'fs';

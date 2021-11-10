@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { getArticleById, search } from '@khaf/wikipedia';
 import { ellipsis, plural } from '../../lib/Utility/String.js';

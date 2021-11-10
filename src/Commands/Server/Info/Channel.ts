@@ -4,7 +4,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, isVoice, isExplicitText, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { bold, codeBlock, time } from '@discordjs/builders';
+import { bold, codeBlock, time } from '@khaf/builders';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 
 @RegisterCommand

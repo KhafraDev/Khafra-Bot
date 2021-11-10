@@ -1,4 +1,4 @@
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { NASAGetRandom, cache } from '../../lib/Packages/NASA.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';

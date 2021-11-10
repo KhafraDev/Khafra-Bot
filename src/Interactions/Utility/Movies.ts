@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { searchMovie } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';

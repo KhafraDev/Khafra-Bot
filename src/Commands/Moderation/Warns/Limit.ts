@@ -7,7 +7,7 @@ import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { client } from '../../../Structures/Database/Redis.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { Message } from '../../../lib/types/Discord.js.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
 

@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 @RegisterCommand

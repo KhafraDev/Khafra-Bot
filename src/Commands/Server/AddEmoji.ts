@@ -4,7 +4,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { validURL } from '../../lib/Utility/Valid/URL.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

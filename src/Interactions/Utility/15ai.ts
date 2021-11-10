@@ -1,4 +1,4 @@
-import { hyperlink, inlineCode } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@khaf/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
 import { APIApplicationCommandOption, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction } from 'discord.js';

@@ -4,7 +4,7 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { readdirSync } from 'fs';

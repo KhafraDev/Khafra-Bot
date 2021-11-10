@@ -7,7 +7,7 @@ import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { decodeXML } from 'entities';
 import { readFileSync } from 'fs';

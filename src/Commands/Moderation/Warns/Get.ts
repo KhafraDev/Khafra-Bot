@@ -6,7 +6,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Warning } from '../../../lib/types/KhafraBot.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 interface Total {

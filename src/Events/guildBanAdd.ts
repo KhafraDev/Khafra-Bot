@@ -6,7 +6,7 @@ import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { bans } from '../lib/Cache/Bans.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { delay } from '../lib/Utility/Constants/OneLiners.js';
 import { client } from '../Structures/Database/Redis.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';

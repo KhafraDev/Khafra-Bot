@@ -4,7 +4,7 @@ import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 
 @RegisterCommand

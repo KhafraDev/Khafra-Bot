@@ -5,7 +5,7 @@ import { plural } from '../String.js';
 import { createFileWatcher } from '../FileWatcher.js';
 import { cwd } from './Path.js';
 import { join } from 'path';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 

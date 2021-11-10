@@ -3,7 +3,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { talkObamaToMe } from '../../lib/Packages/TalkObamaToMe.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

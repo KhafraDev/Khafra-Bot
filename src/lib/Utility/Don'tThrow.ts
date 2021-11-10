@@ -11,7 +11,6 @@ type FromPromise<T> = T extends Promise<infer U> ? U : T;
  * const [err, res] = await dontThrow(message.channel.send({ content: 'Hello, world!' })); 
  */
 export async function dontThrow<Ret>(fn: Function, args: unknown[]): Promise<[Error, Ret]>;
-export async function dontThrow(param: undefined): Promise<[null, undefined]>;
 export async function dontThrow<T extends Promise<unknown>>(promise: T): Promise<[Error, FromPromise<T>]>;
 export async function dontThrow<T extends Promise<unknown>>(promise: T | Function, args?: unknown[]) {
     if (promise === undefined) return [null, undefined];

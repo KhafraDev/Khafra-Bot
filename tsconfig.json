@@ -85,6 +85,7 @@
     "src/lib/Packages/Pocket",
     "src/lib/Packages/Vaccines",
     "src/lib/Packages/15.ai",
-    "src/lib/Packages/MDN"
+    "src/lib/Packages/MDN",
+    "src/lib/Packages/@khaf-builders"
   ]
 }

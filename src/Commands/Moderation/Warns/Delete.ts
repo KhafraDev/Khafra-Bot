@@ -7,7 +7,7 @@ import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 interface WarningDel {
     id: Warning['id']

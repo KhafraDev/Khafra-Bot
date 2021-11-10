@@ -3,9 +3,9 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { DiscordAPIError, Permissions } from 'discord.js';
-import { hyperlink, inlineCode } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@khaf/builders';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { time } from '@discordjs/builders';
+import { time } from '@khaf/builders';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;

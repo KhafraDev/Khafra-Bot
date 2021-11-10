@@ -1,4 +1,4 @@
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';

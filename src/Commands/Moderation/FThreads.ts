@@ -4,7 +4,7 @@ import { isCategory, isStage, isThread, isVoice, Message } from '../../lib/types
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { bold, inlineCode, italic } from '@discordjs/builders';
+import { bold, inlineCode, italic } from '@khaf/builders';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 const threadPerms = new Permissions([

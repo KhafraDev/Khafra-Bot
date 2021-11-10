@@ -8,7 +8,7 @@ import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });

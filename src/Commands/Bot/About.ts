@@ -5,7 +5,7 @@ import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 

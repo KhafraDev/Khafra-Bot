@@ -5,7 +5,7 @@ import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
 import { fetch } from 'undici';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 
 
 interface StrawpollOptions {

@@ -1,4 +1,4 @@
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Activity, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 import { client } from '../../../index.js';

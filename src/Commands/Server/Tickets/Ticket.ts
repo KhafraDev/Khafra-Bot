@@ -2,7 +2,7 @@ import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { KhafraClient } from '../../../Bot/KhafraBot.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 
 @RegisterCommand

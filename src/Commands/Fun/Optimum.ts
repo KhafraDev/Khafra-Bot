@@ -1,4 +1,4 @@
-import { italic } from '@discordjs/builders';
+import { italic } from '@khaf/builders';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 

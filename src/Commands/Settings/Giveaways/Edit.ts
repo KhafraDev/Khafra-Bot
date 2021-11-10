@@ -3,11 +3,11 @@ import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { MessageActionRow } from 'discord.js';
-import { hyperlink, inlineCode, bold } from '@discordjs/builders';
+import { hyperlink, inlineCode, bold } from '@khaf/builders';
 import { Components, disableAll, enableAll } from '../../../lib/Utility/Constants/Components.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
 import { Range } from '../../../lib/Utility/Valid/Number.js';
-import { time } from '@discordjs/builders';
+import { time } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Message } from '../../../lib/types/Discord.js.js';
 

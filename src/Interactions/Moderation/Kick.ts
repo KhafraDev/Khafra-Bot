@@ -1,6 +1,6 @@
 import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';

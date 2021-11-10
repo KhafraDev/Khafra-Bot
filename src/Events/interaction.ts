@@ -1,4 +1,4 @@
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';

@@ -1,5 +1,5 @@
 import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { join } from 'path';
 import { Interactions } from '../../Structures/Interaction.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';

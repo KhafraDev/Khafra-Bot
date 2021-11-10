@@ -7,7 +7,7 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { client } from '../../Structures/Database/Redis.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,

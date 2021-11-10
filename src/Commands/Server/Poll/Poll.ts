@@ -3,7 +3,7 @@ import { isText, isThread, Message } from '../../../lib/types/Discord.js.js';
 import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';

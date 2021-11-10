@@ -2,7 +2,7 @@ import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { bold, italic } from '@discordjs/builders';
+import { bold, italic } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

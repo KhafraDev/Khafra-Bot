@@ -5,7 +5,7 @@ import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js'
 import { pool } from '../../Structures/Database/Postgres.js';
 import { upperCase } from '../../lib/Utility/String.js';
 import { once } from '../../lib/Utility/Memoize.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 
 interface IBibleVerse {

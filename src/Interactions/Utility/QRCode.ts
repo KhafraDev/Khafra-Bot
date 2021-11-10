@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { fetch } from 'undici';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';

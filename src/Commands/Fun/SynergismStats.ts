@@ -3,7 +3,7 @@ import { Kongregate } from '../../lib/Packages/SynergismStats.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { request } from 'undici';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

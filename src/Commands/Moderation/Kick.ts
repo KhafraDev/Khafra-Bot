@@ -5,7 +5,7 @@ import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { isText, Message } from '../../lib/types/Discord.js.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 @RegisterCommand

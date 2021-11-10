@@ -6,7 +6,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { Message } from '../../lib/types/Discord.js.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

@@ -6,7 +6,7 @@ import { Range } from '../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const inRange = Range({ min: 1, max: 100, inclusive: true });
 

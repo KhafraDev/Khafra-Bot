@@ -6,7 +6,7 @@ import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { CategoryChannel, Permissions, TextChannel } from 'discord.js';
 import { ChannelType } from 'discord-api-types/v9';
 import { randomUUID } from 'crypto';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 

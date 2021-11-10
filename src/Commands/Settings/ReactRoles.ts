@@ -9,7 +9,7 @@ import { isText, Message } from '../../lib/types/Discord.js.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const perms = [
     Permissions.FLAGS.SEND_MESSAGES, 

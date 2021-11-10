@@ -15,7 +15,7 @@ import {
     TextChannel,
     Channel
 } from 'discord.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 

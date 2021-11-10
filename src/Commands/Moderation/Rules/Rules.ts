@@ -6,7 +6,7 @@ import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
-import { bold, hyperlink, inlineCode } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode } from '@khaf/builders';
 import { once } from 'events';
 
 const perms = new Permissions([

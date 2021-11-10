@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';

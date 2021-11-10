@@ -3,7 +3,7 @@ import { Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } f
 import { search, getArticleById } from '@khaf/wikipedia';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { ellipsis, plural } from '../../lib/Utility/String.js';
 import { disableAll } from '../../lib/Utility/Constants/Components.js';
 

@@ -6,7 +6,7 @@ import { Interactions } from '../../Structures/Interaction.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));

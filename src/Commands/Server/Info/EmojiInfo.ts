@@ -7,7 +7,7 @@ import { Message } from '../../../lib/types/Discord.js.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
 import { assets } from '../../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const Emojis = createFileWatcher(

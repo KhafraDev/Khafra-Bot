@@ -9,7 +9,7 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Message } from '../../lib/types/Discord.js.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });

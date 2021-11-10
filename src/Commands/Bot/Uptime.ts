@@ -1,4 +1,4 @@
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../Structures/Command.js';

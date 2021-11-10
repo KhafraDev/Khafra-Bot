@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { NASAGetRandom } from '../../lib/Packages/NASA.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';

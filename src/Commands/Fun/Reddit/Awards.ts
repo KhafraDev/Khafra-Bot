@@ -4,7 +4,7 @@ import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
 import { fetch } from 'undici';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const PER_COIN = 1.99 / 500;
 

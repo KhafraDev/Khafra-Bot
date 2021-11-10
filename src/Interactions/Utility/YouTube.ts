@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';

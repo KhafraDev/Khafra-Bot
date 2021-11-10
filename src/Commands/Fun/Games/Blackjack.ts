@@ -1,4 +1,4 @@
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { shuffle } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';

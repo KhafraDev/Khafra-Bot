@@ -1,6 +1,6 @@
 import { CommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { client } from '../../index.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { readFile } from 'fs/promises';

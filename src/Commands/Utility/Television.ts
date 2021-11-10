@@ -3,7 +3,7 @@ import { searchTV } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

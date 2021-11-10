@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { AccountOptions, IpsumAccount } from '../../Ipsum/Account/Account.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';

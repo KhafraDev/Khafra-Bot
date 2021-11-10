@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
 import { CommandInteraction } from 'discord.js';
 import { thisDoesNotExist, DNE } from '../../lib/Packages/ThisDoesNotExist.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';

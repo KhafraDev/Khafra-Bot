@@ -1,6 +1,6 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, italic } from '@discordjs/builders';
+import { bold, italic } from '@khaf/builders';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 

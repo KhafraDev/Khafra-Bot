@@ -1,5 +1,5 @@
 import { Interactions } from '../../Structures/Interaction.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const boomer1984 = `

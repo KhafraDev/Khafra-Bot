@@ -2,7 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { pasteAliases } from '../../lib/Packages/Pastes.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
 

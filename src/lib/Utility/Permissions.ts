@@ -1,5 +1,5 @@
 import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { isText, isVoice } from '../types/Discord.js.js';
 
 /**

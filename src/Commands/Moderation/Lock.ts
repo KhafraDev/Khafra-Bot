@@ -5,7 +5,7 @@ import { isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 
 @RegisterCommand
 export class kCommand extends Command {

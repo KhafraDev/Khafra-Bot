@@ -11,7 +11,7 @@ import { Embed } from '../Constants/Embeds.js';
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { Stats } from '../Stats.js';
 import { PartialGuild } from '../../types/KhafraBot.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 const cooldownUsers = cooldown(10, 60000);

@@ -1,4 +1,4 @@
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';

@@ -1,4 +1,4 @@
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { fromCache, start } from '../../lib/Packages/COVID.js';
 import { once } from '../../lib/Utility/Memoize.js';

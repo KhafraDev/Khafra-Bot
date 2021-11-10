@@ -8,7 +8,7 @@ import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
