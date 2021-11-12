@@ -12,7 +12,6 @@ type HandlerReturn =
     | import('discord.js').MessageEmbed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
-    | import('@discordjs/builders').SlashCommandSubcommandGroupBuilder
     | void;
 
 type InteractionData =

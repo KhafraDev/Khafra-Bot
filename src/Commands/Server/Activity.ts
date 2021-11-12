@@ -14,7 +14,7 @@ import {
     APIInvite
 } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 
 const enum Activities {
     POKER = '755827207812677713',
