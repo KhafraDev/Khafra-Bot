@@ -2,11 +2,11 @@ import { fetch } from 'undici';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Embed } from '../Utility/Constants/Embeds.js';
 
-const formatURL = new Map<DNE, (type: DNE) => string>([
-    ['artwork', t => `https://this${t}doesnotexist.com/`],
-    ['cat',     t => `https://this${t}doesnotexist.com/`],
-    ['horse',   t => `https://this${t}doesnotexist.com/`],
-    ['person',  t => `https://this${t}doesnotexist.com/image`]
+const formatURL = new Map([
+    ['artwork', `https://thisartworkdoesnotexist.com/`],
+    ['cat',     `https://thiscatdoesnotexist.com/`],
+    ['horse',   `https://thishorsedoesnotexist.com/`],
+    ['person',  `https://thispersondoesnotexist.com/image`]
 ]);
 
 export type DNE = 
@@ -16,12 +16,12 @@ export type DNE =
     | 'person'
 
 export const thisDoesNotExist = async (type: DNE) => {
-    if (!formatURL.has(type)) return null;
-
-    const url = formatURL.get(type)!(type);
+    const url = formatURL.get(type);
+    if (!url) return null;
 
     const res = await fetch(url);
-    const attach = new MessageAttachment(await res.blob(), `t${type}dne.jpeg`);
+    const attach = new MessageAttachment(await res.blob(), `t${type}dne.jpeg`)
+        .setDescription(`A random${type === 'artwork' ? ' piece of' : ''} ${type}!`);
 
     return {
         embeds: [

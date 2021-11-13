@@ -35,7 +35,8 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
         }
 
-        const attachment = new MessageAttachment(await r.blob(), 'qr.png');
+        const attachment = new MessageAttachment(await r.blob(), 'qr.png')
+            .setDescription(`A QR Code!`);
 
         return {
             files: [attachment]

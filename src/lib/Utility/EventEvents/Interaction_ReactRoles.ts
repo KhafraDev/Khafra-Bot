@@ -11,7 +11,7 @@ import { validSnowflake } from '../Mentions.js';
  */
 export const interactionReactRoleHandler = async (interaction: MessageComponentInteraction, isDev = false) => {
     if (!validSnowflake(interaction.customId)) return;
-    if (interaction.message.author.id !== client.user!.id) return;
+    if (interaction.message?.author.id !== client.user!.id) return;
     if (!(interaction.member instanceof GuildMember)) return;
     
     let guild: Guild | null = null; // guild can be null here

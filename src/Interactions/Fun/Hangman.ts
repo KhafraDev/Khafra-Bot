@@ -257,7 +257,7 @@ export class kInteraction extends Interactions {
 
         const r = m.createMessageComponentCollector({
             filter: (interaction) => 
-                interaction.message.id === m.id &&
+                interaction.message?.id === m.id &&
                 interaction.user.id === interaction.user.id &&
                 interaction.customId === 'hint',
             max: 1

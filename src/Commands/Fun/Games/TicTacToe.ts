@@ -51,7 +51,7 @@ export class kCommand extends Command {
 
         const c = m.createMessageComponentCollector({
             filter: interaction => 
-                interaction.message.id === m.id &&
+                interaction.message?.id === m.id &&
                 interaction.user.id === message.author.id &&
                 /^empty,\d$/.test(interaction.customId),
             time: 120_000, 

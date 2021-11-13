@@ -46,7 +46,7 @@ export class kCommand extends Command {
             filter: (interaction) =>
                 ['rock', 'paper', 'scissors'].includes(interaction.customId) &&
                 interaction.user.id === message.author.id &&
-                interaction.message.id === m.id,
+                interaction.message?.id === m.id,
             time: 20000
         }));
 

@@ -78,7 +78,7 @@ export class kCommand extends Command {
         const filter = (interaction: Interaction) =>
             interaction.isMessageComponent() &&
             interaction.user.id === message.author.id &&
-            interaction.message.id === m.id;
+            interaction.message?.id === m.id;
 
         let lastAction = ''
         const actions: string[] = [];

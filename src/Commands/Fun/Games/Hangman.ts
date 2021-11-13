@@ -178,7 +178,7 @@ export class kCommand extends Command {
 
         const r = m.createMessageComponentCollector({
             filter: (interaction) => 
-                interaction.message.id === m.id &&
+                interaction.message?.id === m.id &&
                 interaction.user.id === message.author.id &&
                 interaction.customId === 'hint',
             max: 1, 

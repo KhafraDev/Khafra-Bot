@@ -71,7 +71,7 @@ export class kInteraction extends Interactions {
                 new MessageAttachment(
                     await readFile(join(cwd, `assets/Stickers/${fileName}`)),
                     fileName
-                )
+                ).setDescription(`A sticker for ${interaction.options.getString('name', true)}!`)
             ],
             content: `${inlineCode(interaction.options.getString('name', true))} (${fileNames.size} similar).`
         } as InteractionReplyOptions;
