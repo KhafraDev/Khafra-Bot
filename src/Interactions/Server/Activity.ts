@@ -32,7 +32,10 @@ const Activities = {
     'Word Snacks': '879863976006127627',
     'Letter Tile': '879863686565621790',
     'Awkword': '879863881349087252',
-    'Spell Cast': '852509694341283871'
+    'Spell Cast': '852509694341283871',
+    'Checkers': '832013003968348200',
+    'Sketchy Artist': '879864070101172255',
+    'Putt Party': '832012854282158180',
 } as const;
 
 export class kInteraction extends Interactions {
