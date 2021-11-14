@@ -18,6 +18,7 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'unban',
             description: 'Unban someone!',
+            default_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.User,

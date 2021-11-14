@@ -17,6 +17,7 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'kick',
             description: 'Kick a guild member!',
+            default_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.User,

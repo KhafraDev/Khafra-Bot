@@ -22,6 +22,7 @@ export async function dontThrow<T extends Promise<unknown>>(promise: T | Functio
 
         return [null as unknown as Error, ret];
     } catch (e) {
+        // TODO(@KhafraDev): log if an error happened, pino?
         return [e as Error, null as unknown as FromPromise<T>];
     }
 }
