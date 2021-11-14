@@ -15,7 +15,7 @@ import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { RegisterCommand } from '../../Structures/Decorator.js';
 
-let defaultPermissionInteractions: ApplicationCommand<{ guild: GuildResolvable }>[] = []
+const defaultPermissionInteractions: ApplicationCommand<{ guild: GuildResolvable }>[] = []
 
 @RegisterCommand
 export class kCommand extends Command {
