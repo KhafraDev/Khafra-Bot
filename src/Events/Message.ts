@@ -3,7 +3,6 @@ import { Event } from '../Structures/Event.js';
 import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
 import { Logger } from '../Structures/Logger.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
-import { trim } from '../lib/Utility/Template.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -45,7 +44,7 @@ const disabled = typeof processArgs.get('disabled') === 'string'
 @RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
-    logger = new Logger('Message');
+    logger = new Logger('DEBUG');
 
     async init(message: Message) {
         Stats.messages++;
@@ -212,14 +211,15 @@ export class kEvent extends Event<'messageCreate'> {
                 embeds: [Embed.fail(error)],
                 failIfNotExists: false
             }));
-        } finally { 
-            this.logger.log(trim`
-            Command: ${command.settings.name} 
-            | Author: ${message.author.id} 
-            | URL: ${message.url} 
-            | Guild: ${message.guild?.id ?? 'DMs'} 
-            | Input: ${message.content}
-            `);
+        } finally {
+            this.logger.log(
+                `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
+                {
+                    URL: message.url,
+                    guild: message.guild.id,
+                    input: `"${message.content}"`
+                }
+            );
         }
     }
 }

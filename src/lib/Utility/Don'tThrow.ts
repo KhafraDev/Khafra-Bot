@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { types } from 'util';
+import { Logger } from '../../Structures/Logger.js';
+
+const logger = new Logger('WARN');
 
 type FromPromise<T> = T extends Promise<infer U> ? U : T;
 
@@ -14,6 +17,7 @@ export async function dontThrow<Ret>(fn: Function, args: unknown[]): Promise<[Er
 export async function dontThrow<T extends Promise<unknown>>(promise: T): Promise<[Error, FromPromise<T>]>;
 export async function dontThrow<T extends Promise<unknown>>(promise: T | Function, args?: unknown[]) {
     if (promise === undefined) return [null, undefined];
+    let err: Error | void;
 
     try {
         const ret = args && args.length > 0 && typeof promise === 'function' && !types.isPromise(promise)
@@ -21,8 +25,12 @@ export async function dontThrow<T extends Promise<unknown>>(promise: T | Functio
             : <FromPromise<T>>(types.isPromise(promise) ? await promise : promise);
 
         return [null as unknown as Error, ret];
-    } catch (e) {
-        // TODO(@KhafraDev): log if an error happened, pino?
+    } catch (e: unknown) {
+        err = e as Error;
         return [e as Error, null as unknown as FromPromise<T>];
+    } finally {
+        if (err) {
+            logger.log(`An error occurred but was caught.`, err);
+        }
     }
 }
