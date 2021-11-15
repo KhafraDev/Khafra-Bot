@@ -64,12 +64,16 @@ export class kEvent extends Event<'guildMemberRemove'> {
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
 
+        const joined = 
+            member.joinedAt ? time(member.joinedAt) : 'N/A' +
+            ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
+
         const embed = Embed.success()
             .setAuthor(member.user.username, member.user.displayAvatarURL())
             .setDescription(`
             ${member} (${member.user.tag}) has left the server!
             • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
+            • Joined: ${joined}
             • Left: ${time(new Date())} (${time(new Date(), 'R')})
             `)
             .setFooter('User left');

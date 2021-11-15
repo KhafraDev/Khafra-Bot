@@ -10,7 +10,7 @@ export enum LoggerLevels {
     INFO = 'info',
     ERROR = 'error',
     WARN = 'warn'
-};
+}
 
 const getLevel = (l: keyof typeof LoggerLevels) => {
     switch (l) {
