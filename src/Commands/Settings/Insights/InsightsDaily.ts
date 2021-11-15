@@ -18,14 +18,14 @@ class ImageCharts {
         }
     }
 
-    async toBuffer() {
+    async blob() {
         const res = await fetch(`https://image-charts.com/chart.js/2.8.0?${this.query}`, {
             headers: {
                 'User-Agent': 'PseudoBot'
             }
         });
         
-        return Buffer.from(await res.arrayBuffer());
+        return await res.blob();
     }
 }
 
@@ -116,7 +116,7 @@ export class kCommand extends Command {
             width: 500,
             height: 300,
             backgroundColor: 'black'
-        }).toBuffer();
+        }).blob();
         const attach = new MessageAttachment(chart, `chart.png`);
 
         return {
