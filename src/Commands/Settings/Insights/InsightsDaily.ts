@@ -1,11 +1,33 @@
-import { Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
-import { table } from '../../../lib/Utility/CLITable.js';
-import { Message } from '../../../lib/types/Discord.js.js';
 import { codeBlock } from '@khaf/builders';
+import { MessageAttachment, Permissions, ReplyMessageOptions } from 'discord.js';
+import { fetch } from 'undici';
+import { URLSearchParams } from 'url';
+import { Message } from '../../../lib/types/Discord.js.js';
+import { table } from '../../../lib/Utility/CLITable.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { Command } from '../../../Structures/Command.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+import { RegisterCommand } from '../../../Structures/Decorator.js';
+
+class ImageCharts {
+    private query = new URLSearchParams();
+
+    constructor(o: Record<string, string | number>) {
+        for (const [key, value] of Object.entries(o)) {
+            this.query.set(key, `${value}`);
+        }
+    }
+
+    async toBuffer() {
+        const res = await fetch(`https://image-charts.com/chart.js/2.8.0?${this.query}`, {
+            headers: {
+                'User-Agent': 'PseudoBot'
+            }
+        });
+        
+        return Buffer.from(await res.arrayBuffer());
+    }
+}
 
 interface Insights {
     k_date: Date
@@ -14,7 +36,6 @@ interface Insights {
 }
 
 const intl = Intl.DateTimeFormat('en-US', { dateStyle: 'long' });
-const dateFormat = (time: Date) => intl.format(time);
 
 @RegisterCommand
 export class kCommand extends Command {
@@ -57,7 +78,7 @@ export class kCommand extends Command {
 
         const locale = message.guild.preferredLocale;
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(dateFormat(row.k_date));
+            red.Dates.push(intl.format(row.k_date));
             red.Joins.push(row.k_joined.toLocaleString(locale));
             red.Leaves.push(row.k_left.toLocaleString(locale));
 
@@ -68,8 +89,43 @@ export class kCommand extends Command {
             Leaves: [] as string[]
         });
 
-        const t = table({ Dates, Joins, Leaves });
+        const data = JSON.stringify({
+            type: 'line',
+            data: {
+                labels: Dates,
+                datasets: [
+                    {
+                        label: 'Joins',
+                        borderColor: 'rgb(255,+99,+132)',
+                        backgroundColor: 'rgba(255,+99,+132,+.5)',
+                        data: Joins
+                    },
+                    {
+                        label: 'Leaves',
+                        borderColor: 'rgb(54,+162,+235)',
+                        backgroundColor: 'rgba(54,+162,+235,+.5)',
+                        data: Leaves
+                    }
+                ]
+            },
+        });
 
-        return this.Embed.success(codeBlock(t));
+        const t = table({ Dates, Joins, Leaves });
+        const chart = await new ImageCharts({
+            chart: data,
+            width: 500,
+            height: 300,
+            backgroundColor: 'black'
+        }).toBuffer();
+        const attach = new MessageAttachment(chart, `chart.png`);
+
+        return {
+            embeds: [
+                this.Embed.success()
+                    .setDescription(codeBlock(t))
+                    .setImage(`attachment://chart.png`)
+            ],
+            files: [attach]
+        } as ReplyMessageOptions;
     }
 }
