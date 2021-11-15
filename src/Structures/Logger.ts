@@ -79,13 +79,12 @@ export class Logger {
 
     public log (message: unknown, level?: keyof typeof LoggerLevels | unknown): void;
     public log (message: string | unknown, data?: keyof typeof LoggerLevels | unknown, level?: keyof typeof LoggerLevels): void {
-        const starter = `[${Date.now()}] ${getLevel(level ?? this.level)} (${pid} on ${host}): ${EOL}`;
+        const starter = `[${Date.now()}] ${getLevel(level ?? this.level)} (${pid} on ${host}): `;
         
         if (typeof message === 'string') {
             if (data && typeof data === 'object') {
-                message = message.endsWith(EOL) ? message : message + EOL;
-
-                return this.write(starter + objectToReadable(data));
+                message += EOL;
+                return this.write(starter + message + objectToReadable(data));
             } else {
                 return this.write(starter + message + EOL);
             }
