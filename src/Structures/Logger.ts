@@ -5,6 +5,8 @@ import {
     bright, cyan, red, yellow
 } from '../lib/Utility/Colors.js';
 
+type LoggerArguments = [message: string | unknown, data?: unknown];
+
 export enum LoggerLevels {
     DEBUG = 'debug',
     INFO = 'info',
@@ -77,8 +79,7 @@ export class Logger {
         FSWrite(fd, Buffer.from(message), () => {});
     }
 
-    public log (message: unknown, level?: keyof typeof LoggerLevels | unknown): void;
-    public log (message: string | unknown, data?: keyof typeof LoggerLevels | unknown, level?: keyof typeof LoggerLevels): void {
+    public log (message: string | unknown, data?: unknown, level?: keyof typeof LoggerLevels): void {
         const starter = `[${Date.now()}] ${getLevel(level ?? this.level)} (${pid} on ${host}): `;
         
         if (typeof message === 'string') {
@@ -91,5 +92,21 @@ export class Logger {
         } else {
             return this.write(starter + '\n' + objectToReadable(message));
         }
+    }
+
+    public debug (...args: LoggerArguments) {
+        this.log(args[0], args[1], 'DEBUG');
+    }
+
+    public info (...args: LoggerArguments) {
+        this.log(args[0], args[1], 'INFO');
+    }
+
+    public error (...args: LoggerArguments) {
+        this.log(args[0], args[1], 'ERROR');
+    }
+
+    public warn (...args: LoggerArguments) {
+        this.log(args[0], args[1], 'WARN');
     }
 }
