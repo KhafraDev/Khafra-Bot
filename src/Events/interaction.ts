@@ -11,7 +11,7 @@ import { RegisterEvent } from '../Structures/Decorator.js';
 import { Event } from '../Structures/Event.js';
 import { Logger } from '../Structures/Logger.js';
 
-const logger = new Logger('DEBUG');
+const logger = new Logger();
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -46,6 +46,8 @@ export class kEvent extends Event<'interactionCreate'> {
             }));
         }
 
+        let err: Error | void;
+
         try {
             if (command.options.defer)
                 await interaction.deferReply();
@@ -79,15 +81,19 @@ export class kEvent extends Event<'interactionCreate'> {
 
             return void await interaction.reply(param);
         } catch (e) {
-            logger.error(e);
+            err = e as Error;
 
             if (processArgs.get('dev') === true) {
                 console.log(e);
             }
         } finally {
-            logger.log(
-                `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
-            );
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.log(
+                    `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+                );
+            }
         }
     }
 } 

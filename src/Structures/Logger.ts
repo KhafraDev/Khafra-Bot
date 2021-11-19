@@ -6,6 +6,7 @@ import {
 } from '../lib/Utility/Colors.js';
 
 type LoggerArguments = [message: string | unknown, data?: unknown];
+type LoggerLevel = keyof typeof LoggerLevels;
 
 export enum LoggerLevels {
     DEBUG = 'debug',
@@ -63,14 +64,8 @@ const host = hostname();
  * A logger that outputs very fast in similar fashion to pino-pretty!
  */
 export class Logger {
-    constructor (
-        public level: keyof typeof LoggerLevels = 'INFO'
-    ) {
-        this.level = level;
-    }
-
-    private write (message: string) {
-        const fd = this.level === 'ERROR' || this.level === 'WARN'
+    private write (message: string, level: LoggerLevel) {
+        const fd = level === 'ERROR' || level === 'WARN'
             ? process.stderr.fd
             : process.stdout.fd;
 
@@ -79,18 +74,18 @@ export class Logger {
         FSWrite(fd, Buffer.from(message), () => {});
     }
 
-    public log (message: string | unknown, data?: unknown, level?: keyof typeof LoggerLevels): void {
-        const starter = `[${Date.now()}] ${getLevel(level ?? this.level)} (${pid} on ${host}): `;
+    public log (message: string | unknown, data?: unknown, level: LoggerLevel = 'DEBUG'): void {
+        const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
         
         if (typeof message === 'string') {
             if (data && typeof data === 'object') {
                 message += EOL;
-                return this.write(starter + message + objectToReadable(data));
+                return this.write(starter + message + objectToReadable(data), level);
             } else {
-                return this.write(starter + message + EOL);
+                return this.write(starter + message + EOL, level);
             }
         } else {
-            return this.write(starter + '\n' + objectToReadable(message));
+            return this.write(starter + '\n' + objectToReadable(message), level);
         }
     }
 

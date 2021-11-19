@@ -3,7 +3,7 @@
 import { types } from 'util';
 import { Logger } from '../../Structures/Logger.js';
 
-const logger = new Logger('WARN');
+const logger = new Logger();
 
 type FromPromise<T> = T extends Promise<infer U> ? U : T;
 
@@ -30,7 +30,7 @@ export async function dontThrow<T extends Promise<unknown>>(promise: T | Functio
         return [e as Error, null as unknown as FromPromise<T>];
     } finally {
         if (err) {
-            logger.log(`An error occurred but was caught.`, err);
+            logger.warn(`An error occurred but was caught.`, err);
         }
     }
 }

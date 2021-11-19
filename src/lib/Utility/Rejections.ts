@@ -1,8 +1,8 @@
 import { Logger } from '../../Structures/Logger.js'
 
-const logger = new Logger('ERROR');
+const logger = new Logger();
 
 process.on('unhandledRejection', (reason, promise) => {
-    logger.log(reason === promise ? promise : { ...reason, ...promise });    
+    logger.error(reason === promise ? promise : { ...reason, ...promise });    
     process.exit(1);
 });

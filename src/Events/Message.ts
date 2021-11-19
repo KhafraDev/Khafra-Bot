@@ -22,6 +22,8 @@ import { Stats } from '../lib/Utility/Stats.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
 
+const logger = new Logger();
+
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 const defaultSettings: PartialGuild = {
@@ -44,7 +46,6 @@ const disabled = typeof processArgs.get('disabled') === 'string'
 @RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
-    logger = new Logger('DEBUG');
 
     async init(message: Message) {
         Stats.messages++;
@@ -157,6 +158,7 @@ export class kEvent extends Event<'messageCreate'> {
             return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
         }
 
+        let err: Error | void;
         Stats.session++;
 
         try {
@@ -190,6 +192,8 @@ export class kEvent extends Event<'messageCreate'> {
             
             return message.reply(param);
         } catch (e) {
+            err = e as Error;
+
             if (processArgs.get('dev') === true) {
                 console.log(e);
             }
@@ -212,14 +216,18 @@ export class kEvent extends Event<'messageCreate'> {
                 failIfNotExists: false
             }));
         } finally {
-            this.logger.log(
-                `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
-                {
-                    URL: message.url,
-                    guild: message.guild.id,
-                    input: `"${message.content}"`
-                }
-            );
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.log(
+                    `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
+                    {
+                        URL: message.url,
+                        guild: message.guild.id,
+                        input: `"${message.content}"`
+                    }
+                );
+            }
         }
     }
 }
