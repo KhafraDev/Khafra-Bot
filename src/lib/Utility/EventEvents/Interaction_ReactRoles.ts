@@ -4,6 +4,11 @@ import { Embed } from '../Constants/Embeds.js';
 import { dontThrow } from '../Don\'tThrow.js';
 import { validSnowflake } from '../Mentions.js';
 
+type InteractionReply 
+    = import('discord.js').Message<boolean> 
+    | import('discord-api-types/v9').APIMessage
+    | void
+
 /**
  * Handle react roles, runs on every button interaction - including pagination that is present in other commands.
  * 
@@ -48,7 +53,7 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts});
 
-        return void dontThrow(pr);
+        return void dontThrow<InteractionReply>(pr);
     } catch (e) {
         if (isDev) {
             console.log(e);
@@ -62,6 +67,6 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts });
             
-        return void dontThrow(pr);
+        return void dontThrow<InteractionReply>(pr);
     }
 }

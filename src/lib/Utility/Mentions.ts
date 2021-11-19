@@ -53,7 +53,11 @@ export async function getMentions(
             return null;
 
         if (type === 'members' || type === 'roles') {
-            const [fetchErr, coll] = await dontThrow(guild[type].fetch(item));
+            const [fetchErr, coll] = await dontThrow<
+                import('discord.js').Role |
+                import('discord.js').GuildMember |
+                null
+            >(guild[type].fetch(item));
             if (fetchErr === null) return coll;
         } else if (type === 'channels') {
             // only TextChannels/NewsChannels can be mentioned. Voice channels and stage channels 

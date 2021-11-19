@@ -6,6 +6,11 @@ import { createContext, runInContext } from 'vm';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { codeBlock } from '@khaf/builders';
 
+type InteractionReply 
+    = import('discord.js').Message<boolean> 
+    | import('discord-api-types/v9').APIMessage
+    | void
+
 const symbols = /^-|\+|\*|\/|\.|\(|\)$/;
 /** Symbols an input is not allowed to start with */
 const partialSymbols = /^-|\+|\*|\/$/;
@@ -141,7 +146,7 @@ export class kCommand extends Command {
             } catch {}
 
             if (eq !== 'Invalid input!' && typeof eq !== 'number') {
-                return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
+                return void dontThrow<InteractionReply>(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                     content: 'Invalid calculations...',
                     components: disableAll(m)
                 }));
@@ -157,7 +162,7 @@ export class kCommand extends Command {
                 .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
                 .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
 
-            return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
+            return void dontThrow<InteractionReply>(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
                 components: disableAll(m),
                 embeds: [

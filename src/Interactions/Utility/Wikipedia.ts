@@ -31,7 +31,7 @@ export class kInteraction extends Interactions {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 
-        if (err) {
+        if (err !== null) {
             return `❌ An error occurred processing this request: ${inlineCode(err.message)}`;
         } else if (wiki.pages.length === 0) {
             return '❌ No Wikipedia articles for that query were found!';

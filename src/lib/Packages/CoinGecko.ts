@@ -52,7 +52,7 @@ export class CoinGecko {
         const [e, r] = await dontThrow(request(`https://api.coingecko.com/api/v3/ping`));
         await consumeBody(r);
 
-        return e === null && r.statusCode === 200;
+        return e === null && r?.statusCode === 200;
     }
 
     static async fetchAll() {
@@ -70,8 +70,8 @@ export class CoinGecko {
 
         for (const idChunk of chunkSafe(ids, 250)) {
             const [e, r] = await dontThrow(request(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
-            if (e !== null || r.statusCode !== 200) {
-                if (r) void consumeBody(r);
+            if (e !== null || r?.statusCode !== 200) {
+                void consumeBody(r);
                 break;
             }
 

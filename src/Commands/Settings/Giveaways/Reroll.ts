@@ -91,12 +91,13 @@ export class kCommand extends Command {
         if (fetchMessageError !== null) {
             return this.Embed.fail(`Could not fetch the message! Was it deleted?`);
         } else if (
+            !m ||
             m.deleted ||
             m.author.id !== message.client.user!.id ||
             m.embeds.length !== 1 ||
             m.embeds[0].timestamp! > Date.now()
         ) {
-            return this.Embed.fail(`${hyperlink('This', m.url)} is not a giveaway.`);
+            return this.Embed.fail(`${hyperlink('This', m?.url ?? 'https://discord.gg')} is not a giveaway.`);
         } else if (!m.reactions.cache.has('🎉')) {
             return this.Embed.fail(`This message has no 🎉 reactions.`);
         }

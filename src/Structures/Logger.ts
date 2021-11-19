@@ -1,6 +1,6 @@
 import { write as FSWrite } from 'fs';
 import { EOL, hostname } from 'os';
-import { inspect, types } from 'util';
+import { inspect } from 'util';
 import {
     bright, cyan, red, yellow
 } from '../lib/Utility/Colors.js';
@@ -28,7 +28,7 @@ const objectToReadable = (o: unknown) => {
     const tab = `    `;
     let message = '';
 
-    if (types.isNativeError(o)) {
+    if (o instanceof Error) {
         if (o.stack) {
             const stack = o.stack
                 .split(/\r\n|\n/g)
