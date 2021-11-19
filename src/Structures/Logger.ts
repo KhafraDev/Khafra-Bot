@@ -41,7 +41,7 @@ const objectToReadable = (o: unknown) => {
         }
     } else {
         if (o && typeof o === 'object') {
-            for (const key of Reflect.ownKeys(o) as (keyof typeof o)[]) {
+            for (const key of Object.keys(o) as (keyof typeof o)[]) {
                 const ref = o[key];
                 if (ref && typeof ref === 'object') {
                     message += `${tab}${key}: ${inspect(ref, undefined, undefined, true)}${EOL}`;
