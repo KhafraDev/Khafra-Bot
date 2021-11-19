@@ -1,7 +1,19 @@
 import redis from 'redis';
 
 const connect = `redis://localhost:6379`;
-const messageClient = redis.createClient(`${connect}/1`);
+const messageClient = redis.createClient(`${connect}/1`, {
+    retry_strategy(options) {
+        if (options.total_retry_time > 1000 * 60 * 60) {
+            return new Error('Retry time exhausted');
+        } else if (options.attempt > 10) {
+            return new Error('Max attempts reached');
+        } else if (options.error?.code === 'ECONNREFUSED') {
+            return 500;
+        }
+
+        return Math.min(options.attempt * 100, 3000);
+    }
+});
 
 export const client = {
     get: (key: string) => {

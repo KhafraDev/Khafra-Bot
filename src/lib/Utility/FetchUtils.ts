@@ -5,7 +5,7 @@ import type { Response, Dispatcher } from 'undici';
  * @see https://github.com/nodejs/undici#garbage-collection 
  */
 export const consumeBody = async (res: Response | Dispatcher.ResponseData) => {
-    if (res.body === null) return;
+    if (!res?.body) return;
     
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _chunk of res.body) {} 
