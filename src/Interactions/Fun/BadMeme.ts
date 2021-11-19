@@ -13,8 +13,7 @@ export class kInteraction extends Interactions {
                     // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
                     type: ApplicationCommandOptionType.String,
                     name: 'subreddit',
-                    description: 'Subreddit to get a bad meme on.',
-                    required: true
+                    description: 'Subreddit to get a bad meme on.'
                 }
             ]
         };
@@ -23,9 +22,7 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const subreddit = interaction.options.get('subreddit')?.value ?? 'dankmemes';
-        if (typeof subreddit !== 'string')
-            return 'Invalid option received!';
+        const subreddit = interaction.options.getString('subreddit') ?? 'dankmemes';
 
         if (!cache.has(subreddit))
             await interaction.deferReply();
