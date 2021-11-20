@@ -4,11 +4,9 @@ import { pool } from '../../Structures/Database/Postgres.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { client } from '../../Structures/Database/Redis.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

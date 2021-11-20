@@ -1,7 +1,6 @@
 /** Please get mental illness treated! */
 
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
@@ -52,7 +51,6 @@ const cache = once(async () => {
     await rss.cache('http://stonetoss.com/comic/feed/');
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

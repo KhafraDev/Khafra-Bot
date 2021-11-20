@@ -1,5 +1,4 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { MessageActionRow } from 'discord.js';
@@ -19,7 +18,6 @@ const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a
 const monthMs = 60 * 1000 * 60 * 24 * 30;
 const winnersRange = Range({ min: 1, max: 100, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

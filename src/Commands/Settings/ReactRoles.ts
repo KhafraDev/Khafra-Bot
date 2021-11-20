@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { MessageActionRow, MessageEmbed, Permissions, Role } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { upperCase } from '../../lib/Utility/String.js';
@@ -16,7 +15,6 @@ const perms = [
     Permissions.FLAGS.VIEW_CHANNEL
 ];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

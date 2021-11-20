@@ -1,5 +1,4 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Message, MessageActionRow } from 'discord.js';
@@ -60,7 +59,6 @@ interface PushShiftGood {
     }
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

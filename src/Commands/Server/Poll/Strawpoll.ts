@@ -1,5 +1,4 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
@@ -25,7 +24,6 @@ const yes = (yes: boolean, ifYes = 'Yes', ifNo = 'No') =>
 
 const hasOwn = Object.prototype.hasOwnProperty;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

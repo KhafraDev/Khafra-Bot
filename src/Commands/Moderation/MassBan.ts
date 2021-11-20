@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions, GuildMember, User } from 'discord.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { inlineCode } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

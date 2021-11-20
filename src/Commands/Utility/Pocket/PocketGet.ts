@@ -1,7 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { inlineCode } from '@khaf/builders';
 
@@ -11,8 +10,6 @@ interface PocketUser {
     username: string
 }
 
-
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

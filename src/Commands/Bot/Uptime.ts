@@ -2,7 +2,6 @@ import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const getUptime = (ms: number) => {
     return Object.entries({
@@ -17,7 +16,6 @@ const getUptime = (ms: number) => {
         .join(' ');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

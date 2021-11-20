@@ -1,7 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { fetch } from 'undici';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 interface IMCOnline {
     online: true,
@@ -69,7 +68,6 @@ const cache = {
     players: 0
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -14,6 +14,9 @@ import { performance } from 'perf_hooks';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { bright, green, magenta } from '../lib/Utility/Colors.js';
 
+type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
+type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;
+
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 export class KhafraClient extends Client {
@@ -48,23 +51,46 @@ export class KhafraClient extends Client {
 
     async loadCommands() {
         const commands = await KhafraClient.walk('build/src/Commands', p => p.endsWith('.js'));
-        const importPromise = commands.map(command => import(pathToFileURL(command).href) as Promise<Command>);
+        const importPromise = commands.map(command => import(pathToFileURL(command).href) as DynamicImportCommand);
         const settled = await Promise.allSettled(importPromise);
 
-        const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
-        for (const reject of rejected)
-            console.log(reject.reason);
+        let rejected = 0;
 
-        console.log(green(`Loaded ${bright(commands.length - rejected.length)}/${settled.length} commands!`));
+        for (const fileImport of settled) {
+            if (fileImport.status === 'rejected') {
+                console.log(fileImport.reason);
+                rejected++;
+            } else {
+                const kCommand = new fileImport.value.kCommand();
+                
+                KhafraClient.Commands.set(kCommand.settings.name.toLowerCase(), kCommand);
+                kCommand.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, kCommand));
+            }
+        }
+
+        console.log(green(`Loaded ${bright(commands.length - rejected)}/${settled.length} commands!`));
         return KhafraClient.Commands;
     }
 
     async loadEvents() {
         const events = await KhafraClient.walk('build/src/Events', p => p.endsWith('.js'));
-        const importPromise = events.map(event => import(pathToFileURL(event).href) as Promise<Event>);
-        await Promise.allSettled(importPromise);
+        const importPromise = events.map(event => import(pathToFileURL(event).href) as DynamicImportEvent);
+        const settled = await Promise.allSettled(importPromise);
 
-        console.log(green(`Loaded ${bright(KhafraClient.Events.size)} events!`));
+        let rejected = 0;
+
+        for (const fileImport of settled) {
+            if (fileImport.status === 'rejected') {
+                console.log(fileImport.reason);
+                rejected++;
+            } else {
+                const kEvent = new fileImport.value.kEvent();
+
+                KhafraClient.Events.set(kEvent.name, kEvent);
+            }
+        }
+
+        console.log(green(`Loaded ${bright(KhafraClient.Events.size - rejected)}/${settled.length} events!`));
         return KhafraClient.Events;
     }
 

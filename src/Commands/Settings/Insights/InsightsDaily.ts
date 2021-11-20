@@ -7,7 +7,6 @@ import { table } from '../../../lib/Utility/CLITable.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Command } from '../../../Structures/Command.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 class ImageCharts {
     private query = new URLSearchParams();
@@ -37,7 +36,6 @@ interface Insights {
 
 const intl = Intl.DateTimeFormat('en-US', { dateStyle: 'long' });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

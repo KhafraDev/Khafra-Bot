@@ -1,6 +1,5 @@
 import { version } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
@@ -9,7 +8,6 @@ import { bold } from '@khaf/builders';
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

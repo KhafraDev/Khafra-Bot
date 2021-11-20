@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { weather } from '@khaf/hereweather';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bold, time } from '@khaf/builders';
 
 const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

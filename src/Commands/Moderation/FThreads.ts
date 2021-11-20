@@ -1,7 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Collection, GuildChannel, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
 import { isCategory, isStage, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bold, inlineCode, italic } from '@khaf/builders';
@@ -14,7 +13,6 @@ const threadPerms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES_IN_THREADS
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -3,11 +3,9 @@ import { Message } from 'discord.js';
 import { fromCache, start } from '../../lib/Packages/COVID.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const mw = once(start);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

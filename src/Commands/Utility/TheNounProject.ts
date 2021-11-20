@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

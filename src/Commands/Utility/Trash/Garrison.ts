@@ -1,7 +1,6 @@
 /** Please get mental illness treated! */
 
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { garrisonTransaction, migrateGarrison } from '../../../lib/Migration/Garrison.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { Message } from 'discord.js';
@@ -44,7 +43,6 @@ const cache = once(async () => {
     await rss.cache('https://grrrgraphics.com/feed/')
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

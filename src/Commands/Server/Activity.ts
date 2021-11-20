@@ -1,5 +1,4 @@
 import { Arguments, Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
 import { isVoice, Message } from '../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
@@ -30,7 +29,6 @@ const enum Activities {
 
 const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

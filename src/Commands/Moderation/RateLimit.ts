@@ -4,7 +4,6 @@ import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { isExplicitText, isText, Message } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
@@ -14,7 +13,6 @@ import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

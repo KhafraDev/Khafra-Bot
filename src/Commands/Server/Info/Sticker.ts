@@ -1,10 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

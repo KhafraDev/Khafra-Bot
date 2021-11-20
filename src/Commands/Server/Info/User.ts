@@ -8,7 +8,6 @@ import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
@@ -52,7 +51,6 @@ const getEmojis = once(() => {
 // 140214425276776449 -> bug hunter 1
 // 73193882359173120 -> hypesquad events; bug hunter 2
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

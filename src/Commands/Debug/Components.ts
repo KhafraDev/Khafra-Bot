@@ -1,12 +1,10 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message, MessageActionRow } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

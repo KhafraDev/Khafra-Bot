@@ -1,10 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { URLFactory } from '../../lib/Utility/Valid/URL.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

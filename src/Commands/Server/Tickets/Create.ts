@@ -1,6 +1,5 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { isExplicitText, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { CategoryChannel, Permissions, TextChannel } from 'discord.js';
@@ -10,7 +9,6 @@ import { inlineCode } from '@khaf/builders';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

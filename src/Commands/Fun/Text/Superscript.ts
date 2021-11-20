@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const superscript: Record<string, string> = {
     '0': '⁰', '1': '¹', '2': '²',
@@ -18,7 +17,6 @@ const superscript: Record<string, string> = {
     'z': 'ᶻ'
 };
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

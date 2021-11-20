@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

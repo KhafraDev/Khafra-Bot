@@ -1,7 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
@@ -30,7 +29,6 @@ interface IPolitico {
 const rss = new RSSReader<IPolitico>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

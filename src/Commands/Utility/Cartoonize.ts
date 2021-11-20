@@ -1,9 +1,7 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 import { Cartoonize } from '../../lib/Packages/Cartoonize.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

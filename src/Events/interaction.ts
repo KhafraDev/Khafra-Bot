@@ -7,7 +7,6 @@ import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interact
 import { Minimalist } from '../lib/Utility/Minimalist.js';
 import { upperCase } from '../lib/Utility/String.js';
 import { Command } from '../Structures/Command.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { Event } from '../Structures/Event.js';
 import { Logger } from '../Structures/Logger.js';
 
@@ -20,7 +19,6 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .map(c => c.toLowerCase())
     : [];
 
-@RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
     name = 'interactionCreate' as const;
 

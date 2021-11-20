@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
 import { bold, inlineCode, time } from '@khaf/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

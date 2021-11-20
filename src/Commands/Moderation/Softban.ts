@@ -2,7 +2,6 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
@@ -10,7 +9,6 @@ import { Message } from '../../lib/types/Discord.js.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
@@ -23,7 +22,6 @@ const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

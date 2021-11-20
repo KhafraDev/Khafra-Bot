@@ -1,6 +1,5 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { isDM, isExplicitText, isThread, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { TextChannel, CategoryChannel, GuildChannel, Permissions, ThreadChannel } from 'discord.js';
@@ -12,7 +11,6 @@ const memberPermsExpected = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

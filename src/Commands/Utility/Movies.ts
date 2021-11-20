@@ -2,7 +2,6 @@ import { Message } from 'discord.js';
 import { searchMovie } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bold, time } from '@khaf/builders';
 
 const formatMS = (ms: number) => {
@@ -17,7 +16,6 @@ const formatMS = (ms: number) => {
         .join(' ');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

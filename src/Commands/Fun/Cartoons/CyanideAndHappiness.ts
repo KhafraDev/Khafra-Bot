@@ -4,7 +4,6 @@ import { isText } from '../../../lib/types/Discord.js.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface ICyanideAndHappiness {
     title: string
@@ -20,7 +19,6 @@ const rss = new RSSReader<ICyanideAndHappiness>();
 // does the scraping for us, so might as well use until it's no longer available
 const cache = once(() => rss.cache('https://explosm-1311.appspot.com/'));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

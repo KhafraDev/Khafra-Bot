@@ -1,5 +1,4 @@
 import { Arguments, Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isCategory, isExplicitText, Message } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
@@ -8,7 +7,6 @@ import { client } from '../../Structures/Database/Redis.js';
 import { Permissions } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

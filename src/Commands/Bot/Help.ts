@@ -1,6 +1,5 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { chunkSafe } from '../../lib/Utility/Array.js';
 import { bold, inlineCode, hyperlink, codeBlock } from '@khaf/builders';
@@ -10,7 +9,6 @@ import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 let folders: string[] | null = null;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -2,7 +2,6 @@ import { Message, MessageActionRow, Permissions } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const emojis = {
     rock: '🌑', 
@@ -12,7 +11,6 @@ const emojis = {
 
 type Keys = keyof typeof emojis;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

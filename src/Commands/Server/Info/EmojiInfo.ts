@@ -1,6 +1,5 @@
 import { parse, toCodePoints } from 'twemoji-parser';
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { Message } from '../../../lib/types/Discord.js.js';
@@ -30,7 +29,6 @@ interface DiverseUnicodeEmoji extends BaseUnicodeEmoji {
 
 type Emojis = Record<string, BaseUnicodeEmoji | DiverseUnicodeEmoji>;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

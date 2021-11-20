@@ -1,12 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
 import { Permissions } from 'discord.js';
 import { parse } from 'twemoji-parser';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Message } from '../../../lib/types/Discord.js.js';
 
 const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

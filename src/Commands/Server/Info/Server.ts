@@ -1,9 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Message } from '../../../lib/types/Discord.js.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

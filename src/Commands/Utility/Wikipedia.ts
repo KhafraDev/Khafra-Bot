@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { search, getArticleById } from '@khaf/wikipedia';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { ellipsis, plural } from '../../lib/Utility/String.js';
 import { disableAll } from '../../lib/Utility/Constants/Components.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

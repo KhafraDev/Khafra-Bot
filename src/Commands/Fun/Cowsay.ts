@@ -2,7 +2,6 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
 import { codeBlock } from '@khaf/builders';
 
@@ -13,7 +12,6 @@ const start = `
 const types = new Set<string>();
 const bases = new Map<string, string>();
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

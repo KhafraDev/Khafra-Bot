@@ -3,7 +3,6 @@ import { Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Message } from '../../lib/types/Discord.js.js';
@@ -14,7 +13,6 @@ import { Minimalist } from '../../lib/Utility/Minimalist.js';
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

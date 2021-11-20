@@ -1,5 +1,4 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
@@ -13,7 +12,6 @@ const Trump = createFileWatcher(
     join(assets, 'JSON/Trump.json')
 );
 
-@RegisterCommand
 export class kCommand extends Command {    
     constructor() {
         super(

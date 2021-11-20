@@ -1,6 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
 import { isText, isThread, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { inlineCode } from '@khaf/builders';
@@ -32,7 +31,6 @@ const perms = new Permissions([
     Permissions.FLAGS.EMBED_LINKS
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

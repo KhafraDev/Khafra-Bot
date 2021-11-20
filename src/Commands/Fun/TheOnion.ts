@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { RSSReader } from '../../lib/Utility/RSS.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
@@ -66,7 +65,6 @@ interface ITheOnion {
 const rss = new RSSReader<ITheOnion>();
 const cache = once(() => rss.cache(`https://www.theonion.com/rss`));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

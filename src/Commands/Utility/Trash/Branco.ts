@@ -1,5 +1,4 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
 import { decodeXML } from 'entities';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
@@ -38,12 +37,12 @@ const rss = new RSSReader<IBranco>(async () => {
 
     await brancoTransaction(comics);
 });
+
 const cache = once(async () => {
     await migrateBranco();
     await rss.cache('https://comicallyincorrect.com/feed/')
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

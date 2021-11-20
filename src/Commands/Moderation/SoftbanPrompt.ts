@@ -2,7 +2,6 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, MessageActionRow, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -14,7 +13,6 @@ import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

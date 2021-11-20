@@ -3,9 +3,7 @@ import { Message } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

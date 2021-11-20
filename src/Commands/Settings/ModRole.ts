@@ -13,11 +13,9 @@ import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Arguments, Command } from '../../Structures/Command.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const defaultPermissionInteractions: ApplicationCommand<{ guild: GuildResolvable }>[] = []
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

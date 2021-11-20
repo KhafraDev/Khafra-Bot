@@ -1,13 +1,11 @@
 import { Command } from '../../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -1,6 +1,5 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
@@ -30,7 +29,6 @@ const images = [
 const hide = (word: string, guesses: string[]) =>
     word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')}]`, 'gi'), '☐');
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

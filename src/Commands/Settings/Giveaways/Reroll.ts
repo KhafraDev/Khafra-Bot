@@ -1,5 +1,4 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { validSnowflake } from '../../../lib/Utility/Mentions.js';
@@ -16,7 +15,6 @@ const perms = new Permissions([
     Permissions.FLAGS.READ_MESSAGE_HISTORY
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

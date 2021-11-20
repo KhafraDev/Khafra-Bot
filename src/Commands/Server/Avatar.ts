@@ -1,12 +1,10 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { AllowedImageFormat, AllowedImageSize, ImageURLOptions, Message } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const avatarSizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

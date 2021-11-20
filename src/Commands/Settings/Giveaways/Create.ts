@@ -1,5 +1,4 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { plural } from '../../../lib/Utility/String.js';
@@ -42,7 +41,6 @@ const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

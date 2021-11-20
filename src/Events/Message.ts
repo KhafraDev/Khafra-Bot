@@ -6,7 +6,6 @@ import { KhafraClient } from '../Bot/KhafraBot.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { Arguments, Command } from '../Structures/Command.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
@@ -43,7 +42,6 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .map(c => c.toLowerCase())
     : [];
 
-@RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
 

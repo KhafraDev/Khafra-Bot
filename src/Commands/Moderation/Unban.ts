@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
 import { Message } from '../../lib/types/Discord.js.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

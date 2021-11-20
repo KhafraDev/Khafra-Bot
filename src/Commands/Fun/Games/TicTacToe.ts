@@ -4,7 +4,6 @@ import { chunkSafe } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 type Board = ('X' | 'O' | null)[];
 
@@ -25,7 +24,6 @@ const makeRows = (turns: Board) => {
     return chunkSafe(rows, 3).map(r => new MessageActionRow().addComponents(r))
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

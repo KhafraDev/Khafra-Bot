@@ -1,7 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
 import { inlineCode } from '@khaf/builders';
@@ -11,7 +10,6 @@ const Verses = new Map<string, { book: string, verse: string, content: string}>(
 const Max = new Map<number, number>();
 const mw = once(parseQuran);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

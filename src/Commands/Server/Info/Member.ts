@@ -1,7 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 
 const formatPresence = (activities: Activity[] | undefined) => {
@@ -27,7 +26,6 @@ const formatPresence = (activities: Activity[] | undefined) => {
     return push.join('\n');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

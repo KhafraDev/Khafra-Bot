@@ -3,7 +3,6 @@ import { GuildMember, Channel, Permissions } from 'discord.js';
 import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
@@ -18,7 +17,6 @@ const basic = new Permissions([
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-@RegisterEvent
 export class kEvent extends Event<'guildMemberAdd'> {
     name = 'guildMemberAdd' as const;
 

@@ -1,5 +1,4 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
@@ -8,7 +7,6 @@ import { inlineCode } from '@khaf/builders';
 
 const PER_COIN = 1.99 / 500;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

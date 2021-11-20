@@ -1,5 +1,4 @@
 import { Event } from '../Structures/Event.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { GuildBan } from 'discord.js';
 import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
@@ -14,7 +13,6 @@ import { ellipsis } from '../lib/Utility/String.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
-@RegisterEvent
 export class kEvent extends Event<'guildBanRemove'> {
     name = 'guildBanRemove' as const;
 

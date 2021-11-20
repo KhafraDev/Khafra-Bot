@@ -1,6 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
 import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -14,7 +13,6 @@ const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

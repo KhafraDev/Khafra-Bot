@@ -1,10 +1,8 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Stats } from '../../lib/Utility/Stats.js';
 import { bold } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

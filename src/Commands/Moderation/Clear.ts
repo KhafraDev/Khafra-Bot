@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -10,7 +9,6 @@ import { inlineCode } from '@khaf/builders';
 
 const inRange = Range({ min: 1, max: 100, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

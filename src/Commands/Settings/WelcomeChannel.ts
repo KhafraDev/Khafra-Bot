@@ -2,7 +2,6 @@ import { Command } from '../../Structures/Command.js';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
@@ -15,7 +14,6 @@ const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

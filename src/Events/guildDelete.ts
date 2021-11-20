@@ -1,9 +1,7 @@
 import { Event } from '../Structures/Event.js';
 import { pool } from '../Structures/Database/Postgres.js';
 import { Guild } from 'discord.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 
-@RegisterEvent
 export class kEvent extends Event<'guildDelete'> {
     name = 'guildDelete' as const;
 

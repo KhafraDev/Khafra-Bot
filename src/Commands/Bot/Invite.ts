@@ -1,11 +1,9 @@
 import { bold } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const scope = `bot%20applications.commands`;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

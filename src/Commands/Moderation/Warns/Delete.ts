@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -20,7 +19,6 @@ const perms = new Permissions([
 ]);
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

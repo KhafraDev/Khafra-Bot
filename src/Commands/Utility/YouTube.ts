@@ -1,7 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageActionRow, Interaction } from 'discord.js';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
@@ -39,7 +38,6 @@ function* format(items: YouTubeSearchResults, embed = Embed.success) {
     }
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

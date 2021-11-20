@@ -1,5 +1,4 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { DiscordAPIError, Permissions } from 'discord.js';
@@ -13,7 +12,6 @@ type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initi
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

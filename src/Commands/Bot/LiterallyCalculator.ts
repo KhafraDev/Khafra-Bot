@@ -1,7 +1,6 @@
 import { MessageActionRow, Interaction, Message } from 'discord.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { codeBlock } from '@khaf/builders';
@@ -20,7 +19,6 @@ const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([

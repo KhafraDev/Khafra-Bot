@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
@@ -22,7 +21,6 @@ type FromArray<T extends unknown[]> = T extends (infer U)[]
 
 type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

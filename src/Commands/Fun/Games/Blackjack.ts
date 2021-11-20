@@ -4,7 +4,6 @@ import { shuffle } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 type Card = [number, typeof suits[number]];
 
@@ -29,7 +28,6 @@ const getName = (v: number) => v > 1 && v <= 10
     ? `${v}` 
     : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

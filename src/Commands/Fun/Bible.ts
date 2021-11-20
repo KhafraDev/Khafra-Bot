@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { upperCase } from '../../lib/Utility/String.js';
@@ -24,7 +23,6 @@ const R = {
 
 const mw = once(bibleInsertDB);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

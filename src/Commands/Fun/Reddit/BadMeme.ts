@@ -2,11 +2,9 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme, cache } from '@khaf/badmeme';
 import { isDM, isText } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(

@@ -3,9 +3,7 @@ import { Message } from 'discord.js';
 import { NASAGetRandom, cache } from '../../lib/Packages/NASA.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
