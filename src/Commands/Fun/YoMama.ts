@@ -10,7 +10,7 @@ import { assets } from '../../lib/Utility/Constants/Path.js';
 
 // "jokes"
 const file = await readFile(join(assets, 'yomama.txt'), 'utf-8');
-const jokes = file.split(/\r\n|\n/g).slice(0, -1); // last line will be empty
+const jokes = file.split(/\r?\n/g).slice(0, -1); // last line will be empty
 
 @RegisterCommand
 export class kCommand extends Command {

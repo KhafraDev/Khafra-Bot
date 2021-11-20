@@ -14,7 +14,7 @@ export const trim = (...s: [TemplateStringsArray, ...(string | number)[]]) => {
         str += s[0][i-1] + (s[i] ?? '');
     }
     str += s[0].slice(s.length - 1).join('');
-    return str.split(/\r\n|\n/g).map(e => e.trim()).join(' ').trim();
+    return str.split(/\r?\n/g).map(e => e.trim()).join(' ').trim();
 }
 
 /**

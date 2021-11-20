@@ -15,7 +15,7 @@ export enum LoggerLevels {
     WARN = 'warn'
 }
 
-const getLevel = (l: keyof typeof LoggerLevels) => {
+const getLevel = (l: LoggerLevel) => {
     switch (l) {
         case 'DEBUG': return bright(cyan(l));
         case 'INFO': return yellow(l);
@@ -31,7 +31,7 @@ const objectToReadable = (o: unknown) => {
     if (o instanceof Error) {
         if (o.stack) {
             const stack = o.stack
-                .split(/\r\n|\n/g)
+                .split(/\r?\n/g)
                 .map(n => tab + n)
                 .join(EOL);
 
