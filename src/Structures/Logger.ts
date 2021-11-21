@@ -1,21 +1,18 @@
-import { write as FSWrite } from 'fs';
 import { EOL, hostname } from 'os';
+import SonicBoom from 'sonic-boom';
 import { inspect } from 'util';
 import {
     bright, cyan, red, yellow
 } from '../lib/Utility/Colors.js';
 
-type LoggerArguments = [message: string | unknown, data?: unknown];
-type LoggerLevel = keyof typeof LoggerLevels;
+type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 
-export enum LoggerLevels {
-    DEBUG = 'debug',
-    INFO = 'info',
-    ERROR = 'error',
-    WARN = 'warn'
-}
+const stdout = new SonicBoom({ fd: process.stdout.fd, sync: false });
+const stderr = new SonicBoom({ fd: process.stderr.fd, sync: false });
+const pid = process.pid;
+const host = hostname();
 
-const getLevel = (l: LoggerLevel) => {
+const getLevel = (l: LoggerLevels) => {
     switch (l) {
         case 'DEBUG': return bright(cyan(l));
         case 'INFO': return yellow(l);
@@ -27,81 +24,73 @@ const getLevel = (l: LoggerLevel) => {
 const objectToReadable = (o: unknown) => {
     const tab = `    `;
     let message = '';
-
-    if (o instanceof Error) {
-        if (o.stack) {
-            const stack = o.stack
-                .split(/\r?\n/g)
-                .map(n => tab + n)
-                .join(EOL);
-
-            message += `${stack}${EOL}`;
+    if (o && typeof o === 'object') {
+        if (o instanceof Error) {
+            if (o.stack) {
+                const stack = o.stack
+                    .split(/\r?\n/g)
+                    .map(n => tab + n)
+                    .join(EOL);
+                message += `${stack}${EOL}`;
+            } else {
+                message += `${tab}${o.name}: ${o.message}${EOL}`;
+            }
         } else {
-            message += `${tab}${o.name}: ${o.message}${EOL}`;
-        }
-    } else {
-        if (o && typeof o === 'object') {
             for (const key of Object.keys(o) as (keyof typeof o)[]) {
                 const ref = o[key];
                 if (ref && typeof ref === 'object') {
                     message += `${tab}${key}: ${inspect(ref, undefined, undefined, true)}${EOL}`;
                 } else {
-                    message += `${tab}${key}: ${ref}${EOL}`;    
+                    message += `${tab}${key}: ${ref}${EOL}`;
                 }
             }
-        } else {
-            message += `${tab}${typeof o}: ${o}${EOL}`;
         }
+    } else {
+        message += `${tab}${typeof o}: ${o}${EOL}`;
     }
-
+    
     return message;
 }
-
-const pid = process.pid;
-const host = hostname();
 
 /**
  * A logger that outputs very fast in similar fashion to pino-pretty!
  */
 export class Logger {
-    private write (message: string, level: LoggerLevel) {
-        const fd = level === 'ERROR' || level === 'WARN'
-            ? process.stderr.fd
-            : process.stdout.fd;
-
-        // benchmarking showed that async fs.write is 9-11x faster than
-        // its sync counterpart, console.log, and process.stdout.write.
-        FSWrite(fd, Buffer.from(message), () => {});
-    }
-
-    public log (message: string | unknown, data?: unknown, level: LoggerLevel = 'DEBUG'): void {
-        const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
-        
-        if (typeof message === 'string') {
-            if (data && typeof data === 'object') {
-                message += EOL;
-                return this.write(starter + message + objectToReadable(data), level);
-            } else {
-                return this.write(starter + message + EOL, level);
-            }
+    write (message: string, level: LoggerLevels) {
+        if (level === 'ERROR' || level === 'WARN') {
+            stderr.write(message);
         } else {
-            return this.write(starter + '\n' + objectToReadable(message), level);
+            stdout.write(message);
         }
     }
 
-    public debug (...args: LoggerArguments) {
-        this.log(args[0], args[1], 'DEBUG');
+    log (message: unknown, data?: unknown, level: LoggerLevels = 'DEBUG') {
+        const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + pid + ') on ' + host + ': ';
+        // const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
+        if (typeof message === 'string') {
+            if (data && typeof data === 'object') {
+                this.write(starter + message + EOL + objectToReadable(data), level);
+            } else {
+                this.write(starter + message + EOL, level);
+            }
+        } else {
+            this.write(starter + EOL + objectToReadable(message), level);
+        }
     }
 
-    public info (...args: LoggerArguments) {
-        this.log(args[0], args[1], 'INFO');
+    debug (a: unknown, b?: unknown) {
+        this.log(a, b, 'DEBUG');
+    }
+    
+    info (a: unknown, b?: unknown) {
+        this.log(a, b, 'INFO');
     }
 
-    public error (...args: LoggerArguments) {
-        this.log(args[0], args[1], 'ERROR');
+    error (a: unknown, b?: unknown) {
+        this.log(a, b, 'ERROR');
     }
 
-    public warn (...args: LoggerArguments) {
-        this.log(args[0], args[1], 'WARN');
+    warn (a: unknown, b?: unknown) {
+        this.log(a, b, 'WARN');
     }
 }
