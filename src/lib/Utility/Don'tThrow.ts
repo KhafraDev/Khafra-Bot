@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
-
 import { Logger } from '../../Structures/Logger.js';
 
 const logger = new Logger();

@@ -18,7 +18,8 @@ const sql = await KhafraClient.walk(join(assets, 'SQL/Postgres'), p => p.endsWit
 export const pool = new pg.Pool({
     user: process.env.POSTGRES_USER!,
     password: process.env.POSTGRES_PASS!,
-    database: 'kb'
+    database: 'kb',
+    host: '127.0.0.1'
 });
 
 for (const file of sql) {
