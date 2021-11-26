@@ -9,6 +9,7 @@ type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 
 const stdout = new SonicBoom({ fd: process.stdout.fd, sync: false });
 const stderr = new SonicBoom({ fd: process.stderr.fd, sync: false });
+const errorStackIndent = / {4}/g;
 const pid = process.pid;
 const host = hostname();
 
@@ -21,20 +22,37 @@ const getLevel = (l: LoggerLevels) => {
     }
 }
 
+// TODO(@KhafraDev): update type once Error has a cause
+const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
+    let error = '';
+	const indent = ' '.repeat(indentation * 4);
+    const moreIndent = ' '.repeat((indentation + 1) * 4);
+
+	if (err.stack) {
+		error += indentation === 1 ? '> ' : '\n> ';
+		error += indent + err.stack.replace(errorStackIndent, moreIndent);
+	} else {
+        error += indent + err.message.replace(errorStackIndent, moreIndent) + EOL;
+    }
+
+	if ('cause' in err) {
+        if (err.cause instanceof Error) {
+            error += errorToReadable(err.cause, indentation + 1);
+        } else {
+            error += '\n>' + moreIndent + ' cause: ' + err.cause;
+        }
+	}
+
+    (error as unknown as number) | 0;
+	return error;
+}
+
 const objectToReadable = (o: unknown) => {
     const tab = `    `;
     let message = '';
     if (o && typeof o === 'object') {
         if (o instanceof Error) {
-            if (o.stack) {
-                const stack = o.stack
-                    .split(/\r?\n/g)
-                    .map(n => tab + n)
-                    .join(EOL);
-                message += `${stack}${EOL}`;
-            } else {
-                message += `${tab}${o.name}: ${o.message}${EOL}`;
-            }
+            message += errorToReadable(o);
         } else {
             for (const key of Object.keys(o) as (keyof typeof o)[]) {
                 const ref = o[key];
@@ -86,6 +104,19 @@ export class Logger {
         this.log(a, b, 'INFO');
     }
 
+    /**
+     * Logs an object (typically an error) to stderr, including Error.cause(s)!
+     * @example 
+        const l = new Logger();
+
+        l.error(new Error('hello', {
+            cause: new ReferenceError('world', {
+                cause: new String('baz')
+            })
+        }));
+     * @param {unknown} a object or message to log.
+     * @param {unknown} b object to log if a message was provided.
+     */
     error (a: unknown, b?: unknown) {
         this.log(a, b, 'ERROR');
     }
