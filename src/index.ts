@@ -5,15 +5,20 @@ import './lib/Utility/Timers/Giveaways.js';
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
 import { dontThrow } from './lib/Utility/Don\'tThrow.js';
+import type { Event } from './Structures/Event.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    const event = KhafraClient.Events.get(name);
+    let event: Event<keyof ClientEvents> | undefined;
 
     return (...args: ClientEvents[T]) => {
         if (!event) {
-            throw new Error(`The ${name} event has no event handler!`);
+            if (!KhafraClient.Events.has(name)) {
+                throw new Error(`The ${name} event has no event handler!`);
+            }
+
+            event = KhafraClient.Events.get(name)!;
         }
-        
+
         void dontThrow(event.init(...args));
     }
 }
