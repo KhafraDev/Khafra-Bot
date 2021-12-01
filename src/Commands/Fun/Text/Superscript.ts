@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(_message: Message, { content }: Arguments) {
+    async init(_message: Message, { content }: Arguments) {
         const split = [...content]
             .map(c => superscript[c.toLowerCase()] ?? c)
             .join('');

@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments) {
         return this.Embed.success()
             .setAuthor(message.author.username, message.author.displayAvatarURL())
             .setDescription(args.join(' '));

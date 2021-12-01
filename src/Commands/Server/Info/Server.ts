@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) { 
+    async init(message: Message) { 
         const locale = message.guild.preferredLocale;
 
         return this.Embed.success()

@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) {
+    async init(message: Message) {
         return this.Embed.success(`
         There are ${bold(message.guild.memberCount.toLocaleString())} members in ${message.guild.name}!
         `);

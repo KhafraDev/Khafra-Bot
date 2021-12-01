@@ -17,7 +17,7 @@ export class kCommand extends Command {
         });
     }
 
-    init(message: Message) {
+    async init(message: Message) {
         const selfId = message.client.user!.id;
 
         return this.Embed.success()

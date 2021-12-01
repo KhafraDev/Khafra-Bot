@@ -55,7 +55,7 @@ export class kInteraction extends Interactions {
             if (option === BotInfo.UPTIME || option === BotInfo.ABOUT) {
                 const command = KhafraClient.Commands.get(option)!;
 
-                const value = command.init({
+                const value = await command.init({
                     client: interaction.client
                 } as Message) as MessageEmbed;
 

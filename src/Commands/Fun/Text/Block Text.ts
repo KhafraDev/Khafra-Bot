@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(_message: Message, { content }: Arguments) {     
+    async init(_message: Message, { content }: Arguments) {     
         const blocks = [...content]
             .map(l => letters[l.toLowerCase()] ?? l)
             .join(' ');

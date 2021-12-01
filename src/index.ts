@@ -7,8 +7,14 @@ import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
 import { dontThrow } from './lib/Utility/Don\'tThrow.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]): void => 
-        void dontThrow(KhafraClient.Events.get(name)!.init(...args) as Promise<unknown>);
+    const event = KhafraClient.Events.get(name);
+
+    if (!event) {
+        throw new Error(`The ${name} event has no event handler!`);
+    }
+
+    return (...args: ClientEvents[T]) => 
+        void dontThrow(event.init(...args));
 }
 
 export const client = new KhafraClient({

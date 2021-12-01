@@ -20,7 +20,7 @@ export class kCommand extends Command {
         });
     }
 
-    init() {
+    async init() {
         const memoryMB = process.memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
 
         return Embed.success()

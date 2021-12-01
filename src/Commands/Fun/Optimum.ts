@@ -17,7 +17,7 @@ export class kCommand extends Command {
         );
     }
 
-    init() {
+    async init() {
         return this.Embed.success()
             .setTitle('Optimum by Altice')
             .setDescription(`

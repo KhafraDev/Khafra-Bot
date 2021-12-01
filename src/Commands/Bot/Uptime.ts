@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) {
+    async init(message: Message) {
         return Embed.success(`
         ⏰ ${inlineCode(getUptime(message.client.uptime ?? 0))}
         `).setTitle('Khafra-Bot has been online for:');
