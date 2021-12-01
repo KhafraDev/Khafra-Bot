@@ -35,19 +35,17 @@ export class kCommand extends Command {
             dynamic: true
         };
 
-        if (cli.size !== 0) {
-            if (cli.has('size') || cli.has('s')) {
-                const value = Number(cli.get('size') || cli.get('s'));
-                if (avatarSizes.includes(value)) {
-                    opts.size = value as AllowedImageSize;
-                }
+        if (cli.has('size') || cli.has('s')) {
+            const value = Number(cli.get('size') || cli.get('s'));
+            if (avatarSizes.includes(value)) {
+                opts.size = value as AllowedImageSize;
             }
+        }
 
-            if (cli.has('format') || cli.has('f')) {
-                const value = cli.get('format') || cli.get('f');
-                if (typeof value === 'string' && avatarFormats.includes(value)) {
-                    opts.format = value as AllowedImageFormat & 'gif';
-                }
+        if (cli.has('format') || cli.has('f')) {
+            const value = cli.get('format') || cli.get('f');
+            if (typeof value === 'string' && avatarFormats.includes(value)) {
+                opts.format = value as AllowedImageFormat & 'gif';
             }
         }
 
