@@ -9,12 +9,13 @@ import { dontThrow } from './lib/Utility/Don\'tThrow.js';
 const emitted = <T extends keyof ClientEvents>(name: T) => {
     const event = KhafraClient.Events.get(name);
 
-    if (!event) {
-        throw new Error(`The ${name} event has no event handler!`);
-    }
-
-    return (...args: ClientEvents[T]) => 
+    return (...args: ClientEvents[T]) => {
+        if (!event) {
+            throw new Error(`The ${name} event has no event handler!`);
+        }
+        
         void dontThrow(event.init(...args));
+    }
 }
 
 export const client = new KhafraClient({
