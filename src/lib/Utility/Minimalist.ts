@@ -1,13 +1,27 @@
 type Value = true | string;
 
 export class Minimalist extends Map<string, Value> {
-    constructor(s: string) {
-        super();
+    private parsed = false;
 
-        this.parse(s);
+    public constructor (public content: string) {
+        super();
+        this.content = content;
     }
 
-    parse(s: string) {
+    override has (k: string) {
+        if (!this.parsed) this.parse();
+
+        return super.has(k);
+    }
+
+    override get (k: string) {
+        if (!this.parsed) this.parse();
+
+        return super.get(k);
+    }
+
+    private parse (s = this.content) {
+        this.parsed ||= true;
         const tokens = s.split(/\s+/g);
 
         for (let i = 0; i < tokens.length; i++) {
