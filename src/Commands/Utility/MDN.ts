@@ -35,7 +35,10 @@ export class kCommand extends Command {
         const best = results.documents.sort((a, b) => b.score - a.score);
 
         return this.Embed.success()
-            .setAuthor('Mozilla Development Network', 'https://developer.mozilla.org/static/img/opengraph-logo.png')
+            .setAuthor({
+                name: 'Mozilla Development Network',
+                iconURL: 'https://developer.mozilla.org/static/img/opengraph-logo.png'
+            })
             .setDescription(best.map(doc => `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`).join('\n'))
             .setFooter('Requested by ' + message.author.tag)
             .setTimestamp();

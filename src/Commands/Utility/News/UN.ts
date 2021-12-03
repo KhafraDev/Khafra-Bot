@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.un.org/feed/subscribe/en/news/all/rss.xml',
     main: 'https://news.un.org/en/',
     command: ['un'],
-    author: ['UN', 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg']
+    author: { name: 'UN', iconURL: 'http://lofrev.net/wp-content/photos/2014/10/Un-logo.jpg' }
 } as const;
 
 interface IUN {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

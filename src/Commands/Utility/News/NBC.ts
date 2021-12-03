@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://feeds.nbcnews.com/nbcnews/public/news',
     main: 'https://nbcnews.com',
     command: ['nbc', 'nbcnews'],
-    author: ['NBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png']
+    author: { name: 'NBC', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png' }
 } as const;
 
 interface INBC {
@@ -58,6 +58,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

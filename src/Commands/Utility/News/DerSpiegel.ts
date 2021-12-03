@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.spiegel.de/international/index.rss',
     main: 'https://spiegel.de',
     command: ['derspiegel', 'spiegel'],
-    author: ['Der Spiegel', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo-der_spiegel.svg/1280px-Logo-der_spiegel.svg.png']
+    author: { name: 'Der Spiegel', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo-der_spiegel.svg/1280px-Logo-der_spiegel.svg.png' }
 } as const;
 
 interface IABCNews {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
     main: 'https://nytimes.com',
     command: ['nytimes'],
-    author: ['NYTimes', 'https://i.imgur.com/GmhBcJs.png']
+    author: { name: 'NYTimes', iconURL: 'https://i.imgur.com/GmhBcJs.png' }
 } as const;
 
 interface INYTimes {
@@ -55,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

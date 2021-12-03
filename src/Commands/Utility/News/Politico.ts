@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://rss.politico.com/politics-news.xml',
     main: 'https://politico.com',
     command: ['politico'],
-    author: ['Politico', 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png']
+    author: { name: 'Politico', iconURL: 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png' }
 } as const;
 
 interface IPolitico {
@@ -57,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

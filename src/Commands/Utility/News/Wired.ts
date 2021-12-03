@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.wired.com/feed/rss',
     main: 'https://www.wired.com',
     command: ['wired'],
-    author: ['Wired', 'https://www.wired.com/images/logos/wired.png']
+    author: { name: 'Wired', iconURL: 'https://www.wired.com/images/logos/wired.png' }
 } as const;
 
 interface IWired {
@@ -57,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

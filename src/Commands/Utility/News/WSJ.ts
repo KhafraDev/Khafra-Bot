@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://feeds.a.dj.com/rss/RSSWorldNews.xml',
     main: 'https://wsj.com',
     command: ['wsj', 'wallstreetjournal'],
-    author: ['WSJ', 'http://si.wsj.net/img/WSJ_Logo_black_social.gif']
+    author: { name: 'WSJ', iconURL: 'https://i.imgur.com/XxsoRwt.png' }
 } as const;
 
 interface IWSJ {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

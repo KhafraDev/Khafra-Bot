@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://feeds.thedailybeast.com/rss/articles',
     main: 'https://www.thedailybeast.com/',
     command: ['dailybeast', 'thedailybeast'],
-    author: ['The Daily Beast', 'https://img.thedailybeast.com/image/upload/v1550872986/Whitelr_soctf0.png']
+    author: { name: 'The Daily Beast', iconURL: 'https://img.thedailybeast.com/image/upload/v1550872986/Whitelr_soctf0.png' }
 } as const;
 
 interface IDailyBeast {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

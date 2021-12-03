@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.latimes.com/world/rss2.0.xml',
     main: 'https://www.latimes.com',
     command: ['latimes'],
-    author: ['LATimes', 'https://cdn.shopify.com/s/files/1/0249/9326/7772/products/logo_grande_grande_a5b034b5-8b86-47bc-af3c-eba114fdea8b_600x.jpg']
+    author: { name: 'LATimes', iconURL: 'https://i.imgur.com/6vhBYjW.png' }
 } as const;
 
 interface ILATimes {
@@ -55,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

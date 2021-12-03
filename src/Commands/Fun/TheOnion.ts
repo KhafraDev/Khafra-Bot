@@ -97,11 +97,11 @@ export class kCommand extends Command {
             `);
 
         return this.Embed.success()
-            .setAuthor(
-                decodeXML(j.data[0].headline).slice(0, 256), 
-                'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
-                j.data[0].permalink
-            )
+            .setAuthor({
+                name: decodeXML(j.data[0].headline).slice(0, 256), 
+                iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
+                url: j.data[0].permalink
+            })
             .setTimestamp(j.data[0].publishTimeMillis)
             .setDescription(j.data[0].plaintext.slice(0, 2048));
     }

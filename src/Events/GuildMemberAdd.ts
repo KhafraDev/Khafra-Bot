@@ -63,7 +63,7 @@ export class kEvent extends Event<'guildMemberAdd'> {
             return;
         
         const embed = Embed.success()
-            .setAuthor(member.user.username, member.user.displayAvatarURL())
+            .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} (${member.user.tag}) joined the server!
             • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})

@@ -68,7 +68,10 @@ export class kInteraction extends Interactions {
 
         if (option instanceof GuildMember) {
             return Embed.success()
-                .setAuthor(option.displayName, option.user.displayAvatarURL())
+                .setAuthor({
+                    name: option.displayName,
+                    iconURL: option.user.displayAvatarURL()
+                })
                 .setDescription(`
                 ${option} on ${italic(option.guild.name)}.
                 ${formatPresence(option.presence?.activities)}
@@ -126,7 +129,10 @@ export class kInteraction extends Interactions {
                 .map(f => getEmojis().get(f));
 
             return Embed.success(formatPresence(guildMember?.presence?.activities) ?? undefined)
-                .setAuthor(option.tag, option.displayAvatarURL() ?? client.user!.displayAvatarURL())
+                .setAuthor({
+                    name: option.tag, 
+                    iconURL: option.displayAvatarURL() ?? client.user!.displayAvatarURL()
+                })
                 .addField(bold('Username:'), option.username, true)
                 .addField(bold('ID:'), option.id, true)
                 .addField(bold('Discriminator:'), `#${option.discriminator}`, true)

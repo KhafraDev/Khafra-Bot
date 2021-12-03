@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://heavy.com/feed/',
     main: 'https://heavy.com',
     command: ['heavy'],
-    author: ['Heavy', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png']
+    author: { name: 'Heavy', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png' }
 } as const;
 
 interface IHeavy {
@@ -54,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

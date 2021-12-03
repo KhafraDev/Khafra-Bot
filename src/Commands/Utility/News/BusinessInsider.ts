@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.businessinsider.com/rss?op=1',
     main: 'https://businessinsider.com',
     command: ['businessinsider', 'binsider'],
-    author: ['Business Insider', 'https://i.imgur.com/sXMsOj0.png']
+    author: { name: 'Business Insider', iconURL: 'https://i.imgur.com/sXMsOj0.png' }
 } as const;
 
 interface IBusinessInsider {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

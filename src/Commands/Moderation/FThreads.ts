@@ -108,7 +108,10 @@ export class kCommand extends Command {
 
         const embed = this.Embed.success()
             .setTitle(`Edited ${success.length} Channel Perms!`)
-            .setAuthor(message.guild.name, message.guild.bannerURL() ?? undefined);
+            .setAuthor({
+                name: message.guild.name,
+                iconURL: message.guild.bannerURL() ?? undefined
+            });
 
         if (success.length > 0)
             embed.description = `${bold('Success:')}\n`;

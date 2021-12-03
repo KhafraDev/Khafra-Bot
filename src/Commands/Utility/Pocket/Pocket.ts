@@ -17,7 +17,7 @@ export class kCommand extends Command {
 
     async init() {
         return this.Embed.success()
-            .setAuthor('GetPocket', undefined, 'https://app.getpocket.com/')
+            .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`
             Connect your Pocket account to Khafra-Bot to get updates on the latest news.
             

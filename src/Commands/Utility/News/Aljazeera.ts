@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.aljazeera.com/xml/rss/all.xml',
     main: 'https://aljazeera.com',
     command: ['aljazeera'],
-    author: ['Aljazeera', 'https://i.imgur.com/I1X7ygr.png']
+    author: { name: 'Aljazeera', iconURL: 'https://i.imgur.com/I1X7ygr.png' }
 } as const;
 
 interface IAljazeera {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

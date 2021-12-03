@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.tmz.com/rss.xml',
     main: 'https://tmz.com',
     command: ['tmz'],
-    author: ['TMZ', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png']
+    author: { name: 'TMZ', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png' }
 } as const;
 
 interface ITMZ {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

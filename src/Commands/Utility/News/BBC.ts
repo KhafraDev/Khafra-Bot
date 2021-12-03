@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://feeds.bbci.co.uk/news/rss.xml',
     main: 'https://bbc.com',
     command: ['bbc'],
-    author: ['The BBC', 'https://download.logo.wine/logo/BBC_News/BBC_News-Logo.wine.png']
+    author: { name: 'The BBC', iconURL: 'https://i.imgur.com/6VBxZWF.png' }
 } as const;
 
 interface IBBC {
@@ -49,6 +49,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

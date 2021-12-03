@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.theguardian.com/world/rss',
     main: 'https://theguardian.com',
     command: ['guardian', 'theguardian'],
-    author: ['The Guardian', 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg']
+    author: { name: 'The Guardian', iconURL: 'https://kahoot.com/files/2020/03/guardian-logo-square.jpg' }
 } as const;
 
 interface ITheGuardian {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -74,6 +74,9 @@ export class kInteraction extends Interactions {
 
         return Embed.success()
             .setDescription(`${unbanned} has been unbanned from the guild!${processArgs.get('dev') ? notReally : ''}`)
-            .setAuthor(interaction.user.username, interaction.user.displayAvatarURL());
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            });
     }
 } 

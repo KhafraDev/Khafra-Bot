@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.cbsnews.com/latest/rss/world',
     main: 'https://www.cbsnews.com/',
     command: ['cbs', 'cbsnews'],
-    author: ['CBS', 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png']
+    author: { name: 'CBS', iconURL: 'https://www.icingsmiles.org/wp-content/uploads/2015/09/CBS-Logo.png' }
 } as const;
 
 interface IABCNews {
@@ -49,6 +49,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

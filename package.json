@@ -6,16 +6,16 @@
   "type": "module",
   "dependencies": {
     "@discordjs/rest": "^0.1.0-canary.0",
-    "discord-api-types": "^0.24.0",
+    "discord-api-types": "^0.25.2",
     "discord.js": "github:KhafraDev/discord.js",
     "entities": "^3.0.1",
     "esqlite": "^0.0.7",
-    "fast-xml-parser": "^4.0.0-beta.2",
+    "fast-xml-parser": "^4.0.0-beta.3",
     "pg": "^8.7.1",
-    "redis": "^3.1.2",
-    "sonic-boom": "^2.3.1",
+    "redis": "^4.0.0",
+    "sonic-boom": "^2.4.1",
     "twemoji-parser": "^13.1.0",
-    "undici": "^4.10.2"
+    "undici": "^4.11.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.9",

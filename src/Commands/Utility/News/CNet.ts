@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.cnet.com/rss/all/',
     main: 'https://www.cnet.com/',
     command: ['cnet'],
-    author: ['CNet', 'http://www.ranklogos.com/wp-content/uploads/2012/04/CNET_Logo.jpg']
+    author: { name: 'CNet', iconURL: 'http://www.ranklogos.com/wp-content/uploads/2012/04/CNET_Logo.jpg' }
 } as const;
 
 interface ICNet {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://api.axios.com/feed/',
     main: 'https://axios.com',
     command: ['axios'],
-    author: ['Axios', 'https://eig.org/wp-content/uploads/2017/06/Axios-Logo.png']
+    author: { name: 'Axios', iconURL: 'https://eig.org/wp-content/uploads/2017/06/Axios-Logo.png' }
 } as const;
 
 interface IAxios {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

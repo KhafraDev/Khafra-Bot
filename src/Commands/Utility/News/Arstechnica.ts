@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://arstechnica.com/feed/',
     main: 'https://arstechnica.com/',
     command: ['ars', 'arstechnica'],
-    author: ['Arstechnica', 'https://i.imgur.com/NpeaohK.png']
+    author: { name: 'Arstechnica', iconURL: 'https://i.imgur.com/NpeaohK.png' }
 } as const;
 
 interface IArstechnica {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

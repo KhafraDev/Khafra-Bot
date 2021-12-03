@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.vice.com/en/rss?locale=en_us',
     main: 'https://vice.com',
     command: ['vice'],
-    author: ['Vice', 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c0/Vice_logo.svg/220px-Vice_logo.svg.png']
+    author: { name: 'Vice', iconURL: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/c0/Vice_logo.svg/220px-Vice_logo.svg.png' }
 } as const;
 
 interface IVice {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

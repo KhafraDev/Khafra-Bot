@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.buzzfeed.com/ca/world.xml',
     main: 'https://www.buzzfeed.com/',
     command: ['buzzfeed'],
-    author: ['BuzzFeed', 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png']
+    author: { name: 'BuzzFeed', iconURL: 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png' }
 } as const;
 
 interface IBuzzfeed {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

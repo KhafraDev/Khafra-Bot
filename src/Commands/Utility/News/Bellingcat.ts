@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.bellingcat.com/category/news/feed/',
     main: 'https://www.bellingcat.com/',
     command: ['bellingcat', 'belling'],
-    author: ['Bellingcat', 'https://www.bellingcat.com/app/uploads/2018/04/bellingcat_HP_logo_black.jpg']
+    author: { name: 'Bellingcat', iconURL: 'https://i.imgur.com/OHrj6lV.jpg' }
 } as const;
 
 interface IBBC {
@@ -49,6 +49,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

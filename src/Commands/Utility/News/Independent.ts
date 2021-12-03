@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.independent.co.uk/news/world/rss',
     main: 'https://independent.co.uk',
     command: ['independent'],
-    author: ['Independent', 'https://www.calculuscapital.com/cms/media/Independent_logo_logotype.png']
+    author: { name: 'Independent', iconURL: 'https://www.calculuscapital.com/cms/media/Independent_logo_logotype.png' }
 } as const;
 
 interface IIndependent {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

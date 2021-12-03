@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.jpost.com/rss/rssfeedsfrontpage.aspx',
     main: 'https://jpost.com',
     command: ['jpost'],
-    author: ['JPost', 'https://images.jpost.com/image/upload/f_auto,fl_lossy/t_JD_ExpertTopPic_1024/268438']
+    author: { name: 'JPost', iconURL: 'https://images.jpost.com/image/upload/f_auto,fl_lossy/t_JD_ExpertTopPic_1024/268438' }
 } as const;
 
 interface IJPost {
@@ -57,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

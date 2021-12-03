@@ -48,7 +48,7 @@ export class kCommand extends Command {
 
         // max role length = 84 characters
         return this.Embed.success()
-            .setAuthor(member.displayName, member.user.displayAvatarURL())
+            .setAuthor({ name: member.displayName, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} on ${italic(member.guild.name)}.
             ${formatPresence(member.presence?.activities)}

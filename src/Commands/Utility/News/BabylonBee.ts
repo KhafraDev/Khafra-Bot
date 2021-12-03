@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://babylonbee.com/feed/',
     main: 'https://babylonbee.com/',
     command: ['babylonbee'],
-    author: ['The Babylon Bee', 'https://babylonbee.com/img/card-logo.jpg']
+    author: { name: 'The Babylon Bee', iconURL: 'https://babylonbee.com/img/card-logo.jpg' }
 } as const;
 
 interface IBabylonBee {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

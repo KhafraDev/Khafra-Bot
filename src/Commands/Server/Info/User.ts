@@ -84,7 +84,10 @@ export class kCommand extends Command {
             .map(f => getEmojis().get(f));
 
         return this.Embed.success(formatPresence(member?.presence?.activities) ?? undefined)
-            .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user!.displayAvatarURL())
+            .setAuthor({
+                name: user.tag,
+                iconURL: user.displayAvatarURL() ?? message.client.user!.displayAvatarURL()
+            })
             .addField(bold('Username:'), user.username, true)
             .addField(bold('ID:'), user.id, true)
             .addField(bold('Discriminator:'), `#${user.discriminator}`, true)

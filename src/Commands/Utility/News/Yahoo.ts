@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.yahoo.com/news/rss/world',
     main: 'https://www.yahoo.com/news',
     command: ['yahoo', 'yahoonews'],
-    author: ['Yahoo! News', 'https://s.yimg.com/os/creatr-uploaded-images/2019-09/7ce28da0-de21-11e9-8ef3-b3d0b3dcfb8b']
+    author: { name: 'Yahoo! News', iconURL: 'https://s.yimg.com/os/creatr-uploaded-images/2019-09/7ce28da0-de21-11e9-8ef3-b3d0b3dcfb8b' }
 } as const;
 
 interface IYahooNews {
@@ -49,6 +49,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

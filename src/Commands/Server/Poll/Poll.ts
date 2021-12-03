@@ -107,7 +107,10 @@ export class kCommand extends Command {
 
                 const embed = this.Embed.success()
                     .setTitle('Poll')
-                    .setAuthor(message.author.username, message.author.displayAvatarURL());
+                    .setAuthor({
+                        name: message.author.username,
+                        iconURL: message.author.displayAvatarURL()
+                    });
 
                 for (let i = 0; i < settings.options.length; i++) {
                     const option = settings.options[i];

@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://defence-blog.com/feed/',
     main: 'https://defence-blog.com',
     command: ['defenceblog', 'defence-blog'],
-    author: ['DefenceBlog', 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png']
+    author: { name: 'DefenceBlog', iconURL: 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png' }
 } as const;
 
 interface IDefenceBlog {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

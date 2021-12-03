@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.mirror.co.uk/news/world-news/?service=rss',
     main: 'https://www.mirror.co.uk',
     command: ['mirror'],
-    author: ['Mirror', 'https://i.imgur.com/wuINM4z.png']
+    author: { name: 'Mirror', iconURL: 'https://i.imgur.com/wuINM4z.png' }
 } as const;
 
 interface IMirrorCo {
@@ -54,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

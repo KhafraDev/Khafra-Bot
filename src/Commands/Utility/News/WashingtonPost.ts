@@ -8,7 +8,7 @@ const settings = {
     rss: 'http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43',
     main: 'https://washingtonpost.com',
     command: ['washingtonpost', 'thewashingtonpost'],
-    author: ['The Washington Post', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/The_Logo_of_The_Washington_Post_Newspaper.svg/1200px-The_Logo_of_The_Washington_Post_Newspaper.svg.png']
+    author: { name: 'The Washington Post', iconURL: 'https://i.imgur.com/TRRMCnb.png' }
 } as const;
 
 interface IWashingtonPost {
@@ -59,6 +59,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

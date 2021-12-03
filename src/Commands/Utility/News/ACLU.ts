@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://wp.api.aclu.org/feed/',
     main: 'https://aclu.org',
     command: ['aclu'],
-    author: ['ACLU', 'https://www.aclu.org/shared/images/favicons/android-chrome-192x192.png']
+    author: { name: 'ACLU', iconURL: 'https://www.aclu.org/shared/images/favicons/android-chrome-192x192.png' }
 } as const;
 
 interface IACLU {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

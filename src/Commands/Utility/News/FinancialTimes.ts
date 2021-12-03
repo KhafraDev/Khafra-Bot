@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:ft.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://ft.com',
     command: ['ft', 'financialtimes'],
-    author: ['FT', 'https://www.ft.com/__origami/service/image/v2/images/raw/ftlogo-v1%3Abrand-ft-logo-square-coloured?source=update-logos&format=png']
+    author: { name: 'FT', iconURL: 'https://i.imgur.com/c1axilv.png' }
 } as const;
 
 interface IFT {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

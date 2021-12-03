@@ -47,6 +47,10 @@ export class kCommand extends Command {
             .join('\n');
         
         return this.Embed.success(formatted)
-            .setAuthor(message.author.username + '\'s latest saves', message.author.displayAvatarURL(), 'https://getpocket.com/')
+            .setAuthor({
+                name: message.author.username + '\'s latest saves',
+                iconURL: message.author.displayAvatarURL(),
+                url: 'https://getpocket.com/'
+            });
     }
 }

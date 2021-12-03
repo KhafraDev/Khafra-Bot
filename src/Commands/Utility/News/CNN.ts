@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://rss.cnn.com/rss/cnn_world.rss',
     main: 'https://cnn.com',
     command: ['cnn'],
-    author: ['CNN', 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/CNN.svg/1200px-CNN.svg.png']
+    author: { name: 'CNN', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/CNN.svg/1200px-CNN.svg.png' }
 } as const;
 
 interface ICNN {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

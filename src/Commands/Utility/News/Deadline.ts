@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://deadline.com/feed/',
     main: 'https://deadline.com/',
     command: ['deadline'],
-    author: ['Deadline', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Deadline_logo.svg/1280px-Deadline_logo.svg.png']
+    author: { name: 'Deadline', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Deadline_logo.svg/1280px-Deadline_logo.svg.png' }
 } as const;
 
 interface IDeadline {
@@ -56,6 +56,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:people.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://people.com',
     command: ['people'],
-    author: ['People', 'https://people.com/img/misc/og-default.png']
+    author: { name: 'People', iconURL: 'https://people.com/img/misc/og-default.png' }
 } as const;
 
 interface IPeople {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://feeds.skynews.com/feeds/rss/world.xml',
     main: 'https://news.sky.com',
     command: ['sky', 'skynews'],
-    author: ['Sky News', 'https://news.sky.com/resources/sky-news-logo.png?v=1?bypass-service-worker']
+    author: { name: 'Sky News', iconURL: 'https://news.sky.com/resources/sky-news-logo.png?v=1?bypass-service-worker' }
 } as const;
 
 interface ISkyNews {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

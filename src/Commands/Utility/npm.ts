@@ -30,7 +30,11 @@ export class kCommand extends Command {
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
         return this.Embed.success()
-            .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
+            .setAuthor({
+                name: 'NPM',
+                iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
+                url: 'https://npmjs.com/'
+            })
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(_package.description.slice(0, 2000))}

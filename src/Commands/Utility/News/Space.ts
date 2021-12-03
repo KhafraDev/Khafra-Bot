@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.space.com/feeds/all',
     main: 'https://space.com',
     command: ['space', 'spacenews'],
-    author: ['Space News', 'https://vectorlogoseek.com/wp-content/uploads/2019/05/space-com-vector-logo.png']
+    author: { name: 'Space News', iconURL: 'https://vectorlogoseek.com/wp-content/uploads/2019/05/space-com-vector-logo.png' }
 } as const;
 
 interface ISpaceNews {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://thehill.com/rss/syndicator/19109',
     main: 'https://thehill.com',
     command: ['thehill'],
-    author: ['The Hill', 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png']
+    author: { name: 'The Hill', iconURL: 'https://thehill.com/sites/all/themes/thehill/images/redesign/thehill-logo-big.png' }
 } as const;
 
 interface ITheHill {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

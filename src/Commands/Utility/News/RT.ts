@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.rt.com/rss/news/',
     main: 'https://www.RT.com',
     command: ['rt'],
-    author: ['RT', 'https://i.imgur.com/4kS8mvK.png']
+    author: { name: 'RT', iconURL: 'https://i.imgur.com/4kS8mvK.png' }
 } as const;
 
 interface IRT {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

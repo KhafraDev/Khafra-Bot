@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.tomshardware.com/feeds/all',
     main: 'https://www.tomshardware.com/',
     command: ['tomshardware'],
-    author: ['Tom\'s Hardware', 'https://vanilla.futurecdn.net/tomshardware/apple-touch-icon.png']
+    author: { name: 'Tom\'s Hardware', iconURL: 'https://vanilla.futurecdn.net/tomshardware/apple-touch-icon.png' }
 } as const;
 
 interface ITomsHardware {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

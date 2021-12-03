@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.newyorker.com/feed/everything',
     main: 'https://www.newyorker.com/',
     command: ['newyorker', 'thenewyorker'],
-    author: ['The New Yorker', 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png']
+    author: { name: 'The New Yorker', iconURL: 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png' }
 } as const;
 
 interface ITheNewYorker {
@@ -55,6 +55,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

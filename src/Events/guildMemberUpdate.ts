@@ -65,13 +65,19 @@ export class kEvent extends Event<'guildMemberUpdate'> {
         if (oldHas && !newHas) { // lost role
             const embed = Embed.fail(`${newMember} is no longer boosting the server! 😨`);
             if (newMember.user)
-                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+                embed.setAuthor({
+                    name: newMember.user.username,
+                    iconURL: newMember.user.displayAvatarURL()
+                });
 
             return dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
             const embed = Embed.success(`${newMember} just boosted the server! 🥳`);
             if (newMember.user)
-                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+                embed.setAuthor({
+                    name: newMember.user.username,
+                    iconURL: newMember.user.displayAvatarURL()
+                });
 
             return dontThrow(channel.send({ embeds: [embed] }));
         }

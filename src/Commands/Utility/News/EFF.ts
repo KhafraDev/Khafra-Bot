@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.eff.org/rss/updates.xml',
     main: 'https://eff.org. Donate @ https://supporters.eff.org/donate/join-eff-today',
     command: ['eff'],
-    author: ['EFF', 'https://www.eff.org/files/2018/06/14/eff_monogram-primary-red.png']
+    author: { name: 'EFF', iconURL: 'https://www.eff.org/files/2018/06/14/eff_monogram-primary-red.png' }
 } as const;
 
 interface IEFF {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

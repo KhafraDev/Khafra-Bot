@@ -98,7 +98,10 @@ export class kInteraction extends Interactions {
 
         Reason: ${inlineCode(reason.slice(0, 1000))}
         `)
-        .setAuthor(interaction.user.username, interaction.user.displayAvatarURL())
+        .setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.displayAvatarURL()
+        })
         .setFooter(`${days} day${plural(days)} of messages removed.`);
     }
 } 

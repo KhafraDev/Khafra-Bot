@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.thesun.co.uk/news/worldnews/feed/',
     main: 'https://www.thesun.co.uk',
     command: ['thesun'],
-    author: ['The Sun', 'https://upload.wikimedia.org/wikipedia/commons/0/0c/The_sun_logo.jpg']
+    author: { name: 'The Sun', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/The_sun_logo.jpg' }
 } as const;
 
 interface ITheSun {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

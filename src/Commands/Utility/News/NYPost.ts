@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://nypost.com/feed/',
     main: 'https://nypost.com',
     command: ['nypost'],
-    author: ['NYPost', 'https://res-3.cloudinary.com/crunchbase-production/image/upload/c_lpad,h_170,w_170,f_auto,b_white,q_auto:eco/v1448593722/ttyq9tw3bynhfx94u7ho.png']
+    author: { name: 'NYPost', iconURL: 'https://i.imgur.com/jLjuU05.png' }
 } as const;
 
 interface INYPost {
@@ -57,6 +57,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

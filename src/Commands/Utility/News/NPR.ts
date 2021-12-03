@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://feeds.npr.org/1004/rss.xml',
     main: 'https://npr.org',
     command: ['npr'],
-    author: ['NPR', 'https://media.npr.org/assets/img/2019/06/17/nprlogo_rgb_whiteborder_custom-7c06f2837fb5d2e65e44de702968d1fdce0ce748-s800-c85.png']
+    author: { name: 'NPR', iconURL: 'https://i.imgur.com/dDKpD6b.png' }
 } as const;
 
 interface INPR {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

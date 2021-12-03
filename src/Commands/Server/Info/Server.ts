@@ -22,7 +22,10 @@ export class kCommand extends Command {
         const locale = message.guild.preferredLocale;
 
         return this.Embed.success()
-            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
+            .setAuthor({
+                name: message.client.user!.username,
+                iconURL: message.client.user!.displayAvatarURL()
+            })
             .setTimestamp()
             .setThumbnail(message.guild.bannerURL()!)
             .setDescription(`

@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.e-ir.info/feed/',
     main: 'https://e-ir.info',
     command: ['eir', 'e-ir'],
-    author: ['EIR', 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png']
+    author: { name: 'EIR', iconURL: 'https://www.e-ir.info/wp-content/uploads/2014/01/eir-logo-stack@x2-1.png' }
 } as const;
 
 interface IEIRinfo {
@@ -54,6 +54,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

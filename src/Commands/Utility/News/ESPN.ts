@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.espn.com/espn/rss/news',
     main: 'https://espn.com',
     command: ['espn'],
-    author: ['ESPN', 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg']
+    author: { name: 'ESPN', iconURL: 'https://logos-download.com/wp-content/uploads/2016/05/ESPN_logo_red_bg.jpg' }
 } as const;
 
 interface IESPN {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

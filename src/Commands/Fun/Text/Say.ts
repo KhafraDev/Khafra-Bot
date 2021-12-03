@@ -20,7 +20,10 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         return this.Embed.success()
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            })
             .setDescription(args.join(' '));
     }
 }

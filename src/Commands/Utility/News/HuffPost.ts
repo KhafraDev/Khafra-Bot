@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.huffpost.com/section/front-page/feed',
     main: 'https://www.huffpost.com',
     command: ['huff', 'huffpost'],
-    author: ['HuffPost', 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png']
+    author: { name: 'HuffPost', iconURL: 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png' }
 } as const;
 
 interface IHuffPost {
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

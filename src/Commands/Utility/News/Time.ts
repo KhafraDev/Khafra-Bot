@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://feeds.feedburner.com/time/world',
     main: 'https://time.com',
     command: ['time'],
-    author: ['Time', 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png']
+    author: { name: 'Time', iconURL: 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png' }
 } as const;
 
 interface ITime {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

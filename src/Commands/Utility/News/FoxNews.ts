@@ -7,7 +7,7 @@ const settings = {
     rss: 'http://feeds.foxnews.com/foxnews/world',
     main: 'https://foxnews.com',
     command: ['fox', 'foxnews'],
-    author: ['Fox News', 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png']
+    author: { name: 'Fox News', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Fox_News_Channel_logo.png' }
 } as const;
 
 interface IFoxNews {
@@ -53,6 +53,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

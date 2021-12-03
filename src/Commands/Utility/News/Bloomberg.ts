@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://bloomberg.com',
     command: ['bloomberg'],
-    author: ['Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png']
+    author: { name: 'Bloomberg', iconURL: 'https://i.imgur.com/CsJUHy1.png' }
 } as const;
 
 interface IBloomberg {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

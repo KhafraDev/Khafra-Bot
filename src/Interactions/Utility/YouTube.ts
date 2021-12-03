@@ -13,7 +13,7 @@ function* format(items: YouTubeSearchResults) {
         const video = items.items[i].snippet;
         const embed = Embed.success()
             .setTitle(video.title)
-            .setAuthor(video.channelTitle)
+            .setAuthor({ name: video.channelTitle })
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
             .addField(bold('Published:'), time(new Date(video.publishTime)))

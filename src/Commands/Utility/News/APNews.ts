@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:apnews.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://apnews.com',
     command: ['apnews', 'ap'],
-    author: ['AP News', 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Associated_Press_logo_2012.svg/220px-Associated_Press_logo_2012.svg.png']
+    author: { name: 'AP News', iconURL: 'https://i.imgur.com/CvS6WHb.png' }
 } as const;
 
 interface IAPNews {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

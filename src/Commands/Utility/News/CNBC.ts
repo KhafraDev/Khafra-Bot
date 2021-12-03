@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://www.cnbc.com/id/100727362/device/rss/rss.html',
     main: 'https://www.cnbc.com/',
     command: ['cnbc'],
-    author: ['CNBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/1200px-CNBC_logo.svg.png']
+    author: { name: 'CNBC', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CNBC_logo.svg/1200px-CNBC_logo.svg.png' }
 } as const;
 
 interface ICNBC {
@@ -50,6 +50,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

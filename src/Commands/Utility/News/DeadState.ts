@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://deadstate.org/feed/',
     main: 'https://deadstate.org/',
     command: ['deadstate'],
-    author: ['DeadState', 'https://deadstate.org/wp-content/uploads/2016/01/logo-new.jpg']
+    author: { name: 'DeadState', iconURL: 'https://deadstate.org/wp-content/uploads/2016/01/logo-new.jpg' }
 } as const;
 
 interface IDeadState {
@@ -56,6 +56,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

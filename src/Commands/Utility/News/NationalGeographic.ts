@@ -7,7 +7,7 @@ const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:nationalgeographic.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://nationalgeographic.com',
     command: ['nationalgeographic'],
-    author: ['National Geographic', 'https://i.imgur.com/sXMsOj0.png']
+    author: { name: 'National Geographic', iconURL: 'https://i.imgur.com/sXMsOj0.png' }
 } as const;
 
 interface INationalGeographic {
@@ -51,6 +51,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }
