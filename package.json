@@ -10,7 +10,7 @@
     "discord.js": "github:KhafraDev/discord.js",
     "entities": "^3.0.1",
     "esqlite": "^0.0.7",
-    "fast-xml-parser": "^4.0.0-beta.3",
+    "fast-xml-parser": "^4.0.0-beta.6",
     "pg": "^8.7.1",
     "redis": "^4.0.0",
     "sonic-boom": "^2.4.1",
@@ -18,7 +18,7 @@
     "undici": "^4.11.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.9",
+    "@types/node": "^16.11.11",
     "@types/pg": "^8.6.1",
     "@types/redis": "^2.8.28",
     "@types/twemoji-parser": "^13.1.1",
