@@ -11,7 +11,6 @@ export interface kGuild {
     welcome_channel: Snowflake | null
     reactrolechannel: Snowflake | null
     ticketchannel: Snowflake | null
-    modrole: Snowflake | null
 }
 
 export interface Warning {
