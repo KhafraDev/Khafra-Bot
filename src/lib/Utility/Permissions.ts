@@ -27,10 +27,14 @@ export const hasPerms = (
  */
 export const hierarchy = (
     a: GuildMember,
-    b: GuildMember
+    b: GuildMember,
+    strict = true
 ) => {
-    return a.guild.ownerId === a.id || // below check only checks the highest role
-           a.roles.highest.comparePositionTo(b.roles.highest) > 0;
+    const cond = strict
+        ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
+        : a.roles.highest.comparePositionTo(b.roles.highest) >= 0;
+
+    return a.guild.ownerId === a.id || cond;
 }
 
 export const permResolvableToString = (perms: PermissionResolvable) => {

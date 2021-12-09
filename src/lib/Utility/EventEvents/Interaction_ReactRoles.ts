@@ -3,6 +3,7 @@ import { client } from '../../../index.js';
 import { Embed } from '../Constants/Embeds.js';
 import { dontThrow } from '../Don\'tThrow.js';
 import { validSnowflake } from '../Mentions.js';
+import { hierarchy } from '../Permissions.js';
 
 type InteractionReply 
     = import('discord.js').Message<boolean> 
@@ -31,6 +32,15 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
 
     const role = guild.roles.cache.get(interaction.customId);
     if (!role || role.deleted || role.managed) return;
+
+    if (!guild.me || !hierarchy(guild.me, interaction.member, false)) {
+        const opts = { content: `❌ I do not have permission to manage your roles!` };
+        const pr = interaction.deferred
+            ? interaction.editReply(opts)
+            : interaction.reply({ ephemeral: true, ...opts});
+
+        return void dontThrow<InteractionReply>(pr);
+    }
 
     try {
         if (interaction.member.partial)

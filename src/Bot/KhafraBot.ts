@@ -120,9 +120,7 @@ export class KhafraClient extends Client {
                 // debugging in guild
                 await rest.put(
                     Routes.applicationGuildCommands(config.botId, config.guildId),
-                    { 
-                        body: scs.map(i => (i.default_permission = true) && i)
-                    }
+                    { body: scs }
                 );
             }
 
