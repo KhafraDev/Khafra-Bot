@@ -22,6 +22,6 @@ export class kCommand extends Command {
     async init() {
         const homer = await thisSimpsonDoesNotExist();
 
-        return this.Embed.success().setImage(homer);
+        return this.Embed.ok().setImage(homer);
     }
 }

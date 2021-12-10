@@ -25,7 +25,7 @@ export class kCommand extends Command {
 
         if (args.length === 0) {
             // help message
-            return this.Embed.fail('not implemented yet');
+            return this.Embed.error('not implemented yet');
         }
 
         const name = args[0].toLowerCase();
@@ -34,7 +34,7 @@ export class kCommand extends Command {
             : `giveaway:${name}`;
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
-            return this.Embed.fail(
+            return this.Embed.error(
             `Giveaway command doesn't exist, use ${inlineCode(`${settings.prefix}giveaway`)} for more information!`
             );
         }

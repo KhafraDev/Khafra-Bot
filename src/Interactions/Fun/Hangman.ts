@@ -100,7 +100,7 @@ class Hangman {
 
         return {
             embeds: [
-                Embed.success()
+                Embed.ok()
                     .setDescription(`
                     ${this.hide()}
                     ${this.wrong} wrong guess${plural(this.wrong, 'es')}.

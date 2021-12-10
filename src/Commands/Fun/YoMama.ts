@@ -27,8 +27,8 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (isText(message.channel) && !message.channel.nsfw)
-            return this.Embed.fail('🔞 This command only works in NSFW channels.');
+            return this.Embed.error('🔞 This command only works in NSFW channels.');
 
-        return this.Embed.success(upperCase(jokes[await rand(jokes.length)]));
+        return this.Embed.ok(upperCase(jokes[await rand(jokes.length)]));
     }
 }

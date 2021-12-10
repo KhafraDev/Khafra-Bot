@@ -44,10 +44,10 @@ export class kInteraction extends Interactions {
                 const account = await IpsumAccount.create(interaction.user.id);
 
                 if (account === null) {
-                    return Embed.fail(`You already have an account! Did you mean to ${inlineCode(`/ipsum account delete`)}?`);
+                    return Embed.error(`You already have an account! Did you mean to ${inlineCode(`/ipsum account delete`)}?`);
                 }
 
-                return Embed.success(`
+                return Embed.ok(`
                 Created an account for you!
 
                 ID: ${inlineCode(account.playerid)}
@@ -56,10 +56,10 @@ export class kInteraction extends Interactions {
                 const deleted = await IpsumAccount.delete(interaction.user.id);
 
                 if (deleted === null) {
-                    return Embed.success(`You don't have an account! So I guess it was deleted?`);
+                    return Embed.ok(`You don't have an account! So I guess it was deleted?`);
                 }
 
-                return Embed.success(`Deleted your account, play again soon? ❤️`);
+                return Embed.ok(`Deleted your account, play again soon? ❤️`);
             }
         }
     }

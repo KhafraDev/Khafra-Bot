@@ -31,10 +31,10 @@ export class kCommand extends Command {
             message.channel;
 
         if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
-            return this.Embed.fail('No channel with that name was found!'); 
+            return this.Embed.error('No channel with that name was found!'); 
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .addFields(
                 { name: bold('ID:'), value: channel.id, inline: true },
                 { name: bold('Type:'), value: channel.type, inline: true },

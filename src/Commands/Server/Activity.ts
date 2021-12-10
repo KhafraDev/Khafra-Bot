@@ -57,16 +57,16 @@ export class kCommand extends Command {
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
 
         if (!isVoice(channel)) {
-            return this.Embed.fail('Games can only be created in voice channels!');
+            return this.Embed.error('Games can only be created in voice channels!');
         } else if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
-            return this.Embed.fail('No channel with that name was found!'); 
+            return this.Embed.error('No channel with that name was found!'); 
         } else if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.CREATE_INSTANT_INVITE)) {
-            return this.Embed.fail(`I don't have permission to create invites in ${channel}`);
+            return this.Embed.error(`I don't have permission to create invites in ${channel}`);
         }
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.success(`Please choose which activity you want! -> ${channel}`)
+                this.Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
                 new MessageActionRow().addComponents(
@@ -94,7 +94,7 @@ export class kCommand extends Command {
         if (discordError !== null) {
             return void dontThrow(m.edit({
                 embeds: [
-                    this.Embed.success('No response, canceled the command.')
+                    this.Embed.ok('No response, canceled the command.')
                 ],
                 components: disableAll(m)
             }));
@@ -117,12 +117,12 @@ export class kCommand extends Command {
         ) as Promise<APIInvite>);
 
         if (fetchError !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
         }
 
         const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
         const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
 
-        return this.Embed.success(str);
+        return this.Embed.ok(str);
     }
 }

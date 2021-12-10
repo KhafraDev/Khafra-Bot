@@ -114,7 +114,7 @@ export class kInteraction extends Interactions {
             }
             
             if (cache.has(query)) {
-                return Embed.success()
+                return Embed.ok()
                     .setTitle(`${emojiOne} + ${emojiTwo} =`)
                     .setImage(cache.get(query)!);
             }
@@ -147,7 +147,7 @@ export class kInteraction extends Interactions {
             const url = j.results[0].url;
             cache.set(query, url);
     
-            return Embed.success()
+            return Embed.ok()
                 .setTitle(`${emojiOne} + ${emojiTwo} =`)
                 .setImage(url);
         } else {
@@ -168,7 +168,7 @@ export class kInteraction extends Interactions {
                     list.push(...split);
                 }
 
-                return Embed.success(list.join(' '))
+                return Embed.ok(list.join(' '))
                     .setTitle(`Supported Emojis`)
                     .setURL(supportedListURL);
             }

@@ -38,6 +38,6 @@ export class kCommand extends Command {
             .map(c => superscript[c.toLowerCase()] ?? c)
             .join('');
 
-        return this.Embed.success(split);
+        return this.Embed.ok(split);
     }
 }

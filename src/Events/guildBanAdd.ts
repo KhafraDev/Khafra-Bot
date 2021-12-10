@@ -59,7 +59,7 @@ export class kEvent extends Event<'guildBanAdd'> {
 
         await dontThrow(channel.send({ 
             embeds: [
-                Embed.success(`
+                Embed.ok(`
                 ${bold('User:')} ${user} (${user.tag})
                 ${bold('ID:')} ${user.id}
                 ${bold('Staff:')} ${ban?.member ?? 'Unknown'}

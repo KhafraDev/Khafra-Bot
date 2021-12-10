@@ -28,7 +28,7 @@ export class kCommand extends Command {
 
         await pocket.requestCode();
 
-        const embed = this.Embed.success(`
+        const embed = this.Embed.ok(`
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
@@ -58,7 +58,7 @@ export class kCommand extends Command {
 
         if (buttonErr !== null) {
             return void msg.edit({
-                embeds: [this.Embed.fail('Canceled the command, took over 2 minutes.')],
+                embeds: [this.Embed.error('Canceled the command, took over 2 minutes.')],
                 components: []
             });
         }
@@ -70,7 +70,7 @@ export class kCommand extends Command {
             
             if (authError !== null) {
                 return void button.editReply({
-                    embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized.')], 
+                    embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized.')], 
                     components: []
                 });
             }
@@ -93,7 +93,7 @@ export class kCommand extends Command {
 
             return void button.editReply({
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     You have authorized ${message.guild!.me}!
 
                     Try adding an article with ${inlineCode('pocketadd')} now. 👍
@@ -104,7 +104,7 @@ export class kCommand extends Command {
         }
 
         return void button.editReply({
-            embeds: [this.Embed.fail('Khafra-Bot wasn\'t authorized, command was canceled!')],
+            embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized, command was canceled!')],
             components: disableAll(msg)
         });
     }

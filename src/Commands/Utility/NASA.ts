@@ -27,12 +27,12 @@ export class kCommand extends Command {
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}`);
         } else if (result === null) {
-            return this.Embed.fail('No images were fetched, try again?');
+            return this.Embed.error('No images were fetched, try again?');
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(result.title)
             .setImage(result.link);
             

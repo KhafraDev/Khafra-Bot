@@ -62,7 +62,7 @@ export class kEvent extends Event<'guildMemberAdd'> {
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
         
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} (${member.user.tag}) joined the server!

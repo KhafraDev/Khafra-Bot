@@ -44,7 +44,7 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()].map(p => {
@@ -53,7 +53,7 @@ export class kCommand extends Command {
             return p;
         });
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')

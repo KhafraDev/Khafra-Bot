@@ -19,6 +19,6 @@ export class kCommand extends Command {
     }
 
     async init() {
-        return this.Embed.success(Board());
+        return this.Embed.ok(Board());
     }
 }

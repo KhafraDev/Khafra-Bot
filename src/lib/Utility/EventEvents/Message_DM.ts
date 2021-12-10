@@ -46,19 +46,19 @@ export const DM = async (message: Message): Promise<void> => {
     if (!cooldownUsers(message.author.id)) { // user is rate limited
         return void dontThrow(message.reply({
             embeds: [
-                Embed.fail(`Users are limited to 10 commands a minute.`)
+                Embed.error(`Users are limited to 10 commands a minute.`)
             ]
         }));
     } else if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
         return void dontThrow(message.reply({ 
             embeds: [
-                Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
+                Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
             ] 
         }));
     } else if (command.settings.guildOnly) {
         return void dontThrow(message.reply({
             embeds: [
-                Embed.fail(`This command is only available in guilds!`)
+                Embed.error(`This command is only available in guilds!`)
             ]
         }));
     } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
@@ -108,7 +108,7 @@ export const DM = async (message: Message): Promise<void> => {
             : command.errors.default;
             
         return void dontThrow(message.reply({ 
-            embeds: [Embed.fail(error)],
+            embeds: [Embed.error(error)],
             failIfNotExists: false
         }));
     }

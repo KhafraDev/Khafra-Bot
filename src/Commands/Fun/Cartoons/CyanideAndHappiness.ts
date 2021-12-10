@@ -39,13 +39,13 @@ export class kCommand extends Command {
         await cache();
         
         if (isText(message.channel) && !message.channel.nsfw) {
-            return this.Embed.fail('Channel isn\'t marked as NSFW!');
+            return this.Embed.error('Channel isn\'t marked as NSFW!');
         }
 
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`https:${/src="(.*?)"/.exec(comic.description)?.[1]}`);

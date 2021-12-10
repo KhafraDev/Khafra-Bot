@@ -97,6 +97,6 @@ export class kInteraction extends Interactions {
             ? message.url
             : `https://discord.com/channels/${message.guild_id ?? '@me'}/${message.channel_id}/${message.id}`;
 
-        return Embed.success(`Ok! Click [the button here](${url}) to get the ${role} role!`);
+        return Embed.ok(`Ok! Click [the button here](${url}) to get the ${role} role!`);
     }
 } 

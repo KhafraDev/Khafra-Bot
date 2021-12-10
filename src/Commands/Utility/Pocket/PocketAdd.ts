@@ -35,7 +35,7 @@ export class kCommand extends Command {
         `, [message.member!.id]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`
+            return this.Embed.error(`
             You haven't set-up Pocket integration!
 
             Try using the ${inlineCode('pocket')} command for more information.
@@ -44,10 +44,10 @@ export class kCommand extends Command {
         const pocket = new Pocket(rows.shift());
         const article = URLFactory(args[0]);
         if (article === null)
-            return this.Embed.fail(`That's not an article URL, try again!`);
+            return this.Embed.error(`That's not an article URL, try again!`);
         const added = await pocket.add(article, args.slice(1)?.join(' '));
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(added.item.title)
             .setAuthor(
                 added.item.domain_metadata?.name ?? message.author.username, 

@@ -17,6 +17,6 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        return this.Embed.success(`Hello, ${message.author}!`);
+        return this.Embed.ok(`Hello, ${message.author}!`);
     }
 }

@@ -33,7 +33,7 @@ export class kCommand extends Command {
         `, [message.member!.id]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`
+            return this.Embed.error(`
             You haven't set-up Pocket integration!
 
             Try using the ${inlineCode('pocket')} command for more information.
@@ -46,7 +46,7 @@ export class kCommand extends Command {
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
         
-        return this.Embed.success(formatted)
+        return this.Embed.ok(formatted)
             .setAuthor({
                 name: message.author.username + '\'s latest saves',
                 iconURL: message.author.displayAvatarURL(),

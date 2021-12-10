@@ -25,7 +25,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const amount = Number(args[0]);
         if (!inRange(amount))
-            return this.Embed.fail(`Invalid number of buttons to add!`);
+            return this.Embed.error(`Invalid number of buttons to add!`);
 
         const row = new MessageActionRow();
         const keys = Object.keys(Components) as (keyof typeof Components)[];

@@ -58,7 +58,7 @@ export class kCommand extends Command {
  
         const m = await message.reply({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Press a button below to make selections:
                 • ${inlineCode('Add Option')}: Once pressing, type the option in chat to add it (cut off after 200 characters).
                 • ${inlineCode('Post Poll')}: Posts the poll to the selected channel.
@@ -104,7 +104,7 @@ export class kCommand extends Command {
                     }));
                 }
 
-                const embed = this.Embed.success()
+                const embed = this.Embed.ok()
                     .setTitle('Poll')
                     .setAuthor({
                         name: message.author.username,

@@ -43,9 +43,9 @@ export class kCommand extends Command {
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.fail(`You do not have permission to ban ${member}!`);
+            return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.fail(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
         }
 
         // days of messages to clear
@@ -101,14 +101,14 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.fail(`${member ?? user} is not bannable!`);
+                return this.Embed.error(`${member ?? user} is not bannable!`);
             }
         }
 
         if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
             bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!
         `).setFooter(
             `${clear} days of messages removed.`

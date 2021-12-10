@@ -83,7 +83,7 @@ export class kCommand extends Command {
             .filter(f => getEmojis().has(f))
             .map(f => getEmojis().get(f));
 
-        return this.Embed.success(formatPresence(member?.presence?.activities) ?? undefined)
+        return this.Embed.ok(formatPresence(member?.presence?.activities) ?? undefined)
             .setAuthor({
                 name: user.tag,
                 iconURL: user.displayAvatarURL() ?? message.client.user!.displayAvatarURL()

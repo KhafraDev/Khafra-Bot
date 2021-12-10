@@ -25,7 +25,7 @@ export class kCommand extends Command {
 
     async init(_message: Message, { args }: Arguments) {
         if (!('randomInt' in crypto)) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             The ${inlineCode('node')} version the bot is running on is too old!
             `);
         }
@@ -50,7 +50,7 @@ export class kCommand extends Command {
 
         const num = await rand(min, max);
        
-        return this.Embed.success(`
+        return this.Embed.ok(`
         Your number is ${inlineCode(`${num}`)}!
         `);
     }

@@ -21,7 +21,7 @@ export class kCommand extends Command {
     async init(message: Message) { 
         const locale = message.guild.preferredLocale;
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({
                 name: message.client.user!.username,
                 iconURL: message.client.user!.displayAvatarURL()

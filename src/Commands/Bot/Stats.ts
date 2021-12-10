@@ -27,7 +27,7 @@ export class kCommand extends Command {
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(`Bot Statistics`)
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },

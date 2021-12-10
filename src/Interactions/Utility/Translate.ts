@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
             }
         );
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(translated)
             .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
     }

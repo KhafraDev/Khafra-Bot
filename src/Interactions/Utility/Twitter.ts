@@ -40,6 +40,6 @@ export class kInteraction extends Interactions {
         if (!media)
             return '❌ No media found in Tweet!';
             
-        return Embed.success(media);
+        return Embed.ok(media);
     }
 } 

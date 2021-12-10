@@ -1,6 +1,7 @@
-import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
 import { inlineCode } from '@khaf/builders';
-import { isText, isVoice } from '../types/Discord.js.js';
+import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
+import { isText, isThread, isVoice } from '../types/Discord.js.js';
+import { upperCase } from './String.js';
 
 /**
  * Check if a user or role has permissions in a channel.
@@ -12,7 +13,7 @@ export const hasPerms = (
 ) => {
     if (typeof channel === 'undefined' || channel === null)
         return false;
-    if (!isText(channel) && !isVoice(channel))
+    if (!isText(channel) && !isVoice(channel) && !isThread(channel))
         return true;
     if (!(userOrRole instanceof GuildMember) && !(userOrRole instanceof Role))
         return false;
@@ -38,12 +39,20 @@ export const hierarchy = (
 }
 
 export const permResolvableToString = (perms: PermissionResolvable) => {
-    const permissions = new Permissions(perms);
+    const permissions = perms instanceof Permissions ? perms : new Permissions(perms);
     const str: string[] = [];
 
-    for (const [perm, has] of Object.entries(permissions.serialize())) {
-        if (has) str.push(inlineCode(perm));
+    if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+        str.push(inlineCode(`Administrator`));
+    } else {
+        for (const [permName, has] of Object.entries(permissions.serialize())) {
+            if (has) {
+                const nameParts = permName.split('_');
+                const full = inlineCode(nameParts.map(part => upperCase(part)).join(' '));
+                str.push(full);
+            }
+        }
     }
 
-    return str.join(', ');
+    return str;
 }

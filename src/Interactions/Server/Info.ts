@@ -67,7 +67,7 @@ export class kInteraction extends Interactions {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {
-            return Embed.success()
+            return Embed.ok()
                 .setAuthor({
                     name: option.displayName,
                     iconURL: option.user.displayAvatarURL()
@@ -91,7 +91,7 @@ export class kInteraction extends Interactions {
                 )
                 .setFooter('For general user info use the /user command!');
         } else if (option instanceof Role) {
-            const embed = Embed.success()
+            const embed = Embed.ok()
                 .setDescription(`
                 ${option}
                 
@@ -128,7 +128,7 @@ export class kInteraction extends Interactions {
                 .filter(f => getEmojis().has(f))
                 .map(f => getEmojis().get(f));
 
-            return Embed.success(formatPresence(guildMember?.presence?.activities) ?? undefined)
+            return Embed.ok(formatPresence(guildMember?.presence?.activities) ?? undefined)
                 .setAuthor({
                     name: option.tag, 
                     iconURL: option.displayAvatarURL() ?? client.user!.displayAvatarURL()

@@ -23,7 +23,7 @@ export class kCommand extends Command {
     async init(message: Message, argument: Arguments, settings: kGuild) {
         if (argument.args.length === 0) {
             // help message
-            return this.Embed.fail('not implemented yet');
+            return this.Embed.error('not implemented yet');
         }
 
         const name = argument.args[0].toLowerCase();
@@ -32,7 +32,7 @@ export class kCommand extends Command {
             : `ticket:${name}`;
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
-            return this.Embed.fail(
+            return this.Embed.error(
             `Ticket.${name} command doesn't exist, use ${inlineCode(`${settings.prefix}ticket`)} for more information!`
             );
         }

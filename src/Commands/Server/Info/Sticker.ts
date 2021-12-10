@@ -22,7 +22,7 @@ export class kCommand extends Command {
 
     async init({ stickers, guild }: Message) {
         if (stickers.size === 0)
-            return this.Embed.fail('No stickers in message! 😕');
+            return this.Embed.error('No stickers in message! 😕');
 
         const sticker = stickers.first()!;
         
@@ -30,7 +30,7 @@ export class kCommand extends Command {
             await guild.stickers.fetch(sticker.id);
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`${sticker.name}${sticker.description ? ` - ${sticker.description}` : ''}`)
             .addField(bold('Name:'), inlineCode(sticker.name), true)
             .addField(bold('ID:'), inlineCode(sticker.id), true);

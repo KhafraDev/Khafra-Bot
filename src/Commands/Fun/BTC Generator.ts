@@ -26,7 +26,7 @@ export class kCommand extends Command {
         const num = Number(args[0]);
         const btc = inRange(num) ? num : 1000;
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         
         await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
 
-        const embed2 = this.Embed.success()
+        const embed2 = this.Embed.ok()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
         return void dontThrow(msg.edit({ embeds: [embed2] }));

@@ -23,13 +23,13 @@ export class kCommand extends Command {
         const _package = await npm(args[0]);
 
         if ('code' in _package) {
-            return this.Embed.fail('No package with that name was found!');
+            return this.Embed.error('No package with that name was found!');
         } else if ('error' in _package) {
-            return this.Embed.fail(`Received error ${inlineCode(_package.error)}.`);
+            return this.Embed.error(`Received error ${inlineCode(_package.error)}.`);
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({
                 name: 'NPM',
                 iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',

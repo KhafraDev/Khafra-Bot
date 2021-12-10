@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
-                Embed.success(`Choose an article from the dropdown below!`)
+                Embed.ok(`Choose an article from the dropdown below!`)
             ],
             components: [
                 new MessageActionRow().addComponents(
@@ -87,7 +87,7 @@ export class kInteraction extends Interactions {
                 }));
             }
 
-            const embed = Embed.success()
+            const embed = Embed.ok()
                 .setDescription(ellipsis(summary.extract, 2048))
                 .setTitle(summary.title)
                 .setURL(`https://en.wikipedia.org/wiki/${article.key}`)

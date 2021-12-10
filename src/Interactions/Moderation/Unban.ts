@@ -72,7 +72,7 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error has occurred: ${inlineCode(unbanErr.message)}`;
         }
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(`${unbanned} has been unbanned from the guild!${processArgs.get('dev') ? notReally : ''}`)
             .setAuthor({
                 name: interaction.user.username,

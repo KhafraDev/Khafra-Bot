@@ -57,11 +57,11 @@ export class kCommand extends Command {
         `, [message.guild.id, user.id]);
 
         if (rows.length === 0 || !rows[0].dates?.length || !rows[0].ids?.length)
-            return this.Embed.success(`${user} has no warning points! 👍`);
+            return this.Embed.ok(`${user} has no warning points! 👍`);
 
         const { dates, ids, points, total_points } = rows.shift()!;
         const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]]);
-        const embed = this.Embed.success(
+        const embed = this.Embed.ok(
             `${user} has ${ids.length.toLocaleString()} warnings ` +
             `with ${Number(total_points).toLocaleString()} warning points total.`
         );

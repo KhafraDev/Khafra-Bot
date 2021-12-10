@@ -52,7 +52,7 @@ export class kCommand extends Command {
                     + '\n';
             }
 
-            return this.Embed.success(str)
+            return this.Embed.ok(str)
                 .setTitle('Your Current Giveaways');
         }
 
@@ -64,7 +64,7 @@ export class kCommand extends Command {
             : args[1];
 
         if (!uuidRegex.test(id)) {
-            return this.Embed.fail('UUID is not formatted correctly, please use a valid ID next time!');
+            return this.Embed.error('UUID is not formatted correctly, please use a valid ID next time!');
         }
 
         const { rows } = await pool.query<GiveawayRow, string[]>(`
@@ -80,19 +80,19 @@ export class kCommand extends Command {
                 const msg = await channel.messages.fetch(rows[0].messageid);
 
                 if (!msg.deletable)
-                    return this.Embed.fail(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
+                    return this.Embed.error(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
 
                 await msg.delete();
             }
         } catch (e) {
             if (e instanceof DiscordAPIError) {
                 const name = e.code || e.name;
-                return this.Embed.fail(`Giveaway has been deleted, but a(n) ${name} has occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been deleted, but a(n) ${name} has occurred trying to delete the message.`);
             } else {
-                return this.Embed.fail(`Giveaway has been deleted, but an error occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been deleted, but an error occurred trying to delete the message.`);
             }
         }
 
-        return this.Embed.fail(`Giveaway ${inlineCode(rows[0].id)} has been deleted.`);
+        return this.Embed.error(`Giveaway ${inlineCode(rows[0].id)} has been deleted.`);
     }
 }

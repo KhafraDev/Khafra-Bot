@@ -93,7 +93,7 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error has occurred: ${inlineCode(banErr.message)}`;
         }
 
-        return Embed.success(`
+        return Embed.ok(`
         ${banned} has been banned from the guild!${processArgs.get('dev') ? notReally : ''}
 
         Reason: ${inlineCode(reason.slice(0, 1000))}

@@ -23,18 +23,18 @@ export class kCommand extends Command {
 
         if ('errors' in results) {
             const keys = Object.keys(results.errors);
-            return this.Embed.fail(
+            return this.Embed.error(
                 // gets all errors and types of errors and joins them together.
                 keys.map(k => results.errors[k].map(e => e.message).join('\n')).join('\n')
             );
         }
 
         if (results.documents.length === 0)
-            return this.Embed.fail('No results found!');
+            return this.Embed.error('No results found!');
         
         const best = results.documents.sort((a, b) => b.score - a.score);
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({
                 name: 'Mozilla Development Network',
                 iconURL: 'https://developer.mozilla.org/static/img/opengraph-logo.png'

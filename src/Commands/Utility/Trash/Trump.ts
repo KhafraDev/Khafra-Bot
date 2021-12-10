@@ -33,7 +33,7 @@ export class kCommand extends Command {
             : Trump.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
             
         if (!item || item.length === 0) {
-            return this.Embed.fail('Wow! No atrocities on that day.');
+            return this.Embed.error('Wow! No atrocities on that day.');
         } else if (item.length === 1) {
             const { text, color, emojis } = item.shift()!;
             return new MessageEmbed()

@@ -22,10 +22,10 @@ export class kCommand extends Command {
         const word = await thisWordDoesNotExist();
 
         if (word === null) {
-            return this.Embed.fail(`Failed to get a word, try again!`);
+            return this.Embed.error(`Failed to get a word, try again!`);
         }
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${bold(word.word.word.toUpperCase())} - ${word.word.pos}
         ${italic(word.word.syllables.join(' − '))}
         ${inlineCode(word.word.definition)}

@@ -59,7 +59,7 @@ export class kEvent extends Event<'guildBanRemove'> {
 
         await dontThrow(channel.send({ 
             embeds: [
-                Embed.success(`
+                Embed.ok(`
                 ${bold('User:')} ${user} (${user.tag})
                 ${bold('ID:')} ${user.id}
                 ${bold('Staff:')} ${unban?.member ?? 'Unknown'}

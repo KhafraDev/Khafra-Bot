@@ -51,6 +51,6 @@ export class kCommand extends Command {
 
         const avatar = user.displayAvatarURL(opts);
         
-        return this.Embed.success(`${user}'s avatar`).setImage(avatar);
+        return this.Embed.ok(`${user}'s avatar`).setImage(avatar);
     }
 }

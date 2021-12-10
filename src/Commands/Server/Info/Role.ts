@@ -28,10 +28,10 @@ export class kCommand extends Command {
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
 
         if (!(role instanceof Role)) {
-            return this.Embed.fail('No role found!');
+            return this.Embed.error('No role found!');
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setDescription(`
             ${role}
             

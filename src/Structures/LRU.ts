@@ -3,14 +3,14 @@ interface LRUOptions {
     maxAge?: number
 }
 
-type LRUCache<K extends string, V extends unknown> = {
+type LRUCache<K extends string, V> = {
     value: V,
     modified: number,
     next: K | null,
     prev: K | null
 }
 
-export class LRU<K extends string, V extends unknown> {
+export class LRU<K extends string, V> {
     private options: LRUOptions = {};
     private cache = Object.create(null) as Record<K, LRUCache<K, V>>;
     private head: K | null = null;

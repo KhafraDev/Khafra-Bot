@@ -23,7 +23,7 @@ export class kCommand extends Command {
     async init() {
         const memoryMB = process.memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(`
             ${bold('Dependencies')}
             ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}

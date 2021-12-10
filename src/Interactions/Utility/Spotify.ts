@@ -66,7 +66,7 @@ export class kInteraction extends Interactions {
             desc += line;
         }
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(desc)
             .setThumbnail(image.url);
     }

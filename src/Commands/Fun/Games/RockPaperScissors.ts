@@ -35,7 +35,7 @@ export class kCommand extends Command {
         
         const m = await message.reply({ 
             embeds: [
-                this.Embed.success(`Rock, paper, scissors, shoot!`)
+                this.Embed.ok(`Rock, paper, scissors, shoot!`)
             ],
             components: [row]
         });
@@ -51,23 +51,23 @@ export class kCommand extends Command {
         if (canceled !== null) {
             return void m.edit({
                 embeds: [
-                    this.Embed.fail(`Game was canceled! Play again another time.`)
+                    this.Embed.error(`Game was canceled! Play again another time.`)
                 ],
                 components: []
             });
         }
 
         const botChoice = Object.keys(emojis)[Math.floor(Math.random() * 3)] as Keys;
-        let embed = this.Embed.success(`You lost - ${botChoice} beats ${c.customId}!`);
+        let embed = this.Embed.ok(`You lost - ${botChoice} beats ${c.customId}!`);
 
         if (c.customId === botChoice) {
-            embed = this.Embed.success(`It's a tie - we both chose ${emojis[botChoice]}!`);
+            embed = this.Embed.ok(`It's a tie - we both chose ${emojis[botChoice]}!`);
         } else if (
             (c.customId === 'rock' && botChoice === 'scissors') || // rock beats scissors
             (c.customId === 'paper' && botChoice === 'rock') || // paper beats rock
             (c.customId === 'scissors' && botChoice === 'paper') // scissors beats paper
         ) {
-            embed = this.Embed.success(`You win with ${emojis[c.customId]}, I chose ${emojis[botChoice]}!`)
+            embed = this.Embed.ok(`You win with ${emojis[c.customId]}, I chose ${emojis[botChoice]}!`)
         }
 
         return void c.update({

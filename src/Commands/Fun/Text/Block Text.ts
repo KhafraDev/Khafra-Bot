@@ -33,6 +33,6 @@ export class kCommand extends Command {
             .map(l => letters[l.toLowerCase()] ?? l)
             .join(' ');
 
-        return this.Embed.success(blocks);
+        return this.Embed.ok(blocks);
     }
 }

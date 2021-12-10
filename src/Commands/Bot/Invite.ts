@@ -20,7 +20,7 @@ export class kCommand extends Command {
     async init(message: Message) {
         const selfId = message.client.user!.id;
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .addField(
                 bold('Basic Permissions:'), 
                 `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`

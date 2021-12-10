@@ -52,7 +52,7 @@ export class kCommand extends Command {
         if (guildEmoji === null || guildEmoji.groups === undefined) {
             const parsed = parse(content, { assetType: 'png' });
             if (parsed.length === 0) 
-                return this.Embed.fail(`No unicode emojis were in the message!`);
+                return this.Embed.error(`No unicode emojis were in the message!`);
 
             const codePoints = toCodePoints(parsed[0]!.text);
             let emoji = parsed[0].text;
@@ -68,7 +68,7 @@ export class kCommand extends Command {
                     .join('');
             }
             
-            const embed = this.Embed.success()
+            const embed = this.Embed.ok()
                 .setImage(parsed[0].url)
                 .setURL(`http://www.get-emoji.com/${encodeURIComponent(parsed[0].text)}`)
                 .addField(bold('Code Points:'), `\\u${codePoints.join('\\u')}`, true);
@@ -104,12 +104,12 @@ export class kCommand extends Command {
 
             return padEmbedFields(embed);
         } else if (!message.guild.emojis.cache.has(guildEmoji.groups.id)) {
-            return this.Embed.fail(`Emoji isn't cached, whoops!`);
+            return this.Embed.error(`Emoji isn't cached, whoops!`);
         }
 
         const emoji = message.guild.emojis.cache.get(guildEmoji.groups.id)!;
 
-        return this.Embed.success(`${emoji}`)
+        return this.Embed.ok(`${emoji}`)
             .setTitle(emoji.name ?? 'Unknown')
             .setImage(emoji.url)
             .addFields(

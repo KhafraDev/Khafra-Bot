@@ -37,7 +37,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const user = await getMentions(message, 'users');
         if (!user) {
-            return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
+            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -52,7 +52,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embeds: [this.Embed.success(`
+            embeds: [this.Embed.ok(`
             Are you sure you want to soft-ban ${user}? 
     
             This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
@@ -69,14 +69,14 @@ export class kCommand extends Command {
 
         if (buttonError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`)],
+                embeds: [this.Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             }); 
 
@@ -94,13 +94,13 @@ export class kCommand extends Command {
                     bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return void button.editReply({
-                embeds: [this.Embed.fail(`${user} isn't bannable!`)],
+                embeds: [this.Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
         }
 
         return void button.editReply({
-            embeds: [this.Embed.success(`${user} has been soft-banned from the guild!`)],
+            embeds: [this.Embed.ok(`${user} has been soft-banned from the guild!`)],
             components: disableAll(msg)
         });
     }

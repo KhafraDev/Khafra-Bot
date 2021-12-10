@@ -26,10 +26,10 @@ export class kCommand extends Command {
         const word = await owlbotio(args.join(' '));
 
         if (typeof word.definitions === 'undefined') {
-            return this.Embed.fail('No definition found!');
+            return this.Embed.error('No definition found!');
         }
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
         ${word.definitions
             .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)

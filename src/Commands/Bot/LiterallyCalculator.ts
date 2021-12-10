@@ -69,7 +69,7 @@ export class kCommand extends Command {
 
         const m = await message.channel.send({ 
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 ${squiggles}
                 ${codeBlock('Empty')}
                 ${squiggles}
@@ -116,7 +116,7 @@ export class kCommand extends Command {
             return void dontThrow(i.update({ 
                 content: null,
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${squiggles}
                     ${codeBlock(display)}
                     ${squiggles}
@@ -164,7 +164,7 @@ export class kCommand extends Command {
                 content: null,
                 components: disableAll(m),
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${squiggles}
                     ${codeBlock(format)}
                     ${squiggles}

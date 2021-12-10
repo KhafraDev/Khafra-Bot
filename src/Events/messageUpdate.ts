@@ -87,14 +87,14 @@ export class kEvent extends Event<'messageUpdate'> {
         if (command.settings.ownerOnly && !Command.isBotOwner(newMessage.author.id)) {
             return dontThrow(newMessage.reply({ 
                 embeds: [
-                    Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
+                    Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ] 
             }));
         }
 
         const [min, max = Infinity] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return dontThrow(newMessage.reply({ embeds: [Embed.fail(`
+            return dontThrow(newMessage.reply({ embeds: [Embed.error(`
             Incorrect number of arguments provided.
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
@@ -104,11 +104,15 @@ export class kEvent extends Event<'messageUpdate'> {
         }
 
         if (!_cooldownUsers(newMessage.author.id)) {
-            return dontThrow(newMessage.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
+            return dontThrow(newMessage.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
         } else if (!_cooldownGuild(newMessage.guild.id)) {
-            return dontThrow(newMessage.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] }));
+            return dontThrow(newMessage.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
         } else if (!hasPerms(newMessage.channel, newMessage.member, command.permissions)) {
-            return dontThrow(newMessage.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
+            return dontThrow(newMessage.reply({
+                embeds: [
+                    Embed.perms(newMessage.channel, newMessage.member, command.permissions)
+                ]
+            }));
         }
 
         let err: Error | void;
@@ -165,7 +169,7 @@ export class kEvent extends Event<'messageUpdate'> {
                 : command.errors.default;
                 
             return dontThrow(newMessage.reply({ 
-                embeds: [Embed.fail(error)],
+                embeds: [Embed.error(error)],
                 failIfNotExists: false
             }));
         } finally {

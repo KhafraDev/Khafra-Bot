@@ -34,7 +34,7 @@ export class kCommand extends Command {
     async init(message: Message) {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Are you sure you want to disable these permissions for everyone? This cannot be reverted by the bot!
                 `)
             ],
@@ -57,9 +57,9 @@ export class kCommand extends Command {
             }));
 
             if (e !== null || !i) {
-                return this.Embed.fail(`No response, command was canceled!`);
+                return this.Embed.error(`No response, command was canceled!`);
             } else if (i.customId === 'deny') {
-                return this.Embed.fail(`Command was canceled, permissions will not be disabled!`);
+                return this.Embed.error(`Command was canceled, permissions will not be disabled!`);
             } else {
                 void i.update({ components: disableAll(m) });
             }
@@ -68,7 +68,7 @@ export class kCommand extends Command {
         const [fetchErr, allChannels] = await dontThrow(message.guild.channels.fetch());
 
         if (fetchErr !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
         }
 
         const channels = allChannels.filter(c => 
@@ -99,14 +99,14 @@ export class kCommand extends Command {
         }
 
         if (pr.length === 0) {
-            return this.Embed.success('No channel permissions needed to be updated!');
+            return this.Embed.ok('No channel permissions needed to be updated!');
         }
 
         const settled = await Promise.allSettled(pr);
         const success = settled.filter((p): p is PromiseFulfilledResult<GuildChannel> => p.status === 'fulfilled');
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`Edited ${success.length} Channel Perms!`)
             .setAuthor({
                 name: message.guild.name,

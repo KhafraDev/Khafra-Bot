@@ -41,11 +41,11 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`) // the verge does not use the link item for the actual link
                 .join('\n')

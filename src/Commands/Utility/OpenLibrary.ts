@@ -27,12 +27,12 @@ export class kCommand extends Command {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {
-            return this.Embed.fail('No books found on OpenLibrary!');
+            return this.Embed.error('No books found on OpenLibrary!');
         }
 
         const book = books.docs.shift()!;
 
-        const embed = this.Embed.success(`
+        const embed = this.Embed.ok(`
         ${italic(book.title)} by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
         ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: ${inlineCode(book.isbn[0])}` : ''}

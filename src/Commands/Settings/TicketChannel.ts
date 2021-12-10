@@ -29,7 +29,7 @@ export class kCommand extends Command {
 
     async init(message: Message, _args: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.fail(`This command is only available for server admins!`);
+            return this.Embed.error(`This command is only available for server admins!`);
         }
         
         /** guild can use private threads */
@@ -38,9 +38,9 @@ export class kCommand extends Command {
         const ticketChannel = await getMentions(message, 'channels');
         
         if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
-            return this.Embed.fail(`${ticketChannel ?? 'None'} is not a text or category channel!`);
+            return this.Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
         } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return this.Embed.fail(`This guild cannot use private threads, please use a category channel instead!`);
+            return this.Embed.error(`This guild cannot use private threads, please use a category channel instead!`);
         }
 
         const { rows } = await pool.query<kGuild>(`
@@ -52,6 +52,6 @@ export class kCommand extends Command {
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
-        return this.Embed.success(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
+        return this.Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
     }
 }

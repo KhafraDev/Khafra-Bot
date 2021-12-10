@@ -24,7 +24,7 @@ export class kEvent extends Event<'ready'> {
             
             const user = await client.users.fetch(config.botOwner);
             const [err] = await dontThrow(user.send({ 
-                embeds: [Embed.success(s)]
+                embeds: [Embed.ok(s)]
             }));
         
             if (err !== null) {

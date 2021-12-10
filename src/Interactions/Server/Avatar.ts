@@ -46,6 +46,6 @@ export class kInteraction extends Interactions {
             format: format as AllowedImageFormat
         });
 
-        return Embed.success().setImage(avatar);
+        return Embed.ok().setImage(avatar);
     }
 } 

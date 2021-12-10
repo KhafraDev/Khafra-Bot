@@ -35,7 +35,7 @@ export class kCommand extends Command {
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);

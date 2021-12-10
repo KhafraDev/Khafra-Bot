@@ -23,7 +23,7 @@ setInterval(() => {
     void dontThrow(YouTube([search]));
 }, 1000 * 60 * 60 * 24);
 
-function* format(items: YouTubeSearchResults, embed = Embed.success) {
+function* format(items: YouTubeSearchResults, embed = Embed.ok) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const Embed = embed()
@@ -58,11 +58,11 @@ export class kCommand extends Command {
         const results = await YouTube(args);
 
         if ('error' in results) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             ${results.error.code}: ${results.error.message}
             `);
         } else if (results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             No results found!
             `);
         }

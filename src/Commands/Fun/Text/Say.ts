@@ -19,7 +19,7 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({
                 name: message.author.username,
                 iconURL: message.author.displayAvatarURL()

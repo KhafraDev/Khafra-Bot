@@ -1,6 +1,6 @@
 import { hyperlink, inlineCode } from '@khaf/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
-import { APIApplicationCommandOption, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction } from 'discord.js';
 import { join } from 'path';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
                     description: 'Text to convert to speech.',
                     required: true
                 }
-            ] as APIApplicationCommandOption[] // TODO(@KhafraDev): remove once autocomplete option is supported
+            ]
         };
         
         super(sc, { defer: true });
@@ -63,7 +63,7 @@ export class kInteraction extends Interactions {
             return `❌ A server error occurred processing the TTS.`;
         }
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setDescription(`${hyperlink('Visit 15.ai', `https://15.ai`)}\n`)
             .setFooter(`🗣️ tts provided by 15.ai`);
 

@@ -12,7 +12,7 @@ export class kCommand extends Command {
     }
 
     async init() {
-        return this.Embed.success(`
+        return this.Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)
 

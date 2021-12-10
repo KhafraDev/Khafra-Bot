@@ -1,5 +1,5 @@
 import { codeBlock } from '@khaf/builders';
-import { MessageAttachment, Permissions, ReplyMessageOptions } from 'discord.js';
+import { MessageAttachment, Permissions, ReplyMessageOptions, TextChannel } from 'discord.js';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
 import { Message } from '../../../lib/types/Discord.js.js';
@@ -54,7 +54,11 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.VIEW_GUILD_INSIGHTS)) {
-            return this.Embed.missing_perms(true);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.VIEW_GUILD_INSIGHTS
+            );
         }
 
         const { rows } = await pool.query<Insights>(`
@@ -72,7 +76,7 @@ export class kCommand extends Command {
         `, [message.guild.id]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`No insights available within the last 14 days.`);
+            return this.Embed.error(`No insights available within the last 14 days.`);
 
         const locale = message.guild.preferredLocale;
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
@@ -119,7 +123,7 @@ export class kCommand extends Command {
 
         return {
             embeds: [
-                this.Embed.success()
+                this.Embed.ok()
                     .setDescription(codeBlock(t))
                     .setImage(`attachment://chart.png`)
             ],

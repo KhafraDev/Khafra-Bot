@@ -40,12 +40,12 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments, settings: kGuild) {
         if (!uuidRegex.test(args[1])) {
-            return this.Embed.fail('UUID is not formatted correctly, please use a valid ID next time!');
+            return this.Embed.error('UUID is not formatted correctly, please use a valid ID next time!');
         }
 
         const member = await getMentions(message, 'members');
         if (!member)
-            return this.Embed.fail(`No member was mentioned. Try again!`);
+            return this.Embed.error(`No member was mentioned. Try again!`);
 
         const { rows: deleted } = await pool.query<WarningDel>(`
             DELETE FROM kbWarns
@@ -57,11 +57,11 @@ export class kCommand extends Command {
         `, [args[1].toLowerCase(), message.guild.id, member.id]);
 
         if (deleted.length === 0)
-            return this.Embed.fail('No warning with that ID could be found in the guild!');
+            return this.Embed.error('No warning with that ID could be found in the guild!');
 
         await message.reply({ 
             embeds: [
-                this.Embed.success(`Warning ${inlineCode(deleted[0].id)} was removed from ${member}!`)
+                this.Embed.ok(`Warning ${inlineCode(deleted[0].id)} was removed from ${member}!`)
             ]
         });
 
@@ -72,7 +72,7 @@ export class kCommand extends Command {
 
             return void channel.send({ 
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${bold('Removed From:')} ${member}
                     ${bold('Staff:')} ${message.member}
                     ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.

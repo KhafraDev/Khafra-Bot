@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
             return '❌ No location found!';
         }
 
-        return Embed.success(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
+        return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .addField(bold('Temperature:'), `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)

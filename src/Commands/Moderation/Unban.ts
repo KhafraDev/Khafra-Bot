@@ -29,7 +29,7 @@ export class kCommand extends Command {
         const user = await getMentions(message, 'users');
 
         if (!user) 
-            return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
+            return this.Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
         const reasonAny = cli.has('reason') || cli.has('r')
             ? (cli.get('reason') || cli.get('r'))
@@ -40,12 +40,12 @@ export class kCommand extends Command {
         const [e] = await dontThrow(message.guild.members.unban(user, reason));
 
         if (e !== null) {
-            return this.Embed.fail(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
+            return this.Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
         if (!unbans.has(`${message.guild.id},${user.id}`))
             unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
-        return this.Embed.success(`${user} is now unbanned!`);
+        return this.Embed.ok(`${user} is now unbanned!`);
     }
 }

@@ -19,6 +19,6 @@ export class kCommand extends Command {
     async init(message: Message) {
         if (message.deletable)
             await message.delete();
-        await message.reply({ embeds: [this.Embed.fail('If you\'re seeing this, something went wrong...')] });
+        await message.reply({ embeds: [this.Embed.error('If you\'re seeing this, something went wrong...')] });
     }
 }

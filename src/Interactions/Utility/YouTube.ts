@@ -11,7 +11,7 @@ import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } 
 function* format(items: YouTubeSearchResults) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(video.title)
             .setAuthor({ name: video.channelTitle })
             .setThumbnail(video.thumbnails.default.url)

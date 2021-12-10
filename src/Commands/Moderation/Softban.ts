@@ -32,7 +32,7 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const member = await getMentions(message, 'users');
         if (!member) {
-            return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
+            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -51,10 +51,10 @@ export class kCommand extends Command {
                 if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${member.id}`, { member: message.member, reason });
         } catch {
-            return this.Embed.fail(`${member} isn't bannable!`);
+            return this.Embed.error(`${member} isn't bannable!`);
         }
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${member} has been soft-banned from the guild!
         `);
     }

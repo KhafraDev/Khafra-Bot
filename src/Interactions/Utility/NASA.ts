@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
             return '❌ No images were fetched, try again?';
         }
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(result.title)
             .setURL(result.link)
             .setImage(result.link);

@@ -20,11 +20,11 @@ export class kCommand extends Command {
         await fetchHN();
         
         if (cache.size === 0) {
-            return this.Embed.fail('Failed to fetch the articles!');
+            return this.Embed.error('Failed to fetch the articles!');
         }
 
         const stories = [...cache.values()];
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${stories
             .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
             .join('\n')

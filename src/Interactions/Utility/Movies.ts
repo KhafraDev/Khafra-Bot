@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
         if (!movies)
             return '❌ No movie with that name was found!';
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
             .addField(bold('Genres:'), movies.genres.map(g => g.name).join(', '), true)

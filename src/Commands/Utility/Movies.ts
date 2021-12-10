@@ -35,9 +35,9 @@ export class kCommand extends Command {
         );
         
         if (!movies)
-            return this.Embed.fail('No movies found!');
+            return this.Embed.error('No movies found!');
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
             .addField(bold('Genres:'), movies.genres.map(g => g.name).join(', '), true)

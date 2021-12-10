@@ -28,12 +28,12 @@ export class kCommand extends Command {
         });
 
         if (currencies === undefined) {
-            return this.Embed.fail(`No currency with that name or id could be found!`);
+            return this.Embed.error(`No currency with that name or id could be found!`);
         }
         
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)

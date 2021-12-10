@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)

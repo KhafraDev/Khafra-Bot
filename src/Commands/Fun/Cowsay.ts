@@ -40,7 +40,7 @@ export class kCommand extends Command {
         }
 
         if (args[0].toLowerCase() === 'list') {
-            return this.Embed.success(`
+            return this.Embed.ok(`
             ${[...types].map(t => '``' + t + '``').join(', ')}
             `).setTitle(`${types.size} formats available`);
         }
@@ -50,9 +50,9 @@ export class kCommand extends Command {
             : ['cowsay', ...args];
 
         if (!content)
-            return this.Embed.fail('Since you provided a format, you have to provide some text to say!');
+            return this.Embed.error('Since you provided a format, you have to provide some text to say!');
         if (!types.has(format))
-            return this.Embed.fail(`Format not found! Use the command \`cowsay list\` to list all formats!`);
+            return this.Embed.error(`Format not found! Use the command \`cowsay list\` to list all formats!`);
 
         const split = content.join(' ')
             .match(/.{1,38}/g)! // split every 38 characters; removes new lines
@@ -77,8 +77,8 @@ export class kCommand extends Command {
         const formatted = codeBlock(`${start}${split.join('\n')}\n${art}`);
 
         if (formatted.length > 2048)
-            return this.Embed.fail('Message is too long, trim it down!');
+            return this.Embed.error('Message is too long, trim it down!');
 
-        return this.Embed.success(formatted);
+        return this.Embed.ok(formatted);
     }
 }

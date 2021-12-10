@@ -46,7 +46,7 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (games.has(message.author.id))
-            return this.Embed.fail(`Finish your other game before playing another!`);
+            return this.Embed.error(`Finish your other game before playing another!`);
 
         const rows = [
             new MessageActionRow()
@@ -65,7 +65,7 @@ export class kCommand extends Command {
         const makeEmbed = (desc?: string, hide = true) => {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
-            return this.Embed.success(desc)
+            return this.Embed.ok(desc)
                 .addField(
                     bold(`Dealer${dealerTotal}`), 
                     dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')

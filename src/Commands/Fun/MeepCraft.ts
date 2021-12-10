@@ -88,7 +88,7 @@ export class kCommand extends Command {
             const sentence = cache.players === 1
 				? 'is ``1`` player'
 				: `are ${inlineCode(`${cache.players}`)} players`;
-            const embed = this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+            const embed = this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
             return embed;
         }
 
@@ -100,6 +100,6 @@ export class kCommand extends Command {
         const sentence = cache.players === 1
 			? 'is ``1`` player'
 			: `are ${inlineCode(`${cache.players}`)} players`;
-        return this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+        return this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
     }
 }

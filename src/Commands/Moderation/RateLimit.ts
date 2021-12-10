@@ -47,22 +47,22 @@ export class kCommand extends Command {
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) ?? '0s')! / 1000;
 
         if (!inRange(secs))
-            return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
+            return this.Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
         if (!isExplicitText(guildChannel))
-            return this.Embed.fail('Rate-limits can only be set in text channels!');
+            return this.Embed.error('Rate-limits can only be set in text channels!');
 
         const [rlError] = await dontThrow(guildChannel.setRateLimitPerUser(secs, 
             `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
         ));
 
         if (rlError !== null) {
-            return this.Embed.fail(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
+            return this.Embed.error(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
         }
 
         void message.reply({ 
-            embeds: [this.Embed.success(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
+            embeds: [this.Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
         });
 
         if (settings.mod_log_channel !== null) {
@@ -73,7 +73,7 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
                     ${bold('Staff:')} ${message.member}
                     ${bold('Duration:')} ${secs} second${plural(secs)}

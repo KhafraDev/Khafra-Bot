@@ -1,26 +1,26 @@
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { Event } from '../Structures/Event.js';
-import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
-import { Logger } from '../Structures/Logger.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
-import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { Arguments, Command } from '../Structures/Command.js';
-import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { client } from '../Structures/Database/Redis.js';
-import { plural, upperCase } from '../lib/Utility/String.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
-import { join } from 'path';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
-import { Stats } from '../lib/Utility/Stats.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
+import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import { join } from 'path';
+import { KhafraClient } from '../Bot/KhafraBot.js';
 import { MessagesLRU } from '../lib/Cache/Messages.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
+import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
+import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { hasPerms } from '../lib/Utility/Permissions.js';
+import { Stats } from '../lib/Utility/Stats.js';
+import { plural, upperCase } from '../lib/Utility/String.js';
+import { Arguments, Command } from '../Structures/Command.js';
+import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
+import { pool } from '../Structures/Database/Postgres.js';
+import { client } from '../Structures/Database/Redis.js';
+import { Event } from '../Structures/Event.js';
+import { Logger } from '../Structures/Logger.js';
 
 export const logger = new Logger();
 
@@ -101,7 +101,7 @@ export class kEvent extends Event<'messageCreate'> {
                     `You posted an Imgur album, which don't embed correctly! ` + 
                     `Here are all the images in the album:`,
                 embeds: [
-                    Embed.success(desc.trim()).setTitle(imgur.t)
+                    Embed.ok(desc.trim()).setTitle(imgur.t)
                 ]
             }));
         }
@@ -135,14 +135,14 @@ export class kEvent extends Event<'messageCreate'> {
         if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
             return dontThrow(message.reply({ 
                 embeds: [
-                    Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
+                    Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ] 
             }));
         }
 
         const [min, max = Infinity] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`
+            return dontThrow(message.reply({ embeds: [Embed.error(`
             Incorrect number of arguments provided.
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
@@ -152,11 +152,15 @@ export class kEvent extends Event<'messageCreate'> {
         }
 
         if (!_cooldownUsers(message.author.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
+            return dontThrow(message.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
         } else if (!_cooldownGuild(message.guild.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] }));
+            return dontThrow(message.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
         } else if (!hasPerms(message.channel, message.member, command.permissions)) {
-            return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
+            return dontThrow(message.reply({
+                embeds: [
+                    Embed.perms(message.channel, message.member, command.permissions)
+                ]
+            }));
         }
 
         let err: Error | void;
@@ -213,7 +217,7 @@ export class kEvent extends Event<'messageCreate'> {
                 : command.errors.default;
                 
             return dontThrow(message.reply({ 
-                embeds: [Embed.fail(error)],
+                embeds: [Embed.error(error)],
                 failIfNotExists: false
             }));
         } finally {

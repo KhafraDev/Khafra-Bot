@@ -29,7 +29,7 @@ export class kCommand extends Command {
 
     async init(message: Message, { args, commandName, prefix }: Arguments, settings: kGuild) {
         if (settings.ticketchannel === null) {
-            return this.Embed.fail(`This guild doesn't have a ticket channel! Ask a moderator to use \`${prefix}ticketchanel [channel]\`!`);
+            return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`${prefix}ticketchanel [channel]\`!`);
         } else if (commandName === 'ticket' || commandName === 'tickets') {
             args.shift();
         } 
@@ -45,7 +45,7 @@ export class kCommand extends Command {
         if (Array.isArray(ret)) {
             const [err, chan] = ret;
             if (err !== null) {
-                return this.Embed.fail(`An error occurred trying to fetch this channel. Maybe set a new ticket channel?`);
+                return this.Embed.error(`An error occurred trying to fetch this channel. Maybe set a new ticket channel?`);
             } else {
                 // validation is done in the ticketchannel command
                 channel = chan as TicketChannelTypes;
@@ -55,7 +55,7 @@ export class kCommand extends Command {
         }
 
         if (isExplicitText(channel) && !privateThreads) {
-            return this.Embed.fail(
+            return this.Embed.error(
                 `This guild is no longer tier 2 or above, and cannot use private threads. ` +
                 `Use the \`${prefix}ticketchannel\` command to re-set the ticket channel!`
             );
@@ -73,13 +73,13 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.fail(`Failed to create a ticket: ${inlineCode(err.message)}.`);
+                return this.Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`);
             }
 
             await dontThrow(thread.members.add(message.author));
             void dontThrow(thread.send(`${message.author}: ${args.join(' ')}`));
 
-            return this.Embed.success(`Successfully created a ticket: ${thread}!`);
+            return this.Embed.ok(`Successfully created a ticket: ${thread}!`);
         } else {
             // create normal text channel with permissions for message.author
             const [err, ticketChannel] = await dontThrow(message.guild.channels.create(name, {
@@ -104,12 +104,12 @@ export class kCommand extends Command {
             }) as Promise<TextChannel>);
 
             if (err !== null) {
-                return this.Embed.fail(`Failed to create a ticket: ${inlineCode(err.message)}.`);
+                return this.Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`);
             }
             
             void dontThrow(ticketChannel.send({ content: `${message.author}: ${args.join(' ')}` }));
             
-            return this.Embed.success(`Successfully created a ticket: ${ticketChannel}!`);
+            return this.Embed.ok(`Successfully created a ticket: ${ticketChannel}!`);
         }
     }
 }

@@ -15,7 +15,7 @@ export class kCommand extends Command {
     }
 
     async init() {
-        return this.Embed.success(`
+        return this.Embed.ok(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia
         🔵 – Public Statements / Tweets

@@ -34,7 +34,7 @@ export class kCommand extends Command {
         const all =  [...unicode, ...guild];
 
         if (all.length === 0)
-            return this.Embed.fail(`No guild or unicode emojis were in the message! 😕`);
+            return this.Embed.error(`No guild or unicode emojis were in the message! 😕`);
 
         return all.join('\n');
     }

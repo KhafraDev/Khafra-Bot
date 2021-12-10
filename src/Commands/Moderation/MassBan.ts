@@ -32,7 +32,7 @@ export class kCommand extends Command {
         );
 
         if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))
-            return this.Embed.fail(`One or more ❄️❄️❄️ are invalid!`);
+            return this.Embed.error(`One or more ❄️❄️❄️ are invalid!`);
 
         const reason = `Force-ban by ${message.author.id} (${message.author.tag}).`;
 
@@ -52,7 +52,7 @@ export class kCommand extends Command {
         const good = resolved.filter(p => p.status === 'fulfilled') as PromiseFulfilledResult<string | User | GuildMember>[];
         const goodFormat = good.map(x => typeof x.value === 'string' ? inlineCode(x.value) : `${x.value}`).join(', ');
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         Banned ${good.length} members (out of ${args.length} requested).
         ${goodFormat}
         `);

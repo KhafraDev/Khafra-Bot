@@ -24,14 +24,14 @@ export class kCommand extends Command {
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 
         if (stats === null) {
-            return this.Embed.fail('Failed to fetch the stats!');
+            return this.Embed.error('Failed to fetch the stats!');
         } else if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
 
         const quarks = await quarkBonus.body.json() as { bonus: number };
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle('Synergism Stats (Kongregate)')
             .setDescription(`
             ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}

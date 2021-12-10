@@ -31,13 +31,13 @@ export class kCommand extends Command {
         const toDelete = Number(args[0]);
 
         if (!inRange(toDelete)) {
-            return this.Embed.fail(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
+            return this.Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 
         const channel = await getMentions(message, 'channels', { idx: 1 }) ?? message.channel;
         
         if (!isText(channel) || !hasPerms(channel, message.guild!.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
-            return this.Embed.fail('Can\'t delete messages from this type of channel, sorry!');
+            return this.Embed.error('Can\'t delete messages from this type of channel, sorry!');
         } else if (message.deletable) {
             await dontThrow(message.delete());
         }
@@ -45,10 +45,10 @@ export class kCommand extends Command {
         const [err, deleted] = await dontThrow(channel.bulkDelete(toDelete, true));
 
         if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setAuthor({
                 name: message.client.user!.username,
                 iconURL: message.client.user!.displayAvatarURL()

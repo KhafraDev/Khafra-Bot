@@ -32,7 +32,7 @@ export class kCommand extends Command {
             return this.Embed.generic(this, `No location with that query was found.`);
 
         if (loc.type === 'city') {
-            return this.Embed.success(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
+            return this.Embed.ok(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
                 .setTitle(`${loc.result.Combined_Key} COVID-19 Stats`)
                 .addField(bold('Active Cases:'), loc.result.Active?.toLocaleString(locale) ?? 'N/A', true)
                 .addField(bold('Total Cases:'), loc.result.Confirmed?.toLocaleString(locale) ?? 'N/A', true)
@@ -46,7 +46,7 @@ export class kCommand extends Command {
             const recovered = loc.result.reduce((a, b) => a + Number(b.Recovered), 0) || 'N/A';
             const deaths = loc.result.reduce((a, b) => a + Number(b.Deaths), 0) || 'N/A';
 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             Out of ${loc.result.length} cities/provinces in ${loc.result[0].Province_State}
 
             [Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)
@@ -60,7 +60,7 @@ export class kCommand extends Command {
                 .addField('\u200b', '\u200b', true);  
         } else {
             if (loc.result.length === 1) {
-                return this.Embed.success(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
+                return this.Embed.ok(`[Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)`)
                     .setTitle(`${loc.result[0].Combined_Key} COVID-19 Stats`)
                     .addField(bold('Active Cases:'), loc.result[0].Active?.toLocaleString(locale) ?? 'N/A', true)
                     .addField(bold('Total Cases:'), loc.result[0].Confirmed?.toLocaleString(locale) ?? 'N/A', true)
@@ -76,7 +76,7 @@ export class kCommand extends Command {
             const recovered = loc.result.reduce((a, b) => a + Number(b.Recovered), 0) || 'N/A';
             const deaths = loc.result.reduce((a, b) => a + Number(b.Deaths), 0) || 'N/A';
 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             Out of ${totalStates} states/provinces in ${loc.result[0].Country_Region}
 
             [Data Provided by JHU](https://github.com/CSSEGISandData/COVID-19)

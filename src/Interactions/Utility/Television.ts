@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
         if (!tv)
             return `❌ No TV show with that name was found!`;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
             .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)

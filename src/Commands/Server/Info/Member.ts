@@ -47,7 +47,7 @@ export class kCommand extends Command {
         const member = await getMentions(message, 'members') ?? message.member;
 
         // max role length = 84 characters
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({ name: member.displayName, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} on ${italic(member.guild.name)}.

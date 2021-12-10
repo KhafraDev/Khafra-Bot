@@ -33,19 +33,19 @@ export class kCommand extends Command {
         
         if (res === null) {
             if (isText(message.channel) && message.channel.nsfw) {
-                return this.Embed.fail(`This channel isn't marked as NSFW!`);
+                return this.Embed.error(`This channel isn't marked as NSFW!`);
             }
 
-            return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
+            return this.Embed.error(`No posts in this subreddit were found, sorry!`);
         } else if ('error' in res) {
             switch (res.reason) {
-                case 'banned': return this.Embed.fail('Subreddit is banned!');
-                case 'private': return this.Embed.fail('Subreddit is set as private!');
-                case 'quarantined': return this.Embed.fail('Subreddit is quarantined!');
-                default: return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`)
+                case 'banned': return this.Embed.error('Subreddit is banned!');
+                case 'private': return this.Embed.error('Subreddit is set as private!');
+                case 'quarantined': return this.Embed.error('Subreddit is quarantined!');
+                default: return this.Embed.error(`Subreddit is blocked for reason "${res.reason}"!`)
             }
         } else if (res.url.length === 0) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             No image posts found in this subreddit.
             
             If the channel isn't set to NSFW, adult subreddits won't work!

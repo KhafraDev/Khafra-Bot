@@ -19,6 +19,6 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { content }: Arguments) {
-        return this.Embed.success(codeBlock(content));
+        return this.Embed.ok(codeBlock(content));
     }
 }

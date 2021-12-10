@@ -91,12 +91,12 @@ export class kCommand extends Command {
         const j = await r.json() as ITheOnionAPI;
 
         if (j.data.length === 0)
-            return this.Embed.fail(`
+            return this.Embed.error(`
             You'll have to read the article on TheOnion this time, sorry!
             https://www.theonion.com/${id}
             `);
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setAuthor({
                 name: decodeXML(j.data[0].headline).slice(0, 256), 
                 iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',

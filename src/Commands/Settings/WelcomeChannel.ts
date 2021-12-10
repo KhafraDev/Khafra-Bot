@@ -1,12 +1,12 @@
-import { Command } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { isText } from '../../lib/types/Discord.js.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
-import { client } from '../../Structures/Database/Redis.js';
 import { inlineCode } from '@khaf/builders';
+import { Message, Permissions, TextChannel } from 'discord.js';
+import { isText } from '../../lib/types/Discord.js.js';
+import { kGuild } from '../../lib/types/KhafraBot.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Command } from '../../Structures/Command.js';
+import { pool } from '../../Structures/Database/Postgres.js';
+import { client } from '../../Structures/Database/Redis.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -33,15 +33,19 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.missing_perms(true);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member!,
+                Permissions.FLAGS.ADMINISTRATOR
+            );
         } 
 
         const channel = await getMentions(message, 'channels');
         
         if (!isText(channel)) {
-            return this.Embed.fail(`${channel} is not a text channel!`);
+            return this.Embed.error(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild!.me, basic)) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             I am missing one or more of ${basic.toArray().map(p => inlineCode(p)).join(', ')} permissions!
             `);
         }
@@ -55,7 +59,7 @@ export class kCommand extends Command {
 
         await client.set(message.guild!.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
         
-        return this.Embed.success(`
+        return this.Embed.ok(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
         `);
     }

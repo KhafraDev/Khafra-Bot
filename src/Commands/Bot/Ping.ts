@@ -17,9 +17,9 @@ export class kCommand extends Command {
     }
 
     async init(message: Message): Promise<void> {
-        const m = await message.reply({ embeds: [this.Embed.success('Pinging...!')] });
+        const m = await message.reply({ embeds: [this.Embed.ok('Pinging...!')] });
         
-        const embed = this.Embed.success(`
+        const embed = this.Embed.ok(`
         Pong! 🏓
 
         Bot: ${m.createdTimestamp - message.createdTimestamp} ms

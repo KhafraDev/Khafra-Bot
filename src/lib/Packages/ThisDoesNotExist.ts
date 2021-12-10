@@ -25,7 +25,7 @@ export const thisDoesNotExist = async (type: DNE) => {
 
     return {
         embeds: [
-            Embed.success().setImage(`attachment://t${type}dne.jpeg`)
+            Embed.ok().setImage(`attachment://t${type}dne.jpeg`)
         ],
         files: [attach],
         failIfNotExists: false

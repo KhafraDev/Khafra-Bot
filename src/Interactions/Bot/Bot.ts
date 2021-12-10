@@ -62,12 +62,12 @@ export class kInteraction extends Interactions {
                 return value;
             } else if (option === BotInfo.PING) {
                 await interaction.reply({
-                    embeds: [Embed.success('Pinging...!')],
+                    embeds: [Embed.ok('Pinging...!')],
                     ephemeral: true
                 });
 
                 const now = performance.now();
-                const embed = Embed.success(`
+                const embed = Embed.ok(`
                 Pong! 🏓
 
                 Bot: ${(now - was).toFixed(2)} ms
@@ -90,7 +90,7 @@ export class kInteraction extends Interactions {
                     .toLocaleString();
                 const totalGuilds = guilds.size.toLocaleString();
 
-                return Embed.success()
+                return Embed.ok()
                     .setTitle(`Bot Statistics`)
                     .addFields(
                         { name: bold('Guilds:'), value: totalGuilds, inline: true },

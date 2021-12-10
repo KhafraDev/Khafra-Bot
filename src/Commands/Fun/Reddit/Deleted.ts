@@ -82,13 +82,13 @@ export class kCommand extends Command {
         void message.channel.sendTyping();
 
         if (url === null) {
-            return this.Embed.fail(`That's not a Reddit post!`);
+            return this.Embed.error(`That's not a Reddit post!`);
         } else if (
             url.host !== 'www.reddit.com' && 
             url.host !== 'reddit.com' &&
             url.host !== 'old.reddit.com'
         ) {
-            return this.Embed.fail(`${url.hostname} isn't Reddit!`);
+            return this.Embed.error(`${url.hostname} isn't Reddit!`);
         }
 
         const [rSlash, subreddit, comments, id, /*threadName*/] = url.pathname.match(/[^/?]*[^/?]/g) ?? [];
@@ -98,17 +98,17 @@ export class kCommand extends Command {
             !/^[A-z0-9_]{3,21}$/.test(subreddit) ||
             comments !== 'comments'
         ) {
-            return this.Embed.fail(`Invalid or unsupported Reddit link!`);
+            return this.Embed.error(`Invalid or unsupported Reddit link!`);
         }
 
         const r = await fetchDeleted(id);
 
         if (r === null) {
-            return this.Embed.fail(`No post given the URL was indexed, sorry!`);
+            return this.Embed.error(`No post given the URL was indexed, sorry!`);
         } else if ('error' in r) {
-            return this.Embed.fail(`No results found, some posts might not be cached yet!`);
+            return this.Embed.error(`No results found, some posts might not be cached yet!`);
         } else if (r.hits.total < 1) {
-            return this.Embed.fail(`No results were found!`);
+            return this.Embed.error(`No results were found!`);
         }
 
         const post = r.hits.hits[0]._source;
@@ -118,7 +118,7 @@ export class kCommand extends Command {
         const chunks = split(post.selftext, 2048);
         const makeEmbed = (page = 0) => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
-            const embed = this.Embed.success()
+            const embed = this.Embed.ok()
                 .setTitle(title)
                 .setDescription(desc);
 

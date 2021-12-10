@@ -66,7 +66,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             member.joinedAt ? time(member.joinedAt) : 'N/A' +
             ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} (${member.user.tag}) has left the server!

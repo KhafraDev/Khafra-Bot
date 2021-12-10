@@ -63,7 +63,7 @@ export class kCommand extends Command {
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(decodeXML(comic.title))
                 .setURL(comic.link)
                 .setImage(/src="(.*?)"/.exec(comic['content:encoded'])![1]);
@@ -73,7 +73,7 @@ export class kCommand extends Command {
             SELECT * FROM kbGarrison ORDER BY RANDOM() LIMIT 1;
         `);
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(comic.title)
             .setURL(comic.href)
             .setImage(comic.link);

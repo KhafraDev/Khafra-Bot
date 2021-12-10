@@ -32,10 +32,10 @@ export class kCommand extends Command {
         
         const cartoon = await Cartoonize.cartoonize(message.attachments.first()!);
         if (!cartoon)
-            return this.Embed.fail('Failed to extract the image from the HTML. 😕');
+            return this.Embed.error('Failed to extract the image from the HTML. 😕');
         
         return this.Embed
-            .success(`[Click Here](${cartoon}) to download!`)
+            .ok(`[Click Here](${cartoon}) to download!`)
             .setImage(cartoon);
     }
 }

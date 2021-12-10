@@ -29,7 +29,7 @@ export class kCommand extends Command {
         const [barack, obama] = await dontThrow(talkObamaToMe(args.join(' ').slice(0, 280)));
 
         if (barack !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(barack.message)}`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(barack.message)}`);
         }
 
         return obama;

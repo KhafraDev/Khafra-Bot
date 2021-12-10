@@ -23,9 +23,9 @@ export class kCommand extends Command {
         );
         
         if (!tv)
-            return this.Embed.fail('No tv shows found!');
+            return this.Embed.error('No tv shows found!');
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
             .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)

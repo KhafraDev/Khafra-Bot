@@ -38,11 +38,11 @@ export class kCommand extends Command {
         }
 
         if (amount === 0) {
-            return this.Embed.fail(`The server owner already has a crown! Refresh your client to see it. 👑`);
+            return this.Embed.error(`The server owner already has a crown! Refresh your client to see it. 👑`);
         }
 
         desc += next;
 
-        return this.Embed.success(desc);
+        return this.Embed.ok(desc);
     }
 }

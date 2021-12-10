@@ -54,9 +54,9 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
 
         const opts = { embeds: [] as MessageEmbed[] };
         if (had) {
-            opts.embeds.push(Embed.success(`Removed role ${role} from you!`));
+            opts.embeds.push(Embed.ok(`Removed role ${role} from you!`));
         } else {
-            opts.embeds.push(Embed.success(`Granted you the ${role} role!`));
+            opts.embeds.push(Embed.ok(`Granted you the ${role} role!`));
         }
 
         const pr = interaction.deferred
@@ -70,7 +70,7 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
         }
 
         const opts = { 
-            embeds: [ Embed.fail(`An error prevented me from granting you the role!`) ]
+            embeds: [ Embed.error(`An error prevented me from granting you the role!`) ]
         }
 
         const pr = interaction.deferred

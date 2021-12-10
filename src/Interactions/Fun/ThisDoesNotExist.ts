@@ -43,7 +43,7 @@ export class kInteraction extends Interactions {
                 return `❌ An unexpected error occurred getting a Homer!`;
             }
 
-            return Embed.success().setImage(homer);
+            return Embed.ok().setImage(homer);
         } else if (type === 'tdne_word') {
             const [err, word] = await dontThrow(thisWordDoesNotExist());
 
@@ -51,7 +51,7 @@ export class kInteraction extends Interactions {
                 return `❌ An unexpected error occurred getting a word!`;
             }
 
-            return Embed.success(`
+            return Embed.ok(`
             ${bold(word.word.word.toUpperCase())} - ${word.word.pos}
             ${italic(word.word.syllables.join(' − '))}
             ${inlineCode(word.word.definition)}

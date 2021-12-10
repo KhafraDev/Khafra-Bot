@@ -52,7 +52,7 @@ export class kCommand extends Command {
             const excerpt = Verses.get(`${chapter.padStart(3, '0')}-${verse.padStart(3, '0')}`)!;
             const title = Titles.get(chapter)!;
 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             ${chapter}:${verse} - ${inlineCode(excerpt.content)}
             `).setTitle(title);
         }
@@ -62,12 +62,12 @@ export class kCommand extends Command {
 
         const { b = '', v = '' } = /(?<b>\d{1,3}):(?<v>\d{1,3})/.exec(args[0])?.groups ?? {};
         if (!Verses.has(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`))
-            return this.Embed.fail(`Verse not found.`);
+            return this.Embed.error(`Verse not found.`);
 
         const excerpt = Verses.get(`${b.padStart(3, '0')}-${v.padStart(3, '0')}`)!;
         const title = Titles.get(`${Number(excerpt.book)}`)!;
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${b}:${v} ${inlineCode(excerpt.content)}
         `).setTitle(title);
     }

@@ -38,9 +38,9 @@ export class kCommand extends Command {
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.fail(`You do not have permission to ban ${member}!`);
+            return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.fail(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
         }
 
         const row = new MessageActionRow()
@@ -50,7 +50,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embeds: [this.Embed.success(`Are you sure you want to ban ${user}?`)],
+            embeds: [this.Embed.ok(`Are you sure you want to ban ${user}?`)],
             components: [row]
         });
 
@@ -65,14 +65,14 @@ export class kCommand extends Command {
 
         if (pressedError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.fail(`Didn't get confirmation to ban ${user}!`)],
+                embeds: [this.Embed.error(`Didn't get confirmation to ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             }); 
 
@@ -85,7 +85,7 @@ export class kCommand extends Command {
 
         if (banError !== null) {
             return void button.editReply({
-                embeds: [this.Embed.fail(`${user} isn't bannable!`)],
+                embeds: [this.Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
         } else {
@@ -96,7 +96,7 @@ export class kCommand extends Command {
 
         await button.editReply({
             embeds: [
-                this.Embed.success(
+                this.Embed.ok(
                     `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` + 
                     ` days worth of messages have been removed.`
                 )

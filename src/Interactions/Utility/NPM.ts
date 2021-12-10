@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
             .map(u => u.name)
             .join(', ');
 
-        return Embed.success()
+        return Embed.ok()
             .setAuthor({
                 name: 'NPM',
                 iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',

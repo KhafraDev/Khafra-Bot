@@ -84,6 +84,6 @@ export class kCommand extends Command {
 
     async init(_message: Message, { content }: Arguments) {
         const pig = toPigLatin(content);
-        return this.Embed.success(pig.slice(0, 2048))
+        return this.Embed.ok(pig.slice(0, 2048))
     }
 }
