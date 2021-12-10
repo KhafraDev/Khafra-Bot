@@ -31,7 +31,7 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
     if (!guild?.roles.cache.has(interaction.customId)) return;
 
     const role = guild.roles.cache.get(interaction.customId);
-    if (!role || role.deleted || role.managed) return;
+    if (!role || role.managed) return;
 
     if (!guild.me || !hierarchy(guild.me, interaction.member, false)) {
         const opts = { content: `❌ I do not have permission to manage your roles!` };

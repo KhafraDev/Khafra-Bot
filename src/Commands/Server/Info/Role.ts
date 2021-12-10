@@ -29,8 +29,6 @@ export class kCommand extends Command {
 
         if (!(role instanceof Role)) {
             return this.Embed.fail('No role found!');
-        } else if (role.deleted) {
-            return this.Embed.fail('Role has been deleted.');
         }
 
         const embed = this.Embed.success()

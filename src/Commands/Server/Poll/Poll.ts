@@ -87,8 +87,7 @@ export class kCommand extends Command {
         const messageCollector = m.channel.createMessageCollector({
             filter: (mm) =>
                 mm.author.id === message.author.id &&
-                currentOption !== null &&
-                !m.deleted,
+                currentOption !== null,
             time: 60_000 * 5,
             max: 10
         });

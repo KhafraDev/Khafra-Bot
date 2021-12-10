@@ -93,7 +93,7 @@ export class kCommand extends Command {
         });
 
         c.on('collect', (msg) => {
-            if (wrong > 6 || m.deleted || !m.editable) return c.stop();
+            if (wrong > 6 || !m.editable) return c.stop();
 
             const guess = msg.content.toLowerCase();
             const wordLc = word.toLowerCase();
@@ -161,7 +161,8 @@ export class kCommand extends Command {
                 );
             }
 
-            return void dontThrow(m.edit(opts));
+            return void dontThrow(m.edit(opts))
+                .then(([e]) => e !== null && c.stop());
         });
 
         c.once('end', () => {

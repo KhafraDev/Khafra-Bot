@@ -90,7 +90,6 @@ export class kCommand extends Command {
             return this.Embed.fail(`Could not fetch the message! Was it deleted?`);
         } else if (
             !m ||
-            m.deleted ||
             m.author.id !== message.client.user!.id ||
             m.embeds.length !== 1 ||
             m.embeds[0].timestamp! > Date.now()

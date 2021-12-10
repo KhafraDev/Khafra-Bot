@@ -104,8 +104,6 @@ export class kCommand extends Command {
         });
 
         c.on('collect', async (i) => {
-            if (m.deleted) return c.stop();
-
             if (i.customId === 'cancel') {
                 return c.stop('cancel');
             } else if (i.customId === 'save') { 

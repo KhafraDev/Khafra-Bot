@@ -40,6 +40,7 @@ export const DM = async (message: Message): Promise<void> => {
 
     const command = KhafraClient.Commands.get(commandName);
 
+    if (!nameWithPrefix.startsWith(defaultSettings.prefix)) return;
     if (!command) return;
 
     if (!cooldownUsers(message.author.id)) { // user is rate limited
@@ -71,7 +72,7 @@ export const DM = async (message: Message): Promise<void> => {
 
     try {
         const returnValue = await command.init(message, options, defaultSettings);
-        if (!returnValue || returnValue instanceof Message || message.deleted) 
+        if (!returnValue || returnValue instanceof Message) 
             return;
 
         const param = {

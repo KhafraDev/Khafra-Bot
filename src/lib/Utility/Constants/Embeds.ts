@@ -20,6 +20,9 @@ const defaultPerms = [
     Permissions.FLAGS.VIEW_CHANNEL
 ];
 
+// TODO just use objects
+// const embed: APIEmbed = { ... }
+// and re-do these weird embeds that suck and aren't used in modern commands anymore.
 export const Embed = {
     fail: (reason?: string) => {
         const Embed = new MessageEmbed().setColor(config.embed.fail as `#${string}`);

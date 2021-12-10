@@ -76,9 +76,7 @@ export class kCommand extends Command {
 
         const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
         collector.on('collect', i => {
-            if (m.deleted) 
-                return collector.stop();
-            else if (i.customId === 'deny')
+            if (i.customId === 'deny')
                 return collector.stop('deny');
 
             i.customId === 'approve' ? page++ : page--;
@@ -86,7 +84,8 @@ export class kCommand extends Command {
             if (page < 0) page = res.url.length - 1;
             if (page >= res.url.length) page = 0;
 
-            return void dontThrow(i.update({ content: res.url[page] }));
+            return void dontThrow(i.update({ content: res.url[page] }))
+                .then(([e]) => e !== null && collector.stop());
         });
         collector.on('end', (c, r) => {
             if (r === 'deny') {

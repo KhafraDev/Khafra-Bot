@@ -54,6 +54,7 @@ export const client = new KhafraClient({
 })
     .on('ready',                emitted('ready'))
     .on('messageCreate',        emitted('messageCreate'))
+    .on('messageUpdate',        emitted('messageUpdate'))
     .on('guildBanAdd',          emitted('guildBanAdd'))
     .on('guildBanRemove',       emitted('guildBanRemove'))
     .on('guildCreate',          emitted('guildCreate'))

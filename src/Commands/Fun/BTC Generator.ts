@@ -2,6 +2,7 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 
@@ -33,11 +34,9 @@ export class kCommand extends Command {
         
         await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
 
-        if (msg.deleted) return;
-
         const embed2 = this.Embed.success()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return void msg.edit({ embeds: [embed2] });
+        return void dontThrow(msg.edit({ embeds: [embed2] }));
     }
 }
