@@ -8,17 +8,17 @@ import { upperCase } from './String.js';
  */
 export const hasPerms = (
     channel: unknown, 
-    userOrRole: unknown, 
+    memberOrRole: unknown, 
     perms: PermissionResolvable
 ) => {
     if (typeof channel === 'undefined' || channel === null)
         return false;
     if (!isText(channel) && !isVoice(channel) && !isThread(channel))
         return true;
-    if (!(userOrRole instanceof GuildMember) && !(userOrRole instanceof Role))
+    if (!(memberOrRole instanceof GuildMember) && !(memberOrRole instanceof Role))
         return false;
 
-    return channel.permissionsFor(userOrRole).has(perms);
+    return channel.permissionsFor(memberOrRole).has(perms);
 }
 
 /**

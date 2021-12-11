@@ -43,7 +43,7 @@ export class kCommand extends Command {
         
         if (!isText(channel)) {
             return this.Embed.error(`${channel} is not a text channel!`);
-        } else if (!hasPerms(channel, message.guild!.me, basic)) {
+        } else if (!hasPerms(channel, message.guild?.me, basic)) {
             return this.Embed.perms(channel, message.guild!.me, basic);
         }
 

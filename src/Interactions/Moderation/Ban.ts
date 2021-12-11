@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
     async init(interaction: CommandInteraction) {
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to ban this member, try to ${pleaseInvite}`;
-        } else if (!hasPerms(interaction.channel, interaction.client.user, perms)) {
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
             return `❌ I do not have permission to ban this member, try to ${pleaseInvite}`;
         }
 
@@ -69,7 +69,7 @@ export class kInteraction extends Interactions {
         }
             
         const member = 
-            interaction.options.getMember('member', true)
+            interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
         if (!(member instanceof GuildMember) && !(member instanceof User)) {

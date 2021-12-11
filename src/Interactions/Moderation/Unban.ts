@@ -42,7 +42,7 @@ export class kInteraction extends Interactions {
 
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to unban this member, try to ${pleaseInvite}`;
-        } else if (!hasPerms(interaction.channel, interaction.client.user, perms)) {
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
             return `❌ I do not have permission to unban this member, try to ${pleaseInvite}`;
         } else if (!validSnowflake(id)) {
             return '❌ That isn\'t a user ID, try again!';
