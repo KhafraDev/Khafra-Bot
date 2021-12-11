@@ -4,7 +4,7 @@ import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
-import { Permissions } from 'discord.js';
+import { Permissions, TextChannel } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 export class kCommand extends Command {
@@ -29,7 +29,11 @@ export class kCommand extends Command {
 
     async init(message: Message, _args: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.error(`This command is only available for server admins!`);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.ADMINISTRATOR
+            );
         }
         
         /** guild can use private threads */

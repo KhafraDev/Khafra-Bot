@@ -11,7 +11,7 @@ import { Components, disableAll } from '../../../lib/Utility/Constants/Component
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
-import { hasPerms, permResolvableToString } from '../../../lib/Utility/Permissions.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { Command } from '../../../Structures/Command.js';
@@ -108,7 +108,7 @@ export class kCommand extends Command {
             if (!isText(channel)) {
                 return this.Embed.error(`${channel ?? 'Unknown channel'} isn't a text channel!`);
             } else if (!hasPerms(channel, message.guild.me, perms)) {
-                return this.Embed.error(`I don't have one or more of these ${permResolvableToString(perms).join(', ')} permissions in ${channel}.`);
+                return this.Embed.perms(channel, message.guild!.me!, perms);
             }
 
             settings.channel = channel;

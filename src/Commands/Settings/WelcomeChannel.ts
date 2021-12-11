@@ -1,4 +1,3 @@
-import { inlineCode } from '@khaf/builders';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
@@ -45,9 +44,7 @@ export class kCommand extends Command {
         if (!isText(channel)) {
             return this.Embed.error(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild!.me, basic)) {
-            return this.Embed.error(`
-            I am missing one or more of ${basic.toArray().map(p => inlineCode(p)).join(', ')} permissions!
-            `);
+            return this.Embed.perms(channel, message.guild!.me!, basic);
         }
 
         const { rows } = await pool.query<kGuild>(`

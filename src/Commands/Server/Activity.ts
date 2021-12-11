@@ -61,7 +61,7 @@ export class kCommand extends Command {
         } else if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
             return this.Embed.error('No channel with that name was found!'); 
         } else if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.CREATE_INSTANT_INVITE)) {
-            return this.Embed.error(`I don't have permission to create invites in ${channel}`);
+            return this.Embed.perms(channel, message.guild.me!, Permissions.FLAGS.CREATE_INSTANT_INVITE);
         }
 
         const m = await message.channel.send({

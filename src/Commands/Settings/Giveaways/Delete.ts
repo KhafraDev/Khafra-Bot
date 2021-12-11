@@ -80,16 +80,16 @@ export class kCommand extends Command {
                 const msg = await channel.messages.fetch(rows[0].messageid);
 
                 if (!msg.deletable)
-                    return this.Embed.error(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
+                    return this.Embed.error(`Giveaway has been stopped, but the ${hyperlink('message', msg.url)} could not be deleted.`);
 
                 await msg.delete();
             }
         } catch (e) {
             if (e instanceof DiscordAPIError) {
                 const name = e.code || e.name;
-                return this.Embed.error(`Giveaway has been deleted, but a(n) ${name} has occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been stopped, but a(n) ${name} has occurred trying to delete the message.`);
             } else {
-                return this.Embed.error(`Giveaway has been deleted, but an error occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been stopped, but an error occurred trying to delete the message.`);
             }
         }
 

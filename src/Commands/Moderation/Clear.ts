@@ -1,5 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -37,7 +37,11 @@ export class kCommand extends Command {
         const channel = await getMentions(message, 'channels', { idx: 1 }) ?? message.channel;
         
         if (!isText(channel) || !hasPerms(channel, message.guild!.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
-            return this.Embed.error('Can\'t delete messages from this type of channel, sorry!');
+            return this.Embed.perms(
+                channel as TextChannel,
+                message.guild!.me!,
+                Permissions.FLAGS.MANAGE_MESSAGES
+            );
         } else if (message.deletable) {
             await dontThrow(message.delete());
         }

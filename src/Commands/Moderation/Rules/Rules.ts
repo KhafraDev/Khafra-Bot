@@ -99,7 +99,7 @@ export class kCommand extends Command {
             } else if (!hasPerms(channel, message.guild.me, perms)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.error(`I do not have permission to send messages in ${channel}!`)
+                        this.Embed.perms(channel, message.guild.me!, perms)
                     ],
                     components: []
                 }));

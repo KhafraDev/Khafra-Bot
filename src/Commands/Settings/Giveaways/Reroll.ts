@@ -85,7 +85,7 @@ export class kCommand extends Command {
         if (!isText(channel)) {
             return this.Embed.error(`${channel} isn't a text or news channel! You can't have a giveaway here.`);
         } else if (!hasPerms(channel, message.guild.me, perms)) {
-            return this.Embed.error(`I cannot view old messages, send messages, and/or the channel is private (lacking perms)!`);
+            return this.Embed.perms(channel, message.guild!.me!, perms);
         }
 
         const [fetchMessageError, m] = await dontThrow(channel.messages.fetch(messageId));
