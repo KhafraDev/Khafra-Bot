@@ -1,11 +1,11 @@
 import { bold, inlineCode } from '@khaf/builders';
 import {
-    Channel, MessageActionRow,
+    Channel, Message, MessageActionRow,
     NewsChannel,
     Permissions,
     TextChannel
 } from 'discord.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
@@ -59,7 +59,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         // TODO(@KhafraDev): wtf perms should this be available for?
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
@@ -108,7 +108,7 @@ export class kCommand extends Command {
             if (!isText(channel)) {
                 return this.Embed.error(`${channel ?? 'Unknown channel'} isn't a text channel!`);
             } else if (!hasPerms(channel, message.guild.me, perms)) {
-                return this.Embed.perms(channel, message.guild!.me!, perms);
+                return this.Embed.perms(channel, message.guild.me, perms);
             }
 
             settings.channel = channel;
@@ -268,7 +268,7 @@ export class kCommand extends Command {
             message.guild.id, 
             sent.id,
             settings.channel.id,
-            message.member.id, 
+            message.member!.id, 
             settings.endDate, 
             settings.prize, 
             settings.winners

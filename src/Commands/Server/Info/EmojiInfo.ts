@@ -1,12 +1,12 @@
-import { parse, toCodePoints } from 'twemoji-parser';
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { plural } from '../../../lib/Utility/String.js';
-import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
-import { Message } from '../../../lib/types/Discord.js.js';
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { assets } from '../../../lib/Utility/Constants/Path.js';
-import { join } from 'path';
 import { bold, inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { join } from 'path';
+import { parse, toCodePoints } from 'twemoji-parser';
+import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
+import { assets } from '../../../lib/Utility/Constants/Path.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { plural } from '../../../lib/Utility/String.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const Emojis = createFileWatcher(
@@ -46,7 +46,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init(message: Message<true>, { content }: Arguments) {
         const guildEmoji = guildEmojiRegex.exec(content);
 
         if (guildEmoji === null || guildEmoji.groups === undefined) {

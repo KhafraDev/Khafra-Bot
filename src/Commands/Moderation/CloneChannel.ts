@@ -1,10 +1,10 @@
-import { Command } from '../../Structures/Command.js';
-import { GuildChannel, GuildChannelCloneOptions, MessageActionRow, Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isDM, isExplicitText, isStage, isText, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
+import { GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
+import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '../../lib/types/Discord.js.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { Command } from '../../Structures/Command.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const channel = await getMentions(message, 'channels') ?? message.channel;
         if (!channel) {
             return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);

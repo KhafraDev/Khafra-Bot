@@ -1,10 +1,12 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { isDM, isExplicitText, isThread, Message } from '../../../lib/types/Discord.js.js';
+import { CategoryChannel, GuildChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
+import { isDM, isExplicitText, isThread } from '../../../lib/types/Discord.js.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { TextChannel, CategoryChannel, GuildChannel, Permissions, ThreadChannel } from 'discord.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
+type DeletedChannelTypes = TextChannel | NewsChannel | ThreadChannel;
+
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i;
 const memberPermsExpected = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -28,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: kGuild) {
+    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
         if (settings.ticketchannel === null) {
             return this.Embed.error(`Could not archive for you, the guild's ticket channel is unset.`);
         } else if (!isDM(message.channel) && !channelTicketName.test(message.channel.name)) {
@@ -82,7 +84,7 @@ export class kCommand extends Command {
         if (isExplicitText(channel)) {
             await dontThrow((message.channel as ThreadChannel).setArchived(true, `requested by ${message.author.id}`));
         } else {
-            await dontThrow(message.channel.delete());
+            await dontThrow<DeletedChannelTypes>(message.channel.delete());
         }
 
         return void dontThrow(message.author.send({ content: `Ticket was archived/deleted.` }));

@@ -34,7 +34,7 @@ export class kCommand extends Command {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
                 message.channel as TextChannel,
-                message.member!,
+                message.member,
                 Permissions.FLAGS.ADMINISTRATOR
             );
         } 
@@ -44,7 +44,7 @@ export class kCommand extends Command {
         if (!isText(channel)) {
             return this.Embed.error(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild!.me, basic)) {
-            return this.Embed.perms(channel, message.guild!.me!, basic);
+            return this.Embed.perms(channel, message.guild!.me, basic);
         }
 
         const { rows } = await pool.query<kGuild>(`

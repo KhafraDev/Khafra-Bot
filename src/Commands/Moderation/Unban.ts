@@ -1,8 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
-import { Message } from '../../lib/types/Discord.js.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
@@ -25,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, cli }: Arguments) {
+    async init(message: Message<true>, { args, cli }: Arguments) {
         const user = await getMentions(message, 'users');
 
         if (!user) 
@@ -43,7 +42,7 @@ export class kCommand extends Command {
             return this.Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
-        if (!unbans.has(`${message.guild.id},${user.id}`))
+        if (!unbans.has(`${message.guild.id},${user.id}`) && message.member)
             unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
         return this.Embed.ok(`${user} is now unbanned!`);

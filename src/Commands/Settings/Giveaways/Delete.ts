@@ -1,9 +1,9 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { DiscordAPIError, Permissions } from 'discord.js';
+import { DiscordAPIError, Permissions, Message } from 'discord.js';
 import { hyperlink, inlineCode } from '@khaf/builders';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { time } from '@khaf/builders';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (args.length === 0 || (args.length === 1 && args[0].toLowerCase().endsWith('delete'))) {
             const { rows } = await pool.query<GiveawayRow, string[]>(`
                 SELECT guildId, messageId, channelId, initiator, endDate, prize, id
@@ -39,7 +39,7 @@ export class kCommand extends Command {
                 WHERE guildId = $1::text AND initiator = $2::text
                 ORDER BY endDate ASC
                 LIMIT 10;
-            `, [message.guild.id, message.member.id]);
+            `, [message.guild.id, message.author.id]);
             
             let str = '';
             for (const row of rows) {
@@ -71,7 +71,7 @@ export class kCommand extends Command {
             DELETE FROM kbGiveaways
             WHERE initiator = $1::text AND id = $2::uuid
             RETURNING guildId, messageId, channelId, initiator, endDate, prize, id;
-        `, [message.member.id, id]);
+        `, [message.author.id, id]);
 
         try {
             const channel = await message.guild.channels.fetch(rows[0].channelid);

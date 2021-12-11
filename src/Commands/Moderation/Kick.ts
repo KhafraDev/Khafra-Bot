@@ -1,9 +1,9 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
+import { isText } from '../../lib/types/Discord.js.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         const member = await getMentions(message, 'members');
 
         if (!hierarchy(message.member, member)) {

@@ -1,5 +1,5 @@
 import { bold } from '@khaf/builders';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
 
 export class kCommand extends Command {
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         return this.Embed.ok(`
         There are ${bold(message.guild.memberCount.toLocaleString())} members in ${message.guild.name}!
         `);

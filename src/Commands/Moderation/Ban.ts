@@ -1,11 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
-import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
@@ -36,7 +35,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, cli }: Arguments) {
+    async init(message: Message<true>, { args, cli }: Arguments) {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users');
@@ -105,7 +104,7 @@ export class kCommand extends Command {
             }
         }
 
-        if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+        if (!bans.has(`${message.guild.id},${user.id}`) && message.member) // not in the cache already, just to be sure
             bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
         return this.Embed.ok(`

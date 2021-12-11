@@ -1,6 +1,5 @@
 import { inlineCode } from '@khaf/builders';
-import { Permissions, TextChannel } from 'discord.js';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Range } from '../../../lib/Utility/Valid/Number.js';
@@ -29,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))

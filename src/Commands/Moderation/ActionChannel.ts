@@ -1,5 +1,5 @@
-import { Permissions, TextChannel } from 'discord.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
+import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
                 message.channel as TextChannel,

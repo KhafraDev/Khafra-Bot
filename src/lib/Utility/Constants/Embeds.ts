@@ -56,12 +56,16 @@ export const Embed = {
 
     perms: (
         inChannel: PermissionChannels,
-        userOrRole: GuildMember | Role,
+        userOrRole: GuildMember | Role | null,
         permissions: PermissionResolvable
     ) => {
         const perms = permResolvableToString(permissions);
-        const checkType = 'color' in userOrRole ? `The role ${userOrRole}` : `User ${userOrRole}`;
-        const amountMissing = perms.length === 1 ? `This permission` : `These permissions`;
+        const checkType = userOrRole && 'color' in userOrRole
+            ? `The role ${userOrRole}` 
+            : userOrRole
+                ? `User ${userOrRole}`
+                : 'The user';
+        const amountMissing = perms.length === 1 ? `this permission` : `these permissions`;
 
         const reason = 
             `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`;

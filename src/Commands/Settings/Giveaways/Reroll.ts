@@ -1,6 +1,6 @@
 import { bold, hyperlink } from '@khaf/builders';
-import { Channel, GuildChannel, Permissions, TextChannel, ThreadChannel, User } from 'discord.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { Message, Channel, GuildChannel, Permissions, TextChannel, ThreadChannel, User } from 'discord.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { validSnowflake } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, commandName }: Arguments) {
+    async init(message: Message<true>, { args, commandName }: Arguments) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
                 message.channel as TextChannel,
@@ -85,7 +85,7 @@ export class kCommand extends Command {
         if (!isText(channel)) {
             return this.Embed.error(`${channel} isn't a text or news channel! You can't have a giveaway here.`);
         } else if (!hasPerms(channel, message.guild.me, perms)) {
-            return this.Embed.perms(channel, message.guild!.me!, perms);
+            return this.Embed.perms(channel, message.guild.me, perms);
         }
 
         const [fetchMessageError, m] = await dontThrow(channel.messages.fetch(messageId));

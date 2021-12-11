@@ -1,12 +1,12 @@
-import { Command } from '../../../Structures/Command.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { bold, hyperlink, inlineCode } from '@khaf/builders';
+import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
+import { once } from 'events';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
-import { bold, hyperlink, inlineCode } from '@khaf/builders';
-import { once } from 'events';
+import { Command } from '../../../Structures/Command.js';
 
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const m = await message.reply({
             embeds: [
                 this.Embed.ok()
@@ -99,7 +99,7 @@ export class kCommand extends Command {
             } else if (!hasPerms(channel, message.guild.me, perms)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.perms(channel, message.guild.me!, perms)
+                        this.Embed.perms(channel, message.guild.me, perms)
                     ],
                     components: []
                 }));

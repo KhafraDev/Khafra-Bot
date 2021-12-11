@@ -1,10 +1,10 @@
-import { Command } from '../../Structures/Command.js';
-import { Collection, GuildChannel, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
-import { isCategory, isStage, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bold, inlineCode, italic } from '@khaf/builders';
+import { Collection, GuildChannel, Message, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
+import { isCategory, isStage, isThread, isVoice } from '../../lib/types/Discord.js.js';
+import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Command } from '../../Structures/Command.js';
 
 const threadPerms = new Permissions([
     Permissions.FLAGS.MANAGE_THREADS,
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
                 this.Embed.ok(`

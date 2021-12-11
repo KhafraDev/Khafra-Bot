@@ -1,8 +1,7 @@
 import { codeBlock } from '@khaf/builders';
-import { MessageAttachment, Permissions, ReplyMessageOptions, TextChannel } from 'discord.js';
+import { MessageAttachment, Permissions, ReplyMessageOptions, TextChannel, Message } from 'discord.js';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
-import { Message } from '../../../lib/types/Discord.js.js';
 import { table } from '../../../lib/Utility/CLITable.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { Command } from '../../../Structures/Command.js';
@@ -52,7 +51,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.VIEW_GUILD_INSIGHTS)) {
             return this.Embed.perms(
                 message.channel as TextChannel,

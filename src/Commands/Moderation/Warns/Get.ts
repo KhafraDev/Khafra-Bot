@@ -1,12 +1,11 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Warning } from '../../../lib/types/KhafraBot.js';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
 
 interface Total {
     total_points: string
@@ -40,7 +39,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const user = hasPerms(message.channel, message.member, Permissions.FLAGS.KICK_MEMBERS) && args.length === 1
             ? (await getMentions(message, 'users') ?? message.author)
             : message.author;

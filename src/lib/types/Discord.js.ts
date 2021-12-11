@@ -19,8 +19,3 @@ export const isVoice = <T>(c: T): c is T & VoiceChannel => c instanceof VoiceCha
 export const isCategory = <T>(c: T): c is T & CategoryChannel => c instanceof CategoryChannel;
 export const isStage = <T>(c: T): c is T & StageChannel => c instanceof StageChannel;
 export const isThread = <T>(c: T): c is T & ThreadChannel => c instanceof ThreadChannel;
-
-export type Message = import('discord.js').Message
-    & { guild: import('discord.js').Guild }
-    & { member: import('discord.js').GuildMember }
-;

@@ -1,6 +1,6 @@
 import { bold } from '@khaf/builders';
-import { Permissions } from 'discord.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
+import { Message, Permissions } from 'discord.js';
+import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: kGuild) {
+    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 

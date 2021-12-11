@@ -1,8 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isExplicitText, isText, Message } from '../../lib/types/Discord.js.js';
+import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const guildChannel = channelFirst 

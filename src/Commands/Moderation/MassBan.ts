@@ -1,9 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions, GuildMember, User } from 'discord.js';
+import { Permissions, GuildMember, User, Message } from 'discord.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
 import { bans } from '../../lib/Cache/Bans.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Message } from '../../lib/types/Discord.js.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {
@@ -25,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const ids = args.map(id => /^\d{17,19}$/.test(id) 
             ? id 
             : message.mentions.members!.get(id.replace(/[^\d]/g, ''))!
@@ -40,7 +39,7 @@ export class kCommand extends Command {
             return (async () => {
                 const type = await message.guild.members.ban(id, { reason });
 
-                if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+                if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
                     if (!bans.has(`${message.guild.id},${id}`)) // not in the cache already, just to be sure
                         bans.set(`${message.guild.id},${id}`, { member: message.member, reason });
 

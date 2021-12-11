@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { Message } from '../../lib/types/Discord.js.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 export class kCommand extends Command {
@@ -20,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         let desc = `For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n`;
         const next = `It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!`;
         let amount = 0;

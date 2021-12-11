@@ -6,7 +6,6 @@ import { fetch } from 'undici';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { bold } from '@khaf/builders';
 
-
 interface StrawpollOptions {
     priv: boolean
     co: boolean

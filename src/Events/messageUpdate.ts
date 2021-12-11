@@ -20,7 +20,7 @@ import { config, defaultSettings, disabled, logger, processArgs, _cooldownGuild,
 export class kEvent extends Event<'messageUpdate'> {
     name = 'messageUpdate' as const;
 
-    async init(oldMessage: Message, newMessage: Message) {
+    async init(oldMessage: Message<true>, newMessage: Message<true>) {
         if (!MessagesLRU.has(oldMessage.id)) return;
         if (oldMessage.content === newMessage.content) return;
         if (!Sanitize(newMessage) || isDM(newMessage.channel)) return;

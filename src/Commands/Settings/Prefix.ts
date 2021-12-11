@@ -1,6 +1,5 @@
 import { inlineCode } from '@khaf/builders';
-import { Permissions, TextChannel } from 'discord.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Permissions, TextChannel, Message } from 'discord.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Arguments, Command } from '../../Structures/Command.js';
@@ -24,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.perms(
                 message.channel as TextChannel,

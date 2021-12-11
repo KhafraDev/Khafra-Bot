@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
-import { isText, isThread, Message } from '../../../lib/types/Discord.js.js';
-import { MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
+import { isText, isThread } from '../../../lib/types/Discord.js.js';
+import { Message, MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
@@ -48,7 +48,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         // the current option the user is setting
         let currentOption: `${Actions}` | null = null;
         const settings: Settings = {

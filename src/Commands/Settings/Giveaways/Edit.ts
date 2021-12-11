@@ -1,14 +1,13 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { MessageActionRow } from 'discord.js';
+import { MessageActionRow, Message } from 'discord.js';
 import { hyperlink, inlineCode, bold } from '@khaf/builders';
 import { Components, disableAll, enableAll } from '../../../lib/Utility/Constants/Components.js';
 import { parseStrToMs } from '../../../lib/Utility/ms.js';
 import { Range } from '../../../lib/Utility/Valid/Number.js';
 import { time } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Message } from '../../../lib/types/Discord.js.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 type GiveawayEdit = Pick<Giveaway, 'id'>;
@@ -34,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (args.length === 0 || (args.length === 1 && args[0].toLowerCase().endsWith('edit'))) {
             const { rows } = await pool.query<GiveawayRow, string[]>(`
                 SELECT guildId, messageId, channelId, initiator, endDate, prize, id
@@ -42,7 +41,7 @@ export class kCommand extends Command {
                 WHERE guildId = $1::text AND initiator = $2::text
                 ORDER BY endDate ASC
                 LIMIT 10;
-            `, [message.guild.id, message.member.id]);
+            `, [message.guild.id, message.author.id]);
             
             let str = '';
             for (const row of rows) {
@@ -236,7 +235,7 @@ export class kCommand extends Command {
                 }));
             } else if (r === 'save') {
                 await dontThrow(c.last()!.deferReply());
-                params.push(message.guild.id, message.member.id, id);
+                params.push(message.guild.id, message.author.id, id);
                 
                 const { rows } = await pool.query<GiveawayEdit>(`
                     UPDATE kbGiveaways

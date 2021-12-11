@@ -1,8 +1,7 @@
 import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { Activity, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
+import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 import { client } from '../../../index.js';
-import { Message } from '../../../lib/types/Discord.js.js';
 import { cwd } from '../../../lib/Utility/Constants/Path.js';
 import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
 import { once } from '../../../lib/Utility/Memoize.js';
@@ -68,7 +67,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const user = await getMentions(message, 'users') ?? message.author;
         const member = user.equals(message.author) 
             ? message.member 

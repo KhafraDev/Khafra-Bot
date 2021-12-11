@@ -1,10 +1,10 @@
 import { Arguments, Command } from '../../Structures/Command.js';
-import { isCategory, isExplicitText, Message } from '../../lib/types/Discord.js.js';
+import { isCategory, isExplicitText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
-import { Permissions, TextChannel } from 'discord.js';
+import { Permissions, TextChannel, Message } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
 export class kCommand extends Command {
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: kGuild) {
+    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
                 message.channel as TextChannel,

@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) { 
+    async init(message: Message<true>) { 
         const locale = message.guild.preferredLocale;
 
         return this.Embed.ok()

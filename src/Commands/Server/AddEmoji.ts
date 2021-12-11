@@ -1,7 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { MessageAttachment, Permissions } from 'discord.js';
+import { Message, MessageAttachment, Permissions } from 'discord.js';
 import { validURL } from '../../lib/Utility/Valid/URL.js';
-import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 
@@ -24,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (args.length === 1 && message.attachments.size === 0)
             return this.Embed.generic(this, 'No attachment was included and no image link was provided!');
 

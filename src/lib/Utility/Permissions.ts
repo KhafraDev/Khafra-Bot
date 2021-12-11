@@ -27,10 +27,12 @@ export const hasPerms = (
  * @see https://discord.js.org/#/docs/main/stable/class/GuildMember?scrollTo=manageable
  */
 export const hierarchy = (
-    a: GuildMember,
-    b: GuildMember,
+    a: GuildMember | null,
+    b: GuildMember | null,
     strict = true
 ) => {
+    if (!a || !b) return false;
+    
     const cond = strict
         ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
         : a.roles.highest.comparePositionTo(b.roles.highest) >= 0;

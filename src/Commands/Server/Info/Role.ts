@@ -1,8 +1,7 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Role } from 'discord.js';
+import { Message, Role } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -22,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init(message: Message<true>, { content }: Arguments) {
         const role = 
             await getMentions(message, 'roles') ?? 
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());

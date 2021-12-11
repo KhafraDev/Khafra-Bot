@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Permissions, Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -20,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
             return this.Embed.error('Invalid Emoji provided!');
         }

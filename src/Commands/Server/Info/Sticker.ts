@@ -1,7 +1,7 @@
-import { Command } from '../../../Structures/Command.js';
-import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Message } from 'discord.js';
+import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
+import { Command } from '../../../Structures/Command.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init({ stickers, guild }: Message) {
+    async init({ stickers, guild }: Message<true>) {
         if (stickers.size === 0)
             return this.Embed.error('No stickers in message! 😕');
 

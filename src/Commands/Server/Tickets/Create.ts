@@ -1,8 +1,8 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { isExplicitText, Message } from '../../../lib/types/Discord.js.js';
+import { isExplicitText } from '../../../lib/types/Discord.js.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { CategoryChannel, Permissions, TextChannel } from 'discord.js';
+import { CategoryChannel, Permissions, TextChannel, Message } from 'discord.js';
 import { ChannelType } from 'discord-api-types/v9';
 import { randomUUID } from 'crypto';
 import { inlineCode } from '@khaf/builders';
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, commandName, prefix }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args, commandName, prefix }: Arguments, settings: kGuild) {
         if (settings.ticketchannel === null) {
             return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`${prefix}ticketchanel [channel]\`!`);
         } else if (commandName === 'ticket' || commandName === 'tickets') {
@@ -93,7 +93,7 @@ export class kCommand extends Command {
                     },
                     {
                         type: 'member',
-                        id: message.member.id,
+                        id: message.author.id,
                         allow: [
                             Permissions.FLAGS.VIEW_CHANNEL,
                             Permissions.FLAGS.SEND_MESSAGES,

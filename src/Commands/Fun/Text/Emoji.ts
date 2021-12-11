@@ -1,7 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parse } from 'twemoji-parser';
-import { Message } from '../../../lib/types/Discord.js.js';
 
 const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 
@@ -23,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 

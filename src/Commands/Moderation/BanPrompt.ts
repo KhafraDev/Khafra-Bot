@@ -1,12 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, MessageActionRow, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
 import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Message } from '../../lib/types/Discord.js.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -31,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const user = await getMentions(message, 'users');
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
@@ -80,7 +79,7 @@ export class kCommand extends Command {
 
         const [banError] = await dontThrow(message.guild.members.ban(user, {
             days: inRange(clear) ? clear : 7,
-            reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
+            reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
         }));
 
         if (banError !== null) {
@@ -89,7 +88,7 @@ export class kCommand extends Command {
                 components: []
             });
         } else {
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         }

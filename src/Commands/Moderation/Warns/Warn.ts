@@ -1,6 +1,6 @@
 import { bold, inlineCode } from '@khaf/builders';
-import { Permissions, TextChannel } from 'discord.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
@@ -40,7 +40,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         const points = Number(args[1]);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.KICK_MEMBERS))
@@ -59,7 +59,7 @@ export class kCommand extends Command {
             return this.Embed.error('Failed to fetch the member, sorry. 😕\n Are they in the guild?');
         else if (!hierarchy(message.member, member))
             return this.Embed.error(`You can't warn ${member}! 🤣`);
-        else if (!hierarchy(message.guild.me!, member))
+        else if (!hierarchy(message.guild.me, member))
             return this.Embed.error(`I can't warn ${member}! 😦`);
 
         const { rows } = await pool.query<WarnInsert>(`
