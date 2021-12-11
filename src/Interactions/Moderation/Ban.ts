@@ -68,12 +68,16 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        const member = 
+        let member = 
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
         if (!(member instanceof GuildMember) && !(member instanceof User)) {
-            return `❌ No full member or user object was found, ${pleaseInvite}`;
+            member = Reflect.construct(GuildMember, [
+                interaction.client,
+                member,
+                guild
+            ]) as GuildMember;
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember
