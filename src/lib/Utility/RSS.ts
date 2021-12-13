@@ -1,4 +1,4 @@
-import { parse, validate, X2jOptionsOptional } from 'fast-xml-parser';
+import { XMLParser, XMLValidator, X2jOptionsOptional } from 'fast-xml-parser';
 import { fetch } from 'undici';
 import { delay } from './Constants/OneLiners.js';
 import { validateNumber } from './Valid/Number.js';
@@ -19,7 +19,7 @@ const ms = {
     yearly: 3.154e+10
 } as const;
 
-interface RSSJSON<T extends unknown> {
+interface RSSJSON<T> {
     rss: {
         channel: {
             title: string
@@ -34,7 +34,7 @@ interface RSSJSON<T extends unknown> {
     }
 }
 
-interface AtomJSON<T extends unknown> {
+interface AtomJSON<T> {
     feed: {
         id: string
         title: string
@@ -44,9 +44,10 @@ interface AtomJSON<T extends unknown> {
     }
 }
 
-export class RSSReader<T extends unknown> {
+export class RSSReader<T> {
     #interval: NodeJS.Timeout | null = null;
     #options: X2jOptionsOptional = {};
+    #parser: XMLParser;
 
     public readonly results = new Set<T>();
     public timeout = 60 * 1000 * 60;
@@ -61,6 +62,7 @@ export class RSSReader<T extends unknown> {
      */
     constructor(loadFunction = noop, options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
+        this.#parser = new XMLParser(options);
         this.#options = options;
     }
 
@@ -97,7 +99,7 @@ export class RSSReader<T extends unknown> {
         const r = await this.forceFetch();
         const xml = await r?.text();
 
-        const validXML = xml ? validate(xml) : false;
+        const validXML = xml ? XMLValidator.validate(xml) : false;
         if (typeof xml !== 'string' || validXML !== true) {
             if (validXML !== true && validXML !== false) {
                 const { line, msg, code } = validXML.err;
@@ -111,7 +113,7 @@ export class RSSReader<T extends unknown> {
 
         // if the XML is valid, we can clear the old cache
         this.results.clear();
-        const j = parse(xml, this.#options) as RSSJSON<T> | AtomJSON<T>;
+        const j = this.#parser.parse(xml, this.#options) as RSSJSON<T> | AtomJSON<T>;
 
         if (!('rss' in j) && !('feed' in j)) {
             return clearInterval(this.#interval!);
@@ -166,7 +168,7 @@ export class RSSReader<T extends unknown> {
             this.results.add(i);
         }
 
-        this.afterSave?.();
+        void this.afterSave?.();
     }
 
     cache = async (url: string) => {

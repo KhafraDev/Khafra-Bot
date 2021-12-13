@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, SlashCommandSubcommandGroupBuilder } from '@discordjs/builders';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { Interaction, InteractionReplyOptions } from 'discord.js';
 
 interface InteractionOptions {
@@ -12,12 +12,14 @@ type HandlerReturn =
     | import('discord.js').MessageEmbed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
-    | import('@discordjs/builders').SlashCommandSubcommandGroupBuilder
     | void;
+
+type InteractionData =
+    | RESTPostAPIApplicationCommandsJSONBody;
 
 export abstract class Interactions {
     constructor(
-        public data: SlashCommandBuilder | SlashCommandSubcommandGroupBuilder, 
+        public data: InteractionData, 
         public options: InteractionOptions = {}
     ) {
         this.data = data;

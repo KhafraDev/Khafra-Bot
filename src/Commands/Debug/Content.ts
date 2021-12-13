@@ -1,9 +1,7 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -21,6 +19,6 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { content }: Arguments) {
-        return this.Embed.success(codeBlock(content));
+        return this.Embed.ok(codeBlock(content));
     }
 }

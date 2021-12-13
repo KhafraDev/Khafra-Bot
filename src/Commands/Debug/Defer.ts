@@ -1,8 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -21,6 +19,6 @@ export class kCommand extends Command {
     async init(message: Message) {
         if (message.deletable)
             await message.delete();
-        await message.reply({ embeds: [this.Embed.fail('If you\'re seeing this, something went wrong...')] });
+        await message.reply({ embeds: [this.Embed.error('If you\'re seeing this, something went wrong...')] });
     }
 }

@@ -1,10 +1,11 @@
 import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
@@ -13,19 +14,24 @@ const perms = [ Permissions.FLAGS.KICK_MEMBERS ];
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('kick')
-            .addUserOption(option => option
-                .setName('member')
-                .setDescription('Member to kick.')
-                .setRequired(true)    
-            )
-            .addStringOption(option => option
-                .setName('reason')
-                .setDescription('The reason to kick the member for.')
-                .setRequired(false)    
-            )
-            .setDescription('Kick a guild member!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'kick',
+            description: 'Kick a guild member!',
+            default_permission: false,
+            options: [
+                {
+                    type: ApplicationCommandOptionType.User,
+                    name: 'member',
+                    description: 'Member to kick.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'reason',
+                    description: 'The reason you are kicking the member for.'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -33,7 +39,7 @@ export class kInteraction extends Interactions {
     async init(interaction: CommandInteraction) {
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to kick this member, try to ${pleaseInvite}`;
-        } else if (!hasPerms(interaction.channel, interaction.client.user, perms)) {
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
             return `❌ I do not have permission to kick this member, try to ${pleaseInvite}`;
         }
 
@@ -53,12 +59,16 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        const member = 
-            interaction.options.getMember('member', true)
+        let member = 
+            interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
         if (!(member instanceof GuildMember) && !(member instanceof User)) {
-            return `❌ No full member or user object was found, ${pleaseInvite}`;
+            member = Reflect.construct(GuildMember, [
+                interaction.client,
+                member,
+                guild
+            ]) as GuildMember;
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember
@@ -78,11 +88,14 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error has occurred: ${inlineCode(kickErr.message)}`;
         }
 
-        return Embed.success(`
+        return Embed.ok(`
         ${kicked} has been kicked from the guild!${processArgs.get('dev') ? notReally : ''}
 
         Reason: ${inlineCode(reason.slice(0, 1000))}
         `)
-        .setAuthor(interaction.user.username, interaction.user.displayAvatarURL());
+        .setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.displayAvatarURL()
+        });
     }
 } 

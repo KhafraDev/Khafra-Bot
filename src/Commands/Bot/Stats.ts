@@ -1,10 +1,8 @@
 import { Message } from 'discord.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Stats } from '../../lib/Utility/Stats.js';
-import { bold } from '@discordjs/builders';
+import { bold } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([
@@ -29,7 +27,7 @@ export class kCommand extends Command {
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(`Bot Statistics`)
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },

@@ -1,18 +1,15 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,16 +30,16 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const user = await getMentions(message, 'users');
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.fail(`You do not have permission to ban ${member}!`);
+            return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.fail(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
         }
 
         const row = new MessageActionRow()
@@ -52,7 +49,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embeds: [this.Embed.success(`Are you sure you want to ban ${user}?`)],
+            embeds: [this.Embed.ok(`Are you sure you want to ban ${user}?`)],
             components: [row]
         });
 
@@ -61,43 +58,44 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        let button: MessageComponentInteraction | null = null;
-        try {
-            button = await msg.awaitMessageComponent({ filter, time: 20_000 });
-        } catch {
+        const [pressedError, button] = await dontThrow(msg.awaitMessageComponent({
+            filter, time: 20_000
+        }));
+
+        if (pressedError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.fail(`Didn't get confirmation to ban ${user}!`)],
+                embeds: [this.Embed.error(`Didn't get confirmation to ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             }); 
 
         await button.deferUpdate();
 
-        try {
-            await message.guild.members.ban(user, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
-                reason: reason.length > 0 ? reason : `Requested by ${message.member.id}`
-            });
+        const [banError] = await dontThrow(message.guild.members.ban(user, {
+            days: inRange(clear) ? clear : 7,
+            reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
+        }));
 
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
-        } catch {
+        if (banError !== null) {
             return void button.editReply({
-                embeds: [this.Embed.fail(`${user} isn't bannable!`)],
+                embeds: [this.Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
+        } else {
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
+                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         }
 
         await button.editReply({
             embeds: [
-                this.Embed.success(
+                this.Embed.ok(
                     `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` + 
                     ` days worth of messages have been removed.`
                 )

@@ -1,8 +1,6 @@
-import { italic } from '@discordjs/builders';
+import { italic } from '@khaf/builders';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -19,8 +17,8 @@ export class kCommand extends Command {
         );
     }
 
-    init() {
-        return this.Embed.success()
+    async init() {
+        return this.Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`
             Reviews by ${italic('real')} people:

@@ -1,7 +1,5 @@
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([], {
@@ -13,8 +11,8 @@ export class kCommand extends Command {
         });
     }
 
-    init() {
-        return this.Embed.success(`
+    async init() {
+        return this.Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)
 

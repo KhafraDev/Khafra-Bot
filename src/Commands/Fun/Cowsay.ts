@@ -2,9 +2,8 @@ import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
 
 const dir = join(assets, 'Cowsay');
 const start = `
@@ -13,7 +12,6 @@ const start = `
 const types = new Set<string>();
 const bases = new Map<string, string>();
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -42,7 +40,7 @@ export class kCommand extends Command {
         }
 
         if (args[0].toLowerCase() === 'list') {
-            return this.Embed.success(`
+            return this.Embed.ok(`
             ${[...types].map(t => '``' + t + '``').join(', ')}
             `).setTitle(`${types.size} formats available`);
         }
@@ -52,9 +50,9 @@ export class kCommand extends Command {
             : ['cowsay', ...args];
 
         if (!content)
-            return this.Embed.fail('Since you provided a format, you have to provide some text to say!');
+            return this.Embed.error('Since you provided a format, you have to provide some text to say!');
         if (!types.has(format))
-            return this.Embed.fail(`Format not found! Use the command \`cowsay list\` to list all formats!`);
+            return this.Embed.error(`Format not found! Use the command \`cowsay list\` to list all formats!`);
 
         const split = content.join(' ')
             .match(/.{1,38}/g)! // split every 38 characters; removes new lines
@@ -79,8 +77,8 @@ export class kCommand extends Command {
         const formatted = codeBlock(`${start}${split.join('\n')}\n${art}`);
 
         if (formatted.length > 2048)
-            return this.Embed.fail('Message is too long, trim it down!');
+            return this.Embed.error('Message is too long, trim it down!');
 
-        return this.Embed.success(formatted);
+        return this.Embed.ok(formatted);
     }
 }

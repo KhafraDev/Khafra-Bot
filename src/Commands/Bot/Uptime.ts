@@ -1,8 +1,7 @@
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const getUptime = (ms: number) => {
     return Object.entries({
@@ -17,7 +16,6 @@ const getUptime = (ms: number) => {
         .join(' ');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,8 +31,8 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) {
-        return Embed.success(`
+    async init(message: Message) {
+        return Embed.ok(`
         ⏰ ${inlineCode(getUptime(message.client.uptime ?? 0))}
         `).setTitle('Khafra-Bot has been online for:');
     }

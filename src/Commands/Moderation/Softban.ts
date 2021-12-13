@@ -1,17 +1,13 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -32,10 +28,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const member = await getMentions(message, 'users');
         if (!member) {
-            return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
+            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -45,19 +41,19 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.ban(member, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+                days: inRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
 
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
                 if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${member.id}`, { member: message.member, reason });
         } catch {
-            return this.Embed.fail(`${member} isn't bannable!`);
+            return this.Embed.error(`${member} isn't bannable!`);
         }
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${member} has been soft-banned from the guild!
         `);
     }

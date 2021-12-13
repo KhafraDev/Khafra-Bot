@@ -1,11 +1,12 @@
 import { CommandInteraction, Permissions } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { validSnowflake } from '../../lib/Utility/Mentions.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
@@ -14,19 +15,24 @@ const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('unban')
-            .addUserOption(option => option
-                .setName('member')
-                .setDescription('Member ID to unban.')
-                .setRequired(true)    
-            )
-            .addStringOption(option => option
-                .setName('reason')
-                .setDescription('The reason to unban the member for.')
-                .setRequired(false)    
-            )
-            .setDescription('Unban someone!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'unban',
+            description: 'Unban someone!',
+            default_permission: false,
+            options: [
+                {
+                    type: ApplicationCommandOptionType.User,
+                    name: 'member',
+                    description: 'Member to unban.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'reason',
+                    description: 'The reason you are unbanning the member for.'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -36,7 +42,7 @@ export class kInteraction extends Interactions {
 
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to unban this member, try to ${pleaseInvite}`;
-        } else if (!hasPerms(interaction.channel, interaction.client.user, perms)) {
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
             return `❌ I do not have permission to unban this member, try to ${pleaseInvite}`;
         } else if (!validSnowflake(id)) {
             return '❌ That isn\'t a user ID, try again!';
@@ -66,8 +72,11 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error has occurred: ${inlineCode(unbanErr.message)}`;
         }
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(`${unbanned} has been unbanned from the guild!${processArgs.get('dev') ? notReally : ''}`)
-            .setAuthor(interaction.user.username, interaction.user.displayAvatarURL());
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            });
     }
 } 

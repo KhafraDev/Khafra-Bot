@@ -1,10 +1,9 @@
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { Message, MessageActionRow, Snowflake } from 'discord.js';
 import { shuffle } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 type Card = [number, typeof suits[number]];
 
@@ -29,7 +28,6 @@ const getName = (v: number) => v > 1 && v <= 10
     ? `${v}` 
     : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -40,7 +38,7 @@ export class kCommand extends Command {
                 name: 'blackjack',
                 folder: 'Games',
                 args: [0, 0],
-                ratelimit: 30, 
+                ratelimit: 10, 
                 aliases: ['bj']
             }
         );
@@ -48,7 +46,7 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (games.has(message.author.id))
-            return this.Embed.fail(`Finish your other game before playing another!`);
+            return this.Embed.error(`Finish your other game before playing another!`);
 
         const rows = [
             new MessageActionRow()
@@ -67,7 +65,7 @@ export class kCommand extends Command {
         const makeEmbed = (desc?: string, hide = true) => {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
-            return this.Embed.success(desc)
+            return this.Embed.ok(desc)
                 .addField(
                     bold(`Dealer${dealerTotal}`), 
                     dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')

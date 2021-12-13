@@ -1,29 +1,33 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { translate, langs } from '../../lib/Packages/Translate.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('translate')
-            .addStringOption(option => option
-                .setName('text')
-                .setDescription('text to translate')
-                .setRequired(true)
-            )
-            .addStringOption(option => option
-                .setName('to')
-                .setDescription('language code to translate to (default: "en")')
-                .setRequired(false)
-            )
-            .addStringOption(option => option
-                .setName('from')
-                .setDescription('language code to translate from (default: "from")')
-                .setRequired(false)
-            )
-            .setDescription('Use Google Translate to translate some text!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'translate',
+            description: 'Use Google Translate to translate some text!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'text',
+                    description: 'Text to translate.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'to',
+                    description: 'Language code to translate to (default: "en").'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'from',
+                    description: 'Language code to translate from (default: "from").'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -41,8 +45,8 @@ export class kInteraction extends Interactions {
             }
         );
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(translated)
-            .setAuthor(interaction.user.username, interaction.user.displayAvatarURL());
+            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
     }
 } 

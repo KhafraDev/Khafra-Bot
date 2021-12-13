@@ -3,11 +3,10 @@ import { GuildMember, Channel, Permissions } from 'discord.js';
 import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { time } from '@discordjs/builders';
+import { time } from '@khaf/builders';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 
 const basic = new Permissions([
@@ -18,7 +17,6 @@ const basic = new Permissions([
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-@RegisterEvent
 export class kEvent extends Event<'guildMemberRemove'> {
     name = 'guildMemberRemove' as const;
 
@@ -33,12 +31,10 @@ export class kEvent extends Event<'guildMemberRemove'> {
                 WHERE kbInsights.k_guild_id = $1::text;
         `, [member.guild.id]);
 
-        const cached = await client.exists(member.guild.id) === 1;
-        let item: WelcomeChannel | null = null
-
-        if (cached) {
-            item = JSON.parse(await client.get(member.guild.id)) as kGuild;
-        } else {
+        const row = await client.get(member.guild.id);
+        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
+        
+        if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
@@ -66,12 +62,16 @@ export class kEvent extends Event<'guildMemberRemove'> {
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
 
-        const embed = Embed.success()
-            .setAuthor(member.user.username, member.user.displayAvatarURL())
+        const joined = 
+            member.joinedAt ? time(member.joinedAt) : 'N/A' +
+            ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
+
+        const embed = Embed.ok()
+            .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} (${member.user.tag}) has left the server!
             • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
+            • Joined: ${joined}
             • Left: ${time(new Date())} (${time(new Date(), 'R')})
             `)
             .setFooter('User left');

@@ -1,12 +1,10 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { AllowedImageFormat, AllowedImageSize, ImageURLOptions, Message } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 const avatarSizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -37,24 +35,22 @@ export class kCommand extends Command {
             dynamic: true
         };
 
-        if (cli.size !== 0) {
-            if (cli.has('size') || cli.has('s')) {
-                const value = Number(cli.get('size') || cli.get('s'));
-                if (avatarSizes.includes(value)) {
-                    opts.size = value as AllowedImageSize;
-                }
+        if (cli.has('size') || cli.has('s')) {
+            const value = Number(cli.get('size') || cli.get('s'));
+            if (avatarSizes.includes(value)) {
+                opts.size = value as AllowedImageSize;
             }
+        }
 
-            if (cli.has('format') || cli.has('f')) {
-                const value = cli.get('format') || cli.get('f');
-                if (typeof value === 'string' && avatarFormats.includes(value)) {
-                    opts.format = value as AllowedImageFormat & 'gif';
-                }
+        if (cli.has('format') || cli.has('f')) {
+            const value = cli.get('format') || cli.get('f');
+            if (typeof value === 'string' && avatarFormats.includes(value)) {
+                opts.format = value as AllowedImageFormat & 'gif';
             }
         }
 
         const avatar = user.displayAvatarURL(opts);
         
-        return this.Embed.success(`${user}'s avatar`).setImage(avatar);
+        return this.Embed.ok(`${user}'s avatar`).setImage(avatar);
     }
 }

@@ -1,7 +1,6 @@
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { fetch } from 'undici';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
 interface IMCOnline {
     online: true,
@@ -69,7 +68,6 @@ const cache = {
     players: 0
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -90,7 +88,7 @@ export class kCommand extends Command {
             const sentence = cache.players === 1
 				? 'is ``1`` player'
 				: `are ${inlineCode(`${cache.players}`)} players`;
-            const embed = this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+            const embed = this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
             return embed;
         }
 
@@ -102,6 +100,6 @@ export class kCommand extends Command {
         const sentence = cache.players === 1
 			? 'is ``1`` player'
 			: `are ${inlineCode(`${cache.players}`)} players`;
-        return this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+        return this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
     }
 }

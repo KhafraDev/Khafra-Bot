@@ -1,11 +1,31 @@
-import { Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { codeBlock } from '@khaf/builders';
+import { MessageAttachment, Permissions, ReplyMessageOptions, TextChannel, Message } from 'discord.js';
+import { fetch } from 'undici';
+import { URLSearchParams } from 'url';
 import { table } from '../../../lib/Utility/CLITable.js';
-import { Message } from '../../../lib/types/Discord.js.js';
-import { codeBlock } from '@discordjs/builders';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { Command } from '../../../Structures/Command.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
+
+class ImageCharts {
+    private query = new URLSearchParams();
+
+    constructor(o: Record<string, string | number>) {
+        for (const [key, value] of Object.entries(o)) {
+            this.query.set(key, `${value}`);
+        }
+    }
+
+    async blob() {
+        const res = await fetch(`https://image-charts.com/chart.js/2.8.0?${this.query}`, {
+            headers: {
+                'User-Agent': 'PseudoBot'
+            }
+        });
+        
+        return await res.blob();
+    }
+}
 
 interface Insights {
     k_date: Date
@@ -14,9 +34,7 @@ interface Insights {
 }
 
 const intl = Intl.DateTimeFormat('en-US', { dateStyle: 'long' });
-const dateFormat = (time: Date) => intl.format(time);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,9 +51,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.VIEW_GUILD_INSIGHTS)) {
-            return this.Embed.missing_perms(true);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.VIEW_GUILD_INSIGHTS
+            );
         }
 
         const { rows } = await pool.query<Insights>(`
@@ -53,11 +75,11 @@ export class kCommand extends Command {
         `, [message.guild.id]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`No insights available within the last 14 days.`);
+            return this.Embed.error(`No insights available within the last 14 days.`);
 
         const locale = message.guild.preferredLocale;
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(dateFormat(row.k_date));
+            red.Dates.push(intl.format(row.k_date));
             red.Joins.push(row.k_joined.toLocaleString(locale));
             red.Leaves.push(row.k_left.toLocaleString(locale));
 
@@ -68,8 +90,43 @@ export class kCommand extends Command {
             Leaves: [] as string[]
         });
 
-        const t = table({ Dates, Joins, Leaves });
+        const data = JSON.stringify({
+            type: 'line',
+            data: {
+                labels: Dates,
+                datasets: [
+                    {
+                        label: 'Joins',
+                        borderColor: 'rgb(255,+99,+132)',
+                        backgroundColor: 'rgba(255,+99,+132,+.5)',
+                        data: Joins
+                    },
+                    {
+                        label: 'Leaves',
+                        borderColor: 'rgb(54,+162,+235)',
+                        backgroundColor: 'rgba(54,+162,+235,+.5)',
+                        data: Leaves
+                    }
+                ]
+            },
+        });
 
-        return this.Embed.success(codeBlock(t));
+        const t = table({ Dates, Joins, Leaves });
+        const chart = await new ImageCharts({
+            chart: data,
+            width: 500,
+            height: 300,
+            backgroundColor: 'black'
+        }).blob();
+        const attach = new MessageAttachment(chart, `chart.png`);
+
+        return {
+            embeds: [
+                this.Embed.ok()
+                    .setDescription(codeBlock(t))
+                    .setImage(`attachment://chart.png`)
+            ],
+            files: [attach]
+        } as ReplyMessageOptions;
     }
 }

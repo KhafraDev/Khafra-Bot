@@ -1,13 +1,16 @@
-import { Event } from '../Structures/Event.js';
+import { bold, inlineCode } from '@khaf/builders';
 import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { upperCase } from '../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { Command } from '../Structures/Command.js';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { autoCompleteHandler } from '../lib/Utility/EventEvents/Interaction_AutoComplete.js';
 import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interaction_ReactRoles.js';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { upperCase } from '../lib/Utility/String.js';
+import { Command } from '../Structures/Command.js';
+import { Event } from '../Structures/Event.js';
+import { Logger } from '../Structures/Logger.js';
+
+const logger = new Logger();
 
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -16,13 +19,14 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .map(c => c.toLowerCase())
     : [];
 
-@RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
     name = 'interactionCreate' as const;
 
     async init(interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
             return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
+        } else if (interaction.isAutocomplete()) {
+            return autoCompleteHandler(interaction);
         }
         
         if (!interaction.isCommand()) return;
@@ -39,6 +43,8 @@ export class kEvent extends Event<'interactionCreate'> {
                 content: `${inlineCode(interaction.commandName)} is temporarily disabled!`
             }));
         }
+
+        let err: Error | void;
 
         try {
             if (command.options.defer)
@@ -73,8 +79,18 @@ export class kEvent extends Event<'interactionCreate'> {
 
             return void await interaction.reply(param);
         } catch (e) {
+            err = e as Error;
+
             if (processArgs.get('dev') === true) {
                 console.log(e);
+            }
+        } finally {
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.log(
+                    `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+                );
             }
         }
     }

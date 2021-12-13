@@ -1,9 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -20,11 +18,14 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message) { 
+    async init(message: Message<true>) { 
         const locale = message.guild.preferredLocale;
 
-        return this.Embed.success()
-            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
+        return this.Embed.ok()
+            .setAuthor({
+                name: message.client.user!.username,
+                iconURL: message.client.user!.displayAvatarURL()
+            })
             .setTimestamp()
             .setThumbnail(message.guild.bannerURL()!)
             .setDescription(`

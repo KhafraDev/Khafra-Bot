@@ -1,23 +1,28 @@
 import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, inlineCode, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('crypto')
-            .addStringOption(option => option
-                .setName('search')
-                .setDescription('The cryptocurrency\'s name.')
-                .setRequired(true)    
-            )
-            .setDescription('Gets info about cryptocurrency! Kill the environment!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'crypto',
+            description: 'Gets information about a cryptocurrency. Kill the environment!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'search',
+                    description: 'The cryptocurrency\'s name.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }
@@ -34,7 +39,7 @@ export class kInteraction extends Interactions {
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)

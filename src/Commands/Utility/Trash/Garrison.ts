@@ -1,13 +1,11 @@
 /** Please get mental illness treated! */
 
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { garrisonTransaction, migrateGarrison } from '../../../lib/Migration/Garrison.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { Message } from 'discord.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { cpus } from 'os';
 import { asyncQuery } from '../../../Structures/Database/SQLite.js';
 
 interface ISchizophrenia {
@@ -45,7 +43,6 @@ const cache = once(async () => {
     await rss.cache('https://grrrgraphics.com/feed/')
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -61,15 +58,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
-        if (cpus().length === 1) 
-            return this.Embed.fail(`This command will not work on this host! Ask the bot maintainer to change their host!`);
-            
+    async init(_message: Message, { args }: Arguments) {  
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(decodeXML(comic.title))
                 .setURL(comic.link)
                 .setImage(/src="(.*?)"/.exec(comic['content:encoded'])![1]);
@@ -79,7 +73,7 @@ export class kCommand extends Command {
             SELECT * FROM kbGarrison ORDER BY RANDOM() LIMIT 1;
         `);
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(comic.title)
             .setURL(comic.href)
             .setImage(comic.link);

@@ -1,10 +1,7 @@
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Message } from '../../lib/types/Discord.js.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -16,12 +13,13 @@ export class kCommand extends Command {
                 folder: 'Server',
                 aliases: ['crown', 'crownlost'],
                 args: [0, 0],
-                ratelimit: 3
+                ratelimit: 3,
+                guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         let desc = `For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n`;
         const next = `It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!`;
         let amount = 0;
@@ -39,11 +37,11 @@ export class kCommand extends Command {
         }
 
         if (amount === 0) {
-            return this.Embed.fail(`The server owner already has a crown! Refresh your client to see it. 👑`);
+            return this.Embed.error(`The server owner already has a crown! Refresh your client to see it. 👑`);
         }
 
         desc += next;
 
-        return this.Embed.success(desc);
+        return this.Embed.ok(desc);
     }
 }

@@ -1,10 +1,8 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { npm } from '@khaf/npm';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -25,14 +23,18 @@ export class kCommand extends Command {
         const _package = await npm(args[0]);
 
         if ('code' in _package) {
-            return this.Embed.fail('No package with that name was found!');
+            return this.Embed.error('No package with that name was found!');
         } else if ('error' in _package) {
-            return this.Embed.fail(`Received error ${inlineCode(_package.error)}.`);
+            return this.Embed.error(`Received error ${inlineCode(_package.error)}.`);
         }
 
         const dist = _package.versions[_package['dist-tags'][args[1] ?? 'latest']];
-        return this.Embed.success()
-            .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
+        return this.Embed.ok()
+            .setAuthor({
+                name: 'NPM',
+                iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
+                url: 'https://npmjs.com/'
+            })
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(_package.description.slice(0, 2000))}

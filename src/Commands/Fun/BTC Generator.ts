@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { delay } from '../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-const range = Range(0, Number.MAX_SAFE_INTEGER);
+const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -26,9 +24,9 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments): Promise<void> {
         const num = Number(args[0]);
-        const btc = range.isInRange(num) && validateNumber(num) ? num : 1000;
+        const btc = inRange(num) ? num : 1000;
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
@@ -36,11 +34,9 @@ export class kCommand extends Command {
         
         await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
 
-        if (msg.deleted) return;
-
-        const embed2 = this.Embed.success()
+        const embed2 = this.Embed.ok()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
 
-        return void msg.edit({ embeds: [embed2] });
+        return void dontThrow(msg.edit({ embeds: [embed2] }));
     }
 }

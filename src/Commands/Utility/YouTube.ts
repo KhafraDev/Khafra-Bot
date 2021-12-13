@@ -1,13 +1,12 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageActionRow, Interaction } from 'discord.js';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { assets } from '../../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { decodeXML } from 'entities';
 import { readFileSync } from 'fs';
@@ -24,12 +23,12 @@ setInterval(() => {
     void dontThrow(YouTube([search]));
 }, 1000 * 60 * 60 * 24);
 
-function* format(items: YouTubeSearchResults, embed = Embed.success) {
+function* format(items: YouTubeSearchResults, embed = Embed.ok) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const Embed = embed()
             .setTitle(decodeXML(video.title))
-            .setAuthor(video.channelTitle)
+            .setAuthor({ name: video.channelTitle })
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
             .addField(bold('Published:'), time(new Date(video.publishTime)))
@@ -39,7 +38,6 @@ function* format(items: YouTubeSearchResults, embed = Embed.success) {
     }
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -60,11 +58,11 @@ export class kCommand extends Command {
         const results = await YouTube(args);
 
         if ('error' in results) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             ${results.error.code}: ${results.error.message}
             `);
         } else if (results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             No results found!
             `);
         }

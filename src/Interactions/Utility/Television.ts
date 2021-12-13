@@ -1,20 +1,25 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { searchTV } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('tv')
-            .addStringOption(option => option
-                .setName('name')
-                .setDescription('TV Show name to get info about.')
-                .setRequired(true)
-            )
-            .setDescription('Get information about a tv show!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'tv',
+            description: 'Gets information about a TV show!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'name',
+                    description: 'TV show to get information about.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -28,7 +33,7 @@ export class kInteraction extends Interactions {
         if (!tv)
             return `❌ No TV show with that name was found!`;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
             .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)

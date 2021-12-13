@@ -1,11 +1,9 @@
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { NASAGetRandom, cache } from '../../lib/Packages/NASA.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -29,12 +27,12 @@ export class kCommand extends Command {
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}`);
         } else if (result === null) {
-            return this.Embed.fail('No images were fetched, try again?');
+            return this.Embed.error('No images were fetched, try again?');
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(result.title)
             .setImage(result.link);
             

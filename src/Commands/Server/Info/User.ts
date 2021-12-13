@@ -1,19 +1,14 @@
-import { Command } from '../../../Structures/Command.js';
-import { SnowflakeUtil, Snowflake, Activity } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { UserFlagsString } from 'discord.js';
-import { client } from '../../../index.js';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
-
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
+import { client } from '../../../index.js';
+import { cwd } from '../../../lib/Utility/Constants/Path.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { once } from '../../../lib/Utility/Memoize.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { Command } from '../../../Structures/Command.js';
 
-const config = {} as typeof import('../../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
@@ -55,7 +50,6 @@ const getEmojis = once(() => {
 // 140214425276776449 -> bug hunter 1
 // 73193882359173120 -> hypesquad events; bug hunter 2
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -67,12 +61,13 @@ export class kCommand extends Command {
                 name: 'user',
                 folder: 'Server',
                 args: [0, 1],
-                aliases: [ 'userinfo' ]
+                aliases: [ 'userinfo' ],
+                guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const user = await getMentions(message, 'users') ?? message.author;
         const member = user.equals(message.author) 
             ? message.member 
@@ -87,8 +82,11 @@ export class kCommand extends Command {
             .filter(f => getEmojis().has(f))
             .map(f => getEmojis().get(f));
 
-        return this.Embed.success(formatPresence(member?.presence?.activities) ?? undefined)
-            .setAuthor(user.tag, user.displayAvatarURL() ?? message.client.user!.displayAvatarURL())
+        return this.Embed.ok(formatPresence(member?.presence?.activities) ?? undefined)
+            .setAuthor({
+                name: user.tag,
+                iconURL: user.displayAvatarURL() ?? message.client.user!.displayAvatarURL()
+            })
             .addField(bold('Username:'), user.username, true)
             .addField(bold('ID:'), user.id, true)
             .addField(bold('Discriminator:'), `#${user.discriminator}`, true)

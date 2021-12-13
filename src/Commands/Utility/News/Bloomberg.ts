@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:bloomberg.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://bloomberg.com',
     command: ['bloomberg'],
-    author: ['Bloomberg', 'https://assets.bbhub.io/company/sites/51/2019/08/og-image-generic-lp.png']
+    author: { name: 'Bloomberg', iconURL: 'https://i.imgur.com/CsJUHy1.png' }
 } as const;
 
 interface IBloomberg {
@@ -23,7 +22,6 @@ interface IBloomberg {
 const rss = new RSSReader<IBloomberg>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -42,16 +40,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

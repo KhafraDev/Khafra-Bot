@@ -1,26 +1,28 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('badmeme')
-            .addStringOption(option => option
-                .setName('subreddit')
-                .setDescription('Subreddit to get a bad meme on.')
-                .setRequired(false)    
-            )
-            .setDescription('Get a horrible meme!')
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'badmeme',
+            description: `Get a horrible meme!`,
+            options: [
+                {
+                    // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+                    type: ApplicationCommandOptionType.String,
+                    name: 'subreddit',
+                    description: 'Subreddit to get a bad meme on.'
+                }
+            ]
+        };
 
         super(sc);
     }
 
     async init(interaction: CommandInteraction) {
-        const subreddit = interaction.options.get('subreddit')?.value ?? 'dankmemes';
-        if (typeof subreddit !== 'string')
-            return 'Invalid option received!';
+        const subreddit = interaction.options.getString('subreddit') ?? 'dankmemes';
 
         if (!cache.has(subreddit))
             await interaction.deferReply();

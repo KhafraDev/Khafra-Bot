@@ -1,5 +1,6 @@
 import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel, Snowflake } from 'discord.js';
 import { client } from '../../index.js';
+import { dontThrow } from './Don\'tThrow.js';
 
 interface Options {
     splice?: boolean
@@ -52,19 +53,19 @@ export async function getMentions(
             return null;
 
         if (type === 'members' || type === 'roles') {
-            try {
-                const coll = await guild[type].fetch(item); // cache is checked with this
-                return coll;
-            } catch {}
+            const [fetchErr, coll] = await dontThrow<
+                import('discord.js').Role |
+                import('discord.js').GuildMember |
+                null
+            >(guild[type].fetch(item));
+            if (fetchErr === null) return coll;
         } else if (type === 'channels') {
             // only TextChannels/NewsChannels can be mentioned. Voice channels and stage channels 
             // can only be fetched given its id!
             return guild.channels.cache.get(item);
         } else {
-            try {
-                const users = await client.users.fetch(item);
-                return users;
-            } catch {}
+            const [fetchErr, users] = await dontThrow(client.users.fetch(item));
+            if (fetchErr === null) return users;
         }
 
         return null;

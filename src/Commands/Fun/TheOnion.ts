@@ -1,6 +1,5 @@
 import { Command } from '../../Structures/Command.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { RSSReader } from '../../lib/Utility/RSS.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { rand } from '../../lib/Utility/Constants/OneLiners.js';
@@ -66,7 +65,6 @@ interface ITheOnion {
 const rss = new RSSReader<ITheOnion>();
 const cache = once(() => rss.cache(`https://www.theonion.com/rss`));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -93,17 +91,17 @@ export class kCommand extends Command {
         const j = await r.json() as ITheOnionAPI;
 
         if (j.data.length === 0)
-            return this.Embed.fail(`
+            return this.Embed.error(`
             You'll have to read the article on TheOnion this time, sorry!
             https://www.theonion.com/${id}
             `);
 
-        return this.Embed.success()
-            .setAuthor(
-                decodeXML(j.data[0].headline).slice(0, 256), 
-                'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
-                j.data[0].permalink
-            )
+        return this.Embed.ok()
+            .setAuthor({
+                name: decodeXML(j.data[0].headline).slice(0, 256), 
+                iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
+                url: j.data[0].permalink
+            })
             .setTimestamp(j.data[0].publishTimeMillis)
             .setDescription(j.data[0].plaintext.slice(0, 2048));
     }

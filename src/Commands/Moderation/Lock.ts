@@ -1,13 +1,11 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { bold } from '@khaf/builders';
+import { Message, Permissions } from 'discord.js';
+import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { bold } from '@discordjs/builders';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Arguments, Command } from '../../Structures/Command.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,15 +25,18 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: kGuild) {
+    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 
         if (!isText(text)) {
             return this.Embed.generic(this, 'No channel found!');
         } else if (!hasPerms(text, message.guild.me, this.permissions)) {
-            // maybe better fail message?
-            return this.Embed.missing_perms();
+            if (message.guild.me) {
+                return this.Embed.perms(text, message.guild.me, this.permissions);
+            } else {
+                return this.Embed.error(`A caching issue prevented me from properly checking permissions!`);
+            }
         }
 
         let lockState = 'unlocked';
@@ -48,7 +49,7 @@ export class kCommand extends Command {
             );
         }
 
-        await message.reply({ embeds: [this.Embed.success(`
+        await message.reply({ embeds: [this.Embed.ok(`
         ${text} has been ${lockState} for ${everyone}!
         `)] });
 
@@ -58,7 +59,7 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
                 return;
 
-            return void channel.send({ embeds: [this.Embed.success(`
+            return void channel.send({ embeds: [this.Embed.ok(`
             ${bold('Channel:')} ${text} (${text.id}).
             ${bold('Staff:')} ${message.member}
             `).setTitle('Channel Locked')] });

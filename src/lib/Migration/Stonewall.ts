@@ -31,6 +31,6 @@ export const stonewallTransaction = async (comics: Comic[]) => {
             ) VALUES (
                 ?, ?, ?
             );
-        `, { run: true }, comic.href, comic.link, comic.title);
+        `, comic.href, comic.link, comic.title);
     }
 }

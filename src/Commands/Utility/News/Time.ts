@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'http://feeds.feedburner.com/time/world',
     main: 'https://time.com',
     command: ['time'],
-    author: ['Time', 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png']
+    author: { name: 'Time', iconURL: 'https://api.time.com/wp-content/themes/time2014/img/time-logo-og.png' }
 } as const;
 
 interface ITime {
@@ -26,7 +25,6 @@ interface ITime {
 const rss = new RSSReader<ITime>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -45,16 +43,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

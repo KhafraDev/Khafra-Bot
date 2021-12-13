@@ -1,18 +1,23 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, italic, SlashCommandBuilder } from '@discordjs/builders';
+import { bold, italic } from '@khaf/builders';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('dictionary')
-            .addStringOption(option => option
-                .setName('word')
-                .setDescription('The word (or phrase) to define.')
-                .setRequired(true)    
-            )
-            .setDescription('Define a word or short phrase!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'dictionary',
+            description: 'Gets the definition of a word or phrase!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'word',
+                    description: 'The word or phrase to define.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }

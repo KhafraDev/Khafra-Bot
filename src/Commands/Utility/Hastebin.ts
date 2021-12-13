@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { pasteAliases } from '../../lib/Packages/Pastes.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,7 +25,7 @@ export class kCommand extends Command {
         const command = commandName.toLowerCase();
 
         if (command === 'pastebin' || content.length == 0) 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             Here is a list of the sites currently supported by this command:
             ${keys.map(k => inlineCode(k)).join(', ')}
             `);
@@ -36,8 +34,8 @@ export class kCommand extends Command {
         const pasteLink = await paste(content);
 
         if (!pasteLink)
-            return this.Embed.fail('A server error prevented me from uploading the paste. Try a different server!');
+            return this.Embed.error('A server error prevented me from uploading the paste. Try a different server!');
 
-        return this.Embed.success(pasteLink);
+        return this.Embed.ok(pasteLink);
     }
 }

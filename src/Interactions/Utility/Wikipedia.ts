@@ -1,23 +1,28 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { hideLinkEmbed, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { getArticleById, search } from '@khaf/wikipedia';
 import { ellipsis, plural } from '../../lib/Utility/String.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { InteractionType } from 'discord-api-types';
 import { disableAll } from '../../lib/Utility/Constants/Components.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('wikipedia')
-            .addStringOption(option => option
-                .setName('article')
-                .setDescription('Article name to get content or summary of.')
-                .setRequired(true)
-            )
-            .setDescription('Retrieve the content of a Wikipedia article.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'wikipedia',
+            description: 'Retrieves the content of a Wikipedia article.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'article',
+                    description: 'Article name to get a summary for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -26,7 +31,7 @@ export class kInteraction extends Interactions {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 
-        if (err) {
+        if (err !== null) {
             return `❌ An error occurred processing this request: ${inlineCode(err.message)}`;
         } else if (wiki.pages.length === 0) {
             return '❌ No Wikipedia articles for that query were found!';
@@ -35,7 +40,7 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
-                Embed.success(`Choose an article from the dropdown below!`)
+                Embed.ok(`Choose an article from the dropdown below!`)
             ],
             components: [
                 new MessageActionRow().addComponents(
@@ -82,7 +87,7 @@ export class kInteraction extends Interactions {
                 }));
             }
 
-            const embed = Embed.success()
+            const embed = Embed.ok()
                 .setDescription(ellipsis(summary.extract, 2048))
                 .setTitle(summary.title)
                 .setURL(`https://en.wikipedia.org/wiki/${article.key}`)

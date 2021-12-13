@@ -1,20 +1,18 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isExplicitText, isText, Message } from '../../lib/types/Discord.js.js';
+import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { plural } from '../../lib/Utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { bold } from '@discordjs/builders';
+import { Range } from '../../lib/Utility/Valid/Number.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
-const range = Range(0, MAX_SECS, true);
+const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -36,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const guildChannel = channelFirst 
@@ -48,23 +46,23 @@ export class kCommand extends Command {
         // by default, reset the ratelimit (0s).
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) ?? '0s')! / 1000;
 
-        if (!validateNumber(secs) || !range.isInRange(secs))
-            return this.Embed.fail(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
+        if (!inRange(secs))
+            return this.Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
         if (!isExplicitText(guildChannel))
-            return this.Embed.fail('Rate-limits can only be set in text channels!');
+            return this.Embed.error('Rate-limits can only be set in text channels!');
 
-        try {
-            await guildChannel.setRateLimitPerUser(secs, 
-                `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
-            );
-        } catch {
-            return this.Embed.fail('An error prevented the rate-limit from being set.');
+        const [rlError] = await dontThrow(guildChannel.setRateLimitPerUser(secs, 
+            `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
+        ));
+
+        if (rlError !== null) {
+            return this.Embed.error(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
         }
 
         void message.reply({ 
-            embeds: [this.Embed.success(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
+            embeds: [this.Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
         });
 
         if (settings.mod_log_channel !== null) {
@@ -75,7 +73,7 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
                     ${bold('Staff:')} ${message.member}
                     ${bold('Duration:')} ${secs} second${plural(secs)}

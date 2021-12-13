@@ -1,18 +1,19 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { InteractionType } from 'discord-api-types';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 function* format(items: YouTubeSearchResults) {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setTitle(video.title)
-            .setAuthor(video.channelTitle)
+            .setAuthor({ name: video.channelTitle })
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
             .addField(bold('Published:'), time(new Date(video.publishTime)))
@@ -24,14 +25,18 @@ function* format(items: YouTubeSearchResults) {
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('youtube')
-            .addStringOption(option => option
-                .setName('search')
-                .setDescription('Videos to search for')
-                .setRequired(true)
-            )
-            .setDescription('Get YouTube videos matching your search!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'youtube',
+            description: 'Gets YouTube videos matching your search.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'search',
+                    description: 'Videos to search for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }

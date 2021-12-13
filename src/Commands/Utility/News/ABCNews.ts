@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://abcnews.go.com/abcnews/internationalheadlines',
     main: 'https://abcnews.go.com',
     command: ['abc', 'abcnews'],
-    author: ['ABC News', 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png']
+    author: { name: 'ABC News', iconURL: 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png' }
 } as const;
 
 interface IABCNews {
@@ -24,7 +23,6 @@ interface IABCNews {
 const rss = new RSSReader<IABCNews>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -43,16 +41,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -2,7 +2,6 @@ import { decodeXML } from 'entities';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IxKCD {
     title: string
@@ -15,7 +14,6 @@ interface IxKCD {
 const rss = new RSSReader<IxKCD>();
 const cache = once(() => rss.cache('https://xkcd.com/rss.xml'));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -37,7 +35,7 @@ export class kCommand extends Command {
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);

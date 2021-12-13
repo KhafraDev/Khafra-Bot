@@ -1,9 +1,6 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Permissions, Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -22,14 +19,14 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
-            return this.Embed.fail('Invalid Emoji provided!');
+            return this.Embed.error('Invalid Emoji provided!');
         }
 
         const [,, name, id] = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/.exec(args[0]) ?? [];
         if (!name || !id) {
-            return this.Embed.fail('Invalid guild emoji provided!');
+            return this.Embed.error('Invalid guild emoji provided!');
         }
                
         const emoji = await message.guild.emojis.create(
@@ -38,7 +35,7 @@ export class kCommand extends Command {
             { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
         );
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         Created emoji ${emoji} with name ${name}.
         `);
     }

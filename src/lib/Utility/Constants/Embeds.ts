@@ -1,11 +1,20 @@
-import { MessageEmbed, PermissionResolvable, Permissions } from 'discord.js';
+import { bold, inlineCode } from '@khaf/builders';
+import {
+    GuildMember,
+    MessageEmbed,
+    NewsChannel,
+    PermissionResolvable,
+    Role,
+    TextChannel,
+    ThreadChannel,
+    VoiceChannel
+} from 'discord.js';
+import { join } from 'path';
 import { Command } from '../../../Structures/Command.js';
+import { createFileWatcher } from '../FileWatcher.js';
 import { permResolvableToString } from '../Permissions.js';
 import { plural } from '../String.js';
-import { createFileWatcher } from '../FileWatcher.js';
 import { cwd } from './Path.js';
-import { join } from 'path';
-import { bold, inlineCode } from '@discordjs/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
@@ -14,16 +23,20 @@ type PartialCommand = {
     help: Command['help']
 }
 
-const defaultPerms = [ 
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS,
-    Permissions.FLAGS.VIEW_CHANNEL
-];
+type PermissionChannels = TextChannel | NewsChannel | VoiceChannel | ThreadChannel;
+
+const colors = {
+    ok: Number.parseInt(config.embed.success.slice(1), 16),
+    error: Number.parseInt(config.embed.fail.slice(1), 16)
+};
 
 export const Embed = {
-    fail: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.fail as `#${string}`);
-        reason && Embed.setDescription(reason);
+    error: (reason?: string) => {
+        const Embed = new MessageEmbed().setColor(colors.error);
+
+        if (reason) {
+            Embed.setDescription(reason);
+        }
         
         return Embed;
     },
@@ -31,27 +44,36 @@ export const Embed = {
     /**
      * An embed for a command being successfully executed!
      */
-    success: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.success as `#${string}`); 
-        reason && Embed.setDescription(reason);
+    ok: (reason?: string) => {
+        const Embed = new MessageEmbed().setColor(colors.ok); 
+        
+        if (reason) {
+            Embed.setDescription(reason);
+        }
         
         return Embed;
     },
 
-    /**
-     * An embed for missing permissions!
-     */
-    missing_perms: (admin?: boolean, perms: PermissionResolvable = defaultPerms) => {
-        return new MessageEmbed()
-            .setColor(config.embed.fail as `#${string}`)
-            .setDescription(`
-            One of us doesn't have the needed permissions!
+    perms: (
+        inChannel: PermissionChannels,
+        userOrRole: GuildMember | Role | null,
+        permissions: PermissionResolvable
+    ) => {
+        const perms = permResolvableToString(permissions);
+        const checkType = userOrRole && 'color' in userOrRole
+            ? `The role ${userOrRole}` 
+            : userOrRole
+                ? `User ${userOrRole}`
+                : 'The user';
+        const amountMissing = perms.length === 1 ? `this permission` : `these permissions`;
 
-            Both of us must have ${permResolvableToString(perms)} permissions to use this command!
-            ${admin ? 'You must have ``ADMINISTRATOR`` perms to use this command!' : '' }
-            `);
+        const reason = 
+            `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`;
+
+        return Embed.error(reason);
     },
 
+    // TODO(@KhafraDev): remove or replace this with a better alternative.
     /**
      * A generic help embed useful for most situations.
      */
@@ -60,7 +82,7 @@ export const Embed = {
         const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
         
         return new MessageEmbed()
-            .setColor(config.embed.fail as `#${string}`)
+            .setColor(colors.error)
             .setDescription(`
             ${r}
 

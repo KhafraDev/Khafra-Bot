@@ -1,10 +1,8 @@
-import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Command } from '../../../Structures/Command.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -22,9 +20,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init({ stickers, guild }: Message) {
+    async init({ stickers, guild }: Message<true>) {
         if (stickers.size === 0)
-            return this.Embed.fail('No stickers in message! 😕');
+            return this.Embed.error('No stickers in message! 😕');
 
         const sticker = stickers.first()!;
         
@@ -32,7 +30,7 @@ export class kCommand extends Command {
             await guild.stickers.fetch(sticker.id);
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`${sticker.name}${sticker.description ? ` - ${sticker.description}` : ''}`)
             .addField(bold('Name:'), inlineCode(sticker.name), true)
             .addField(bold('ID:'), inlineCode(sticker.id), true);

@@ -1,19 +1,24 @@
 import { CommandInteraction, GuildMember } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { hyperlink, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('spotify')
-            .addStringOption(option => option
-                .setName('song')
-                .setDescription('Song name to search for.')
-                .setRequired(true)
-            )
-            .setDescription('Search for a song on Spotify!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'spotify',
+            description: 'Search for a song on Spotify!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'song',
+                    description: 'The song\'s name to search for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -61,7 +66,7 @@ export class kInteraction extends Interactions {
             desc += line;
         }
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(desc)
             .setThumbnail(image.url);
     }

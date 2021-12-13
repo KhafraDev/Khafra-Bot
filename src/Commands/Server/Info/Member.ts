@@ -1,8 +1,7 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message, Activity } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
@@ -27,7 +26,6 @@ const formatPresence = (activities: Activity[] | undefined) => {
     return push.join('\n');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -49,8 +47,8 @@ export class kCommand extends Command {
         const member = await getMentions(message, 'members') ?? message.member;
 
         // max role length = 84 characters
-        return this.Embed.success()
-            .setAuthor(member.displayName, member.user.displayAvatarURL())
+        return this.Embed.ok()
+            .setAuthor({ name: member.displayName, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} on ${italic(member.guild.name)}.
             ${formatPresence(member.presence?.activities)}

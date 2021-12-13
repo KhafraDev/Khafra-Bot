@@ -1,20 +1,17 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { Interaction, MessageActionRow, MessageComponentInteraction, Permissions } from 'discord.js';
-import { parseStrToMs } from '../../lib/Utility/ms.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { plural } from '../../lib/Utility/String.js';
+import { bold } from '@khaf/builders';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { Message } from '../../lib/types/Discord.js.js';
-import { bold } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { parseStrToMs } from '../../lib/Utility/ms.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { plural } from '../../lib/Utility/String.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
+import { Arguments, Command } from '../../Structures/Command.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -36,10 +33,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const user = await getMentions(message, 'users');
         if (!user) {
-            return this.Embed.fail('No user mentioned and/or an invalid ❄️ was used!');
+            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -54,7 +51,7 @@ export class kCommand extends Command {
             );
 
         const msg = await message.reply({
-            embeds: [this.Embed.success(`
+            embeds: [this.Embed.ok(`
             Are you sure you want to soft-ban ${user}? 
     
             This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
@@ -67,19 +64,18 @@ export class kCommand extends Command {
             ['approve', 'deny'].includes(interaction.customId) && 
             interaction.user.id === message.author.id;
 
-        let button: MessageComponentInteraction | null = null;
-        try {
-            button = await msg.awaitMessageComponent({ filter, time: 20_000 });
-        } catch {
+        const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({ filter, time: 20_000 }));
+
+        if (buttonError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.fail(`Didn't get confirmation to soft-ban ${user}!`)],
+                embeds: [this.Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.fail(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             }); 
 
@@ -87,23 +83,23 @@ export class kCommand extends Command {
         
         try {
             await message.guild.members.ban(user, {
-                days: range.isInRange(clear) && validateNumber(clear) ? clear : 7,
+                days: inRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
 
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG))
+            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
                 if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
                     bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return void button.editReply({
-                embeds: [this.Embed.fail(`${user} isn't bannable!`)],
+                embeds: [this.Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
         }
 
         return void button.editReply({
-            embeds: [this.Embed.success(`${user} has been soft-banned from the guild!`)],
+            embeds: [this.Embed.ok(`${user} has been soft-banned from the guild!`)],
             components: disableAll(msg)
         });
     }

@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
 import { decodeXML } from 'entities';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { Message } from 'discord.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 import { asyncQuery } from '../../../Structures/Database/SQLite.js';
-import { cpus } from 'os';
 
 interface IBranco {
     title: string
@@ -39,12 +37,12 @@ const rss = new RSSReader<IBranco>(async () => {
 
     await brancoTransaction(comics);
 });
+
 const cache = once(async () => {
     await migrateBranco();
     await rss.cache('https://comicallyincorrect.com/feed/')
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -60,15 +58,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
-        if (cpus().length === 1) 
-            return this.Embed.fail(`This command will not work on this host! Ask the bot maintainer to change their host!`);
-            
+    async init(_message: Message, { args }: Arguments) {   
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(decodeXML(comic.title))
                 .setURL(comic.link)
                 .setImage(/src="(.*?)"/.exec(comic['content:encoded'])![1]?.replace(/-\d+x\d+\.(.*?)/, '.$1'));
@@ -78,7 +73,7 @@ export class kCommand extends Command {
             SELECT * FROM kbBranco ORDER BY RANDOM() LIMIT 1;
         `);
 
-        return this.Embed.success()
+        return this.Embed.ok()
             .setTitle(comic.title)
             .setURL(comic.href)
             .setImage(comic.link);

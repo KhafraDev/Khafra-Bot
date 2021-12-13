@@ -2,12 +2,10 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import crypto from 'crypto';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 const MAX_DIFF = 2 ** 48 - 1;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,7 +25,7 @@ export class kCommand extends Command {
 
     async init(_message: Message, { args }: Arguments) {
         if (!('randomInt' in crypto)) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             The ${inlineCode('node')} version the bot is running on is too old!
             `);
         }
@@ -52,7 +50,7 @@ export class kCommand extends Command {
 
         const num = await rand(min, max);
        
-        return this.Embed.success(`
+        return this.Embed.ok(`
         Your number is ${inlineCode(`${num}`)}!
         `);
     }

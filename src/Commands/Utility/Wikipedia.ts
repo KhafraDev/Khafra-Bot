@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { search, getArticleById } from '@khaf/wikipedia';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { ellipsis, plural } from '../../lib/Utility/String.js';
 import { disableAll } from '../../lib/Utility/Constants/Components.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,15 +25,15 @@ export class kCommand extends Command {
     async init(message: Message, { content }: Arguments) {
         const [err, wiki] = await dontThrow(search(content));
         if (err) {
-            return this.Embed.fail(`An error occurred processing this request: ${inlineCode(err.message)}`);
+            return this.Embed.error(`An error occurred processing this request: ${inlineCode(err.message)}`);
         } else if (wiki.pages.length === 0) {
-            return this.Embed.fail('No Wikipedia articles for that query were found!');
+            return this.Embed.error('No Wikipedia articles for that query were found!');
         }
 
         const m = await message.reply({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
-                this.Embed.success(`Choose an article from the dropdown below!`)
+                this.Embed.ok(`Choose an article from the dropdown below!`)
             ],
             components: [
                 new MessageActionRow().addComponents(
@@ -69,7 +67,7 @@ export class kCommand extends Command {
             if (err) {
                 return void dontThrow(i.editReply({
                     embeds: [
-                        this.Embed.fail(`An error occurred getting this article's summary: ${inlineCode(err.message)}`)
+                        this.Embed.error(`An error occurred getting this article's summary: ${inlineCode(err.message)}`)
                     ],
                     components: disableAll(m)
                 }));
@@ -78,12 +76,12 @@ export class kCommand extends Command {
             const summary = summaryRes.query?.pages[`${article.id}`];
             if (typeof summary === 'undefined') {
                 return void dontThrow(i.editReply({
-                    embeds: [this.Embed.fail('Invalid response from Wikipedia!')],
+                    embeds: [this.Embed.error('Invalid response from Wikipedia!')],
                     components: disableAll(m)
                 }));
             }
 
-            const embed = this.Embed.success()
+            const embed = this.Embed.ok()
                 .setDescription(ellipsis(summary.extract, 2048))
                 .setTitle(summary.title)
                 .setURL(`https://en.wikipedia.org/wiki/${article.key}`)

@@ -1,12 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { Message, MessageActionRow } from 'discord.js';
 import { once } from 'events';
 import { fetch } from 'undici';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { bold } from '@discordjs/builders';
-
+import { bold } from '@khaf/builders';
 
 interface StrawpollOptions {
     priv: boolean
@@ -25,7 +23,6 @@ const yes = (yes: boolean, ifYes = 'Yes', ifNo = 'No') =>
 
 const hasOwn = Object.prototype.hasOwnProperty;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -74,7 +71,7 @@ export class kCommand extends Command {
         ];
 
         const makeEmbed = () => {
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle('Poll Configuration')
                 .addFields(
                     { name: bold('Private:'), value: yes(defaultOpts.priv), inline: true },
@@ -108,7 +105,7 @@ export class kCommand extends Command {
             c.on('collect', async (interaction) => {
                 if (interaction.customId === 'cancel') {
                     await dontThrow(interaction.update({
-                        embeds: [this.Embed.fail('Command was canceled!')],
+                        embeds: [this.Embed.error('Command was canceled!')],
                         components: disableAll(m)
                     }));
 
@@ -116,7 +113,7 @@ export class kCommand extends Command {
                 } else if (interaction.customId === 'done') {
                     await dontThrow(interaction.update({
                         embeds: [
-                            this.Embed.success()
+                            this.Embed.ok()
                                 .setTitle('Setting Choices')
                                 .setDescription(`
                                 Send an individual message for each choice, the title will be the first message you send.
@@ -160,7 +157,7 @@ export class kCommand extends Command {
         if (choices.length === 0) {
             return void m.edit({
                 embeds: [
-                    this.Embed.fail('No answers were provided, canceling the poll creation!')
+                    this.Embed.error('No answers were provided, canceling the poll creation!')
                 ],
                 components: []
             });
@@ -181,7 +178,7 @@ export class kCommand extends Command {
 
         return void m.edit({
             embeds: [
-                this.Embed.success(`https://strawpoll.com/${j.content_id}`)
+                this.Embed.ok(`https://strawpoll.com/${j.content_id}`)
             ]
         });
     }

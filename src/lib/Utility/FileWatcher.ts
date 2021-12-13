@@ -40,7 +40,13 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string) =
         if (base !== filename) return;
         if (!await exists(join(dir, filename))) return;
 
-        const [err, file] = await dontThrow<F>(JSON.parse, [await readFile(join(dir, filename), 'utf-8')]);
+        let err: Error | null = null, file!: F;
+
+        try {
+            file = JSON.parse(await readFile(join(dir, filename), 'utf-8')) as F;
+        } catch (e) {
+            err = e as Error;
+        }
         
         if (err === null) {
             if (Array.isArray(storage) && Array.isArray(file)) {

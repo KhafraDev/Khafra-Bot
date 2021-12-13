@@ -1,14 +1,12 @@
-import { Command } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { client } from '../../Structures/Database/Redis.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
+import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Command } from '../../Structures/Command.js';
+import { pool } from '../../Structures/Database/Postgres.js';
+import { client } from '../../Structures/Database/Redis.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,14 +25,18 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.missing_perms(true);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.ADMINISTRATOR
+            );
         } 
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
         if (!channel || !isText(channel)) {
-            return this.Embed.fail(`Channel isn't cached or the ID is incorrect.`);
+            return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);
         }
 
         const { rows } = await pool.query<kGuild>(`
@@ -46,7 +48,7 @@ export class kCommand extends Command {
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         Set public mod-logging channel to ${channel}!
         `);
     }

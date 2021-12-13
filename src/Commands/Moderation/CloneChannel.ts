@@ -1,13 +1,11 @@
-import { Command } from '../../Structures/Command.js';
-import { GuildChannel, GuildChannelCloneOptions, MessageActionRow, Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isDM, isExplicitText, isStage, isText, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
+import { GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
+import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '../../lib/types/Discord.js.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { getMentions } from '../../lib/Utility/Mentions.js';
+import { Command } from '../../Structures/Command.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -28,17 +26,17 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const channel = await getMentions(message, 'channels') ?? message.channel;
         if (!channel) {
-            return this.Embed.fail(`Channel isn't cached or the ID is incorrect.`);
+            return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);
         } else if (isThread(channel) || isDM(channel)) {
-            return this.Embed.fail(`I cannot clone a ${channel.type} channel!`);
+            return this.Embed.error(`I cannot clone a ${channel.type} channel!`);
         }
 
         const [e, m] = await dontThrow(message.reply({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Are you sure you want to clone ${channel}? The channel will be deleted and re-created; all pins will be lost.
                 `)
             ],
@@ -61,9 +59,9 @@ export class kCommand extends Command {
             }));
 
             if (e !== null || !i) {
-                return this.Embed.fail(`No response, command was canceled!`);
+                return this.Embed.error(`No response, command was canceled!`);
             } else if (i.customId === 'deny') {
-                return this.Embed.fail(`Command was canceled, ${channel} will not be cloned.`);
+                return this.Embed.error(`Command was canceled, ${channel} will not be cloned.`);
             }
         }
 
@@ -89,7 +87,7 @@ export class kCommand extends Command {
         {
             const [err] = await dontThrow(channel.delete());
             if (err !== null) {
-                return this.Embed.fail(`Failed to delete the channel: ${inlineCode(err.message)}.`);
+                return this.Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`);
             }
         }
 
@@ -97,11 +95,11 @@ export class kCommand extends Command {
 
         if (err !== null) {
             return void dontThrow(message.author.send({
-                embeds: [this.Embed.fail(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
+                embeds: [this.Embed.error(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
             }));
         }
 
-        const embed = this.Embed.success(`Cloned channel #${opts.name} -> ${cloned}!`);
+        const embed = this.Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`);
 
         if (isText(cloned)) {
             return void dontThrow(cloned.send({ embeds: [embed] }));

@@ -1,12 +1,10 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const symbol = String.fromCodePoint(Number.parseInt('202B', 16));
 const clean = 'The edit button won\'t be where you expect it to be!';
 const edited = `The edit button is right there -> ${symbol} !Over here ->`;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -28,7 +26,7 @@ export class kCommand extends Command {
         if (m.editable) {
             return void m.edit({ content: edited });
         } else {
-            return this.Embed.fail(`Message wasn't editable!`);
+            return this.Embed.error(`Message wasn't editable!`);
         }
     }
 }

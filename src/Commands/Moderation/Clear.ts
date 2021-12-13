@@ -1,17 +1,14 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
-const range = Range(1, 100, true);
+const inRange = Range({ min: 1, max: 100, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,20 +30,18 @@ export class kCommand extends Command {
     async init(message: Message, { args }: Arguments) {
         const toDelete = Number(args[0]);
 
-        if (!validateNumber(toDelete)) {
-            return this.Embed.fail(`
-            Received: ${toDelete}, this command requires a valid integer!
-
-            Example: ${inlineCode(`${this.settings.name} 100`)}
-            `);
-        } else if (!range.isInRange(toDelete)) {
-            return this.Embed.fail(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
+        if (!inRange(toDelete)) {
+            return this.Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 
         const channel = await getMentions(message, 'channels', { idx: 1 }) ?? message.channel;
         
-        if (!isText(channel) || !hasPerms(channel, message.guild!.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
-            return this.Embed.fail('Can\'t delete messages from this type of channel, sorry!');
+        if (!isText(channel) || !hasPerms(channel, message.guild?.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
+            return this.Embed.perms(
+                channel as TextChannel,
+                message.guild!.me,
+                Permissions.FLAGS.MANAGE_MESSAGES
+            );
         } else if (message.deletable) {
             await dontThrow(message.delete());
         }
@@ -54,11 +49,14 @@ export class kCommand extends Command {
         const [err, deleted] = await dontThrow(channel.bulkDelete(toDelete, true));
 
         if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
 
-        const embed = this.Embed.success()
-            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
+        const embed = this.Embed.ok()
+            .setAuthor({
+                name: message.client.user!.username,
+                iconURL: message.client.user!.displayAvatarURL()
+            })
             .setTimestamp()
             .setFooter(`Requested by ${message.author.tag}!`)
             .setDescription(`

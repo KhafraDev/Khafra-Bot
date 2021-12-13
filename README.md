@@ -69,6 +69,9 @@ All values are required, as there is no guarantee that there is error handling f
     - Windows tutorial [here](https://www.tutorialkart.com/postgresql/postgresql-sql-shell-psql/)!
     - Linux: `sudo -u postgres psql`, `\c kb`, run the command above, `\q`.
 
+### v1.10 -> v1.11
+1. `npm rebuild esqlite` if moving to Node v17+
+
 ## CLI Args
 - `--prod` (none): runs the bot in production mode
 - `--disabled` (string[]): disables commands listed

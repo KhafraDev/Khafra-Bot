@@ -1,3 +1,5 @@
+PRAGMA journal_mode = WAL;
+
 CREATE TABLE IF NOT EXISTS kbBranco (
     comic_key INTEGER NOT NULL PRIMARY KEY,
     href TEXT UNIQUE NOT NULL,

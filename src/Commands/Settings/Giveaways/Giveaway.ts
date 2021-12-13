@@ -1,11 +1,9 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { KhafraClient } from '../../../Bot/KhafraBot.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -27,7 +25,7 @@ export class kCommand extends Command {
 
         if (args.length === 0) {
             // help message
-            return this.Embed.fail('not implemented yet');
+            return this.Embed.error('not implemented yet');
         }
 
         const name = args[0].toLowerCase();
@@ -36,7 +34,7 @@ export class kCommand extends Command {
             : `giveaway:${name}`;
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
-            return this.Embed.fail(
+            return this.Embed.error(
             `Giveaway command doesn't exist, use ${inlineCode(`${settings.prefix}giveaway`)} for more information!`
             );
         }

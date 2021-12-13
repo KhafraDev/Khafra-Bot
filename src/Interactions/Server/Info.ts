@@ -1,5 +1,5 @@
 import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
-import { bold, inlineCode, italic, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { join } from 'path';
 import { Interactions } from '../../Structures/Interaction.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
@@ -7,6 +7,7 @@ import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
 import { once } from '../../lib/Utility/Memoize.js';
 import { client } from '../../index.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
@@ -46,14 +47,18 @@ const getEmojis = once(() => {
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('info')
-            .addMentionableOption(option => option
-                .setName('type')
-                .setDescription('Information to fetch.')
-                .setRequired(true)    
-            )
-            .setDescription('Get info about a user, guild member, channel, or role.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'info',
+            description: 'Gets info about a user, guild member, channel, or role.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.Mentionable,
+                    name: 'type',
+                    description: 'Type of Discord object to get information for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }
@@ -62,8 +67,11 @@ export class kInteraction extends Interactions {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {
-            return Embed.success()
-                .setAuthor(option.displayName, option.user.displayAvatarURL())
+            return Embed.ok()
+                .setAuthor({
+                    name: option.displayName,
+                    iconURL: option.user.displayAvatarURL()
+                })
                 .setDescription(`
                 ${option} on ${italic(option.guild.name)}.
                 ${formatPresence(option.presence?.activities)}
@@ -83,7 +91,7 @@ export class kInteraction extends Interactions {
                 )
                 .setFooter('For general user info use the /user command!');
         } else if (option instanceof Role) {
-            const embed = Embed.success()
+            const embed = Embed.ok()
                 .setDescription(`
                 ${option}
                 
@@ -120,8 +128,11 @@ export class kInteraction extends Interactions {
                 .filter(f => getEmojis().has(f))
                 .map(f => getEmojis().get(f));
 
-            return Embed.success(formatPresence(guildMember?.presence?.activities) ?? undefined)
-                .setAuthor(option.tag, option.displayAvatarURL() ?? client.user!.displayAvatarURL())
+            return Embed.ok(formatPresence(guildMember?.presence?.activities) ?? undefined)
+                .setAuthor({
+                    name: option.tag, 
+                    iconURL: option.displayAvatarURL() ?? client.user!.displayAvatarURL()
+                })
                 .addField(bold('Username:'), option.username, true)
                 .addField(bold('ID:'), option.id, true)
                 .addField(bold('Discriminator:'), `#${option.discriminator}`, true)

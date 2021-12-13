@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Message, Permissions } from 'discord.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
-import { Message } from '../../lib/types/Discord.js.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -26,11 +24,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, cli }: Arguments) {
+    async init(message: Message<true>, { args, cli }: Arguments) {
         const user = await getMentions(message, 'users');
 
         if (!user) 
-            return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
+            return this.Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
         const reasonAny = cli.has('reason') || cli.has('r')
             ? (cli.get('reason') || cli.get('r'))
@@ -38,15 +36,15 @@ export class kCommand extends Command {
 
         const reason = typeof reasonAny === 'string' ? reasonAny : '';
 
-        try {
-            await message.guild.members.unban(user, reason);
+        const [e] = await dontThrow(message.guild.members.unban(user, reason));
 
-            if (!unbans.has(`${message.guild.id},${user.id}`))
-                unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
-        } catch (e) {
-            return this.Embed.fail(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
+        if (e !== null) {
+            return this.Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
-        return this.Embed.success(`${user} is now unbanned!`);
+        if (!unbans.has(`${message.guild.id},${user.id}`) && message.member)
+            unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
+
+        return this.Embed.ok(`${user} is now unbanned!`);
     }
 }

@@ -5,10 +5,22 @@ import './lib/Utility/Timers/Giveaways.js';
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
 import { dontThrow } from './lib/Utility/Don\'tThrow.js';
+import type { Event } from './Structures/Event.js';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]): void => 
-        void dontThrow(KhafraClient.Events.get(name)!.init(...args) as Promise<unknown>);
+    let event: Event<keyof ClientEvents> | undefined;
+
+    return (...args: ClientEvents[T]) => {
+        if (!event) {
+            if (!KhafraClient.Events.has(name)) {
+                throw new Error(`The ${name} event has no event handler!`);
+            }
+
+            event = KhafraClient.Events.get(name)!;
+        }
+
+        void dontThrow(event.init(...args));
+    }
 }
 
 export const client = new KhafraClient({
@@ -29,7 +41,8 @@ export const client = new KhafraClient({
         }
     }),
     partials: [ 'MESSAGE', 'USER' ],
-    intents: [ 
+    intents: [
+        Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_BANS,
         Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
@@ -41,6 +54,7 @@ export const client = new KhafraClient({
 })
     .on('ready',                emitted('ready'))
     .on('messageCreate',        emitted('messageCreate'))
+    .on('messageUpdate',        emitted('messageUpdate'))
     .on('guildBanAdd',          emitted('guildBanAdd'))
     .on('guildBanRemove',       emitted('guildBanRemove'))
     .on('guildCreate',          emitted('guildCreate'))

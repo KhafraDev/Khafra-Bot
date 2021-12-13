@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://nbc-2.com/category/news/feed/',
     main: 'https://nbc-2.com',
     command: ['nbc2', 'nbc-2'],
-    author: ['NBC-2', 'https://pbs.twimg.com/profile_images/1018899598029606912/lomPmdG3_400x400.jpg']
+    author: { name: 'NBC-2', iconURL: 'https://pbs.twimg.com/profile_images/1018899598029606912/lomPmdG3_400x400.jpg' }
 } as const;
 
 interface INBC {
@@ -25,7 +24,6 @@ interface INBC {
 const rss = new RSSReader<INBC>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -44,16 +42,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'http://defence-blog.com/feed/',
     main: 'https://defence-blog.com',
     command: ['defenceblog', 'defence-blog'],
-    author: ['DefenceBlog', 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png']
+    author: { name: 'DefenceBlog', iconURL: 'https://defence-blog.com/wp-content/uploads/2020/06/logo-big-c-180.png' }
 } as const;
 
 interface IDefenceBlog {
@@ -25,7 +24,6 @@ interface IDefenceBlog {
 const rss = new RSSReader<IDefenceBlog>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -44,16 +42,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

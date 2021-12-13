@@ -1,14 +1,12 @@
 /** Please get mental illness treated! */
 
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'url';
 import { Message, MessageActionRow } from 'discord.js';
 import { once } from '../../../lib/Utility/Memoize.js';
-import { cpus } from 'os';
 import { asyncQuery } from '../../../Structures/Database/SQLite.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
@@ -53,7 +51,6 @@ const cache = once(async () => {
     await rss.cache('http://stonetoss.com/comic/feed/');
 });
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -71,17 +68,13 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        if (cpus().length === 1) {
-            return this.Embed.fail(`This command will not work on this host! Ask the bot maintainer to upgrade their host!`);
-        }
-
         await cache();
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift()!;
             const { origin, pathname } = new URL(/src="(.*?)"/.exec(trash['content:encoded'])![1]);
 
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted, often hateful ideas.
@@ -92,12 +85,12 @@ export class kCommand extends Command {
         } else if (args.length !== 0) {
             const comics = await asyncQuery<Comic>(`
                 SELECT * FROM kbStonewall WHERE instr(lower(title), lower(?)) > 0 ORDER BY comic_key DESC LIMIT 5;
-            `, undefined, args.join(' '));
+            `, args.join(' '));
             
             if (comics[0] === undefined) {
-                return this.Embed.fail(`No comics with that query could be found. Omit the query for a random comic!`);
+                return this.Embed.error(`No comics with that query could be found. Omit the query for a random comic!`);
             } else if (comics.length === 1) {
-                return this.Embed.success()
+                return this.Embed.ok()
                     .setDescription(`
                     KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                     The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
@@ -107,7 +100,7 @@ export class kCommand extends Command {
                     .setImage(comics[0].link);
             }
 
-            const makeEmbed = (page = 0) => this.Embed.success()
+            const makeEmbed = (page = 0) => this.Embed.ok()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
@@ -128,7 +121,7 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.fail(`Could not send message.`);
+                return this.Embed.error(`Could not send message.`);
             }
 
             const c = m.createMessageComponentCollector({
@@ -142,9 +135,9 @@ export class kCommand extends Command {
         } else {
             const { 0: comic } = await asyncQuery<Comic>(`
                 SELECT * FROM kbStonewall ORDER BY RANDOM() LIMIT 1;
-            `, { get: true });
+            `);
 
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.

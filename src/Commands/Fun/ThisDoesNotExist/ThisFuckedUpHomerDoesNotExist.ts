@@ -1,10 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
 import { thisSimpsonDoesNotExist } from '../../../lib/Packages/Simpson.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 // this is not handled the same way the other this[x]doesnotexist commands.
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -24,6 +22,6 @@ export class kCommand extends Command {
     async init() {
         const homer = await thisSimpsonDoesNotExist();
 
-        return this.Embed.success().setImage(homer);
+        return this.Embed.ok().setImage(homer);
     }
 }

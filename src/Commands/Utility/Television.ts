@@ -2,10 +2,8 @@ import { Message } from 'discord.js';
 import { searchTV } from '../../lib/Packages/TMDB.js';
 import { isDM, isText } from '../../lib/types/Discord.js.js';
 import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { bold, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([
@@ -25,9 +23,9 @@ export class kCommand extends Command {
         );
         
         if (!tv)
-            return this.Embed.fail('No tv shows found!');
+            return this.Embed.error('No tv shows found!');
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
             .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)

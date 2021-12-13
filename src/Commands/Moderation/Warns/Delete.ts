@@ -1,13 +1,12 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Message, Permissions } from 'discord.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@khaf/builders';
 
 interface WarningDel {
     id: Warning['id']
@@ -20,7 +19,6 @@ const perms = new Permissions([
 ]);
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -40,14 +38,14 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         if (!uuidRegex.test(args[1])) {
-            return this.Embed.fail('UUID is not formatted correctly, please use a valid ID next time!');
+            return this.Embed.error('UUID is not formatted correctly, please use a valid ID next time!');
         }
 
         const member = await getMentions(message, 'members');
         if (!member)
-            return this.Embed.fail(`No member was mentioned. Try again!`);
+            return this.Embed.error(`No member was mentioned. Try again!`);
 
         const { rows: deleted } = await pool.query<WarningDel>(`
             DELETE FROM kbWarns
@@ -59,11 +57,11 @@ export class kCommand extends Command {
         `, [args[1].toLowerCase(), message.guild.id, member.id]);
 
         if (deleted.length === 0)
-            return this.Embed.fail('No warning with that ID could be found in the guild!');
+            return this.Embed.error('No warning with that ID could be found in the guild!');
 
         await message.reply({ 
             embeds: [
-                this.Embed.success(`Warning ${inlineCode(deleted[0].id)} was removed from ${member}!`)
+                this.Embed.ok(`Warning ${inlineCode(deleted[0].id)} was removed from ${member}!`)
             ]
         });
 
@@ -74,7 +72,7 @@ export class kCommand extends Command {
 
             return void channel.send({ 
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${bold('Removed From:')} ${member}
                     ${bold('Staff:')} ${message.member}
                     ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.

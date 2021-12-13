@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Basic Options */
-    // "incremental": true,                   /* Enable incremental compilation */
+    "incremental": true,                   /* Enable incremental compilation */
     "target": "ESNext",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
     "module": "ESNext",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
     "lib": [ "ESNext" ],                             /* Specify library files to be included in the compilation. */
@@ -60,8 +60,8 @@
     // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
 
     /* Experimental Options */
-    "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
-    "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+    "experimentalDecorators": false,        /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": false,         /* Enables experimental support for emitting type metadata for decorators. */
 
     /* Advanced Options */
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
@@ -85,6 +85,7 @@
     "src/lib/Packages/Pocket",
     "src/lib/Packages/Vaccines",
     "src/lib/Packages/15.ai",
-    "src/lib/Packages/MDN"
+    "src/lib/Packages/MDN",
+    "src/lib/Packages/@khaf-builders"
   ]
 }

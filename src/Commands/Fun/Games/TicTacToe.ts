@@ -4,7 +4,6 @@ import { chunkSafe } from '../../../lib/Utility/Array.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 type Board = ('X' | 'O' | null)[];
 
@@ -13,10 +12,11 @@ const makeRows = (turns: Board) => {
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
+
         if (row === 'X')
-            rows.push(Components.approve('X', 'X'));
+            rows.push(Components.approve('X', `X,${i}`));
         else if (row === 'O')
-            rows.push(Components.primary('O', 'O'));
+            rows.push(Components.primary('O', `O,${i}`));
         else 
             rows.push(Components.secondary('\u200b', `empty,${i}`));
     }
@@ -24,7 +24,6 @@ const makeRows = (turns: Board) => {
     return chunkSafe(rows, 3).map(r => new MessageActionRow().addComponents(r))
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -50,7 +49,7 @@ export class kCommand extends Command {
 
         const c = m.createMessageComponentCollector({
             filter: interaction => 
-                interaction.message.id === m.id &&
+                interaction.message?.id === m.id &&
                 interaction.user.id === message.author.id &&
                 /^empty,\d$/.test(interaction.customId),
             time: 120_000, 

@@ -1,14 +1,12 @@
 import { Arguments, Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { isCategory, isExplicitText, Message } from '../../lib/types/Discord.js.js';
+import { isCategory, isExplicitText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { client } from '../../Structures/Database/Redis.js';
-import { Permissions } from 'discord.js';
+import { Permissions, TextChannel, Message } from 'discord.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -23,14 +21,19 @@ export class kCommand extends Command {
                 folder: 'Settings',
                 aliases: ['ticketchannels'],
                 args: [1, 1],
-                ratelimit: 10
+                ratelimit: 10,
+                guildOnly: true
             }
         );
     }
 
-    async init(message: Message, _args: Arguments, settings: kGuild) {
+    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.fail(`This command is only available for server admins!`);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.ADMINISTRATOR
+            );
         }
         
         /** guild can use private threads */
@@ -39,9 +42,9 @@ export class kCommand extends Command {
         const ticketChannel = await getMentions(message, 'channels');
         
         if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
-            return this.Embed.fail(`${ticketChannel ?? 'None'} is not a text or category channel!`);
+            return this.Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
         } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return this.Embed.fail(`This guild cannot use private threads, please use a category channel instead!`);
+            return this.Embed.error(`This guild cannot use private threads, please use a category channel instead!`);
         }
 
         const { rows } = await pool.query<kGuild>(`
@@ -53,6 +56,6 @@ export class kCommand extends Command {
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 
-        return this.Embed.success(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
+        return this.Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
     }
 }

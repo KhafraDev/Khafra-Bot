@@ -1,14 +1,13 @@
 import { Command } from '../../../Structures/Command.js';
 import { RSSReader } from '../../../lib/Utility/RSS.js';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://www.huffpost.com/section/front-page/feed',
     main: 'https://www.huffpost.com',
     command: ['huff', 'huffpost'],
-    author: ['HuffPost', 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png']
+    author: { name: 'HuffPost', iconURL: 'https://img.huffingtonpost.com/asset/58fe7a181c00002600e81721.png' }
 } as const;
 
 interface IHuffPost {
@@ -25,7 +24,6 @@ interface IHuffPost {
 const rss = new RSSReader<IHuffPost>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -44,16 +42,16 @@ export class kCommand extends Command {
     async init() {
         await cache();
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return this.Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return this.Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

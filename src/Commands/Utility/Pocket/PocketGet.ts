@@ -1,9 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 
 interface PocketUser {
     access_token: string 
@@ -11,8 +10,6 @@ interface PocketUser {
     username: string
 }
 
-
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -36,7 +33,7 @@ export class kCommand extends Command {
         `, [message.member!.id]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`
+            return this.Embed.error(`
             You haven't set-up Pocket integration!
 
             Try using the ${inlineCode('pocket')} command for more information.
@@ -49,7 +46,11 @@ export class kCommand extends Command {
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
         
-        return this.Embed.success(formatted)
-            .setAuthor(message.author.username + '\'s latest saves', message.author.displayAvatarURL(), 'https://getpocket.com/')
+        return this.Embed.ok(formatted)
+            .setAuthor({
+                name: message.author.username + '\'s latest saves',
+                iconURL: message.author.displayAvatarURL(),
+                url: 'https://getpocket.com/'
+            });
     }
 }

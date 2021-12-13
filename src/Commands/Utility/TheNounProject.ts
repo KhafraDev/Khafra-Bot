@@ -1,12 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { theNounProjectSearch } from '../../lib/Packages/TheNounProject/TheNounProject.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Paginate } from '../../lib/Utility/Discord/Paginate.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -30,7 +28,7 @@ export class kCommand extends Command {
         const [err, icons] = await dontThrow(theNounProjectSearch(content));
         
         if (err !== null || icons === null || icons.icons.length === 0) {
-            return this.Embed.fail('No icons found for that search!');
+            return this.Embed.error('No icons found for that search!');
         }
         
         const row = new MessageActionRow().addComponents(
@@ -40,7 +38,7 @@ export class kCommand extends Command {
         );
 
         const m = await message.channel.send({ 
-            embeds: [this.Embed.success().setImage(icons.icons[0].preview_url)],
+            embeds: [this.Embed.ok().setImage(icons.icons[0].preview_url)],
             components: [row]
         });
 
@@ -50,7 +48,7 @@ export class kCommand extends Command {
             interaction.user.id === message.author.id;
 
         const c = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
-        const fn = (page: number) => this.Embed.success().setImage(icons.icons[page].preview_url);
+        const fn = (page: number) => this.Embed.ok().setImage(icons.icons[page].preview_url);
 
         return Paginate(c, m, 5 * 2, fn);
     }

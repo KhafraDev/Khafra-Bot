@@ -1,20 +1,18 @@
-import { Command } from '../../../Structures/Command.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { bold, hyperlink, inlineCode } from '@khaf/builders';
+import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
+import { once } from 'events';
+import { isText } from '../../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
-import { bold, hyperlink, inlineCode } from '@discordjs/builders';
-import { once } from 'events';
+import { Command } from '../../../Structures/Command.js';
 
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -32,10 +30,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const m = await message.reply({
             embeds: [
-                this.Embed.success()
+                this.Embed.ok()
                     .setDescription(`Please enter the channel where rules should be posted, or click the ${inlineCode('cancel')} button to cancel.`)
                     .setTitle('Rule Editor') 
             ],
@@ -77,12 +75,12 @@ export class kCommand extends Command {
             const [coll, reason] = race.shift()!;
             if (coll.length === 0 || reason === 'time') {
                 return void dontThrow(m.edit({
-                    embeds: [this.Embed.fail('Command was canceled!')],
+                    embeds: [this.Embed.error('Command was canceled!')],
                     components: disableAll(m)
                 }));
             } else if (coll[1] instanceof ButtonInteraction) {
                 return void dontThrow(coll[1].update({
-                    embeds: [this.Embed.fail('Command was canceled!')],
+                    embeds: [this.Embed.error('Command was canceled!')],
                     components: disableAll(m)
                 }));
             }
@@ -94,14 +92,14 @@ export class kCommand extends Command {
             if (!isText(channel)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail('Channel must be a text channel or a news channel!')
+                        this.Embed.error('Channel must be a text channel or a news channel!')
                     ],
                     components: []
                 }));
             } else if (!hasPerms(channel, message.guild.me, perms)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail(`I do not have permission to send messages in ${channel}!`)
+                        this.Embed.perms(channel, message.guild.me, perms)
                     ],
                     components: []
                 }));
@@ -110,7 +108,7 @@ export class kCommand extends Command {
 
         await dontThrow(m.edit({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Send an individual message for each rule, or send them all together. I recommend using ` + 
                 `${hyperlink('markdown', 'https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-')} ` +
                 `to separate messages and make rule titles more noticeable.\n\n` +
@@ -147,21 +145,21 @@ export class kCommand extends Command {
                 if (i.customId === 'done' && rules.length === 0) {
                     return void dontThrow(i.update({
                         embeds: [
-                            this.Embed.fail('No rules were entered, command was canceled!')
+                            this.Embed.error('No rules were entered, command was canceled!')
                         ],
                         components: []
                     }));
                 } else if (i.customId === 'cancel') {
                     return void dontThrow(i.update({
                         embeds: [
-                            this.Embed.fail('Command was canceled!')
+                            this.Embed.error('Command was canceled!')
                         ],
                         components: []
                     }));
                 } else {
                     void dontThrow(i.update({
                         embeds: [
-                            this.Embed.success(`Posting rules to ${channel} now!`)
+                            this.Embed.ok(`Posting rules to ${channel} now!`)
                         ],
                         components: disableAll(m)
                     }));
@@ -177,7 +175,7 @@ export class kCommand extends Command {
             if (rules.length === 0) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail('No rules were entered, command was canceled!')
+                        this.Embed.error('No rules were entered, command was canceled!')
                     ],
                     components: []
                 }));
@@ -192,18 +190,18 @@ export class kCommand extends Command {
                 const line = rule.endsWith('\n') ? `${rule}\n` : `${rule}\n\n`;
 
                 if (embeds.length === 0) {
-                    const embed = this.Embed.success(line)
+                    const embed = this.Embed.ok(line)
                         .setTitle(`${message.guild.name} Rules`)
                         .setThumbnail(message.guild.iconURL()!)
                     
                     embeds.push(embed);
                 } else if (embed.description!.length >= 2048) {
-                    embeds.push(this.Embed.success(line));
+                    embeds.push(this.Embed.ok(line));
                 } else {
                     const desc = embed.description!;
 
                     if (desc.length + line.length > 2048) {
-                        embeds.push(this.Embed.success(line));
+                        embeds.push(this.Embed.ok(line));
                     } else {
                         embed.description += line;
                     }

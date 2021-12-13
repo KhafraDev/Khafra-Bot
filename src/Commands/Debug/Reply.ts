@@ -1,8 +1,6 @@
 import { Command } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -19,6 +17,6 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        return this.Embed.success(`Hello, ${message.author}!`);
+        return this.Embed.ok(`Hello, ${message.author}!`);
     }
 }

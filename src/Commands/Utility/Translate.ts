@@ -1,9 +1,7 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
 import { langs, translate } from '../../lib/Packages/Translate.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -30,11 +28,11 @@ export class kCommand extends Command {
         if (args[1] === from) args.splice(1, 1);
 
         if (args.length === 0) {
-            return this.Embed.fail('Nothing to translate!');
+            return this.Embed.error('Nothing to translate!');
         }
 
         const tr = await translate(args.join(' '), { to, from });
         
-        return this.Embed.success(tr);
+        return this.Embed.ok(tr);
     }
 }

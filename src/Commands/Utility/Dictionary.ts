@@ -1,10 +1,8 @@
 import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { bold, italic } from '@discordjs/builders';
+import { bold, italic } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -28,10 +26,10 @@ export class kCommand extends Command {
         const word = await owlbotio(args.join(' '));
 
         if (typeof word.definitions === 'undefined') {
-            return this.Embed.fail('No definition found!');
+            return this.Embed.error('No definition found!');
         }
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
         ${word.definitions
             .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)

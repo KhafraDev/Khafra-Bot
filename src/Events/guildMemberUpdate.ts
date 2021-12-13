@@ -3,7 +3,6 @@ import { GuildMember, Channel, Permissions } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
 import { client } from '../Structures/Database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
@@ -17,7 +16,6 @@ const basic = new Permissions([
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-@RegisterEvent
 export class kEvent extends Event<'guildMemberUpdate'> {
     name = 'guildMemberUpdate' as const;
 
@@ -33,12 +31,10 @@ export class kEvent extends Event<'guildMemberUpdate'> {
         if (oldHas === newHas)
             return;
 
-        const cached = await client.exists(oldMember.guild.id) === 1;
-        let item: WelcomeChannel | null = null
+        const row = await client.get(oldMember.guild.id);
+        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
 
-        if (cached) {
-            item = JSON.parse(await client.get(oldMember.guild.id)) as kGuild;
-        } else {
+        if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
@@ -67,15 +63,21 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             return;
 
         if (oldHas && !newHas) { // lost role
-            const embed = Embed.fail(`${newMember} is no longer boosting the server! 😨`);
+            const embed = Embed.error(`${newMember} is no longer boosting the server! 😨`);
             if (newMember.user)
-                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+                embed.setAuthor({
+                    name: newMember.user.username,
+                    iconURL: newMember.user.displayAvatarURL()
+                });
 
             return dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
-            const embed = Embed.success(`${newMember} just boosted the server! 🥳`);
+            const embed = Embed.ok(`${newMember} just boosted the server! 🥳`);
             if (newMember.user)
-                embed.setAuthor(newMember.user.username, newMember.user.displayAvatarURL());
+                embed.setAuthor({
+                    name: newMember.user.username,
+                    iconURL: newMember.user.displayAvatarURL()
+                });
 
             return dontThrow(channel.send({ embeds: [embed] }));
         }

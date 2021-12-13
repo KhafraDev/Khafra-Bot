@@ -1,9 +1,8 @@
 import { Command } from '../../../Structures/Command.js';
-import { isText, isThread, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
+import { isText, isThread } from '../../../lib/types/Discord.js.js';
+import { Message, MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
@@ -32,7 +31,6 @@ const perms = new Permissions([
     Permissions.FLAGS.EMBED_LINKS
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -50,7 +48,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         // the current option the user is setting
         let currentOption: `${Actions}` | null = null;
         const settings: Settings = {
@@ -60,7 +58,7 @@ export class kCommand extends Command {
  
         const m = await message.reply({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Press a button below to make selections:
                 • ${inlineCode('Add Option')}: Once pressing, type the option in chat to add it (cut off after 200 characters).
                 • ${inlineCode('Post Poll')}: Posts the poll to the selected channel.
@@ -89,8 +87,7 @@ export class kCommand extends Command {
         const messageCollector = m.channel.createMessageCollector({
             filter: (mm) =>
                 mm.author.id === message.author.id &&
-                currentOption !== null &&
-                !m.deleted,
+                currentOption !== null,
             time: 60_000 * 5,
             max: 10
         });
@@ -107,9 +104,12 @@ export class kCommand extends Command {
                     }));
                 }
 
-                const embed = this.Embed.success()
+                const embed = this.Embed.ok()
                     .setTitle('Poll')
-                    .setAuthor(message.author.username, message.author.displayAvatarURL());
+                    .setAuthor({
+                        name: message.author.username,
+                        iconURL: message.author.displayAvatarURL()
+                    });
 
                 for (let i = 0; i < settings.options.length; i++) {
                     const option = settings.options[i];

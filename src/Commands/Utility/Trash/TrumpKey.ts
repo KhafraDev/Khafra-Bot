@@ -1,7 +1,5 @@
 import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -17,7 +15,7 @@ export class kCommand extends Command {
     }
 
     async init() {
-        return this.Embed.success(`
+        return this.Embed.ok(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia
         🔵 – Public Statements / Tweets

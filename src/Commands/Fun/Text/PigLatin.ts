@@ -1,6 +1,5 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
 const vowels = ['A', 'E', 'I', 'O', 'U'];
@@ -67,7 +66,6 @@ const toPigLatin = (sentence: string) => {
     return pigLatin.join(' ');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -86,6 +84,6 @@ export class kCommand extends Command {
 
     async init(_message: Message, { content }: Arguments) {
         const pig = toPigLatin(content);
-        return this.Embed.success(pig.slice(0, 2048))
+        return this.Embed.ok(pig.slice(0, 2048))
     }
 }

@@ -1,21 +1,17 @@
 import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '../../lib/Utility/ms.js';
 import { getMentions } from '../../lib/Utility/Mentions.js';
 import { hierarchy } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Range } from '../../lib/Utility/Valid/Number.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
 
-const range = Range(0, 7, true);
+const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -39,16 +35,16 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args, cli }: Arguments) {
+    async init(message: Message<true>, { args, cli }: Arguments) {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users');
 
         const member = message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.fail(`You do not have permission to ban ${member}!`);
+            return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.fail(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
         }
 
         // days of messages to clear
@@ -57,17 +53,14 @@ export class kCommand extends Command {
         if (cli.has('days') || cli.has('time')) {
             const time = Number(cli.get('days') || cli.get('time'));
 
-            if (validateNumber(time) && range.isInRange(time)) {
+            if (inRange(time)) {
                 clear = time;
             }
         } else if (typeof args[1] === 'string') {
-            // I know I'll forget this in the future, so:
-            // this uses a trick that when `null` is coerced to a number,
-            // by performing a math op on it, it coerces to 0.
-            // If it couldn't be parsed, the `time` will default to 0.
-            const time = Math.ceil(parseStrToMs(args[1])! / 86_400_000); // ms -> days
+            const ms = parseStrToMs(args[1]);
+            const time = Math.ceil(ms! / 86_400_000); // ms -> days
 
-            if (validateNumber(time) && range.isInRange(time)) {
+            if (ms && inRange(time)) {
                 clear = time;
                 usedMs = true;
             }
@@ -107,14 +100,14 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.fail(`${member ?? user} is not bannable!`);
+                return this.Embed.error(`${member ?? user} is not bannable!`);
             }
         }
 
-        if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
+        if (!bans.has(`${message.guild.id},${user.id}`) && message.member) // not in the cache already, just to be sure
             bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
-        return this.Embed.success(`
+        return this.Embed.ok(`
         ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!
         `).setFooter(
             `${clear} days of messages removed.`

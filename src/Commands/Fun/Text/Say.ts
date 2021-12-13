@@ -1,8 +1,6 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -20,9 +18,12 @@ export class kCommand extends Command {
         );
     }
 
-    init(message: Message, { args }: Arguments) {
-        return this.Embed.success()
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+    async init(message: Message, { args }: Arguments) {
+        return this.Embed.ok()
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            })
             .setDescription(args.join(' '));
     }
 }

@@ -1,8 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { Board } from '../../../lib/Packages/MineSweeper.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -20,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    init() {
-        return this.Embed.success(Board());
+    async init() {
+        return this.Embed.ok(Board());
     }
 }

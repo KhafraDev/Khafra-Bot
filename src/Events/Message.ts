@@ -1,65 +1,64 @@
+import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { Event } from '../Structures/Event.js';
-import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
-import { Logger } from '../Structures/Logger.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
-import { trim } from '../lib/Utility/Template.js';
-import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
-import { commandLimit, notified } from '../Structures/Cooldown/CommandCooldown.js';
-import { Arguments, Command } from '../Structures/Command.js';
-import { pool } from '../Structures/Database/Postgres.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { client } from '../Structures/Database/Redis.js';
-import { upperCase } from '../lib/Utility/String.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { KhafraClient } from '../Bot/KhafraBot.js';
+import { MessagesLRU } from '../lib/Cache/Messages.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
+import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { DM } from '../lib/Utility/EventEvents/Message_DM.js';
 import { Imgur } from '../lib/Utility/EventEvents/Message_ImgurAlbum.js';
+import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Stats } from '../lib/Utility/Stats.js';
-import { inlineCode } from '@discordjs/builders';
+import { plural, upperCase } from '../lib/Utility/String.js';
+import { Arguments, Command } from '../Structures/Command.js';
+import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
+import { pool } from '../Structures/Database/Postgres.js';
+import { client } from '../Structures/Database/Redis.js';
+import { Event } from '../Structures/Event.js';
+import { Logger } from '../Structures/Logger.js';
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+export const logger = new Logger();
 
-const defaultSettings: PartialGuild = {
+export const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+
+export const defaultSettings: PartialGuild = {
     prefix: config.prefix,
     max_warning_points: 20,
     mod_log_channel: null,
     welcome_channel: null,
 };
 
-const _cooldownGuild = cooldown(30, 60000);
-const _cooldownUsers = cooldown(10, 60000);
+export const _cooldownGuild = cooldown(30, 60000);
+export const _cooldownUsers = cooldown(10, 60000);
 
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
-const disabled = typeof processArgs.get('disabled') === 'string'
+export const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+export const disabled = typeof processArgs.get('disabled') === 'string'
     ? (processArgs.get('disabled') as string)
         .split(',')
         .map(c => c.toLowerCase())
     : [];
 
-@RegisterEvent
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
-    logger = new Logger('Message');
 
     async init(message: Message) {
         Stats.messages++;
 
+        if (message.channel.type === 'DM') return DM(message);
         if (!Sanitize(message)) return;
 
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild!: typeof defaultSettings | kGuild;
-        const exists = await client.exists(message.guild.id);
+        const row = await client.get(message.guild.id);
 
-        if (exists === 1) {
-            const row = await client.get(message.guild.id);
-            guild = Object.assign({ ...defaultSettings }, JSON.parse(row) as Partial<kGuild>);
+        if (row) {
+            guild = { ...defaultSettings, ...JSON.parse(row) as kGuild };
         } else {
             const { rows } = await pool.query<kGuild>(`
                 SELECT * 
@@ -71,7 +70,7 @@ export class kEvent extends Event<'messageCreate'> {
             if (rows.length !== 0) {
                 void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
 
-                guild = Object.assign({ ...defaultSettings }, rows.shift());
+                guild = { ...defaultSettings, ...rows.shift() };
             } else {
                 guild = { ...defaultSettings };
             }
@@ -82,6 +81,8 @@ export class kEvent extends Event<'messageCreate'> {
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);
         const cli = new Minimalist(content);
+
+        MessagesLRU.set(message.id, message);
 
         if (!name.startsWith(prefix)) {
             const imgur = await Imgur.album([name, ...args]);
@@ -100,7 +101,7 @@ export class kEvent extends Event<'messageCreate'> {
                     `You posted an Imgur album, which don't embed correctly! ` + 
                     `Here are all the images in the album:`,
                 embeds: [
-                    Embed.success(desc.trim()).setTitle(imgur.t)
+                    Embed.ok(desc.trim()).setTitle(imgur.t)
                 ]
             }));
         }
@@ -109,34 +110,39 @@ export class kEvent extends Event<'messageCreate'> {
 
         const command = KhafraClient.Commands.get(commandName)!;
         // command cooldowns are based around the commands name, not aliases
-        const limited = !commandLimit(command.settings.name, message.author.id);
+        const limited = command.rateLimit.isRateLimited(message.author.id);
 
         if (limited) {
-            if (notified.has(message.author.id)) return;
+            if (command.rateLimit.isNotified(message.author.id)) return;
 
-            notified.add(message.author.id);
+            const cooldownInfo = command.rateLimit.get(message.author.id)!;
+            const rateLimitSeconds = command.rateLimit.rateLimitSeconds;
+            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000);
+
             return dontThrow(message.reply({
                 content: 
-                    `${upperCase(command.settings.name)} has a ${command.settings.ratelimit} second rate limit! ` +
-                    `Please wait a little bit longer to use the command again. ❤️`
+                    `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
+                    `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
             }));
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
             return void dontThrow(message.reply({
                 content: `${inlineCode(commandName)} is temporarily disabled!`
             }));
+        } else if (!limited) {
+            command.rateLimit.rateLimitUser(message.author.id);
         }
         
         if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
             return dontThrow(message.reply({ 
                 embeds: [
-                    Embed.fail(`\`${command.settings.name}\` is only available to the bot owner!`)
+                    Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ] 
             }));
         }
 
         const [min, max = Infinity] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`
+            return dontThrow(message.reply({ embeds: [Embed.error(`
             Incorrect number of arguments provided.
             
             The command requires ${min} minimum arguments and ${max ?? 'no'} max.
@@ -146,19 +152,24 @@ export class kEvent extends Event<'messageCreate'> {
         }
 
         if (!_cooldownUsers(message.author.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`Users are limited to 10 commands a minute.`)] }));
+            return dontThrow(message.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
         } else if (!_cooldownGuild(message.guild.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.fail(`Guilds are limited to 30 commands a minute.`)] }));
+            return dontThrow(message.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
         } else if (!hasPerms(message.channel, message.member, command.permissions)) {
-            return dontThrow(message.reply({ embeds: [Embed.missing_perms(false, command.permissions)] }));
+            return dontThrow(message.reply({
+                embeds: [
+                    Embed.perms(message.channel, message.member, command.permissions)
+                ]
+            }));
         }
 
+        let err: Error | void;
         Stats.session++;
 
         try {
             const options: Arguments = { args, commandName, content, prefix, cli };
             const returnValue = await command.init(message, options, guild);
-            if (!returnValue || returnValue instanceof Message || message.deleted) 
+            if (!returnValue || returnValue instanceof Message) 
                 return;
 
             const param = {
@@ -174,8 +185,20 @@ export class kEvent extends Event<'messageCreate'> {
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);
             
+            if ([...command.settings.aliases!, command.settings.name].some(n => KhafraClient.Interactions.has(n))) {
+                const toAdd = `${bold('Tip: use the slash command version of this command!')}\n\n`;
+                
+                if (param.content && param.content.length + toAdd.length <= 2048) {
+                    param.content = `${toAdd}${param.content}`;
+                } else {
+                    param.content ??= toAdd;
+                }
+            }
+            
             return message.reply(param);
         } catch (e) {
+            err = e as Error;
+
             if (processArgs.get('dev') === true) {
                 console.log(e);
             }
@@ -194,17 +217,24 @@ export class kEvent extends Event<'messageCreate'> {
                 : command.errors.default;
                 
             return dontThrow(message.reply({ 
-                embeds: [Embed.fail(error)],
+                embeds: [Embed.error(error)],
                 failIfNotExists: false
             }));
-        } finally { 
-            this.logger.log(trim`
-            Command: ${command.settings.name} 
-            | Author: ${message.author.id} 
-            | URL: ${message.url} 
-            | Guild: ${message.guild?.id ?? 'DMs'} 
-            | Input: ${message.content}
-            `);
+        } finally {
+            MessagesLRU.remove(message.id);
+
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.log(
+                    `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
+                    {
+                        URL: message.url,
+                        guild: message.guild.id,
+                        input: `"${message.content}"`
+                    }
+                );
+            }
         }
     }
 }

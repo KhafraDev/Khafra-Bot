@@ -1,15 +1,14 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { Message, Permissions, TextChannel } from 'discord.js';
+import { isText } from '../../../lib/types/Discord.js.js';
+import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
+import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
 import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
-import { Range } from '../../../lib/Utility/Range.js';
-import { validateNumber } from '../../../lib/Utility/Valid/Number.js';
-import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
 import { plural } from '../../../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
+import { Range } from '../../../lib/Utility/Valid/Number.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
+import { pool } from '../../../Structures/Database/Postgres.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -17,13 +16,12 @@ type WarnInsert = {
     k_ts: Warning['k_ts']
 }
 
-const range = Range(0, 32767, true);
+const inRange = Range({ min: 0, max: 32767, inclusive: true });
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -42,23 +40,27 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
         const points = Number(args[1]);
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.KICK_MEMBERS))
-            return this.Embed.missing_perms(false, Permissions.FLAGS.KICK_MEMBERS);
-        else if (!validateNumber(points) || !range.isInRange(points))
-            return this.Embed.fail(`An invalid number of points was provided, user wasn't warned!`);
+            return this.Embed.perms(
+                message.channel as TextChannel,
+                message.member,
+                Permissions.FLAGS.KICK_MEMBERS
+            );
+        else if (!inRange(points))
+            return this.Embed.error(`An invalid number of points was provided, user wasn't warned!`);
         
         const reason = args.slice(2).join(' ');
         const member = await getMentions(message, 'members');
 
         if (!member)
-            return this.Embed.fail('Failed to fetch the member, sorry. 😕\n Are they in the guild?');
+            return this.Embed.error('Failed to fetch the member, sorry. 😕\n Are they in the guild?');
         else if (!hierarchy(message.member, member))
-            return this.Embed.fail(`You can't warn ${member}! 🤣`);
-        else if (!hierarchy(message.guild.me!, member))
-            return this.Embed.fail(`I can't warn ${member}! 😦`);
+            return this.Embed.error(`You can't warn ${member}! 🤣`);
+        else if (!hierarchy(message.guild.me, member))
+            return this.Embed.error(`I can't warn ${member}! 😦`);
 
         const { rows } = await pool.query<WarnInsert>(`
             WITH warns AS (
@@ -86,22 +88,22 @@ export class kCommand extends Command {
         `, [message.guild.id, member.id, points]);
 
         if (rows.length === 0)
-            return this.Embed.fail(`Yeah, I'm not really sure what happened. 🤯`);
+            return this.Embed.error(`Yeah, I'm not really sure what happened. 🤯`);
 
         const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
         const k_id = rows[0].insertedid;
      
         // old warnings should not be nullified, subsequent warnings will each result in a kick.
         if (settings.max_warning_points <= totalPoints) {
-            try {
-                await member.kick(reason || undefined);
-            } catch {
-                return this.Embed.fail(`Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`);
+            const [kickError] = await dontThrow(member.kick(reason || undefined));
+            
+            if (kickError !== null) {
+                return this.Embed.error(`Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`);
             }
 
             await message.reply({ 
                 embeds: [
-                    this.Embed.success(
+                    this.Embed.ok(
                     `${member} was automatically kicked from the server for having ` + 
                     `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
                     )
@@ -110,7 +112,7 @@ export class kCommand extends Command {
         } else {
             await message.reply({ 
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).
                     Member has ${totalPoints.toLocaleString()} points total.
                     `)
@@ -125,7 +127,7 @@ export class kCommand extends Command {
 
             return void channel.send({ 
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${bold('Offender:')} ${member}
                     ${bold('Reason:')} ${inlineCode(reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
                     ${bold('Staff:')} ${message.member}

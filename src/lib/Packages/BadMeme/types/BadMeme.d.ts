@@ -1,7 +1,7 @@
 type GalleryData = {
     y: number
     x: number
-    u: string
+    u: string | undefined
 }
 
 type RedditVideoData = {

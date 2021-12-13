@@ -1,11 +1,10 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
 import { pool } from '../../Structures/Database/Postgres.js';
 import { upperCase } from '../../lib/Utility/String.js';
 import { once } from '../../lib/Utility/Memoize.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 
 interface IBibleVerse {
@@ -24,7 +23,6 @@ const R = {
 
 const mw = once(bibleInsertDB);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -55,16 +53,16 @@ export class kCommand extends Command {
                 .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
                 .shift()!;
 
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(`${book} ${rows[0].chapter}:${rows[0].verse}`)
                 .setDescription(rows[0].content);
         }
 
         // list all books available to the bot
         if (args[0].toLowerCase() === 'list') {
-            return this.Embed.success(Object.keys(titles).map(t => inlineCode(t)).join(', '));
+            return this.Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '));
         } else if (!titleRegex.test(content)) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             No book with that name was found!
 
             Use ${inlineCode(`${settings.prefix}${this.settings.name} list`)} to list all of the supported book names!
@@ -90,7 +88,7 @@ export class kCommand extends Command {
                     LIMIT 1;
                 `, [upperCase(bookAcronym[1]), Number(locationUnformatted)]);
                 
-                return this.Embed.success(`
+                return this.Embed.ok(`
                 Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
                 `);
             }
@@ -103,7 +101,7 @@ export class kCommand extends Command {
                 LIMIT 1;
             `, [upperCase(bookAcronym[1])]);
 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             ${bookAcronym[0]} has ${rows[0]?.chapter ?? 'no'} chapters.
             `);
         }
@@ -131,12 +129,12 @@ export class kCommand extends Command {
             `, [upperCase(bookAcronym.pop()!), chapter, ...versesDiff]);
 
             if (rows.length === 0)
-                return this.Embed.fail(`
+                return this.Embed.error(`
                 No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
                 `);
 
             const [first, last] = [rows.at(0)!, rows.at(-1)!];
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(`${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`)
                 .setDescription(`
                 ${rows.map(v => v.content).join('\n')}
@@ -159,11 +157,11 @@ export class kCommand extends Command {
             `, [upperCase(bookAcronym[1]), chapter, verse]);
 
             if (rows.length === 0)
-                return this.Embed.fail(`
+                return this.Embed.error(`
                 No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕
                 `);
 
-            return this.Embed.success()
+            return this.Embed.ok()
                 .setTitle(`${bookAcronym.shift()} ${chapter}:${verse}`)
                 .setDescription(rows[0].content);
         }

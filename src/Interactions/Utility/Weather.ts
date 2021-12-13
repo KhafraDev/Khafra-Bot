@@ -1,21 +1,26 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, time } from '@khaf/builders';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { weather } from '@khaf/hereweather';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('weather')
-            .addStringOption(option => option
-                .setName('location')
-                .setDescription('Location to get weather of.')
-                .setRequired(true)
-            )
-            .setDescription('Get the weather!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'weather',
+            description: 'Gets the weather of a provided location!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'location',
+                    description: 'Location to get the weather of.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -35,7 +40,7 @@ export class kInteraction extends Interactions {
             return '❌ No location found!';
         }
 
-        return Embed.success(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
+        return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .addField(bold('Temperature:'), `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)

@@ -1,11 +1,10 @@
-import { Command } from '../../Structures/Command.js';
-import { Collection, GuildChannel, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
-import { isCategory, isStage, isThread, isVoice, Message } from '../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { bold, inlineCode, italic } from '@khaf/builders';
+import { Collection, GuildChannel, Message, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
+import { isCategory, isStage, isThread, isVoice } from '../../lib/types/Discord.js.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { bold, inlineCode, italic } from '@discordjs/builders';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { Command } from '../../Structures/Command.js';
 
 const threadPerms = new Permissions([
     Permissions.FLAGS.MANAGE_THREADS,
@@ -14,7 +13,6 @@ const threadPerms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES_IN_THREADS
 ]);
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,10 +31,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 Are you sure you want to disable these permissions for everyone? This cannot be reverted by the bot!
                 `)
             ],
@@ -59,9 +57,9 @@ export class kCommand extends Command {
             }));
 
             if (e !== null || !i) {
-                return this.Embed.fail(`No response, command was canceled!`);
+                return this.Embed.error(`No response, command was canceled!`);
             } else if (i.customId === 'deny') {
-                return this.Embed.fail(`Command was canceled, permissions will not be disabled!`);
+                return this.Embed.error(`Command was canceled, permissions will not be disabled!`);
             } else {
                 void i.update({ components: disableAll(m) });
             }
@@ -70,7 +68,7 @@ export class kCommand extends Command {
         const [fetchErr, allChannels] = await dontThrow(message.guild.channels.fetch());
 
         if (fetchErr !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
         }
 
         const channels = allChannels.filter(c => 
@@ -101,16 +99,19 @@ export class kCommand extends Command {
         }
 
         if (pr.length === 0) {
-            return this.Embed.success('No channel permissions needed to be updated!');
+            return this.Embed.ok('No channel permissions needed to be updated!');
         }
 
         const settled = await Promise.allSettled(pr);
         const success = settled.filter((p): p is PromiseFulfilledResult<GuildChannel> => p.status === 'fulfilled');
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setTitle(`Edited ${success.length} Channel Perms!`)
-            .setAuthor(message.guild.name, message.guild.bannerURL() ?? undefined);
+            .setAuthor({
+                name: message.guild.name,
+                iconURL: message.guild.bannerURL() ?? undefined
+            });
 
         if (success.length > 0)
             embed.description = `${bold('Success:')}\n`;

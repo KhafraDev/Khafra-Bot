@@ -1,10 +1,9 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { plural } from '../../../lib/Utility/String.js';
 import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
-import { inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@khaf/builders';
 import { readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { readdirSync } from 'fs';
@@ -30,7 +29,6 @@ const images = [
 const hide = (word: string, guesses: string[]) =>
     word.replace(new RegExp(`[^${guesses.filter(l => l.length === 1).join('')}]`, 'gi'), '☐');
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -48,7 +46,7 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         if (games.has(message.author.id))
-            return this.Embed.fail('Finish your current game before starting another!');
+            return this.Embed.error('Finish your current game before starting another!');
 
         const listName = args.length === 0 ? 'presidents' : args[0].toLowerCase();
         let words: string[] | null = null;
@@ -64,7 +62,7 @@ export class kCommand extends Command {
                     .filter(l => !l.startsWith('#') && l.length > 0);
                 lists.set(listName, words);
             } else {
-                return this.Embed.fail('That list of words doesn\'t exist!');
+                return this.Embed.error('That list of words doesn\'t exist!');
             }
         }
 
@@ -74,7 +72,7 @@ export class kCommand extends Command {
 
         const m = await message.reply({
             embeds: [
-                this.Embed.success()
+                this.Embed.ok()
                     .setDescription(hide(word, guesses))
                     .setImage(images[wrong])
             ],
@@ -95,7 +93,7 @@ export class kCommand extends Command {
         });
 
         c.on('collect', (msg) => {
-            if (wrong > 6 || m.deleted || !m.editable) return c.stop();
+            if (wrong > 6 || !m.editable) return c.stop();
 
             const guess = msg.content.toLowerCase();
             const wordLc = word.toLowerCase();
@@ -113,7 +111,7 @@ export class kCommand extends Command {
                 c.stop();
                 opts.content = null;
                 opts.components = disableAll(m);
-                opts.embeds!.push(this.Embed.success()
+                opts.embeds!.push(this.Embed.ok()
                     .setTitle('You guessed the word!')
                     .setImage(images[wrong])
                     .setDescription(`
@@ -129,7 +127,7 @@ export class kCommand extends Command {
                     opts.content = null;
                     opts.components = disableAll(m);
                     opts.embeds = [
-                        this.Embed.success()
+                        this.Embed.ok()
                             .setTitle(`You lost! The word was "${word}"!`)
                             .setImage(images[wrong])
                             .setDescription(`
@@ -140,7 +138,7 @@ export class kCommand extends Command {
                     ];
                 } else {
                     opts.content = guess.length > 1 ? '❗ Partial guesses do not count.' : null;
-                    opts.embeds!.push(this.Embed.success()
+                    opts.embeds!.push(this.Embed.ok()
                         .setTitle(`That guess is incorrect!`)
                         .setImage(images[wrong])
                         .setDescription(`
@@ -152,7 +150,7 @@ export class kCommand extends Command {
                 }
             } else { // guess is correct, didn't win or lose
                 opts.content = null;
-                opts.embeds!.push(this.Embed.success()
+                opts.embeds!.push(this.Embed.ok()
                     .setTitle(`"${msg.content.slice(0, 10)}" is in the word!`)
                     .setImage(images[wrong])
                     .setDescription(`
@@ -163,7 +161,8 @@ export class kCommand extends Command {
                 );
             }
 
-            return void dontThrow(m.edit(opts));
+            return void dontThrow(m.edit(opts))
+                .then(([e]) => e !== null && c.stop());
         });
 
         c.once('end', () => {
@@ -178,7 +177,7 @@ export class kCommand extends Command {
 
         const r = m.createMessageComponentCollector({
             filter: (interaction) => 
-                interaction.message.id === m.id &&
+                interaction.message?.id === m.id &&
                 interaction.user.id === message.author.id &&
                 interaction.customId === 'hint',
             max: 1, 
@@ -201,7 +200,7 @@ export class kCommand extends Command {
             const letter = letters[Math.floor(Math.random() * letters.length)];
             guesses.push(letter);
 
-            const embed = this.Embed.success()
+            const embed = this.Embed.ok()
                 .setTitle(`"${letter}" is the hint!`)
                 .setImage(images[++wrong])
                 .setDescription(`

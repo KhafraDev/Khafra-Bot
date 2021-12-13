@@ -1,16 +1,14 @@
 import { Arguments, Command } from '../../Structures/Command.js';
 import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { chunkSafe } from '../../lib/Utility/Array.js';
-import { bold, inlineCode, hyperlink, codeBlock } from '@discordjs/builders';
+import { bold, inlineCode, hyperlink, codeBlock } from '@khaf/builders';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 
 let folders: string[] | null = null;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -35,9 +33,9 @@ export class kCommand extends Command {
         if (args.length !== 0) {
             const commandName = args[0].toLowerCase();
             if (!KhafraClient.Commands.has(commandName))
-                return this.Embed.fail(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
+                return this.Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
 
-            const { settings, help } = KhafraClient.Commands.get(commandName)!;
+            const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!;
             const helpF = help.length === 2 && help[1] === ''
                 ? [help[0], '[No arguments]']
                 : help;
@@ -45,7 +43,7 @@ export class kCommand extends Command {
                 ? ['No aliases!']
                 : settings.aliases!;
 
-            return this.Embed.success(`
+            return this.Embed.ok(`
             The ${inlineCode(settings.name)} command:
             ${codeBlock(help.shift()!)}
 
@@ -56,13 +54,13 @@ export class kCommand extends Command {
             .addFields(
                 { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
                 { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-                { name: bold('Rate-Limit:'), value: `${settings.ratelimit} seconds`, inline: true}
+                { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
             );
         }
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 ${hyperlink('Khafra-Bot', 'https://github.com/KhafraDev/Khafra-Bot')}
                 
                 To get help on a single command use ${inlineCode(`${settings.prefix}help [command name]`)}!
@@ -116,7 +114,7 @@ export class kCommand extends Command {
                             desc += `${bold(settings.name)}: ${inlineCode('No description')}`
                     }
 
-                    pages.push(this.Embed.success(desc));
+                    pages.push(this.Embed.ok(desc));
                 }
 
                 const components: MessageActionRow[] = [];

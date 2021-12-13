@@ -1,5 +1,4 @@
 import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
 import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
 import { Components } from '../../../lib/Utility/Constants/Components.js';
@@ -13,7 +12,6 @@ const Trump = createFileWatcher(
     join(assets, 'JSON/Trump.json')
 );
 
-@RegisterCommand
 export class kCommand extends Command {    
     constructor() {
         super(
@@ -35,7 +33,7 @@ export class kCommand extends Command {
             : Trump.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
             
         if (!item || item.length === 0) {
-            return this.Embed.fail('Wow! No atrocities on that day.');
+            return this.Embed.error('Wow! No atrocities on that day.');
         } else if (item.length === 1) {
             const { text, color, emojis } = item.shift()!;
             return new MessageEmbed()

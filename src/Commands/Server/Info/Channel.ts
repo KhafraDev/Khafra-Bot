@@ -1,13 +1,11 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { isText, isVoice, isExplicitText, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { bold, codeBlock, time } from '@discordjs/builders';
+import { bold, codeBlock, time } from '@khaf/builders';
+import { Message, Permissions } from 'discord.js';
+import { isExplicitText, isText, isVoice } from '../../../lib/types/Discord.js.js';
 import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
+import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { hasPerms } from '../../../lib/Utility/Permissions.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -26,17 +24,17 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init(message: Message<true>, { content }: Arguments) {
         const channel = 
             await getMentions(message, 'channels') ?? 
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
             message.channel;
 
         if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
-            return this.Embed.fail('No channel with that name was found!'); 
+            return this.Embed.error('No channel with that name was found!'); 
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .addFields(
                 { name: bold('ID:'), value: channel.id, inline: true },
                 { name: bold('Type:'), value: channel.type, inline: true },

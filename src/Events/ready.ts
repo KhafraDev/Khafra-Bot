@@ -1,6 +1,5 @@
 import { Event } from '../Structures/Event.js';
 import { client } from '../index.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
 import { validSnowflake } from '../lib/Utility/Mentions.js';
@@ -11,7 +10,6 @@ import { yellow } from '../lib/Utility/Colors.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
-@RegisterEvent
 export class kEvent extends Event<'ready'> {
     name = 'ready' as const;
 
@@ -26,7 +24,7 @@ export class kEvent extends Event<'ready'> {
             
             const user = await client.users.fetch(config.botOwner);
             const [err] = await dontThrow(user.send({ 
-                embeds: [Embed.success(s)]
+                embeds: [Embed.ok(s)]
             }));
         
             if (err !== null) {

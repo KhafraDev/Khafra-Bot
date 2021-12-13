@@ -1,11 +1,10 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { pool } from '../../../Structures/Database/Postgres.js';
 import { Giveaway } from '../../../lib/types/KhafraBot.js';
-import { DiscordAPIError, Permissions } from 'discord.js';
-import { hyperlink, inlineCode } from '@discordjs/builders';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { time } from '@discordjs/builders';
+import { DiscordAPIError, Permissions, Message } from 'discord.js';
+import { hyperlink, inlineCode } from '@khaf/builders';
+import { isText } from '../../../lib/types/Discord.js.js';
+import { time } from '@khaf/builders';
 import { hasPerms } from '../../../lib/Utility/Permissions.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
@@ -13,7 +12,6 @@ type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initi
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -33,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         if (args.length === 0 || (args.length === 1 && args[0].toLowerCase().endsWith('delete'))) {
             const { rows } = await pool.query<GiveawayRow, string[]>(`
                 SELECT guildId, messageId, channelId, initiator, endDate, prize, id
@@ -41,7 +39,7 @@ export class kCommand extends Command {
                 WHERE guildId = $1::text AND initiator = $2::text
                 ORDER BY endDate ASC
                 LIMIT 10;
-            `, [message.guild.id, message.member.id]);
+            `, [message.guild.id, message.author.id]);
             
             let str = '';
             for (const row of rows) {
@@ -54,7 +52,7 @@ export class kCommand extends Command {
                     + '\n';
             }
 
-            return this.Embed.success(str)
+            return this.Embed.ok(str)
                 .setTitle('Your Current Giveaways');
         }
 
@@ -66,14 +64,14 @@ export class kCommand extends Command {
             : args[1];
 
         if (!uuidRegex.test(id)) {
-            return this.Embed.fail('UUID is not formatted correctly, please use a valid ID next time!');
+            return this.Embed.error('UUID is not formatted correctly, please use a valid ID next time!');
         }
 
         const { rows } = await pool.query<GiveawayRow, string[]>(`
             DELETE FROM kbGiveaways
             WHERE initiator = $1::text AND id = $2::uuid
             RETURNING guildId, messageId, channelId, initiator, endDate, prize, id;
-        `, [message.member.id, id]);
+        `, [message.author.id, id]);
 
         try {
             const channel = await message.guild.channels.fetch(rows[0].channelid);
@@ -82,19 +80,19 @@ export class kCommand extends Command {
                 const msg = await channel.messages.fetch(rows[0].messageid);
 
                 if (!msg.deletable)
-                    return this.Embed.fail(`Giveaway has been deleted, but the ${hyperlink('message', msg.url)} could not be deleted.`);
+                    return this.Embed.error(`Giveaway has been stopped, but the ${hyperlink('message', msg.url)} could not be deleted.`);
 
                 await msg.delete();
             }
         } catch (e) {
             if (e instanceof DiscordAPIError) {
                 const name = e.code || e.name;
-                return this.Embed.fail(`Giveaway has been deleted, but a(n) ${name} has occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been stopped, but a(n) ${name} has occurred trying to delete the message.`);
             } else {
-                return this.Embed.fail(`Giveaway has been deleted, but an error occurred trying to delete the message.`);
+                return this.Embed.error(`Giveaway has been stopped, but an error occurred trying to delete the message.`);
             }
         }
 
-        return this.Embed.fail(`Giveaway ${inlineCode(rows[0].id)} has been deleted.`);
+        return this.Embed.error(`Giveaway ${inlineCode(rows[0].id)} has been deleted.`);
     }
 }

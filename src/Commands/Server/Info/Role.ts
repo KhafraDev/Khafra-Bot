@@ -1,11 +1,8 @@
 import { Arguments, Command } from '../../../Structures/Command.js';
-import { Role } from 'discord.js';
+import { Message, Role } from 'discord.js';
 import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { bold, inlineCode, time } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -24,18 +21,16 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init(message: Message<true>, { content }: Arguments) {
         const role = 
             await getMentions(message, 'roles') ?? 
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
 
         if (!(role instanceof Role)) {
-            return this.Embed.fail('No role found!');
-        } else if (role.deleted) {
-            return this.Embed.fail('Role has been deleted.');
+            return this.Embed.error('No role found!');
         }
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setDescription(`
             ${role}
             

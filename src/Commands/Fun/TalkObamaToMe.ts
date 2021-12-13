@@ -1,9 +1,9 @@
 import { Message } from 'discord.js';
 import { Command, Arguments } from '../../Structures/Command.js';
 import { talkObamaToMe } from '../../lib/Packages/TalkObamaToMe.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { inlineCode } from '@khaf/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -26,7 +26,11 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        const obama = await talkObamaToMe(args.join(' ').slice(0, 280));
+        const [barack, obama] = await dontThrow(talkObamaToMe(args.join(' ').slice(0, 280)));
+
+        if (barack !== null) {
+            return this.Embed.error(`An unexpected error occurred: ${inlineCode(barack.message)}`);
+        }
 
         return obama;
     }

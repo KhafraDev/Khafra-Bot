@@ -1,13 +1,12 @@
-import { parse, toCodePoints } from 'twemoji-parser';
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { plural } from '../../../lib/Utility/String.js';
-import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
-import { Message } from '../../../lib/types/Discord.js.js';
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { assets } from '../../../lib/Utility/Constants/Path.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
 import { join } from 'path';
-import { bold, inlineCode } from '@discordjs/builders';
+import { parse, toCodePoints } from 'twemoji-parser';
+import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
+import { assets } from '../../../lib/Utility/Constants/Path.js';
+import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
+import { plural } from '../../../lib/Utility/String.js';
+import { Arguments, Command } from '../../../Structures/Command.js';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const Emojis = createFileWatcher(
@@ -30,7 +29,6 @@ interface DiverseUnicodeEmoji extends BaseUnicodeEmoji {
 
 type Emojis = Record<string, BaseUnicodeEmoji | DiverseUnicodeEmoji>;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -48,13 +46,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init(message: Message<true>, { content }: Arguments) {
         const guildEmoji = guildEmojiRegex.exec(content);
 
         if (guildEmoji === null || guildEmoji.groups === undefined) {
             const parsed = parse(content, { assetType: 'png' });
             if (parsed.length === 0) 
-                return this.Embed.fail(`No unicode emojis were in the message!`);
+                return this.Embed.error(`No unicode emojis were in the message!`);
 
             const codePoints = toCodePoints(parsed[0]!.text);
             let emoji = parsed[0].text;
@@ -70,7 +68,7 @@ export class kCommand extends Command {
                     .join('');
             }
             
-            const embed = this.Embed.success()
+            const embed = this.Embed.ok()
                 .setImage(parsed[0].url)
                 .setURL(`http://www.get-emoji.com/${encodeURIComponent(parsed[0].text)}`)
                 .addField(bold('Code Points:'), `\\u${codePoints.join('\\u')}`, true);
@@ -106,12 +104,12 @@ export class kCommand extends Command {
 
             return padEmbedFields(embed);
         } else if (!message.guild.emojis.cache.has(guildEmoji.groups.id)) {
-            return this.Embed.fail(`Emoji isn't cached, whoops!`);
+            return this.Embed.error(`Emoji isn't cached, whoops!`);
         }
 
         const emoji = message.guild.emojis.cache.get(guildEmoji.groups.id)!;
 
-        return this.Embed.success(`${emoji}`)
+        return this.Embed.ok(`${emoji}`)
             .setTitle(emoji.name ?? 'Unknown')
             .setImage(emoji.url)
             .addFields(

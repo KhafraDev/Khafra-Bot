@@ -2,11 +2,9 @@ import { Command, Arguments } from '../../../Structures/Command.js';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme, cache } from '@khaf/badmeme';
 import { isDM, isText } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -35,19 +33,19 @@ export class kCommand extends Command {
         
         if (res === null) {
             if (isText(message.channel) && message.channel.nsfw) {
-                return this.Embed.fail(`This channel isn't marked as NSFW!`);
+                return this.Embed.error(`This channel isn't marked as NSFW!`);
             }
 
-            return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
+            return this.Embed.error(`No posts in this subreddit were found, sorry!`);
         } else if ('error' in res) {
             switch (res.reason) {
-                case 'banned': return this.Embed.fail('Subreddit is banned!');
-                case 'private': return this.Embed.fail('Subreddit is set as private!');
-                case 'quarantined': return this.Embed.fail('Subreddit is quarantined!');
-                default: return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`)
+                case 'banned': return this.Embed.error('Subreddit is banned!');
+                case 'private': return this.Embed.error('Subreddit is set as private!');
+                case 'quarantined': return this.Embed.error('Subreddit is quarantined!');
+                default: return this.Embed.error(`Subreddit is blocked for reason "${res.reason}"!`)
             }
         } else if (res.url.length === 0) {
-            return this.Embed.fail(`
+            return this.Embed.error(`
             No image posts found in this subreddit.
             
             If the channel isn't set to NSFW, adult subreddits won't work!
@@ -78,9 +76,7 @@ export class kCommand extends Command {
 
         const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
         collector.on('collect', i => {
-            if (m.deleted) 
-                return collector.stop();
-            else if (i.customId === 'deny')
+            if (i.customId === 'deny')
                 return collector.stop('deny');
 
             i.customId === 'approve' ? page++ : page--;
@@ -88,7 +84,8 @@ export class kCommand extends Command {
             if (page < 0) page = res.url.length - 1;
             if (page >= res.url.length) page = 0;
 
-            return void dontThrow(i.update({ content: res.url[page] }));
+            return void dontThrow(i.update({ content: res.url[page] }))
+                .then(([e]) => e !== null && collector.stop());
         });
         collector.on('end', (c, r) => {
             if (r === 'deny') {

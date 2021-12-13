@@ -11,6 +11,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { join } from 'path';
 import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { Cooldown } from './Cooldown/CommandCooldown.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -35,7 +36,7 @@ interface ICommand {
         readonly folder: string
         readonly args: [number, number?]
         /** Ratelimit in seconds, defaults to 5 */
-        ratelimit?: number
+        readonly ratelimit?: number
         readonly permissions?: PermissionResolvable
         aliases?: string[]
         readonly guildOnly?: boolean
@@ -55,6 +56,7 @@ type HandlerReturn =
 export abstract class Command implements ICommand {
     readonly errors = Errors;
     readonly Embed = Embed;
+    readonly rateLimit: Cooldown;
 
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     readonly permissions: PermissionResolvable[] = [ 
@@ -73,12 +75,12 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = settings;
         this.settings.aliases ??= [];
-        this.settings.ratelimit ??= 5;
-        this.errors = Object.assign({ ...this.errors }, this.settings.errors);
+        this.rateLimit = new Cooldown(settings.ratelimit ?? 5);
+        this.errors = { ...this.errors, ...this.settings.errors };
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
-        HandlerReturn | Promise<HandlerReturn>
+        Promise<HandlerReturn>
 
     static isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 
         ? config.botOwner.includes(id) 

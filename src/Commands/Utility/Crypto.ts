@@ -1,13 +1,11 @@
 import { Command, Arguments } from '../../Structures/Command.js';
 import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
 import { Message, ReplyMessageOptions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { stripIndents } from '../../lib/Utility/Template.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
@@ -30,12 +28,12 @@ export class kCommand extends Command {
         });
 
         if (currencies === undefined) {
-            return this.Embed.fail(`No currency with that name or id could be found!`);
+            return this.Embed.error(`No currency with that name or id could be found!`);
         }
         
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = this.Embed.success()
+        const embed = this.Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)

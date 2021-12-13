@@ -1,24 +1,29 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '../../Structures/Interaction.js';
-import { bold, inlineCode, SlashCommandBuilder, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { npm } from '@khaf/npm';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('npm')
-            .addStringOption(option => option
-                .setName('name')
-                .setDescription('NPM package to get info about.')
-                .setRequired(true)
-            )
-            .addStringOption(option => option
-                .setName('version')
-                .setDescription('Package version to get (defaults to latest).')
-                .setRequired(false)    
-            )
-            .setDescription('Get information about a package on NPM!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'npm',
+            description: 'Gets the information about a package on NPM.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'name',
+                    description: 'NPM package to get information about.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'version',
+                    description: 'Package version to get, defaults to the latest.'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
@@ -40,8 +45,12 @@ export class kInteraction extends Interactions {
             .map(u => u.name)
             .join(', ');
 
-        return Embed.success()
-            .setAuthor('NPM', 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400', 'https://npmjs.com/')
+        return Embed.ok()
+            .setAuthor({
+                name: 'NPM',
+                iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
+                url: 'https://npmjs.com/'
+            })
             .setDescription(`
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(p.description.slice(0, 2000))}

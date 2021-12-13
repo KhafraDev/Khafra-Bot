@@ -51,6 +51,7 @@ Giveaways.on('giveaway', async (giveaway) => {
         if (count > giveaway.winners) { // bot react counts so the length must be greater
             while (winners.length < giveaway.winners) {
                 const random = users.cache.random();
+                if (!random) break;
                 if (random.bot) continue;
                 if (winners.some(u => u.id === random.id)) continue;
 

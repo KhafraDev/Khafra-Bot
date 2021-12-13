@@ -8,7 +8,7 @@ if (!existsSync(path)) {
     throw new Error('.env: No .env file found at the root of the repo!');
 }
 
-const file = readFileSync(path, 'utf-8').split(/\r\n|\n/g);
+const file = readFileSync(path, 'utf-8').split(/\r?\n/g);
 for (const line of file) {
     const [k, ...v] = line.split('=');
     Env.set(k, v.join('='));

@@ -1,10 +1,14 @@
 import { MessageActionRow, Interaction, Message } from 'discord.js';
 import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
 import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 import { createContext, runInContext } from 'vm';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { codeBlock } from '@discordjs/builders';
+import { codeBlock } from '@khaf/builders';
+
+type InteractionReply 
+    = import('discord.js').Message<boolean> 
+    | import('discord-api-types/v9').APIMessage
+    | void
 
 const symbols = /^-|\+|\*|\/|\.|\(|\)$/;
 /** Symbols an input is not allowed to start with */
@@ -15,7 +19,6 @@ const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super([
@@ -66,7 +69,7 @@ export class kCommand extends Command {
 
         const m = await message.channel.send({ 
             embeds: [
-                this.Embed.success(`
+                this.Embed.ok(`
                 ${squiggles}
                 ${codeBlock('Empty')}
                 ${squiggles}
@@ -78,7 +81,7 @@ export class kCommand extends Command {
         const filter = (interaction: Interaction) =>
             interaction.isMessageComponent() &&
             interaction.user.id === message.author.id &&
-            interaction.message.id === m.id;
+            interaction.message?.id === m.id;
 
         let lastAction = ''
         const actions: string[] = [];
@@ -113,7 +116,7 @@ export class kCommand extends Command {
             return void dontThrow(i.update({ 
                 content: null,
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${squiggles}
                     ${codeBlock(display)}
                     ${squiggles}
@@ -141,7 +144,7 @@ export class kCommand extends Command {
             } catch {}
 
             if (eq !== 'Invalid input!' && typeof eq !== 'number') {
-                return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
+                return void dontThrow<InteractionReply>(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                     content: 'Invalid calculations...',
                     components: disableAll(m)
                 }));
@@ -157,11 +160,11 @@ export class kCommand extends Command {
                 .replace(/(\d)\s\./g, '$1.') // 1 . 2 -> 1. 2
                 .replace(/\.\s(\d)/g, '.$1') // 1. 2 -> 1.2
 
-            return void dontThrow(c.last()![r !== 'stop' ? 'editReply' : 'update']({
+            return void dontThrow<InteractionReply>(c.last()![r !== 'stop' ? 'editReply' : 'update']({
                 content: null,
                 components: disableAll(m),
                 embeds: [
-                    this.Embed.success(`
+                    this.Embed.ok(`
                     ${squiggles}
                     ${codeBlock(format)}
                     ${squiggles}
