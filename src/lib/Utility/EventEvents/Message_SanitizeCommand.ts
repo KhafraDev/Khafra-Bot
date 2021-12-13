@@ -15,7 +15,7 @@ export const Sanitize = (message: Message): message is Message<true> => {
     if (
         message.webhookId || // author is null in webhook messages
         message.author.bot ||
-        !['DEFAULT', 'REPLY'].includes(message.type) ||
+        (message.type !== 'DEFAULT' && message.type !== 'REPLY') ||
         (message.guild && !message.guild.available) ||
         message.system ||
         message.partial ||

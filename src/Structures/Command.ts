@@ -38,7 +38,7 @@ interface ICommand {
         /** Ratelimit in seconds, defaults to 5 */
         readonly ratelimit?: number
         readonly permissions?: PermissionResolvable
-        aliases?: string[]
+        readonly aliases?: string[]
         readonly guildOnly?: boolean
         readonly ownerOnly?: boolean
         readonly errors?: Record<string, string>
@@ -73,8 +73,7 @@ export abstract class Command implements ICommand {
             ? [...help, ...Array<string>(2 - help.length).fill('')]
             : help;
         this.permissions = this.permissions.concat(settings.permissions ?? []);
-        this.settings = settings;
-        this.settings.aliases ??= [];
+        this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] });
         this.rateLimit = new Cooldown(settings.ratelimit ?? 5);
         this.errors = { ...this.errors, ...this.settings.errors };
     }
