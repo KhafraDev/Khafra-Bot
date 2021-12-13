@@ -221,7 +221,7 @@ export class kEvent extends Event<'messageCreate'> {
                 failIfNotExists: false
             }));
         } finally {
-            MessagesLRU.remove(message.id);
+            MessagesLRU.delete(message.id);
 
             if (err) {
                 logger.error(err);

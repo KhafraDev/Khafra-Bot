@@ -10,7 +10,7 @@ type LRUCache<K extends string, V> = {
     prev: K | null
 }
 
-export class LRU<K extends string, V> {
+export class LRU<K extends string, V> implements Map<K, V> {
     private options: LRUOptions = {};
     private cache = Object.create(null) as Record<K, LRUCache<K, V>>;
     private head: K | null = null;
@@ -21,7 +21,7 @@ export class LRU<K extends string, V> {
         this.options = { maxSize: opts.maxSize ?? 100, maxAge: opts.maxAge ?? 0 };
     }
 
-    public remove (key: K): boolean {
+    public delete (key: K): boolean {
         if (!(key in this.cache)) return false;
 
         const element = this.cache[key];
@@ -29,16 +29,6 @@ export class LRU<K extends string, V> {
 
         this.unlink(key, element.prev as K, element.next as K);
         return true;
-    }
-
-    public peek (key: K) {
-        if (!(key in this.cache)) return null;
-
-        const element = this.cache[key];
-
-        if (!this.checkAge(key, element)) return null;
-        
-        return element.value;
     }
 
     public set (key: K, value: V) {
@@ -49,7 +39,7 @@ export class LRU<K extends string, V> {
             element.value = value;
             
             if (this.options.maxAge) element.modified = Date.now();
-            if (key === this.head) return value;
+            if (key === this.head) return this;
 
             this.unlink(key, element.prev as K, element.next as K);
         } else {
@@ -57,7 +47,8 @@ export class LRU<K extends string, V> {
             if (this.options.maxAge) element.modified = Date.now();
             this.cache[key] = element;
 
-            if (this.length === this.options.maxSize) this.evict();
+            if (this.length === this.options.maxSize && this.tail)
+                this.delete(this.tail);
         }
 
         this.length++;
@@ -68,15 +59,18 @@ export class LRU<K extends string, V> {
         this.head = key;
 
         if (!this.tail) this.tail = key;
-        return value;
+        return this;
     }
 
     public get (key: K) {
-        if (!(key in this.cache)) return null;
+        if (!(key in this.cache)) return undefined;
 
         const element = this.cache[key];
 
-        if (!this.checkAge(key, element)) return null;
+        if (this.options.maxAge && (Date.now() - element.modified) > this.options.maxAge) {
+            this.delete(key);
+            return undefined;
+        }
 
         if (this.head !== key) {
             if (key === this.tail) {
@@ -104,6 +98,53 @@ export class LRU<K extends string, V> {
         return key in this.cache;
     }
 
+    public clear () {
+        this.cache = Object.create(null) as Record<K, LRUCache<K, V>>;
+        this.head = null;
+        this.tail = null;
+        this.length = 0
+    }
+
+    public forEach (callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void {
+        const entries = Object.entries(this.cache);
+
+        for (const [key, value] of entries) {
+            callbackfn.call(thisArg, value as V, key as K, this);
+        }
+    }
+
+    public * entries (): IterableIterator<[K, V]> {
+        for (const entry of Object.entries(this.cache)) {
+            yield entry as [K, V];
+        }
+    }
+
+    public * keys (): IterableIterator<K> {
+        for (const key in this.cache) {
+            yield key;
+        }
+    }
+
+    public * values (): IterableIterator<V> {
+        for (const value of Object.values(this.cache)) {
+            yield value as V;
+        }
+    }
+
+    public * [Symbol.iterator] () {
+        for (const entry of this.entries()) {
+            yield entry;
+        }
+    }
+
+    public get [Symbol.toStringTag] () {
+        return 'LRU';
+    }
+
+    public get size () {
+        return this.length;
+    }
+
     private unlink (key: K, prev: K, next: K) {
         this.length--;
 
@@ -120,19 +161,5 @@ export class LRU<K extends string, V> {
             this.cache[prev].next = next;
             this.cache[next].prev = prev;
         }
-    }
-
-    private checkAge (key: K, element: LRUCache<K, V>) {
-        if (this.options.maxAge && (Date.now() - element.modified) > this.options.maxAge) {
-            this.remove(key);
-            return false;
-        }
-
-        return true;
-    }
-
-    private evict () {
-        if (!this.tail) return;
-        this.remove(this.tail);
     }
 }

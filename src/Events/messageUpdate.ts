@@ -173,7 +173,7 @@ export class kEvent extends Event<'messageUpdate'> {
                 failIfNotExists: false
             }));
         } finally {
-            MessagesLRU.remove(newMessage.id);
+            MessagesLRU.delete(newMessage.id);
 
             if (err) {
                 logger.error(err);
