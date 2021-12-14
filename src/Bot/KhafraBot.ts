@@ -6,7 +6,7 @@ import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
 import { Client, ClientEvents } from 'discord.js';
 import { REST } from '@discordjs/rest';
-import { APIVersion, Routes } from 'discord-api-types/v9';
+import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { join, resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
@@ -125,10 +125,18 @@ export class KhafraClient extends Client {
             }
 
             // globally
-            await rest.put(
+            const slashCommands = await rest.put(
                 Routes.applicationCommands(config.botId),
                 { body: scs }
-            );
+            ) as APIApplicationCommand[];
+
+            for (const { id, name } of slashCommands) {
+                const cached = KhafraClient.Interactions.get(name);
+
+                if (cached) {
+                    cached.id = id;
+                }
+            }
         }
 
         console.log(green(`Loaded ${bright(loaded.length)} interactions!`));

@@ -1,4 +1,4 @@
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
 
 interface InteractionOptions {
@@ -18,7 +18,11 @@ type HandlerReturn =
 type InteractionData =
     | RESTPostAPIApplicationCommandsJSONBody;
 
+const kId = Symbol('Khafra.Interaction.Id');
+
 export abstract class Interactions {
+    private [kId]: APIApplicationCommand['id'];
+
     constructor(
         public data: InteractionData, 
         public options: InteractionOptions = {}
@@ -27,5 +31,13 @@ export abstract class Interactions {
         this.options = options;
     }
     
-    abstract init(arg: Interaction): HandlerReturn | Promise<HandlerReturn>;
+    abstract init(arg: Interaction): Promise<HandlerReturn>;
+
+    public set id (body: APIApplicationCommand['id']) {
+        this[kId] = body;
+    }
+
+    public get id () {
+        return this[kId];
+    }
 }

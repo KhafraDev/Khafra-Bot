@@ -27,10 +27,6 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        if (!interaction.client.application) {
-            return `❌ I have no idea why you are getting this error.`;
-        }
-
         let member = interaction.member;
 
         if (!member || !interaction.guild) {
@@ -55,15 +51,7 @@ export class kInteraction extends Interactions {
 
         if (!cachedCommand) {
             return `❌ Command does not exist.`;
-        }
-
-        const application = await interaction.client.application.fetch();
-        const allCommands = await application.commands.fetch();
-        const command = allCommands.find(c => c.name === nameOption);
-
-        if (!command) {
-            return `❌ No slash command with this name could be found.`;
-        } else if (command.defaultPermission !== false) {
+        } else if (cachedCommand.data.default_permission !== false) {
             return `❌ This command is already available to all guild members`;
         }
 
@@ -74,7 +62,7 @@ export class kInteraction extends Interactions {
 
         for (const role of roles.values()) {
             fullPermissions.push({
-                id: command.id,
+                id: cachedCommand.id,
                 permissions: [{
                     id: role.id,
                     type: 'ROLE',

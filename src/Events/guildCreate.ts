@@ -31,21 +31,11 @@ export class kEvent extends Event<'guildCreate'> {
         await dontThrow(guild.roles.fetch());
 
         const fullPermissions: GuildApplicationCommandPermissionData[] = [];
-
-        if (!guild.client.application) {
-            return logger.error(new Error(`guild.application is undefined!`));
-        }
-
-        const [err, commands] = await dontThrow(guild.client.application.commands.fetch());
-
-        if (err !== null) {
-            return logger.error(err);
-        }
         
-        for (const slashCommand of commands.values()) {
+        for (const slashCommand of KhafraClient.Interactions.values()) {
             // if slash command is disabled by default
-            if (slashCommand.defaultPermission === false) {
-                const interaction = KhafraClient.Interactions.get(slashCommand.name)!;
+            if (slashCommand.data.default_permission === false) {
+                const interaction = KhafraClient.Interactions.get(slashCommand.data.name)!;
                 if (!interaction.options.permissions) continue;
 
                 const perms = new Permissions(interaction.options.permissions);
