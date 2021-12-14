@@ -39,7 +39,12 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc, { defer: true });
+        super(sc, {
+            defer: true,
+            permissions: [
+                Permissions.FLAGS.BAN_MEMBERS
+            ]
+        });
     }
 
     async init(interaction: CommandInteraction) {

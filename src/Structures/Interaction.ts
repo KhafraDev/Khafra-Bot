@@ -1,10 +1,11 @@
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { Interaction, InteractionReplyOptions } from 'discord.js';
+import { Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
 
 interface InteractionOptions {
     defer?: boolean
     ownerOnly?: boolean
     replyOpts?: InteractionReplyOptions
+    permissions?: PermissionResolvable
 }
 
 type HandlerReturn =

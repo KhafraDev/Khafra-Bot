@@ -1,13 +1,18 @@
-import { Event } from '../Structures/Event.js';
-import { GuildMember, Channel, Permissions } from 'discord.js';
-import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { isText } from '../lib/types/Discord.js.js';
-import { client } from '../Structures/Database/Redis.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { time } from '@khaf/builders';
+import { Channel, GuildMember, Permissions } from 'discord.js';
+import { join } from 'path';
+import { isText } from '../lib/types/Discord.js.js';
+import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { cwd } from '../lib/Utility/Constants/Path.js';
 import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
+import { hasPerms } from '../lib/Utility/Permissions.js';
+import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
+import { client } from '../Structures/Database/Redis.js';
+import { Event } from '../Structures/Event.js';
+
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
@@ -21,6 +26,8 @@ export class kEvent extends Event<'guildMemberRemove'> {
     name = 'guildMemberRemove' as const;
 
     async init(member: GuildMember) {
+        if (member.id === config.botId) return;
+
         await pool.query(`
             INSERT INTO kbInsights (
                 k_guild_id, k_left

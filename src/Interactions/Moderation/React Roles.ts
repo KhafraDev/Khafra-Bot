@@ -38,7 +38,11 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc);
+        super(sc, {
+            permissions: [
+                Permissions.FLAGS.MANAGE_ROLES
+            ]
+        });
     }
 
     async init(interaction: CommandInteraction) {
