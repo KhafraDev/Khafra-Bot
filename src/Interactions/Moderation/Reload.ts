@@ -58,21 +58,21 @@ export class kInteraction extends Interactions {
         const perms = new Permissions(cachedCommand.options.permissions);
         const allRoles = await interaction.guild.roles.fetch();
         const roles = allRoles.filter(role => role.permissions.has(perms));
-        const fullPermissions: GuildApplicationCommandPermissionData[] = [];
+        const fullPermissions: GuildApplicationCommandPermissionData = {
+            id: cachedCommand.id,
+            permissions: []
+        };
 
         for (const role of roles.values()) {
-            fullPermissions.push({
-                id: cachedCommand.id,
-                permissions: [{
-                    id: role.id,
-                    type: 'ROLE',
-                    permission: true
-                }]
+            fullPermissions.permissions.push({
+                id: role.id,
+                type: 'ROLE',
+                permission: true
             });
         }
 
-        const [setError] =await dontThrow(interaction.guild.commands.permissions.set({
-            fullPermissions
+        const [setError] = await dontThrow(interaction.guild.commands.permissions.set({
+            fullPermissions: [fullPermissions]
         }));
 
         if (setError !== null) {
