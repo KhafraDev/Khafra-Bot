@@ -43,8 +43,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init(message: Message<true>) {
         const member = await getMentions(message, 'members') ?? message.member;
+
+        if (!member) {
+            return this.Embed.error(`No guild member mentioned.`);
+        }
 
         // max role length = 84 characters
         return this.Embed.ok()

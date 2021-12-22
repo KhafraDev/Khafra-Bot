@@ -35,6 +35,7 @@ export class kInteraction extends Interactions {
                     name: 'message',
                     description: 'The text the button message will display.'
                 }
+                // once repeating choices are added, allow multiple roles!!!
             ]
         };
 

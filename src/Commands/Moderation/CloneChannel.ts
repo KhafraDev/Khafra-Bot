@@ -1,5 +1,5 @@
 import { inlineCode } from '@khaf/builders';
-import { GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
+import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '../../lib/types/Discord.js.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
@@ -85,7 +85,7 @@ export class kCommand extends Command {
         });
         
         {
-            const [err] = await dontThrow(channel.delete());
+            const [err] = await dontThrow<GuildBasedChannel>(channel.delete());
             if (err !== null) {
                 return this.Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`);
             }

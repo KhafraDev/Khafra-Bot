@@ -1,5 +1,5 @@
 import { Event } from '../Structures/Event.js';
-import { GuildMember, Channel, Permissions } from 'discord.js';
+import { GuildMember, Permissions, AnyChannel } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
 import { hasPerms } from '../lib/Utility/Permissions.js';
 import { Embed } from '../lib/Utility/Constants/Embeds.js';
@@ -50,7 +50,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel | null = null;
+        let channel: AnyChannel | null = null;
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
             channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {

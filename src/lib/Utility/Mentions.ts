@@ -1,11 +1,7 @@
-import { Message, SnowflakeUtil, Role, User, GuildMember, GuildChannel, Snowflake } from 'discord.js';
-import { client } from '../../index.js';
+import { Message, SnowflakeUtil, Role, User, GuildMember, Snowflake, GuildBasedChannel, TextBasedChannel } from 'discord.js';
 import { dontThrow } from './Don\'tThrow.js';
 
-interface Options {
-    splice?: boolean
-    idx?: number
-}
+type MentionTypes = User | GuildBasedChannel | TextBasedChannel | GuildMember | Role;
 
 type MessageMentionTypes = 
     | 'roles' 
@@ -13,63 +9,57 @@ type MessageMentionTypes =
     | 'members' 
     | 'channels';
 
-const REGEX = {
-    users: /(<@!)?(\d{17,19})>?/,
-    members: /(<@!)?(\d{17,19})>?/,
-    channels: /<?#?(\d{17,19})>?/, 
-    roles: /<?@?&?(\d{17,19})>?/,
-}
 const epoch = new Date('January 1, 2015 GMT-0');
 const zeroBinary = '0'.repeat(64);
-const opts: Options = {
-    splice: true,
-    idx: 0
-}
 
-export async function getMentions(message: Message, type: 'roles', options?: Options): Promise<Role>;
-export async function getMentions(message: Message, type: 'users', options?: Options): Promise<User>;
-export async function getMentions(message: Message, type: 'members', options?: Options): Promise<GuildMember>;
-export async function getMentions(message: Message, type: 'channels', options?: Options): Promise<GuildChannel>;
+/** matches all Discord mention types */
+const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g;
+
+export async function getMentions(message: Message<true>, type: 'roles'): Promise<Role | null>;
+export async function getMentions(message: Message, type: 'users'): Promise<User | null>;
+export async function getMentions(message: Message<true>, type: 'members'): Promise<GuildMember | null>;
+export async function getMentions(message: Message<true>, type: 'channels'): Promise<GuildBasedChannel | null>;
 export async function getMentions(
-    { mentions, content, guild }: Message, 
-    type: MessageMentionTypes,
-    options: Options = opts
+    message: Message, 
+    fetchType: MessageMentionTypes
 ) {
-    const args = content.split(/\s+/g);
-    if (options.splice)
-        args.splice(0, 1); // normal prefixed command
+    const { mentions, content, guild, client} = message;
+    if (fetchType !== 'users' && !message.inGuild()) return null;
 
-    if (REGEX[type].test(args[options.idx!])) {
-        const id = args[options.idx!].replace(/[^0-9]/g, ''); // replace non-numeric characters
-        if (!validSnowflake(id)) return null;
-        // sometimes, especially for users, they might not be cached/auto fetched
-        // for the bot, so no items will be in the collection
-        const item = mentions[type]?.get(id) ?? id;
+    for (const [, type, id] of content.matchAll(mentionMatcher)) {
+        let pr: Promise<MentionTypes | null> | MentionTypes | null | undefined; 
 
-        // if it's not a string, no need to fetch it; we can just return it!
-        if (typeof item !== 'string')
-            return item;
-        if (guild === null)
-            return null;
-
-        if (type === 'members' || type === 'roles') {
-            const [fetchErr, coll] = await dontThrow<
-                import('discord.js').Role |
-                import('discord.js').GuildMember |
-                null
-            >(guild[type].fetch(item));
-            if (fetchErr === null) return coll;
-        } else if (type === 'channels') {
-            // only TextChannels/NewsChannels can be mentioned. Voice channels and stage channels 
-            // can only be fetched given its id!
-            return guild.channels.cache.get(item);
-        } else {
-            const [fetchErr, users] = await dontThrow(client.users.fetch(item));
-            if (fetchErr === null) return users;
+        if (type) {
+            // not a channel mention
+            if (type === '#' && fetchType !== 'channels') continue;
+            // not a member or user mention
+            if ((type === '@!' || type === '@') && fetchType !== 'members' && fetchType !== 'users') continue;
+            // not a role mention
+            if (type === '@&' && fetchType !== 'roles') continue;
         }
 
-        return null;
+        if (fetchType === 'channels') {
+            pr = mentions.channels.get(id) ?? guild!.channels.cache.get(id);
+        } else if (fetchType === 'members') {
+            pr = mentions.members?.get(id) ?? guild!.members.cache.get(id);
+        } else if (fetchType === 'roles') {
+            pr = mentions.roles.get(id) ?? guild!.roles.cache.get(id);
+        } else {
+            pr = client.users.cache.get(id);
+        }
+
+        pr ??= fetchType === 'users'
+            ? client.users.fetch(id)
+            : guild![fetchType].fetch(id);
+
+        const result = pr instanceof Promise
+            ? await dontThrow(pr)
+            : [null, pr]
+
+        return result[1] ?? null;
     }
+
+    return null;
 }
 
 export const validSnowflake = (id: unknown): id is Snowflake => {

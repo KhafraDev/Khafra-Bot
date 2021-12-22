@@ -40,7 +40,7 @@ export class kCommand extends Command {
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users');
 
-        const member = message.guild.members.resolve(user);
+        const member = user && message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
             return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {

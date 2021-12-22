@@ -1,7 +1,6 @@
-import { REST } from '@discordjs/rest';
 import { inlineCode } from '@khaf/builders';
-import { APIVersion, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { CommandInteraction, GuildMember, Permissions } from 'discord.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
 import { Minimalist } from '../../lib/Utility/Minimalist.js';
@@ -19,12 +18,11 @@ const timeOptions = {
     minutes: 60 * 1000,
     seconds: 1000
 } as const;
-const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
+
 const isDev = new Minimalist(process.argv.slice(2).join(' ')).get('dev') === true;
 const inRange = Range({ min: 0, max: /* 28 days */ 2_419_200_000, inclusive: true });
 const perms = new Permissions([
-    // TODO(@KhafraDev): switch to Permissions.FLAGS.MODERATE_MEMBERS
-    Permissions.FLAGS.KICK_MEMBERS
+    Permissions.FLAGS.MODERATE_MEMBERS
 ]);
 
 export class kInteraction extends Interactions {
@@ -94,16 +92,20 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        let member = 
-            interaction.options.getMember('member') ??
-            interaction.options.getUser('member', true);
+        let member = interaction.options.getMember('member')
 
-        if (!(member instanceof GuildMember) && !(member instanceof User)) {
+        if (member === null) {
+            return `❌ No guild member to mute was provided - I can't kick someone not in the guild!`;
+        } else if (!(member instanceof GuildMember)) {
             member = Reflect.construct(GuildMember, [
                 interaction.client,
                 member,
                 guild
             ]) as GuildMember;
+
+            if (!('disableCommunicationUntil' in member)) {
+                return `❌ Unable to construct a guild member, ${pleaseInvite}`;
+            }
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember
@@ -133,12 +135,9 @@ export class kInteraction extends Interactions {
         }
 
         const time =  totalMs === 0 ? null : new Date(Date.now() + totalMs).toISOString();
-        const route = Routes.guildMember(interaction.guild?.id ?? interaction.guildId!, member.id);
-        const body = { communication_disabled_until: time };
-
         const [muteErr] = isDev
             ? [null, member]
-            : await dontThrow(rest.patch(route, { body }));
+            : await dontThrow(member.disableCommunicationUntil(time));
 
         if (muteErr !== null) {
             return `❌ An unexpected error has occurred: ${inlineCode(muteErr.message)}`;

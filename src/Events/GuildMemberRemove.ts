@@ -1,5 +1,5 @@
 import { time } from '@khaf/builders';
-import { Channel, GuildMember, Permissions } from 'discord.js';
+import { AnyChannel, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
 import { isText } from '../lib/types/Discord.js.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
@@ -57,7 +57,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
 
         if (!item || item.welcome_channel === null) return;
 
-        let channel: Channel | null = null;
+        let channel: AnyChannel | null = null;
         if (member.guild.channels.cache.has(item.welcome_channel)) {
             channel = member.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {

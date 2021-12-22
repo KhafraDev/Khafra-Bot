@@ -27,14 +27,14 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message<true>, { args }: Arguments) {
         const toDelete = Number(args[0]);
 
         if (!inRange(toDelete)) {
             return this.Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 
-        const channel = await getMentions(message, 'channels', { idx: 1 }) ?? message.channel;
+        const channel = await getMentions(message, 'channels') ?? message.channel;
         
         if (!isText(channel) || !hasPerms(channel, message.guild?.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
             return this.Embed.perms(

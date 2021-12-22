@@ -87,7 +87,7 @@ export class kCommand extends Command {
 
             channel = 
                 coll[1].mentions.channels.first() as GuildChannel || 
-                await getMentions(coll[1], 'channels', { idx: 0 });
+                await getMentions(coll[1] as Message<true>, 'channels');
 
             if (!isText(channel)) {
                 return void dontThrow(m.edit({

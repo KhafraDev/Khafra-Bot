@@ -35,7 +35,7 @@ export class kCommand extends Command {
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 
-        const member = message.guild.members.resolve(user);
+        const member = user && message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
             return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {

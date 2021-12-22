@@ -1,5 +1,5 @@
 import { bold, hyperlink } from '@khaf/builders';
-import { Message, Channel, GuildChannel, Permissions, TextChannel, ThreadChannel, User } from 'discord.js';
+import { Message, Permissions, TextChannel, User, AnyChannel } from 'discord.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
 import { validSnowflake } from '../../../lib/Utility/Mentions.js';
@@ -77,7 +77,7 @@ export class kCommand extends Command {
             return this.Embed.error(`Cannot re-roll a giveaway that isn't from this guild!`);
         }
 
-        let channel: GuildChannel | ThreadChannel | null | Channel = message.guild.channels.cache.get(channelId) ?? null;
+        let channel: AnyChannel | null = message.guild.channels.cache.get(channelId) ?? null;
         if (!channel) {
             ([, channel] = await dontThrow(message.client.channels.fetch(channelId)));
         }

@@ -1,6 +1,6 @@
 import { Command } from '../../../Structures/Command.js';
 import { isText, isThread } from '../../../lib/types/Discord.js.js';
-import { Message, MessageActionRow, Permissions, TextBasedChannels } from 'discord.js';
+import { Message, MessageActionRow, Permissions, TextBasedChannel } from 'discord.js';
 import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
@@ -10,7 +10,7 @@ import { ellipsis } from '../../../lib/Utility/String.js';
 import { setTimeout } from 'timers/promises';
 
 interface Settings {
-    channel: TextBasedChannels | null
+    channel: TextBasedChannel | null
     options: string[]
 }
 
@@ -140,7 +140,7 @@ export class kCommand extends Command {
             if (currentOption === Actions.CANCEL) {
                 return messageCollector.stop();
             } else if (currentOption === Actions.CHANNEL) {
-                const channel = await getMentions(msg, 'channels', { idx: 0 });
+                const channel = await getMentions(msg as Message<true>, 'channels');
 
                 if (!isText(channel) && !isThread(channel)) {
                     return void dontThrow(m.edit({

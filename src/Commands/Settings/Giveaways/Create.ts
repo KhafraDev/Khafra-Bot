@@ -1,6 +1,9 @@
 import { bold, inlineCode } from '@khaf/builders';
 import {
-    Channel, Message, MessageActionRow,
+    AnyChannel,
+    GuildBasedChannel,
+    Message,
+    MessageActionRow,
     NewsChannel,
     Permissions,
     TextChannel
@@ -97,12 +100,12 @@ export class kCommand extends Command {
                 });
             }
 
-            const msg = channelSetting.first()!;
-            let channel: Channel | null = null;
+            const msg = channelSetting.first()! as Message<true>;
+            let channel: AnyChannel | GuildBasedChannel | null = null;
             if (msg.mentions.channels.size !== 0) {
                 channel = msg.mentions.channels.first() ?? null;
             } else {
-                channel = await getMentions(msg, 'channels', { splice: false });
+                channel = await getMentions(msg, 'channels');
             }
 
             if (!isText(channel)) {
