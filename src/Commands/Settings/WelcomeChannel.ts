@@ -44,7 +44,7 @@ export class kCommand extends Command {
         if (!isText(channel)) {
             return this.Embed.error(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild?.me, basic)) {
-            return this.Embed.perms(channel, message.guild!.me, basic);
+            return this.Embed.perms(channel, message.guild.me, basic);
         }
 
         const { rows } = await pool.query<kGuild>(`
@@ -52,9 +52,9 @@ export class kCommand extends Command {
             SET welcome_channel = $1::text
             WHERE guild_id = $2::text
             RETURNING *;
-        `, [channel.id, message.guild!.id]);
+        `, [channel.id, message.guild.id]);
 
-        await client.set(message.guild!.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
+        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
         
         return this.Embed.ok(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!

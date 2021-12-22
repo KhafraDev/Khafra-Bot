@@ -39,7 +39,7 @@ export class kCommand extends Command {
         if (!isText(channel) || !hasPerms(channel, message.guild?.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
             return this.Embed.perms(
                 channel as TextChannel,
-                message.guild!.me,
+                message.guild.me,
                 Permissions.FLAGS.MANAGE_MESSAGES
             );
         } else if (message.deletable) {
