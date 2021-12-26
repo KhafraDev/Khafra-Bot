@@ -46,28 +46,10 @@ export class kCommand extends Command {
             await dontThrow(message.delete());
         }
 
-        const [err, deleted] = await dontThrow(channel.bulkDelete(toDelete, true));
+        const [err] = await dontThrow(channel.bulkDelete(toDelete, true));
 
         if (err !== null) {
             return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
-
-        const embed = this.Embed.ok()
-            .setAuthor({
-                name: message.client.user!.username,
-                iconURL: message.client.user!.displayAvatarURL()
-            })
-            .setTimestamp()
-            .setFooter(`Requested by ${message.author.tag}!`)
-            .setDescription(`
-            Successfully deleted ${deleted.size} messages!
-
-            If this number isn't correct, it is because messages older than 2 weeks cannot be deleted!
-            `);
-
-        const [, m] = await dontThrow(message.reply({ embeds: [embed] }));
-        setTimeout(() => {
-            if (m?.deletable) void dontThrow(m.delete());
-        }, 5000).unref();
     }
 }

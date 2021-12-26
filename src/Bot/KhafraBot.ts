@@ -1,6 +1,6 @@
 import { Command } from '../Structures/Command.js';
 import { Event } from '../Structures/Event.js';
-import { Interactions } from '../Structures/Interaction.js';
+import { Interactions, InteractionSubCommand } from '../Structures/Interaction.js';
 import { once } from '../lib/Utility/Memoize.js';
 import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
 import { cwd } from '../lib/Utility/Constants/Path.js';
@@ -16,6 +16,11 @@ import { bright, green, magenta } from '../lib/Utility/Colors.js';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
 type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;
+type DynamicImportAppCommand = Promise<{
+    kInteraction: new () => Interactions
+} | {
+    kSubCommand: new () => InteractionSubCommand
+}>;
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -23,6 +28,7 @@ export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
     static Interactions: Map<string, Interactions> = new Map();
+    static Subcommands: Map<string, InteractionSubCommand> = new Map();
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
@@ -97,18 +103,27 @@ export class KhafraClient extends Client {
     async loadInteractions() {
         const interactionPaths = await KhafraClient.walk('build/src/Interactions', p => p.endsWith('.js'));
         const importPromise = interactionPaths.map(
-            int => import(pathToFileURL(int).href) as Promise<{ kInteraction: new () => Interactions }>
+            int => import(pathToFileURL(int).href) as DynamicImportAppCommand
         );
         const imported = await Promise.allSettled(importPromise);
 
         const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
         const loaded: Interactions[] = [];
+        let loadedSubCommands = 0;
 
         for (const interaction of imported) {
             if (interaction.status === 'fulfilled') {
-                const int = new interaction.value.kInteraction();
-                KhafraClient.Interactions.set(int.data.name, int);
-                loaded.push(int);
+                if ('kInteraction' in interaction.value) {
+                    const int = new interaction.value.kInteraction();
+                    KhafraClient.Interactions.set(int.data.name, int);
+                    loaded.push(int);
+                } else {
+                    const sub = new interaction.value.kSubCommand();
+                    KhafraClient.Subcommands.set(`${sub.data.references}-${sub.data.name}`, sub);
+                    loadedSubCommands++;
+                }
+            } else {
+                console.log(interaction)
             }
         }
 
@@ -139,7 +154,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        console.log(green(`Loaded ${bright(loaded.length)} interactions!`));
+        console.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
         return KhafraClient.Interactions;
     }
 

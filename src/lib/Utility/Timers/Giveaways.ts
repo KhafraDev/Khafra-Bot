@@ -40,7 +40,13 @@ Giveaways.on('giveaway', async (giveaway) => {
         const reactions = message.reactions.cache;
 
         if (message.author.id !== client.user.id) return;
-        if (!reactions.has('🎉')) return;
+        if (!reactions.has('🎉')) {
+            const emoji = message.reactions.resolve('🎉');
+
+            if (emoji) {
+                await emoji.users.fetch();
+            }
+        }
 
         const { users, count } = reactions.get('🎉')!;
         if (users.cache.size !== count) {

@@ -113,4 +113,4 @@ export class kInteraction extends Interactions {
         })
         .setFooter(`${days} day${plural(days)} of messages removed.`);
     }
-} 
+}

@@ -1,11 +1,17 @@
 import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
+import { CommandInteraction, Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
+import { KhafraClient } from '../Bot/KhafraBot.js';
 
 interface InteractionOptions {
     defer?: boolean
     ownerOnly?: boolean
     replyOpts?: InteractionReplyOptions
     permissions?: PermissionResolvable
+}
+
+interface SubcommandOptions {
+    references: string
+    name: string
 }
 
 type HandlerReturn =
@@ -40,4 +46,14 @@ export abstract class Interactions {
     public get id () {
         return this[kId];
     }
+}
+
+export abstract class InteractionSubCommand {
+    public constructor (public data: SubcommandOptions) {}
+
+    public get references () {
+        return KhafraClient.Interactions.get(this.data.references)!;
+    }
+
+    abstract handle (arg: CommandInteraction): Promise<HandlerReturn>;
 }
