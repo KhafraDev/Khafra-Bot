@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, Permissions } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { Interactions } from '../../Structures/Interaction.js';
@@ -19,7 +19,10 @@ export class kInteraction extends Interactions {
                             type: ApplicationCommandOptionType.Channel,
                             name: 'channel',
                             description: 'Channel to create the giveaway in.',
-                            required: true
+                            required: true,
+                            channel_types: [
+                                ChannelType.GuildNews, ChannelType.GuildText
+                            ]
                         },
                         {
                             type: ApplicationCommandOptionType.String,

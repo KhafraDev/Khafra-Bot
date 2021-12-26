@@ -1,6 +1,5 @@
 import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
 import { type Giveaway } from '../../lib/types/KhafraBot.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
@@ -24,14 +23,12 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async handle (interaction: CommandInteraction) {
-        const channel = interaction.options.getChannel('channel', true);
+        const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel;
         const prize = interaction.options.getString('prize', true);
         const ends = parseStrToMs(interaction.options.getString('ends', true));
         const winners = interaction.options.getInteger('winners') ?? 1;
         
-        if (!isText(channel)) {
-            return `❌ ${channel} isn't a text or news channel!`;
-        } else if (!winnersRange(winners)) {
+        if (!winnersRange(winners)) {
             return `❌ The number of winners must be between 1 and 100!`;
         } else if (ends === null || !timeRange(ends)) {
             return `❌ A giveaway must last longer than a minute, and less than a month!`;

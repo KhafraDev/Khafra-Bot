@@ -1,15 +1,27 @@
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMember, GuildMemberRoleManager, MessageActionRow, MessageEmbed, Permissions, Role } from 'discord.js';
-import { isTextBased } from '../../lib/types/Discord.js.js';
+import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import {
+    CommandInteraction,
+    GuildMember,
+    GuildMemberRoleManager,
+    MessageActionRow,
+    MessageEmbed,
+    NewsChannel,
+    Permissions,
+    Role,
+    TextChannel,
+    ThreadChannel
+} from 'discord.js';
 import { Components } from '../../lib/Utility/Constants/Components.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Interactions } from '../../Structures/Interaction.js';
 
+type Channel = TextChannel | NewsChannel | ThreadChannel;
+
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.VIEW_CHANNEL
-])
+]);
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -22,7 +34,14 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Channel,
                     name: 'channel',
                     description: 'Channel to post the message into.',
-                    required: true
+                    required: true,
+                    channel_types: [
+                        ChannelType.GuildText,
+                        ChannelType.GuildNews,
+                        ChannelType.GuildNewsThread,
+                        ChannelType.GuildPublicThread,
+                        ChannelType.GuildPrivateThread
+                    ]
                 },
                 {
                     type: ApplicationCommandOptionType.Role,
@@ -47,7 +66,7 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const channel = interaction.options.getChannel('channel', true);
+        const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const text =
             interaction.options.getString('message') ??
@@ -55,9 +74,7 @@ export class kInteraction extends Interactions {
             
             Clicking the button again will take the role away!`;
 
-        if (!isTextBased(channel)) {
-            return `❌ I can't send messages into this type of channel, try a text, news, or thread channel instead!`;
-        } else if (!hasPerms(channel, interaction.guild?.me, perms)) { 
+        if (!hasPerms(channel, interaction.guild?.me, perms)) { 
             return `❌ I do not have permission to post a message in this channel!`;
         } else if (!hasPerms(channel, interaction.member, perms)) { 
             return `❌ You do not have permission to post a message in this channel!`;
