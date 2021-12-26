@@ -15,7 +15,7 @@ interface WarningDel {
 
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.VIEW_CHANNEL
+    Permissions.FLAGS.EMBED_LINKS
 ]);
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 

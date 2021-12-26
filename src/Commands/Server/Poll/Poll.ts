@@ -26,7 +26,6 @@ const emojis = [
 	'6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
 ] as const;
 const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);
@@ -36,7 +35,7 @@ export class kCommand extends Command {
         super(
             [
                 'Create a poll in a channel.', 
-                '705894525473784303'
+                ''
             ],
 			{
                 name: 'poll',

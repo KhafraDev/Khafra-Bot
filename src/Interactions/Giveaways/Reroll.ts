@@ -10,7 +10,6 @@ import { plural } from '#khaf/utility/String.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
 const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.READ_MESSAGE_HISTORY
 ]);

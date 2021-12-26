@@ -19,7 +19,7 @@ type WarnInsert = {
 const inRange = Range({ min: 0, max: 32767, inclusive: true });
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.VIEW_CHANNEL
+    Permissions.FLAGS.EMBED_LINKS
 ]);
 
 export class kCommand extends Command {

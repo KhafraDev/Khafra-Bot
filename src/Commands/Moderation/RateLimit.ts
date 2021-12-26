@@ -12,6 +12,10 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
+const perms = new Permissions([
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS
+]);
 
 export class kCommand extends Command {
     constructor() {
@@ -68,7 +72,7 @@ export class kCommand extends Command {
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
             return void channel.send({

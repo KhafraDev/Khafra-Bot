@@ -11,8 +11,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS,
-    Permissions.FLAGS.VIEW_CHANNEL
+    Permissions.FLAGS.EMBED_LINKS
 ]);
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;

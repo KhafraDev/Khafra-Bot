@@ -9,8 +9,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Command } from '#khaf/Command';
 
 const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.VIEW_CHANNEL
+    Permissions.FLAGS.SEND_MESSAGES
 ]);
 
 export class kCommand extends Command {

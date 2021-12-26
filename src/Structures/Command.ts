@@ -61,8 +61,7 @@ export abstract class Command implements ICommand {
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     readonly permissions: PermissionResolvable[] = [ 
         Permissions.FLAGS.SEND_MESSAGES,
-        Permissions.FLAGS.EMBED_LINKS,
-        Permissions.FLAGS.VIEW_CHANNEL
+        Permissions.FLAGS.EMBED_LINKS
     ];
     
     constructor(

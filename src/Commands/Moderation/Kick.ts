@@ -7,6 +7,11 @@ import { isText } from '../../lib/types/Discord.js.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
+const perms = new Permissions([
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS
+]);
+
 export class kCommand extends Command {
     constructor() {
         super(
@@ -49,7 +54,7 @@ export class kCommand extends Command {
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
             const reason = args.slice(1).join(' ');

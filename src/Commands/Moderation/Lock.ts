@@ -6,6 +6,11 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Arguments, Command } from '#khaf/Command';
 
+const perms = new Permissions([
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS
+]);
+
 export class kCommand extends Command {
     constructor() {
         super(
@@ -56,7 +61,7 @@ export class kCommand extends Command {
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
             
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
             return void channel.send({ embeds: [this.Embed.ok(`

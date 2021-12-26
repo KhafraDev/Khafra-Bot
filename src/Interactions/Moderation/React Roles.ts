@@ -19,8 +19,7 @@ import { Interactions } from '#khaf/Interaction';
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 
 const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.VIEW_CHANNEL
+    Permissions.FLAGS.SEND_MESSAGES
 ]);
 
 export class kInteraction extends Interactions {
