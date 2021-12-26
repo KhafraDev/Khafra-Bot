@@ -1,8 +1,8 @@
 import { Client } from 'undici';
-import { once } from '../Utility/Memoize.js';
-import { dontThrow } from '../Utility/Don\'tThrow.js';
-import { chunkSafe } from '../Utility/Array.js';
-import { consumeBody } from '../Utility/FetchUtils.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { chunkSafe } from '#khaf/utility/Array.js';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface CoinGeckoRes {
     id: string,

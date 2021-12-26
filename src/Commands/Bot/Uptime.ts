@@ -1,7 +1,7 @@
 import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { Command } from '../../Structures/Command.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Command } from '#khaf/Command';
 
 const getUptime = (ms: number) => {
     return Object.entries({

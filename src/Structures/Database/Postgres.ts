@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import pg from 'pg';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { assets } from '../../lib/Utility/Constants/Path.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 
 export const defaultKGuild = [
     'prefix',

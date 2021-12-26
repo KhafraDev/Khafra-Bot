@@ -1,7 +1,7 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Message, MessageActionRow } from 'discord.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
 
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 

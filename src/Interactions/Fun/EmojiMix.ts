@@ -4,9 +4,9 @@ import { CommandInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { fetch } from 'undici';
 import { URL } from 'url';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Interactions } from '#khaf/Interaction';
 
 const enum Subcommands {
     HELP = 'help',

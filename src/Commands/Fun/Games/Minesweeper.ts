@@ -1,5 +1,5 @@
-import { Command } from '../../../Structures/Command.js';
-import { Board } from '../../../lib/Packages/MineSweeper.js';
+import { Command } from '#khaf/Command';
+import { Board } from '#khaf/utility/commands/MineSweeper';
 
 export class kCommand extends Command {
     constructor() {

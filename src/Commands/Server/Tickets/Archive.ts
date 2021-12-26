@@ -1,8 +1,8 @@
 import { CategoryChannel, GuildChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
 import { isDM, isExplicitText, isThread } from '../../../lib/types/Discord.js.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Arguments, Command } from '../../../Structures/Command.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Arguments, Command } from '#khaf/Command';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 type DeletedChannelTypes = TextChannel | NewsChannel | ThreadChannel;

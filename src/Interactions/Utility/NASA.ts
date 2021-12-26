@@ -1,8 +1,8 @@
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
-import { NASAGetRandom } from '../../lib/Packages/NASA.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { NASAGetRandom } from '#khaf/utility/commands/NASA';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

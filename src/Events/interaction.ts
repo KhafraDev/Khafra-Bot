@@ -1,13 +1,13 @@
 import { bold, inlineCode } from '@khaf/builders';
 import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
 import { KhafraClient } from '../Bot/KhafraBot.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { autoCompleteHandler } from '../lib/Utility/EventEvents/Interaction_AutoComplete.js';
-import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interaction_ReactRoles.js';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { upperCase } from '../lib/Utility/String.js';
-import { Command } from '../Structures/Command.js';
-import { Event } from '../Structures/Event.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { autoCompleteHandler } from '#khaf/utility/EventEvents/Interaction_AutoComplete.js';
+import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { upperCase } from '#khaf/utility/String.js';
+import { Command } from '#khaf/Command';
+import { Event } from '#khaf/Event';
 import { Logger } from '../Structures/Logger.js';
 
 const logger = new Logger();

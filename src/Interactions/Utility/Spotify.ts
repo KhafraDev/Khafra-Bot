@@ -1,8 +1,8 @@
 import { CommandInteraction, GuildMember } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

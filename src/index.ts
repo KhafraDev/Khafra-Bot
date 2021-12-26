@@ -1,11 +1,11 @@
-import './lib/Utility/load.env.js';
-import './lib/Utility/Rejections.js';
-import './lib/Utility/Timers/Giveaways.js';
+import '#khaf/utility/load.env.js';
+import '#khaf/utility/Rejections.js';
+import '#khaf/utility/Timers/Giveaways.js';
 
 import { KhafraClient } from './Bot/KhafraBot.js';
 import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
-import { dontThrow } from './lib/Utility/Don\'tThrow.js';
-import type { Event } from './Structures/Event.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import type { Event } from '#khaf/Event';
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
     let event: Event<keyof ClientEvents> | undefined;

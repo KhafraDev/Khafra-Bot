@@ -1,10 +1,10 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
 import { decodeXML } from 'entities';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
 import { Message } from 'discord.js';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { asyncQuery } from '../../../Structures/Database/SQLite.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { asyncQuery } from '#khaf/database/SQLite.js';
 
 interface IBranco {
     title: string

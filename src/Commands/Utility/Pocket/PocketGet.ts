@@ -1,7 +1,7 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { pool } from '#khaf/database/Postgres.js';
 import { inlineCode } from '@khaf/builders';
 
 interface PocketUser {

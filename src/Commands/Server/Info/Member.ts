@@ -1,6 +1,6 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Message, Activity } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 
 const formatPresence = (activities: Activity[] | undefined) => {

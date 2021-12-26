@@ -1,4 +1,4 @@
-import { Event } from '../Structures/Event.js';
+import { Event } from '#khaf/Event';
 import { Logger } from '../Structures/Logger.js';
 import type { RateLimitData } from 'discord.js';
 

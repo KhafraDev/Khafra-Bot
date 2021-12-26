@@ -1,7 +1,7 @@
 import { badmeme, cache } from '@khaf/badmeme';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 
 export class kInteraction extends Interactions {
     constructor() {

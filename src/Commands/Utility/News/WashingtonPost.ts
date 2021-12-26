@@ -1,7 +1,7 @@
-import { Command } from '../../../Structures/Command.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Command } from '#khaf/Command';
+import { RSSReader } from '#khaf/utility/RSS.js';
 import { decodeXML } from 'entities';
-import { once } from '../../../lib/Utility/Memoize.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 const settings = {

@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
-import { Command } from '../../../Structures/Command.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { Command } from '#khaf/Command';
 
 interface IxKCD {
     title: string

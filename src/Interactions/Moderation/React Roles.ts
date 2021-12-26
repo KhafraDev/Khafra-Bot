@@ -11,10 +11,10 @@ import {
     TextChannel,
     ThreadChannel
 } from 'discord.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 

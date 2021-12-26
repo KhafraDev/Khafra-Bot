@@ -1,6 +1,6 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 
 export class kCommand extends Command {
     constructor() {

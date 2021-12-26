@@ -4,6 +4,14 @@
   "description": "Discord Bot",
   "main": "build/src/index.js",
   "type": "module",
+  "imports": {
+    "#khaf/utility/*": "./src/lib/Utility/*",
+    "#khaf/utility/commands/*": "./src/lib/Packages/*.js",
+    "#khaf/database/*": "./src/Structures/Database/*",
+    "#khaf/Command": "./src/Structures/Command.js",
+    "#khaf/Interaction": "./src/Structures/Interaction.js",
+    "#khaf/Event": "./src/Structures/Event.js"
+  },
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",
     "discord-api-types": "^0.25.2",
@@ -58,7 +66,6 @@
     "src/lib/Packages/Spotify",
     "src/lib/Packages/NPM",
     "src/lib/Packages/Pocket",
-    "src/lib/Packages/Vaccines",
     "src/lib/Packages/15.ai",
     "src/lib/Packages/MDN",
     "src/lib/Packages/@khaf-builders"

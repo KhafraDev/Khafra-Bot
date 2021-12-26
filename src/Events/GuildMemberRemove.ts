@@ -3,14 +3,14 @@ import { AnyChannel, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
 import { isText } from '../lib/types/Discord.js.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
-import { client } from '../Structures/Database/Redis.js';
-import { Event } from '../Structures/Event.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

@@ -1,4 +1,4 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { KhafraClient } from '../../../Bot/KhafraBot.js';
 import { inlineCode } from '@khaf/builders';

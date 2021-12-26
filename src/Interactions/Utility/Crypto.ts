@@ -1,10 +1,10 @@
 import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;

@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { asyncQuery } from '../../Structures/Database/SQLite.js';
-import { assets } from '../Utility/Constants/Path.js';
+import { asyncQuery } from '#khaf/database/SQLite.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 
 type Ret = { 'EXISTS(SELECT 1 from kbBranco)': number };
 interface Comic {

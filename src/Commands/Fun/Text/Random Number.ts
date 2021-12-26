@@ -1,7 +1,7 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 import crypto from 'crypto';
-import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { inlineCode } from '@khaf/builders';
 
 const MAX_DIFF = 2 ** 48 - 1;

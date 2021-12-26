@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 
 export class kCommand extends Command {
     constructor() {

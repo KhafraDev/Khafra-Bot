@@ -1,6 +1,6 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Message } from 'discord.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
+import { stripIndents } from '#khaf/utility/Template.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {

@@ -1,11 +1,11 @@
 import { CommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
 import { client } from '../../index.js';
-import { once } from '../../lib/Utility/Memoize.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const stickers: Sticker[] = [];

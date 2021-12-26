@@ -1,10 +1,10 @@
 import { bold, inlineCode, italic } from '@khaf/builders';
 import { Collection, GuildChannel, Message, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
 import { isCategory, isStage, isThread, isVoice } from '../../lib/types/Discord.js.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Command } from '../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Command } from '#khaf/Command';
 
 const threadPerms = new Permissions([
     Permissions.FLAGS.MANAGE_THREADS,

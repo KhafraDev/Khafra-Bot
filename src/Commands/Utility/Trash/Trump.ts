@@ -1,11 +1,11 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Interaction, Message, MessageActionRow, MessageEmbed } from 'discord.js';
-import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { assets } from '../../../lib/Utility/Constants/Path.js';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 import { join } from 'path';
-import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
+import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 
 const Trump = createFileWatcher(
     [] as typeof import('../../../../assets/JSON/Trump.json'),

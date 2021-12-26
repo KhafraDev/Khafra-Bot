@@ -1,4 +1,4 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {

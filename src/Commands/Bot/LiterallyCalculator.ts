@@ -1,8 +1,8 @@
 import { MessageActionRow, Interaction, Message } from 'discord.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { Command } from '../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Command } from '#khaf/Command';
 import { createContext, runInContext } from 'vm';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { codeBlock } from '@khaf/builders';
 
 type InteractionReply 

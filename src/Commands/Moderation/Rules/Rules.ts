@@ -2,11 +2,11 @@ import { bold, hyperlink, inlineCode } from '@khaf/builders';
 import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
 import { once } from 'events';
 import { isText } from '../../../lib/types/Discord.js.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { Command } from '../../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Command } from '#khaf/Command';
 
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,

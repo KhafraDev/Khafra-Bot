@@ -1,13 +1,13 @@
 import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
 import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
 import { type Giveaway } from '../../lib/types/KhafraBot.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { parseStrToMs } from '../../lib/Utility/ms.js';
-import { plural } from '../../lib/Utility/String.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { InteractionSubCommand } from '../../Structures/Interaction.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
+import { plural } from '#khaf/utility/String.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { pool } from '#khaf/database/Postgres.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 

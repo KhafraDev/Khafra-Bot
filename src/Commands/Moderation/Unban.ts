@@ -1,9 +1,9 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { unbans } from '../../lib/Cache/Unban.js';
 import { inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export class kCommand extends Command {
     constructor() {

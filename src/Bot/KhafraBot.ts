@@ -1,9 +1,9 @@
-import { Command } from '../Structures/Command.js';
-import { Event } from '../Structures/Event.js';
-import { Interactions, InteractionSubCommand } from '../Structures/Interaction.js';
-import { once } from '../lib/Utility/Memoize.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
+import { Command } from '#khaf/Command';
+import { Event } from '#khaf/Event';
+import { Interactions, InteractionSubCommand } from '#khaf/Interaction';
+import { once } from '#khaf/utility/Memoize.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { Client, ClientEvents } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
@@ -11,8 +11,8 @@ import { join, resolve } from 'path';
 import { readdir, stat } from 'fs/promises';
 import { pathToFileURL } from 'url';
 import { performance } from 'perf_hooks';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { bright, green, magenta } from '../lib/Utility/Colors.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { bright, green, magenta } from '#khaf/utility/Colors.js';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
 type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;

@@ -3,7 +3,7 @@ import SonicBoom from 'sonic-boom';
 import { inspect } from 'util';
 import {
     bright, cyan, red, yellow
-} from '../lib/Utility/Colors.js';
+} from '#khaf/utility/Colors.js';
 
 type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 

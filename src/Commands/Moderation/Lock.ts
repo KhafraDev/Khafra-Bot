@@ -2,9 +2,9 @@ import { bold } from '@khaf/builders';
 import { Message, Permissions } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Arguments, Command } from '../../Structures/Command.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Arguments, Command } from '#khaf/Command';
 
 export class kCommand extends Command {
     constructor() {

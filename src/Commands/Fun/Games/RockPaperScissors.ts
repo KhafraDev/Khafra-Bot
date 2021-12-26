@@ -1,7 +1,7 @@
 import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Command } from '../../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Command } from '#khaf/Command';
 
 const emojis = {
     rock: '🌑', 

@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { Cartoonize } from '../../lib/Packages/Cartoonize.js';
+import { Command } from '#khaf/Command';
+import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
 
 export class kCommand extends Command {
     constructor() {

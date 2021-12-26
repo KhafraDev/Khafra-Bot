@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Message } from 'discord.js';
 

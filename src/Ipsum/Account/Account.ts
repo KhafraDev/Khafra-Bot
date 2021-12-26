@@ -1,5 +1,5 @@
 import { Snowflake } from 'discord.js';
-import { pool } from '../../Structures/Database/Postgres.js';
+import { pool } from '#khaf/database/Postgres.js';
 import { Ipsum_Account } from '../types/Ipsum.d';
 
 export enum AccountOptions {

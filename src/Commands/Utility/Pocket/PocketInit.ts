@@ -1,10 +1,10 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { pool } from '../../../Structures/Database/Postgres.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { pool } from '#khaf/database/Postgres.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export class kCommand extends Command {
     constructor() {

@@ -1,8 +1,8 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { Pocket } from '@khaf/pocket';
-import { pool } from '../../../Structures/Database/Postgres.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
+import { pool } from '#khaf/database/Postgres.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { codeBlock, inlineCode } from '@khaf/builders';
 
 interface PocketUser {

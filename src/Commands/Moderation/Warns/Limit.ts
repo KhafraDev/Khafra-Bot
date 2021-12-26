@@ -1,11 +1,11 @@
 import { inlineCode } from '@khaf/builders';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { kGuild } from '../../../lib/types/KhafraBot.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { Range } from '../../../lib/Utility/Valid/Number.js';
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
-import { client } from '../../../Structures/Database/Redis.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { Arguments, Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
 

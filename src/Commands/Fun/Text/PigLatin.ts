@@ -1,4 +1,4 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 
 const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];

@@ -1,8 +1,8 @@
 import { bold } from '@khaf/builders';
 import { Message } from 'discord.js';
-import { fromCache, start } from '../../lib/Packages/COVID.js';
-import { once } from '../../lib/Utility/Memoize.js';
-import { Command, Arguments } from '../../Structures/Command.js';
+import { fromCache, start } from '#khaf/utility/commands/COVID';
+import { once } from '#khaf/utility/Memoize.js';
+import { Command, Arguments } from '#khaf/Command';
 
 const mw = once(start);
 

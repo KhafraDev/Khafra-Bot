@@ -1,6 +1,6 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Message, Role } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, time } from '@khaf/builders';
 
 export class kCommand extends Command {

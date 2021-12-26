@@ -4,17 +4,17 @@ import { KhafraClient } from '../Bot/KhafraBot.js';
 import { MessagesLRU } from '../lib/Cache/Messages.js';
 import { isDM } from '../lib/types/Discord.js.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { Sanitize } from '../lib/Utility/EventEvents/Message_SanitizeCommand.js';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { Stats } from '../lib/Utility/Stats.js';
-import { plural, upperCase } from '../lib/Utility/String.js';
-import { Arguments, Command } from '../Structures/Command.js';
-import { pool } from '../Structures/Database/Postgres.js';
-import { client } from '../Structures/Database/Redis.js';
-import { Event } from '../Structures/Event.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Sanitize } from '#khaf/utility/EventEvents/Message_SanitizeCommand.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Stats } from '#khaf/utility/Stats.js';
+import { plural, upperCase } from '#khaf/utility/String.js';
+import { Arguments, Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
 import { config, defaultSettings, disabled, logger, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 export class kEvent extends Event<'messageUpdate'> {

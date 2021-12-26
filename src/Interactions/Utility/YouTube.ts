@@ -1,11 +1,11 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
-import { YouTube, YouTubeSearchResults } from '../../lib/Packages/YouTube.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
+import { YouTube, YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { InteractionType } from 'discord-api-types';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 function* format(items: YouTubeSearchResults) {

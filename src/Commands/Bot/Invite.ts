@@ -1,6 +1,6 @@
 import { bold } from '@khaf/builders';
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 
 const scope = `bot%20applications.commands`;
 

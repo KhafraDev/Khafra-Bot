@@ -10,7 +10,7 @@ import {
     VoiceChannel
 } from 'discord.js';
 import { join } from 'path';
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { createFileWatcher } from '../FileWatcher.js';
 import { permResolvableToString } from '../Permissions.js';
 import { plural } from '../String.js';

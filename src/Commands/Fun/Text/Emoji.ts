@@ -1,4 +1,4 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { parse } from 'twemoji-parser';
 

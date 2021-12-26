@@ -1,12 +1,12 @@
 import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { hideLinkEmbed, inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getArticleById, search } from '@khaf/wikipedia';
-import { ellipsis, plural } from '../../lib/Utility/String.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { ellipsis, plural } from '#khaf/utility/String.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { InteractionType } from 'discord-api-types';
-import { disableAll } from '../../lib/Utility/Constants/Components.js';
+import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

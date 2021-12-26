@@ -2,10 +2,10 @@ import { codeBlock } from '@khaf/builders';
 import { MessageAttachment, Permissions, ReplyMessageOptions, TextChannel, Message } from 'discord.js';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
-import { table } from '../../../lib/Utility/CLITable.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { Command } from '../../../Structures/Command.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { table } from '#khaf/utility/CLITable.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
 
 class ImageCharts {
     private query = new URLSearchParams();

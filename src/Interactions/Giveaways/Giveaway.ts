@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, Permissions } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 
 export class kInteraction extends Interactions {
     constructor() {

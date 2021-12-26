@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { translate, langs } from '../../lib/Packages/Translate.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction';
+import { translate, langs } from '#khaf/utility/commands/Translate';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

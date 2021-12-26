@@ -1,8 +1,8 @@
 import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { URLFactory } from '../../lib/Utility/Valid/URL.js';
-import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
+import { Interactions } from '#khaf/Interaction';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

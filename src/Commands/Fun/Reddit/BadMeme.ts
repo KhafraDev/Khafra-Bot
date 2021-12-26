@@ -1,9 +1,9 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme, cache } from '@khaf/badmeme';
 import { isDM, isText } from '../../../lib/types/Discord.js.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export class kCommand extends Command {
     constructor() {

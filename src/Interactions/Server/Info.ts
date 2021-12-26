@@ -1,11 +1,11 @@
 import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { join } from 'path';
-import { Interactions } from '../../Structures/Interaction.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { once } from '../../lib/Utility/Memoize.js';
+import { Interactions } from '#khaf/Interaction';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { client } from '../../index.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 

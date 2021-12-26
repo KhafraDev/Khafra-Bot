@@ -1,8 +1,8 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { parseQuran } from '../../lib/Packages/Quran/Quran.js';
-import { once } from '../../lib/Utility/Memoize.js';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { inlineCode } from '@khaf/builders';
 
 const Titles = new Map<string, string>();

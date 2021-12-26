@@ -1,10 +1,10 @@
 import { inlineCode } from '@khaf/builders';
 import { Permissions, TextChannel, Message } from 'discord.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Arguments, Command } from '../../Structures/Command.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { client } from '../../Structures/Database/Redis.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Arguments, Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 
 export class kCommand extends Command {
     constructor() {

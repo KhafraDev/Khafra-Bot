@@ -1,9 +1,9 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { upperCase } from '../../lib/Utility/String.js';
-import { once } from '../../lib/Utility/Memoize.js';
+import { pool } from '#khaf/database/Postgres.js';
+import { upperCase } from '#khaf/utility/String.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { inlineCode } from '@khaf/builders';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 

@@ -1,11 +1,11 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { chunkSafe } from '../../lib/Utility/Array.js';
+import { chunkSafe } from '#khaf/utility/Array.js';
 import { bold, inlineCode, hyperlink, codeBlock } from '@khaf/builders';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 let folders: string[] | null = null;
 

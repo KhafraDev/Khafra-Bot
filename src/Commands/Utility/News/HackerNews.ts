@@ -1,5 +1,5 @@
-import { Command } from '../../../Structures/Command.js';
-import { cache, fetchHN } from '../../../lib/Packages/HackerNews.js';
+import { Command } from '#khaf/Command';
+import { cache, fetchHN } from '#khaf/utility/commands/HackerNews';
 
 export class kCommand extends Command {
     constructor() {

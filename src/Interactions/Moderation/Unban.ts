@@ -1,11 +1,11 @@
 import { CommandInteraction, Permissions } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { Minimalist } from '../../lib/Utility/Minimalist.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { validSnowflake } from '../../lib/Utility/Mentions.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;

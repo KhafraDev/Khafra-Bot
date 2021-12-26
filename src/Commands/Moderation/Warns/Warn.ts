@@ -2,13 +2,13 @@ import { bold, inlineCode } from '@khaf/builders';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../../lib/types/Discord.js.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { hasPerms, hierarchy } from '../../../lib/Utility/Permissions.js';
-import { plural } from '../../../lib/Utility/String.js';
-import { Range } from '../../../lib/Utility/Valid/Number.js';
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { plural } from '#khaf/utility/String.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { Arguments, Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
 
 type WarnInsert = {
     insertedid: Warning['id']

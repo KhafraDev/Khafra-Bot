@@ -1,10 +1,10 @@
 import { CommandInteraction } from 'discord.js';
 import { fetchMDN } from '@khaf/mdn';
 import { client } from '../../index.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { Interactions } from '#khaf/Interaction';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { join } from 'path';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';

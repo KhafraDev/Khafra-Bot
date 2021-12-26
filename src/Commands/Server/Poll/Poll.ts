@@ -1,12 +1,12 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { isText, isThread } from '../../../lib/types/Discord.js.js';
 import { Message, MessageActionRow, Permissions, TextBasedChannel } from 'discord.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { ellipsis } from '../../../lib/Utility/String.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { ellipsis } from '#khaf/utility/String.js';
 import { setTimeout } from 'timers/promises';
 
 interface Settings {

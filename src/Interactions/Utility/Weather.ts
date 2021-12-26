@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { weather } from '@khaf/hereweather';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 

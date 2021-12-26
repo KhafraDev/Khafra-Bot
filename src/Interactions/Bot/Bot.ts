@@ -1,10 +1,10 @@
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { bold } from '@khaf/builders';
 import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { performance } from 'perf_hooks';
-import { Stats } from '../../lib/Utility/Stats.js';
+import { Stats } from '#khaf/utility/Stats.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 enum BotInfo {

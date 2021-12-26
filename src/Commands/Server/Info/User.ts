@@ -2,11 +2,11 @@ import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 import { client } from '../../../index.js';
-import { cwd } from '../../../lib/Utility/Constants/Path.js';
-import { createFileWatcher } from '../../../lib/Utility/FileWatcher.js';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { Command } from '../../../Structures/Command.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { Command } from '#khaf/Command';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 

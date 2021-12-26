@@ -1,8 +1,8 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
 import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
-import { assets } from '../../lib/Utility/Constants/Path.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 import { codeBlock } from '@khaf/builders';
 
 const dir = join(assets, 'Cowsay');

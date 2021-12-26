@@ -6,11 +6,11 @@ import {
 } from 'discord-api-types/v9';
 import { Message, MessageActionRow, Permissions } from 'discord.js';
 import { isVoice } from '../../lib/types/Discord.js.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Arguments, Command } from '#khaf/Command';
 
 const enum Activities {
     POKER = '755827207812677713',

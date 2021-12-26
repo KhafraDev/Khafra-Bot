@@ -1,5 +1,5 @@
-import { Command } from '../../../Structures/Command.js';
-import { thisWordDoesNotExist } from '../../../lib/Packages/ThisWordDoesNotExist.js';
+import { Command } from '#khaf/Command';
+import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
 
 export class kCommand extends Command {

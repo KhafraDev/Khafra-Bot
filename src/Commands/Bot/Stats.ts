@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { Stats } from '../../lib/Utility/Stats.js';
+import { Command } from '#khaf/Command';
+import { Stats } from '#khaf/utility/Stats.js';
 import { bold } from '@khaf/builders';
 
 export class kCommand extends Command {

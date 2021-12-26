@@ -43,8 +43,15 @@
 
     /* Module Resolution Options */
     "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
-    // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+    "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "#khaf/utility/*": ["./src/lib/Utility/*"],
+      "#khaf/utility/commands/*": ["./src/lib/Packages/*"],
+      "#khaf/database/*": ["./src/Structures/Database/*"],
+      "#khaf/Command": ["./src/Structures/Command.js"],
+      "#khaf/Interaction": ["./src/Structures/Interaction.js"],
+      "#khaf/Event": ["./src/Structures/Event.js"]
+    },                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
     // "types": [],                           /* Type declaration files to be included in compilation. */
@@ -83,7 +90,6 @@
     "src/lib/Packages/HereWeather",
     "src/lib/Packages/NPM",
     "src/lib/Packages/Pocket",
-    "src/lib/Packages/Vaccines",
     "src/lib/Packages/15.ai",
     "src/lib/Packages/MDN",
     "src/lib/Packages/@khaf-builders"

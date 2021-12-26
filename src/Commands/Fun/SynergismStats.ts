@@ -1,7 +1,7 @@
-import { Command } from '../../Structures/Command.js';
-import { Kongregate } from '../../lib/Packages/SynergismStats.js';
+import { Command } from '#khaf/Command';
+import { Kongregate } from '#khaf/utility/commands/SynergismStats';
 import { request } from 'undici';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {

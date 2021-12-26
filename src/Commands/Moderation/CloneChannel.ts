@@ -1,10 +1,10 @@
 import { inlineCode } from '@khaf/builders';
 import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '../../lib/types/Discord.js.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { Command } from '../../Structures/Command.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { Command } from '#khaf/Command';
 
 export class kCommand extends Command {
     constructor() {

@@ -8,7 +8,7 @@ import { KhafraClient } from '../../../Bot/KhafraBot.js';
 import { cooldown } from '../../../Structures/Cooldown/GlobalCooldown.js';
 import { dontThrow } from '../Don\'tThrow.js';
 import { Embed } from '../Constants/Embeds.js';
-import { Arguments, Command } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Stats } from '../Stats.js';
 import { PartialGuild } from '../../types/KhafraBot.js';
 import { inlineCode } from '@khaf/builders';

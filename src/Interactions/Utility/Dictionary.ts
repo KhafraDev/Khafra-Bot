@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { bold, italic } from '@khaf/builders';
-import { owlbotio } from '../../lib/Packages/OwlBotIO.js';
+import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {

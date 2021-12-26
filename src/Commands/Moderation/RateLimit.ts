@@ -1,14 +1,14 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { parseStrToMs } from '../../lib/Utility/ms.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { isExplicitText, isText } from '../../lib/types/Discord.js.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { plural } from '../../lib/Utility/String.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { plural } from '#khaf/utility/String.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });

@@ -1,14 +1,14 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { rand } from '../../../lib/Utility/Constants/OneLiners.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { plural } from '../../../lib/Utility/String.js';
+import { Arguments, Command } from '#khaf/Command';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { plural } from '#khaf/utility/String.js';
 import { Message, MessageActionRow, MessageEditOptions, Snowflake } from 'discord.js';
 import { inlineCode } from '@khaf/builders';
 import { readFile } from 'fs/promises';
 import { join, extname } from 'path';
 import { readdirSync } from 'fs';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { assets } from '../../../lib/Utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 
 const assetsPath = join(assets, 'Hangman');
 

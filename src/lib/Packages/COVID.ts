@@ -1,5 +1,5 @@
 import { fetch } from 'undici';
-import { dontThrow } from '../Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 interface JHURes {
     type: 'FeatureCollection'

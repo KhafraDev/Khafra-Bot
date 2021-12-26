@@ -2,8 +2,8 @@ import type { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
 import { basename } from 'path';
 import { fetch, FormData } from 'undici';
-import { dontThrow } from '../Utility/Don\'tThrow.js';
-import { URLFactory } from '../Utility/Valid/URL.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/;

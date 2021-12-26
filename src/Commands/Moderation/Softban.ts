@@ -1,10 +1,10 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { parseStrToMs } from '../../lib/Utility/ms.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 

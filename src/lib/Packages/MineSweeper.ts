@@ -1,4 +1,4 @@
-import { chunkSafe } from '../Utility/Array.js';
+import { chunkSafe } from '#khaf/utility/Array.js';
 
 const emojis = [
     '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', 

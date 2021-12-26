@@ -1,12 +1,12 @@
-import { Event } from '../Structures/Event.js';
+import { Event } from '#khaf/Event';
 import { client } from '../index.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { validSnowflake } from '../lib/Utility/Mentions.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { join } from 'path';
-import { yellow } from '../lib/Utility/Colors.js';
+import { yellow } from '#khaf/utility/Colors.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

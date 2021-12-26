@@ -1,5 +1,5 @@
-import { Command } from '../../../Structures/Command.js';
-import { thisDoesNotExist } from '../../../lib/Packages/ThisDoesNotExist.js';
+import { Command } from '#khaf/Command';
+import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 
 export class kCommand extends Command {
     constructor() {

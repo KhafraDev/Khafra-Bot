@@ -1,6 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { fetch } from 'undici';
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 
 interface IMCOnline {
     online: true,

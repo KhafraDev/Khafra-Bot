@@ -1,11 +1,11 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { pool } from '#khaf/database/Postgres.js';
 import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { isText } from '../../../lib/types/Discord.js.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { plural } from '../../../lib/Utility/String.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
 
 interface WarningDel {

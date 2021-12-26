@@ -1,14 +1,14 @@
 import { bold } from '@khaf/builders';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { parseStrToMs } from '../../lib/Utility/ms.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { plural } from '../../lib/Utility/String.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { plural } from '#khaf/utility/String.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { Arguments, Command } from '#khaf/Command';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 

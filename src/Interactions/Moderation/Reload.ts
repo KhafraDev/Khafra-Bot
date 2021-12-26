@@ -3,13 +3,13 @@ import { ApplicationCommand, CommandInteraction, GuildApplicationCommandPermissi
 import { join } from 'path';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { inlineCode } from '../../lib/Packages/@khaf-builders/index.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { Minimalist } from '../../lib/Utility/Minimalist.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 const processArgs = new Minimalist(process.argv.slice(2).join(' '));

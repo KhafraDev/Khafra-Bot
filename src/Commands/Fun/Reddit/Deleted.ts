@@ -1,13 +1,13 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { Command, Arguments } from '#khaf/Command';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Message, MessageActionRow } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
 import { fetch } from 'undici';
 import { decodeXML } from 'entities';
-import { split } from '../../../lib/Utility/String.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
-import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
+import { split } from '#khaf/utility/String.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 
 const fetchDeleted = async (postId: string) => {
     const ac = new AbortController();

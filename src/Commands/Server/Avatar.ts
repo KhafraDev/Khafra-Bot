@@ -1,6 +1,6 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
 import { AllowedImageFormat, AllowedImageSize, ImageURLOptions, Message } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 
 const avatarSizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats = ['webp', 'png', 'jpg', 'jpeg', 'gif'];

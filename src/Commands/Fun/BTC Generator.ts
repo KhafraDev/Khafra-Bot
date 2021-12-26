@@ -1,8 +1,8 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
-import { delay } from '../../lib/Utility/Constants/OneLiners.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { delay } from '#khaf/utility/Constants/OneLiners.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 

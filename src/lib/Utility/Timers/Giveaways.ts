@@ -1,4 +1,4 @@
-import { pool } from '../../../Structures/Database/Postgres.js';
+import { pool } from '#khaf/database/Postgres.js';
 import { Giveaway } from '../../types/KhafraBot.js';
 import { client } from '../../../index.js';
 import { isText } from '../../types/Discord.js.js';

@@ -1,5 +1,5 @@
 import { fetch } from 'undici';
-import { consumeBody } from '../Utility/FetchUtils.js';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface NonexistentWord {
     word: {

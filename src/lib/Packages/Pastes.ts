@@ -1,6 +1,6 @@
 import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
-import { consumeBody } from '../Utility/FetchUtils.js';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 

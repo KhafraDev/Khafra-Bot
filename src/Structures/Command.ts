@@ -4,13 +4,13 @@ import {
     Permissions,
     PermissionResolvable
 } from 'discord.js';
-import { Errors } from '../lib/Utility/Constants/Errors.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { Errors } from '#khaf/utility/Constants/Errors.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { kGuild } from '../lib/types/KhafraBot.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { join } from 'path';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { Cooldown } from './Cooldown/CommandCooldown.js';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));

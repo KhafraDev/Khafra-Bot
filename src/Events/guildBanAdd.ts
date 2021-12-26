@@ -1,15 +1,15 @@
-import { Event } from '../Structures/Event.js';
+import { Event } from '#khaf/Event';
 import { GuildBan } from 'discord.js';
-import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
+import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
 import { isText } from '../lib/types/Discord.js.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bans } from '../lib/Cache/Bans.js';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { delay } from '../lib/Utility/Constants/OneLiners.js';
-import { client } from '../Structures/Database/Redis.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { ellipsis } from '../lib/Utility/String.js';
+import { delay } from '#khaf/utility/Constants/OneLiners.js';
+import { client } from '#khaf/database/Redis.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ellipsis } from '#khaf/utility/String.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 

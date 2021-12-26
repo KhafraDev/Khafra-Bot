@@ -1,6 +1,6 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
-import { pasteAliases } from '../../lib/Packages/Pastes.js';
+import { pasteAliases } from '#khaf/utility/commands/Pastes';
 import { inlineCode } from '@khaf/builders';
 
 const keys = ['pastebin', ...pasteAliases.keys()];

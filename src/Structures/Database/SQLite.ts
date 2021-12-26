@@ -2,8 +2,8 @@ import { Database } from 'esqlite';
 import { join } from 'path';
 import { readFile } from 'fs/promises';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
-import { assets } from '../../lib/Utility/Constants/Path.js';
-import { once } from '../../lib/Utility/Memoize.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
+import { once } from '#khaf/utility/Memoize.js';
 
 const dbPath = join(assets, 'khafrabot.db');
 const db = new Database(dbPath);

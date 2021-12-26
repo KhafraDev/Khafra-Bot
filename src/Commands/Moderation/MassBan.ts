@@ -1,8 +1,8 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Permissions, GuildMember, User, Message } from 'discord.js';
-import { validSnowflake } from '../../lib/Utility/Mentions.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { bans } from '../../lib/Cache/Bans.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {

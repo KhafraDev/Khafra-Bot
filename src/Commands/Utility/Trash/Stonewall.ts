@@ -1,16 +1,16 @@
 /** Please get mental illness treated! */
 
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'url';
 import { Message, MessageActionRow } from 'discord.js';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { asyncQuery } from '../../../Structures/Database/SQLite.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
-import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { asyncQuery } from '#khaf/database/SQLite.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 
 interface ITrashHuman {
     title: string

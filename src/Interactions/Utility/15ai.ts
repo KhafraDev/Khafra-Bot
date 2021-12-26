@@ -3,11 +3,11 @@ import { FifteenDotAI } from '@khaf/15.ai';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction } from 'discord.js';
 import { join } from 'path';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { Interactions } from '#khaf/Interaction';
 
 type Characters = typeof import('../../lib/Packages/15.ai/Characters.json');
 

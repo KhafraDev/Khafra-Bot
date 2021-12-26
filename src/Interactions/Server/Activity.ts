@@ -1,7 +1,7 @@
 import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { 
     APIInvite,
     APIVersion,
@@ -13,7 +13,7 @@ import {
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
 

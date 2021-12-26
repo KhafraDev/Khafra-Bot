@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
-import { Command, Arguments } from '../../Structures/Command.js';
-import { talkObamaToMe } from '../../lib/Packages/TalkObamaToMe.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { Command, Arguments } from '#khaf/Command';
+import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {

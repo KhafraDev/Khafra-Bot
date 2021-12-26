@@ -1,12 +1,12 @@
-import { Event } from '../Structures/Event.js';
+import { Event } from '#khaf/Event';
 import { GuildMember, Permissions, AnyChannel } from 'discord.js';
 import { isText } from '../lib/types/Discord.js.js';
-import { hasPerms } from '../lib/Utility/Permissions.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
-import { client } from '../Structures/Database/Redis.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,

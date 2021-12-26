@@ -1,12 +1,12 @@
 import { AnyChannel, CommandInteraction, Permissions, User } from 'discord.js';
 import { bold, hyperlink, inlineCode } from '@khaf/builders';
 import { isText } from '../../lib/types/Discord.js.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { validSnowflake } from '../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { URLFactory } from '../../lib/Utility/Valid/URL.js';
-import { InteractionSubCommand } from '../../Structures/Interaction.js';
-import { plural } from '../../lib/Utility/String.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
+import { plural } from '#khaf/utility/String.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
 const perms = new Permissions([

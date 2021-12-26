@@ -1,10 +1,10 @@
-import { version } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
-import { join } from 'path';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { bold } from '@khaf/builders';
+import { version } from 'discord.js';
+import { join } from 'path';
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 

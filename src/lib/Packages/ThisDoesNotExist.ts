@@ -1,6 +1,6 @@
 import { fetch } from 'undici';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
-import { Embed } from '../Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 
 const formatURL = new Map([
     ['artwork', `https://thisartworkdoesnotexist.com/`],

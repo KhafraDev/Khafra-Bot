@@ -1,5 +1,5 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
+import { Command, Arguments } from '#khaf/Command';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { Message } from 'discord.js';
 import { RedditData } from '@khaf/badmeme';
 import { fetch } from 'undici';

@@ -1,8 +1,8 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
 import { decodeXML } from 'entities';
-import { RSSReader } from '../../lib/Utility/RSS.js';
-import { once } from '../../lib/Utility/Memoize.js';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { fetch } from 'undici';
 
 interface ITheOnionAPI {

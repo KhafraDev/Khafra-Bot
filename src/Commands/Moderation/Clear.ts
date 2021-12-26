@@ -1,10 +1,10 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
-import { Range } from '../../lib/Utility/Valid/Number.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 
 const inRange = Range({ min: 1, max: 100, inclusive: true });

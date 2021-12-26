@@ -1,7 +1,7 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, MessageAttachment, Permissions } from 'discord.js';
-import { validURL } from '../../lib/Utility/Valid/URL.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { validURL } from '#khaf/utility/Valid/URL.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {

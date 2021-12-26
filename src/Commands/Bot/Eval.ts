@@ -2,7 +2,7 @@ import { codeBlock } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 
 export class kCommand extends Command {
     constructor() {

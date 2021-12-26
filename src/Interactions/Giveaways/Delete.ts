@@ -2,8 +2,8 @@ import { inlineCode } from '@khaf/builders';
 import { CommandInteraction } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { Giveaway } from '../../lib/types/KhafraBot.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { InteractionSubCommand } from '../../Structures/Interaction.js';
+import { pool } from '#khaf/database/Postgres.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 

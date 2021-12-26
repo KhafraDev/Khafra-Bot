@@ -1,11 +1,11 @@
 import { Message, Permissions, TextChannel } from 'discord.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { Command } from '../../Structures/Command.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { client } from '../../Structures/Database/Redis.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES,

@@ -1,11 +1,11 @@
-import { Command, Arguments } from '../../Structures/Command.js';
+import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { kGuild } from '../../lib/types/KhafraBot.js';
 import { isText } from '../../lib/types/Discord.js.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export class kCommand extends Command {
     constructor() {

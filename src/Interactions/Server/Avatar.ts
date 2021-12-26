@@ -1,6 +1,6 @@
 import { AllowedImageFormat, AllowedImageSize, CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const sizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];

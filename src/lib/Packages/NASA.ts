@@ -1,6 +1,6 @@
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
-import { consumeBody } from '../Utility/FetchUtils.js';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface IAPOD {
     copyright?: string

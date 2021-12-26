@@ -1,5 +1,5 @@
-import { Command } from '../../../Structures/Command.js';
-import { thisSimpsonDoesNotExist } from '../../../lib/Packages/Simpson.js';
+import { Command } from '#khaf/Command';
+import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
 
 // this is not handled the same way the other this[x]doesnotexist commands.
 

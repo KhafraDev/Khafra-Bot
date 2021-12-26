@@ -1,7 +1,7 @@
 import { bold, inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
-import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
-import { Command } from '../../../Structures/Command.js';
+import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { Command } from '#khaf/Command';
 
 export class kCommand extends Command {
     constructor() {

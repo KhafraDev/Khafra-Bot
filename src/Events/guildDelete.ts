@@ -1,5 +1,5 @@
-import { Event } from '../Structures/Event.js';
-import { pool } from '../Structures/Database/Postgres.js';
+import { Event } from '#khaf/Event';
+import { pool } from '#khaf/database/Postgres.js';
 import { Guild } from 'discord.js';
 
 export class kEvent extends Event<'guildDelete'> {
