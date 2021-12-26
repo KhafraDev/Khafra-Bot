@@ -1,11 +1,20 @@
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
+import { ApplicationCommand, CommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
+import { join } from 'path';
 import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { inlineCode } from '../../lib/Packages/@khaf-builders/index.js';
 import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { cwd } from '../../lib/Utility/Constants/Path.js';
 import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
+import { Minimalist } from '../../lib/Utility/Minimalist.js';
 import { hasPerms } from '../../lib/Utility/Permissions.js';
 import { Interactions } from '../../Structures/Interaction.js';
+
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
+const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const isDev = processArgs.get('dev') === true;
+const guildDebuggingCommands: ApplicationCommand[] = [];
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -71,12 +80,29 @@ export class kInteraction extends Interactions {
             });
         }
 
-        const [setError] = await dontThrow(interaction.guild.commands.permissions.set({
+        const permissions = interaction.guild.commands.permissions;
+        const [setError] = await dontThrow(permissions.set({
             fullPermissions: [fullPermissions]
         }));
 
         if (setError !== null) {
             return `❌ An unexpected error occured: ${inlineCode(setError.message)}`;
+        }
+
+        if (isDev && interaction.guildId === config.guildId) {
+            if (guildDebuggingCommands.length === 0) {
+                const commands = await interaction.guild.commands.fetch();
+                guildDebuggingCommands.push(...commands.values());
+            }
+
+            const command = guildDebuggingCommands.find(c => c.name === nameOption);
+
+            if (command) {
+                fullPermissions.id = command.id;
+                await dontThrow(permissions.set({
+                    fullPermissions: [fullPermissions]
+                }));
+            }
         }
 
         return Embed.ok(`✅ Update ${inlineCode(cachedCommand.data.name)} to allow ${roles.map(v => `${v}`).join(', ')} to use it.`);
