@@ -90,6 +90,10 @@ export class kEvent extends Event<'interactionCreate'> {
             } else {
                 logger.log(
                     `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+                    {
+                        time: interaction.createdAt,
+                        channel: interaction.channelId
+                    }
                 );
             }
         }

@@ -1,9 +1,9 @@
+import {
+    bright, cyan, magenta, red, yellow
+} from '#khaf/utility/Colors.js';
 import { EOL, hostname } from 'os';
 import SonicBoom from 'sonic-boom';
 import { inspect } from 'util';
-import {
-    bright, cyan, red, yellow
-} from '#khaf/utility/Colors.js';
 
 type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 
@@ -21,6 +21,8 @@ const getLevel = (l: LoggerLevels) => {
         case 'WARN': return bright(red(l));
     }
 }
+
+const isDate = (something: object): something is Date => 'toISOString' in something;
 
 // TODO(@KhafraDev): update type once Error has a cause
 const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
@@ -54,13 +56,22 @@ const objectToReadable = (o: unknown) => {
         if (o instanceof Error) {
             message += errorToReadable(o);
         } else {
-            for (const key of Object.keys(o) as (keyof typeof o)[]) {
-                const ref = o[key];
+            for (const key in o) {
+                const ref = o[key as keyof typeof o] as unknown;
+                message += tab + key + ': ';
+
                 if (ref && typeof ref === 'object') {
-                    message += `${tab}${key}: ${inspect(ref, undefined, undefined, true)}${EOL}`;
+                    if (isDate(ref)) {
+                        // toISOString is *slow* - https://twitter.com/dirkdev98/status/1449306210210037762
+                        message += magenta(ref);
+                    } else {
+                        message += inspect(ref, undefined, undefined, true);
+                    }
                 } else {
-                    message += `${tab}${key}: ${ref}${EOL}`;
+                    message += ref;
                 }
+
+                message += EOL;
             }
         }
     } else {
