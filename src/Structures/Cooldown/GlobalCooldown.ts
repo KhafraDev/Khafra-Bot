@@ -1,3 +1,5 @@
+import { setInterval } from 'timers';
+
 /**
  * Create and use a cooldown everywhere in 2 steps.
  * @example

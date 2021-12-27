@@ -1,4 +1,5 @@
 import { inflateRawSync } from 'zlib';
+import { Buffer } from 'buffer';
 
 /**
  * An extremely stripped down version of ADM-Zip that only unzips

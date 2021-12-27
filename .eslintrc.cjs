@@ -25,6 +25,13 @@ module.exports = {
         'no-unreachable-loop': 'error',
         'no-unsafe-optional-chaining': 'error',
         'no-useless-backreference': 'error',
+        'no-restricted-globals': [
+            'error',
+            'process',
+            'Buffer',
+            'setTimeout',
+            'setInterval'
+        ],
 
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',
         '@typescript-eslint/await-thenable': 'error',

@@ -1,10 +1,11 @@
-import { XMLParser, XMLValidator, X2jOptionsOptional } from 'fast-xml-parser';
+import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
+import { join } from 'path';
+import { setInterval, setTimeout } from 'timers';
 import { fetch } from 'undici';
 import { delay } from './Constants/OneLiners.js';
-import { validateNumber } from './Valid/Number.js';
-import { createFileWatcher } from './FileWatcher.js';
 import { cwd } from './Constants/Path.js';
-import { join } from 'path';
+import { createFileWatcher } from './FileWatcher.js';
+import { validateNumber } from './Valid/Number.js';
 
 const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 

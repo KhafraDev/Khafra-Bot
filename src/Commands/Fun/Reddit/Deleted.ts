@@ -1,13 +1,14 @@
-import { Command, Arguments } from '#khaf/Command';
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Message, MessageActionRow } from 'discord.js';
-import { RedditData } from '@khaf/badmeme';
-import { fetch } from 'undici';
-import { decodeXML } from 'entities';
-import { split } from '#khaf/utility/String.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { split } from '#khaf/utility/String.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { RedditData } from '@khaf/badmeme';
+import { Message, MessageActionRow } from 'discord.js';
+import { decodeXML } from 'entities';
+import { setTimeout } from 'timers';
+import { fetch } from 'undici';
 
 const fetchDeleted = async (postId: string) => {
     const ac = new AbortController();

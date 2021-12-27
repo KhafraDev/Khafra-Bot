@@ -9,10 +9,11 @@ import { upperCase } from '#khaf/utility/String.js';
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { Logger } from '../Structures/Logger.js';
+import { argv } from 'process';
 
 const logger = new Logger();
 
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
     ? (processArgs.get('disabled') as string)
         .split(',')

@@ -4,13 +4,14 @@ import {
 import { EOL, hostname } from 'os';
 import SonicBoom from 'sonic-boom';
 import { inspect } from 'util';
+import { stdout, stderr, pid } from 'process';
 
 type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 
-const stdout = new SonicBoom({ fd: process.stdout.fd, sync: false });
-const stderr = new SonicBoom({ fd: process.stderr.fd, sync: false });
+const stdoutStream = new SonicBoom({ fd: stdout.fd, sync: false });
+const stderrStream = new SonicBoom({ fd: stderr.fd, sync: false });
 const errorStackIndent = / {4}/g;
-const pid = process.pid;
+const processId = pid;
 const host = hostname();
 
 const getLevel = (l: LoggerLevels) => {
@@ -87,14 +88,14 @@ const objectToReadable = (o: unknown) => {
 export class Logger {
     write (message: string, level: LoggerLevels) {
         if (level === 'ERROR' || level === 'WARN') {
-            stderr.write(message);
+            stderrStream.write(message);
         } else {
-            stdout.write(message);
+            stdoutStream.write(message);
         }
     }
 
     log (message: unknown, data?: unknown, level: LoggerLevels = 'DEBUG') {
-        const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + pid + ') on ' + host + ': ';
+        const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + processId + ') on ' + host + ': ';
         // const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
         if (typeof message === 'string') {
             if (data && typeof data === 'object') {

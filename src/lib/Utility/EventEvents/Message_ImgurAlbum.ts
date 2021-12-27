@@ -1,3 +1,4 @@
+import { env } from 'process';
 import { URL } from 'url';
 import { fetch, Headers } from 'undici';
 import { dontThrow } from '../Don\'tThrow.js';
@@ -84,7 +85,7 @@ export class Imgur {
     }
 
     static async album(args: string[]) {
-        if (process.env['IMGUR_CLIENT_ID'] === undefined) return;
+        if (env.IMGUR_CLIENT_ID === undefined) return;
 
         if (
             Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
@@ -122,7 +123,7 @@ export class Imgur {
 
         const [err, r] = await dontThrow(fetch(`https://api.imgur.com/3/album/${hash}`, {
             headers: {
-                'Authorization': `Client-ID ${process.env['IMGUR_CLIENT_ID']}`
+                'Authorization': `Client-ID ${env.IMGUR_CLIENT_ID}`
             }
         }));
 

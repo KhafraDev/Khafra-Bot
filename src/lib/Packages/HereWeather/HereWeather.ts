@@ -1,4 +1,5 @@
 import { fetch, Response } from 'undici';
+import { env } from 'process';
 import { HereResult } from './types/HereWeather';
 
 const consumeBody = async (res: Response) => {
@@ -11,7 +12,7 @@ const consumeBody = async (res: Response) => {
 export const weather = async (q: string) => {
     q = encodeURIComponent(q);
 
-    const res = await fetch(`https://weather.ls.hereapi.com/weather/1.0/report.json?apiKey=${process.env.HERE_WEATHER}&product=observation&name=${q}`);
+    const res = await fetch(`https://weather.ls.hereapi.com/weather/1.0/report.json?apiKey=${env.HERE_WEATHER}&product=observation&name=${q}`);
 
     // https://developer.here.com/documentation/destination-weather/dev_guide/topics/http-status-codes.html
     if (res.status === 200) {

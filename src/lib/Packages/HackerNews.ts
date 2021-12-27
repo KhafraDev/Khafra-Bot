@@ -1,6 +1,7 @@
-import { fetch } from 'undici';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { once } from '#khaf/utility/Memoize.js';
+import { setInterval } from 'timers';
+import { fetch } from 'undici';
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 const art = 'https://hacker-news.firebaseio.com/v0/item/{id}.json';

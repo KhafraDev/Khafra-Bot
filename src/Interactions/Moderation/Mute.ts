@@ -7,6 +7,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { Interactions } from '#khaf/Interaction';
+import { argv } from 'process';
 
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -19,7 +20,7 @@ const timeOptions = {
     seconds: 1000
 } as const;
 
-const isDev = new Minimalist(process.argv.slice(2).join(' ')).get('dev') === true;
+const isDev = new Minimalist(argv.slice(2).join(' ')).get('dev') === true;
 const inRange = Range({ min: 0, max: /* 28 days */ 2_419_200_000, inclusive: true });
 const perms = new Permissions([
     Permissions.FLAGS.MODERATE_MEMBERS

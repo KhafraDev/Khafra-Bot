@@ -1,4 +1,5 @@
 import { Snowflake } from 'discord.js';
+import { setInterval } from 'timers';
 
 type UserCooldown = {
     added: number,

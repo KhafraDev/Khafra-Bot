@@ -1,5 +1,6 @@
 import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
+import { env } from 'process';
 
 interface ITMDBSearch {
     page: number
@@ -163,7 +164,7 @@ const base = {
     detail_tv: 'https://api.themoviedb.org/3/tv/'
 } as const;
 const headers = {
-    'Authorization': `Bearer ${process.env.TMDB}`,
+    'Authorization': `Bearer ${env.TMDB}`,
     'Content-Type': 'application/json;charset=utf-8'
 };
 

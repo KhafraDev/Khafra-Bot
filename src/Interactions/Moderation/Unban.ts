@@ -7,10 +7,11 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { argv } from 'process';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 
 export class kInteraction extends Interactions {

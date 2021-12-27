@@ -1,6 +1,7 @@
 import { fetch } from 'undici';
 import { ZipFile } from '#khaf/utility/Unzip.js';
 import { pool } from '#khaf/database/Postgres.js';
+import { Buffer } from 'buffer';
 
 export const titles = {
     'Genesis': 'gen',

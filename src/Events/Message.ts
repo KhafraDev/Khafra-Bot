@@ -1,8 +1,7 @@
-import { bold, inlineCode } from '@khaf/builders';
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { join } from 'path';
-import { KhafraClient } from '../Bot/KhafraBot.js';
-import { MessagesLRU } from '../lib/Cache/Messages.js';
+import { Arguments, Command } from '#khaf/Command';
+import { pool } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -15,11 +14,13 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { Arguments, Command } from '#khaf/Command';
+import { bold, inlineCode } from '@khaf/builders';
+import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import { join } from 'path';
+import { argv } from 'process';
+import { KhafraClient } from '../Bot/KhafraBot.js';
+import { MessagesLRU } from '../lib/Cache/Messages.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-import { pool } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
-import { Event } from '#khaf/Event';
 import { Logger } from '../Structures/Logger.js';
 
 export const logger = new Logger();
@@ -36,7 +37,7 @@ export const defaultSettings: PartialGuild = {
 export const _cooldownGuild = cooldown(30, 60000);
 export const _cooldownUsers = cooldown(10, 60000);
 
-export const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+export const processArgs = new Minimalist(argv.slice(2).join(' '));
 export const disabled = typeof processArgs.get('disabled') === 'string'
     ? (processArgs.get('disabled') as string)
         .split(',')

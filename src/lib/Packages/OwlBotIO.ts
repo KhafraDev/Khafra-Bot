@@ -1,4 +1,5 @@
 import { fetch } from 'undici';
+import { env } from 'process';
 
 interface IOwlBotWord {
     definitions: {
@@ -22,13 +23,13 @@ class OwlBotError extends Error {
 
 export const owlbotio = async (word: string) => {
     word = encodeURIComponent(word.toLowerCase());
-    if (!process.env.OWLBOTIO) {
+    if (!env.OWLBOTIO) {
         return Promise.reject(new OwlBotError('No API token found in env variables.'));
     }
 
     const res = await fetch(`${url}${word}`, {
         headers: {
-            Authorization: `Token ${process.env.OWLBOTIO}`
+            Authorization: `Token ${env.OWLBOTIO}`
         }
     });
     const json = await res.json() as IOwlBotWord;

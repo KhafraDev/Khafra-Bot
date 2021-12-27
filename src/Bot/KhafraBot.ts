@@ -1,18 +1,19 @@
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { Interactions, InteractionSubCommand } from '#khaf/Interaction';
-import { once } from '#khaf/utility/Memoize.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { bright, green, magenta } from '#khaf/utility/Colors.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
-import { Client, ClientEvents } from 'discord.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { REST } from '@discordjs/rest';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
-import { join, resolve } from 'path';
+import { Client, ClientEvents } from 'discord.js';
 import { readdir, stat } from 'fs/promises';
-import { pathToFileURL } from 'url';
+import { join, resolve } from 'path';
 import { performance } from 'perf_hooks';
-import { Minimalist } from '#khaf/utility/Minimalist.js';
-import { bright, green, magenta } from '#khaf/utility/Colors.js';
+import { argv, env } from 'process';
+import { pathToFileURL } from 'url';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
 type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;
@@ -107,7 +108,7 @@ export class KhafraClient extends Client {
         );
         const imported = await Promise.allSettled(importPromise);
 
-        const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
+        const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
         const loaded: Interactions[] = [];
         let loadedSubCommands = 0;
 
@@ -129,7 +130,7 @@ export class KhafraClient extends Client {
 
         if (loaded.length !== 0) {
             const scs = loaded.map(i => i.data);
-            const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+            const processArgs = new Minimalist(argv.slice(2).join(' '));
             
             if (processArgs.get('dev') === true) {
                 // debugging in guild
@@ -162,7 +163,7 @@ export class KhafraClient extends Client {
         const start = performance.now();
         await this.loadEvents();
         await this.loadCommands();
-        await this.login(process.env.TOKEN);
+        await this.login(env.TOKEN);
         console.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`));
     });
 }

@@ -1,6 +1,7 @@
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
+import { env } from 'process';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
-import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface IAPOD {
     copyright?: string
@@ -25,7 +26,7 @@ export const cache: { copyright: string | undefined, link: string, title: string
 export const NASAGetRandom = async () => {
     const params = new URLSearchParams({
         count: '25',
-        api_key: process.env.NASA ?? 'DEMO_KEY'  
+        api_key: env.NASA ?? 'DEMO_KEY'  
     });
 
     // ratelimited or cached results

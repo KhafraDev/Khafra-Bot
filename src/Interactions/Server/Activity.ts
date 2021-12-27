@@ -1,21 +1,18 @@
-import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { 
-    APIInvite,
-    APIVersion,
-    ChannelType,
-    InviteTargetType,
-    RESTPostAPIChannelInviteJSONBody,
-    Routes,
-    ApplicationCommandOptionType,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
-import { REST } from '@discordjs/rest';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { REST } from '@discordjs/rest';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import {
+    APIInvite,
+    APIVersion, ApplicationCommandOptionType, ChannelType,
+    InviteTargetType, RESTPostAPIApplicationCommandsJSONBody, RESTPostAPIChannelInviteJSONBody,
+    Routes
+} from 'discord-api-types/v9';
+import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
+import { env } from 'process';
 
-const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
+const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 const activityPerms = new Permissions([
     Permissions.FLAGS.CREATE_INSTANT_INVITE,

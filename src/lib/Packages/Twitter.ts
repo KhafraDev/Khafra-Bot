@@ -3,6 +3,8 @@
  * look at how Twitter does it, and then do the EXACT OPPOSITE.
  */
 
+import { Buffer } from 'buffer';
+import { env } from 'process';
 import { fetch } from 'undici';
 
 type Indices = [number, number];
@@ -118,7 +120,7 @@ interface ITweet {
 let token: string | null = null;
 
 const getTwitterOAUTH = async () => {
-    const creds = Buffer.from(`${process.env.TWITTER_API}:${process.env.TWITTER_API_SECRET}`).toString('base64');
+    const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64');
     const r = await fetch('https://api.twitter.com/oauth2/token', {
         method: 'POST',
         body: 'grant_type=client_credentials',

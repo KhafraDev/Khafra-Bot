@@ -1,5 +1,6 @@
-import { fetch } from 'undici';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { setInterval } from 'timers';
+import { fetch } from 'undici';
 
 interface JHURes {
     type: 'FeatureCollection'

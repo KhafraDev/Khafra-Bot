@@ -1,15 +1,16 @@
-import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { inlineCode } from '@khaf/builders';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
+import { argv } from 'process';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 const perms = [ Permissions.FLAGS.KICK_MEMBERS ];
 
 export class kInteraction extends Interactions {

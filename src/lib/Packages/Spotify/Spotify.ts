@@ -1,3 +1,4 @@
+import { env } from 'process';
 import { fetch } from 'undici';
 import { URL, URLSearchParams } from 'url';
 import { SpotifyResult } from './types/Spotify';
@@ -10,8 +11,8 @@ type Token = {
 }
 
 class Spotify {
-    #id = process.env.SPOTIFY_ID;
-    #secret = process.env.SPOTIFY_SECRET;
+    #id = env.SPOTIFY_ID;
+    #secret = env.SPOTIFY_SECRET;
 
     #token: Token | null = null;
     #expires_in: number | null = null;

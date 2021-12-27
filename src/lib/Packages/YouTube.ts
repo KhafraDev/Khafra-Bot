@@ -1,5 +1,6 @@
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
+import { env } from 'process';
 
 interface YouTubeError {
     error: {
@@ -45,7 +46,7 @@ export const YouTube = async (q: string[] | string) => {
     params.append('part', 'snippet');
     params.append('q', encodeURIComponent(query.replace(/\s+/, '+')));
     params.append('type', 'video');
-    params.append('key', process.env.GOOGLE_API!);
+    params.append('key', env.GOOGLE_API!);
 
 
     const r = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)

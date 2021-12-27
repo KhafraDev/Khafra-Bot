@@ -44,7 +44,8 @@
     "dev:run": "node build/src/index --dev",
     "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- build/src/index --prod",
     "v1.10": "npm run dev:build && node scripts/dump",
-    "lint": "npx eslint . --ext .ts --fix",
+    "lint": "npx eslint . --ext .ts",
+    "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install"
   },
   "repository": {

@@ -1,5 +1,6 @@
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
+import { argv } from 'process';
 import { createFileWatcher } from '../FileWatcher.js';
 import { isDM } from '#khaf/utility/Discord.js';
 import { cwd } from '../Constants/Path.js';
@@ -15,7 +16,7 @@ import { inlineCode } from '@khaf/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 const cooldownUsers = cooldown(10, 60000);
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
     ? (processArgs.get('disabled') as string)
         .split(',')

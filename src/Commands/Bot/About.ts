@@ -3,8 +3,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { bold } from '@khaf/builders';
-import { version } from 'discord.js';
+import { version as DJSVersion } from 'discord.js';
 import { join } from 'path';
+import { memoryUsage, version } from 'process';
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
@@ -21,7 +22,7 @@ export class kCommand extends Command {
     }
 
     async init() {
-        const memoryMB = process.memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
+        const memoryMB = memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
 
         return Embed.ok()
             .setDescription(`
@@ -30,7 +31,7 @@ export class kCommand extends Command {
             `)
             .addField(bold('Memory'), `${memoryMB.toFixed(2)} MB`, false)
             .addField(bold('Khafra-Bot:'), `v${pkg.version}`, true)
-            .addField(bold('Discord.js'), `v${version}`, true)
-            .addField(bold('NodeJS'), process.version, true);
+            .addField(bold('Discord.js'), `v${DJSVersion}`, true)
+            .addField(bold('NodeJS'), version, true);
     }
 }

@@ -1,3 +1,9 @@
+import { Arguments, Command } from '#khaf/Command';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { isVoice } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { REST } from '@discordjs/rest';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
@@ -5,12 +11,7 @@ import {
     RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
 import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { isVoice } from '#khaf/utility/Discord.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Arguments, Command } from '#khaf/Command';
+import { env } from 'process';
 
 const enum Activities {
     POKER = '755827207812677713',
@@ -24,7 +25,7 @@ const enum Activities {
     SPELLCAST = '852509694341283871'
 }
 
-const rest = new REST({ version: APIVersion }).setToken(process.env.TOKEN!);
+const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 export class kCommand extends Command {
     constructor() {

@@ -1,5 +1,6 @@
 import { fetch, Headers } from 'undici';
 import crypto from 'crypto';
+import { env } from 'process';
 import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
@@ -12,7 +13,7 @@ const limits: PocketRateLimit = {
 }
 
 class Pocket {
-    consumer_key = process.env.POCKET_CONSUMER_KEY;
+    consumer_key = env.POCKET_CONSUMER_KEY;
 
     redirect_uri?: string;
     request_token?: string;
@@ -172,7 +173,7 @@ class Pocket {
                 url: `${url}`,
                 title,
                 time: Date.now(),
-                consumer_key: process.env.POCKET_CONSUMER_KEY,
+                consumer_key: env.POCKET_CONSUMER_KEY,
                 access_token: this.access_token
             })
         });
@@ -190,7 +191,7 @@ class Pocket {
 
     encrypt = (text: string) => {
         const iv = crypto.randomBytes(16);
-        const cipher = crypto.createCipheriv('aes-256-ctr', process.env.POCKET_SECRET_KEY!, iv);
+        const cipher = crypto.createCipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, iv);
         const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
 
         return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
@@ -199,7 +200,7 @@ class Pocket {
 
     decrypt = (hash: string) => {
         const [iv, content] = hash.split(':');
-        const decipher = crypto.createDecipheriv('aes-256-ctr', process.env.POCKET_SECRET_KEY!, Buffer.from(iv, 'hex'));
+        const decipher = crypto.createDecipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, Buffer.from(iv, 'hex'));
         const decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()]);
 
         return decrpyted.toString();

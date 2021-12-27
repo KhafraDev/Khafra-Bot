@@ -1,16 +1,17 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
-import { parseStrToMs } from '#khaf/utility/ms.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hierarchy } from '#khaf/utility/Permissions.js';
-import { bans } from '../../lib/Cache/Bans.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
+import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
+import { hierarchy } from '#khaf/utility/Permissions.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { inlineCode } from '@khaf/builders';
+import { Message, Permissions } from 'discord.js';
+import { argv } from 'process';
+import { bans } from '../../lib/Cache/Bans.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 
 export class kCommand extends Command {
     constructor() {
