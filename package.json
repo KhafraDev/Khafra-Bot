@@ -7,6 +7,7 @@
   "imports": {
     "#khaf/utility/*": "./src/lib/Utility/*",
     "#khaf/utility/commands/*": "./src/lib/Packages/*.js",
+    "#khaf/utility/Discord.js": "./src/lib/types/Discord.js.js",
     "#khaf/database/*": "./src/Structures/Database/*",
     "#khaf/Command": "./src/Structures/Command.js",
     "#khaf/Interaction": "./src/Structures/Interaction.js",

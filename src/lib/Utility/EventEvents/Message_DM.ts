@@ -1,7 +1,7 @@
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { createFileWatcher } from '../FileWatcher.js';
-import { isDM } from '../../types/Discord.js.js';
+import { isDM } from '#khaf/utility/Discord.js';
 import { cwd } from '../Constants/Path.js';
 import { Minimalist } from '../Minimalist.js';
 import { KhafraClient } from '../../../Bot/KhafraBot.js';
@@ -10,7 +10,7 @@ import { dontThrow } from '../Don\'tThrow.js';
 import { Embed } from '../Constants/Embeds.js';
 import { Arguments, Command } from '#khaf/Command';
 import { Stats } from '../Stats.js';
-import { PartialGuild } from '../../types/KhafraBot.js';
+import { PartialGuild } from '#khaf/types/KhafraBot.js';
 import { inlineCode } from '@khaf/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));

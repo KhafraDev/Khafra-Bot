@@ -2,7 +2,7 @@ import { CommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { isDM, isText } from '../../lib/types/Discord.js.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 

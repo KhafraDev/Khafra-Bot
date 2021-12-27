@@ -6,7 +6,7 @@ import {
 } from 'discord.js';
 import { Errors } from '#khaf/utility/Constants/Errors.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { kGuild } from '../lib/types/KhafraBot.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { join } from 'path';

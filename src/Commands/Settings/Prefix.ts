@@ -1,6 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { Permissions, TextChannel, Message } from 'discord.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Arguments, Command } from '#khaf/Command';
 import { pool } from '#khaf/database/Postgres.js';

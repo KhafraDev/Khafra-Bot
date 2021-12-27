@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { isText, isThread } from '../../../lib/types/Discord.js.js';
+import { isText, isThread } from '#khaf/utility/Discord.js';
 import { Message, MessageActionRow, Permissions, TextBasedChannel } from 'discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { inlineCode } from '@khaf/builders';

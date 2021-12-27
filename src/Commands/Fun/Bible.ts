@@ -5,7 +5,7 @@ import { pool } from '#khaf/database/Postgres.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { inlineCode } from '@khaf/builders';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 
 interface IBibleVerse {
     idx: number

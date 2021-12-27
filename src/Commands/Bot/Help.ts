@@ -4,7 +4,7 @@ import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { bold, inlineCode, hyperlink, codeBlock } from '@khaf/builders';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 let folders: string[] | null = null;

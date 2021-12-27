@@ -3,7 +3,7 @@ import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessage
 import { join } from 'path';
 import { KhafraClient } from '../Bot/KhafraBot.js';
 import { MessagesLRU } from '../lib/Cache/Messages.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';

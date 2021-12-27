@@ -3,7 +3,7 @@ import { Message } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { rand } from '#khaf/utility/Constants/OneLiners.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 

@@ -1,6 +1,6 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { getMentions } from '#khaf/utility/Mentions.js';

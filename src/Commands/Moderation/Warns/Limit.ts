@@ -1,6 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { Arguments, Command } from '#khaf/Command';

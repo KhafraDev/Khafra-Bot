@@ -1,6 +1,6 @@
 import { AnyChannel, CommandInteraction, Permissions, User } from 'discord.js';
 import { bold, hyperlink, inlineCode } from '@khaf/builders';
-import { isText } from '../../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';

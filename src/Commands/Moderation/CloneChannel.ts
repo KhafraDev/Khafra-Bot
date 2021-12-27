@@ -1,6 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message, MessageActionRow, Permissions } from 'discord.js';
-import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '../../lib/types/Discord.js.js';
+import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';

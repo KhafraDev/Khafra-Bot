@@ -1,7 +1,7 @@
 import { bold, inlineCode } from '@khaf/builders';
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { isText } from '../../../lib/types/Discord.js.js';
-import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { kGuild, Warning } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';

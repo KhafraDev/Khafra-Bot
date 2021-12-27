@@ -1,6 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
-import { isExplicitText } from '../../../lib/types/Discord.js.js';
-import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { isExplicitText } from '#khaf/utility/Discord.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { CategoryChannel, Permissions, TextChannel, Message } from 'discord.js';
 import { ChannelType } from 'discord-api-types/v9';

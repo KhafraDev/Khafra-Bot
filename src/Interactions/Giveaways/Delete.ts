@@ -1,7 +1,7 @@
 import { inlineCode } from '@khaf/builders';
 import { CommandInteraction } from 'discord.js';
-import { isText } from '../../lib/types/Discord.js.js';
-import { Giveaway } from '../../lib/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { pool } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 

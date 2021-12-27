@@ -1,6 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
-import { isCategory, isExplicitText } from '../../lib/types/Discord.js.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';

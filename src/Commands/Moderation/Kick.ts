@@ -2,8 +2,8 @@ import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
-import { isText } from '../../lib/types/Discord.js.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 

@@ -1,6 +1,6 @@
 import { bold, inlineCode, italic } from '@khaf/builders';
 import { Collection, GuildChannel, Message, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
-import { isCategory, isStage, isThread, isVoice } from '../../lib/types/Discord.js.js';
+import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';

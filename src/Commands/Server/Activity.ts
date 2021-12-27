@@ -5,7 +5,7 @@ import {
     RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
 import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { isVoice } from '../../lib/types/Discord.js.js';
+import { isVoice } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';

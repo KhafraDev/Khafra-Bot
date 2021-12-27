@@ -1,7 +1,7 @@
 import { bold, hyperlink, inlineCode } from '@khaf/builders';
 import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
 import { once } from 'events';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';

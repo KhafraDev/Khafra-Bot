@@ -1,8 +1,8 @@
 import { time } from '@khaf/builders';
 import { AnyChannel, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
-import { isText } from '../lib/types/Discord.js.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';

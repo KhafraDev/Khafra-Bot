@@ -4,7 +4,7 @@ import { pool } from '#khaf/database/Postgres.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
-import { Warning } from '../../../lib/types/KhafraBot.js';
+import { Warning } from '#khaf/types/KhafraBot.js';
 import { bold, inlineCode, time } from '@khaf/builders';
 
 interface Total {

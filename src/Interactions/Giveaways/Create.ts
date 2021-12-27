@@ -1,6 +1,6 @@
 import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
 import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
-import { type Giveaway } from '../../lib/types/KhafraBot.js';
+import { type Giveaway } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';

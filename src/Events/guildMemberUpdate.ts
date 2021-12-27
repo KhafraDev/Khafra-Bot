@@ -1,11 +1,11 @@
 import { Event } from '#khaf/Event';
 import { GuildMember, Permissions, AnyChannel } from 'discord.js';
-import { isText } from '../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const basic = new Permissions([

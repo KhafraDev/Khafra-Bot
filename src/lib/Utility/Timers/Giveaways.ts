@@ -1,7 +1,7 @@
 import { pool } from '#khaf/database/Postgres.js';
-import { Giveaway } from '../../types/KhafraBot.js';
+import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { client } from '../../../index.js';
-import { isText } from '../../types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { EventEmitter } from 'events';
 import { Permissions, User } from 'discord.js';
 import { hasPerms } from '../Permissions.js';

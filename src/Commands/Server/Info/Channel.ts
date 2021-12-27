@@ -1,6 +1,6 @@
 import { bold, codeBlock, time } from '@khaf/builders';
 import { Message, Permissions } from 'discord.js';
-import { isExplicitText, isText, isVoice } from '../../../lib/types/Discord.js.js';
+import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';

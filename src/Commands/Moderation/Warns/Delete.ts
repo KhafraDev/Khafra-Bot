@@ -1,9 +1,9 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { pool } from '#khaf/database/Postgres.js';
-import { kGuild, Warning } from '../../../lib/types/KhafraBot.js';
+import { kGuild, Warning } from '#khaf/types/KhafraBot.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { isText } from '../../../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';

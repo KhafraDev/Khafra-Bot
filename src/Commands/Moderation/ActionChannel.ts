@@ -1,6 +1,6 @@
 import { Message, Permissions, TextChannel } from 'discord.js';
-import { isText } from '../../lib/types/Discord.js.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Command } from '#khaf/Command';

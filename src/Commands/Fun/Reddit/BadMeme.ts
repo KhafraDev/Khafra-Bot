@@ -1,7 +1,7 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Interaction, Message, MessageActionRow } from 'discord.js';
 import { badmeme, cache } from '@khaf/badmeme';
-import { isDM, isText } from '../../../lib/types/Discord.js.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 

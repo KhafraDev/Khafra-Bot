@@ -3,9 +3,9 @@ import { GuildMember, Permissions, AnyChannel } from 'discord.js';
 import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText } from '../lib/types/Discord.js.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { client } from '#khaf/database/Redis.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { time } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 

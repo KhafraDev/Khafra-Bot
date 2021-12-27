@@ -1,6 +1,6 @@
 import { CategoryChannel, GuildChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
-import { isDM, isExplicitText, isThread } from '../../../lib/types/Discord.js.js';
-import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Arguments, Command } from '#khaf/Command';
 

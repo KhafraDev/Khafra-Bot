@@ -1,8 +1,8 @@
 import { Event } from '#khaf/Event';
 import { GuildBan } from 'discord.js';
 import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { isText } from '../lib/types/Discord.js.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { unbans } from '../lib/Cache/Unban.js';
 import { bold, inlineCode, time } from '@khaf/builders';
