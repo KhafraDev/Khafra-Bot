@@ -13,6 +13,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
 const perms = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);

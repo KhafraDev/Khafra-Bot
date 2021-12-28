@@ -39,7 +39,9 @@ export class kInteraction extends Interactions {
                         {
                             type: ApplicationCommandOptionType.Integer,
                             name: 'winners',
-                            description: 'The number of winners there should be, defaults to 1.'
+                            description: 'The number of winners there should be, defaults to 1.',
+                            min_value: 1,
+                            max_value: 100
                         }
                     ]
                 },

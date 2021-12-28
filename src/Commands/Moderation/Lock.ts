@@ -7,6 +7,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Arguments, Command } from '#khaf/Command';
 
 const perms = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);

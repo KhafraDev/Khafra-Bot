@@ -15,6 +15,7 @@ import { Event } from '#khaf/Event';
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 const basic = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);

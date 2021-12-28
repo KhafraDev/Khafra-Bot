@@ -26,6 +26,7 @@ const emojis = [
 	'6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
 ] as const;
 const perms = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);

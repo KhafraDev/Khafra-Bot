@@ -8,6 +8,7 @@ import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 
 const basic = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);

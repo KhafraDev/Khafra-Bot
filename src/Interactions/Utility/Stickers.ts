@@ -26,7 +26,8 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Integer,
                     name: 'offset',
-                    description: 'Offset of the sticker name to use.'
+                    description: 'Offset of the sticker name to use.',
+                    min_value: 0
                 }
             ]
         };

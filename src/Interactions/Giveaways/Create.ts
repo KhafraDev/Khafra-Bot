@@ -11,7 +11,6 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 
-const winnersRange = Range({ min: 1, max: 100, inclusive: true });
 const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true });
 
 export class kSubCommand extends InteractionSubCommand {
@@ -28,9 +27,7 @@ export class kSubCommand extends InteractionSubCommand {
         const ends = parseStrToMs(interaction.options.getString('ends', true));
         const winners = interaction.options.getInteger('winners') ?? 1;
         
-        if (!winnersRange(winners)) {
-            return `❌ The number of winners must be between 1 and 100!`;
-        } else if (ends === null || !timeRange(ends)) {
+        if (ends === null || !timeRange(ends)) {
             return `❌ A giveaway must last longer than a minute, and less than a month!`;
         }
 

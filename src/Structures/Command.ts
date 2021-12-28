@@ -59,7 +59,8 @@ export abstract class Command implements ICommand {
     readonly rateLimit: Cooldown;
 
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    readonly permissions: PermissionResolvable[] = [ 
+    readonly permissions: PermissionResolvable[] = [
+        Permissions.FLAGS.VIEW_CHANNEL,
         Permissions.FLAGS.SEND_MESSAGES,
         Permissions.FLAGS.EMBED_LINKS
     ];

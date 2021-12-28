@@ -30,7 +30,9 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Integer,
                     name: 'days',
-                    description: 'Days of messages to clear (default is 7).'
+                    description: 'Days of messages to clear (default is 7).',
+                    min_value: 0,
+                    max_value: 7
                 },
                 {
                     type: ApplicationCommandOptionType.String,

@@ -9,6 +9,7 @@ import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const basic = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
     Permissions.FLAGS.SEND_MESSAGES,
     Permissions.FLAGS.EMBED_LINKS
 ]);
