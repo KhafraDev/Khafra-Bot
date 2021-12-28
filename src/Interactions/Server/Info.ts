@@ -1,13 +1,13 @@
-import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
-import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { join } from 'path';
+import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { client } from '../../index.js';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
+import { join } from 'path';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';

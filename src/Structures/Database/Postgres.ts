@@ -1,9 +1,9 @@
+import { KhafraClient } from '#khaf/Bot';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import pg from 'pg';
 import { env } from 'process';
-import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 export const defaultKGuild = [
     'prefix',

@@ -1,8 +1,8 @@
+import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
-import { Message } from 'discord.js';
-import { KhafraClient } from '../../../Bot/KhafraBot.js';
-import { inlineCode } from '@khaf/builders';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {

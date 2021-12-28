@@ -1,5 +1,5 @@
 import { Event } from '#khaf/Event';
-import { Logger } from '../Structures/Logger.js';
+import { Logger } from '#khaf/Logger';
 import type { RateLimitData } from 'discord.js';
 
 const logger = new Logger();

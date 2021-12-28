@@ -2,7 +2,7 @@ import '#khaf/utility/load.env.js';
 import '#khaf/utility/Rejections.js';
 import '#khaf/utility/Timers/Giveaways.js';
 
-import { KhafraClient } from './Bot/KhafraBot.js';
+import { KhafraClient } from '#khaf/Bot';
 import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { Event } from '#khaf/Event';

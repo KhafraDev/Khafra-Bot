@@ -1,18 +1,18 @@
+import { KhafraClient } from '#khaf/Bot';
+import { Arguments, Command } from '#khaf/Command';
+import { PartialGuild } from '#khaf/types/KhafraBot.js';
+import { isDM } from '#khaf/utility/Discord.js';
+import { inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
-import { createFileWatcher } from '../FileWatcher.js';
-import { isDM } from '#khaf/utility/Discord.js';
-import { cwd } from '../Constants/Path.js';
-import { Minimalist } from '../Minimalist.js';
-import { KhafraClient } from '../../../Bot/KhafraBot.js';
 import { cooldown } from '../../../Structures/Cooldown/GlobalCooldown.js';
-import { dontThrow } from '../Don\'tThrow.js';
 import { Embed } from '../Constants/Embeds.js';
-import { Arguments, Command } from '#khaf/Command';
+import { cwd } from '../Constants/Path.js';
+import { dontThrow } from '../Don\'tThrow.js';
+import { createFileWatcher } from '../FileWatcher.js';
+import { Minimalist } from '../Minimalist.js';
 import { Stats } from '../Stats.js';
-import { PartialGuild } from '#khaf/types/KhafraBot.js';
-import { inlineCode } from '@khaf/builders';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 const cooldownUsers = cooldown(10, 60000);

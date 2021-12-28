@@ -1,12 +1,12 @@
-import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
-import { join } from 'path';
-import { client } from '../../../index.js';
+import { client } from '#khaf/Client';
+import { Command } from '#khaf/Command';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { Command } from '#khaf/Command';
+import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
+import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 

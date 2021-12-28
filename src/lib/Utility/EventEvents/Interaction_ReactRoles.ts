@@ -1,5 +1,5 @@
+import { client } from '#khaf/Client';
 import { Guild, GuildMember, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { client } from '../../../index.js';
 import { Embed } from '../Constants/Embeds.js';
 import { dontThrow } from '../Don\'tThrow.js';
 import { validSnowflake } from '../Mentions.js';

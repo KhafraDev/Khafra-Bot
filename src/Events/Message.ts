@@ -1,7 +1,9 @@
+import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
+import { Logger } from '#khaf/Logger';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -18,10 +20,8 @@ import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
-import { KhafraClient } from '../Bot/KhafraBot.js';
 import { MessagesLRU } from '../lib/Cache/Messages.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-import { Logger } from '../Structures/Logger.js';
 
 export const logger = new Logger();
 

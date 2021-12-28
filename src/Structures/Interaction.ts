@@ -1,6 +1,6 @@
+import { KhafraClient } from '#khaf/Bot';
 import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
 
 interface InteractionOptions {
     defer?: boolean

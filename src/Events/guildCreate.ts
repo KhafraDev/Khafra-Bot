@@ -1,12 +1,12 @@
+import { KhafraClient } from '#khaf/Bot';
+import { pool } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { pool } from '#khaf/database/Postgres.js'; 
-import { ApplicationCommandPermissionData, Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { Logger } from '#khaf/Logger';
 import { cwd } from '#khaf/utility/Constants/Path.js';
-import { join } from 'path';
-import { Logger } from '../Structures/Logger.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { ApplicationCommandPermissionData, Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
+import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 const logger = new Logger();

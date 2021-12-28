@@ -1,10 +1,10 @@
+import { client } from '#khaf/Client';
 import { pool } from '#khaf/database/Postgres.js';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { Permissions, User } from 'discord.js';
 import { EventEmitter } from 'events';
 import { setInterval } from 'timers';
-import { client } from '../../../index.js';
 import { hasPerms } from '../Permissions.js';
 
 interface GiveawayEmitter extends EventEmitter {

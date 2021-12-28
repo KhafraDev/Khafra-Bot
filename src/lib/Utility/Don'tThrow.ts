@@ -1,4 +1,4 @@
-import { Logger } from '../../Structures/Logger.js';
+import { Logger } from '#khaf/Logger';
 
 const logger = new Logger();
 

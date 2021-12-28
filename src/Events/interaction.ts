@@ -1,14 +1,14 @@
-import { bold, inlineCode } from '@khaf/builders';
-import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
+import { KhafraClient } from '#khaf/Bot';
+import { Command } from '#khaf/Command';
+import { Event } from '#khaf/Event';
+import { Logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { autoCompleteHandler } from '#khaf/utility/EventEvents/Interaction_AutoComplete.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { Command } from '#khaf/Command';
-import { Event } from '#khaf/Event';
-import { Logger } from '../Structures/Logger.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
 import { argv } from 'process';
 
 const logger = new Logger();

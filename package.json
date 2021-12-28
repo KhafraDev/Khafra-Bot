@@ -11,7 +11,10 @@
     "#khaf/database/*": "./src/Structures/Database/*",
     "#khaf/Command": "./src/Structures/Command.js",
     "#khaf/Interaction": "./src/Structures/Interaction.js",
-    "#khaf/Event": "./src/Structures/Event.js"
+    "#khaf/Event": "./src/Structures/Event.js",
+    "#khaf/Logger": "./src/Structures/Logger.js",
+    "#khaf/Bot": "./src/Bot/KhafraBot.js",
+    "#khaf/Client": "./src/index.js"
   },
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",

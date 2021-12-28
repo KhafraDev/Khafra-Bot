@@ -1,3 +1,4 @@
+import { KhafraClient } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -10,7 +11,6 @@ import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } 
 import { ApplicationCommand, CommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
-import { KhafraClient } from '../../Bot/KhafraBot.js';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 const processArgs = new Minimalist(argv.slice(2).join(' '));

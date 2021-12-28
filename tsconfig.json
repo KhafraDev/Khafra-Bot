@@ -52,8 +52,11 @@
       "#khaf/Command": ["./src/Structures/Command.js"],
       "#khaf/Interaction": ["./src/Structures/Interaction.js"],
       "#khaf/Event": ["./src/Structures/Event.js"],
-      "#khaf/types/*": ["./src/lib/types/*"]
-    },                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+      "#khaf/types/*": ["./src/lib/types/*"],
+      "#khaf/Logger": ["./src/Structures/Logger.js"],
+      "#khaf/Bot": ["./src/Bot/KhafraBot.js"],
+      "#khaf/Client": ["./src/index.js"]
+    },                                        /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
     // "types": [],                           /* Type declaration files to be included in compilation. */

@@ -1,13 +1,13 @@
-import { CommandInteraction } from 'discord.js';
-import { fetchMDN } from '@khaf/mdn';
-import { client } from '../../index.js';
-import { stripIndents } from '#khaf/utility/Template.js';
+import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
-import { join } from 'path';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { stripIndents } from '#khaf/utility/Template.js';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { fetchMDN } from '@khaf/mdn';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { CommandInteraction } from 'discord.js';
+import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 

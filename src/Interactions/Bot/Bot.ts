@@ -1,11 +1,11 @@
+import { KhafraClient } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
-import { bold } from '@khaf/builders';
-import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
-import { KhafraClient } from '../../Bot/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { performance } from 'perf_hooks';
 import { Stats } from '#khaf/utility/Stats.js';
+import { bold } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
+import { performance } from 'perf_hooks';
 
 enum BotInfo {
     UPTIME = 'uptime',
