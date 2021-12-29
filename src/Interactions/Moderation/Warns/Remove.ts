@@ -10,7 +10,7 @@ import { client } from '#khaf/database/Redis.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
-import { Embed } from '#khaf/utility/Constants/Embeds';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 
 interface WarningDel {
     id: Warning['id']
