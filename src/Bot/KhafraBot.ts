@@ -7,6 +7,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { REST } from '@discordjs/rest';
+import { Buffer } from 'buffer';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { Client, ClientEvents } from 'discord.js';
 import { existsSync, writeFileSync } from 'fs';
