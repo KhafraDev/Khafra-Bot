@@ -7,7 +7,7 @@ import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { RedditData } from '@khaf/badmeme';
 import { Message, MessageActionRow } from 'discord.js';
 import { decodeXML } from 'entities';
-import { setTimeout } from 'timers';
+import { setTimeout, clearTimeout } from 'timers';
 import { fetch } from 'undici';
 
 const fetchDeleted = async (postId: string) => {

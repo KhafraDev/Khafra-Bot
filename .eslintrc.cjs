@@ -30,7 +30,11 @@ module.exports = {
             'process',
             'Buffer',
             'setTimeout',
-            'setInterval'
+            'setInterval',
+            'clearTimeout',
+            'clearInterval',
+            'URL',
+            'URLSearchParams'
         ],
 
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',

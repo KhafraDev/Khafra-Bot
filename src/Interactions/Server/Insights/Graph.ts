@@ -3,6 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 import { CommandInteraction, MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import { URLSearchParams } from 'url';
 
 interface Insights {
     k_date: Date

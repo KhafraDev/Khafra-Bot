@@ -1,6 +1,6 @@
 import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
 import { join } from 'path';
-import { setInterval, setTimeout } from 'timers';
+import { clearInterval, setInterval, setTimeout } from 'timers';
 import { fetch } from 'undici';
 import { delay } from './Constants/OneLiners.js';
 import { cwd } from './Constants/Path.js';
