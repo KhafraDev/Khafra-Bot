@@ -39,6 +39,11 @@ export class kInteraction extends Interactions {
                     description: 'Member to kick.',
                     required: true
                 },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'reason',
+                    description: 'An optional reason detailing why the member has been muted.'
+                },
                 // TODO(@KhafraDev): if Discord ever adds a date option... use that
                 {
                     type: ApplicationCommandOptionType.Integer,
@@ -136,9 +141,10 @@ export class kInteraction extends Interactions {
         }
 
         const time =  totalMs === 0 ? null : new Date(Date.now() + totalMs).toISOString();
+        const reason = interaction.options.getString('reason') ?? undefined;
         const [muteErr] = isDev
             ? [null, member]
-            : await dontThrow(member.disableCommunicationUntil(time));
+            : await dontThrow(member.disableCommunicationUntil(time, reason));
 
         if (muteErr !== null) {
             return `❌ An unexpected error has occurred: ${inlineCode(muteErr.message)}`;
