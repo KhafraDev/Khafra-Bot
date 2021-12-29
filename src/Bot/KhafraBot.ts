@@ -2,14 +2,15 @@ import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { Interactions, InteractionSubCommand } from '#khaf/Interaction';
 import { bright, green, magenta } from '#khaf/utility/Colors.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
+import { assets, cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { REST } from '@discordjs/rest';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { Client, ClientEvents } from 'discord.js';
-import { readdir, stat } from 'fs/promises';
+import { existsSync, writeFileSync } from 'fs';
+import { readdir, readFile, stat } from 'fs/promises';
 import { join, resolve } from 'path';
 import { performance } from 'perf_hooks';
 import { argv, env } from 'process';
@@ -24,6 +25,7 @@ type DynamicImportAppCommand = Promise<{
 }>;
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+const toBase64 = (command: unknown) => Buffer.from(JSON.stringify(command)).toString('base64');
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -129,22 +131,90 @@ export class KhafraClient extends Client {
         }
 
         if (loaded.length !== 0) {
+            const deployPath = join(assets, 'interaction_last_deployed.txt');
             const scs = loaded.map(i => i.data);
-            const processArgs = new Minimalist(argv.slice(2).join(' '));
-            
-            if (processArgs.get('dev') === true) {
-                // debugging in guild
-                await rest.put(
-                    Routes.applicationGuildCommands(config.botId, config.guildId),
-                    { body: scs }
-                );
+            const redeploy: typeof scs = [];
+
+            // When dealing with slash command permissions, like the rest of the 
+            // application command design is, it is poorly designed. Re-deploying
+            // a command removes all the permissions from it. Therefore, the bot
+            // has to diff changes from the command and only re-deploy the commands
+            // that have been changed since its last start up.
+
+            if (existsSync(deployPath)) {
+                const file = await readFile(deployPath, 'utf-8');
+                const names: string[] = [];
+                let data = '';
+
+                for (const line of file.split(/\r?\n/g)) {
+                    // File is structured as name|base64
+                    const [name, b64] = line.split('|');
+                    const command = scs.find(c => c.name === name);
+
+                    if (!command) {
+                        // The command was likely deleted.
+                        continue;
+                    }
+
+                    names.push(command.name);
+                    const newBase64 = toBase64(command);
+
+                    if (b64 !== newBase64) {
+                        redeploy.push(command);
+                    }
+
+                    data += `${command.name}|${toBase64(command)}\r\n`;
+                }
+
+                // Now we loop over all of the commands to see if any new ones have
+                // been added.
+                for (const command of scs) {
+                    if (names.includes(command.name)) {
+                        continue;
+                    }
+
+                    redeploy.push(command);
+                    data += `${command.name}|${toBase64(command)}\r\n`;
+                }
+
+                // We need to re-write the file as a new command may have been added or
+                // edited, and it's easier than replacing the old outdated data.
+                writeFileSync(deployPath, data);
+            } else {
+                // If the bot has not recorded the last deployment, we must assume that
+                // every command has to be deployed.
+                redeploy.push(...scs);
+
+                // Then we have to write the data to the file so we can use it!
+                let data = '';
+
+                for (const command of redeploy) {
+                    data += `${command.name}|${toBase64(command)}\r\n`;
+                }
+
+                writeFileSync(deployPath, data);
             }
 
-            // globally
-            const slashCommands = await rest.put(
-                Routes.applicationCommands(config.botId),
-                { body: scs }
-            ) as APIApplicationCommand[];
+            const processArgs = new Minimalist(argv.slice(2).join(' '));
+            const route = Routes.applicationCommands(config.botId);
+            
+            if (redeploy.length !== 0) {
+                if (processArgs.get('dev') === true) {
+                    // debugging in guild
+                    await rest.put(
+                        Routes.applicationGuildCommands(config.botId, config.guildId),
+                        { body: redeploy }
+                    );
+                }
+
+                // globally
+                await rest.put(route, { body: redeploy });
+            }
+
+            // Since we cannot rely on rest.put(...) to return every application command
+            // anymore, we must fetch the list from Discord's API.
+            // https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
+            const slashCommands = await rest.get(route) as APIApplicationCommand[];
 
             for (const { id, name } of slashCommands) {
                 const cached = KhafraClient.Interactions.get(name);
