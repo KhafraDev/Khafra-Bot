@@ -199,15 +199,15 @@ export class KhafraClient extends Client {
             const processArgs = new Minimalist(argv.slice(2).join(' '));
             const route = Routes.applicationCommands(config.botId);
             
-            if (redeploy.length !== 0) {
-                if (processArgs.get('dev') === true) {
-                    // debugging in guild
-                    await rest.put(
-                        Routes.applicationGuildCommands(config.botId, config.guildId),
-                        { body: redeploy }
-                    );
-                }
+            if (processArgs.get('dev') === true) {
+                // debugging in guild
+                await rest.put(
+                    Routes.applicationGuildCommands(config.botId, config.guildId),
+                    { body: redeploy }
+                );
+            }
 
+            if (redeploy.length !== 0) {
                 // globally
                 await rest.put(route, { body: redeploy });
             }
