@@ -1,6 +1,6 @@
 import { KhafraClient } from '#khaf/Bot';
 import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Interaction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
+import { CommandInteraction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
 
 interface InteractionOptions {
     defer?: boolean
@@ -26,7 +26,7 @@ type InteractionData =
 
 const kId = Symbol('Khafra.Interaction.Id');
 
-export abstract class Interactions {
+export class Interactions {
     private [kId]: APIApplicationCommand['id'];
 
     constructor(
@@ -37,7 +37,18 @@ export abstract class Interactions {
         this.options = options;
     }
     
-    abstract init(arg: Interaction): Promise<HandlerReturn>;
+    async init (interaction: CommandInteraction): Promise<HandlerReturn> {
+        const subcommand = interaction.options.getSubcommand();
+        const subcommandName = `${this.data.name}-${subcommand}`;
+
+        if (!KhafraClient.Subcommands.has(subcommandName)) {
+            return `❌ This option has not been implemented yet!`;
+        }
+
+        const option = KhafraClient.Subcommands.get(subcommandName)!;
+        
+        return await option.handle(interaction);
+    }
 
     public set id (body: APIApplicationCommand['id']) {
         this[kId] = body;
