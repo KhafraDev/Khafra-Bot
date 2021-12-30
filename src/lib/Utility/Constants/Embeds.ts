@@ -1,7 +1,6 @@
 import { bold, inlineCode } from '@khaf/builders';
 import {
     GuildMember,
-    MessageEmbed,
     NewsChannel,
     PermissionResolvable,
     Role,
@@ -15,6 +14,7 @@ import { createFileWatcher } from '../FileWatcher.js';
 import { permResolvableToString } from '../Permissions.js';
 import { plural } from '../String.js';
 import { cwd } from './Path.js';
+import { MessageEmbed } from '#khaf/Embed';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 

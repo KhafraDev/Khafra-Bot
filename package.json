@@ -14,7 +14,8 @@
     "#khaf/Event": "./src/Structures/Event.js",
     "#khaf/Logger": "./src/Structures/Logger.js",
     "#khaf/Bot": "./src/Bot/KhafraBot.js",
-    "#khaf/Client": "./src/index.js"
+    "#khaf/Client": "./src/index.js",
+    "#khaf/Embed": "./src/Structures/MessageEmbed.js"
   },
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",

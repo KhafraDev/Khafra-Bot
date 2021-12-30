@@ -1,20 +1,20 @@
+import { MessageEmbed } from '#khaf/Embed';
+import { Interactions } from '#khaf/Interaction';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import {
     CommandInteraction,
     GuildMember,
     GuildMemberRoleManager,
     MessageActionRow,
-    MessageEmbed,
     NewsChannel,
     Permissions,
     Role,
     TextChannel,
     ThreadChannel
 } from 'discord.js';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Interactions } from '#khaf/Interaction';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 
