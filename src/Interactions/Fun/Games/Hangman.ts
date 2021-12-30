@@ -1,15 +1,15 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { inlineCode } from '@khaf/builders';
-import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
-import { extname, join } from 'path';
-import { readdirSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { plural } from '#khaf/utility/String.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { plural } from '#khaf/utility/String.js';
+import { inlineCode } from '@khaf/builders';
+import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
+import { readdirSync } from 'fs';
+import { readFile } from 'fs/promises';
+import { extname, join } from 'path';
 
 const assetsPath = join(assets, 'Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));

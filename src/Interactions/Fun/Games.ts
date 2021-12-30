@@ -31,6 +31,11 @@ export class kInteraction extends Interactions {
                             choices: listsByName.map(word => ({ name: word, value: word }))
                         }
                     ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'minesweeper',
+                    description: 'Play a game of MineSweeper directly in Discord!'
                 }
             ]
         };
