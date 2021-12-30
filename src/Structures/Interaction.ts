@@ -32,10 +32,7 @@ export class Interactions {
     constructor(
         public data: InteractionData, 
         public options: InteractionOptions = {}
-    ) {
-        this.data = data;
-        this.options = options;
-    }
+    ) {}
     
     async init (interaction: CommandInteraction): Promise<HandlerReturn> {
         const subcommand = interaction.options.getSubcommand();

@@ -1,4 +1,4 @@
-import { Interactions } from '#khaf/Interaction';
+import { InteractionSubCommand } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
 import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { extname, join } from 'path';
@@ -10,7 +10,6 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 const assetsPath = join(assets, 'Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
@@ -33,15 +32,11 @@ class Hangman {
     private usedHint = false;
     public lastGuessWasWrong = false;
 
-    constructor(
-        private word: string
-    ) {
-        this.word = word;
-    }
+    constructor(private word: string) {}
 
     /**
      * Guess a given phrase or word
-     * @returns {boolean} true if the guess was added, false otherwise
+     * @returns true if the guess was added, false otherwise
      */
     guess(phraseOrChar: string) {
         const guess = phraseOrChar.toLowerCase();
@@ -144,49 +139,32 @@ class Hangman {
     }
 }
 
-export class kInteraction extends Interactions {
+export class kSubCommand extends InteractionSubCommand {
     constructor() {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'hangman',
-            description: `Play a game of hangman!`,
-            options: [
-                {
-                    // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
-                    type: ApplicationCommandOptionType.Boolean,
-                    name: 'list',
-                    description: 'list of words that you can use.',
-                    required: false
-                },
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'play',
-                    description: 'choose a list of words to play with.',
-                    choices: listsByName.map(word => ({ name: word, value: word })),
-                }
-            ]
-        };
-        
-        super(sc, { defer: true });
+        super({
+            references: 'games',
+            name: 'hangman'
+        });
     }
 
-    async init(interaction: CommandInteraction) {
+    async handle (interaction: CommandInteraction) {
         if (currentGames.has(interaction.user.id)) {
             return `❌ Finish your current game first!`;
         }
 
-        const shouldList = interaction.options.getBoolean('list') !== null;
-        const listName = interaction.options.getString('play', true);
-
-        if (!shouldList && listName === null) {
-            return `❌ No options were provided!`;
-        }
+        const shouldList = interaction.options.getBoolean('list');
+        const listName = interaction.options.getString('play');
 
         if (shouldList) {
             const lists = listsByName
-                .map(l => inlineCode(l))
+                .map(l => `• ${inlineCode(l)}`)
                 .join('\n');
                 
             return `✅ Here are the word lists that you can play:\n${lists}`;
+        } else if (shouldList !== null) {
+            return `❌ You can't choose false.`;
+        } else if (!listName) {
+            return `❌ No options were provided!`;
         }
 
         let words!: string[];
@@ -250,7 +228,7 @@ export class kInteraction extends Interactions {
             r.stop();
 
             return void dontThrow(m.edit({
-                content: `Game over!`,
+                ...game.toJSON('Game over! You guessed the word!'),
                 components: disableAll(m)
             }));
         });
