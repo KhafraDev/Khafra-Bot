@@ -29,7 +29,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async handle (interaction: CommandInteraction) {
-        const [err] = await dontThrow(interaction.editReply({ 
+        const [err, int] = await dontThrow(interaction.editReply({ 
             embeds: [
                 Embed.ok(`Rock, paper, scissors, shoot!`)
             ],
@@ -55,7 +55,9 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = channel.createMessageComponentCollector({
-            filter: (i) => interaction.user.id === i.user.id,
+            filter: (i) =>
+                interaction.user.id === i.user.id &&
+                int.id === i.message.id,
             time: 15000,
             max: 1
         });

@@ -1,9 +1,11 @@
-import { bold, inlineCode } from '@khaf/builders';
-import { Message, MessageActionRow, Snowflake } from 'discord.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
 import { shuffle } from '#khaf/utility/Array.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { CommandInteraction, MessageActionRow, Snowflake } from 'discord.js';
+import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Command } from '#khaf/Command';
+import { isTextBased } from '#khaf/utility/Discord.js';
 
 type Card = [number, typeof suits[number]];
 
@@ -28,32 +30,24 @@ const getName = (v: number) => v > 1 && v <= 10
     ? `${v}` 
     : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v];
 
-export class kCommand extends Command {
+export class kSubCommand extends InteractionSubCommand {
     constructor() {
-        super(
-            [
-                'Play a game of Blackjack!'
-            ],
-			{
-                name: 'blackjack',
-                folder: 'Games',
-                args: [0, 0],
-                ratelimit: 10, 
-                aliases: ['bj']
-            }
-        );
+        super({
+            references: 'games',
+            name: 'blackjack'
+        });
     }
 
-    async init(message: Message) {
-        if (games.has(message.author.id))
-            return this.Embed.error(`Finish your other game before playing another!`);
+    async handle (interaction: CommandInteraction) {
+        if (games.has(interaction.user.id)) {
+            return `❌ Finish your other game before playing another!`;
+        }
 
         const rows = [
-            new MessageActionRow()
-                .addComponents(
-                    Components.approve('Hit', 'hit'),
-                    Components.secondary('Stay', 'stay')
-                )
+            new MessageActionRow().addComponents(
+                Components.approve('Hit', 'hit'),
+                Components.secondary('Stay', 'stay')
+            )
         ];
 
         const deck = makeDeck();
@@ -65,7 +59,7 @@ export class kCommand extends Command {
         const makeEmbed = (desc?: string, hide = true) => {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
-            return this.Embed.ok(desc)
+            return Embed.ok(desc)
                 .addField(
                     bold(`Dealer${dealerTotal}`), 
                     dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
@@ -76,18 +70,37 @@ export class kCommand extends Command {
                 );
         }
 
-        const m = await message.reply({
+        const [err, int] = await dontThrow(interaction.editReply({
             embeds: [makeEmbed()],
             components: rows
+        }));
+
+        if (err !== null) {
+            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+        }
+
+        let channel = interaction.channel;
+
+        if (!channel) {
+            const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
+
+            if (err !== null || c === null) {
+                return `❌ Please invite the bot with the correct permissions to use this command!`;
+            } else if (!isTextBased(c)) {
+                return `❌ This command cannot be used in this channel!`;
+            }
+
+            channel = c;
+        }
+
+        const collector = channel.createMessageComponentCollector({
+            filter: (i) =>
+                interaction.user.id === i.user.id &&
+                int.id === i.message.id,
+            idle: 30_000
         });
 
-        const c = m.createMessageComponentCollector({
-            filter: (interaction) => 
-                interaction.user.id === message.author.id,
-            time: 120_000
-        });
-
-        c.on('collect', (i) => {
+        collector.on('collect', (i) => {
             if (i.customId === 'hit') {
                 const [card, suit] = deck.shift()!;
 
@@ -95,9 +108,10 @@ export class kCommand extends Command {
                 const total = getTotal(score.sucker);
 
                 if (total > 21) { // player lost
+                    collector.stop();
                     return void dontThrow(i.update({
                         embeds: [makeEmbed(`You went over 21, you lose!`, false)],
-                        components: disableAll(m)
+                        components: []
                     }));
                 } else { // continue playing
                     return void dontThrow(i.update({ embeds: [makeEmbed()] }));
@@ -112,17 +126,25 @@ export class kCommand extends Command {
                 const totalDealer = getTotal(score.dealer);
 
                 if (totalDealer > 21) { // dealer goes over 21
+                    collector.stop();
                     return void dontThrow(i.update({
                         embeds: [makeEmbed(`You win, I went over 21!`, false)],
-                        components: disableAll(m)
+                        components: []
                     }));
                 } else if (totalDealer >= totalPlayer) { // dealer wins
+                    collector.stop();
                     return void dontThrow(i.update({
                         embeds: [makeEmbed(`You lose!`, false)],
-                        components: disableAll(m)
+                        components: []
                     }));
                 }
             }
         });
+
+        collector.on('end', (_, reason) => {
+            if (reason === 'idle') {
+                return void dontThrow(interaction.editReply({ components: [] }));
+            }
+        });
     }
-}
+} 

@@ -41,6 +41,11 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'rockpaperscissors',
                     description: 'Play a game of Rock Paper Scissors against the bot!'
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'blackjack',
+                    description: 'Play a game of Blackjack against the bot!'
                 }
             ]
         };
