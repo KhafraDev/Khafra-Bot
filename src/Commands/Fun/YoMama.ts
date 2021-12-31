@@ -1,14 +1,14 @@
 import { Command } from '#khaf/Command';
-import { Message } from 'discord.js';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { rand } from '#khaf/utility/Constants/OneLiners.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { assets } from '#khaf/utility/Constants/Path.js';
+import { Message } from 'discord.js';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 // "jokes"
-const file = await readFile(join(assets, 'yomama.txt'), 'utf-8');
+const file = readFileSync(join(assets, 'yomama.txt'), 'utf-8');
 const jokes = file.split(/\r?\n/g).slice(0, -1); // last line will be empty
 
 export class kCommand extends Command {

@@ -1,6 +1,6 @@
 import { KhafraClient } from '#khaf/Bot';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { readFile } from 'fs/promises';
+import { readFileSync } from 'fs';
 import { join } from 'path';
 import pg from 'pg';
 import { env } from 'process';
@@ -24,6 +24,6 @@ export const pool = new pg.Pool({
 });
 
 for (const file of sql) {
-    const text = await readFile(file, 'utf-8');
+    const text = readFileSync(file, 'utf-8');
     await pool.query(text);
 }
