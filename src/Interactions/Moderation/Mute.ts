@@ -1,13 +1,14 @@
-import { inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMember, Permissions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { Interactions } from '#khaf/Interaction';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { CommandInteraction, GuildMember, Permissions } from 'discord.js';
 import { argv } from 'process';
+import { bold, inlineCode, time as formatTime } from '@khaf/builders';
 
 const notReally = ` (Not really, the bot is in ${inlineCode('dev')} mode!)`;
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -90,7 +91,7 @@ export class kInteraction extends Interactions {
             return `❌ Invalid permissions, ${pleaseInvite}`;
         }
 
-        const [err, guild] = interaction.guild
+        const [err] = interaction.guild
             ? [null, interaction.guild]
             : await dontThrow(interaction.client.guilds.fetch(interaction.guildId!));
 
@@ -98,20 +99,12 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        let member = interaction.options.getMember('member')
+        const member = interaction.options.getMember('member')
 
         if (member === null) {
             return `❌ No guild member to mute was provided - I can't kick someone not in the guild!`;
         } else if (!(member instanceof GuildMember)) {
-            member = Reflect.construct(GuildMember, [
-                interaction.client,
-                member,
-                guild
-            ]) as GuildMember;
-
-            if (!('disableCommunicationUntil' in member)) {
-                return `❌ Unable to construct a guild member, ${pleaseInvite}`;
-            }
+            return `❌ Re-invite the bot with the correct permissions to use this command!`;
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember
@@ -141,7 +134,9 @@ export class kInteraction extends Interactions {
         }
 
         const time =  totalMs === 0 ? null : new Date(Date.now() + totalMs).toISOString();
-        const reason = interaction.options.getString('reason') ?? undefined;
+        const reason = 
+            interaction.options.getString('reason') ??
+            `Mute requested by ${interaction.user.tag} (${interaction.user.id})!`;
         const [muteErr] = isDev
             ? [null, member]
             : await dontThrow(member.disableCommunicationUntil(time, reason));
@@ -152,6 +147,19 @@ export class kInteraction extends Interactions {
 
         const action = totalTimeString === '' ? 'unmuted' : 'muted';
         const timeDisplay = totalTimeString === '' ? '!' : ` for ${totalTimeString}!`;
-        return Embed.ok(`${member} has been ${action}${timeDisplay}${isDev ? notReally : ''}`);
+
+        try {
+            return Embed.ok(`${member} has been ${action}${timeDisplay}${isDev ? notReally : ''}`);
+        } finally {
+            const embed = Embed.ok(`
+            ${bold('User:')} ${member}
+            ${bold('ID:')} ${member.id}
+            ${bold('Staff:')} ${interaction.user}
+            ${bold('Ends:')} ${formatTime(Math.floor(totalMs / 1000), 'f')}
+            ${bold('Reason:')} ${inlineCode(reason)}
+            `).setTitle('Muted Member');
+
+            void postToModLog(interaction, [embed]);
+        }
     }
 } 

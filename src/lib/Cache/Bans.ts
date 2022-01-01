@@ -1,4 +1,5 @@
 import { GuildMember } from 'discord.js';
+import { LRU } from '../../Structures/LRU.js';
 
 interface Ban {
     member: GuildMember
@@ -11,4 +12,4 @@ interface Ban {
  * Messages are sent to the log channels from the guildBanAdd event.
  * @link { https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildBanAdd }
  */
-export const bans = new Map<string, Ban>();
+export const bans = new LRU<string, Ban>();

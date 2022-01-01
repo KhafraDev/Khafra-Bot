@@ -1,37 +1,19 @@
 import { pool } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { kGuild, PartialGuild, Warning } from '#khaf/types/KhafraBot.js';
+import { Warning } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { isText } from '#khaf/utility/Discord.js';
+import { interactionGetGuildSettings, postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { CommandInteraction, Permissions } from 'discord.js';
-import { join } from 'path';
 
 type WarnInsert = {
     insertedid: Warning['id']
     insertedpoints: Warning['k_points']
     k_ts: Warning['k_ts']
 }
-
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
-
-const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
-const defaultSettings: PartialGuild = {
-    prefix: config.prefix,
-    max_warning_points: 20,
-    mod_log_channel: null,
-    welcome_channel: null,
-};
 
 export class kSubCommand extends InteractionSubCommand {
     constructor() {
@@ -94,29 +76,9 @@ export class kSubCommand extends InteractionSubCommand {
         const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
         const k_id = rows[0].insertedid;
 
-        let settings!: typeof defaultSettings | kGuild;
-        const row = await client.get(interaction.guildId);
+        const settings = await interactionGetGuildSettings(interaction);
 
-        if (row) {
-            settings = { ...defaultSettings, ...JSON.parse(row) as kGuild };
-        } else {
-            const { rows } = await pool.query<kGuild>(`
-                SELECT * 
-                FROM kbGuild
-                WHERE guild_id = $1::text
-                LIMIT 1;
-            `, [interaction.guildId]);
-
-            if (rows.length !== 0) {
-                void client.set(interaction.guildId, JSON.stringify(rows[0]), 'EX', 600);
-
-                settings = { ...defaultSettings, ...rows.shift() };
-            } else {
-                settings = { ...defaultSettings };
-            }
-        }
-
-        if (settings.max_warning_points <= totalPoints) {
+        if (settings && settings.max_warning_points <= totalPoints) {
             const [kickError] = await dontThrow(member.kick(reason || undefined));
             
             if (kickError !== null) {
@@ -136,23 +98,18 @@ export class kSubCommand extends InteractionSubCommand {
             });
         }
 
-        if (settings.mod_log_channel !== null) {
-            const channel = interaction.guild.channels.cache.get(settings.mod_log_channel);
-            if (!isText(channel) || !hasPerms(channel, interaction.guild.me, perms))
-                return;
+        const kicked = settings && settings.max_warning_points <= totalPoints ? 'Yes' : 'No';
+        const embeds = [
+            Embed.ok(`
+            ${bold('Offender:')} ${member}
+            ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
+            ${bold('Staff:')} ${interaction.member}
+            ${bold('Points:')} ${points} warning point${plural(points)} given.
+            ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
+            ${bold('ID:')} ${inlineCode(k_id)}
+            `).setTitle('Member Warned')
+        ];
 
-            return void channel.send({ 
-                embeds: [
-                    Embed.ok(`
-                    ${bold('Offender:')} ${member}
-                    ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
-                    ${bold('Staff:')} ${interaction.member}
-                    ${bold('Points:')} ${points} warning point${plural(points)} given.
-                    ${bold('Kicked:')} ${settings.max_warning_points <= totalPoints ? 'Yes' : 'No'} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
-                    ${bold('ID:')} ${inlineCode(k_id)}
-                    `).setTitle('Member Warned')
-                ] 
-            });
-        }
+        return void postToModLog(interaction, embeds, settings);
     }
 }

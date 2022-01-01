@@ -33,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         const id = 'id' in member ? member.id : null;
 
-        if (!id || !interaction.guild) {
+        if (!id || !interaction.inGuild()) {
             return `❌ To use this command, re-invite the bot with all permissions!`;
         }
 
@@ -59,7 +59,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         // embeds can have a maximum of 25 fields
         for (const [id, date, p] of mapped) {
-            const points = p.toLocaleString(interaction.guild.preferredLocale);
+            const points = p.toLocaleString(interaction.guild?.preferredLocale ?? 'en-US');
             const line = `${bold(time(date))}: ${inlineCode(id)}: ${points} point${plural(p)}.\n`;
 
             if (content.length + line.length > 2048) break;

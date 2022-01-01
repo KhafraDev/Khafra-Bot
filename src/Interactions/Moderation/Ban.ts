@@ -57,8 +57,7 @@ export class kInteraction extends Interactions {
             return `❌ I do not have permission to ban this member, try to ${pleaseInvite}`;
         }
 
-        const daysOpt = interaction.options.getInteger('days') ?? 7;
-        const days = daysOpt > 7 ? daysOpt % 7 : daysOpt;
+        const days = interaction.options.getInteger('days') ?? 7;
 
         const reason =
             interaction.options.getString('reason') ??
@@ -76,16 +75,12 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        let member = 
+        const member = 
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
         if (!(member instanceof GuildMember) && !(member instanceof User)) {
-            member = Reflect.construct(GuildMember, [
-                interaction.client,
-                member,
-                guild
-            ]) as GuildMember;
+            return `❌ Re-invite the bot with the correct permissions to use this command!`;
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember

@@ -62,9 +62,7 @@ export class kInteraction extends Interactions {
         }
 
         const fileNames = new Set(stickerMatches.map(n => `${n.name};${n.id}.gif`));
-        const offset = interaction.options.getInteger('offset')
-            ? interaction.options.getInteger('offset', true)
-            : 0;
+        const offset = interaction.options.getInteger('offset') ?? 0;
         const fileName = [...fileNames][offset - 1] ?? [...fileNames][0];
 
         return {

@@ -203,13 +203,16 @@ export class KhafraClient extends Client {
                 // debugging in guild
                 await rest.put(
                     Routes.applicationGuildCommands(config.botId, config.guildId),
-                    { body: redeploy }
+                    { body: scs }
                 );
-            }
 
-            if (redeploy.length !== 0) {
+                await rest.put(route, { body: scs });
+            } else if (redeploy.length !== 0) {
                 // globally
-                await rest.put(route, { body: redeploy });
+                // PUT is for bulk overwrite, POST is to add a single command!
+                // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
+                // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
+                await rest.post(route, { body: redeploy });
             }
 
             // Since we cannot rely on rest.put(...) to return every application command

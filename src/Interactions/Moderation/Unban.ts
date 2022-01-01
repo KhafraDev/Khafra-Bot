@@ -44,13 +44,13 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const id = interaction.options.getString('member', true);
+        const user = interaction.options.getUser('member', true);
 
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to unban this member, try to ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
             return `❌ I do not have permission to unban this member, try to ${pleaseInvite}`;
-        } else if (!validSnowflake(id)) {
+        } else if (!validSnowflake(user.id)) {
             return '❌ That isn\'t a user ID, try again!';
         }
 
@@ -71,8 +71,8 @@ export class kInteraction extends Interactions {
         }
         
         const [unbanErr, unbanned] = processArgs.get('dev')
-            ? [null, id]
-            : await dontThrow(guild.bans.remove(id, reason));
+            ? [null, user]
+            : await dontThrow(guild.bans.remove(user, reason));
 
         if (unbanErr !== null) {
             return `❌ An unexpected error has occurred: ${inlineCode(unbanErr.message)}`;

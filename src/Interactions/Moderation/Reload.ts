@@ -37,16 +37,12 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        let member = interaction.member;
+        const member = interaction.member;
 
         if (!member || !interaction.guild) {
             return `❌ You need to re-invite the bot with default permissions for this to work. Thank Discord for this feature.`;
         } else if (!(member instanceof GuildMember)) {
-            member = Reflect.construct(GuildMember, [
-                interaction.client,
-                member,
-                interaction.guild
-            ]) as GuildMember;
+            return `❌ Re-invite the bot with the correct permissions to use this command!`;
         }
 
         if (!hasPerms(interaction.channel, member, Permissions.FLAGS.ADMINISTRATOR)) {

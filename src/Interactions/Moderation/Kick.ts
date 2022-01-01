@@ -1,9 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@khaf/builders';
+import { bold, inlineCode, time } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { argv } from 'process';
@@ -65,16 +66,12 @@ export class kInteraction extends Interactions {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
             
-        let member = 
+        const member = 
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
         if (!(member instanceof GuildMember) && !(member instanceof User)) {
-            member = Reflect.construct(GuildMember, [
-                interaction.client,
-                member,
-                guild
-            ]) as GuildMember;
+            return `❌ Re-invite the bot with the correct permissions to use this command!`;
         } else if (
             member instanceof GuildMember && 
             interaction.member instanceof GuildMember
@@ -94,14 +91,26 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error has occurred: ${inlineCode(kickErr.message)}`;
         }
 
-        return Embed.ok(`
-        ${kicked} has been kicked from the guild!${processArgs.get('dev') ? notReally : ''}
+        try {
+            return Embed.ok(`
+            ${kicked} has been kicked from the guild!${processArgs.get('dev') ? notReally : ''}
 
-        Reason: ${inlineCode(reason.slice(0, 1000))}
-        `)
-        .setAuthor({
-            name: interaction.user.username,
-            iconURL: interaction.user.displayAvatarURL()
-        });
+            Reason: ${inlineCode(reason.slice(0, 1000))}
+            `)
+            .setAuthor({
+                name: interaction.user.username,
+                iconURL: interaction.user.displayAvatarURL()
+            });
+        } finally {
+            const embed = Embed.ok(`
+            ${bold('User:')} ${kicked}
+            ${bold('ID:')} ${typeof kicked === 'string' ? kicked : kicked.id}
+            ${bold('Staff:')} ${interaction.user}
+            ${bold('Time:')} ${time(new Date())}
+            ${bold('Reason:')} ${inlineCode(reason)}
+            `).setTitle('Member Kicked');
+
+            void postToModLog(interaction, [embed]);
+        }
     }
 } 
