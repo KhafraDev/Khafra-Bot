@@ -73,7 +73,7 @@ export class kCommand extends Command {
             ? message.member 
             : message.guild.members.resolve(user);
 
-        const snowflake = SnowflakeUtil.deconstruct(user.id);
+        const snowflake = SnowflakeUtil.timestampFrom(user.id);
         const flags = user.flags?.bitfield
             ? user.flags.toArray()
             : [];
@@ -92,6 +92,6 @@ export class kCommand extends Command {
             .addField(bold('Discriminator:'), `#${user.discriminator}`, true)
             .addField(bold('Bot:'), user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
             .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-            .addField(bold('Account Created:'), time(snowflake.date), true);
+            .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
     }
 }

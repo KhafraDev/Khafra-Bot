@@ -9,8 +9,7 @@ type MessageMentionTypes =
     | 'members' 
     | 'channels';
 
-const epoch = new Date('January 1, 2015 GMT-0');
-const zeroBinary = '0'.repeat(64);
+const epoch = new Date('January 1, 2015 GMT-0').getTime();
 
 /** matches all Discord mention types */
 const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g;
@@ -63,20 +62,11 @@ export async function getMentions(
 }
 
 export const validSnowflake = (id: unknown): id is Snowflake => {
-    if (typeof id !== 'string')
-        return false;
-    else if (!/^\d{17,19}$/.test(id))
+    if (typeof id !== 'string') return false;
+    if (id.length < 17 || id.length > 19 || !/^\d{17,19}$/.test(id))
         return false;
         
-    const snowflake = SnowflakeUtil.deconstruct(id);
-    if ( 
-        snowflake.date.getTime() === epoch.getTime()
-        || snowflake.binary === zeroBinary
-        || snowflake.timestamp >= Date.now()
-        || snowflake.timestamp === epoch.getTime() // just in case
-    ) {
-        return false;
-    }
+    const timestamp = SnowflakeUtil.timestampFrom(id);
 
-    return true;
+    return timestamp > epoch && timestamp <= Date.now();
 }

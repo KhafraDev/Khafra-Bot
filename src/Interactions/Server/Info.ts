@@ -119,7 +119,7 @@ export class kInteraction extends Interactions {
                 ? member
                 : null;
 
-            const snowflake = SnowflakeUtil.deconstruct(option.id);
+            const snowflake = SnowflakeUtil.timestampFrom(option.id);
             const flags = option.flags?.bitfield
                 ? option.flags.toArray()
                 : [];
@@ -138,7 +138,7 @@ export class kInteraction extends Interactions {
                 .addField(bold('Discriminator:'), `#${option.discriminator}`, true)
                 .addField(bold('Bot:'), option.bot != undefined ? option.bot ? 'Yes' : 'No' : 'Unknown', true)
                 .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-                .addField(bold('Account Created:'), time(snowflake.date), true);
+                .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
         }
     }
 } 
