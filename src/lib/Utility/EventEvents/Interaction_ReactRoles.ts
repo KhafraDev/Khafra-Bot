@@ -1,9 +1,9 @@
 import { client } from '#khaf/Client';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
+import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Guild, GuildMember, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { Embed } from '../Constants/Embeds.js';
-import { dontThrow } from '../Don\'tThrow.js';
-import { validSnowflake } from '../Mentions.js';
-import { hierarchy } from '../Permissions.js';
 
 type InteractionReply 
     = import('discord.js').Message<boolean> 

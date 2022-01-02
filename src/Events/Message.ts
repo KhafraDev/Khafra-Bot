@@ -20,7 +20,7 @@ import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
-import { MessagesLRU } from '../lib/Cache/Messages.js';
+import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 
 export const logger = new Logger();

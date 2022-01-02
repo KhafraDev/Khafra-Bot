@@ -1,7 +1,7 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { unbans } from '../../lib/Cache/Unban.js';
+import { unbans } from '#khaf/cache/Unban.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 

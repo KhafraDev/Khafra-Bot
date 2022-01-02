@@ -3,7 +3,7 @@ import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bans } from '../../lib/Cache/Bans.js';
+import { bans } from '#khaf/cache/Bans.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });

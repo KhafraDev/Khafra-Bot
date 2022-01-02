@@ -1,6 +1,6 @@
 import { bold } from '@khaf/builders';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
-import { bans } from '../../lib/Cache/Bans.js';
+import { bans } from '#khaf/cache/Bans.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';

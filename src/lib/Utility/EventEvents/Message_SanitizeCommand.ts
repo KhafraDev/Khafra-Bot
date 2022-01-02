@@ -1,5 +1,5 @@
 import { Message, Permissions } from 'discord.js';
-import { hasPerms } from '../Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,

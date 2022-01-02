@@ -10,10 +10,10 @@ import {
 } from 'discord.js';
 import { join } from 'path';
 import { Command } from '#khaf/Command';
-import { createFileWatcher } from '../FileWatcher.js';
-import { permResolvableToString } from '../Permissions.js';
-import { plural } from '../String.js';
-import { cwd } from './Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { permResolvableToString } from '#khaf/utility/Permissions.js';
+import { plural } from '#khaf/utility/String.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { MessageEmbed } from '#khaf/Embed';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));

@@ -8,7 +8,7 @@ import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
 import { Message, Permissions } from 'discord.js';
 import { argv } from 'process';
-import { bans } from '../../lib/Cache/Bans.js';
+import { bans } from '#khaf/cache/Bans.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(argv.slice(2).join(' '));

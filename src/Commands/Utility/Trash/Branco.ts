@@ -1,5 +1,5 @@
 import { Command, Arguments } from '#khaf/Command';
-import { brancoTransaction, migrateBranco } from '../../../lib/Migration/Branco.js';
+import { brancoTransaction, migrateBranco } from '#khaf/migration/Branco.js';
 import { decodeXML } from 'entities';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { Message } from 'discord.js';

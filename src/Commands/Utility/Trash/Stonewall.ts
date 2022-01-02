@@ -1,7 +1,7 @@
 /** Please get mental illness treated! */
 
 import { Command, Arguments } from '#khaf/Command';
-import { stonewallTransaction, migrateStonewall } from '../../../lib/Migration/Stonewall.js';
+import { stonewallTransaction, migrateStonewall } from '#khaf/migration/Stonewall.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { decodeXML } from 'entities';
 import { URL } from 'url';

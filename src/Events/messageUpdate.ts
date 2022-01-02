@@ -14,7 +14,7 @@ import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { MessagesLRU } from '../lib/Cache/Messages.js';
+import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { config, defaultSettings, disabled, logger, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 export class kEvent extends Event<'messageUpdate'> {

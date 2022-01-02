@@ -5,7 +5,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { bans } from '../../lib/Cache/Bans.js';
+import { bans } from '#khaf/cache/Bans.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });

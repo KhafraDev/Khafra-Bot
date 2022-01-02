@@ -4,7 +4,7 @@ import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { unbans } from '../lib/Cache/Unban.js';
+import { unbans } from '#khaf/cache/Unban.js';
 import { bold, inlineCode, time } from '@khaf/builders';
 import { delay } from '#khaf/utility/Constants/OneLiners.js';
 import { client } from '#khaf/database/Redis.js';

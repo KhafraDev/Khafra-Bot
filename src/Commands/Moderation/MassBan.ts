@@ -1,7 +1,7 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Permissions, GuildMember, User, Message } from 'discord.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { bans } from '../../lib/Cache/Bans.js';
+import { bans } from '#khaf/cache/Bans.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 

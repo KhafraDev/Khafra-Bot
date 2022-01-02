@@ -1,8 +1,8 @@
 import { env } from 'process';
 import { URL } from 'url';
 import { fetch, Headers } from 'undici';
-import { dontThrow } from '../Don\'tThrow.js';
-import { URLFactory } from '../Valid/URL.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
 
 interface ImgurAlbum {
     data: {

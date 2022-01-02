@@ -1,7 +1,7 @@
 /** Please get mental illness treated! */
 
 import { Arguments, Command } from '#khaf/Command';
-import { garrisonTransaction, migrateGarrison } from '../../../lib/Migration/Garrison.js';
+import { garrisonTransaction, migrateGarrison } from '#khaf/migration/Garrison.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { Message } from 'discord.js';
 import { RSSReader } from '#khaf/utility/RSS.js';

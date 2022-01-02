@@ -5,7 +5,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { Permissions, User } from 'discord.js';
 import { EventEmitter } from 'events';
 import { setInterval } from 'timers';
-import { hasPerms } from '../Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 
 interface GiveawayEmitter extends EventEmitter {
     on(event: 'giveaway', listener: (giveaway: Giveaway) => void | Promise<void>): this;

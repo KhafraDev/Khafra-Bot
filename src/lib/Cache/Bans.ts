@@ -1,5 +1,5 @@
 import { GuildMember } from 'discord.js';
-import { LRU } from '../../Structures/LRU.js';
+import { LRU } from '#khaf/LRU';
 
 interface Ban {
     member: GuildMember

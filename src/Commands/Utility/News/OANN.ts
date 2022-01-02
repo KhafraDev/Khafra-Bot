@@ -2,7 +2,7 @@ import { Command } from '#khaf/Command';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { decodeXML } from 'entities';
 import { once } from '#khaf/utility/Memoize.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
 
 const settings = {
     rss: 'https://www.oann.com/feed/',

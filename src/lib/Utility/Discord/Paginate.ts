@@ -1,6 +1,6 @@
 import { InteractionCollector, Message, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { disableAll } from '../Constants/Components.js';
-import { dontThrow } from '../Don\'tThrow.js';
+import { disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export const Paginate = (
     c: InteractionCollector<MessageComponentInteraction>, 

@@ -1,5 +1,5 @@
 import redis from 'redis';
-import { LRU } from '../LRU.js';
+import { LRU } from '#khaf/LRU';
 
 const messageClient = redis.createClient({
     database: 1,

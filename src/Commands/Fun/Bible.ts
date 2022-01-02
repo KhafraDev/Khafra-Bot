@@ -1,6 +1,6 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Message } from 'discord.js';
-import { bibleInsertDB, titleRegex, titles } from '../../lib/Migration/Bible.js';
+import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
 import { pool } from '#khaf/database/Postgres.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { once } from '#khaf/utility/Memoize.js';

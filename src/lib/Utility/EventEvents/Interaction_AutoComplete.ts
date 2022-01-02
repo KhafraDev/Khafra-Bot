@@ -1,8 +1,8 @@
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { AutocompleteInteraction } from 'discord.js';
 import { join } from 'path';
-import { cwd } from '../Constants/Path.js';
-import { dontThrow } from '../Don\'tThrow.js';
-import { createFileWatcher } from '../FileWatcher.js';
 
 type Characters = typeof import('../../Packages/15.ai/Characters.json');
 
