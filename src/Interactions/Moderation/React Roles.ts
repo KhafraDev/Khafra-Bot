@@ -113,7 +113,6 @@ export class kInteraction extends Interactions {
 
         let emoji: EmojiIdentifierResolvable | undefined;
         if (icon) {
-            console.log(icon, icon.match(guildEmojiRegex))
             if (guildEmojiRegex.test(icon)) {
                 // The parsing is handled by Util.parseEmoji
                 // https://github.com/discordjs/discord.js/blob/2f6f365098cbab397cda124711c4bb08da850a17/src/util/Util.js#L297

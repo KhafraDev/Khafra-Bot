@@ -6,6 +6,7 @@ import { Permissions, User } from 'discord.js';
 import { EventEmitter } from 'events';
 import { setInterval } from 'timers';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { logger } from '#khaf/Logger';
 
 interface GiveawayEmitter extends EventEmitter {
     on(event: 'giveaway', listener: (giveaway: Giveaway) => void | Promise<void>): this;
@@ -103,6 +104,6 @@ Giveaways.on('giveaway', async (giveaway) => {
             }
         }
     } catch (e) {
-        console.log(e);
+        logger.error(e);
     }
 });

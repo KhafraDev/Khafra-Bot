@@ -1,5 +1,6 @@
 import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
+import { logger } from '#khaf/Logger';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -25,7 +26,7 @@ const formatPresence = (activities: Activity[] | undefined) => {
                 push.push(`Playing ${italic(activity.name)}.`); 
                 break;
             default:
-                console.log(activity);
+                logger.log(activity);
         }
     }
 

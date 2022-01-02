@@ -1,3 +1,4 @@
+import { logger } from '#khaf/Logger';
 import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
 import { join } from 'path';
 import { clearInterval, setInterval, setTimeout } from 'timers';
@@ -104,12 +105,12 @@ export class RSSReader<T> {
         if (typeof xml !== 'string' || validXML !== true) {
             if (validXML !== true && validXML !== false) {
                 const { line, msg, code } = validXML.err;
-                console.log(`${code}: Error on line ${line} "${msg}". ${this.url}`);
+                logger.warn(`${code}: Error on line ${line} "${msg}". ${this.url}`);
             }
-            console.log(`${this.url} has been disabled as invalid XML has been fetched.`);
+            logger.warn(`${this.url} has been disabled as invalid XML has been fetched.`);
             return clearInterval(this.#interval!);
         } else if (r && r.redirected) {
-            console.log(`${this.url} redirected you to ${r.url} (redirected=${r.redirected})`);
+            logger.info(`${this.url} redirected you to ${r.url} (redirected=${r.redirected})`);
         }
 
         // if the XML is valid, we can clear the old cache

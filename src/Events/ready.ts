@@ -1,5 +1,6 @@
 import { client } from '#khaf/Client';
 import { Event } from '#khaf/Event';
+import { logger } from '#khaf/Logger';
 import { yellow } from '#khaf/utility/Colors.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -15,7 +16,7 @@ export class kEvent extends Event<'ready'> {
 
     async init() {
         const s = `Logged in at ${new Date()}`;
-        console.log(yellow(s));
+        logger.log(yellow(s));
         
         if (typeof config.botOwner === 'string') {
             if (!validSnowflake(config.botOwner)) {

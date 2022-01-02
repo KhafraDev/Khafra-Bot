@@ -2,6 +2,7 @@ import { Command } from '#khaf/Command';
 import { Message, Activity } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { logger } from '#khaf/Logger';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
@@ -19,7 +20,7 @@ const formatPresence = (activities: Activity[] | undefined) => {
                 push.push(`Playing ${italic(activity.name)}.`); 
                 break;
             default:
-                console.log(activity);
+                logger.log(activity);
         }
     }
 
