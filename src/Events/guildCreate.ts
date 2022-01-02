@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { pool } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { Logger } from '#khaf/Logger';
+import { logger } from '#khaf/Logger';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -9,7 +9,6 @@ import { ApplicationCommandPermissionData, Guild, GuildApplicationCommandPermiss
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
-const logger = new Logger();
 
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;

@@ -1,8 +1,6 @@
 import { Event } from '#khaf/Event';
-import { Logger } from '#khaf/Logger';
+import { logger } from '#khaf/Logger';
 import type { RateLimitData } from 'discord.js';
-
-const logger = new Logger();
 
 export class kEvent extends Event<'rateLimit'> {
     name = 'rateLimit' as const;

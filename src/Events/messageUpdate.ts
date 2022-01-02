@@ -1,8 +1,10 @@
 import { KhafraClient } from '#khaf/Bot';
+import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { Arguments, Command } from '#khaf/Command';
 import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
+import { logger } from '#khaf/Logger';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM } from '#khaf/utility/Discord.js';
@@ -14,8 +16,7 @@ import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { MessagesLRU } from '#khaf/cache/Messages.js';
-import { config, defaultSettings, disabled, logger, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
+import { config, defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 export class kEvent extends Event<'messageUpdate'> {
     name = 'messageUpdate' as const;

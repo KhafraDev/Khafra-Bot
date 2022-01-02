@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
-import { Logger } from '#khaf/Logger';
+import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { autoCompleteHandler } from '#khaf/utility/EventEvents/Interaction_AutoComplete.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
@@ -10,8 +10,6 @@ import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
 import { argv } from 'process';
-
-const logger = new Logger();
 
 const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'

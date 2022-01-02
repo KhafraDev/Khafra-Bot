@@ -1,6 +1,4 @@
-import { Logger } from '#khaf/Logger';
-
-const logger = new Logger();
+import { logger } from '#khaf/Logger';
 
 /**
  * Resolves a promise without throwing an error.

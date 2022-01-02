@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { Interactions, InteractionSubCommand } from '#khaf/Interaction';
+import { logger } from '#khaf/Logger';
 import { bright, green, magenta } from '#khaf/utility/Colors.js';
 import { assets, cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -216,6 +217,7 @@ export class KhafraClient extends Client {
                 // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
                 if (post) {
                     for (const command of redeploy) {
+                        logger.info(`Redeploying ${command.name}!`);
                         await rest.post(route, { body: command });
                     }
                 } else {

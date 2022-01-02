@@ -3,7 +3,7 @@ import { Arguments, Command } from '#khaf/Command';
 import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
-import { Logger } from '#khaf/Logger';
+import { logger } from '#khaf/Logger';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -22,8 +22,6 @@ import { join } from 'path';
 import { argv } from 'process';
 import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
-
-export const logger = new Logger();
 
 export const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

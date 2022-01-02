@@ -2,10 +2,13 @@ import { MessageEmbed } from '#khaf/Embed';
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import {
     CommandInteraction,
+    EmojiIdentifierResolvable,
     GuildMember,
     GuildMemberRoleManager,
     MessageActionRow,
@@ -15,9 +18,11 @@ import {
     TextChannel,
     ThreadChannel
 } from 'discord.js';
+import { parse } from 'twemoji-parser';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 
+const guildEmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES
 ]);
@@ -52,6 +57,11 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.String,
                     name: 'message',
                     description: 'The text the button message will display.'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'icon',
+                    description: 'The icon the button should display.'
                 }
                 // once repeating choices are added, allow multiple roles!!!
             ]
@@ -67,6 +77,7 @@ export class kInteraction extends Interactions {
     async init(interaction: CommandInteraction) {
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
+        const icon = interaction.options.getString('icon');
         const text =
             interaction.options.getString('message') ??
             `Press the button below to get the ${role} role!
@@ -100,7 +111,26 @@ export class kInteraction extends Interactions {
             return `❌ You cannot give this role out to others!`;
         }
 
-        const message = await interaction.reply({
+        let emoji: EmojiIdentifierResolvable | undefined;
+        if (icon) {
+            console.log(icon, icon.match(guildEmojiRegex))
+            if (guildEmojiRegex.test(icon)) {
+                // The parsing is handled by Util.parseEmoji
+                // https://github.com/discordjs/discord.js/blob/2f6f365098cbab397cda124711c4bb08da850a17/src/util/Util.js#L297
+                emoji = icon;
+            } else {
+                const parsed = parse(icon);
+
+                if (parsed.length !== 0) {
+                    emoji = parsed[0].text;
+                }
+            }
+        }
+
+        const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
+        if (emoji) component.setEmoji(emoji);
+
+        const [err, message] = await dontThrow(channel.send({
             embeds: [
                 new MessageEmbed()
                     .setColor(role.hexColor)
@@ -108,16 +138,15 @@ export class kInteraction extends Interactions {
             ],
             components: [
                 new MessageActionRow().addComponents(
-                    Components.approve(`Get ${role.name}`.slice(0, 80), role.id)
+                    component
                 )
-            ],
-            fetchReply: true
-        });
+            ]
+        }));
 
-        const url = 'url' in message
-            ? message.url
-            : `https://discord.com/channels/${message.guild_id ?? '@me'}/${message.channel_id}/${message.id}`;
+        if (err !== null) {
+            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+        }
 
-        return Embed.ok(`Ok! Click [the button here](${url}) to get the ${role} role!`);
+        return Embed.ok(`Ok! Click [the button here](${message?.url}) to get the ${role} role!`);
     }
 } 

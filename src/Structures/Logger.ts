@@ -85,7 +85,7 @@ const objectToReadable = (o: unknown) => {
 /**
  * A logger that outputs very fast in similar fashion to pino-pretty!
  */
-export class Logger {
+class Logger {
     write (message: string, level: LoggerLevels) {
         if (level === 'ERROR' || level === 'WARN') {
             stderrStream.write(message);
@@ -137,3 +137,5 @@ export class Logger {
         this.log(a, b, 'WARN');
     }
 }
+
+export const logger = new Logger();
