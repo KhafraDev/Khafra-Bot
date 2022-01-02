@@ -135,6 +135,7 @@ export class KhafraClient extends Client {
             const deployPath = join(assets, 'interaction_last_deployed.txt');
             const scs = loaded.map(i => i.data);
             const redeploy: typeof scs = [];
+            let post = true;
 
             // When dealing with slash command permissions, like the rest of the 
             // application command design is, it is poorly designed. Re-deploying
@@ -182,6 +183,7 @@ export class KhafraClient extends Client {
                 // edited, and it's easier than replacing the old outdated data.
                 writeFileSync(deployPath, data);
             } else {
+                post = false;
                 // If the bot has not recorded the last deployment, we must assume that
                 // every command has to be deployed.
                 redeploy.push(...scs);
@@ -212,7 +214,13 @@ export class KhafraClient extends Client {
                 // PUT is for bulk overwrite, POST is to add a single command!
                 // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
                 // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
-                await rest.post(route, { body: redeploy });
+                if (post) {
+                    for (const command of redeploy) {
+                        await rest.post(route, { body: command });
+                    }
+                } else {
+                    await rest.put(route, { body: redeploy });
+                }
             }
 
             // Since we cannot rely on rest.put(...) to return every application command
