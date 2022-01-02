@@ -16,15 +16,27 @@ const formatPresence = (activities: Activity[] | undefined) => {
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM':
+            case 'CUSTOM': {
                 push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
                 break;
-            case 'LISTENING':
+            }
+            case 'LISTENING': {
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
                 break;
-            case 'PLAYING':
+            }
+            case 'PLAYING': {
                 push.push(`Playing ${italic(activity.name)}.`); 
                 break;
+            }
+            case 'STREAMING': {
+                const details = activity.details ?? activity.url;
+                push.push(`Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}${details ? `- ${inlineCode(details)}` : ''}`);
+                break;
+            }
+            case 'WATCHING': {
+                push.push(`Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}`);
+                break;
+            }
             default:
                 logger.log(activity);
         }
@@ -90,7 +102,7 @@ export class kInteraction extends Interactions {
                         inline: true 
                     },
                 )
-                .setFooter({ text: 'For general user info use the /user command!' });
+                .setFooter({ text: 'For general user info mention a user!' });
         } else if (option instanceof Role) {
             const embed = Embed.ok()
                 .setDescription(`
