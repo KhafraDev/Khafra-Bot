@@ -11,8 +11,8 @@ import { REST } from '@discordjs/rest';
 import { Buffer } from 'buffer';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { Client, ClientEvents } from 'discord.js';
-import { existsSync, writeFileSync } from 'fs';
-import { readdir, readFile, stat } from 'fs/promises';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { readdir, stat } from 'fs/promises';
 import { join, resolve } from 'path';
 import { performance } from 'perf_hooks';
 import { argv, env } from 'process';
@@ -128,115 +128,126 @@ export class KhafraClient extends Client {
                     loadedSubCommands++;
                 }
             } else {
-                console.log(interaction)
+                logger.error(interaction);
             }
         }
 
+        // If we have to deal with slash commands :(
         if (loaded.length !== 0) {
-            const deployPath = join(assets, 'interaction_last_deployed.txt');
-            const scs = loaded.map(i => i.data);
-            const redeploy: typeof scs = [];
-            let post = true;
-
-            // When dealing with slash command permissions, like the rest of the 
-            // application command design is, it is poorly designed. Re-deploying
-            // a command removes all the permissions from it. Therefore, the bot
-            // has to diff changes from the command and only re-deploy the commands
-            // that have been changed since its last start up.
-
-            if (existsSync(deployPath)) {
-                const file = await readFile(deployPath, 'utf-8');
-                const names: string[] = [];
-                let data = '';
-
-                for (const line of file.split(/\r?\n/g)) {
-                    // File is structured as name|base64
-                    const [name, b64] = line.split('|');
-                    const command = scs.find(c => c.name === name);
-
-                    if (!command) {
-                        // The command was likely deleted.
-                        continue;
-                    }
-
-                    names.push(command.name);
-                    const newBase64 = toBase64(command);
-
-                    if (b64 !== newBase64) {
-                        redeploy.push(command);
-                    }
-
-                    data += `${command.name}|${toBase64(command)}\r\n`;
-                }
-
-                // Now we loop over all of the commands to see if any new ones have
-                // been added.
-                for (const command of scs) {
-                    if (names.includes(command.name)) {
-                        continue;
-                    }
-
-                    redeploy.push(command);
-                    data += `${command.name}|${toBase64(command)}\r\n`;
-                }
-
-                // We need to re-write the file as a new command may have been added or
-                // edited, and it's easier than replacing the old outdated data.
-                writeFileSync(deployPath, data);
-            } else {
-                post = false;
-                // If the bot has not recorded the last deployment, we must assume that
-                // every command has to be deployed.
-                redeploy.push(...scs);
-
-                // Then we have to write the data to the file so we can use it!
-                let data = '';
-
-                for (const command of redeploy) {
-                    data += `${command.name}|${toBase64(command)}\r\n`;
-                }
-
-                writeFileSync(deployPath, data);
-            }
-
             const processArgs = new Minimalist(argv.slice(2).join(' '));
-            const route = Routes.applicationCommands(config.botId);
-            
-            if (processArgs.get('dev') === true) {
-                // debugging in guild
-                await rest.put(
-                    Routes.applicationGuildCommands(config.botId, config.guildId),
-                    { body: scs }
-                );
+            const lastDeployedPath = join(assets, 'interaction_last_deployed.txt');
+            const loadedCommands = loaded.map(command => command.data);
 
-                await rest.put(route, { body: scs });
-            } else if (redeploy.length !== 0) {
-                // globally
-                // PUT is for bulk overwrite, POST is to add a single command!
-                // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-                // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
-                if (post) {
-                    for (const command of redeploy) {
-                        logger.info(`Redeploying ${command.name}!`);
-                        await rest.post(route, { body: command });
-                    }
-                } else {
-                    await rest.put(route, { body: redeploy });
-                }
-            }
-
-            // Since we cannot rely on rest.put(...) to return every application command
-            // anymore, we must fetch the list from Discord's API.
             // https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
-            const slashCommands = await rest.get(route) as APIApplicationCommand[];
+            // Slash commands that have already been deployed.
+            // We do not have to POST/PUT these, but PATCH them
+            // if they have been updated.
+            const existingSlashCommands = await rest.get(
+                Routes.applicationCommands(config.botId)
+            ) as APIApplicationCommand[];
 
-            for (const { id, name } of slashCommands) {
+            for (const { id, name } of existingSlashCommands) {
                 const cached = KhafraClient.Interactions.get(name);
 
                 if (cached) {
                     cached.id = id;
                 }
             }
+
+            // Lines to write to the last deployed file.
+            const data: string[] = [];
+
+            // Commands that have already been deployed.
+            // We need to PATCH these instead of overwriting.
+            const previouslyDeployed: [string, string][] = existsSync(lastDeployedPath)
+                ? readFileSync(lastDeployedPath, 'utf-8')
+                    .trim()
+                    .split(/\r?\n/g)
+                    .map(line => line.split('|') as [string, string]) // "name|base64" -> ["name", "base64"]
+                : [];
+
+            // If the file does not exist, meaning no commands
+            // have been deployed yet.
+            // We need the bulk overwrite endpoint.
+            if (previouslyDeployed.length === 0) {
+                logger.info(`Bulk creating ${loadedCommands.length} slash commands...`);
+                // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
+                await rest.put(
+                    Routes.applicationCommands(config.botId),
+                    { body: loadedCommands }
+                );
+
+                if (processArgs.get('dev') === true) {
+                    await rest.put(
+                        Routes.applicationGuildCommands(config.botId, config.guildId),
+                        { body: loadedCommands }
+                    );
+                }
+
+                data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`));
+            } else {
+                // Otherwise, we need to determine whether to
+                // overwrite (create) a command or to update
+                // an existing one instead.
+                for (const [deployedName, deployedBase64] of previouslyDeployed) {
+                    const current = loadedCommands.find(command => command.name === deployedName);
+                    const existing = existingSlashCommands.find(command => command.name === deployedName);
+
+                    // The command was deleted, the bot did not load
+                    // the handler file. However, this can also be
+                    // triggered by an error when importing the handler.
+                    // TODO: exit the process if an error occurs when loading.
+                    if (!current) {
+                        logger.warn(`Command ${deployedName} was not loaded by the bot...`);
+                        // const id = existing.id ...
+                        continue;
+                    }
+                    
+                    // If the command has not been loaded on Discord's side,
+                    // we need to deploy it by POST request.
+                    if (!existing) {
+                        logger.info(`Deploying ${deployedName} slash command!`);
+                        // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
+                        await rest.post(
+                            Routes.applicationCommands(config.botId),
+                            { body: current }
+                        );
+
+                        if (processArgs.get('dev') === true) {
+                            await rest.post(
+                                Routes.applicationGuildCommands(config.botId, config.guildId),
+                                { body: current }
+                            );
+                        }
+                    }
+
+                    // If the base64 for the deployed command and the current
+                    // command are different, the command must be updated.
+                    else if (toBase64(current) !== deployedBase64) {
+                        logger.info(`Updating ${deployedName} slash command!`);
+                        const id = existing.id;
+                        // https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
+                        await rest.patch(
+                            Routes.applicationCommand(config.botId, id),
+                            { body: current }
+                        );
+
+                        if (processArgs.get('dev') === true) {
+                            await rest.post(
+                                Routes.applicationGuildCommand(config.botId, config.guildId, id),
+                                { body: current }
+                            );
+                        }
+                    } 
+                    
+                    // The command already exists and has not been updated.
+                    // We do not have to do anything in this case.
+                    
+                    data.push(`${current.name}|${toBase64(current)}`);
+                }
+            }
+
+            writeFileSync(lastDeployedPath, data.join('\n'));
         }
 
         console.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
