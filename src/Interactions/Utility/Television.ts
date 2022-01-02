@@ -42,7 +42,7 @@ export class kInteraction extends Interactions {
             .addField(bold('Seasons:'), `${tv.number_of_seasons}`, true)
             .addField(bold('Episodes:'), `${tv.number_of_episodes}`, true)
             .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
-            .setFooter('Data provided by https://www.themoviedb.org/')
+            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
             
         tv.homepage && embed.setURL(tv.homepage);
         

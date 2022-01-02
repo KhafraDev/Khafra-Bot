@@ -42,7 +42,7 @@ export class kSubCommand extends InteractionSubCommand {
                     
                     ${bold('React with 🎉 to enter!')}
                     `)
-                    .setFooter(`${winners} winner${plural(winners)}`)
+                    .setFooter({ text: `${winners} winner${plural(winners)}` })
                     .setTimestamp(endsDate)
             ]
         }));

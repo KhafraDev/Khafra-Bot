@@ -59,6 +59,6 @@ export class kCommand extends Command {
             ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}
             `)
             .setTimestamp(new Date(added.item.date_published))
-            .setFooter('Published');
+            .setFooter({ text: 'Published' });
     }
 }

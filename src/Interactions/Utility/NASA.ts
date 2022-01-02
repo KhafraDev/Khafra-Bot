@@ -30,7 +30,7 @@ export class kInteraction extends Interactions {
             .setImage(result.link);
             
         if (typeof result.copyright === 'string') {
-            embed.setFooter(`© ${result.copyright}`);
+            embed.setFooter({ text: `© ${result.copyright}` });
         }
 
         return embed;

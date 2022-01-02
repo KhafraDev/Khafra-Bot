@@ -110,8 +110,8 @@ export class kCommand extends Command {
 
         return this.Embed.ok(`
         ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!
-        `).setFooter(
-            `${clear} days of messages removed.`
-        );
+        `).setFooter({
+            text: `${clear} days of messages removed.`
+        });
     }
 }

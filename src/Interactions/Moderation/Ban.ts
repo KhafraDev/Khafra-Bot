@@ -109,6 +109,6 @@ export class kInteraction extends Interactions {
             name: interaction.user.username,
             iconURL: interaction.user.displayAvatarURL()
         })
-        .setFooter(`${days} day${plural(days)} of messages removed.`);
+        .setFooter({ text: `${days} day${plural(days)} of messages removed.` });
     }
 }

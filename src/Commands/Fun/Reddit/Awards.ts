@@ -57,6 +57,6 @@ export class kCommand extends Command {
                 `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` + 
                 `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
             )
-            .setFooter('Free awards are counted in the cost!');
+            .setFooter({ text: 'Free awards are counted in the cost!' });
     }
 }

@@ -81,7 +81,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             • Joined: ${joined}
             • Left: ${time(new Date())} (${time(new Date(), 'R')})
             `)
-            .setFooter('User left');
+            .setFooter({ text: 'User left' });
 
         return dontThrow(channel.send({ embeds: [embed] }));
     }

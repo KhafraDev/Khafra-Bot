@@ -70,6 +70,6 @@ export class kCommand extends Command {
                     inline: true 
                 },
             )
-            .setFooter('For general user info use the user command!');
+            .setFooter({ text: 'For general user info use the user command!' });
     }
 }

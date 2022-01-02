@@ -89,7 +89,7 @@ export class kInteraction extends Interactions {
                         inline: true 
                     },
                 )
-                .setFooter('For general user info use the /user command!');
+                .setFooter({ text: 'For general user info use the /user command!' });
         } else if (option instanceof Role) {
             const embed = Embed.ok()
                 .setDescription(`

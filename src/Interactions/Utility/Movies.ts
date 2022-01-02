@@ -53,7 +53,7 @@ export class kInteraction extends Interactions {
             .addField(bold('Status:'), movies.status, true)
             .addField(bold('Released:'), movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
             .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
-            .setFooter('Data provided by https://www.themoviedb.org/')
+            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
             
         movies.homepage && embed.setURL(movies.homepage);
         movies.imdb_id && embed.addField(bold('IMDB:'), `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`, true);

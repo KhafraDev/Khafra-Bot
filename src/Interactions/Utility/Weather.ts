@@ -49,6 +49,6 @@ export class kInteraction extends Interactions {
             .addField(bold('Humidity:'), `${first.humidity}%`, true)
             .addField(bold('Wind:'), `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, true)
             .addField(bold('Coordinates:'), `(${first.latitude}, ${first.longitude})`, true)
-            .setFooter(`© 2020 HERE`);
+            .setFooter({ text: `© 2020 HERE` });
     }
 } 

@@ -69,7 +69,7 @@ export class kEvent extends Event<'guildMemberAdd'> {
             • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
             • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
             `)
-            .setFooter('User joined');
+            .setFooter({ text: 'User joined' });
 
         return dontThrow(channel.send({ embeds: [embed] }));
     }

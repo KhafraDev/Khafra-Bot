@@ -65,7 +65,7 @@ export class kInteraction extends Interactions {
 
         const embed = Embed.ok()
             .setDescription(`${hyperlink('Visit 15.ai', `https://15.ai`)}\n`)
-            .setFooter(`🗣️ tts provided by 15.ai`);
+            .setFooter({ text: `🗣️ tts provided by 15.ai` });
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
