@@ -2,8 +2,8 @@ import { logger } from '#khaf/Logger';
 import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
 import { join } from 'path';
 import { clearInterval, setInterval, setTimeout } from 'timers';
+import { setTimeout as delay } from 'timers/promises';
 import { fetch } from 'undici';
-import { delay } from './Constants/OneLiners.js';
 import { cwd } from './Constants/Path.js';
 import { createFileWatcher } from './FileWatcher.js';
 import { validateNumber } from './Valid/Number.js';
@@ -89,10 +89,10 @@ export class RSSReader<T> {
             } catch (e) {
                 if (!(e instanceof Error))
                     return;
-                else if (e.name === 'AbortError')
+                if (e.name === 'AbortError')
                     break;
 
-                await delay(1000);
+                await delay(1000, undefined, { ref: false });
             }
         }
     }

@@ -1,8 +1,8 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message } from 'discord.js';
-import { delay } from '#khaf/utility/Constants/OneLiners.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
+import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { Message } from 'discord.js';
+import { setTimeout } from 'timers/promises';
 
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 
@@ -32,7 +32,11 @@ export class kCommand extends Command {
 
         const msg = await message.reply({ embeds: [embed] });
         
-        await delay(Math.floor(Math.random() * (10000 - 2500 + 1) + 2500));
+        await setTimeout(
+            Math.floor(Math.random() * (10000 - 2500 + 1) + 2500),
+            undefined,
+            { ref: false }
+        );
 
         const embed2 = this.Embed.ok()
             .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
