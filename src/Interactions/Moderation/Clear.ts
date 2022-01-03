@@ -11,8 +11,8 @@ import { bold, time } from '@khaf/builders';
 export class kInteraction extends Interactions {
     constructor() {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'kick',
-            description: 'Kick a guild member!',
+            name: 'clear',
+            description: 'Bulk deletes messages from a channel.',
             default_permission: false,
             options: [
                 {
