@@ -3,9 +3,11 @@ import '#khaf/utility/Rejections.js';
 import '#khaf/utility/Timers/Giveaways.js';
 
 import { KhafraClient } from '#khaf/Bot';
-import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { Event } from '#khaf/Event';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { AllowedMentionsTypes, PresenceUpdateStatus } from 'discord-api-types/v9';
+import { ClientEvents, Intents, Options, Sweepers } from 'discord.js';
+
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
     let event: Event<keyof ClientEvents> | undefined;
@@ -24,17 +26,20 @@ const emitted = <T extends keyof ClientEvents>(name: T) => {
 }
 
 export const client = new KhafraClient({
-    allowedMentions: { parse: [ 'users', 'roles' ], repliedUser: true },
-    presence: { status: 'online' },
+    allowedMentions: {
+        parse: [ AllowedMentionsTypes.Role, AllowedMentionsTypes.User ],
+        repliedUser: true
+    },
+    presence: { status: PresenceUpdateStatus.Online },
     makeCache: Options.cacheWithLimits({
         MessageManager: {
-            sweepFilter: LimitedCollection.filterByLifetime({
+            sweepFilter: Sweepers.filterByLifetime({
                 lifetime: 1800
             }),
             sweepInterval: 1800
         },
         ThreadManager: {
-            sweepFilter: LimitedCollection.filterByLifetime({
+            sweepFilter: Sweepers.filterByLifetime({
                 excludeFromSweep: (thread) => !thread.archived,
             }),
             sweepInterval: 1800
