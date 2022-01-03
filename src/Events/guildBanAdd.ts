@@ -1,23 +1,54 @@
-import { Event } from '#khaf/Event';
-import { GuildBan } from 'discord.js';
 import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bans } from '#khaf/cache/Bans.js';
-import { bold, inlineCode, time } from '@khaf/builders';
-import { delay } from '#khaf/utility/Constants/OneLiners.js';
 import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
+import { bold, inlineCode, time } from '@khaf/builders';
+import { AuditLogEvent } from 'discord-api-types/v9';
+import { GuildBan, Permissions, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
+
+const auditLogPerms = new Permissions([
+    Permissions.FLAGS.VIEW_AUDIT_LOG
+]);
+
+const perms = new Permissions([
+    Permissions.FLAGS.VIEW_CHANNEL,
+    Permissions.FLAGS.SEND_MESSAGES,
+    Permissions.FLAGS.EMBED_LINKS
+]);
 
 export class kEvent extends Event<'guildBanAdd'> {
     name = 'guildBanAdd' as const;
 
     async init({ guild, user, reason }: GuildBan) {
-        const key = `${guild.id},${user.id}`;
+        // This event will always return "partial" bans,
+        // where the reason & executor are not included!
+        // Plus, the reason, if fetched, can be null anyways!
+        // So, it's far more useful to try fetching the audit
+        // logs which includes the unban executor AND reason!
+
+        let staff: User | null = null;
+        
+        if (guild.me?.permissions.has(auditLogPerms)) {
+            const [err, logs] = await dontThrow(guild.fetchAuditLogs({
+                type: AuditLogEvent.MemberBanAdd,
+                limit: 1
+            }));
+
+            if (err === null) {
+                const entry = logs.entries.first();
+                
+                if (entry?.executor) staff = entry.executor;
+                if (entry?.reason) reason = entry.reason;
+            }
+        }
+
         const row = await client.get(guild.id);
         let item: ModLogChannel = JSON.parse(row!) as kGuild;
 
@@ -34,41 +65,24 @@ export class kEvent extends Event<'guildBanAdd'> {
             }
         }
 
-        if (
-            !item || // precaution
-            item.mod_log_channel === null || // default value, not set
-            !guild.channels.cache.has(item.mod_log_channel) // channel isn't cached
-        ) 
-            return bans.delete(key);
+        const channel = guild.channels.cache.get(item.mod_log_channel ?? '');
 
-        const channel = guild.channels.cache.get(item.mod_log_channel);
-        if (!isText(channel))
-            return bans.delete(key);
-
-        // so you might be thinking "this is disgusting"
-        // and I would mostly agree with you. This event is propagated
-        // right after the ban and it's entirely possible for the event to fire
-        // before the cache is set.
-        for (let i = 0; i < 10; i++) {
-            if (bans.has(key)) break;
-            await delay(1000);
+        if (!item || !channel) {
+            return;
+        } else if (!isTextBased(channel) || !hasPerms(channel, guild.me, perms)) {
+            return;
         }
 
-        const ban = bans.has(key) ? bans.get(key) : null;
-        const reasonStr = reason ?? (ban?.reason || 'Unknown');
-
-        await dontThrow(channel.send({ 
+        return void dontThrow(channel.send({ 
             embeds: [
                 Embed.ok(`
                 ${bold('User:')} ${user} (${user.tag})
                 ${bold('ID:')} ${user.id}
-                ${bold('Staff:')} ${ban?.member ?? 'Unknown'}
+                ${bold('Staff:')} ${staff ?? 'Unknown'}
                 ${bold('Time:')} ${time(new Date())}
-                ${bold('Reason:')} ${inlineCode(ellipsis(reasonStr, 1500))}
+                ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
                 `).setTitle('Member Banned') 
             ] 
         }));
-
-        bans.delete(key);
     }
 }

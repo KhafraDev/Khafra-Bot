@@ -94,7 +94,7 @@ export class kInteraction extends Interactions {
 
         const [banErr, banned] = processArgs.get('dev')
             ? [null, member]
-            : await dontThrow(guild.bans.create(member.id, { days }));
+            : await dontThrow(guild.bans.create(member.id, { days, reason }));
 
         if (banErr !== null) {
             return `❌ An unexpected error has occurred: ${inlineCode(banErr.message)}`;

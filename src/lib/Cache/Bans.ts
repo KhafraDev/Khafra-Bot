@@ -1,6 +1,8 @@
 import { GuildMember } from 'discord.js';
 import { LRU } from '#khaf/LRU';
 
+// TODO: remove this!
+
 interface Ban {
     member: GuildMember
     reason: string
