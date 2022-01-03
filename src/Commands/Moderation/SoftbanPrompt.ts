@@ -1,11 +1,9 @@
 import { bold } from '@khaf/builders';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
-import { bans } from '#khaf/cache/Bans.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { Arguments, Command } from '#khaf/Command';
@@ -87,10 +85,6 @@ export class kCommand extends Command {
                 reason
             });
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
-
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         } catch {
             return void button.editReply({
                 embeds: [this.Embed.error(`${user} isn't bannable!`)],

@@ -1,8 +1,6 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Permissions, GuildMember, User, Message } from 'discord.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { bans } from '#khaf/cache/Bans.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 
 export class kCommand extends Command {
@@ -37,13 +35,7 @@ export class kCommand extends Command {
 
         const promiseArr = ids.map(id => {
             return (async () => {
-                const type = await message.guild.members.ban(id, { reason });
-
-                if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
-                    if (!bans.has(`${message.guild.id},${id}`)) // not in the cache already, just to be sure
-                        bans.set(`${message.guild.id},${id}`, { member: message.member, reason });
-
-                return type;
+                return await message.guild.members.ban(id, { reason });
             })()
         });
 

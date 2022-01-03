@@ -2,8 +2,6 @@ import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bans } from '#khaf/cache/Bans.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -45,10 +43,6 @@ export class kCommand extends Command {
                 reason
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
-
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
-                if (!bans.has(`${message.guild.id},${member.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${member.id}`, { member: message.member, reason });
         } catch {
             return this.Embed.error(`${member} isn't bannable!`);
         }

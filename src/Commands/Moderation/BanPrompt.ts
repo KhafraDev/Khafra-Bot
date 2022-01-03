@@ -2,10 +2,9 @@ import { Command, Arguments } from '#khaf/Command';
 import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
-import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { bans } from '#khaf/cache/Bans.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -87,10 +86,6 @@ export class kCommand extends Command {
                 embeds: [this.Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
-        } else {
-            if (hasPerms(message.channel, message.guild.me, Permissions.FLAGS.VIEW_AUDIT_LOG) && message.member)
-                if (!bans.has(`${message.guild.id},${user.id}`)) // not in the cache already, just to be sure
-                    bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
         }
 
         await button.editReply({

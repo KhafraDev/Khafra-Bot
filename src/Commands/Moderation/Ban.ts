@@ -8,7 +8,6 @@ import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
 import { Message, Permissions } from 'discord.js';
 import { argv } from 'process';
-import { bans } from '#khaf/cache/Bans.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(argv.slice(2).join(' '));
@@ -104,9 +103,6 @@ export class kCommand extends Command {
                 return this.Embed.error(`${member ?? user} is not bannable!`);
             }
         }
-
-        if (!bans.has(`${message.guild.id},${user.id}`) && message.member) // not in the cache already, just to be sure
-            bans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
         return this.Embed.ok(`
         ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!

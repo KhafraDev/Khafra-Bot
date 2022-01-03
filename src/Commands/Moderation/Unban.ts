@@ -1,7 +1,6 @@
 import { Command, Arguments } from '#khaf/Command';
 import { Message, Permissions } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { unbans } from '#khaf/cache/Unban.js';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
@@ -41,9 +40,6 @@ export class kCommand extends Command {
         if (e !== null) {
             return this.Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
-
-        if (!unbans.has(`${message.guild.id},${user.id}`) && message.member)
-            unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
 
         return this.Embed.ok(`${user} is now unbanned!`);
     }
