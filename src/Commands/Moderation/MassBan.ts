@@ -33,11 +33,7 @@ export class kCommand extends Command {
 
         const reason = `Force-ban by ${message.author.id} (${message.author.tag}).`;
 
-        const promiseArr = ids.map(id => {
-            return (async () => {
-                return await message.guild.members.ban(id, { reason });
-            })()
-        });
+        const promiseArr = ids.map(id => message.guild.members.ban(id, { reason }));
 
         const resolved = await Promise.allSettled(promiseArr);
         const good = resolved.filter(p => p.status === 'fulfilled') as PromiseFulfilledResult<string | User | GuildMember>[];
