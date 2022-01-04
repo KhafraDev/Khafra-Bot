@@ -1,0 +1,31 @@
+{
+  "name": "@khaf/hereweather",
+  "version": "1.0.0",
+  "description": "Get the weather from Here.com!",
+  "main": "./HereWeather.js",
+  "types": "./types/HereWeather.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/Khafra-Bot.git",
+    "directory": "src/lib/Packages"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "here",
+    "weather",
+    "khafra-bot"
+  ],
+  "author": "KhafraDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "dependencies": {
+    "undici": "^4.4.7"
+  }
+}

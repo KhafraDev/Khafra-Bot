@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+      "outDir": "."
+  },
+  "include": [
+      "./*.ts"
+, "types/HereWeather.d.ts"  ],
+  "exclude": [
+    "./*.d.ts"
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "name": "@khaf/npm",
+  "version": "1.0.0",
+  "description": "Search NPM for a package.",
+  "main": "./NPM.js",
+  "types": "./types/NPM.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/Khafra-Bot.git",
+    "directory": "src/lib/Packages"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "npm",
+    "registry",
+    "khafra-bot"
+  ],
+  "author": "KhafraDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "dependencies": {
+    "undici": "^4.4.7"
+  }
+}
