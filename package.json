@@ -70,14 +70,6 @@
     "node": ">=15.4.0"
   },
   "workspaces": [
-    "src/lib/Packages/BadMeme",
-    "src/lib/Packages/HereWeather",
-    "src/lib/Packages/Wikipedia",
-    "src/lib/Packages/Spotify",
-    "src/lib/Packages/NPM",
-    "src/lib/Packages/Pocket",
-    "src/lib/Packages/15.ai",
-    "src/lib/Packages/MDN",
-    "src/lib/Packages/@khaf-builders"
+    "packages/**"
   ]
 }

@@ -9,9 +9,9 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Interactions } from '#khaf/Interaction';
 
-type Characters = typeof import('../../lib/Packages/15.ai/Characters.json');
+type Characters = typeof import('../../../packages/15.ai/Characters.json');
 
-const characters = createFileWatcher({}, join(cwd, 'src/lib/Packages/15.ai/Characters.json')) as Characters;
+const characters = createFileWatcher({}, join(cwd, 'packages/15.ai/Characters.json')) as Characters;
 const keys = (Object.keys(characters) as (keyof typeof characters)[])
     .map(k => characters[k].flat()).flat();
 

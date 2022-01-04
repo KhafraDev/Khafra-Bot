@@ -1,9 +1,15 @@
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    ignorePatterns: ['src/lib/Packages/*/*.ts'],
+    ignorePatterns: [
+        '**/*.d.ts'
+    ],
     parserOptions: {
-        project: './tsconfig.json',
+        project: [
+            './tsconfig.json',
+            './packages/*/tsconfig.json',
+            './packages/tsconfig.base.json'
+        ],
         ecmaVersion: 99,
         sourceType: 'module'
     },
