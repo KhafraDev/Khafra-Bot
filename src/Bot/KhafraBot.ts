@@ -28,6 +28,12 @@ type DynamicImportAppCommand = Promise<{
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 const toBase64 = (command: unknown) => Buffer.from(JSON.stringify(command)).toString('base64');
+const setInteractionIds = (commands: APIApplicationCommand[]) => {
+    for (const { name, id } of commands) {
+        const cached = KhafraClient.Interactions.get(name);
+        if (cached) cached.id = id;
+    }
+}
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
@@ -146,13 +152,7 @@ export class KhafraClient extends Client {
                 Routes.applicationCommands(config.botId)
             ) as APIApplicationCommand[];
 
-            for (const { id, name } of existingSlashCommands) {
-                const cached = KhafraClient.Interactions.get(name);
-
-                if (cached) {
-                    cached.id = id;
-                }
-            }
+            setInteractionIds(existingSlashCommands);
 
             // Lines to write to the last deployed file.
             const data: string[] = [];
@@ -172,10 +172,12 @@ export class KhafraClient extends Client {
             if (previouslyDeployed.length === 0) {
                 logger.info(`Bulk creating ${loadedCommands.length} slash commands...`);
                 // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-                await rest.put(
+                const overwritten = await rest.put(
                     Routes.applicationCommands(config.botId),
                     { body: loadedCommands }
-                );
+                ) as APIApplicationCommand[];
+
+                setInteractionIds(overwritten);
 
                 if (processArgs.get('dev') === true) {
                     await rest.put(
@@ -220,10 +222,12 @@ export class KhafraClient extends Client {
                     if (!existing || !previous) {
                         logger.info(`Deploying ${current.name} slash command!`);
                         // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
-                        await rest.post(
+                        const added = await rest.post(
                             Routes.applicationCommands(config.botId),
                             { body: current }
-                        );
+                        ) as APIApplicationCommand;
+
+                        setInteractionIds([added]);
 
                         if (processArgs.get('dev') === true) {
                             await rest.post(
@@ -238,10 +242,12 @@ export class KhafraClient extends Client {
                     else if (toBase64(current) !== deployedBase64) {
                         logger.info(`Updating ${deployedName} slash command!`);
                         // https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
-                        await rest.patch(
+                        const updated = await rest.patch(
                             Routes.applicationCommand(config.botId, existing.id),
                             { body: current }
-                        );
+                        ) as APIApplicationCommand;
+
+                        setInteractionIds([updated]);
 
                         if (processArgs.get('dev') === true) {
                             // TODO: fix this! We need the guild app id rather than the global one...
