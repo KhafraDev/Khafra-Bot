@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, SnowflakeUtil } from 'discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 
 export class kInteraction extends Interactions {
     constructor() {

@@ -1,10 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { codeBlock } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
-import { codeBlock } from '@khaf/builders';
 
 export class kInteraction extends Interactions {
     constructor() {

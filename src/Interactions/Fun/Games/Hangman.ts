@@ -130,12 +130,13 @@ class Hangman {
     }
 
     get winner(): boolean {
-        return this.wrong < 6 && (
-            // the gusses include the word
-            this.guessed.includes(this.word.toLowerCase()) ||
-            // every character has been gussed
-            [...this.word].every(c => this.guessed.includes(c.toLowerCase()))
+        const lessThan6Wrong = this.wrong < 6;
+        const guessedEntireWord = this.guessed.includes(this.word.toLowerCase());
+        const gussedEveryChar = [...this.word.toLowerCase()].every(
+            c => c === ' ' || this.guessed.includes(c.toLowerCase())
         );
+
+        return lessThan6Wrong && (guessedEntireWord || gussedEveryChar);
     }
 }
 
@@ -207,10 +208,10 @@ export class kSubCommand extends InteractionSubCommand {
             let json!: WebhookEditMessageOptions;
             if (game.winner) {
                 json = game.toJSON('You guessed the word!');
-                c.stop();
+                c.stop('do_not_edit');
             } else if (game.lost) { 
                 json = game.toJSON(`You lost! The word was "${word}"!`);
-                c.stop();
+                c.stop('do_not_edit');
             } else if (m.content.length === 1) {
                 json = game.toJSON(!game.lastGuessWasWrong
                     ? `"${m.content.slice(0, 10)}" is in the word!`
@@ -223,12 +224,20 @@ export class kSubCommand extends InteractionSubCommand {
             return void dontThrow(interaction.editReply(json));
         });
 
-        c.once('end', () => {
+        c.once('end', (_, reason) => {
             currentGames.delete(interaction.user.id);
             r.stop();
 
+            if (reason === 'do_not_edit') {
+                return;
+            }
+
+            const g = reason === 'idle'
+                ? 'Game over! You took too long to guess!'
+                : 'Game over! You guessed the word!';
+
             return void dontThrow(m.edit({
-                ...game.toJSON('Game over! You guessed the word!'),
+                ...game.toJSON(g),
                 components: disableAll(m)
             }));
         });
