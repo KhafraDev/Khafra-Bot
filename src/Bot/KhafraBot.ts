@@ -237,18 +237,18 @@ export class KhafraClient extends Client {
                     // command are different, the command must be updated.
                     else if (toBase64(current) !== deployedBase64) {
                         logger.info(`Updating ${deployedName} slash command!`);
-                        const id = existing.id;
                         // https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
                         await rest.patch(
-                            Routes.applicationCommand(config.botId, id),
+                            Routes.applicationCommand(config.botId, existing.id),
                             { body: current }
                         );
 
                         if (processArgs.get('dev') === true) {
-                            await rest.post(
-                                Routes.applicationGuildCommand(config.botId, config.guildId, id),
-                                { body: current }
-                            );
+                            // TODO: fix this! We need the guild app id rather than the global one...
+                            // await rest.patch(
+                            //     Routes.applicationGuildCommand(config.botId, config.guildId, id),
+                            //     { body: current }
+                            // );
                         }
                     } 
                     
