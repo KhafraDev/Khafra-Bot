@@ -12,7 +12,7 @@ const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
 export class kInteraction extends Interactions {
     constructor() {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'ban',
+            name: 'massban',
             description: 'Ban someone!',
             default_permission: false,
             options: [

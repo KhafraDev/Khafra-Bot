@@ -186,27 +186,39 @@ export class KhafraClient extends Client {
 
                 data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`));
             } else {
+                // If there are less commands on our side
+                // then there are on Discord's side, we can
+                // assume that *some* commands have been
+                // deleted.
+                if (loadedCommands < existingSlashCommands) {
+                    const deleted = existingSlashCommands.filter(
+                        c => loadedCommands.find(n => n.name === c.name)
+                    );
+
+                    for (const deletedCommand of deleted) {
+                        logger.info(`Deleting ${deletedCommand.name}!`);
+
+                        await rest.delete(
+                            Routes.applicationCommand(config.botId, deletedCommand.id)
+                        );
+                    }
+                }
+
                 // Otherwise, we need to determine whether to
                 // overwrite (create) a command or to update
                 // an existing one instead.
-                for (const [deployedName, deployedBase64] of previouslyDeployed) {
-                    const current = loadedCommands.find(command => command.name === deployedName);
+                for (const current of loadedCommands) {
+                    const previous = previouslyDeployed.find(([n]) => n === current.name);
+                    const [deployedName, deployedBase64] = previous ?? [];
                     const existing = existingSlashCommands.find(command => command.name === deployedName);
 
-                    // The command was deleted, the bot did not load
-                    // the handler file. However, this can also be
-                    // triggered by an error when importing the handler.
                     // TODO: exit the process if an error occurs when loading.
-                    if (!current) {
-                        logger.warn(`Command ${deployedName} was not loaded by the bot...`);
-                        // const id = existing.id ...
-                        continue;
-                    }
                     
                     // If the command has not been loaded on Discord's side,
-                    // we need to deploy it by POST request.
-                    if (!existing) {
-                        logger.info(`Deploying ${deployedName} slash command!`);
+                    // or it hasn't previously been deployed, on our side, we
+                    // need to on deploy it by POST request.
+                    if (!existing || !previous) {
+                        logger.info(`Deploying ${current.name} slash command!`);
                         // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
                         await rest.post(
                             Routes.applicationCommands(config.botId),
@@ -247,7 +259,10 @@ export class KhafraClient extends Client {
                 }
             }
 
-            writeFileSync(lastDeployedPath, data.join('\n'));
+            // Do not write to file if no commands were loaded!
+            if (data.length > 0) {
+                writeFileSync(lastDeployedPath, data.join('\n'));
+            }
         }
 
         console.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
