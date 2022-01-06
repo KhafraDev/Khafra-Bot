@@ -1,5 +1,9 @@
 import { logger } from '#khaf/Logger';
 
+interface Options {
+    logOnFail?: boolean
+}
+
 /**
  * Resolves a promise without throwing an error.
  * @example
@@ -7,7 +11,10 @@ import { logger } from '#khaf/Logger';
  * const [err, res] = await dontThrow(message.channel.send({ content: 'Hello, world!' })); 
  */
  export async function dontThrow<T = unknown>(
-    promise: Promise<T>
+    promise: Promise<T>,
+    options: Options = {
+        logOnFail: true
+    }
 ): Promise<
     Readonly<[null, T]> |
     Readonly<[Error, null]>
@@ -20,7 +27,7 @@ import { logger } from '#khaf/Logger';
         err = e as Error;
         return [err, null];
     } finally {
-        if (err) {
+        if (err && options.logOnFail) {
             logger.warn(`An error occurred but was caught.`, err);
         }
     }

@@ -8,7 +8,7 @@ type Watcher = Record<string, unknown> | unknown[];
 const watchers = new Map<string, Watcher>();
 
 const exists = async (file: string) => {
-    const [err] = await dontThrow(stat(file));
+    const [err] = await dontThrow(stat(file), { logOnFail: false });
     return err === null;
 }
 
