@@ -53,7 +53,7 @@ export class kEvent extends Event<'guildCreate'> {
         }
 
         try {
-            return await guild.commands.permissions.set({ fullPermissions });
+            return void await guild.commands.permissions.set({ fullPermissions });
         } catch {
             // No permission to create slash commands, don't bother.
         }

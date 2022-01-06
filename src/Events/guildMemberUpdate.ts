@@ -70,7 +70,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
                     iconURL: newMember.user.displayAvatarURL()
                 });
 
-            return dontThrow(channel.send({ embeds: [embed] }));
+            return void dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
             const embed = Embed.ok(`${newMember} just boosted the server! 🥳`);
             if (newMember.user)
@@ -79,7 +79,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
                     iconURL: newMember.user.displayAvatarURL()
                 });
 
-            return dontThrow(channel.send({ embeds: [embed] }));
+            return void dontThrow(channel.send({ embeds: [embed] }));
         }
     }
 }

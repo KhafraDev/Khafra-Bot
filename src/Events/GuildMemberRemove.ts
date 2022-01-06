@@ -83,6 +83,6 @@ export class kEvent extends Event<'guildMemberRemove'> {
             `)
             .setFooter({ text: 'User left' });
 
-        return dontThrow(channel.send({ embeds: [embed] }));
+        return void dontThrow(channel.send({ embeds: [embed] }));
     }
 }

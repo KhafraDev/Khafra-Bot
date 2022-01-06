@@ -118,7 +118,7 @@ export class kEvent extends Event<'messageCreate'> {
             const rateLimitSeconds = command.rateLimit.rateLimitSeconds;
             const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000);
 
-            return dontThrow(message.reply({
+            return void dontThrow(message.reply({
                 content: 
                     `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
                     `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
@@ -132,7 +132,7 @@ export class kEvent extends Event<'messageCreate'> {
         }
         
         if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
-            return dontThrow(message.reply({ 
+            return void dontThrow(message.reply({ 
                 embeds: [
                     Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ] 
@@ -141,21 +141,25 @@ export class kEvent extends Event<'messageCreate'> {
 
         const [min, max = Infinity] = command.settings.args;
         if (min > args.length || args.length > max) {
-            return dontThrow(message.reply({ embeds: [Embed.error(`
-            Incorrect number of arguments provided.
-            
-            The command requires ${min} minimum arguments and ${max ?? 'no'} max.
-            Example(s):
-            ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
-            `)] }));
+            return void dontThrow(message.reply({
+                embeds: [
+                    Embed.error(`
+                    Incorrect number of arguments provided.
+                    
+                    The command requires ${min} minimum arguments and ${max ?? 'no'} max.
+                    Example(s):
+                    ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
+                    `)
+                ]
+            }));
         }
 
         if (!_cooldownUsers(message.author.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
+            return void dontThrow(message.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
         } else if (!_cooldownGuild(message.guild.id)) {
-            return dontThrow(message.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
+            return void dontThrow(message.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
         } else if (!hasPerms(message.channel, message.member, command.permissions)) {
-            return dontThrow(message.reply({
+            return void dontThrow(message.reply({
                 embeds: [
                     Embed.perms(message.channel, message.member, command.permissions)
                 ]
@@ -194,7 +198,7 @@ export class kEvent extends Event<'messageCreate'> {
                 }
             }
             
-            return message.reply(param);
+            return void await message.reply(param);
         } catch (e) {
             err = e as Error;
 
@@ -215,7 +219,7 @@ export class kEvent extends Event<'messageCreate'> {
                 ? command.errors[e.name as keyof typeof command.errors] 
                 : command.errors.default;
                 
-            return dontThrow(message.reply({ 
+            return void dontThrow(message.reply({ 
                 embeds: [Embed.error(error)],
                 failIfNotExists: false
             }));

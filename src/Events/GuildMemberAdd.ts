@@ -71,6 +71,6 @@ export class kEvent extends Event<'guildMemberAdd'> {
             `)
             .setFooter({ text: 'User joined' });
 
-        return dontThrow(channel.send({ embeds: [embed] }));
+        return void dontThrow(channel.send({ embeds: [embed] }));
     }
 }
