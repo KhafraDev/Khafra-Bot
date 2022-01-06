@@ -1,13 +1,13 @@
 import { Interactions } from '#khaf/Interaction';
+import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { codeBlock, inlineCode } from '@khaf/builders';
 import { APIMessage, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { CommandInteraction, Message, MessageActionRow } from 'discord.js';
-import { codeBlock, inlineCode } from '@khaf/builders';
-import { isTextBased } from '#khaf/utility/Discord.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { createContext, runInContext } from 'vm';
-import { logger } from '#khaf/Logger';
 
 class Parser extends Array<string> {
     private openParenthesis = 0;

@@ -1,5 +1,5 @@
-import { Message, SnowflakeUtil, Role, User, GuildMember, Snowflake, GuildBasedChannel, TextBasedChannel } from 'discord.js';
-import { dontThrow } from './Don\'tThrow.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { GuildBasedChannel, GuildMember, Message, Role, Snowflake, SnowflakeUtil, TextBasedChannel, User } from 'discord.js';
 
 type MentionTypes = User | GuildBasedChannel | TextBasedChannel | GuildMember | Role;
 

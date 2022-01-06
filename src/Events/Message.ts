@@ -1,5 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
+import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { Arguments, Command } from '#khaf/Command';
+import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { pool } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
@@ -20,8 +22,6 @@ import { bold, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
-import { MessagesLRU } from '#khaf/cache/Messages.js';
-import { cooldown } from '../Structures/Cooldown/GlobalCooldown.js';
 
 export const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

@@ -1,17 +1,14 @@
-import { 
-    Message, 
-    Snowflake,
-    Permissions,
-    PermissionResolvable
-} from 'discord.js';
-import { Errors } from '#khaf/utility/Constants/Errors.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Cooldown } from '#khaf/cooldown/CommandCooldown.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Errors } from '#khaf/utility/Constants/Errors.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
-import { join } from 'path';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
-import { Cooldown } from './Cooldown/CommandCooldown.js';
+import {
+    Message, PermissionResolvable, Permissions, Snowflake
+} from 'discord.js';
+import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

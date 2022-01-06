@@ -1,7 +1,7 @@
+import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
+import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
 import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
-import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
-import { upperCase } from './String.js';
 
 /**
  * Check if a user or role has permissions in a channel.
