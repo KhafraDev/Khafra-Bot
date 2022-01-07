@@ -72,7 +72,7 @@ export class kInteraction extends Interactions {
             if (userOption) {
                 const member = interaction.options.getMember(`member${i}`);
 
-                if (member && interaction.member) {
+                if (member) {
                     const memberPerms: PermissionResolvable = member.permissions instanceof Permissions
                         ? member.permissions
                         : new Permissions(BigInt(member.permissions as string));

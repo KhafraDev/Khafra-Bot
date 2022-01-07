@@ -32,7 +32,9 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             return;
 
         const row = await client.get(oldMember.guild.id);
-        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
+        let item: WelcomeChannel | null = row !== null
+            ? JSON.parse(row) as kGuild
+            : null;
 
         if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
@@ -45,10 +47,12 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             if (rows.length !== 0) {
                 void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);
                 item = rows[0];
+            } else {
+                return;
             }
         }
 
-        if (!item || item.welcome_channel === null) return;
+        if (item.welcome_channel === null) return;
 
         let channel: AnyChannel | null = null;
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
@@ -63,18 +67,16 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             return;
 
         if (oldHas && !newHas) { // lost role
-            const embed = Embed.error(`${newMember} is no longer boosting the server! 😨`);
-            if (newMember.user)
-                embed.setAuthor({
+            const embed = Embed.error(`${newMember} is no longer boosting the server! 😨`)
+                .setAuthor({
                     name: newMember.user.username,
                     iconURL: newMember.user.displayAvatarURL()
                 });
 
             return void dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
-            const embed = Embed.ok(`${newMember} just boosted the server! 🥳`);
-            if (newMember.user)
-                embed.setAuthor({
+            const embed = Embed.ok(`${newMember} just boosted the server! 🥳`)
+                .setAuthor({
                     name: newMember.user.username,
                     iconURL: newMember.user.displayAvatarURL()
                 });

@@ -1,5 +1,5 @@
 import { bold, hyperlink, inlineCode } from '@khaf/builders';
-import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
+import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake, TextBasedChannel } from 'discord.js';
 import { once } from 'events';
 import { isText } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
@@ -43,7 +43,7 @@ export class kCommand extends Command {
             ]
         });
 
-        let channel!: GuildChannel;
+        let channel: TextBasedChannel | GuildChannel | null;
         const rules: string[] = [];
         
         {
@@ -85,7 +85,7 @@ export class kCommand extends Command {
             }
 
             channel = 
-                coll[1].mentions.channels.first() as GuildChannel || 
+                coll[1].mentions.channels.first() ?? 
                 await getMentions(coll[1] as Message<true>, 'channels');
 
             if (!isText(channel)) {

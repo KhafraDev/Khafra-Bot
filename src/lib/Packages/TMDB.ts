@@ -34,7 +34,7 @@ interface ITMDBDetails {
     id: number
     imdb_id: string | null
     original_language: string
-    original_title: string
+    original_title: string | null
     overview: string | null
     popularity: number
     poster_path: string | null

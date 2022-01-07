@@ -1,7 +1,7 @@
 import { URL } from 'url';
 
 interface ValidURL {
-    url: URL
+    url: URL | null
     idx: number
 }
 
@@ -24,7 +24,7 @@ export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
         const url = new URL(s);
         if (url.protocol !== 'https:' && url.protocol !== 'http:')
             return null;
-        else if (url.username !== '' || url.password !== '')
+        if (url.username !== '' || url.password !== '')
             return null;
 
         if (opts.stripParams === true) {

@@ -50,7 +50,9 @@ export class kEvent extends Event<'guildBanAdd'> {
         }
 
         const row = await client.get(guild.id);
-        let item: ModLogChannel = JSON.parse(row!) as kGuild;
+        let item: ModLogChannel | null = row !== null
+            ? JSON.parse(row) as kGuild
+            : null;
 
         if (!item) {
             const { rows } = await pool.query<ModLogChannel>(`
@@ -62,12 +64,14 @@ export class kEvent extends Event<'guildBanAdd'> {
             if (rows.length !== 0) {
                 void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
                 item = rows[0];
+            } else {
+                return;
             }
         }
 
         const channel = guild.channels.cache.get(item.mod_log_channel ?? '');
 
-        if (!item || !channel) {
+        if (!channel) {
             return;
         } else if (!isTextBased(channel) || !hasPerms(channel, guild.me, perms)) {
             return;

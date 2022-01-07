@@ -44,10 +44,6 @@ export class kCommand extends Command {
         const json = await res.json() as [RedditData, RedditData];
 
         const post = json[0].data.children[0].data;
-        if (!post) {
-            return this.Embed.error(this.errors.FetchError);
-        }
-
         const coins = post.all_awardings.reduce((p, c) => p + (c.coin_price * c.count), 0);
         const price = (coins * PER_COIN).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
         const count = post.all_awardings.reduce((p, c) => p + c.count, 0);

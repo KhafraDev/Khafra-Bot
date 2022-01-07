@@ -79,7 +79,7 @@ export class CoinGecko {
         if (pinged === false) return false;
 
         const list = await CoinGecko.list();
-        const ids = list.map(i => i.id);
+        const ids = list ? list.map(i => i.id) : [];
 
         for (const idChunk of chunkSafe(ids, 250)) {
             const [e, r] = await dontThrow(client.request({
@@ -109,7 +109,7 @@ export class CoinGecko {
             if (success !== true) return;
         }
 
-        const list = await CoinGecko.list();
+        const list = await CoinGecko.list() ?? [];
 
         const found: CoinGeckoRes[] = [];
         const q = query.toLowerCase();

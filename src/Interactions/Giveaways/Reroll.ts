@@ -100,7 +100,10 @@ export class kSubCommand extends InteractionSubCommand {
 
                 winners.push(random);
             }
-        } else if (count === 1 && (users.cache.first()?.id ?? '.') === interaction.client.user?.id) { // no one entered
+        } else if (
+            count === 1 &&
+            users.cache.first()?.id === interaction.client.user.id
+        ) { // no one entered
             if (m.editable) {
                 return void dontThrow(m.edit({
                     content: `${bold('Re-rolled:')} No one entered the giveaway!`

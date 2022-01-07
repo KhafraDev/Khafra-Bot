@@ -29,9 +29,10 @@ export class kInteraction extends Interactions {
 
         if (hostname !== 'twitter.com' || !pathname)
             return '❌ Not a Twitter status!';
+        
         // Your username can only contain letters, numbers and '_'
         // Your username must be shorter than 15 characters.
-        else if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname ?? ''))
+        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname))
             return `❌ Invalid Twitter status!`;
 
         const id = /\/(\d+)$/.exec(pathname)![1];

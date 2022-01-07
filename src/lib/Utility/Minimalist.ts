@@ -33,7 +33,7 @@ export class Minimalist extends Map<string, Value> {
             if (token.includes('=')) { // --prop=value
                 const [n, value] = token.split('=', 2);
                 super.set(n.slice(toSlice), value);
-            } else if (tokens[i + 1] === undefined || tokens[i + 1].charAt(0) === '-') { // --prop --prop2
+            } else if (!tokens[i + 1] || tokens[i + 1].charAt(0) === '-') { // --prop --prop2
                 super.set(token.slice(toSlice), true);
             } else { // --prop value
                 const value: string[] = [];

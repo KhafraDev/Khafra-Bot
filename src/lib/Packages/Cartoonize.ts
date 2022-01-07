@@ -13,7 +13,7 @@ const R = /<div class="image">\s+<img src="(.*?)">/;
  */
 export class Cartoonize {
     static async blobFromUrl(url: string) {
-        const u = URLFactory(url)!;
+        const u = URLFactory(url);
         if (u === null) return null;
         
         const [err, res] = await dontThrow(fetch(u));

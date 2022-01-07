@@ -18,7 +18,7 @@ export interface WikipediaSearch {
 
 export interface WikipediaSummary<T extends number> {
     batchcomplete: string
-    query: {
+    query?: {
         pages: {
             [key: string]: {
                 pageid: T

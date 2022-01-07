@@ -87,7 +87,7 @@ export class kCommand extends Command {
                 SELECT * FROM kbStonewall WHERE instr(lower(title), lower(?)) > 0 ORDER BY comic_key DESC LIMIT 5;
             `, args.join(' '));
             
-            if (comics[0] === undefined) {
+            if (comics.length === 0) {
                 return this.Embed.error(`No comics with that query could be found. Omit the query for a random comic!`);
             } else if (comics.length === 1) {
                 return this.Embed.ok()

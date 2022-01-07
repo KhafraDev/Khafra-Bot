@@ -57,7 +57,7 @@ export class kCommand extends Command {
             const codePoints = toCodePoints(parsed[0]!.text);
             let emoji = parsed[0].text;
 
-            while (!Emojis[emoji as keyof typeof Emojis]) {
+            while (!(emoji in Emojis)) {
                 const codepoints = toCodePoints(emoji);
                 if (codepoints.length <= 1)
                     break;

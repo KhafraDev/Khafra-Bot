@@ -35,7 +35,7 @@ export class kInteraction extends Interactions {
             return `❌ ${results.Type}`;
         }
 
-        const first = results.observations?.location?.[0].observation?.[0];
+        const first = results.observations?.location[0].observation[0];
         if (first === undefined) {
             return '❌ No location found!';
         }

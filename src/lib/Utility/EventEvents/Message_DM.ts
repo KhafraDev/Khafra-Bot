@@ -1,6 +1,5 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
-import { PartialGuild } from '#khaf/types/KhafraBot.js';
 import { isDM } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
@@ -22,7 +21,7 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .split(',')
         .map(c => c.toLowerCase())
     : [];
-const defaultSettings: PartialGuild = {
+const defaultSettings = {
     prefix: config.prefix,
     max_warning_points: 20,
     mod_log_channel: null,

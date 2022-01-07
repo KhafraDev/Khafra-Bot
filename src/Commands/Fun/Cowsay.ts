@@ -49,7 +49,7 @@ export class kCommand extends Command {
             ? [args[0].toLowerCase(), ...args.slice(1)]
             : ['cowsay', ...args];
 
-        if (!content)
+        if (content.length === 0)
             return this.Embed.error('Since you provided a format, you have to provide some text to say!');
         if (!types.has(format))
             return this.Embed.error(`Format not found! Use the command \`cowsay list\` to list all formats!`);

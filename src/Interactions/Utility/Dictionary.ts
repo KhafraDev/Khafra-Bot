@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
         const phrase = interaction.options.getString('word', true);
         const word = await owlbotio(phrase);
 
-        if (word.definitions === undefined) {
+        if (word?.definitions === undefined) {
             return '❌ No definition found!';
         }
 

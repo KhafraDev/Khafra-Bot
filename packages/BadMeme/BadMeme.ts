@@ -67,7 +67,7 @@ export const badmeme = async (
     for (const { data } of j.data.children) {
         if (data.is_self === true && 'crosspost_parent' in data) {
             continue;
-        } else if ('is_gallery' in data && data.is_gallery === true) {
+        } else if ('is_gallery' in data) {
             const galleryImages = Object
                 .values(data.media_metadata)
                 .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid' && !!k.s.u)
@@ -75,7 +75,7 @@ export const badmeme = async (
 
             urls.push({ nsfw: data.over_18, url: galleryImages });
         } else if (isgfycat(data)) {
-            if (!data.secure_media && !data.preview?.reddit_video_preview?.fallback_url) {
+            if (!data.secure_media && !data.preview.reddit_video_preview.fallback_url) {
                 urls.push({ nsfw: data.over_18, url: `${data.url}.mp4` });
             } else {
                 urls.push({ 
@@ -87,7 +87,7 @@ export const badmeme = async (
             }
         } else if (data.domain === 'redgifs.com') {
             urls.push({ nsfw: data.over_18, url: data.url });
-        } else if ('post_hint' in data && data.post_hint === 'hosted:video') {
+        } else if ('post_hint' in data) {
             // reddit separates the video from the audio, so the best we can do is get the video
             // not gonna waste resources combining audio + video.
             // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/

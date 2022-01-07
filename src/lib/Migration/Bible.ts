@@ -114,12 +114,12 @@ export const parseBible = async () => {
         .split(/~/g) // each line ends with ~ to denote the end of a verse
         .filter(l => l.trim().length > 0) // for example the last line is a newline, causing an undefined/NaN combo below
         .map(line => {
-            const [book, chapter, verse, content] = line.split('|');
+            const [book, chapter, verse, content = ''] = line.split('|');
             return {
                 book: book.trim(), 
                 chapter: +chapter, 
                 verse: +verse, 
-                content: content?.trim()
+                content: content.trim()
             };
         });
 

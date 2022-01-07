@@ -25,7 +25,7 @@ export class kCommand extends Command {
     async init(message: Message<true>, { args }: Arguments) {
         const ids = args.map(id => /^\d{17,19}$/.test(id) 
             ? id 
-            : message.mentions.members!.get(id.replace(/[^\d]/g, ''))!
+            : message.mentions.members?.get(id.replace(/[^\d]/g, ''))
         );
 
         if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))
@@ -33,7 +33,9 @@ export class kCommand extends Command {
 
         const reason = `Force-ban by ${message.author.id} (${message.author.tag}).`;
 
-        const promiseArr = ids.map(id => message.guild.members.ban(id, { reason }));
+        const promiseArr = ids
+            .filter((id): id is GuildMember | string => id !== undefined)
+            .map(id => message.guild.members.ban(id, { reason }));
 
         const resolved = await Promise.allSettled(promiseArr);
         const good = resolved.filter(p => p.status === 'fulfilled') as PromiseFulfilledResult<string | User | GuildMember>[];

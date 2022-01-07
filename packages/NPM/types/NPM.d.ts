@@ -54,14 +54,14 @@ interface Package {
         name: string
         email: string
     }[],
-    time: KeyString,
-    homepage: string,
+    time?: KeyString,
+    homepage?: string,
     keywords: string[],
     repository: {
         type: string
         url: string
     }
-    author: {
+    author?: {
         name: string
     },
     bugs: {

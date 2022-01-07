@@ -22,7 +22,7 @@ export const asyncQuery = async <T, P extends unknown[] = string[]>(
     
     return new Promise<T[]>((res, rej) => {
         db.query<T>(sql, parameters, (err, rows) => {
-            return err !== null ? rej(err) : res(rows);
+            return err !== null ? rej(err) : res(rows as T[]);
         });
     });
 }

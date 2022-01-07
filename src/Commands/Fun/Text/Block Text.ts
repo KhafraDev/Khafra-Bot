@@ -30,7 +30,7 @@ export class kCommand extends Command {
 
     async init(_message: Message, { content }: Arguments) {     
         const blocks = [...content]
-            .map(l => letters[l.toLowerCase()] ?? l)
+            .map(l => l.toLowerCase() in letters ? letters[l.toLowerCase()] : l)
             .join(' ');
 
         return this.Embed.ok(blocks);

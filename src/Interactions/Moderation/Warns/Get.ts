@@ -48,7 +48,7 @@ export class kSubCommand extends InteractionSubCommand {
             LIMIT 1;
         `, [interaction.guildId, id]);
 
-        if (rows.length === 0 || !rows[0].dates?.length || !rows[0].ids?.length)
+        if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length)
             return `✅ ${member} has no warning points!`;
 
         const { dates, ids, points, total_points } = rows.shift()!;

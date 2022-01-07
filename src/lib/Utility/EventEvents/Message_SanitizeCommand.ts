@@ -18,7 +18,6 @@ export const Sanitize = (message: Message): message is Message<true> => {
         (message.type !== 'DEFAULT' && message.type !== 'REPLY') ||
         (message.guild && !message.guild.available) ||
         message.system ||
-        message.partial ||
         message.tts || 
         message.content.length === 0 ||
         !message.guild

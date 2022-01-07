@@ -39,7 +39,7 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ This member cannot be warned!`;
         } else if (!hierarchy(interaction.member, member)) {
             return `❌ You can't warn ${member}!`;
-        } else if (interaction.guild?.me && !hierarchy(interaction.guild.me, member)) {
+        } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
             return `❌ I can't warn ${member}! 😦`;
         }
         

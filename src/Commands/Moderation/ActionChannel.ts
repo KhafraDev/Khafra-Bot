@@ -35,7 +35,7 @@ export class kCommand extends Command {
         } 
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
-        if (!channel || !isText(channel)) {
+        if (!isText(channel)) {
             return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);
         }
 

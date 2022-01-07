@@ -5,7 +5,7 @@ type UUID4 = `${string}-${string}-${string}-${string}-${string}`;
 export interface kGuild {
     id: UUID4
     guild_id: Snowflake
-    prefix: string
+    prefix: string | null
     max_warning_points: number
     mod_log_channel: Snowflake | null
     welcome_channel: Snowflake | null

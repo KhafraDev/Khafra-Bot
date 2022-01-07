@@ -17,7 +17,7 @@ type InteractionReply
  */
 export const interactionReactRoleHandler = async (interaction: MessageComponentInteraction, isDev = false) => {
     if (!validSnowflake(interaction.customId)) return;
-    if (interaction.message?.author.id !== client.user!.id) return;
+    if (interaction.message.author.id !== client.user?.id) return;
     if (!(interaction.member instanceof GuildMember)) return;
     
     let guild: Guild | null = null; // guild can be null here
@@ -42,10 +42,7 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
         return void dontThrow<InteractionReply>(pr);
     }
 
-    try {
-        if (interaction.member.partial)
-            await interaction.member.fetch();
-        
+    try {        
         const had = interaction.member.roles.cache.has(role.id);
         if (had)
             await interaction.member.roles.remove(role);

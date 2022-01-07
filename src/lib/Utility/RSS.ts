@@ -23,7 +23,7 @@ const ms = {
 
 interface RSSJSON<T> {
     rss: {
-        channel: {
+        channel?: {
             title: string
             link: string
             description: string
@@ -136,7 +136,7 @@ export class RSSReader<T> {
                 ).unref();
             } else if (
                 typeof j.rss.channel?.['sy:updateFrequency'] === 'string' && 
-                typeof j.rss.channel?.['sy:updatePeriod'] === 'number'
+                typeof j.rss.channel['sy:updatePeriod'] === 'number'
             ) {
                 const period = j.rss.channel['sy:updatePeriod'];
                 const frequency = j.rss.channel['sy:updateFrequency'];
@@ -170,7 +170,7 @@ export class RSSReader<T> {
             this.results.add(i);
         }
 
-        void this.afterSave?.();
+        return void this.afterSave();
     }
 
     cache = async (url: string) => {

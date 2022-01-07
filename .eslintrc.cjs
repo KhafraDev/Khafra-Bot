@@ -65,6 +65,7 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'error',
         '@typescript-eslint/prefer-as-const': 'error',
         '@typescript-eslint/prefer-namespace-keyword': 'error',
-        '@typescript-eslint/prefer-regexp-exec': 'error'
+        '@typescript-eslint/prefer-regexp-exec': 'error',
+        '@typescript-eslint/no-unnecessary-condition': 'error'
     }
 };

@@ -39,7 +39,9 @@ export class kEvent extends Event<'guildMemberRemove'> {
         `, [member.guild.id]);
 
         const row = await client.get(member.guild.id);
-        let item: WelcomeChannel = JSON.parse(row!) as kGuild;
+        let item: WelcomeChannel | null = row !== null
+            ? JSON.parse(row) as kGuild
+            : null;
         
         if (!item) {
             const { rows } = await pool.query<WelcomeChannel>(`
@@ -52,10 +54,12 @@ export class kEvent extends Event<'guildMemberRemove'> {
             if (rows.length !== 0) {
                 void client.set(member.guild.id, JSON.stringify(rows[0]), 'EX', 600);
                 item = rows[0];
+            } else {
+                return;
             }
         }
 
-        if (!item || item.welcome_channel === null) return;
+        if (item.welcome_channel === null) return;
 
         let channel: AnyChannel | null = null;
         if (member.guild.channels.cache.has(item.welcome_channel)) {
@@ -70,7 +74,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             return;
 
         const joined = 
-            member.joinedAt ? time(member.joinedAt) : 'N/A' +
+            (member.joinedAt ? time(member.joinedAt) : 'N/A') +
             ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
 
         const embed = Embed.ok()

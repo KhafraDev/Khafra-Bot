@@ -28,9 +28,8 @@ export class kCommand extends Command {
 
     async init(message: Message<true>) {
         const channel = await getMentions(message, 'channels') ?? message.channel;
-        if (!channel) {
-            return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);
-        } else if (isThread(channel) || isDM(channel)) {
+        
+        if (isThread(channel) || isDM(channel)) {
             return this.Embed.error(`I cannot clone a ${channel.type} channel!`);
         }
 

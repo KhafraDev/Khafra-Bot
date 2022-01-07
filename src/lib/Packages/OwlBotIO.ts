@@ -14,17 +14,11 @@ interface IOwlBotWord {
 }
 
 const url = 'https://owlbot.info/api/v4/dictionary/';
-class OwlBotError extends Error {
-    constructor(m?: string) {
-        super(m);
-        this.name = 'OwlBotError';
-    }
-}
 
 export const owlbotio = async (word: string) => {
     word = encodeURIComponent(word.toLowerCase());
     if (!env.OWLBOTIO) {
-        return Promise.reject(new OwlBotError('No API token found in env variables.'));
+        return null;
     }
 
     const res = await fetch(`${url}${word}`, {

@@ -77,7 +77,7 @@ export class kCommand extends Command {
         } else if (usedMs) {
             // ban @user 3d reason here -> reason here
             // ban @user reason here -> reason here
-            reason = args.slice(usedMs ? 2 : 1).join(' ');
+            reason = args.slice(2).join(' ');
         } else {
             const idx = args.findIndex(a => a.startsWith('--time') || a.startsWith('--days'));
             let r = '';

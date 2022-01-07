@@ -93,7 +93,7 @@ export class kInteraction extends Interactions {
                 .setURL(`https://en.wikipedia.org/wiki/${article.key}`)
 
             if (article.thumbnail) {
-                const image = article.thumbnail.url?.startsWith('http')
+                const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
                     : `https:${article.thumbnail.url}`;
 

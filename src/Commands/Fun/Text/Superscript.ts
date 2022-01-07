@@ -35,7 +35,7 @@ export class kCommand extends Command {
 
     async init(_message: Message, { content }: Arguments) {
         const split = [...content]
-            .map(c => superscript[c.toLowerCase()] ?? c)
+            .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
             .join('');
 
         return this.Embed.ok(split);

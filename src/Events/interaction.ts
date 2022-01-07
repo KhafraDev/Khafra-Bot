@@ -55,7 +55,7 @@ export class kEvent extends Event<'interactionCreate'> {
             if (interaction.replied) {
                 return;
             } else if (result == null) {
-                const type = result == null ? `${result}` : Object.prototype.toString.call(result);
+                const type = Object.prototype.toString.call(result);
                 param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
                 param.ephemeral = true;
             } else {

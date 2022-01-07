@@ -75,7 +75,7 @@ export class kEvent extends Event<'messageCreate'> {
             }
         }
 
-        const prefix = guild?.prefix ?? config.prefix;
+        const prefix = guild.prefix ?? config.prefix;
         const commandName = name.slice(prefix.length).toLowerCase();
         // !say hello world -> hello world
         const content = message.content.slice(prefix.length + commandName.length + 1);
@@ -127,7 +127,7 @@ export class kEvent extends Event<'messageCreate'> {
             return void dontThrow(message.reply({
                 content: `${inlineCode(commandName)} is temporarily disabled!`
             }));
-        } else if (!limited) {
+        } else {
             command.rateLimit.rateLimitUser(message.author.id);
         }
         
@@ -146,7 +146,7 @@ export class kEvent extends Event<'messageCreate'> {
                     Embed.error(`
                     Incorrect number of arguments provided.
                     
-                    The command requires ${min} minimum arguments and ${max ?? 'no'} max.
+                    The command requires ${min} minimum arguments and ${max} max.
                     Example(s):
                     ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
                     `)

@@ -7,7 +7,7 @@ type Ret = { 'EXISTS(SELECT 1 from kbBranco)': number };
 interface Comic {
     href: string
     title: string
-    link: string
+    link: string | null
 }
 
 const PATH = join(assets, 'JSON/Branco.json');

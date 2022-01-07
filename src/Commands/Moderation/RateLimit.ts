@@ -49,7 +49,7 @@ export class kCommand extends Command {
         // if a channel is mentioned in the first argument, 
         // seconds must be the second argument + vice versa.
         // by default, reset the ratelimit (0s).
-        const secs = parseStrToMs((channelFirst ? args[1] : args[0]) ?? '0s')! / 1000;
+        const secs = parseStrToMs((channelFirst ? args[1] : args[0]) || '0s')! / 1000;
 
         if (!inRange(secs))
             return this.Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);

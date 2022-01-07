@@ -50,7 +50,7 @@ export type PocketAddResults = {
         date_resolved: Date,
         date_published: Date,
         title: string,
-        excerpt: string,
+        excerpt?: string,
         word_count: string,
         innerdomain_redirect: string,
         login_required: string,

@@ -80,18 +80,18 @@ export class kCommand extends Command {
             : [];
 
         const emojis = flags
-            .filter(f => getEmojis().has(f))
-            .map(f => getEmojis().get(f));
+            .filter(f => getEmojis()?.has(f))
+            .map(f => getEmojis()?.get(f));
 
         return this.Embed.ok(formatPresence(member?.presence?.activities) ?? undefined)
             .setAuthor({
                 name: user.tag,
-                iconURL: user.displayAvatarURL() ?? message.client.user!.displayAvatarURL()
+                iconURL: user.displayAvatarURL()
             })
             .addField(bold('Username:'), user.username, true)
             .addField(bold('ID:'), user.id, true)
             .addField(bold('Discriminator:'), `#${user.discriminator}`, true)
-            .addField(bold('Bot:'), user.bot !== undefined ? user.bot === true ? 'Yes' : 'No' : 'Unknown', true)
+            .addField(bold('Bot:'), user.bot ? 'Yes' : 'No', true)
             .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
             .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
     }

@@ -138,18 +138,18 @@ export class kInteraction extends Interactions {
                 : [];
 
             const emojis = flags
-                .filter(f => getEmojis().has(f))
-                .map(f => getEmojis().get(f));
+                .filter(f => getEmojis()?.has(f))
+                .map(f => getEmojis()?.get(f));
 
-            return Embed.ok(formatPresence(guildMember?.presence?.activities) ?? undefined)
+            return Embed.ok(formatPresence(guildMember?.presence?.activities))
                 .setAuthor({
                     name: option.tag, 
-                    iconURL: option.displayAvatarURL() ?? client.user!.displayAvatarURL()
+                    iconURL: option.displayAvatarURL()
                 })
                 .addField(bold('Username:'), option.username, true)
                 .addField(bold('ID:'), option.id, true)
                 .addField(bold('Discriminator:'), `#${option.discriminator}`, true)
-                .addField(bold('Bot:'), option.bot != undefined ? option.bot ? 'Yes' : 'No' : 'Unknown', true)
+                .addField(bold('Bot:'), option.bot ? 'Yes' : 'No', true)
                 .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
                 .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
         }

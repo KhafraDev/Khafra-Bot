@@ -1,5 +1,9 @@
 declare module 'esqlite' {
-    type Callback<T> = (error: Error, rows: T[]) => void;
+    type CallbackParams =
+        Readonly<[Error, null]> |
+        Readonly<[null, T[]]>;
+
+    type Callback<T> = (...args: [Error, null] | [null, T[]]) => void; 
 
     declare const version: string;
 

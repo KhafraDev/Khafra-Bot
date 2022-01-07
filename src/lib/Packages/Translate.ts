@@ -54,7 +54,7 @@ export const translate = async (
 	opts.from = typeof opts.from === 'string' && langs.includes(opts.from.toLowerCase()) 
 		? opts.from.toLowerCase() 
 		: 'auto';
-	opts.to = typeof opts.to === 'string' && langs.includes(opts.to?.toLowerCase()) 
+	opts.to = typeof opts.to === 'string' && langs.includes(opts.to.toLowerCase()) 
 		? opts.to.toLowerCase() 
 		: 'en';
 

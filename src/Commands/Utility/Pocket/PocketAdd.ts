@@ -45,7 +45,7 @@ export class kCommand extends Command {
         const article = URLFactory(args[0]);
         if (article === null)
             return this.Embed.error(`That's not an article URL, try again!`);
-        const added = await pocket.add(article, args.slice(1)?.join(' '));
+        const added = await pocket.add(article, args.slice(1).join(' '));
 
         return this.Embed.ok()
             .setTitle(added.item.title)
