@@ -1,17 +1,34 @@
-import { KhafraClient } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold } from '@khaf/builders';
+import { bold, inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Message, MessageEmbed } from 'discord.js';
+import { CommandInteraction, version as DJSVersion } from 'discord.js';
+import { join } from 'path';
 import { performance } from 'perf_hooks';
+import { memoryUsage, version } from 'process';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 
 enum BotInfo {
-    UPTIME = 'uptime',
     ABOUT = 'about',
     PING = 'ping',
     STATS = 'stats',
+}
+
+const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
+
+const getUptime = (ms: number) => {
+    return Object.entries({
+		d: Math.floor(ms / 86400000),
+		h: Math.floor(ms / 3600000) % 24,
+		m: Math.floor(ms / 60000) % 60,
+		s: Math.floor(ms / 1000) % 60,
+		ms: Math.floor(ms) % 1000,
+    })
+        .filter(f => f[1] > 0)
+        .map(t => `${t[1]}${t[0]}`)
+        .join(' ');
 }
 
 export class kInteraction extends Interactions {
@@ -31,7 +48,6 @@ export class kInteraction extends Interactions {
                             description: 'basic info about the bot',
                             required: true,
                             choices: [
-                                { name: BotInfo.UPTIME, value: BotInfo.UPTIME },
                                 { name: BotInfo.ABOUT, value: BotInfo.ABOUT },
                                 { name: BotInfo.PING, value: BotInfo.PING },
                                 { name: BotInfo.STATS, value: BotInfo.STATS }
@@ -52,14 +68,20 @@ export class kInteraction extends Interactions {
         if (subcommand === 'info') {
             const option = interaction.options.getString('option', true);
 
-            if (option === BotInfo.UPTIME || option === BotInfo.ABOUT) {
-                const command = KhafraClient.Commands.get(option)!;
+            if (option === BotInfo.ABOUT) {
+                const memoryMB = memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
+                const uptime = getUptime(interaction.client.uptime ?? 0);
 
-                const value = await command.init({
-                    client: interaction.client
-                } as Message) as MessageEmbed;
-
-                return value;
+                return Embed.ok()
+                    .setDescription(`
+                    ${bold('Dependencies')}
+                    ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}
+                    `)
+                    .addField(bold('Memory:'), `${memoryMB.toFixed(2)} MB`, false)
+                    .addField(bold('Khafra-Bot:'), `v${pkg.version}`, true)
+                    .addField(bold('Discord.js:'), `v${DJSVersion}`, true)
+                    .addField(bold('Node.JS:'), version, true)
+                    .addField(bold('Uptime:'), `⏰ ${inlineCode(uptime)}`);
             } else if (option === BotInfo.PING) {
                 await interaction.reply({
                     embeds: [Embed.ok('Pinging...!')],
