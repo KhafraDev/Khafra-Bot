@@ -153,8 +153,8 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ Finish your current game first!`;
         }
 
-        const shouldList = interaction.options.getBoolean('list');
-        const listName = interaction.options.getString('play');
+        const shouldList = interaction.options.getSubcommand() === 'list';
+        const listName = interaction.options.getString('lists') ?? 'presidents';
 
         if (shouldList) {
             const lists = listsByName
@@ -162,10 +162,6 @@ export class kSubCommand extends InteractionSubCommand {
                 .join('\n');
                 
             return `✅ Here are the word lists that you can play:\n${lists}`;
-        } else if (shouldList !== null) {
-            return `❌ You can't choose false.`;
-        } else if (!listName) {
-            return `❌ No options were provided!`;
         }
 
         let words!: string[];

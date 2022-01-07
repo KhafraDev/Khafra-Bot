@@ -14,21 +14,27 @@ export class kInteraction extends Interactions {
             description: 'Command that handles games!',
             options: [
                 {
-                    type: ApplicationCommandOptionType.Subcommand,
+                    type: ApplicationCommandOptionType.SubcommandGroup,
                     name: 'hangman',
                     description: 'Guess the word before running out of guesses!',
                     options: [
                         {
-                            type: ApplicationCommandOptionType.Boolean,
+                            type: ApplicationCommandOptionType.Subcommand,
                             name: 'list',
                             description: 'list of words that you can use.',
-                            required: false
                         },
                         {
-                            type: ApplicationCommandOptionType.String,
+                            type: ApplicationCommandOptionType.Subcommand,
                             name: 'play',
-                            description: 'choose a list of words to play with.',
-                            choices: listsByName.map(word => ({ name: word, value: word }))
+                            description: 'Let\'s play a game of hangman!',
+                            options: [
+                                {
+                                    type: ApplicationCommandOptionType.String,
+                                    name: 'lists',
+                                    description: 'The list of words to randomly choose from.',
+                                    choices: listsByName.map(word => ({ name: word, value: word }))
+                                }
+                            ]
                         }
                     ]
                 },

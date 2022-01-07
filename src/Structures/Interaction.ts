@@ -36,7 +36,9 @@ export class Interactions {
     ) {}
     
     async init (interaction: CommandInteraction): Promise<HandlerReturn> {
-        const subcommand = interaction.options.getSubcommand();
+        const subcommand =
+            interaction.options.getSubcommandGroup(false) ??
+            interaction.options.getSubcommand();
         const subcommandName = `${this.data.name}-${subcommand}`;
 
         if (!KhafraClient.Subcommands.has(subcommandName)) {

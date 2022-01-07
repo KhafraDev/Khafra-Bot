@@ -1,7 +1,6 @@
-import { KhafraClient } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Permissions } from 'discord.js';
+import { Permissions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -29,18 +28,5 @@ export class kInteraction extends Interactions {
                 Permissions.FLAGS.VIEW_GUILD_INSIGHTS
             ]
         });
-    }
-
-    async init(interaction: CommandInteraction) {
-        const subcommand = interaction.options.getSubcommand();
-        const subcommandName = `${this.data.name}-${subcommand}`;
-
-        if (!KhafraClient.Subcommands.has(subcommandName)) {
-            return `❌ This option has not been implemented yet!`;
-        }
-
-        const option = KhafraClient.Subcommands.get(subcommandName)!;
-        
-        return await option.handle(interaction);
     }
 }
