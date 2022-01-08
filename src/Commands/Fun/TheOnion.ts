@@ -82,7 +82,11 @@ export class kCommand extends Command {
     }
 
     async init() {
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
 
         const i = await rand(rss.results.size);
         const id = [...rss.results][i].guid;

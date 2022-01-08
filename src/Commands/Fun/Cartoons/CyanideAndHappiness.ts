@@ -36,7 +36,11 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
         
         if (isText(message.channel) && !message.channel.nsfw) {
             return this.Embed.error('Channel isn\'t marked as NSFW!');

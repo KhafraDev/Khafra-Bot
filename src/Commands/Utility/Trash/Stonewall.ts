@@ -68,7 +68,11 @@ export class kCommand extends Command {
     }
 
     async init(message: Message, { args }: Arguments) {
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift()!;

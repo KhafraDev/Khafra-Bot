@@ -37,7 +37,12 @@ export class kCommand extends Command {
     }
 
     async init() {
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
+        
         if (rss.results.size === 0) {
             return this.Embed.error('An unexpected error occurred!');
         }

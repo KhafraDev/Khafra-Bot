@@ -59,7 +59,11 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {  
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
         
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;

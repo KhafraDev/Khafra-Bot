@@ -30,7 +30,11 @@ export class kCommand extends Command {
     }
 
     async init() {
-        await cache();
+        const state = await cache();
+
+        if (state === null) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
 
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
