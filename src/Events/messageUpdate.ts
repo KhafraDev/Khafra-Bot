@@ -138,7 +138,7 @@ export class kEvent extends Event<'messageUpdate'> {
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);
             
-            if ([...command.settings.aliases!, command.settings.name].some(n => KhafraClient.Interactions.has(n))) {
+            if ([...command.settings.aliases!, command.settings.name].some(n => KhafraClient.Interactions.Commands.has(n))) {
                 const toAdd = `${bold('Tip: use the slash command version of this command!')}\n\n`;
                 
                 if (param.content && param.content.length + toAdd.length <= 2048) {

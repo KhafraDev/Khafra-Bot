@@ -3,7 +3,6 @@ import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { autoCompleteHandler } from '#khaf/utility/EventEvents/Interaction_AutoComplete.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
@@ -25,13 +24,20 @@ export class kEvent extends Event<'interactionCreate'> {
         if (interaction.isMessageComponent()) { // "react" roles
             return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
         } else if (interaction.isAutocomplete()) {
-            return autoCompleteHandler(interaction);
+            const autocomplete = interaction.options.getFocused(true);
+            const handler = KhafraClient.Interactions.Autocomplete.get(
+                `${interaction.commandName}-${autocomplete.name}`
+            );
+
+            if (handler) {
+                return handler.handle(interaction);
+            }
         }
         
         if (!interaction.isCommand()) return;
-        if (!KhafraClient.Interactions.has(interaction.commandName)) return;
+        if (!KhafraClient.Interactions.Commands.has(interaction.commandName)) return;
 
-        const command = KhafraClient.Interactions.get(interaction.commandName)!;
+        const command = KhafraClient.Interactions.Commands.get(interaction.commandName)!;
 
         if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({

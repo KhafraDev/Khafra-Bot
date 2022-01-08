@@ -31,10 +31,10 @@ export class kEvent extends Event<'guildCreate'> {
 
         const fullPermissions: GuildApplicationCommandPermissionData[] = [];
         
-        for (const slashCommand of KhafraClient.Interactions.values()) {
+        for (const slashCommand of KhafraClient.Interactions.Commands.values()) {
             // if slash command is disabled by default
             if (slashCommand.data.default_permission === false) {
-                const interaction = KhafraClient.Interactions.get(slashCommand.data.name)!;
+                const interaction = KhafraClient.Interactions.Commands.get(slashCommand.data.name)!;
                 if (!interaction.options.permissions) continue;
 
                 const perms = new Permissions(interaction.options.permissions);

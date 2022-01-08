@@ -1,6 +1,6 @@
 import { KhafraClient } from '#khaf/Bot';
 import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
+import { AutocompleteInteraction, CommandInteraction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
 
 interface InteractionOptions {
     defer?: boolean
@@ -41,11 +41,11 @@ export class Interactions {
             interaction.options.getSubcommand();
         const subcommandName = `${this.data.name}-${subcommand}`;
 
-        if (!KhafraClient.Subcommands.has(subcommandName)) {
+        if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
             return `❌ This option has not been implemented yet!`;
         }
 
-        const option = KhafraClient.Subcommands.get(subcommandName)!;
+        const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!;
         
         return await option.handle(interaction);
     }
@@ -63,8 +63,14 @@ export abstract class InteractionSubCommand {
     public constructor (public data: SubcommandOptions) {}
 
     public get references () {
-        return KhafraClient.Interactions.get(this.data.references)!;
+        return KhafraClient.Interactions.Commands.get(this.data.references)!;
     }
 
     abstract handle (arg: CommandInteraction): Promise<HandlerReturn>;
+}
+
+export abstract class InteractionAutocomplete {
+    public constructor (public data: SubcommandOptions) {}
+
+    abstract handle (arg: AutocompleteInteraction): Promise<void>;
 }

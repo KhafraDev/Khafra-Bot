@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
-import { Interactions, InteractionSubCommand } from '#khaf/Interaction';
+import { InteractionAutocomplete, Interactions, InteractionSubCommand } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
 import { bright, green, magenta } from '#khaf/utility/Colors.js';
 import { assets, cwd } from '#khaf/utility/Constants/Path.js';
@@ -20,17 +20,16 @@ import { pathToFileURL } from 'url';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
 type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;
-type DynamicImportAppCommand = Promise<{
-    kInteraction: new () => Interactions
-} | {
-    kSubCommand: new () => InteractionSubCommand
-}>;
+type DynamicImportAppCommand = 
+    | Promise<{ kInteraction: new () => Interactions }> 
+    | Promise<{ kSubCommand: new () => InteractionSubCommand }>
+    | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>;
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 const toBase64 = (command: unknown) => Buffer.from(JSON.stringify(command)).toString('base64');
 const setInteractionIds = (commands: APIApplicationCommand[]) => {
     for (const { name, id } of commands) {
-        const cached = KhafraClient.Interactions.get(name);
+        const cached = KhafraClient.Interactions.Commands.get(name);
         if (cached) cached.id = id;
     }
 }
@@ -38,8 +37,13 @@ const setInteractionIds = (commands: APIApplicationCommand[]) => {
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
-    static Interactions: Map<string, Interactions> = new Map();
-    static Subcommands: Map<string, InteractionSubCommand> = new Map();
+    static Interactions = {
+        Commands: new Map<string, Interactions>(),
+        Subcommands: new Map<string, InteractionSubCommand>(),
+        Autocomplete: new Map<string, InteractionAutocomplete>()
+    } as const;
+    // static Interactions: Map<string, Interactions> = new Map();
+    // static Subcommands: Map<string, InteractionSubCommand> = new Map();
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
@@ -126,12 +130,18 @@ export class KhafraClient extends Client {
             if (interaction.status === 'fulfilled') {
                 if ('kInteraction' in interaction.value) {
                     const int = new interaction.value.kInteraction();
-                    KhafraClient.Interactions.set(int.data.name, int);
+                    KhafraClient.Interactions.Commands.set(int.data.name, int);
                     loaded.push(int);
-                } else {
+                } else if ('kSubCommand' in interaction.value) {
                     const sub = new interaction.value.kSubCommand();
-                    KhafraClient.Subcommands.set(`${sub.data.references}-${sub.data.name}`, sub);
+                    KhafraClient.Interactions.Subcommands.set(`${sub.data.references}-${sub.data.name}`, sub);
                     loadedSubCommands++;
+                } else if ('kAutocomplete' in interaction.value) {
+                    const autocomplete = new interaction.value.kAutocomplete();
+                    KhafraClient.Interactions.Autocomplete.set(
+                        `${autocomplete.data.references}-${autocomplete.data.name}`, 
+                        autocomplete
+                    );
                 }
             } else {
                 logger.error(interaction);
@@ -272,7 +282,7 @@ export class KhafraClient extends Client {
         }
 
         console.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
-        return KhafraClient.Interactions;
+        return KhafraClient.Interactions.Commands;
     }
 
     init = once(async () => {

@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'voice',
-                    description: 'Voice to choose TTS from.',
+                    description: 'The character voice to use!',
                     required: true,
                     autocomplete: true
                 },

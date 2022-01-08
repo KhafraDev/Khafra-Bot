@@ -4,7 +4,7 @@
     "guildId": "503024525076725771",
     "prefix": "!!",
     "embed": {
-        "fail": "#FF0000",
+        "fail": "#ff5c5c",
         "success": "#ffe449"
     },
     "emoji": {

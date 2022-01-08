@@ -53,7 +53,7 @@ export class kInteraction extends Interactions {
         }
 
         const nameOption = interaction.options.getString('command', true).toLowerCase();
-        const cachedCommand = KhafraClient.Interactions.get(nameOption);
+        const cachedCommand = KhafraClient.Interactions.Commands.get(nameOption);
 
         if (!cachedCommand) {
             return `❌ Command does not exist.`;
