@@ -15,10 +15,15 @@ if (!existsSync(path)) {
 
 const file = readFileSync(path, 'utf-8').split(/\r?\n/g);
 for (const line of file) {
+    if (line.startsWith('#')) continue;
+
     const [k, ...v] = line.split('=');
+    const value = v.join('=');
 
     Object.defineProperty(env, k, {
-        value: v.join('='),
+        value: value.startsWith('"') && value.endsWith('"')
+            ? value.slice(1, -1)
+            : value,
         ...propertyDescriptors
     });
 }
