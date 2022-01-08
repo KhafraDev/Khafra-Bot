@@ -1,4 +1,4 @@
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -35,13 +35,13 @@ export class kSubCommand extends InteractionSubCommand {
             return '❌ That ID is not formatted correctly, please use a valid ID next time!';
         }
 
-        const { rows: deleted } = await pool.query<WarningDel>(`
+        const deleted = await sql<WarningDel[]>`
             DELETE FROM kbWarns
             WHERE 
-                kbWarns.id = $1::uuid AND
-                kbWarns.k_guild_id = $2::text
+                kbWarns.id = ${uuid}::uuid AND
+                kbWarns.k_guild_id = ${interaction.guildId}::text
             RETURNING id, k_points, k_user_id;
-        `, [uuid.toUpperCase(), interaction.guildId]);
+        `;
 
         if (deleted.length === 0) {
             return '❌ No warning with that ID could be found in the guild!';

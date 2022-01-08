@@ -1,12 +1,12 @@
-import { Event } from '#khaf/Event';
-import { GuildMember, Permissions, AnyChannel } from 'discord.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
+import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { AnyChannel, GuildMember, Permissions } from 'discord.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -37,12 +37,12 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             : null;
 
         if (!item) {
-            const { rows } = await pool.query<WelcomeChannel>(`
+            const rows = await sql<WelcomeChannel[]>`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
-                WHERE guild_id = $1::text
+                WHERE guild_id = ${oldMember.guild.id}::text
                 LIMIT 1;
-            `, [oldMember.guild.id]);
+            `;
             
             if (rows.length !== 0) {
                 void client.set(oldMember.guild.id, JSON.stringify(rows[0]), 'EX', 600);

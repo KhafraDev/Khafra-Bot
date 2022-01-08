@@ -1,12 +1,12 @@
 import { client as Client } from '#khaf/Client';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { MessageEmbed } from '#khaf/Embed';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { AnyChannel, CommandInteraction, Snowflake, Permissions } from 'discord.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { AnyChannel, CommandInteraction, Permissions, Snowflake } from 'discord.js';
 
 const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -27,12 +27,12 @@ export const interactionGetGuildSettings = async (interaction: CommandInteractio
     if (row) {
         settings = JSON.parse(row) as kGuild;
     } else {
-        const { rows } = await pool.query<kGuild>(`
+        const rows = await sql<kGuild[]>`
             SELECT * 
             FROM kbGuild
-            WHERE guild_id = $1::text
+            WHERE guild_id = ${interaction.guildId}::text
             LIMIT 1;
-        `, [interaction.guildId]);
+        `;
 
         if (rows.length !== 0) {
             await client.set(interaction.guildId, JSON.stringify(rows[0]), 'EX', 600);

@@ -1,16 +1,16 @@
-import { time } from '@khaf/builders';
-import { AnyChannel, GuildMember, Permissions } from 'discord.js';
-import { join } from 'path';
-import { isText } from '#khaf/utility/Discord.js';
+import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
+import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
-import { Event } from '#khaf/Event';
+import { time } from '@khaf/builders';
+import { AnyChannel, GuildMember, Permissions } from 'discord.js';
+import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -28,15 +28,15 @@ export class kEvent extends Event<'guildMemberRemove'> {
     async init(member: GuildMember) {
         if (member.id === config.botId) return;
 
-        await pool.query(`
+        await sql<unknown[]>`
             INSERT INTO kbInsights (
                 k_guild_id, k_left
             ) VALUES (
-                $1::text, 1::integer
+                ${member.guild.id}::text, ${1}::integer
             ) ON CONFLICT (k_guild_id, k_date) DO UPDATE SET
                 k_left = kbInsights.k_left + 1
-                WHERE kbInsights.k_guild_id = $1::text;
-        `, [member.guild.id]);
+                WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
+        `;
 
         const row = await client.get(member.guild.id);
         let item: WelcomeChannel | null = row !== null
@@ -44,12 +44,12 @@ export class kEvent extends Event<'guildMemberRemove'> {
             : null;
         
         if (!item) {
-            const { rows } = await pool.query<WelcomeChannel>(`
+            const rows = await sql<WelcomeChannel[]>`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
-                WHERE guild_id = $1::text
+                WHERE guild_id = ${member.guild.id}::text
                 LIMIT 1;
-            `, [member.guild.id]);
+            `;
             
             if (rows.length !== 0) {
                 void client.set(member.guild.id, JSON.stringify(rows[0]), 'EX', 600);

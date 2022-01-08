@@ -1,4 +1,4 @@
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { table } from '#khaf/utility/CLITable.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -26,20 +26,20 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ Re-invite the bot with the correct permissions to use this command!`;
         }
 
-        const { rows } = await pool.query<Insights>(`
+        const rows = await sql<Insights[]>`
             WITH removed AS (
                 DELETE FROM kbInsights
-                WHERE k_date <= CURRENT_DATE - 14 AND k_guild_id = $1::text
+                WHERE k_date <= CURRENT_DATE - 14 AND k_guild_id = ${id}::text
             )
 
             SELECT k_date, k_left, k_joined
             FROM kbInsights
             WHERE 
-                k_guild_id = $1::text AND
+                k_guild_id = ${id}::text AND
                 k_date > CURRENT_DATE - 14 AND
                 k_date < CURRENT_DATE
             ORDER BY kbInsights.k_date ASC;
-        `, [id]);
+        `;
 
         if (rows.length === 0) {
             return `❌ There are no insights available for the last 14 days!`;

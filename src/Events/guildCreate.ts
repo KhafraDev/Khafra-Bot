@@ -1,5 +1,5 @@
 import { KhafraClient } from '#khaf/Bot';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -19,13 +19,13 @@ export class kEvent extends Event<'guildCreate'> {
             name: guild.name
         });
 
-        await pool.query(`
+        await sql<unknown[]>`
             INSERT INTO kbGuild (
                 guild_id, prefix, max_warning_points
             ) VALUES (
-                $1::text, $2::text, $3::smallint
+                ${guild.id}::text, ${config.prefix}::text, ${20}::smallint
             ) ON CONFLICT DO NOTHING;
-        `, [guild.id, config.prefix, 20]);
+        `;
 
         await dontThrow(guild.roles.fetch());
 

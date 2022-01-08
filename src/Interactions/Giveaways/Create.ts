@@ -1,13 +1,13 @@
-import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
-import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
 import { type Giveaway } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { pool } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
+import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
+import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 
@@ -53,7 +53,7 @@ export class kSubCommand extends InteractionSubCommand {
             void dontThrow(sent.react('🎉'));
         }
 
-        const { rows } = await pool.query<GiveawayId>(`
+        const rows = await sql<GiveawayId[]>`
             INSERT INTO kbGiveaways (
                 guildId, 
                 messageId,
@@ -63,24 +63,16 @@ export class kSubCommand extends InteractionSubCommand {
                 prize,
                 winners
             ) VALUES (
-                $1::text, 
-                $2::text, 
-                $3::text,
-                $4::text,
-                $5::timestamp,
-                $6::text,
-                $7::smallint
+                ${interaction.guildId}::text, 
+                ${sent.id}::text, 
+                ${channel.id}::text,
+                ${interaction.user.id}::text,
+                ${endsDate}::timestamp,
+                ${prize}::text,
+                ${winners}::smallint
             ) ON CONFLICT DO NOTHING
             RETURNING id;
-        `, [
-            interaction.guildId,
-            sent.id,
-            channel.id,
-            interaction.user.id,
-            endsDate,
-            prize,
-            winners
-        ]);
+        `;
 
         return `
         ✅ Started a giveaway in ${channel}!

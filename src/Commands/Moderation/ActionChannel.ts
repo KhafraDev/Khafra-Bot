@@ -1,11 +1,11 @@
-import { Message, Permissions, TextChannel } from 'discord.js';
-import { isText } from '#khaf/utility/Discord.js';
+import { Command } from '#khaf/Command';
+import { sql } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Command } from '#khaf/Command';
-import { pool } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -39,12 +39,12 @@ export class kCommand extends Command {
             return this.Embed.error(`Channel isn't cached or the ID is incorrect.`);
         }
 
-        const { rows } = await pool.query<kGuild>(`
+        const rows = await sql<kGuild[]>`
             UPDATE kbGuild 
-            SET mod_log_channel = $1::text
-            WHERE kbGuild.guild_id = $2::text
+            SET mod_log_channel = ${channel.id}::text
+            WHERE kbGuild.guild_id = ${message.guildId}::text
             RETURNING *;
-        `, [channel.id, message.guild.id]);
+        `;
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 

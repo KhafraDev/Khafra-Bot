@@ -1,4 +1,4 @@
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -43,20 +43,22 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ I can't warn ${member}! 😦`;
         }
         
-        const { rows } = await pool.query<WarnInsert>(`
+        const rows = await sql<WarnInsert[]>`
             WITH warns AS (
                 SELECT id, k_points, k_ts
                 FROM kbWarns
-                WHERE kbWarns.k_guild_id = $1::text AND kbWarns.k_user_id = $2::text
+                WHERE
+                    kbWarns.k_guild_id = ${interaction.guildId}::text AND
+                    kbWarns.k_user_id = ${member.id}::text
             ), inserted AS (
                 INSERT INTO kbWarns (
                     k_guild_id, 
                     k_user_id, 
                     k_points
                 ) VALUES (
-                    $1::text, 
-                    $2::text, 
-                    $3::smallint
+                    ${interaction.guildId}::text, 
+                    ${member.id}::text, 
+                    ${points}::smallint
                 ) RETURNING k_points, id, k_ts
             )
 
@@ -66,7 +68,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             SELECT k_ts, warns.id AS warnsId, warns.k_points as warnPoints FROM warns
             ORDER BY k_ts DESC;
-        `, [interaction.guildId, member.id, points]);
+        `;
 
         // something really bad has gone wrong...
         if (rows.length === 0) {

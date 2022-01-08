@@ -1,4 +1,4 @@
-import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
+import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
@@ -55,11 +55,11 @@ export class kEvent extends Event<'guildBanAdd'> {
             : null;
 
         if (!item) {
-            const { rows } = await pool.query<ModLogChannel>(`
+            const rows = await sql<ModLogChannel[]>`
                 SELECT ${defaultKGuild} FROM kbGuild
-                WHERE guild_id = $1::text
+                WHERE guild_id = ${guild.id}::text
                 LIMIT 1;
-            `, [guild.id]);
+            `;
 
             if (rows.length !== 0) {
                 void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);

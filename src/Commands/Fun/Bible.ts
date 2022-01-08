@@ -1,11 +1,10 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
-import { pool } from '#khaf/database/Postgres.js';
-import { upperCase } from '#khaf/utility/String.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { inlineCode } from '@khaf/builders';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { upperCase } from '#khaf/utility/String.js';
+import { inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 interface IBibleVerse {
     idx: number
@@ -20,8 +19,6 @@ const R = {
     BETWEEN: /(\d{1,2}):(\d{1,2})-(\d{1,2})/,
     CHAPTER: /(\d{1,2})/
 } as const;
-
-const mw = once(bibleInsertDB);
 
 export class kCommand extends Command {
     constructor() {
@@ -39,13 +36,17 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args, content }: Arguments, settings: kGuild) {
-        await mw();
+        const inserted = await bibleInsertDB();
+
+        if (inserted !== true) {
+            return this.Embed.error(`Try again in a minute!`);
+        }
 
         // no arguments provided, get a random entry
         if (args.length === 0) {
-            const { rows } = await pool.query<IBibleVerse>(`
+            const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible TABLESAMPLE BERNOULLI(.1) ORDER BY random() LIMIT 1;
-            `);
+            `;
 
             // basically the same as bookAcronym down below
             const book = Object 
@@ -81,12 +82,14 @@ export class kCommand extends Command {
         if (!R.GENERIC.test(locationUnformatted)) {
             // get verses in chapter
             if (R.CHAPTER.test(locationUnformatted)) {
-                const { rows } = await pool.query<IBibleVerse>(`
+                const rows = await sql<IBibleVerse[]>`
                     SELECT * FROM kbBible
-                    WHERE book = $1::text AND chapter = $2::smallint
+                    WHERE
+                        book = ${upperCase(bookAcronym[1])}::text AND
+                        chapter = ${Number(locationUnformatted)}::smallint
                     ORDER BY verse DESC
                     LIMIT 1;
-                `, [upperCase(bookAcronym[1]), Number(locationUnformatted)]);
+                `;
                 
                 return this.Embed.ok(`
                 Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
@@ -94,16 +97,15 @@ export class kCommand extends Command {
             }
             
             // if not chapter is provided, get the number of chapters in the book
-            const { rows } = await pool.query<IBibleVerse>(`
+            const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible 
-                WHERE book = $1::text
+                WHERE book = ${upperCase(bookAcronym[1])}::text
                 ORDER BY chapter DESC
                 LIMIT 1;
-            `, [upperCase(bookAcronym[1])]);
+            `;
 
-            return this.Embed.ok(`
-            ${bookAcronym[0]} has ${rows[0]?.chapter ?? 'no'} chapters.
-            `);
+            const chaper = rows.length === 0 ? 'no' : rows[0].chapter;
+            return this.Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`);
         }
 
         // Example: 13:1-5
@@ -119,14 +121,14 @@ export class kCommand extends Command {
                 ? [verses[0], verses[0] + 9] // sql between is inclusive
                 : verses
 
-            const { rows } = await pool.query<IBibleVerse>(`
+            const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1::text AND
-                    chapter = $2::smallint AND
-                    verse BETWEEN $3::smallint AND $4::smallint
+                    book = ${upperCase(bookAcronym.pop()!)}::text AND
+                    chapter = ${chapter}::smallint AND
+                    verse BETWEEN ${versesDiff[0]}::smallint AND ${versesDiff[1]}::smallint
                 LIMIT 10;
-            `, [upperCase(bookAcronym.pop()!), chapter, ...versesDiff]);
+            `;
 
             if (rows.length === 0)
                 return this.Embed.error(`
@@ -147,14 +149,14 @@ export class kCommand extends Command {
                 .exec(locationUnformatted)!
                 .map(Number);
 
-            const { rows } = await pool.query<IBibleVerse>(`
+            const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible
                 WHERE
-                    book = $1::text AND
-                    chapter = $2::smallint AND
-                    verse = $3::smallint
+                    book = ${upperCase(bookAcronym[1])}::text AND
+                    chapter = ${chapter}::smallint AND
+                    verse = ${verse}::smallint
                 LIMIT 1;
-            `, [upperCase(bookAcronym[1]), chapter, verse]);
+            `;
 
             if (rows.length === 0)
                 return this.Embed.error(`

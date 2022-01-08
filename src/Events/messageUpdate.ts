@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { Arguments, Command } from '#khaf/Command';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
@@ -36,12 +36,12 @@ export class kEvent extends Event<'messageUpdate'> {
         if (row) {
             guild = { ...defaultSettings, ...JSON.parse(row) as kGuild };
         } else {
-            const { rows } = await pool.query<kGuild>(`
+            const rows = await sql<kGuild[]>`
                 SELECT * 
                 FROM kbGuild
-                WHERE guild_id = $1::text
+                WHERE guild_id = ${newMessage.guildId}::text
                 LIMIT 1;
-            `, [newMessage.guild.id]);
+            `;
 
             if (rows.length !== 0) {
                 void client.set(newMessage.guild.id, JSON.stringify(rows[0]), 'EX', 600);

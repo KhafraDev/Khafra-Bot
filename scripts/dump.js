@@ -1,9 +1,18 @@
 import '../build/src/lib/Utility/load.env.js';
-import { pool } from '../build/src/Structures/Database/Postgres.js';
 
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
+import postgres from 'postgres';
+import { env } from 'process';
+
+export const sql = postgres({
+    user: env.POSTGRES_USER,
+    pass: env.POSTGRES_PASS,
+    database: 'kb',
+    host: '127.0.0.1',
+    onnotice: () => {}
+});
 
 const tables = new Map([
     ['kbstonewall', 'Stonewall.json'], 
@@ -12,16 +21,16 @@ const tables = new Map([
 ]);
 
 for (const [table, file] of tables) {
-    const { rows } = await pool.query(`
+    const rows = await sql`
         SELECT EXISTS (
             SELECT 1
             FROM information_schema.tables
-            WHERE table_catalog = 'kb' AND table_name = $1::text
+            WHERE table_catalog = 'kb' AND table_name = ${table}::text
         );
-    `, [table]);
+    `;
 
     if (rows[0].exists === true) {
-        const { rows } = await pool.query(`SELECT * FROM ${table};`);
+        const rows = await sql`SELECT * FROM ${table};`;
         const u = fileURLToPath(join(import.meta.url, `../../assets/${file}`));
 
         await writeFile(u, JSON.stringify(rows));

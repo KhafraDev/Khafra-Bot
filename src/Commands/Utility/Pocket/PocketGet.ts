@@ -1,8 +1,8 @@
 import { Command } from '#khaf/Command';
-import { Message } from 'discord.js';
-import { Pocket } from '@khaf/pocket';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { inlineCode } from '@khaf/builders';
+import { Pocket } from '@khaf/pocket';
+import { Message } from 'discord.js';
 
 interface PocketUser {
     access_token: string 
@@ -25,12 +25,12 @@ export class kCommand extends Command {
     }
 
     async init(message: Message) {
-        const { rows } = await pool.query<PocketUser>(`
+        const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket
-            WHERE user_id = $1::text
+            WHERE user_id = ${message.author.id}::text
             LIMIT 1;
-        `, [message.member!.id]);
+        `;
 
         if (rows.length === 0)
             return this.Embed.error(`

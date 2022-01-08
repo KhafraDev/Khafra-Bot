@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
-import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { client } from '#khaf/database/Redis.js';
-import { Permissions, TextChannel, Message } from 'discord.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Message, Permissions, TextChannel } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -47,12 +47,12 @@ export class kCommand extends Command {
             return this.Embed.error(`This guild cannot use private threads, please use a category channel instead!`);
         }
 
-        const { rows } = await pool.query<kGuild>(`
+        const rows = await sql<kGuild[]>`
             UPDATE kbGuild
-            SET ticketChannel = $1::text
-            WHERE guild_id = $2::text
+            SET ticketChannel = ${ticketChannel.id}::text
+            WHERE guild_id = ${message.guildId}::text
             RETURNING *;
-        `, [ticketChannel.id, message.guild.id]);
+        `;
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 

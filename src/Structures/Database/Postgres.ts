@@ -1,8 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { readFileSync } from 'fs';
 import { join } from 'path';
-import pg from 'pg';
+import postgres from 'postgres';
 import { env } from 'process';
 
 export const defaultKGuild = [
@@ -14,16 +13,19 @@ export const defaultKGuild = [
     'ticketChannel'
 ].join(', ');
 
-const sql = await KhafraClient.walk(join(assets, 'SQL/Postgres'), p => p.endsWith('.sql'));
+const sqlFiles = await KhafraClient.walk(
+    join(assets, 'SQL/Postgres'),
+    p => p.endsWith('.sql')
+);
 
-export const pool = new pg.Pool({
-    user: env.POSTGRES_USER!,
-    password: env.POSTGRES_PASS!,
+export const sql = postgres({
+    user: env.POSTGRES_USER,
+    pass: env.POSTGRES_PASS,
     database: 'kb',
-    host: '127.0.0.1'
+    host: '127.0.0.1',
+    onnotice: () => {}
 });
 
-for (const file of sql) {
-    const text = readFileSync(file, 'utf-8');
-    await pool.query(text);
+for (const file of sqlFiles) {
+    await sql.file<unknown[]>(file);
 }

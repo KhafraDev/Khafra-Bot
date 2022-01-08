@@ -1,10 +1,10 @@
-import { inlineCode } from '@khaf/builders';
-import { Permissions, TextChannel, Message } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { sql } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Arguments, Command } from '#khaf/Command';
-import { pool } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
+import { inlineCode } from '@khaf/builders';
+import { Message, Permissions, TextChannel } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -33,12 +33,12 @@ export class kCommand extends Command {
         else if (args[0].length > 100)
             return this.Embed.error(`Maximum prefix length is 100 characters!`);
 
-        const { rows } = await pool.query<kGuild>(`
+        const rows = await sql<kGuild[]>`
             UPDATE kbGuild
-            SET prefix = $1::text
-            WHERE guild_id = $2::text
+            SET prefix = ${args[0]}::text
+            WHERE guild_id = ${message.guildId}::text
             RETURNING *;
-        `, [args[0]!, message.guild.id]);
+        `;
 
         await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
 

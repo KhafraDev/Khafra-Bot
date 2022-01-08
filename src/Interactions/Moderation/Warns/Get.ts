@@ -1,4 +1,4 @@
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { plural } from '#khaf/utility/String.js';
@@ -37,16 +37,18 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ To use this command, re-invite the bot with all permissions!`;
         }
 
-        const { rows } = await pool.query<Total>(`
+        const rows = await sql<Total[]>`
             SELECT 
                 SUM(k_points) AS total_points,
                 ARRAY_AGG(k_ts) dates,
                 ARRAY_AGG(id) ids,
                 ARRAY_AGG(k_points) points
             FROM kbWarns
-            WHERE kbWarns.k_guild_id = $1::text AND kbWarns.k_user_id = $2::text
+            WHERE
+                kbWarns.k_guild_id = ${interaction.guildId}::text AND
+                kbWarns.k_user_id = ${id}::text
             LIMIT 1;
-        `, [interaction.guildId, id]);
+        `;
 
         if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length)
             return `✅ ${member} has no warning points!`;

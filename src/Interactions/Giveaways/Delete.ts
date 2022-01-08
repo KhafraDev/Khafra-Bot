@@ -1,9 +1,9 @@
+import { sql } from '#khaf/database/Postgres.js';
+import { InteractionSubCommand } from '#khaf/Interaction';
+import { Giveaway } from '#khaf/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@khaf/builders';
 import { CommandInteraction } from 'discord.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { Giveaway } from '#khaf/types/KhafraBot.js';
-import { pool } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 
@@ -27,11 +27,13 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ No guild id provided in the command, re-invite the bot with the correct permissions.`;
         }
 
-        const { rows } = await pool.query<GiveawayRow, string[]>(`
+        const rows = await sql<GiveawayRow[]>`
             DELETE FROM kbGiveaways
-            WHERE guildId = $1::text AND id = $2::uuid
+            WHERE
+                guildId = ${interaction.guildId}::text AND 
+                id = ${id}::uuid
             RETURNING guildId, messageId, channelId, initiator, endDate, prize, id;
-        `, [interaction.guildId, id]);
+        `;
 
         try {
             const channel = await interaction.guild.channels.fetch(rows[0].channelid);

@@ -1,7 +1,15 @@
-import { fetch } from 'undici';
+import { sql } from '#khaf/database/Postgres.js';
 import { ZipFile } from '#khaf/utility/Unzip.js';
-import { pool } from '#khaf/database/Postgres.js';
 import { Buffer } from 'buffer';
+import { fetch } from 'undici';
+
+interface IBibleVerse {
+    idx: number
+    book: string
+    chapter: number
+    verse: number
+    content: string
+}
 
 export const titles = {
     'Genesis': 'gen',
@@ -126,31 +134,38 @@ export const parseBible = async () => {
     return lines;
 }
 
+let ran = false;
+
 export const bibleInsertDB = async () => {
-    const { rows } = await pool.query<{ exists: boolean }>(`SELECT EXISTS(SELECT 1 FROM kbBible);`);
-    if (rows[0].exists === true)
+    if (ran) return true;
+
+    const rows = await sql<{ exists: boolean }[]>`SELECT EXISTS(SELECT 1 FROM kbBible);`;
+
+    if (rows[0].exists === true) {
+        ran = true;
         return true;
-    
-    const client = await pool.connect();
+    }
+
     const bible = await parseBible();
 
-    try {
-        await client.query('BEGIN');
+    await sql.begin<IBibleVerse[]>(async sql => {
+        const docs: IBibleVerse[] = [];
 
-        for (const verse of bible) {
-            await client.query(`
+        for (const { book, chapter, verse, content } of bible) {
+            const doc = await sql<IBibleVerse[]>`
                 INSERT INTO kbBible (
                     book, chapter, verse, content
                 ) VALUES (
-                    $1, $2, $3, $4
+                    ${book}, ${chapter}, ${verse}, ${content}
                 ) ON CONFLICT DO NOTHING;
-            `, [verse.book, verse.chapter, verse.verse, verse.content]);
-        }
+            `;
 
-        await client.query('COMMIT');
-    } catch {
-        await client.query('ROLLBACK');
-    } finally {
-        client.release();
-    }
+            docs.push(...doc);
+        }
+      
+        return docs;
+    });
+
+    ran = true;
+    return true;
 }

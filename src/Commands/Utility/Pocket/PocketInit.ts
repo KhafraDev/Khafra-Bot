@@ -1,10 +1,10 @@
 import { Command } from '#khaf/Command';
-import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
-import { Pocket } from '@khaf/pocket';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { Pocket } from '@khaf/pocket';
+import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -69,27 +69,38 @@ export class kCommand extends Command {
             const [authError] = await dontThrow(pocket.accessToken());
             
             if (authError !== null) {
-                return void button.editReply({
+                return void dontThrow(button.editReply({
                     embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized.')], 
                     components: []
-                });
+                }));
             }
 
             const { access_token, request_token, username } = pocket.toObject();
+
+            if (!access_token || !request_token || !username) {
+                return void dontThrow(button.editReply({
+                    embeds: [this.Embed.error(`An unexpected issue occurred.`)],
+                    components: []
+                }));
+            }
+
             // Insert into the table, if username or user_id is already in,
             // we will update the values. Useful if user unauthorizes Khafra-Bot.
-            await pool.query(`
+            await sql<unknown[]>`
                 INSERT INTO kbPocket (
                     user_id, access_token, request_token, username
                 ) VALUES (
-                    $1::text, $2::text, $3::text, $4::text
+                    ${message.author.id}::text,
+                    ${access_token}::text,
+                    ${request_token}::text,
+                    ${username}::text
                 ) ON CONFLICT (user_id, username) DO UPDATE SET 
-                    user_id = $1::text, 
-                    access_token = $2::text, 
-                    request_token = $3::text, 
-                    username = $4::text
+                    user_id = ${message.author.id}::text, 
+                    access_token = ${access_token}::text, 
+                    request_token = ${request_token}::text, 
+                    username = ${username}::text
                 ;
-            `, [message.author.id, access_token, request_token, username]);
+            `;
 
             return void button.editReply({
                 embeds: [

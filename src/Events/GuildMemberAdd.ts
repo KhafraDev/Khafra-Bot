@@ -1,13 +1,13 @@
+import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
+import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
-import { GuildMember, Permissions, AnyChannel } from 'discord.js';
-import { defaultKGuild, pool } from '#khaf/database/Postgres.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
-import { client } from '#khaf/database/Redis.js';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { time } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { time } from '@khaf/builders';
+import { AnyChannel, GuildMember, Permissions } from 'discord.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -21,15 +21,15 @@ export class kEvent extends Event<'guildMemberAdd'> {
     name = 'guildMemberAdd' as const;
 
     async init(member: GuildMember) {  
-        await pool.query(`
+        await sql<unknown[]>`
             INSERT INTO kbInsights (
                 k_guild_id, k_joined
             ) VALUES (
-                $1::text, 1::integer
+                ${member.guild.id}::text, ${1}::integer
             ) ON CONFLICT (k_guild_id, k_date) DO UPDATE SET
                 k_joined = kbInsights.k_joined + 1
-                WHERE kbInsights.k_guild_id = $1::text;
-        `, [member.guild.id]);
+                WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
+        `;
 
         const row = await client.get(member.guild.id);
         let item: WelcomeChannel | null = row !== null
@@ -37,12 +37,12 @@ export class kEvent extends Event<'guildMemberAdd'> {
             : null;
 
         if (!item) {
-            const { rows } = await pool.query<WelcomeChannel>(`
+            const rows = await sql<WelcomeChannel[]>`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
-                WHERE guild_id = $1::text
+                WHERE guild_id = ${member.guild.id}::text
                 LIMIT 1;
-            `, [member.guild.id]);
+            `;
             
             if (rows.length !== 0) {
                 void client.set(member.guild.id, JSON.stringify(rows[0]), 'EX', 600);

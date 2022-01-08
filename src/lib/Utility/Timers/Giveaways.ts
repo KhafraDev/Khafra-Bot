@@ -1,12 +1,12 @@
 import { client } from '#khaf/Client';
-import { pool } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
+import { logger } from '#khaf/Logger';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Permissions, User } from 'discord.js';
 import { EventEmitter } from 'events';
 import { setInterval } from 'timers';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { logger } from '#khaf/Logger';
 
 interface GiveawayEmitter extends EventEmitter {
     on(event: 'giveaway', listener: (giveaway: Giveaway) => void | Promise<void>): this;
@@ -17,11 +17,11 @@ const Giveaways: GiveawayEmitter = new EventEmitter();
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 setInterval(async () => {
-    const { rows } = await pool.query<Giveaway>(`
+    const rows = await sql<Giveaway[]>`
         DELETE FROM kbGiveaways 
         WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP
         RETURNING *;
-    `);
+    `;
 
     for (const row of rows)
         Giveaways.emit('giveaway', row);
