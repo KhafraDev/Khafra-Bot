@@ -204,7 +204,7 @@ export class KhafraClient extends Client {
                 // deleted.
                 if (loadedCommands < existingSlashCommands) {
                     const deleted = existingSlashCommands.filter(
-                        c => loadedCommands.find(n => n.name === c.name)
+                        c => !loadedCommands.find(n => n.name === c.name)
                     );
 
                     for (const deletedCommand of deleted) {

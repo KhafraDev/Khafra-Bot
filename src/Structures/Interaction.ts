@@ -20,7 +20,7 @@ type HandlerReturn =
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
     | null
-    | undefined;
+    | void;
 
 type InteractionData =
     | RESTPostAPIApplicationCommandsJSONBody;
