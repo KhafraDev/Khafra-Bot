@@ -1,6 +1,5 @@
 import '#khaf/utility/load.env.js';
 import '#khaf/utility/Rejections.js';
-import '#khaf/utility/Timers/Giveaways.js';
 
 import { KhafraClient } from '#khaf/Bot';
 import type { Event } from '#khaf/Event';
@@ -21,7 +20,7 @@ const emitted = <T extends keyof ClientEvents>(name: T) => {
             event = KhafraClient.Events.get(name)!;
         }
 
-        void dontThrow(event.init(...args));
+        return void dontThrow(event.init(...args));
     }
 }
 

@@ -19,7 +19,8 @@
     "#khaf/Bot": "./src/Bot/KhafraBot.js",
     "#khaf/Client": "./src/index.js",
     "#khaf/Embed": "./src/Structures/MessageEmbed.js",
-    "#khaf/LRU": "./src/Structures/LRU.js"
+    "#khaf/LRU": "./src/Structures/LRU.js",
+    "#khaf/Timer": "./src/Structures/Timer.js"
   },
   "dependencies": {
     "@discordjs/rest": "^0.2.0-canary.0",
