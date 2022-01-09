@@ -1,0 +1,35 @@
+{
+  "name": "@khaf/translate",
+  "version": "0.0.1",
+  "description": "Translate text from multiple services.",
+  "main": "./Translate.js",
+  "typings": "./Translate.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/Khafra-Bot.git",
+    "directory": "packages/"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "google translate",
+    "libre translate",
+    "translate",
+    "pseudo-bot"
+  ],
+  "author": "KhafraDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.7"
+  },
+  "dependencies": {
+    "undici": "^4.12.1"
+  }
+}
