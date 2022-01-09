@@ -15,7 +15,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { readdir, stat } from 'fs/promises';
 import { join, resolve } from 'path';
 import { performance } from 'perf_hooks';
-import { argv, env } from 'process';
+import { argv, env, exit } from 'process';
 import { pathToFileURL } from 'url';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
@@ -145,6 +145,7 @@ export class KhafraClient extends Client {
                 }
             } else {
                 logger.error(interaction);
+                exit(1);
             }
         }
 
@@ -199,7 +200,7 @@ export class KhafraClient extends Client {
                 data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`));
             } else {
                 // If there are less commands on our side
-                // then there are on Discord's side, we can
+                // than there are on Discord's side, we can
                 // assume that *some* commands have been
                 // deleted.
                 if (loadedCommands < existingSlashCommands) {
@@ -223,8 +224,6 @@ export class KhafraClient extends Client {
                     const previous = previouslyDeployed.find(([n]) => n === current.name);
                     const [deployedName, deployedBase64] = previous ?? [];
                     const existing = existingSlashCommands.find(command => command.name === deployedName);
-
-                    // TODO: exit the process if an error occurs when loading.
                     
                     // If the command has not been loaded on Discord's side,
                     // or it hasn't previously been deployed, on our side, we

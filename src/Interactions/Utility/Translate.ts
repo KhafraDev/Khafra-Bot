@@ -1,6 +1,11 @@
 import { CommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { translate, langs } from '#khaf/utility/commands/Translate';
+import {
+    GoogleTranslate,
+    GoogleLanguages,
+    LibreTranslate,
+    LibreTranslateGetLanguages
+} from '@khaf/translate'; 
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
@@ -10,6 +15,16 @@ export class kInteraction extends Interactions {
             name: 'translate',
             description: 'Use Google Translate to translate some text!',
             options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'engine',
+                    description: 'The translating service to use.',
+                    required: true,
+                    choices: [
+                        { name: 'LibreTranslate', value: 'libretranslate' },
+                        { name: 'Google Translate', value: 'googletranslate' }
+                    ]
+                },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'text',
@@ -33,20 +48,47 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: CommandInteraction) {
-        const to = interaction.options.getString('to') ?? 'en';
-        const from = interaction.options.getString('from') ?? 'auto';
+        const to = interaction.options.getString('to');
+        const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);
-        
-        const translated = await translate(
-            text,
-            {
-                to: langs.includes(to.toLowerCase()) ? to.toLowerCase() : 'en',
-                from: langs.includes(from.toLowerCase()) ? from.toLowerCase() : 'auto'
-            }
-        );
+        const engine = interaction.options.getString('engine', true);
 
-        return Embed.ok()
-            .setDescription(translated)
-            .setAuthor({ name: interaction.user.username, iconURL: interaction.user.displayAvatarURL() });
+        const embed = Embed.ok().setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.displayAvatarURL()
+        });
+
+        if (engine === 'googletranslate') {
+            const translated = await GoogleTranslate(
+                text,
+                {
+                    to: to && GoogleLanguages.includes(to.toLowerCase())
+                        ? to.toLowerCase()
+                        : 'es',
+                    from: from && GoogleLanguages.includes(from.toLowerCase())
+                        ? from.toLowerCase()
+                        : 'auto'
+                }
+            );
+
+            return embed.setDescription(translated);
+        } else if (engine === 'libretranslate') {
+            const supported = await LibreTranslateGetLanguages();
+            const translated = await LibreTranslate({
+                query: text,
+                to: to && supported.includes(to.toLowerCase())
+                    ? to.toLowerCase()
+                    : 'es',
+                from: from && supported.includes(from.toLowerCase())
+                    ? from.toLowerCase()
+                    : 'en'
+            });
+
+            if (translated === null) {
+                return `❌ An error occurred using LibreTranslate, try another service!`;
+            }
+
+            return embed.setDescription(translated.translatedText);
+        }
     }
 } 
