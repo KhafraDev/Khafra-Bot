@@ -7,7 +7,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { Activity, CommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
+import { Activity, ChatInputCommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
 const formatPresence = (activities: Activity[] | undefined) => {
@@ -76,7 +76,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {

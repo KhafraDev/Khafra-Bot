@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const url = interaction.options.getString('tweet', true);
         const { hostname, pathname } = URLFactory(url) ?? {};
 

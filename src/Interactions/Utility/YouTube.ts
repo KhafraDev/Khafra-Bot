@@ -1,4 +1,4 @@
-import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
 import { YouTube, YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
@@ -41,7 +41,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const query = interaction.options.getString('search', true);
         const results = await YouTube(query);
 

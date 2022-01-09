@@ -1,4 +1,4 @@
-import { CommandInteraction, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, Permissions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -43,7 +43,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const user = interaction.options.getUser('member', true);
 
         if (!hasPerms(interaction.channel, interaction.member, perms)) {

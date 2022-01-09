@@ -3,7 +3,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 import { APIApplicationCommandOption, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMemberManager, PermissionResolvable, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMemberManager, PermissionResolvable, Permissions } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -44,7 +44,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: CommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction) {
         if (!interaction.inGuild()) {
             return `❌ Invalid permissions, ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {

@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { bold } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Guild } from 'discord.js';
+import { ChatInputCommandInteraction, Guild } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         let guild!: Guild | null;
 
         if (!interaction.guild) {

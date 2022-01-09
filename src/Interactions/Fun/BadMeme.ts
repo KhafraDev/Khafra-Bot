@@ -1,6 +1,6 @@
 import { badmeme, cache } from '@khaf/badmeme';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 
 export class kInteraction extends Interactions {
@@ -21,7 +21,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const subreddit = interaction.options.getString('subreddit') ?? 'dankmemes';
 
         if (!cache.has(subreddit))

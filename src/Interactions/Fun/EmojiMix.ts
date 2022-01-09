@@ -1,6 +1,6 @@
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { fetch } from 'undici';
 import { URL } from 'url';
@@ -96,7 +96,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const subcommand = interaction.options.getSubcommand(true);
 
         if (subcommand === 'mix') {

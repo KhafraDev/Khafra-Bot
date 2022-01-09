@@ -1,4 +1,4 @@
-import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { hideLinkEmbed, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 

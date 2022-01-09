@@ -6,7 +6,7 @@ import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { codeBlock, inlineCode } from '@khaf/builders';
 import { APIMessage, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Message, MessageActionRow } from 'discord.js';
+import { ChatInputCommandInteraction, Message, MessageActionRow } from 'discord.js';
 import { createContext, runInContext } from 'vm';
 
 class Parser extends Array<string> {
@@ -161,7 +161,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: CommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction) {
         const rows = [
             new MessageActionRow().addComponents(
                 Components.approve('(', '('),

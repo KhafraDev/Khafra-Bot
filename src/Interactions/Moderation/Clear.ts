@@ -5,7 +5,7 @@ import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, Permissions } from 'discord.js';
 import { bold, time } from '@khaf/builders';
 
 export class kInteraction extends Interactions {
@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const amount = interaction.options.getInteger('messages', true);
         const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 

@@ -6,7 +6,7 @@ import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 interface WarningDel {
     id: Warning['id']
@@ -24,7 +24,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         if (!interaction.inGuild()) {
             return `❌ The bot must be re-invited with all permissions to use this command.`;
         }

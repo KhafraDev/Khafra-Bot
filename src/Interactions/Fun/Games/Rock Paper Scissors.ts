@@ -4,7 +4,7 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { CommandInteraction, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 
 type Keys = keyof typeof emojis;
 
@@ -28,7 +28,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const [err, int] = await dontThrow(interaction.editReply({ 
             embeds: [
                 Embed.ok(`Rock, paper, scissors, shoot!`)

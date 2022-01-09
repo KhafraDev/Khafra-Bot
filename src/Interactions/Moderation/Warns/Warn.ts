@@ -7,7 +7,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { CommandInteraction, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, Permissions } from 'discord.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -23,7 +23,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         if (!interaction.inCachedGuild()) {
             return `❌ The bot must be re-invited with all permissions to use this command.`;
         }

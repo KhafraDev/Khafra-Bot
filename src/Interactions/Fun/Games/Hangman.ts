@@ -6,7 +6,7 @@ import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
-import { CommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
+import { ChatInputCommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { readdirSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
@@ -148,7 +148,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         if (currentGames.has(interaction.user.id)) {
             return `❌ Finish your current game first!`;
         }

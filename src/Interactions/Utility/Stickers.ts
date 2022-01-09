@@ -4,7 +4,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 
@@ -35,7 +35,7 @@ export class kInteraction extends Interactions {
         super(sc, { ownerOnly: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         if (stickers.length === 0) {
             const res = await mw();
             if (res === null) {

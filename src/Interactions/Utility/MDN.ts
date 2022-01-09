@@ -6,7 +6,7 @@ import { stripIndents } from '#khaf/utility/Template.js';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import { fetchMDN } from '@khaf/mdn';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
@@ -31,7 +31,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const search = interaction.options.getString('input', true);            
         const result = await fetchMDN(search);
 

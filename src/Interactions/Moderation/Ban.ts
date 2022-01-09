@@ -6,7 +6,7 @@ import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMember, Permissions, User } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, Permissions, User } from 'discord.js';
 import { argv } from 'process';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -50,7 +50,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to ban this member, try to ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {

@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
 import { searchTV } from '#khaf/utility/commands/TMDB';
@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const tv = await searchTV(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)

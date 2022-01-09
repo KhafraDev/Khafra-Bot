@@ -1,4 +1,4 @@
-import { AllowedImageFormat, AllowedImageSize, CommandInteraction } from 'discord.js';
+import { AllowedImageFormat, AllowedImageSize, ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
@@ -36,7 +36,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const user = interaction.options.getUser('user', true);
         const size = interaction.options.getString('size') ?? '256';
         const format = interaction.options.getString('format') ?? 'webp'

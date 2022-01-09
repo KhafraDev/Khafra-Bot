@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { thisDoesNotExist, DNE } from '#khaf/utility/commands/ThisDoesNotExist';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const type = interaction.options.getString('type', true);
         if (type === 'tdne_fuhomer') {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());

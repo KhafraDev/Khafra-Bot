@@ -90,8 +90,8 @@ export class kCommand extends Command {
                 pr.push(channel.permissionOverwrites.edit(
                     message.guild.roles.everyone,
                     {
-                        USE_PUBLIC_THREADS: false,
-                        USE_PRIVATE_THREADS: false,
+                        CREATE_PUBLIC_THREADS: false,
+                        CREATE_PRIVATE_THREADS: false,
                         MANAGE_THREADS: false
                     }
                 ));

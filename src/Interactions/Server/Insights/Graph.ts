@@ -2,7 +2,8 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
-import { CommandInteraction, MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import { Buffer } from 'buffer';
+import { ChatInputCommandInteraction, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { URLSearchParams } from 'url';
 
 interface Insights {
@@ -25,7 +26,7 @@ const Chart = (o: Record<string, string | number>) => {
             }
         });
         
-        return await res.blob();
+        return await res.arrayBuffer();
     }
 }
 
@@ -37,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
@@ -114,7 +115,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new MessageAttachment(blob, `chart.png`)
+                new MessageAttachment(Buffer.from(blob), `chart.png`)
             ]
         } as ReplyMessageOptions;
     }

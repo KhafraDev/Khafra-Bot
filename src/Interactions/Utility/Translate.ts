@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import {
     GoogleTranslate,
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);

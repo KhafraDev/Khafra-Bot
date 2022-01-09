@@ -8,7 +8,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ApplicationCommand, CommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
+import { ApplicationCommand, ChatInputCommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
 
@@ -36,7 +36,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const member = interaction.member;
 
         if (!member || !interaction.guild) {

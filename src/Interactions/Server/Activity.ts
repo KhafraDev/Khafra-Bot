@@ -9,7 +9,7 @@ import {
     InviteTargetType, RESTPostAPIApplicationCommandsJSONBody, RESTPostAPIChannelInviteJSONBody,
     Routes
 } from 'discord-api-types/v9';
-import { CommandInteraction, Permissions, VoiceChannel } from 'discord.js';
+import { ChatInputCommandInteraction, Permissions, VoiceChannel } from 'discord.js';
 import { env } from 'process';
 
 const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
@@ -61,7 +61,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         if (!interaction.inCachedGuild()) {
             return `❌ This command is not available in this guild, please re-invite the bot with the correct permissions!`;
         } else if (!hasPerms(interaction.channel, interaction.member, activityPerms)) {

@@ -7,7 +7,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import {
-    CommandInteraction,
+    ChatInputCommandInteraction,
     EmojiIdentifierResolvable,
     GuildMember,
     GuildMemberRoleManager,
@@ -74,7 +74,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const icon = interaction.options.getString('icon');

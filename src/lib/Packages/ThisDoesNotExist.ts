@@ -1,6 +1,7 @@
-import { fetch } from 'undici';
-import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Buffer } from 'buffer';
+import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import { fetch } from 'undici';
 
 const formatURL = new Map([
     ['artwork', `https://thisartworkdoesnotexist.com/`],
@@ -20,7 +21,8 @@ export const thisDoesNotExist = async (type: DNE) => {
     if (!url) return null;
 
     const res = await fetch(url);
-    const attach = new MessageAttachment(await res.blob(), `t${type}dne.jpeg`)
+    const buffer = Buffer.from(await res.arrayBuffer());
+    const attach = new MessageAttachment(buffer, `t${type}dne.jpeg`)
         .setDescription(`A random${type === 'artwork' ? ' piece of' : ''} ${type}!`);
 
     return {

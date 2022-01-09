@@ -4,7 +4,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, version as DJSVersion } from 'discord.js';
+import { ChatInputCommandInteraction, version as DJSVersion } from 'discord.js';
 import { join } from 'path';
 import { performance } from 'perf_hooks';
 import { memoryUsage, version } from 'process';
@@ -61,7 +61,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const was = performance.now();
         const subcommand = interaction.options.getSubcommand(true);
 

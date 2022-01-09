@@ -34,7 +34,7 @@ export class kEvent extends Event<'interactionCreate'> {
             }
         }
         
-        if (!interaction.isCommand()) return;
+        if (!interaction.isChatInputCommand()) return;
         if (!KhafraClient.Interactions.Commands.has(interaction.commandName)) return;
 
         const command = KhafraClient.Interactions.Commands.get(interaction.commandName)!;

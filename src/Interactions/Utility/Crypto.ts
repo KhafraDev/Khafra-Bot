@@ -1,4 +1,4 @@
-import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, inlineCode, time } from '@khaf/builders';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const currencies = await CoinGecko.get(
             interaction.options.getString('search', true),
             () => void dontThrow(interaction.deferReply())

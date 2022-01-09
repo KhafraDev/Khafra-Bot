@@ -2,7 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { shuffle } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { CommandInteraction, MessageActionRow, Snowflake } from 'discord.js';
+import { ChatInputCommandInteraction, MessageActionRow, Snowflake } from 'discord.js';
 import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         if (games.has(interaction.user.id)) {
             return `❌ Finish your other game before playing another!`;
         }

@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, time } from '@khaf/builders';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const location = interaction.options.getString('location', true);
         const results = await weather(location);
 

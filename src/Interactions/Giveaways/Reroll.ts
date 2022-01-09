@@ -1,4 +1,4 @@
-import { AnyChannel, CommandInteraction, Permissions, User } from 'discord.js';
+import { AnyChannel, ChatInputCommandInteraction, Permissions, User } from 'discord.js';
 import { bold, hyperlink, inlineCode } from '@khaf/builders';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -22,7 +22,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const messageURL = URLFactory(interaction.options.getString('url', true));
 
         if (messageURL === null) {

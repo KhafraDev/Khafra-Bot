@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
 import { time } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 interface Insights {
     k_left: number 
@@ -18,7 +18,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {

@@ -1,6 +1,11 @@
 import { KhafraClient } from '#khaf/Bot';
 import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { AutocompleteInteraction, CommandInteraction, InteractionReplyOptions, PermissionResolvable } from 'discord.js';
+import {
+    AutocompleteInteraction,
+    ChatInputCommandInteraction,
+    InteractionReplyOptions,
+    PermissionResolvable
+} from 'discord.js';
 
 interface InteractionOptions {
     defer?: boolean
@@ -35,7 +40,7 @@ export class Interactions {
         public options: InteractionOptions = {}
     ) {}
     
-    async init (interaction: CommandInteraction): Promise<HandlerReturn> {
+    async init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> {
         const subcommand =
             interaction.options.getSubcommandGroup(false) ??
             interaction.options.getSubcommand();
@@ -66,7 +71,7 @@ export abstract class InteractionSubCommand {
         return KhafraClient.Interactions.Commands.get(this.data.references)!;
     }
 
-    abstract handle (arg: CommandInteraction): Promise<HandlerReturn>;
+    abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn>;
 }
 
 export abstract class InteractionAutocomplete {

@@ -3,7 +3,7 @@ import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const sentence = interaction.options.getString('sentence', true);
         const [barack, obama] = await dontThrow(talkObamaToMe(sentence.slice(0, 280)));
 

@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, italic } from '@khaf/builders';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const phrase = interaction.options.getString('word', true);
         const word = await owlbotio(phrase);
 

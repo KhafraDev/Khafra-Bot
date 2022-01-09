@@ -5,7 +5,7 @@ import { KhafraClient } from '#khaf/Bot';
 import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { AllowedMentionsTypes, PresenceUpdateStatus } from 'discord-api-types/v9';
-import { ClientEvents, Intents, Options, Sweepers } from 'discord.js';
+import { ClientEvents, Intents } from 'discord.js';
 
 
 const emitted = <T extends keyof ClientEvents>(name: T) => {
@@ -30,20 +30,6 @@ export const client = new KhafraClient({
         repliedUser: true
     },
     presence: { status: PresenceUpdateStatus.Online },
-    makeCache: Options.cacheWithLimits({
-        MessageManager: {
-            sweepFilter: Sweepers.filterByLifetime({
-                lifetime: 1800
-            }),
-            sweepInterval: 1800
-        },
-        ThreadManager: {
-            sweepFilter: Sweepers.filterByLifetime({
-                excludeFromSweep: (thread) => !thread.archived,
-            }),
-            sweepInterval: 1800
-        }
-    }),
     partials: [ 'MESSAGE', 'USER' ],
     intents: [
         Intents.FLAGS.DIRECT_MESSAGES,

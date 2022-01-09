@@ -6,7 +6,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, GuildMember, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, Permissions } from 'discord.js';
 import { argv } from 'process';
 import { bold, inlineCode, time as formatTime } from '@khaf/builders';
 
@@ -80,7 +80,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         if (!hasPerms(interaction.channel, interaction.member, perms)) {
             return `❌ You do not have permission to ban this member, try to ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {

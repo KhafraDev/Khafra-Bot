@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 interface Total {
     total_points: string
@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const member =
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);

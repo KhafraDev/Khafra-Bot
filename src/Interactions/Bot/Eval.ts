@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { codeBlock } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
 
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: CommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction) {
         const text = interaction.options.getString('string', true);
 
         const context = createContext({ interaction });

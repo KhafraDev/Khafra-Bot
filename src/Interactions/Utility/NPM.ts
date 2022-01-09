@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { bold, inlineCode, time } from '@khaf/builders';
 import { npm } from '@khaf/npm';
@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const name = interaction.options.getString('name', true);
         const version = interaction.options.getString('version') ?? 'latest';
         const p = await npm(name);

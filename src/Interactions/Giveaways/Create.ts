@@ -7,7 +7,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
-import { CommandInteraction, NewsChannel, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 
@@ -21,7 +21,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel;
         const prize = interaction.options.getString('prize', true);
         const ends = parseStrToMs(interaction.options.getString('ends', true));

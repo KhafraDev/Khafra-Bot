@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@khaf/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 
@@ -18,7 +18,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: CommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction) {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {

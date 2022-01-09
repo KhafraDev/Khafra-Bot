@@ -1,7 +1,7 @@
 import { hyperlink, inlineCode } from '@khaf/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { join } from 'path';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         const name = interaction.options.getString('voice', true).toLowerCase();
         const text = interaction.options.getString('text', true);
         const obj = keys.find(key => key.name.toLowerCase() === name);

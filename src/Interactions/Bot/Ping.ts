@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { CommandInteraction, SnowflakeUtil } from 'discord.js';
+import { ChatInputCommandInteraction, SnowflakeUtil } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: CommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction) {
         const m = await interaction.reply({
             embeds: [Embed.ok('Pinging...!')],
             fetchReply: true

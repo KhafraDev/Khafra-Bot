@@ -1,4 +1,4 @@
-import { CommandInteraction, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction) {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(
