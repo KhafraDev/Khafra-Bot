@@ -26,7 +26,7 @@ export class kCommand extends Command {
 
     async init(message: Message) {
         if (message.attachments.size === 0)
-            return this.Embed.generic(this, 'No image attached!');
+            return this.Embed.error('No image was attached!');
 
         void message.channel.sendTyping();
         

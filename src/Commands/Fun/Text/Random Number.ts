@@ -1,8 +1,8 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message } from 'discord.js';
-import crypto from 'crypto';
+import { Arguments, Command } from '#khaf/Command';
 import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { inlineCode } from '@khaf/builders';
+import crypto from 'crypto';
+import { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
 
@@ -41,10 +41,9 @@ export class kCommand extends Command {
             max < min ||                   // min is greater than max
             !Number.isSafeInteger(min) || !Number.isSafeInteger(max)
         ) {
-            return this.Embed.generic(
-                this,
-                'Invalid number(s) provided! Numbers ``cannot equal`` one another ' + 
-                'and the difference between the two ``cannot be greater`` than 281,474,976,710,655 (2^48-1)!'
+            return this.Embed.error(
+                `Invalid number(s) provided! Numbers ${inlineCode('cannot equal')} one another ` + 
+                `and the difference between the two ${inlineCode('cannot be greater')} than 2^48-1!`
             );
         }
 

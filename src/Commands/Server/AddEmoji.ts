@@ -25,7 +25,7 @@ export class kCommand extends Command {
 
     async init(message: Message<true>, { args }: Arguments) {
         if (args.length === 1 && message.attachments.size === 0)
-            return this.Embed.generic(this, 'No attachment was included and no image link was provided!');
+            return this.Embed.error('No attachment was included and no image link was provided!');
 
         let name: string | null = null,
             link: string | MessageAttachment | null = null;

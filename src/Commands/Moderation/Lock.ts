@@ -36,7 +36,7 @@ export class kCommand extends Command {
         const everyone = message.guild.roles.everyone;
 
         if (!isText(text)) {
-            return this.Embed.generic(this, 'No channel found!');
+            return this.Embed.error(`This command only works in text & news channels.`);
         } else if (!hasPerms(text, message.guild.me, this.permissions)) {
             if (message.guild.me) {
                 return this.Embed.perms(text, message.guild.me, this.permissions);
