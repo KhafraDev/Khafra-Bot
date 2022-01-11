@@ -1,7 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { inlineCode } from '@khaf/builders';
-import crypto from 'crypto';
 import { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
@@ -24,12 +22,6 @@ export class kCommand extends Command {
     }
 
     async init(_message: Message, { args }: Arguments) {
-        if (!('randomInt' in crypto)) {
-            return this.Embed.error(`
-            The ${inlineCode('node')} version the bot is running on is too old!
-            `);
-        }
-
         const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
         const max = +maxStr + 1;
         const min = +minStr;
@@ -47,10 +39,8 @@ export class kCommand extends Command {
             );
         }
 
-        const num = await rand(min, max);
+        const num = Math.floor(Math.random() * (max - min) + min);
        
-        return this.Embed.ok(`
-        Your number is ${inlineCode(`${num}`)}!
-        `);
+        return this.Embed.ok(`Your number is ${inlineCode(`${num}`)}!`);
     }
 }

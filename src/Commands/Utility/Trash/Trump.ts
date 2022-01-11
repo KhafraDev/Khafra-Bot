@@ -1,12 +1,11 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Interaction, Message, MessageActionRow } from 'discord.js';
-import { rand } from '#khaf/utility/Constants/OneLiners.js';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { assets } from '#khaf/utility/Constants/Path.js';
-import { join } from 'path';
-import { Paginate } from '#khaf/utility/Discord/Paginate.js';
+import { Arguments, Command } from '#khaf/Command';
 import { MessageEmbed } from '#khaf/Embed';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
+import { Paginate } from '#khaf/utility/Discord/Paginate.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { Interaction, Message, MessageActionRow } from 'discord.js';
+import { join } from 'path';
 
 const Trump = createFileWatcher(
     [] as typeof import('../../../../assets/JSON/Trump.json'),
@@ -30,7 +29,7 @@ export class kCommand extends Command {
 
     async init(message: Message, { args }: Arguments) {
         const item = args.length === 0 
-            ? [Trump[await rand(Trump.length)]]
+            ? [Trump[Math.floor(Math.random() * Trump.length)]]
             : Trump.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
             
         if (item.length === 0) {

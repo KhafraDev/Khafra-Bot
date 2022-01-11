@@ -1,8 +1,7 @@
 import { Command } from '#khaf/Command';
-import { decodeXML } from 'entities';
-import { RSSReader } from '#khaf/utility/RSS.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { rand } from '#khaf/utility/Constants/OneLiners.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { decodeXML } from 'entities';
 import { fetch } from 'undici';
 
 interface ITheOnionAPI {
@@ -88,7 +87,7 @@ export class kCommand extends Command {
             return this.Embed.error(`Try again in a minute!`);
         }
 
-        const i = await rand(rss.results.size);
+        const i = Math.floor(Math.random() * rss.results.size);
         const id = [...rss.results][i].guid;
 
         const r = await fetch(`https://theonion.com/api/core/corepost/getList?id=${id}`);

@@ -1,7 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { rand } from '#khaf/utility/Constants/OneLiners.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
@@ -179,7 +178,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         currentGames.add(interaction.user.id);
-        const word = words[await rand(words.length)]
+        const word = words[Math.floor(Math.random() * words.length)];
         const game = new Hangman(word);
 
         const m = await interaction.editReply(game.toJSON());
