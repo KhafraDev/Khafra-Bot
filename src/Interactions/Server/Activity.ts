@@ -14,11 +14,6 @@ import { env } from 'process';
 
 const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
-const activityPerms = new Permissions([
-    Permissions.FLAGS.CREATE_INSTANT_INVITE,
-    Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
-]);
-
 const Activities = {
     'Poker': '755827207812677713',
     'Betrayal.io': '773336526917861400',
@@ -31,7 +26,7 @@ const Activities = {
     'Awkword': '879863881349087252',
     'Spell Cast': '852509694341283871',
     'Checkers': '832013003968348200',
-    'Sketchy Artist': '879864070101172255',
+    // 'Sketchy Artist': '879864070101172255',
     'Putt Party': '832012854282158180',
 } as const;
 
@@ -40,33 +35,37 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'activity',
             description: 'Play a game in VC!',
+            default_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
-                    name: 'name',
-                    description: 'Name of the game to play.',
+                    name: 'game',
+                    description: 'The game you wish to play.',
                     required: true,
                     choices: Object.entries(Activities).map(([name, value]) => ({ name, value }))
                 },
                 {
                     type: ApplicationCommandOptionType.Channel,
                     name: 'channel',
-                    description: 'Channel to play the game in!',
+                    description: 'Voice channel to play the game in!',
                     channel_types: [ ChannelType.GuildVoice ],
                     required: true
                 }
             ]
         };
 
-        super(sc);
+        super(sc, {
+            permissions: [
+                Permissions.FLAGS.CREATE_INSTANT_INVITE,
+                Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
+            ]
+        });
     }
 
     async init(interaction: ChatInputCommandInteraction) {
-        if (!interaction.inCachedGuild()) {
+        if (!interaction.inGuild()) {
             return `❌ This command is not available in this guild, please re-invite the bot with the correct permissions!`;
-        } else if (!hasPerms(interaction.channel, interaction.member, activityPerms)) {
-            return `❌ You do not have the permissions needed to start an activity!`;
-        } else if (!hasPerms(interaction.channel, interaction.guild.me, activityPerms)) {
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {
             return `❌ I do not have perms to create an activity in this channel!`;
         }
 

@@ -295,18 +295,22 @@ export class KhafraClient extends Client {
             import(pathToFileURL(timer).href) as Promise<{ [key: string]: new () => Timer }>
         );
         const settled = await Promise.allSettled(importPromise);
+        let loadedTimers = 0;
 
         for (const imported of settled) {
             if (imported.status === 'fulfilled') {
                 const key = Object.keys(imported.value)[0];
                 const timer = new imported.value[key]();
 
+                loadedTimers++;
                 timer.setInterval();
             } else {
                 logger.error(imported.reason);
                 exit(1);
             }
         }
+
+        logger.log(green(`Loaded ${bright(loadedTimers)}/${bright(settled.length)} timers!`));
     }
 
     init = once(async () => {

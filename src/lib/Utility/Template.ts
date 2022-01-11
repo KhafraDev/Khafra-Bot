@@ -20,19 +20,10 @@ export const trim = (...s: [TemplateStringsArray, ...(string | number)[]]) => {
 /**
  * Strip leading indents from a multi-lined template literal.
  */
-export const stripIndents = (temp: TemplateStringsArray, ...args: unknown[]) => {
-    const s = temp.raw;
-    let f = '';
-    for (const item of s) {
-        // rather than using \s+ for all whitespace, we use a normal space
-        // this fixes a bug where two+ new lines will be transformed into 1
-        const str = item
-            .replace(/\n +/g, '\n')
-            // then we remove backslashes not followed by a-z (\n, \t, etc. will not be matched)
-            .replace(/\\(?![a-z])/g, '');
+export const stripIndents = (raw: TemplateStringsArray, ...args: unknown[]) => {
+    const r = String.raw({ raw }, ...args);
 
-        f += `${str}${args.shift() ?? ''}`;
-    }
-
-    return f.trim();
+    return r
+        .replace(/^[^\S\r\n]+/gm, '')
+        .trim();
 }

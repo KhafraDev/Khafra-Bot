@@ -5,6 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
+import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
 import { ChatInputCommandInteraction, NewsChannel, TextChannel } from 'discord.js';
@@ -68,13 +69,13 @@ export class kSubCommand extends InteractionSubCommand {
                 ${channel.id}::text,
                 ${interaction.user.id}::text,
                 ${endsDate}::timestamp,
-                ${prize}::text,
+                ${prize},
                 ${winners}::smallint
             ) ON CONFLICT DO NOTHING
             RETURNING id;
         `;
 
-        return `
+        return stripIndents`
         ✅ Started a giveaway in ${channel}!
 
         • ${winners} winner${plural(winners)}

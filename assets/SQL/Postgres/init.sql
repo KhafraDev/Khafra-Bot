@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 CREATE TABLE IF NOT EXISTS kbBible (
     idx SERIAL PRIMARY KEY,
     book TEXT NOT NULL,
@@ -14,4 +16,13 @@ CREATE TABLE IF NOT EXISTS kbPocket (
     username TEXT UNIQUE NOT NULL,
 
     CONSTRAINT user_id_name UNIQUE (user_id, username)
+);
+
+CREATE TABLE IF NOT EXISTS "kbReminders" (
+    "id" uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    "userId" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "time" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "once" BOOLEAN NOT NULL,
+    "interval" INTERVAL DEFAULT NULL
 );

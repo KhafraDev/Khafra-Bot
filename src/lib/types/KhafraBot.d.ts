@@ -33,3 +33,12 @@ export interface Giveaway {
 }
 
 export type PartialGuild = Pick<kGuild, 'prefix' | 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;
+
+export interface kReminder {
+    id: UUID4
+    userId: string
+    message: string
+    time: Date
+    once: boolean
+    interval: string
+}
