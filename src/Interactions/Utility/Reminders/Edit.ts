@@ -38,13 +38,20 @@ export class kSubCommand extends InteractionSubCommand {
 
         const date = parsedTime ? new Date(Date.now() + parsedTime) : null;
         
-        await sql<{ id: string }[]>`
+        const rows = await sql<{ id: string }[]>`
             UPDATE "kbReminders" SET
                 "message" = COALESCE(NULLIF(${text}::text, NULL), "kbReminders"."message"),
                 "time" = COALESCE(NULLIF(${date}::timestamp, NULL), "kbReminders"."time"),
                 "once" = COALESCE(NULLIF(${typeof once === 'boolean' ? !once : null}::boolean, NULL), "kbReminders"."once") 
-            WHERE id = ${id}::uuid;
+            WHERE
+                "id" = ${id}::uuid AND
+                "userId" = ${interaction.user.id}::text
+            ;
         `;
+
+        if (rows.length === 0) {
+            return `❌ You do not have any reminders with that ID.`;
+        }
 
         const intervalMessage = once ? '' : parsedTime
             ? ` (Interval ${formatTime(Math.floor(parsedTime / 1000), 'R')})`
