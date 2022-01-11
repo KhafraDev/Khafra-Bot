@@ -52,11 +52,18 @@ const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
 
 const objectToReadable = (o: unknown) => {
     const tab = `    `;
-    let message = '';
-    if (o && typeof o === 'object') {
-        if (o instanceof Error) {
-            message += errorToReadable(o);
-        } else {
+
+    switch (typeof o) {
+        case 'symbol': return ' ' + o.toString();
+        case 'object': {
+            if (o === null) {
+                return `[NULL]: ${o}${EOL}`
+            } else if (o instanceof Error) {
+                return EOL + errorToReadable(o);
+            }
+
+            let message = '';
+
             for (const key in o) {
                 const ref = o[key as keyof typeof o] as unknown;
                 message += tab + key + ': ';
@@ -74,18 +81,22 @@ const objectToReadable = (o: unknown) => {
 
                 message += EOL;
             }
+
+            return EOL + message;
         }
-    } else {
-        message += `${tab}${typeof o}: ${o}${EOL}`;
+        default: return ` ${o}`;
     }
-    
-    return message;
 }
 
 /**
  * A logger that outputs very fast in similar fashion to pino-pretty!
  */
 class Logger {
+    close (): void {
+        stderrStream.end();
+        stdoutStream.end();
+    }
+
     write (message: string, level: LoggerLevels) {
         if (level === 'ERROR' || level === 'WARN') {
             stderrStream.write(message);
@@ -98,11 +109,7 @@ class Logger {
         const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + processId + ') on ' + host + ': ';
         // const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
         if (typeof message === 'string') {
-            if (data && typeof data === 'object') {
-                this.write(starter + message + EOL + objectToReadable(data), level);
-            } else {
-                this.write(starter + message + EOL, level);
-            }
+            this.write(starter + message + objectToReadable(data), level);
         } else {
             this.write(starter + EOL + objectToReadable(message), level);
         }

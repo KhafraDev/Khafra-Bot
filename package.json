@@ -29,6 +29,7 @@
     "entities": "^3.0.1",
     "esqlite": "^0.0.7",
     "fast-xml-parser": "^4.0.1",
+    "node-graceful": "^3.1.0",
     "postgres": "^2.0.0-beta.11",
     "redis": "^4.0.1",
     "sonic-boom": "^2.5.0",

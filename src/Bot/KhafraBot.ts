@@ -76,12 +76,10 @@ export class KhafraClient extends Client {
         const importPromise = commands.map(command => import(pathToFileURL(command).href) as DynamicImportCommand);
         const settled = await Promise.allSettled(importPromise);
 
-        let rejected = 0;
-
         for (const fileImport of settled) {
             if (fileImport.status === 'rejected') {
-                console.log(fileImport.reason);
-                rejected++;
+                logger.error(fileImport.reason);
+                exit(1);
             } else {
                 const kCommand = new fileImport.value.kCommand();
                 
@@ -90,7 +88,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        console.log(green(`Loaded ${bright(commands.length - rejected)}/${settled.length} commands!`));
+        logger.log(green(`Loaded ${bright(commands.length)} commands!`));
         return KhafraClient.Commands;
     }
 
@@ -99,12 +97,10 @@ export class KhafraClient extends Client {
         const importPromise = events.map(event => import(pathToFileURL(event).href) as DynamicImportEvent);
         const settled = await Promise.allSettled(importPromise);
 
-        let rejected = 0;
-
         for (const fileImport of settled) {
             if (fileImport.status === 'rejected') {
-                console.log(fileImport.reason);
-                rejected++;
+                logger.error(fileImport.reason);
+                exit(1);
             } else {
                 const kEvent = new fileImport.value.kEvent();
 
@@ -112,7 +108,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        console.log(green(`Loaded ${bright(KhafraClient.Events.size - rejected)}/${settled.length} events!`));
+        logger.log(green(`Loaded ${bright(KhafraClient.Events.size)} events!`));
         return KhafraClient.Events;
     }
 
@@ -281,7 +277,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        console.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
+        logger.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
         return KhafraClient.Interactions.Commands;
     }
 
@@ -319,6 +315,6 @@ export class KhafraClient extends Client {
         await this.loadCommands();
         await this.startTimers();
         await this.login(env.TOKEN);
-        console.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`));
+        logger.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`));
     });
 }

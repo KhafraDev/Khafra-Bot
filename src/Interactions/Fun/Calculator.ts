@@ -59,7 +59,6 @@ class Parser extends Array<string> {
         // If the calculator has no open parenthesis,
         // then a closing parenthesis would be invalid.
         if (token === ')' && this.openParenthesis === 0) {
-            console.log(this.openParenthesis, token);
             return false;
         }
 

@@ -6,7 +6,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 const dbPath = join(assets, 'khafrabot.db');
-const db = new Database(dbPath);
+export const db = new Database(dbPath);
 db.open();
 
 type Message<T extends unknown[]> = { 

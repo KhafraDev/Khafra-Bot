@@ -20,7 +20,7 @@ export class kEvent extends Event<'ready'> {
         
         if (typeof config.botOwner === 'string') {
             if (!validSnowflake(config.botOwner)) {
-                return console.log('Logged in, configuration bot owner is not a valid Snowflake!');
+                return logger.warn('Logged in, configuration bot owner is not a valid Snowflake!');
             }
             
             const user = await client.users.fetch(config.botOwner);
@@ -29,7 +29,7 @@ export class kEvent extends Event<'ready'> {
             }));
         
             if (err !== null) {
-                console.log(`Logged in! Could not send message to the bot owner.`);
+                logger.warn(`Logged in! Could not send message to the bot owner.`);
             }
         }
 

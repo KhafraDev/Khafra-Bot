@@ -33,5 +33,6 @@ export const client = {
         if (item) cache.set(key, value);
 
         return item;
-    }
+    },
+    exit: () => messageClient.quit()
 }
