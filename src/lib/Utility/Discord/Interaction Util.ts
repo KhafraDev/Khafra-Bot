@@ -6,7 +6,19 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { AnyChannel, ChatInputCommandInteraction, Permissions, Snowflake } from 'discord.js';
+import {
+    AnyChannel,
+    ChatInputCommandInteraction,
+    MessageContextMenuCommandInteraction,
+    Permissions,
+    Snowflake,
+    UserContextMenuCommandInteraction
+} from 'discord.js';
+
+type Interactions =
+    | ChatInputCommandInteraction
+    | UserContextMenuCommandInteraction
+    | MessageContextMenuCommandInteraction;
 
 const perms = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -18,7 +30,7 @@ const perms = new Permissions([
  * Fetches the guild settings given a ChatInputCommandInteraction, or
  * null if the command is not in a guild or an error occurs. 
  */
-export const interactionGetGuildSettings = async (interaction: ChatInputCommandInteraction) => {
+export const interactionGetGuildSettings = async (interaction: Interactions) => {
     if (!interaction.inGuild()) return null;
 
     let settings: kGuild;
@@ -51,7 +63,7 @@ export const interactionGetGuildSettings = async (interaction: ChatInputCommandI
  * it cannot be fetched.
  */
 export const interactionFetchChannel = async (
-    interaction: ChatInputCommandInteraction,
+    interaction: Interactions,
     id: Snowflake
 ) => {
     const channelManager = interaction.guild?.channels;

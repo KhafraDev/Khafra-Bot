@@ -4,7 +4,9 @@ import {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     InteractionReplyOptions,
-    PermissionResolvable
+    MessageContextMenuCommandInteraction,
+    PermissionResolvable,
+    UserContextMenuCommandInteraction
 } from 'discord.js';
 
 interface InteractionOptions {
@@ -78,4 +80,16 @@ export abstract class InteractionAutocomplete {
     public constructor (public data: SubcommandOptions) {}
 
     abstract handle (arg: AutocompleteInteraction): Promise<void>;
+}
+
+/**
+ * @link {https://discord.com/developers/docs/interactions/application-commands#user-commands}
+ */
+export abstract class InteractionUserCommand {
+    constructor (
+        public data: InteractionData,
+        public options: InteractionOptions = {}
+    ) {}
+
+    abstract init (interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction): Promise<HandlerReturn>;
 }

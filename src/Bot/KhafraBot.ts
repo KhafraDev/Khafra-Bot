@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
-import { InteractionAutocomplete, Interactions, InteractionSubCommand } from '#khaf/Interaction';
+import { InteractionAutocomplete, Interactions, InteractionSubCommand, InteractionUserCommand } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
 import { Timer } from '#khaf/Timer';
 import { bright, green, magenta } from '#khaf/utility/Colors.js';
@@ -24,7 +24,8 @@ type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>
 type DynamicImportAppCommand = 
     | Promise<{ kInteraction: new () => Interactions }> 
     | Promise<{ kSubCommand: new () => InteractionSubCommand }>
-    | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>;
+    | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>
+    | Promise<{ kUserCommand: new () => InteractionUserCommand }>;
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 const toBase64 = (command: unknown) => Buffer.from(JSON.stringify(command)).toString('base64');
@@ -41,7 +42,8 @@ export class KhafraClient extends Client {
     static Interactions = {
         Commands: new Map<string, Interactions>(),
         Subcommands: new Map<string, InteractionSubCommand>(),
-        Autocomplete: new Map<string, InteractionAutocomplete>()
+        Autocomplete: new Map<string, InteractionAutocomplete>(),
+        UserCommands: new Map<string, InteractionUserCommand>()
     } as const;
     // static Interactions: Map<string, Interactions> = new Map();
     // static Subcommands: Map<string, InteractionSubCommand> = new Map();
@@ -120,8 +122,9 @@ export class KhafraClient extends Client {
         const imported = await Promise.allSettled(importPromise);
 
         const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
-        const loaded: Interactions[] = [];
+        const loaded: (Interactions | InteractionUserCommand)[] = [];
         let loadedSubCommands = 0;
+        let loadedUserCommands = 0;
 
         for (const interaction of imported) {
             if (interaction.status === 'fulfilled') {
@@ -139,6 +142,11 @@ export class KhafraClient extends Client {
                         `${autocomplete.data.references}-${autocomplete.data.name}`, 
                         autocomplete
                     );
+                } else if ('kUserCommand' in interaction.value) {
+                    const userCommand = new interaction.value.kUserCommand();
+                    KhafraClient.Interactions.UserCommands.set(userCommand.data.name, userCommand);
+                    loaded.push(userCommand);
+                    loadedUserCommands++;
                 }
             } else {
                 logger.error(interaction);
@@ -277,7 +285,12 @@ export class KhafraClient extends Client {
             }
         }
 
-        logger.log(green(`Loaded ${bright(loaded.length)} interactions and ${bright(loadedSubCommands)} sub commands!`));
+        const loadedMessage =
+            `Loaded ${bright(loaded.length)} interactions, ` +
+            `${bright(loadedSubCommands)} sub commands, ` +
+            `and ${bright(loadedUserCommands)} user commands!`;
+
+        logger.log(green(loadedMessage));
         return KhafraClient.Interactions.Commands;
     }
 

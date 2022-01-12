@@ -7,8 +7,13 @@ import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interacti
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
+import { ChatInputCommandInteraction, Interaction, InteractionReplyOptions, MessageAttachment, MessageContextMenuCommandInteraction, MessageEmbed, UserContextMenuCommandInteraction } from 'discord.js';
 import { argv } from 'process';
+
+type Interactions =
+    ChatInputCommandInteraction & 
+    MessageContextMenuCommandInteraction &
+    UserContextMenuCommandInteraction;
 
 const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -33,11 +38,17 @@ export class kEvent extends Event<'interactionCreate'> {
                 return handler.handle(interaction);
             }
         }
-        
-        if (!interaction.isChatInputCommand()) return;
-        if (!KhafraClient.Interactions.Commands.has(interaction.commandName)) return;
 
-        const command = KhafraClient.Interactions.Commands.get(interaction.commandName)!;
+        if (
+            !interaction.isChatInputCommand() && 
+            !interaction.isContextMenuCommand()
+        ) {
+            return;
+        }
+
+        const command = interaction.isContextMenuCommand()
+            ? KhafraClient.Interactions.UserCommands.get(interaction.commandName)!
+            : KhafraClient.Interactions.Commands.get(interaction.commandName)!;
 
         if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({
@@ -55,7 +66,7 @@ export class kEvent extends Event<'interactionCreate'> {
             if (command.options.defer)
                 await interaction.deferReply();
 
-            const result = await command.init(interaction);
+            const result = await command.init(interaction as Interactions);
             const param = {} as InteractionReplyOptions;
 
             if (interaction.replied) {

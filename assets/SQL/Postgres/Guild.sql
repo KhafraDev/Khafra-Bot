@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS kbGuild (
     mod_log_channel TEXT DEFAULT NULL,
     welcome_channel TEXT DEFAULT NULL,
     reactRoleChannel TEXT DEFAULT NULL,
+    ticketChannel TEXT DEFAULT NULL,
+    "staffChannel" TEXT DEFAULT NULL,
     UNIQUE (guild_id)
 );
 
