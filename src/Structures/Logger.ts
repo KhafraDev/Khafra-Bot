@@ -1,10 +1,9 @@
 import {
-    bright, cyan, magenta, red, yellow
+    bright, cyan, green, magenta, red, yellow
 } from '#khaf/utility/Colors.js';
 import { EOL, hostname } from 'os';
+import { pid, stderr, stdout } from 'process';
 import SonicBoom from 'sonic-boom';
-import { inspect } from 'util';
-import { stdout, stderr, pid } from 'process';
 
 type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';
 
@@ -13,6 +12,7 @@ const stderrStream = new SonicBoom({ fd: stderr.fd, sync: false });
 const errorStackIndent = / {4}/g;
 const processId = pid;
 const host = hostname();
+const blankParam = Symbol('khafra.logging');
 
 const getLevel = (l: LoggerLevels) => {
     switch (l) {
@@ -26,13 +26,13 @@ const getLevel = (l: LoggerLevels) => {
 const isDate = (something: object): something is Date => 'toISOString' in something;
 
 // TODO(@KhafraDev): update type once Error has a cause
-const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
+const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1, newLineFirst = false) => {
     let error = '';
 	const indent = ' '.repeat(indentation * 4);
     const moreIndent = ' '.repeat((indentation + 1) * 4);
 
 	if (err.stack) {
-		error += indentation === 1 ? '> ' : '\n> ';
+        if (newLineFirst) error += EOL;
 		error += indent + err.stack.replace(errorStackIndent, moreIndent);
 	} else {
         error += indent + err.message.replace(errorStackIndent, moreIndent) + EOL;
@@ -40,9 +40,9 @@ const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
 
 	if ('cause' in err) {
         if (err.cause instanceof Error) {
-            error += errorToReadable(err.cause, indentation + 1);
+            error += errorToReadable(err.cause, indentation + 1, true) + EOL;
         } else {
-            error += '\n>' + moreIndent + ' cause: ' + err.cause;
+            error += moreIndent + ' cause: ' + err.cause + EOL;
         }
 	}
 
@@ -50,16 +50,17 @@ const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1) => {
 	return error;
 }
 
-const objectToReadable = (o: unknown) => {
-    const tab = `    `;
+const objectToReadable = (o: unknown, depth = 1) => {
+    const tab = '    '.repeat(depth);
 
     switch (typeof o) {
-        case 'symbol': return ' ' + o.toString();
+        case 'symbol': return ' ' + green(o.toString()) + EOL;
+        case 'undefined': return EOL;
         case 'object': {
             if (o === null) {
                 return `[NULL]: ${o}${EOL}`
             } else if (o instanceof Error) {
-                return EOL + errorToReadable(o);
+                return errorToReadable(o, depth).trimStart();
             }
 
             let message = '';
@@ -68,23 +69,24 @@ const objectToReadable = (o: unknown) => {
                 const ref = o[key as keyof typeof o] as unknown;
                 message += tab + key + ': ';
 
-                if (ref && typeof ref === 'object') {
-                    if (isDate(ref)) {
+                const type = typeof ref;
+                if (ref && type === 'object') {
+                    if (isDate(ref as object)) {
                         // toISOString is *slow* - https://twitter.com/dirkdev98/status/1449306210210037762
-                        message += magenta(ref);
+                        message += magenta(ref) + EOL;
                     } else {
-                        message += inspect(ref, undefined, undefined, true);
+                        message += objectToReadable(ref, depth + 1);
                     }
+                } else if (type === 'symbol') {
+                    message += green((ref as symbol).toString()) + EOL;
                 } else {
-                    message += ref;
+                    message += ref + EOL;
                 }
-
-                message += EOL;
             }
 
-            return EOL + message;
+            return message.trimEnd() + EOL;
         }
-        default: return ` ${o}`;
+        default: return ` ${o}` + EOL;
     }
 }
 
@@ -105,11 +107,15 @@ class Logger {
         }
     }
 
-    log (message: unknown, data?: unknown, level: LoggerLevels = 'DEBUG') {
+    log (message: unknown, data: unknown = blankParam, level: LoggerLevels = 'DEBUG') {
         const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + processId + ') on ' + host + ': ';
-        // const starter = `[${Date.now()}] ${getLevel(level)} (${pid} on ${host}): `;
+
         if (typeof message === 'string') {
-            this.write(starter + message + objectToReadable(data), level);
+            if (data === blankParam) {
+                this.write(starter + message + EOL, level);
+            } else {
+                this.write(starter + message + EOL + objectToReadable(data), level);
+            }
         } else {
             this.write(starter + EOL + objectToReadable(message), level);
         }
