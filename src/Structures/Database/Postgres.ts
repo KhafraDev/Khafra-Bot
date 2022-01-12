@@ -13,7 +13,7 @@ export const defaultKGuild = [
     'ticketChannel'
 ].join(', ');
 
-const sqlFiles = await KhafraClient.walk(
+const sqlFiles = KhafraClient.walk(
     join(assets, 'SQL/Postgres'),
     p => p.endsWith('.sql')
 );

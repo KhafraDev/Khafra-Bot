@@ -28,7 +28,7 @@ export const asyncQuery = async <T, P extends unknown[] = string[]>(
 }
 
 export const load = once(async () => {
-    const sql = await KhafraClient.walk(join(assets, 'SQL/SQLite'), p => p.endsWith('.sql'));
+    const sql = KhafraClient.walk(join(assets, 'SQL/SQLite'), p => p.endsWith('.sql'));
 
     for (const file of sql) {
         const text = await readFile(file, 'utf-8');

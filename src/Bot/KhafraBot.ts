@@ -12,8 +12,7 @@ import { REST } from '@discordjs/rest';
 import { Buffer } from 'buffer';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { Client, ClientEvents } from 'discord.js';
-import { existsSync, readFileSync, writeFileSync } from 'fs';
-import { readdir, stat } from 'fs/promises';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { performance } from 'perf_hooks';
 import { argv, env, exit } from 'process';
@@ -51,18 +50,18 @@ export class KhafraClient extends Client {
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
      */
-    static async walk (dir: string, fn: (path: string) => boolean) {
-        const ini = new Set<string>(await readdir(dir));
+    static walk (dir: string, fn: (path: string) => boolean) {
+        const ini = new Set<string>(readdirSync(dir));
         const files = new Set<string>(); 
     
         while (ini.size !== 0) {        
             for (const d of ini) {
                 const path = resolve(dir, d);
                 ini.delete(d); // remove from set
-                const stats = await stat(path);
+                const stats = statSync(path);
     
                 if (stats.isDirectory()) {
-                    for (const f of await readdir(path))
+                    for (const f of readdirSync(path))
                         ini.add(resolve(path, f));
                 } else if (stats.isFile() && fn(d)) {
                     files.add(path);
@@ -74,7 +73,7 @@ export class KhafraClient extends Client {
     }
 
     async loadCommands () {
-        const commands = await KhafraClient.walk('build/src/Commands', p => p.endsWith('.js'));
+        const commands = KhafraClient.walk('build/src/Commands', p => p.endsWith('.js'));
         const importPromise = commands.map(command => import(pathToFileURL(command).href) as DynamicImportCommand);
         const settled = await Promise.allSettled(importPromise);
 
@@ -95,7 +94,7 @@ export class KhafraClient extends Client {
     }
 
     async loadEvents () {
-        const events = await KhafraClient.walk('build/src/Events', p => p.endsWith('.js'));
+        const events = KhafraClient.walk('build/src/Events', p => p.endsWith('.js'));
         const importPromise = events.map(event => import(pathToFileURL(event).href) as DynamicImportEvent);
         const settled = await Promise.allSettled(importPromise);
 
@@ -115,7 +114,7 @@ export class KhafraClient extends Client {
     }
 
     async loadInteractions () {
-        const interactionPaths = await KhafraClient.walk('build/src/Interactions', p => p.endsWith('.js'));
+        const interactionPaths = KhafraClient.walk('build/src/Interactions', p => p.endsWith('.js'));
         const importPromise = interactionPaths.map(
             int => import(pathToFileURL(int).href) as DynamicImportAppCommand
         );
@@ -295,7 +294,7 @@ export class KhafraClient extends Client {
     }
 
     async startTimers () {
-        const timers = await KhafraClient.walk(
+        const timers = KhafraClient.walk(
             'build/src/Structures/Timers',
             (p) => p.endsWith('.js')
         );
