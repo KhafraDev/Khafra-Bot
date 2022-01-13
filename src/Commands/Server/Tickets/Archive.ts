@@ -1,4 +1,4 @@
-import { CategoryChannel, GuildChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
+import { CategoryChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -44,7 +44,7 @@ export class kCommand extends Command {
                 return this.Embed.error(`${message.channel} is not private!`);
             }
         } else {
-            const perms = (message.channel as GuildChannel).permissionOverwrites.cache;
+            const perms = message.channel.permissionOverwrites.cache;
 
             if (!perms.has(message.author.id) || !perms.get(everyoneId)) {
                 return this.Embed.error(`Incorrect permissions setup for ${message.channel}!`);

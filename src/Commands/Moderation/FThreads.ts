@@ -1,5 +1,5 @@
 import { bold, inlineCode, italic } from '@khaf/builders';
-import { Collection, GuildChannel, Message, MessageActionRow, NewsChannel, Permissions, Snowflake, TextChannel } from 'discord.js';
+import { GuildChannel, Message, MessageActionRow, Permissions } from 'discord.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -76,7 +76,7 @@ export class kCommand extends Command {
             !isThread(c) &&
             !isVoice(c) &&
             !c.permissionsLocked
-        ) as Collection<Snowflake, TextChannel | NewsChannel>;
+        );
     
         const pr: Promise<GuildChannel>[] = [];
         for (const [, channel] of channels) {

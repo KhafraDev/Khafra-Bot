@@ -70,11 +70,11 @@ const objectToReadable = (o: unknown, depth = 1) => {
 
                 const type = typeof ref;
                 if (ref && type === 'object') {
-                    message += EOL;
                     if (isDate(ref as object)) {
                         // toISOString is *slow* - https://twitter.com/dirkdev98/status/1449306210210037762
                         message += magenta(ref) + EOL;
                     } else {
+                        message += EOL;
                         message += objectToReadable(ref, depth + 1);
                     }
                 } else if (type === 'symbol') {

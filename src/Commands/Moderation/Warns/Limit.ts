@@ -5,7 +5,7 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
 
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.perms(
-                message.channel as TextChannel,
+                message.channel,
                 message.member,
                 Permissions.FLAGS.ADMINISTRATOR
             );

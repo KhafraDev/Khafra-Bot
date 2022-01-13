@@ -1,5 +1,5 @@
 import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -38,7 +38,7 @@ export class kCommand extends Command {
         
         if (!isText(channel) || !hasPerms(channel, message.guild.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
             return this.Embed.perms(
-                channel as TextChannel,
+                channel,
                 message.guild.me,
                 Permissions.FLAGS.MANAGE_MESSAGES
             );

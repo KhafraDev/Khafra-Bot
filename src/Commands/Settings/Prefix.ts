@@ -4,7 +4,7 @@ import { client } from '#khaf/database/Redis.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
     async init(message: Message<true>, { args }: Arguments) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
             return this.Embed.perms(
-                message.channel as TextChannel,
+                message.channel,
                 message.member,
                 Permissions.FLAGS.ADMINISTRATOR
             );

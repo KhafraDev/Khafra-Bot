@@ -5,7 +5,7 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Message, Permissions, TextChannel } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -33,7 +33,7 @@ export class kCommand extends Command {
     async init(message: Message<true>) {
         if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
             return this.Embed.perms(
-                message.channel as TextChannel,
+                message.channel,
                 message.member,
                 Permissions.FLAGS.ADMINISTRATOR
             );

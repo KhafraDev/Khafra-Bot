@@ -3,13 +3,10 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
 import {
+    AnyChannel,
     GuildMember,
-    NewsChannel,
     PermissionResolvable,
-    Role,
-    TextChannel,
-    ThreadChannel,
-    VoiceChannel
+    Role
 } from 'discord.js';
 import { join } from 'path';
 
@@ -17,8 +14,6 @@ const config = createFileWatcher(
     {} as typeof import('../../../../config.json'),
     join(cwd, 'config.json')
 );
-
-type PermissionChannels = TextChannel | NewsChannel | VoiceChannel | ThreadChannel;
 
 const colors = {
     ok: Number.parseInt(config.embed.success.slice(1), 16),
@@ -50,7 +45,7 @@ export const Embed = {
     },
 
     perms: (
-        inChannel: PermissionChannels,
+        inChannel: AnyChannel,
         userOrRole: GuildMember | Role | null,
         permissions: PermissionResolvable
     ) => {
