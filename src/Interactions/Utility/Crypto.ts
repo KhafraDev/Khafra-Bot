@@ -34,6 +34,8 @@ export class kInteraction extends Interactions {
         );
 
         if (currencies === undefined) {
+            return `❌ The cache is being loaded for the first time, please wait a minute!`;
+        } else if (currencies.length === 0) {
             return `❌ No currency with that name or id could be found!`;
         }
 
