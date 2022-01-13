@@ -28,8 +28,8 @@ const isDate = (something: object): something is Date => 'toISOString' in someth
 // TODO(@KhafraDev): update type once Error has a cause
 const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1, newLineFirst = false) => {
     let error = '';
-	const indent = ' '.repeat(indentation * 4);
-    const moreIndent = ' '.repeat((indentation + 1) * 4);
+    const indent = ' '.repeat(indentation * 2);
+    const moreIndent = ' '.repeat((indentation + 1) * 2);
 
 	if (err.stack) {
         if (newLineFirst) error += EOL;
@@ -40,27 +40,26 @@ const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1, newL
 
 	if ('cause' in err) {
         if (err.cause instanceof Error) {
-            error += errorToReadable(err.cause, indentation + 1, true) + EOL;
+            error += errorToReadable(err.cause, indentation + 1, true);
         } else {
-            error += moreIndent + ' cause: ' + err.cause + EOL;
+            error += moreIndent + ' cause: ' + objectToReadable(err.cause, indentation + 1);
         }
 	}
 
-    (error as unknown as number) | 0;
 	return error;
 }
 
 const objectToReadable = (o: unknown, depth = 1) => {
-    const tab = '    '.repeat(depth);
-
     switch (typeof o) {
         case 'symbol': return ' ' + green(o.toString()) + EOL;
         case 'undefined': return EOL;
         case 'object': {
+            const tab = '  '.repeat(depth);
+
             if (o === null) {
                 return `[NULL]: ${o}${EOL}`
             } else if (o instanceof Error) {
-                return errorToReadable(o, depth).trimStart();
+                return errorToReadable(o, depth) + EOL;
             }
 
             let message = '';
@@ -71,6 +70,7 @@ const objectToReadable = (o: unknown, depth = 1) => {
 
                 const type = typeof ref;
                 if (ref && type === 'object') {
+                    message += EOL;
                     if (isDate(ref as object)) {
                         // toISOString is *slow* - https://twitter.com/dirkdev98/status/1449306210210037762
                         message += magenta(ref) + EOL;
