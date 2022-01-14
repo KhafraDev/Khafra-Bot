@@ -1,3 +1,4 @@
+import '#khaf/utility/__proto__.js';
 import '#khaf/utility/load.env.js';
 import '#khaf/utility/Rejections.js';
 
