@@ -89,7 +89,7 @@ export class kInteraction extends Interactions {
             }));
         });
 
-        c.on('end', (c) => {
+        c.once('end', (c) => {
             return void dontThrow(c.last()!.update({ components: disableAll(m) }))
         });
     }

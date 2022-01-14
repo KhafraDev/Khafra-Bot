@@ -35,6 +35,8 @@ const setInteractionIds = (commands: APIApplicationCommand[]) => {
     }
 }
 
+export const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
+
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
     static Events: Map<keyof ClientEvents, Event> = new Map();
@@ -120,7 +122,6 @@ export class KhafraClient extends Client {
         );
         const imported = await Promise.allSettled(importPromise);
 
-        const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
         const loaded: (Interactions | InteractionUserCommand)[] = [];
         let loadedSubCommands = 0;
         let loadedUserCommands = 0;

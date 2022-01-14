@@ -87,7 +87,7 @@ export class kCommand extends Command {
             return void dontThrow(i.update({ content: res.url[page] }))
                 .then(([e]) => e !== null && collector.stop());
         });
-        collector.on('end', (c, r) => {
+        collector.once('end', (c, r) => {
             if (r === 'deny') {
                 return void dontThrow(c.last()!.update({ components: disableAll(m) }));
             }

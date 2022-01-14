@@ -178,7 +178,7 @@ export class kCommand extends Command {
             }))
         }
 
-        interactionCollector.on('end', end);
-        messageCollector.on('end', end);
+        interactionCollector.once('end', end);
+        messageCollector.once('end', end);
     }
 }

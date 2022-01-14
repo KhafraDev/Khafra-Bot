@@ -136,7 +136,7 @@ export class kCommand extends Command {
                 }
             });
 
-            c.on('end', () => res(null));
+            c.once('end', () => res(null));
         });
 
         if (status === null) return; // command was canceled or poll config wasn't finished

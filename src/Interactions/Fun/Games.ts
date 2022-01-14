@@ -52,6 +52,11 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'blackjack',
                     description: 'Play a game of Blackjack against the bot!'
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'wordle',
+                    description: 'Play a game of Wordle!'
                 }
             ]
         };

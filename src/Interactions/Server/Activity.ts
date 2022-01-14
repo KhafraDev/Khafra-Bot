@@ -1,18 +1,15 @@
+import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { REST } from '@discordjs/rest';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
     APIInvite,
-    APIVersion, ApplicationCommandOptionType, ChannelType,
+    ApplicationCommandOptionType, ChannelType,
     InviteTargetType, RESTPostAPIApplicationCommandsJSONBody, RESTPostAPIChannelInviteJSONBody,
     Routes
 } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, Permissions, VoiceChannel } from 'discord.js';
-import { env } from 'process';
-
-const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 const Activities = {
     'Poker': '755827207812677713',

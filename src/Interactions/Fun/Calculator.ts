@@ -258,7 +258,7 @@ export class kInteraction extends Interactions {
             }));
         });
 
-        collector.on('end', (all, reason) => {
+        collector.once('end', (all, reason) => {
             const i = all.last()!;
 
             if (reason === 'calculate') {

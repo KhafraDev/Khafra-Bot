@@ -141,7 +141,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         });
 
-        collector.on('end', (_, reason) => {
+        collector.once('end', (_, reason) => {
             if (reason === 'idle') {
                 return void dontThrow(interaction.editReply({ components: [] }));
             }

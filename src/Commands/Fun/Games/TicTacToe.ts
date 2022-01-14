@@ -83,7 +83,7 @@ export class kCommand extends Command {
             return void dontThrow(i.update({ components: makeRows(game.board) }));
         });
 
-        c.on('end', (_c, r) => {
+        c.once('end', (_c, r) => {
             if (r === 'time') {
                 return void dontThrow(m.edit({
                     content: `Game took too long, play a little faster next time!`,

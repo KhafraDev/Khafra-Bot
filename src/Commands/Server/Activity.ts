@@ -1,17 +1,16 @@
+import { rest } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { REST } from '@discordjs/rest';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
-    APIInvite, APIVersion, InviteTargetType,
+    APIInvite, InviteTargetType,
     RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
 import { Message, MessageActionRow, Permissions } from 'discord.js';
-import { env } from 'process';
 
 const enum Activities {
     POKER = '755827207812677713',
@@ -24,8 +23,6 @@ const enum Activities {
     LETTERTILE = '879863686565621790',
     SPELLCAST = '852509694341283871'
 }
-
-const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 export class kCommand extends Command {
     constructor() {
