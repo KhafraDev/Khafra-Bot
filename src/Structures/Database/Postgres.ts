@@ -4,15 +4,6 @@ import { join } from 'path';
 import postgres from 'postgres';
 import { env } from 'process';
 
-export const defaultKGuild = [
-    'prefix',
-    'mod_log_channel',
-    'max_warning_points',
-    'welcome_channel',
-    'reactRoleChannel',
-    'ticketChannel'
-].join(', ');
-
 const sqlFiles = KhafraClient.walk(
     join(assets, 'SQL/Postgres'),
     p => p.endsWith('.sql')

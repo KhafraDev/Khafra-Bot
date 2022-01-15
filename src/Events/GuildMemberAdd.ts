@@ -1,5 +1,5 @@
 import { cache } from '#khaf/cache/Settings.js';
-import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -36,7 +36,9 @@ export class kEvent extends Event<'guildMemberAdd'> {
 
         if (!item) {
             const rows = await sql<kGuild[]>`
-                SELECT ${defaultKGuild}
+                SELECT
+                    prefix, mod_log_channel, max_warning_points,
+                    welcome_channel, reactRoleChannel, ticketChannel
                 FROM kbGuild
                 WHERE guild_id = ${member.guild.id}::text
                 LIMIT 1;
