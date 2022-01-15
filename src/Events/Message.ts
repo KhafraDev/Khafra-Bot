@@ -1,9 +1,9 @@
 import { KhafraClient } from '#khaf/Bot';
 import { MessagesLRU } from '#khaf/cache/Messages.js';
+import { cache } from '#khaf/cache/Settings.js';
 import { Arguments, Command } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
@@ -54,10 +54,10 @@ export class kEvent extends Event<'messageCreate'> {
         const [name, ...args] = message.content.split(/\s+/g);
     
         let guild!: typeof defaultSettings | kGuild;
-        const row = await client.get(message.guild.id);
+        const row = cache.get(message.guild.id);
 
         if (row) {
-            guild = { ...defaultSettings, ...JSON.parse(row) as kGuild };
+            guild = { ...defaultSettings, ...row };
         } else {
             const rows = await sql<kGuild[]>`
                 SELECT * 
@@ -67,7 +67,7 @@ export class kEvent extends Event<'messageCreate'> {
             `;
 
             if (rows.length !== 0) {
-                void client.set(message.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                cache.set(message.guild.id, rows[0]);
 
                 guild = { ...defaultSettings, ...rows.shift() };
             } else {

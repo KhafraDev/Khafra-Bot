@@ -38,8 +38,6 @@ TWITTER_API=
 TWITTER_API_SECRET=
 POSTGRES_USER=
 POSTGRES_PASS=
-REDIS_USER=
-REDIS_PASS=
 TMDB=
 IMGUR_CLIENT_ID=
 ```
@@ -47,9 +45,8 @@ All values are required, as there is no guarantee that there is error handling f
 
 4. Edit the [config](./config.json) file.
 * For multiple bot owners, an array can be used, or a single string.
-5. Install Postgres and Redis. For Windows:
+5. Install Postgres. For Windows:
     - Download and setup WSL2
-    - [Installing Redis](https://redis.io/download#from-the-official-ubuntu-ppa)
     - [Installing Postgres with WSL2](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database#install-postgresql)
 6. Create a new user account in Postgres with the same name as specified in the `.env` file.
     - `sudo -u postgres psql`

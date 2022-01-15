@@ -1,6 +1,6 @@
+import { cache } from '#khaf/cache/Settings.js';
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
@@ -40,7 +40,7 @@ export class kCommand extends Command {
             RETURNING *;
         `;
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
+        cache.set(message.guild.id, rows[0]);
 
         return this.Embed.ok(`Updated the guild's prefix to ${inlineCode(args[0])}`);
     }

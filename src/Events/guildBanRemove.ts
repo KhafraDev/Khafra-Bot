@@ -1,5 +1,5 @@
+import { cache } from '#khaf/cache/Settings.js';
 import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -49,20 +49,18 @@ export class kEvent extends Event<'guildBanRemove'> {
             }
         }
 
-        const row = await client.get(guild.id);
-        let item: ModLogChannel | null = row !== null
-            ? JSON.parse(row) as kGuild
-            : null;
+        const row = cache.get(guild.id);
+        let item: ModLogChannel | null = row ?? null;
 
         if (!item) {
-            const rows = await sql<ModLogChannel[]>`
+            const rows = await sql<kGuild[]>`
                 SELECT ${defaultKGuild} FROM kbGuild
                 WHERE guild_id = ${guild.id}::text
                 LIMIT 1;
             `;
 
             if (rows.length !== 0) {
-                void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                cache.set(guild.id, rows[0]);
                 item = rows[0];
             } else {
                 return;

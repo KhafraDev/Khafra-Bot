@@ -1,6 +1,6 @@
+import { cache } from '#khaf/cache/Settings.js';
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
@@ -47,7 +47,7 @@ export class kCommand extends Command {
             RETURNING *;
         `;
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
+        cache.set(message.guild.id, rows[0]);
 
         return this.Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`);
     }

@@ -1,5 +1,5 @@
+import { cache } from '#khaf/cache/Settings.js';
 import { defaultKGuild, sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -38,13 +38,11 @@ export class kEvent extends Event<'guildMemberRemove'> {
                 WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
         `;
 
-        const row = await client.get(member.guild.id);
-        let item: WelcomeChannel | null = row !== null
-            ? JSON.parse(row) as kGuild
-            : null;
+        const row = cache.get(member.guild.id);
+        let item: WelcomeChannel | null = row ?? null;
         
         if (!item) {
-            const rows = await sql<WelcomeChannel[]>`
+            const rows = await sql<kGuild[]>`
                 SELECT ${defaultKGuild}
                 FROM kbGuild
                 WHERE guild_id = ${member.guild.id}::text
@@ -52,7 +50,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             `;
             
             if (rows.length !== 0) {
-                void client.set(member.guild.id, JSON.stringify(rows[0]), 'EX', 600);
+                cache.set(member.guild.id, rows[0]);
                 item = rows[0];
             } else {
                 return;

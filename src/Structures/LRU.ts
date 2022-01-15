@@ -1,6 +1,8 @@
+import { setInterval } from 'timers';
+
 interface LRUOptions {
     maxSize?: number,
-    maxAge?: number
+    maxAgeMs?: number
 }
 
 type LRUCache<K extends string, V> = {
@@ -18,7 +20,20 @@ export class LRU<K extends string, V> implements Map<K, V> {
     private length = 0;
 
     public constructor (opts: LRUOptions = {}) {
-        this.options = { maxSize: opts.maxSize ?? 100, maxAge: opts.maxAge ?? 0 };
+        this.options = { maxSize: opts.maxSize ?? 100, maxAgeMs: opts.maxAgeMs };
+
+        if (opts.maxAgeMs) {
+            setInterval(() => {
+                const entries = Object.entries(this.cache) as [K, LRUCache<K, V>][];
+                const now = Date.now();
+
+                for (const [key, value] of entries) {
+                    if (now - value.modified > opts.maxAgeMs!) {
+                        this.delete(key);
+                    }
+                }
+            }, opts.maxAgeMs);
+        }
     }
 
     public delete (key: K): boolean {
@@ -38,13 +53,13 @@ export class LRU<K extends string, V> implements Map<K, V> {
             element = this.cache[key];
             element.value = value;
             
-            if (this.options.maxAge) element.modified = Date.now();
+            if (this.options.maxAgeMs) element.modified = Date.now();
             if (key === this.head) return this;
 
             this.unlink(key, element.prev as K, element.next as K);
         } else {
             element = { value, modified: 0, next: null, prev: null };
-            if (this.options.maxAge) element.modified = Date.now();
+            if (this.options.maxAgeMs) element.modified = Date.now();
             this.cache[key] = element;
 
             if (this.length === this.options.maxSize && this.tail)
@@ -67,7 +82,7 @@ export class LRU<K extends string, V> implements Map<K, V> {
 
         const element = this.cache[key];
 
-        if (this.options.maxAge && (Date.now() - element.modified) > this.options.maxAge) {
+        if (this.options.maxAgeMs && (Date.now() - element.modified) > this.options.maxAgeMs) {
             this.delete(key);
             return undefined;
         }

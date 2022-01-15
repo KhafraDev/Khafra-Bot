@@ -1,6 +1,6 @@
+import { cache } from '#khaf/cache/Settings.js';
 import { client as Client } from '#khaf/Client';
 import { sql } from '#khaf/database/Postgres.js';
-import { client } from '#khaf/database/Redis.js';
 import { MessageEmbed } from '#khaf/Embed';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
@@ -34,10 +34,10 @@ export const interactionGetGuildSettings = async (interaction: Interactions) => 
     if (!interaction.inGuild()) return null;
 
     let settings: kGuild;
-    const row = await client.get(interaction.guildId);
+    const row = cache.get(interaction.guildId);
 
     if (row) {
-        settings = JSON.parse(row) as kGuild;
+        settings = row;
     } else {
         const rows = await sql<kGuild[]>`
             SELECT * 
@@ -47,8 +47,7 @@ export const interactionGetGuildSettings = async (interaction: Interactions) => 
         `;
 
         if (rows.length !== 0) {
-            await client.set(interaction.guildId, JSON.stringify(rows[0]), 'EX', 600);
-
+            cache.set(interaction.guildId, rows[0]);
             settings = rows[0];
         } else {
             return null;
