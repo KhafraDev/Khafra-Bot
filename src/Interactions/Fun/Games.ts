@@ -57,6 +57,11 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'wordle',
                     description: 'Play a game of Wordle!'
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'tictactoe',
+                    description: 'Play a game of Tic-Tac-Toe!'
                 }
             ]
         };
