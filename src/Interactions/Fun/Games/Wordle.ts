@@ -66,11 +66,11 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         if (words.length === 0) {
-            const r = await fetch('https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt');
+            const r = await fetch('https://raw.githubusercontent.com/madalynrose/Words/71a338251a88e55a1e46622fdcef64f6b17fc321/assets/5-letter.txt');
             const t = await r.text();
 
             const lines = t
-                .split(/\r?\n/g)
+                .split(/\s+/g)
                 .filter(word => word.length === 5);
 
             words.push(...lines);
