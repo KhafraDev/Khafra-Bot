@@ -1,13 +1,12 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, Message } from 'discord.js';
+import { ChatInputCommandInteraction, Message, MessageActionRow } from 'discord.js';
 import { inlineCode } from '@khaf/builders';
 import { clearInterval, setTimeout } from 'timers';
 import { fetch } from 'undici';
-import { rest } from '#khaf/Bot';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Routes } from 'discord-api-types/v9';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 
 const games = new Set<string>();
 const words: string[] = [];
@@ -87,11 +86,18 @@ export class kSubCommand extends InteractionSubCommand {
         }, 60 * 1000 * 60);
 
         const [err, int] = await dontThrow(interaction.editReply({
-            embeds: [game.toEmbed()]
+            embeds: [game.toEmbed()],
+            components: [
+                new MessageActionRow().addComponents(
+                    Components.approve('Quit', 'quit')
+                )
+            ]
         }));
 
         if (err !== null) {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+        } else if (!(int instanceof Message)) {
+            return `❌ Ask an administrator to re-invite the bot with full permissions!`;
         }
 
         let channel = interaction.channel;
@@ -117,6 +123,12 @@ export class kSubCommand extends InteractionSubCommand {
             idle: 120_000
         });
 
+        const rCollector = channel.createMessageComponentCollector({
+            filter: (i) =>
+                interaction.user.id === i.user.id &&
+                int.id === i.message.id
+        });
+
         const checkOver = () => {
             if (game.won()) return collector.stop('winner');
             if (game.guesses.length >= 6) return collector.stop('loser');
@@ -131,20 +143,15 @@ export class kSubCommand extends InteractionSubCommand {
             const over = checkOver();
             if (over !== false) return;
 
-            if (int instanceof Message) {
-                return void dontThrow(int.edit(embeds));
-            } else {
-                return void dontThrow(rest.patch(
-                    Routes.channelMessage(int.channel_id, int.id),
-                    { body: embeds }
-                ));
-            }
+            return void dontThrow(int.edit(embeds));
         });
 
         collector.once('end', (_, reason) => {
             const embed = game.toEmbed();
             embed.setTitle(game.word.split('').join(' '));
+            
             games.delete(interaction.user.id);
+            if (!rCollector.ended) rCollector.stop(reason);
 
             switch (reason) {
                 case 'winner': {
@@ -158,14 +165,23 @@ export class kSubCommand extends InteractionSubCommand {
                 default: embed.description = `Game over!\n\n` + embed.description;
             }
 
-            if (int instanceof Message) {
-                return void dontThrow(int.edit({ embeds: [embed] }));
-            } else {
-                return void dontThrow(rest.patch(
-                    Routes.channelMessage(int.channel_id, int.id),
-                    { body: { embeds: [embed] } }
-                ));
-            }
+            return void dontThrow(int.edit({
+                embeds: [embed],
+                components: disableAll(int)
+            }));
         });
+
+        rCollector.once('collect', (i) => {
+            if (!collector.ended) collector.stop();
+            rCollector.stop();
+
+            games.delete(interaction.user.id);
+            game.guesses.push(word); // force correct
+
+            return void dontThrow(i.update({
+                embeds: [game.toEmbed()],
+                components: disableAll(int)
+            }));
+        })
     }
 }
