@@ -76,7 +76,12 @@ export class kSubCommand extends InteractionSubCommand {
             words.push(...lines);
         }
 
-        const word = words[Math.floor(Math.random() * words.length)];
+        let word: string | undefined;
+        while (!word) {
+            const random = words[Math.floor(Math.random() * words.length)];
+            if (!random.endsWith('s')) word = random;
+        }
+
         const game = new Wordle(word);
         games.add(interaction.user.id);
 
@@ -176,7 +181,7 @@ export class kSubCommand extends InteractionSubCommand {
             rCollector.stop();
 
             games.delete(interaction.user.id);
-            game.guesses.push(word); // force correct
+            game.guesses.push(word!); // force correct
 
             return void dontThrow(i.update({
                 embeds: [game.toEmbed()],
