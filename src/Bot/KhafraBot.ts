@@ -208,7 +208,7 @@ export class KhafraClient extends Client {
                 // than there are on Discord's side, we can
                 // assume that *some* commands have been
                 // deleted.
-                if (loadedCommands < existingSlashCommands) {
+                if (loadedCommands.length < existingSlashCommands.length) {
                     const deleted = existingSlashCommands.filter(
                         c => !loadedCommands.find(n => n.name === c.name)
                     );

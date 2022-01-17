@@ -27,7 +27,7 @@ export class kCommand extends Command {
             )
             .addField(
                 bold('Everything:'),
-                `[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=1074654294)`
+                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=1478811839735&scope=${scope})`
             )
             .addField(
                 bold('Enable slash commands and buttons:'),

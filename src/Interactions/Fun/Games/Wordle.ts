@@ -144,6 +144,7 @@ export class kSubCommand extends InteractionSubCommand {
         collector.once('end', (_, reason) => {
             const embed = game.toEmbed();
             embed.setTitle(game.word.split('').join(' '));
+            games.delete(interaction.user.id);
 
             switch (reason) {
                 case 'winner': {

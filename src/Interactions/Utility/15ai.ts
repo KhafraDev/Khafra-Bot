@@ -13,7 +13,7 @@ type Characters = typeof import('../../../packages/15.ai/Characters.json');
 
 const characters = createFileWatcher({}, join(cwd, 'packages/15.ai/Characters.json')) as Characters;
 const keys = (Object.keys(characters) as (keyof typeof characters)[])
-    .map(k => characters[k].flat()).flat();
+    .map(k => characters[k]).flat(2);
 
 export class kInteraction extends Interactions {
     constructor() {

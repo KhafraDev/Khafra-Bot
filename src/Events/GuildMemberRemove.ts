@@ -45,7 +45,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
             const rows = await sql<kGuild[]>`
                 SELECT
                     prefix, mod_log_channel, max_warning_points,
-                    welcome_channel, reactRoleChannel, ticketChannel
+                    welcome_channel, ticketChannel, "staffChannel"
                 FROM kbGuild
                 WHERE guild_id = ${member.guild.id}::text
                 LIMIT 1;
