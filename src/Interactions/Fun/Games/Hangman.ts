@@ -5,7 +5,8 @@ import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
-import { ChatInputCommandInteraction, Message, MessageActionRow, Snowflake, WebhookEditMessageOptions } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
+import { InteractionTypes } from 'discord.js/typings/enums.js';
 import { readdirSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
@@ -108,8 +109,9 @@ class Hangman {
     }
 
     hint() {
-        if (this.canUseHint) return null;
-        const potential = [...this.word.toLowerCase()].filter(l => !this.guessed.includes(l));
+        if (!this.canUseHint) return null;
+        const potential = [...this.word.toLowerCase()]
+            .filter(l => !this.guessed.includes(l) && l !== ' ');
 
         this.usedHint = true;
         
@@ -237,12 +239,14 @@ export class kSubCommand extends InteractionSubCommand {
             }));
         });
 
-        const r = m.createMessageComponentCollector({
-            filter: (interaction) => 
-                interaction.message.id === m.id &&
-                interaction.user.id === interaction.user.id &&
-                interaction.customId === 'hint',
-            max: 1
+        const r = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            message: m,
+            max: 1,
+            filter: (i) =>
+                i.message.id === m.id &&
+                i.user.id === interaction.user.id &&
+                i.customId === 'hint'
         });
 
         r.once('collect', i => {
@@ -253,10 +257,12 @@ export class kSubCommand extends InteractionSubCommand {
                 }));
             }
 
-            
             const hint = game.hint() ?? 'N/A';
             
-            return void dontThrow(i.update(game.toJSON(`The hint is: ${hint}`)));
+            return void dontThrow(i.update({
+                ...game.toJSON(`The hint is: ${hint}`),
+                components: disableAll(m)
+            }));
         });
     }
 } 

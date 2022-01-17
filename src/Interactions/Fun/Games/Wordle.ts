@@ -1,12 +1,13 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, Message, MessageActionRow } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { inlineCode } from '@khaf/builders';
 import { clearInterval, setTimeout } from 'timers';
 import { fetch } from 'undici';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { InteractionTypes } from 'discord.js/typings/enums.js';
 
 const games = new Set<string>();
 const words: string[] = [];
@@ -128,7 +129,9 @@ export class kSubCommand extends InteractionSubCommand {
             idle: 120_000
         });
 
-        const rCollector = channel.createMessageComponentCollector({
+        const rCollector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            message: int,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
                 int.id === i.message.id

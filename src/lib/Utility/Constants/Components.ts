@@ -1,4 +1,5 @@
-import { Message, MessageButton } from 'discord.js';
+import { Message, MessageActionRow, MessageButton } from 'discord.js';
+import { APIMessage } from 'discord-api-types/v9';
 
 export const Components = {
     approve: (label = 'approve', id?: string) => new MessageButton()
@@ -19,24 +20,19 @@ export const Components = {
         .setStyle('PRIMARY')
 }
 
-type Component = { components: Message['components'] }
-
-export const disableAll = ({ components }: Component) => {
-    for (const component of components) {
+const toggleComponents = (item: Message | APIMessage, disabled: boolean) => {
+    if (!item.components) return [];
+    
+    for (const component of item.components) {
         for (const button of component.components) {
-            button.setDisabled(true);
+            button.disabled = disabled;
         }
     }
 
-    return components;
+    return 'channelId' in item
+        ? item.components
+        : item.components.map(r => new MessageActionRow(r));
 }
 
-export const enableAll = ({ components }: Component) => {
-    for (const component of components) {
-        for (const button of component.components) {
-            button.setDisabled(false);
-        }
-    }
-
-    return components;
-}
+export const disableAll = (item: Message | APIMessage) => toggleComponents(item, true);
+export const enableAll = (item: Message | APIMessage) => toggleComponents(item, false);

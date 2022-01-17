@@ -2,11 +2,11 @@ import { Interactions } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { codeBlock, inlineCode } from '@khaf/builders';
-import { APIMessage, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, Message, MessageActionRow } from 'discord.js';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { InteractionTypes } from 'discord.js/typings/enums.js';
 import { createContext, runInContext } from 'vm';
 
 class Parser extends Array<string> {
@@ -141,13 +141,6 @@ const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
-const _disableAll = (m: APIMessage | Message<boolean>) => {
-    if (m instanceof Message) return disableAll(m);
-    if (!m.components) return [];
-
-    return m.components.map(r => new MessageActionRow(r));
-}
-
 export class kInteraction extends Interactions {
     constructor() {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
@@ -210,27 +203,15 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
         }
 
-        let channel = interaction.channel;
-
-        if (!channel) {
-            const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
-
-            if (err !== null || c === null) {
-                return `❌ Please invite the bot with the correct permissions to use this command!`;
-            } else if (!isTextBased(c)) {
-                return `❌ This command cannot be used in this channel!`;
-            }
-
-            channel = c;
-        }
-
         const parser = new Parser();
 
-        const collector = channel.createMessageComponentCollector({
+        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            message: int,
+            idle: 30_000,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id,
-            idle: 30_000
+                int.id === i.message.id
         });
 
         collector.on('collect', (i) => {
@@ -239,7 +220,7 @@ export class kInteraction extends Interactions {
 
                 return void dontThrow(i.update({
                     embeds: [makeEmbed(`${parser.toString()}\nLimited to 15 characters.`)],
-                    components: _disableAll(int)
+                    components: disableAll(int)
                 }));
             } else if (i.customId === '=') {
                 return collector.stop('calculate');
@@ -274,18 +255,18 @@ export class kInteraction extends Interactions {
                 if (eq === 'Invalid input!') {
                     return void dontThrow(i.update({
                         embeds: [makeEmbed(eq)],
-                        components: _disableAll(int)
+                        components: disableAll(int)
                     }));
                 }
 
                 return void dontThrow(i.update({
                     embeds: [makeEmbed(`${parsed} = ${eq}`)],
-                    components: _disableAll(int)
+                    components: disableAll(int)
                 }));
             } else if (reason === 'idle') {
                 return void dontThrow(i.update({
                     embeds: [makeEmbed(parser.toString())],
-                    components: _disableAll(int)
+                    components: disableAll(int)
                 }));
             }
         })

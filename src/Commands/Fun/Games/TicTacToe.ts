@@ -68,7 +68,7 @@ export class kCommand extends Command {
                     content: `Game over - ${game.turn} won!`,
                     components: disableAll({
                         components: makeRows(game.board)
-                    })
+                    } as unknown as Message)
                 }));
             } else if (game.isFull()) {
                 c.stop();
@@ -76,7 +76,7 @@ export class kCommand extends Command {
                     content: `Looks like it's a tie!`,
                     components: disableAll({
                         components: makeRows(game.board)
-                    })
+                    } as unknown as Message)
                 }));
             }
 

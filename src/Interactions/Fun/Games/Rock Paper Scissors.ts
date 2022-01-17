@@ -2,9 +2,9 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { inlineCode } from '@khaf/builders';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { InteractionTypes } from 'discord.js/typings/enums.js';
 
 type Keys = keyof typeof emojis;
 
@@ -40,26 +40,14 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
         }
 
-        let channel = interaction.channel;
-
-        if (!channel) {
-            const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
-
-            if (err !== null || c === null) {
-                return `❌ Please invite the bot with the correct permissions to use this command!`;
-            } else if (!isTextBased(c)) {
-                return `❌ This command cannot be used in this channel!`;
-            }
-
-            channel = c;
-        }
-
-        const collector = channel.createMessageComponentCollector({
+        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            message: int,
+            time: 15_000,
+            max: 1,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id,
-            time: 15000,
-            max: 1
+                int.id === i.message.id
         });
 
         const [canceled, c] = await dontThrow(new Promise<MessageComponentInteraction>((res, rej) => {

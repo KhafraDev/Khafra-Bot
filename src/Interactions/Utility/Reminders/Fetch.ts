@@ -4,12 +4,12 @@ import { kReminder } from '#khaf/types/KhafraBot.js';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode, time } from '@khaf/builders';
-import { ChatInputCommandInteraction, MessageActionRow } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
+import { InteractionTypes } from 'discord.js/typings/enums.js';
 
 type Row = Exclude<kReminder, 'userId'>;
 
@@ -68,26 +68,14 @@ export class kSubCommand extends InteractionSubCommand {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
         }
 
-        let channel = interaction.channel;
-
-        if (!channel) {
-            const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
-
-            if (err !== null || c === null) {
-                return `❌ Please invite the bot with the correct permissions to use this command!`;
-            } else if (!isTextBased(c)) {
-                return `❌ This command cannot be used in this channel!`;
-            }
-
-            channel = c;
-        }
-
-        const collector = channel.createMessageComponentCollector({
+        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            message: int,
+            idle: 30_000,
+            max: 10,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id,
-            idle: 30_000,
-            max: 10
+                int.id === i.message.id
         });
 
         collector.on('collect', (i) => {
