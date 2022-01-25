@@ -1,13 +1,13 @@
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { hideLinkEmbed, inlineCode } from '@khaf/builders';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getArticleById, search } from '@khaf/wikipedia';
-import { ellipsis, plural } from '#khaf/utility/String.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { InteractionType } from 'discord-api-types';
 import { disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ellipsis, plural } from '#khaf/utility/String.js';
+import { ActionRow, hideLinkEmbed, inlineCode, SelectMenuComponent, SelectMenuOption } from '@khaf/builders';
+import { getArticleById, search } from '@khaf/wikipedia';
+import { InteractionType } from 'discord-api-types/v9';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, Message, SelectMenuInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -43,11 +43,11 @@ export class kInteraction extends Interactions {
                 Embed.ok(`Choose an article from the dropdown below!`)
             ],
             components: [
-                new MessageActionRow().addComponents(
-                    new MessageSelectMenu()
+                new ActionRow().addComponents(
+                    new SelectMenuComponent()
                         .setCustomId('wikipedia')
                         .setPlaceholder('Which article summary would you like to get?')
-                        .addOptions(wiki.pages.map(w => ({
+                        .addOptions(...wiki.pages.map(w => new SelectMenuOption({
                             label: ellipsis(w.title, 25),
                             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
                             value: `${w.id}`

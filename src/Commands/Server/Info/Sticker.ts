@@ -1,7 +1,8 @@
-import { bold, inlineCode } from '@khaf/builders';
-import { Message } from 'discord.js';
-import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { Command } from '#khaf/Command';
+import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { StickerFormatType } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -32,20 +33,27 @@ export class kCommand extends Command {
 
         const embed = this.Embed.ok()
             .setTitle(`${sticker.name}${sticker.description ? ` - ${sticker.description}` : ''}`)
-            .addField(bold('Name:'), inlineCode(sticker.name), true)
-            .addField(bold('ID:'), inlineCode(sticker.id), true);
+            .addField({ name: bold('Name:'), value: inlineCode(sticker.name), inline: true })
+            .addField({ name: bold('ID:'), value: inlineCode(sticker.id), inline: true });
 
         if (sticker.packId !== null) {
-            embed.addField(bold('Pack ID:'), inlineCode(sticker.packId), true);
+            embed.addField({
+                name: bold('Pack ID:'),
+                value: inlineCode(sticker.packId),
+                inline: true
+            });
         } else if (sticker.guildId !== null) {
-            embed.addField(bold('Guild Sticker:'), inlineCode(`Yes - ${sticker.guild}`));
+            embed.addField({
+                name: bold('Guild Sticker:'),
+                value: inlineCode(`Yes - ${sticker.guild}`)
+            });
         }
         
         if (Array.isArray(sticker.tags) && sticker.tags.length > 0) {
             embed.setDescription(`${bold('Tags:')}\n${sticker.tags.map(t => inlineCode(t)).join(', ')}`);
         }
 
-        if (sticker.format === 'LOTTIE') {
+        if (sticker.format === StickerFormatType.Lottie) {
             embed.setImage(`http://distok.top/stickers/${sticker.packId}/${sticker.id}.gif`);
         } else {
             embed.setImage(sticker.url);

@@ -1,16 +1,17 @@
 /** Please get mental illness treated! */
 
-import { Command, Arguments } from '#khaf/Command';
-import { stonewallTransaction, migrateStonewall } from '#khaf/migration/Stonewall.js';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import { decodeXML } from 'entities';
-import { URL } from 'url';
-import { Message, MessageActionRow } from 'discord.js';
-import { once } from '#khaf/utility/Memoize.js';
+import { Arguments, Command } from '#khaf/Command';
 import { asyncQuery } from '#khaf/database/SQLite.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { migrateStonewall, stonewallTransaction } from '#khaf/migration/Stonewall.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { ActionRow } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { decodeXML } from 'entities';
+import { URL } from 'url';
 
 interface ITrashHuman {
     title: string
@@ -116,7 +117,7 @@ export class kCommand extends Command {
             const [err, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new MessageActionRow().addComponents(
+                    new ActionRow().addComponents(
                         Components.approve('Next'),
                         Components.secondary('Back'),
                         Components.deny('Stop')

@@ -1,10 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
-import { MessageEmbed } from '#khaf/Embed';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Interaction, Message, MessageActionRow } from 'discord.js';
+import { ActionRow, Embed } from '@khaf/builders';
+import { Interaction, Message, Util } from 'discord.js';
 import { join } from 'path';
 
 const Trump = createFileWatcher(
@@ -36,22 +36,21 @@ export class kCommand extends Command {
             return this.Embed.error('Wow! No atrocities on that day.');
         } else if (item.length === 1) {
             const { text, color, emojis } = item.shift()!;
-            return new MessageEmbed()
-                .setColor(color as `#${string}`)
+            return new Embed()
+                .setColor(Util.resolveColor(color as `#${string}`))
                 .setDescription(`${emojis.join('')} ${text}`);
         }
 
-        const embeds = item.map(atro => new MessageEmbed()
-            .setColor(atro.color as `#${string}`)
+        const embeds = item.map(atro => new Embed()
+            .setColor(Util.resolveColor(atro.color as `#${string}`))
             .setDescription(`${atro.emojis.join('')} ${atro.text}`)
         );
 
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Next'),
-                Components.secondary('Previous'),
-                Components.deny('Stop')
-            );
+        const row = new ActionRow().addComponents(
+            Components.approve('Next'),
+            Components.secondary('Previous'),
+            Components.deny('Stop')
+        );
 
         const m = await message.reply({ 
             embeds: [embeds[0]],

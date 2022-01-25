@@ -1,12 +1,13 @@
-import { InteractionCollector, Message, MessageComponentInteraction, MessageEmbed } from 'discord.js';
 import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { Embed } from '@khaf/builders';
+import { InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 
 export const Paginate = (
     c: InteractionCollector<MessageComponentInteraction>, 
     m: Message, 
     pageData: number,
-    embeds: MessageEmbed[] | ((page: number) => MessageEmbed)
+    embeds: Embed[] | ((page: number) => Embed)
 ) => {
     let page = 0;
 

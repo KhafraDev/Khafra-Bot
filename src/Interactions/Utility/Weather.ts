@@ -43,12 +43,12 @@ export class kInteraction extends Interactions {
         return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
-            .addField(bold('Temperature:'), `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)
-            .addField(bold('High:'), `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, true)
-            .addField(bold('Low:'), `${ctof(first.temperature)}°F, ${first.temperature}°C`, true)
-            .addField(bold('Humidity:'), `${first.humidity}%`, true)
-            .addField(bold('Wind:'), `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, true)
-            .addField(bold('Coordinates:'), `(${first.latitude}, ${first.longitude})`, true)
+            .addField({ name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
+            .addField({ name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true })
+            .addField({ name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
+            .addField({ name: bold('Humidity:'), value: `${first.humidity}%`, inline: true })
+            .addField({ name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true })
+            .addField({ name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true })
             .setFooter({ text: `© 2020 HERE` });
     }
 } 

@@ -5,8 +5,9 @@ import { logger } from '#khaf/Logger';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { ApplicationCommandPermissionData, Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
+import { Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
 import { join } from 'path';
+import { ApplicationCommandPermissionType } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -42,8 +43,8 @@ export class kEvent extends Event<'guildCreate'> {
                     role => role.permissions.has(perms)  
                 );
                 const commandPerms = rolesWithPerms
-                    .map(v => ({ id: v.id, type: 'ROLE', permission: true }))
-                    .values() as IterableIterator<ApplicationCommandPermissionData>;
+                    .map(v => ({ id: v.id, type: ApplicationCommandPermissionType.Role, permission: true }))
+                    .values();
 
                 fullPermissions.push({
                     id: slashCommand.id,

@@ -3,7 +3,7 @@ import { isExplicitText } from '#khaf/utility/Discord.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { CategoryChannel, Permissions, TextChannel, Message } from 'discord.js';
-import { ChannelType } from 'discord-api-types/v9';
+import { ChannelType, OverwriteType } from 'discord-api-types/v9';
 import { randomUUID } from 'crypto';
 import { inlineCode } from '@khaf/builders';
 
@@ -87,12 +87,12 @@ export class kCommand extends Command {
                 parent: channel,
                 permissionOverwrites: [
                     {
-                        type: 'role',
+                        type: OverwriteType.Role,
                         id: message.guild.roles.everyone.id,
                         deny: [ Permissions.FLAGS.VIEW_CHANNEL ]
                     },
                     {
-                        type: 'member',
+                        type: OverwriteType.Member,
                         id: message.author.id,
                         allow: [
                             Permissions.FLAGS.VIEW_CHANNEL,

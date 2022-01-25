@@ -1,12 +1,12 @@
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, time } from '@khaf/builders';
 import { YouTube, YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { InteractionType } from 'discord-api-types';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ActionRow, bold, time } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 
 function* format(items: YouTubeSearchResults) {
     for (let i = 0; i < items.items.length; i++) {
@@ -16,8 +16,8 @@ function* format(items: YouTubeSearchResults) {
             .setAuthor({ name: video.channelTitle })
             .setThumbnail(video.thumbnails.default.url)
             .setDescription(`${video.description.slice(0, 2048)}`)
-            .addField(bold('Published:'), time(new Date(video.publishTime)))
-            .addField(bold('URL:'), `https://youtube.com/watch?v=${items.items[i].id.videoId}`);
+            .addField({ name: bold('Published:'), value: time(new Date(video.publishTime)) })
+            .addField({ name: bold('URL:'), value: `https://youtube.com/watch?v=${items.items[i].id.videoId}` });
             
         yield embed;
     }
@@ -57,7 +57,7 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({ 
             embeds: [embeds[0]],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Next'),
                     Components.secondary('Previous'),
                     Components.deny('Stop')

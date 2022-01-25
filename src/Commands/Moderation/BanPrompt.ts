@@ -1,11 +1,12 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ActionRow } from '@khaf/builders';
+import { Interaction, Message, Permissions } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
@@ -41,11 +42,10 @@ export class kCommand extends Command {
             return this.Embed.error(`No user id or user mentioned, no one was banned.`);
         }
 
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Yes'),
-                Components.deny('No')
-            );
+        const row = new ActionRow().addComponents(
+            Components.approve('Yes'),
+            Components.deny('No')
+        );
 
         const msg = await message.reply({
             embeds: [this.Embed.ok(`Are you sure you want to ban ${user}?`)],

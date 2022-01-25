@@ -49,11 +49,11 @@ export class kCommand extends Command {
 
         return this.Embed.ok()
             .setTitle(added.item.title)
-            .setAuthor(
-                added.item.domain_metadata?.name ?? message.author.username, 
-                added.item.domain_metadata?.logo, 
-                added.item.resolved_normal_url
-            )
+            .setAuthor({
+                name: added.item.domain_metadata?.name ?? message.author.username, 
+                url: added.item.domain_metadata?.logo, 
+                iconURL: added.item.resolved_normal_url
+            })
             .setDescription(`
             Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
             ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}

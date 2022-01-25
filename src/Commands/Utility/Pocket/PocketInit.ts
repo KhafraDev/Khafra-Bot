@@ -2,9 +2,9 @@ import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { ActionRow, bold, inlineCode } from '@khaf/builders';
 import { Pocket } from '@khaf/pocket';
-import { Interaction, Message, MessageActionRow, Permissions } from 'discord.js';
+import { Interaction, Message, Permissions } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -38,11 +38,10 @@ export class kCommand extends Command {
         `)
         .setTitle('Pocket');
 
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Approve'),
-                Components.deny('Cancel')
-            );
+        const row = new ActionRow().addComponents(
+            Components.approve('Approve'),
+            Components.deny('Cancel')
+        );
 
         const msg = await message.reply({
             embeds: [embed],

@@ -4,8 +4,8 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, codeBlock, hyperlink, inlineCode } from '@khaf/builders';
-import { Message, MessageActionRow, MessageEmbed, MessageSelectMenu } from 'discord.js';
+import { ActionRow, ActionRowComponent, bold, codeBlock, Embed, hyperlink, inlineCode, SelectMenuComponent, SelectMenuOption } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 let folders: string[] | null = null;
 
@@ -67,11 +67,11 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new MessageActionRow().addComponents(
-                    new MessageSelectMenu()
+                new ActionRow().addComponents(
+                    new SelectMenuComponent()
                         .setCustomId('help')
                         .setPlaceholder('Select a category of commands!')
-                        .addOptions(folders.map(f => ({
+                        .addOptions(...folders.map(f => new SelectMenuOption({
                             label: f,
                             description: `Select the ${f} category!`,
                             value: f
@@ -80,7 +80,7 @@ export class kCommand extends Command {
             ]
         });
 
-        let pages: MessageEmbed[] = [],
+        let pages: Embed[] = [],
             page = 0;
 
         const c = m.createMessageComponentCollector({
@@ -117,10 +117,10 @@ export class kCommand extends Command {
                     pages.push(this.Embed.ok(desc));
                 }
 
-                const components: MessageActionRow[] = [];
+                const components: ActionRow<ActionRowComponent>[] = [];
                 if (pages.length > 1) {
                     components.push(
-                        new MessageActionRow().addComponents(
+                        new ActionRow().addComponents(
                             Components.deny('Previous', 'previous'),
                             Components.approve('Next', 'next'),
                             Components.secondary('Stop', 'stop')
@@ -128,10 +128,11 @@ export class kCommand extends Command {
                     );
                 }
 
-                if (m.components.length === 1)
-                    components.push(...m.components);
-                else
-                    components.push(m.components.at(-1)!);
+                if (m.components.length === 1) {
+                    components.push(...m.components.map(c => new ActionRow(c)));
+                } else {
+                    components.push(new ActionRow(m.components.at(-1)));
+                }
 
                 return void dontThrow(i.update({ 
                     embeds: [pages[page]],

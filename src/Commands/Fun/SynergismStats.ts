@@ -38,6 +38,10 @@ export class kCommand extends Command {
             ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
             Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
             `)
-            .addField(bold('Quark Bonus:'), `${quarks.bonus}%`, true);
+            .addField({
+                name: bold('Quark Bonus:'),
+                value: `${quarks.bonus}%`,
+                inline: true
+            });
     }
 }

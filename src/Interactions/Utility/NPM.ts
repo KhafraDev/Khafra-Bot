@@ -55,13 +55,17 @@ export class kInteraction extends Interactions {
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(p.description.slice(0, 2000))}
             `)
-            .addField(bold('Version:'), dist.version, true)
-            .addField(bold('License:'), dist.license, true)
-            .addField(bold('Author:'), p.author?.name ?? 'N/A', true)
-            .addField(bold('Last Modified:'), time(new Date(p.time?.modified ?? Date.now()), 'f'), true)
-            .addField(bold('Published:'), time(new Date(p.time?.created ?? Date.now())), true)
-            .addField(bold('Homepage:'), p.homepage ?? 'None', true)
-            .addField(bold('Maintainers:'), maintainers, false)
+            .addField({ name: bold('Version:'), value: dist.version, inline: true })
+            .addField({ name: bold('License:'), value: dist.license, inline: true })
+            .addField({ name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true })
+            .addField({
+                name: bold('Last Modified:'),
+                value: time(new Date(p.time?.modified ?? Date.now()), 'f'),
+                inline: true
+            })
+            .addField({ name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true })
+            .addField({ name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true })
+            .addField({ name: bold('Maintainers:'), value: maintainers })
     
     }
 } 

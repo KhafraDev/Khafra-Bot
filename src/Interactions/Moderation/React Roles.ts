@@ -1,22 +1,21 @@
-import { MessageEmbed } from '#khaf/Embed';
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@khaf/builders';
+import { ActionRow, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
 import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import {
     ChatInputCommandInteraction,
     EmojiIdentifierResolvable,
     GuildMember,
     GuildMemberRoleManager,
-    MessageActionRow,
     NewsChannel,
     Permissions,
     Role,
     TextChannel,
-    ThreadChannel
+    ThreadChannel,
+    Util
 } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
@@ -127,16 +126,26 @@ export class kInteraction extends Interactions {
         }
 
         const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
-        if (emoji) component.setEmoji(emoji);
+        if (emoji) {
+            if (typeof emoji === 'string') {
+                component.setEmoji({ name: emoji });
+            } else {
+                component.setEmoji({
+                    name: emoji.name ?? undefined,
+                    animated: emoji.animated ?? undefined,
+                    id: emoji.id ?? undefined
+                });
+            }
+        }
 
         const [err, message] = await dontThrow(channel.send({
             embeds: [
                 new MessageEmbed()
-                    .setColor(role.hexColor)
+                    .setColor(Util.resolveColor(role.hexColor))
                     .setDescription(text)
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     component
                 )
             ]

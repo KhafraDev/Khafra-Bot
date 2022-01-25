@@ -1,10 +1,10 @@
 import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Message, MessageActionRow } from 'discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ActionRow, bold } from '@khaf/builders';
+import { Message } from 'discord.js';
 import { once } from 'events';
 import { fetch } from 'undici';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold } from '@khaf/builders';
 
 interface StrawpollOptions {
     priv: boolean
@@ -54,17 +54,17 @@ export class kCommand extends Command {
         }
 
         const rows = [
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.approve('Public', 'priv'),
                 Components.primary('Comments', 'co'),
                 Components.approve('Registered', 'only_reg'),
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.primary('Multiple', 'ma'),
                 Components.approve('Allow VPN', 'vpn'),
                 Components.primary('Captcha', 'captcha')
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.deny('Cancel', 'cancel'),
                 Components.deny('Done', 'done')
             )

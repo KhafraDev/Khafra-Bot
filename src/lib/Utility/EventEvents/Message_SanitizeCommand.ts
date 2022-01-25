@@ -1,5 +1,6 @@
-import { Message, Permissions } from 'discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { MessageType } from 'discord-api-types/v9';
+import { Message, Permissions } from 'discord.js';
 
 const basic = new Permissions([
     Permissions.FLAGS.VIEW_CHANNEL,
@@ -15,7 +16,7 @@ export const Sanitize = (message: Message): message is Message<true> => {
     if (
         message.webhookId || // author is null in webhook messages
         message.author.bot ||
-        (message.type !== 'DEFAULT' && message.type !== 'REPLY') ||
+        (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
         (message.guild && !message.guild.available) ||
         message.system ||
         message.tts || 

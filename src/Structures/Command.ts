@@ -45,7 +45,7 @@ interface ICommand {
 type HandlerReturn =
     | string
     | import('discord.js').MessageAttachment
-    | import('discord.js').MessageEmbed
+    | import('@khaf/builders').Embed
     | import('discord.js').ReplyMessageOptions
     | void
     | null;

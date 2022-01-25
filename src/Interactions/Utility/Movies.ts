@@ -48,15 +48,33 @@ export class kInteraction extends Interactions {
         const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
-            .addField(bold('Genres:'), movies.genres.map(g => g.name).join(', '), true)
-            .addField(bold('Runtime:'), formatMS(Number(movies.runtime) * 60000), true)
-            .addField(bold('Status:'), movies.status, true)
-            .addField(bold('Released:'), movies.release_date ? time(new Date(movies.release_date)) : 'Unknown', true)
-            .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, true)
+            .addField({
+                name: bold('Genres:'),
+                value: movies.genres.map(g => g.name).join(', '),
+                inline: true
+            })
+            .addField({ name: bold('Runtime:'), value: formatMS(Number(movies.runtime) * 60000), inline: true })
+            .addField({ name: bold('Status:'), value: movies.status, inline: true })
+            .addField({
+                name: bold('Released:'),
+                value: movies.release_date ? time(new Date(movies.release_date)) : 'Unknown',
+                inline: true
+            })
+            .addField({
+                name: bold('TMDB:'),
+                value: `[TMDB](https://www.themoviedb.org/movie/${movies.id})`,
+                inline: true
+            })
             .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
             
         movies.homepage && embed.setURL(movies.homepage);
-        movies.imdb_id && embed.addField(bold('IMDB:'), `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`, true);
+        if (movies.imdb_id) {
+            embed.addField({
+                name: bold('IMDB:'),
+                value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
+                inline: true
+            });
+        }
         
         if (movies.poster_path) 
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);

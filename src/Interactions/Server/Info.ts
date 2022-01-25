@@ -6,7 +6,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { Activity, ChatInputCommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
@@ -16,24 +16,24 @@ const formatPresence = (activities: Activity[] | undefined) => {
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM': {
+            case ActivityType.Custom: {
                 push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
                 break;
             }
-            case 'LISTENING': {
+            case ActivityType.Listening: {
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
                 break;
             }
-            case 'PLAYING': {
+            case ActivityType.Game: {
                 push.push(`Playing ${italic(activity.name)}.`); 
                 break;
             }
-            case 'STREAMING': {
+            case ActivityType.Streaming: {
                 const details = activity.details ?? activity.url;
                 push.push(`Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}${details ? `- ${inlineCode(details)}` : ''}`);
                 break;
             }
-            case 'WATCHING': {
+            case ActivityType.Watching: {
                 push.push(`Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}`);
                 break;
             }
@@ -111,16 +111,16 @@ export class kInteraction extends Interactions {
                 Permissions: 
                 ${inlineCode(option.permissions.toArray().join(', '))}
                 `)
-                .addField(bold('Name:'), option.name, true)
-                .addField(bold('Color:'), option.hexColor, true)
-                .addField(bold('Created:'), time(option.createdAt), true)
-                .addField(bold('Mentionable:'), option.mentionable ? 'Yes' : 'No', true)
-                .addField(bold('Hoisted:'), option.hoist ? 'Yes' : 'No', true)
-                .addField(bold('Position:'), `${option.position}`, true)
-                .addField(bold('Managed:'), option.managed ? 'Yes' : 'No');
+                .addField({ name: bold('Name:'), value: option.name, inline: true })
+                .addField({ name: bold('Color:'), value: option.hexColor, inline: true })
+                .addField({ name: bold('Created:'), value: time(option.createdAt), inline: true })
+                .addField({ name: bold('Mentionable:'), value: option.mentionable ? 'Yes' : 'No', inline: true })
+                .addField({ name: bold('Hoisted:'), value: option.hoist ? 'Yes' : 'No', inline: true })
+                .addField({ name: bold('Position:'), value: `${option.position}`, inline: true })
+                .addField({ name: bold('Managed:'), value: option.managed ? 'Yes' : 'No' });
 
             if (option.icon) {
-                embed.setImage(option.iconURL()!);
+                embed.setImage(option.iconURL());
             }
 
             return embed;
@@ -146,12 +146,12 @@ export class kInteraction extends Interactions {
                     name: option.tag, 
                     iconURL: option.displayAvatarURL()
                 })
-                .addField(bold('Username:'), option.username, true)
-                .addField(bold('ID:'), option.id, true)
-                .addField(bold('Discriminator:'), `#${option.discriminator}`, true)
-                .addField(bold('Bot:'), option.bot ? 'Yes' : 'No', true)
-                .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-                .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
+                .addField({ name: bold('Username:'), value: option.username, inline: true })
+                .addField({ name: bold('ID:'), value: option.id, inline: true })
+                .addField({ name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true })
+                .addField({ name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true })
+                .addField({ name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true })
+                .addField({ name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true });
         }
     }
 } 

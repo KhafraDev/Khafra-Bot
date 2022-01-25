@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
-import { Message, Activity } from 'discord.js';
+import { logger } from '#khaf/Logger';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
-import { logger } from '#khaf/Logger';
+import { ActivityType } from 'discord-api-types/v9';
+import { Activity, Message } from 'discord.js';
 
 const formatPresence = (activities: Activity[] | undefined) => {
     if (!Array.isArray(activities)) return '';
@@ -10,13 +11,13 @@ const formatPresence = (activities: Activity[] | undefined) => {
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM':
+            case ActivityType.Custom:
                 push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
                 break;
-            case 'LISTENING':
+            case ActivityType.Listening:
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
                 break;
-            case 'PLAYING':
+            case ActivityType.Game:
                 push.push(`Playing ${italic(activity.name)}.`); 
                 break;
             default:

@@ -18,8 +18,9 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import { bold, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
+import { ChannelType } from 'discord-api-types/v9';
+import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
 
@@ -48,7 +49,7 @@ export class kEvent extends Event<'messageCreate'> {
     async init(message: Message) {
         Stats.messages++;
 
-        if (message.channel.type === 'DM') return DM(message);
+        if (message.channel.type === ChannelType.DM) return DM(message);
         if (!Sanitize(message)) return;
 
         const [name, ...args] = message.content.split(/\s+/g);

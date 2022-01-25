@@ -7,9 +7,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, time } from '@khaf/builders';
-import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, inlineCode, time } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Row = Exclude<kReminder, 'userId'>;
 
@@ -56,10 +56,10 @@ export class kSubCommand extends InteractionSubCommand {
             content: `Page ${page + 1} out of ${embeds.length}`,
             embeds: [embeds[page]],
             components: [
-                new MessageActionRow().addComponents(
-                    Components.approve('Next', 'next').setEmoji('▶️'),
-                    Components.deny('Stop', 'stop').setEmoji('🗑️'),
-                    Components.secondary('Back', 'back').setEmoji('◀️')
+                new ActionRow().addComponents(
+                    Components.approve('Next', 'next').setEmoji({ name: '▶️' }),
+                    Components.deny('Stop', 'stop').setEmoji({ name: '🗑️' }),
+                    Components.secondary('Back', 'back').setEmoji({ name: '◀️' })
                 )
             ]
         }));
@@ -69,7 +69,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             idle: 30_000,
             max: 10,

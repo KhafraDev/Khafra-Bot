@@ -3,10 +3,9 @@ import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { codeBlock, inlineCode } from '@khaf/builders';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, codeBlock, inlineCode } from '@khaf/builders';
+import { InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 import { createContext, runInContext } from 'vm';
 
 class Parser extends Array<string> {
@@ -155,31 +154,31 @@ export class kInteraction extends Interactions {
 
     async init (interaction: ChatInputCommandInteraction) {
         const rows = [
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.approve('(', '('),
                 Components.approve(')', ')'),
                 Components.approve('.', '.'),
                 // Components.approve('idk', 'idk')
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.secondary('1', '1'),
                 Components.secondary('2', '2'),
                 Components.secondary('3', '3'),
                 Components.approve('+', '+')
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.secondary('4', '4'),
                 Components.secondary('5', '5'),
                 Components.secondary('6', '6'),
                 Components.approve('-', '-')
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.secondary('7', '7'),
                 Components.secondary('8', '8'),
                 Components.secondary('9', '9'),
                 Components.approve('*', '*')
             ),
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.deny('Stop', 'stop'),
                 Components.secondary('0', '0'),
                 Components.deny('=', '='),
@@ -206,7 +205,7 @@ export class kInteraction extends Interactions {
         const parser = new Parser();
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             idle: 30_000,
             filter: (i) =>

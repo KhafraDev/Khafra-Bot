@@ -36,12 +36,16 @@ export class kInteraction extends Interactions {
         const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
-            .addField(bold('Genres:'), tv.genres.map(g => g.name).join(', '), true)
-            .addField(bold('Status:'), tv.status, true)
-            .addField(bold('Premiered:'), tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
-            .addField(bold('Seasons:'), `${tv.number_of_seasons}`, true)
-            .addField(bold('Episodes:'), `${tv.number_of_episodes}`, true)
-            .addField(bold('TMDB:'), `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
+            .addField({ name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true })
+            .addField({ name: bold('Status:'), value: tv.status, inline: true })
+            .addField({
+                name: bold('Premiered:'),
+                value: tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown',
+                inline: true
+            })
+            .addField({ name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true })
+            .addField({ name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true })
+            .addField({ name: bold('TMDB:'), value: `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, inline: true })
             .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
             
         tv.homepage && embed.setURL(tv.homepage);

@@ -71,7 +71,11 @@ export class kCommand extends Command {
             const embed = this.Embed.ok()
                 .setImage(parsed[0].url)
                 .setURL(`http://www.get-emoji.com/${encodeURIComponent(parsed[0].text)}`)
-                .addField(bold('Code Points:'), `\\u${codePoints.join('\\u')}`, true);
+                .addField({
+                    name: bold('Code Points:'),
+                    value: `\\u${codePoints.join('\\u')}`,
+                    inline: true
+                });
 
             const e = (<Emojis>Emojis)[emoji];
             if (typeof e !== 'undefined') {
@@ -92,13 +96,13 @@ export class kCommand extends Command {
                     ${bold('Similar:')} ${inlineCode(e.diversityChildren.map(c => c.surrogates).join('``/``'))}
                     `);
 
-                    embed.addField(
-                        `${bold(`Tone${plural(child.diversity.length)}:`)}`,
-                        child.diversity.length === 0
+                    embed.addField({
+                        name: `${bold(`Tone${plural(child.diversity.length)}:`)}`,
+                        value: child.diversity.length === 0
                             ? 'None' 
                             : child.diversity.map(d => String.fromCodePoint(Number.parseInt(d, 16))).join(', '),
-                        true
-                    );
+                        inline: true
+                    });
                 }
             }
 

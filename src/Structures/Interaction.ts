@@ -23,7 +23,7 @@ interface SubcommandOptions {
 
 type HandlerReturn =
     | string
-    | import('discord.js').MessageEmbed
+    | import('@khaf/builders').Embed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
     | null

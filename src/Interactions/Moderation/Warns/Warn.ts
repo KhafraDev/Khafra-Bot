@@ -7,7 +7,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { ChatInputCommandInteraction, Permissions } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, Permissions } from 'discord.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -30,17 +30,21 @@ export class kSubCommand extends InteractionSubCommand {
 
         const points = interaction.options.getInteger('points', true);
         const reason = interaction.options.getString('reason');
-        const member = interaction.options.getMember('member', true);
+        const member = 
+            interaction.options.getMember('member') ??
+            interaction.options.getUser('member', true);
 
-        if (
-            member.permissions.has(Permissions.FLAGS.KICK_MEMBERS) ||
-            member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
-        ) {
-            return `❌ This member cannot be warned!`;
-        } else if (!hierarchy(interaction.member, member)) {
-            return `❌ You can't warn ${member}!`;
-        } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
-            return `❌ I can't warn ${member}! 😦`;
+        if (member instanceof GuildMember) {
+            if (
+                member.permissions.has(Permissions.FLAGS.KICK_MEMBERS) ||
+                member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+            ) {
+                return `❌ This member cannot be warned!`;
+            } else if (!hierarchy(interaction.member, member)) {
+                return `❌ You can't warn ${member}!`;
+            } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
+                return `❌ I can't warn ${member}! 😦`;
+            }
         }
         
         const rows = await sql<WarnInsert[]>`
@@ -81,7 +85,9 @@ export class kSubCommand extends InteractionSubCommand {
         const settings = await interactionGetGuildSettings(interaction);
 
         if (settings && settings.max_warning_points <= totalPoints) {
-            const [kickError] = await dontThrow(member.kick(reason || undefined));
+            const [kickError] = 'kick' in member
+                ? await dontThrow(member.kick(reason || undefined))
+                : [''];
             
             if (kickError !== null) {
                 return `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`;

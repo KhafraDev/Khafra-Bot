@@ -3,7 +3,7 @@ import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(
-                a => a.type === 'LISTENING' && a.name === 'Spotify'
+                a => a.type === ActivityType.Listening && a.name === 'Spotify'
             );
 
             if (p) {

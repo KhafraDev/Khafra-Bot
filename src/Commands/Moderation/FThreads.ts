@@ -1,10 +1,10 @@
-import { bold, inlineCode, italic } from '@khaf/builders';
-import { GuildChannel, Message, MessageActionRow, Permissions } from 'discord.js';
-import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
+import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Command } from '#khaf/Command';
+import { ActionRow, bold, inlineCode, italic } from '@khaf/builders';
+import { GuildChannel, Message, Permissions } from 'discord.js';
 
 const threadPerms = new Permissions([
     Permissions.FLAGS.MANAGE_THREADS,
@@ -39,7 +39,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Yes', 'approve'),
                     Components.deny('No', 'deny')
                 )

@@ -27,7 +27,7 @@ export class kCommand extends Command {
                 iconURL: message.client.user!.displayAvatarURL()
             })
             .setTimestamp()
-            .setThumbnail(message.guild.bannerURL()!)
+            .setThumbnail(message.guild.bannerURL())
             .setDescription(`
             ${italic(message.guild.name)}
             ${inlineCode(message.guild.description ?? 'No description set')}

@@ -6,8 +6,15 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
-import { ChatInputCommandInteraction, Interaction, InteractionReplyOptions, MessageAttachment, MessageContextMenuCommandInteraction, MessageEmbed, UserContextMenuCommandInteraction } from 'discord.js';
+import { bold, inlineCode, Embed } from '@khaf/builders';
+import {
+    ChatInputCommandInteraction,
+    Interaction,
+    InteractionReplyOptions,
+    MessageAttachment,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction
+} from 'discord.js';
 import { argv } from 'process';
 
 type Interactions =
@@ -78,7 +85,7 @@ export class kEvent extends Event<'interactionCreate'> {
             } else {
                 if (typeof result === 'string') {
                     param.content = result;
-                } else if (result instanceof MessageEmbed) {
+                } else if (result instanceof Embed) {
                     param.embeds = [result];
                 } else if (result instanceof MessageAttachment) {
                     param.files = [result];

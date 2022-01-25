@@ -3,7 +3,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
-import { Guild, GuildMember, MessageComponentInteraction, MessageEmbed } from 'discord.js';
+import { Embed as MessageEmbed } from '@khaf/builders';
+import { Guild, GuildMember, MessageComponentInteraction } from 'discord.js';
 
 type InteractionReply 
     = import('discord.js').Message<boolean> 

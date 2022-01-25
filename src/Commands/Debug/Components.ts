@@ -1,7 +1,8 @@
 import { Arguments, Command } from '#khaf/Command';
-import { Message, MessageActionRow } from 'discord.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { ActionRow } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 
@@ -27,7 +28,7 @@ export class kCommand extends Command {
         if (!inRange(amount))
             return this.Embed.error(`Invalid number of buttons to add!`);
 
-        const row = new MessageActionRow();
+        const row = new ActionRow();
         const keys = Object.keys(Components) as (keyof typeof Components)[];
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)];

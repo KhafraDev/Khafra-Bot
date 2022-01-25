@@ -1,13 +1,13 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction } from 'discord.js';
-import { inlineCode } from '@khaf/builders';
+import { ActionRow, inlineCode } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 import { clearInterval, setTimeout } from 'timers';
 import { fetch } from 'undici';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
 
 const games = new Set<string>();
 const words: string[] = [];
@@ -94,7 +94,7 @@ export class kSubCommand extends InteractionSubCommand {
         const [err, int] = await dontThrow(interaction.editReply({
             embeds: [game.toEmbed()],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Quit', 'quit')
                 )
             ]
@@ -130,7 +130,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
 
         const rCollector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
@@ -146,7 +146,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         collector.on('collect', (m) => {
             game.guesses.push(m.content.toLowerCase());
-            const embeds = { embeds: [game.toEmbed().toJSON()] };
+            const embeds = { embeds: [game.toEmbed()] };
 
             const over = checkOver();
             if (over !== false) return;

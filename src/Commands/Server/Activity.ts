@@ -5,12 +5,12 @@ import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
     APIInvite, InviteTargetType,
     RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
-import { Message, MessageActionRow, Permissions } from 'discord.js';
+import { Message, Permissions } from 'discord.js';
 
 const enum Activities {
     POKER = '755827207812677713',
@@ -64,14 +64,14 @@ export class kCommand extends Command {
                 this.Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Poker', Activities.POKER),
                     Components.deny('Betrayal.io', Activities.BETRAYALIO),
                     Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
                     Components.secondary('Fishington.io', Activities.FISHINGTONIO),
                     Components.approve('Chess in the Park', Activities.CHESS)
                 ),
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Doodle Crew', Activities.DOODLECREW),
                     Components.deny('WordSnacks', Activities.WORDSNACKS),
                     Components.primary('LetterTile', Activities.LETTERTILE)

@@ -37,7 +37,7 @@ export class kCommand extends Command {
         const embed = this.Embed.ok()
             .addFields(
                 { name: bold('ID:'), value: channel.id, inline: true },
-                { name: bold('Type:'), value: channel.type, inline: true },
+                { name: bold('Type:'), value: `${channel.type}`, inline: true },
                 { name: bold('Created:'), value: time(channel.createdAt, 'f'), inline: true }
             );
 
@@ -55,14 +55,23 @@ export class kCommand extends Command {
                 );
 
             if (isExplicitText(channel)) {
-                embed.addField(bold('Rate-Limit:'), channel.rateLimitPerUser + ' seconds', true);
+                embed.addField({
+                    name: bold('Rate-Limit:'),
+                    value: channel.rateLimitPerUser + ' seconds',
+                    inline: true
+                });
             }
         } else if (isVoice(channel)) {
-            embed
-                .addField(bold('Bitrate:'),   channel.bitrate.toLocaleString(), true)
-                .addField(bold('Full:'),      channel.full ? 'Yes' : 'No', true)
-                .addField(bold('Max Users:'), channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`, true)
-                .addField(bold('Region:'), channel.rtcRegion ?? 'Auto', true);
+            embed.addFields(
+                { name: bold('Bitrate:'), value: channel.bitrate.toLocaleString(), inline: true },
+                { name: bold('Full:'), value: channel.full ? 'Yes' : 'No', inline: true },
+                {
+                    name: bold('Max Users:'),
+                    value: channel.userLimit === 0 ? 'Unlimited': `${channel.userLimit}`,
+                    inline: true
+                },
+                { name: bold('Region:'), value: channel.rtcRegion ?? 'Auto', inline: true }
+            );
         }
 
         return padEmbedFields(embed);

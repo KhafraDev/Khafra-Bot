@@ -1,12 +1,12 @@
-import { bold, hyperlink, inlineCode } from '@khaf/builders';
-import { ButtonInteraction, GuildChannel, Message, MessageActionRow, MessageEmbed, Permissions, Snowflake, TextBasedChannel } from 'discord.js';
-import { once } from 'events';
-import { isText } from '#khaf/utility/Discord.js';
+import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Command } from '#khaf/Command';
+import { ActionRow, bold, Embed, hyperlink, inlineCode } from '@khaf/builders';
+import { ButtonInteraction, GuildChannel, Message, Permissions, Snowflake, TextBasedChannel } from 'discord.js';
+import { once } from 'events';
 
 const perms = new Permissions([
     Permissions.FLAGS.SEND_MESSAGES
@@ -37,7 +37,7 @@ export class kCommand extends Command {
                     .setTitle('Rule Editor') 
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.deny('Cancel', 'cancel')
                 )
             ]
@@ -115,7 +115,7 @@ export class kCommand extends Command {
                 )
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Finished', 'done'),
                     Components.deny('Cancel', 'cancel')
                 )
@@ -182,7 +182,7 @@ export class kCommand extends Command {
         }
 
         {
-            const embeds: MessageEmbed[] = [];
+            const embeds: Embed[] = [];
 
             for (const rule of rules) {
                 const embed = embeds.at(-1)!;
@@ -191,7 +191,7 @@ export class kCommand extends Command {
                 if (embeds.length === 0) {
                     const embed = this.Embed.ok(line)
                         .setTitle(`${message.guild.name} Rules`)
-                        .setThumbnail(message.guild.iconURL()!)
+                        .setThumbnail(message.guild.iconURL());
                     
                     embeds.push(embed);
                 } else if (embed.description!.length >= 2048) {

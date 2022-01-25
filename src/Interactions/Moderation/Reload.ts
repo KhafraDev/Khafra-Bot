@@ -7,7 +7,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, ApplicationCommandPermissionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ApplicationCommand, ChatInputCommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
@@ -72,7 +72,7 @@ export class kInteraction extends Interactions {
         for (const role of roles.values()) {
             fullPermissions.permissions.push({
                 id: role.id,
-                type: 'ROLE',
+                type: ApplicationCommandPermissionType.Role,
                 permission: true
             });
         }

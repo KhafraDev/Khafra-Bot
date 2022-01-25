@@ -1,10 +1,10 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { inlineCode } from '@khaf/builders';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction } from 'discord.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, inlineCode } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Keys = keyof typeof emojis;
 
@@ -14,7 +14,7 @@ const emojis = {
     scissors: '✂️'
 } as const;
 
-const row = new MessageActionRow().addComponents(
+const row = new ActionRow().addComponents(
     Components.primary('🌑', 'rock'),
     Components.secondary('🧻', 'paper'),
     Components.approve('✂️', 'scissors')
@@ -41,7 +41,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             time: 15_000,
             max: 1,

@@ -4,9 +4,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
-import { inlineCode } from '@khaf/builders';
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageActionRow, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, inlineCode } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { readdirSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
@@ -86,9 +86,9 @@ class Hangman {
         const components = this.winner || this.lost
             ? []
             : [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.primary('Hint', 'hint')
-                        .setEmoji('❓')
+                        .setEmoji({ name: '❓' })
                         .setDisabled(this.usedHint)
                 )
             ];
@@ -240,7 +240,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
 
         const r = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: m,
             max: 1,
             filter: (i) =>

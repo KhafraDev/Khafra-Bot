@@ -1,12 +1,12 @@
 import { Command } from '#khaf/Command';
-import { isText, isThread } from '#khaf/utility/Discord.js';
-import { Message, MessageActionRow, Permissions, TextBasedChannel } from 'discord.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { inlineCode } from '@khaf/builders';
+import { isText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
+import { ActionRow, inlineCode } from '@khaf/builders';
+import { Message, Permissions, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 interface Settings {
@@ -67,7 +67,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow().addComponents(
                     Components.approve('Add Option', Actions.ADD),
                     Components.primary('Post Poll', Actions.POST),
                     Components.secondary('Add Channel', Actions.CHANNEL),

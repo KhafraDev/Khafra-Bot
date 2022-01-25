@@ -2,10 +2,10 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { shuffle } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageComponentInteraction, Snowflake } from 'discord.js';
-import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, bold, inlineCode } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction, Snowflake } from 'discord.js';
 
 type Card = [number, typeof suits[number]];
 
@@ -44,7 +44,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const rows = [
-            new MessageActionRow().addComponents(
+            new ActionRow().addComponents(
                 Components.approve('Hit', 'hit'),
                 Components.secondary('Stay', 'stay')
             )
@@ -60,14 +60,14 @@ export class kSubCommand extends InteractionSubCommand {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
             return Embed.ok(desc)
-                .addField(
-                    bold(`Dealer${dealerTotal}`), 
-                    dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-                )
-                .addField(
-                    bold(`Player (${getTotal(score.sucker)}):`), 
-                    score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-                );
+                .addField({
+                    name: bold(`Dealer${dealerTotal}`), 
+                    value: dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
+                })
+                .addField({
+                    name: bold(`Player (${getTotal(score.sucker)}):`), 
+                    value: score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
+                });
         }
 
         const [err, int] = await dontThrow(interaction.editReply({
@@ -80,7 +80,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             idle: 30_000,
             filter: (i) =>

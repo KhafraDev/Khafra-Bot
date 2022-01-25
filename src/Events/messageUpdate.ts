@@ -14,8 +14,8 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import { bold, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
+import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { config, defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 export class kEvent extends Event<'messageUpdate'> {

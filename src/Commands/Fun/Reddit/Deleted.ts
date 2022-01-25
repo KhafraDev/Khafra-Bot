@@ -5,9 +5,10 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { RedditData } from '@khaf/badmeme';
-import { Message, MessageActionRow } from 'discord.js';
+import { ActionRow } from '@khaf/builders';
+import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
-import { setTimeout, clearTimeout } from 'timers';
+import { clearTimeout, setTimeout } from 'timers';
 import { fetch } from 'undici';
 
 const fetchDeleted = async (postId: string) => {
@@ -134,7 +135,7 @@ export class kCommand extends Command {
             const [e, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new MessageActionRow().addComponents(
+                    new ActionRow().addComponents(
                         Components.approve('Next', 'next'),
                         Components.primary('Back', 'back'),
                         Components.deny('Stop', 'stop')

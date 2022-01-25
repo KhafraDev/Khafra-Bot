@@ -3,14 +3,14 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ChatInputCommandInteraction, InteractionCollector, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
-import { inlineCode } from '@khaf/builders';
-import { InteractionTypes } from 'discord.js/typings/enums.js';
+import { ActionRow, ButtonComponent, inlineCode } from '@khaf/builders';
+import { InteractionType } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
 const makeRows = (turns: Board) => {
-    const rows: MessageButton[] = [];
+    const rows: ButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
@@ -24,7 +24,7 @@ const makeRows = (turns: Board) => {
         }
     }
 
-    return chunkSafe(rows, 3).map(r => new MessageActionRow().addComponents(r))
+    return chunkSafe(rows, 3).map(r => new ActionRow().addComponents(...r))
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -48,7 +48,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionTypes.MESSAGE_COMPONENT,
+            interactionType: InteractionType.MessageComponent,
             message: int,
             time: 120_000,
             idle: 15_000,

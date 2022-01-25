@@ -8,6 +8,7 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
 import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
+import { ActivityType } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
@@ -20,11 +21,11 @@ const formatPresence = (activities: Activity[] | undefined) => {
 
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM':
+            case ActivityType.Custom:
                 push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`); break;
-            case 'LISTENING':
+            case ActivityType.Listening:
                 push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); break;
-            case 'PLAYING':
+            case ActivityType.Game:
                 push.push(`Playing ${italic(activity.name)}.`); break;
             default:
                 logger.log(activity);
@@ -88,11 +89,13 @@ export class kCommand extends Command {
                 name: user.tag,
                 iconURL: user.displayAvatarURL()
             })
-            .addField(bold('Username:'), user.username, true)
-            .addField(bold('ID:'), user.id, true)
-            .addField(bold('Discriminator:'), `#${user.discriminator}`, true)
-            .addField(bold('Bot:'), user.bot ? 'Yes' : 'No', true)
-            .addField(bold('Badges:'), `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, true)
-            .addField(bold('Account Created:'), time(Math.floor(snowflake / 1000)), true);
+            .addFields(
+                { name: bold('Username:'), value: user.username, inline: true },
+                { name: bold('ID:'), value: user.id, inline: true },
+                { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
+                { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
+                { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
+                { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+            );
     }
 }

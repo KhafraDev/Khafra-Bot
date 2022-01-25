@@ -1,7 +1,7 @@
-import { MessageEmbed } from '#khaf/Embed';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
+import { Embed as MessageEmbed } from '@khaf/builders';
 import {
     AnyChannel,
     GuildMember,
@@ -66,7 +66,7 @@ export const Embed = {
 
 export const padEmbedFields = (embed: MessageEmbed) => {
     while (embed.fields.length % 3 !== 0 && embed.fields.length !== 0) {
-        embed.addField('\u200b', '\u200b', true);
+        embed.addField({ name: '\u200b', value: '\u200b', inline: true });
     }
 
     return embed;

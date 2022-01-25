@@ -21,17 +21,17 @@ export class kCommand extends Command {
         const selfId = message.client.user!.id;
 
         return this.Embed.ok()
-            .addField(
-                bold('Basic Permissions:'), 
-                `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`
-            )
-            .addField(
-                bold('Everything:'),
-                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=1478811839735&scope=${scope})`
-            )
-            .addField(
-                bold('Enable slash commands and buttons:'),
-                `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=${scope})`
-            );
+            .addField({
+                name: bold('Basic Permissions:'), 
+                value: `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`
+            })
+            .addField({
+                name: bold('Everything:'),
+                value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=1478811839735&scope=${scope})`
+            })
+            .addField({
+                name: bold('Enable slash commands and buttons:'),
+                value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=${scope})`
+            });
     }
 }

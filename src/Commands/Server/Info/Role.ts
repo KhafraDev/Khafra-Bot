@@ -37,16 +37,18 @@ export class kCommand extends Command {
             Permissions: 
             ${inlineCode(role.permissions.toArray().join(', '))}
             `)
-            .addField(bold('Name:'), role.name, true)
-            .addField(bold('Color:'), role.hexColor, true)
-            .addField(bold('Created:'), time(role.createdAt), true)
-            .addField(bold('Mentionable:'), role.mentionable ? 'Yes' : 'No', true)
-            .addField(bold('Hoisted:'), role.hoist ? 'Yes' : 'No', true)
-            .addField(bold('Position:'), `${role.position}`, true)
-            .addField(bold('Managed:'), role.managed ? 'Yes' : 'No');
+            .addFields(
+                { name: bold('Name:'), value: role.name, inline: true },
+                { name: bold('Color:'), value: role.hexColor, inline: true },
+                { name: bold('Created:'), value: time(role.createdAt), inline: true },
+                { name: bold('Mentionable:'), value: role.mentionable ? 'Yes' : 'No', inline: true },
+                { name: bold('Hoisted:'), value: role.hoist ? 'Yes' : 'No', inline: true },
+                { name: bold('Position:'), value: `${role.position}`, inline: true },
+                { name: bold('Managed:'), value: role.managed ? 'Yes' : 'No' }
+            );
 
         if (role.icon) {
-            embed.setImage(role.iconURL()!);
+            embed.setImage(role.iconURL());
         }
         
         return embed;

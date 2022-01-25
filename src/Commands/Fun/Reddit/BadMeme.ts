@@ -1,9 +1,10 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Interaction, Message, MessageActionRow } from 'discord.js';
-import { badmeme, cache } from '@khaf/badmeme';
-import { isDM, isText } from '#khaf/utility/Discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { badmeme, cache } from '@khaf/badmeme';
+import { ActionRow } from '@khaf/builders';
+import { Interaction, Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -57,12 +58,11 @@ export class kCommand extends Command {
 
         let page = 0;
         
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Next'),
-                Components.secondary('Previous'),
-                Components.deny('Stop')
-            );
+        const row = new ActionRow().addComponents(
+            Components.approve('Next'),
+            Components.secondary('Previous'),
+            Components.deny('Stop')
+        );
 
         const m = await message.channel.send({ 
             content: res.url[page],

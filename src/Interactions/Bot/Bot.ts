@@ -77,11 +77,11 @@ export class kInteraction extends Interactions {
                     ${bold('Dependencies')}
                     ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}
                     `)
-                    .addField(bold('Memory:'), `${memoryMB.toFixed(2)} MB`, false)
-                    .addField(bold('Khafra-Bot:'), `v${pkg.version}`, true)
-                    .addField(bold('Discord.js:'), `v${DJSVersion}`, true)
-                    .addField(bold('Node.JS:'), version, true)
-                    .addField(bold('Uptime:'), `⏰ ${inlineCode(uptime)}`);
+                    .addField({ name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` })
+                    .addField({ name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true })
+                    .addField({ name: bold('Discord.js:'), value: `v${DJSVersion}`, inline: true })
+                    .addField({ name: bold('Node.JS:'), value: version, inline: true })
+                    .addField({ name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` });
             } else if (option === BotInfo.PING) {
                 await interaction.reply({
                     embeds: [Embed.ok('Pinging...!')],
