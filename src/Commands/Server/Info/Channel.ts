@@ -38,7 +38,11 @@ export class kCommand extends Command {
             .addFields(
                 { name: bold('ID:'), value: channel.id, inline: true },
                 { name: bold('Type:'), value: `${channel.type}`, inline: true },
-                { name: bold('Created:'), value: time(channel.createdAt, 'f'), inline: true }
+                {
+                    name: bold('Created:'),
+                    value: channel.createdAt ? time(channel.createdAt, 'f') : 'Unknown!',
+                    inline: true
+                }
             );
 
         if (isText(channel)) {

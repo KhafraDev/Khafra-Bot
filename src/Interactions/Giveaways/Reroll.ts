@@ -69,7 +69,7 @@ export class kSubCommand extends InteractionSubCommand {
             !m ||
             m.author.id !== interaction.client.user?.id ||
             m.embeds.length !== 1 ||
-            m.embeds[0].timestamp! > Date.now()
+            Number(m.embeds[0].timestamp!) > Date.now()
         ) {
             return `❌ This ${hyperlink('message', m?.url ?? 'https://discord.gg')} is not a giveaway.`;
         }

@@ -1,8 +1,8 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { isDM } from '#khaf/utility/Discord.js';
-import { inlineCode } from '@khaf/builders';
-import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import { inlineCode, Embed as MessageEmbed } from '@khaf/builders';
+import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { argv } from 'process';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
