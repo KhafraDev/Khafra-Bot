@@ -1,36 +1,26 @@
-import { ChatInputCommandInteraction } from 'discord.js';
-import { Interactions } from '#khaf/Interaction';
+import { Arguments, Command } from '#khaf/Command';
 import { bold, inlineCode, time } from '@khaf/builders';
 import { npm } from '@khaf/npm';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
-export class kInteraction extends Interactions {
+export class kCommand extends Command {
     constructor() {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'npm',
-            description: 'Gets the information about a package on NPM.',
-            options: [
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'name',
-                    description: 'NPM package to get information about.',
-                    required: true
-                },
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'version',
-                    description: 'Package version to get, defaults to the latest.'
-                }
-            ]
-        };
-
-        super(sc, { defer: true });
+        super(
+            [
+                'Search NPM\'s registry for a package',
+                'node-fetch latest', 'typescript'
+            ],
+			{
+                name: 'npm',
+                folder: 'Utility',
+                aliases: [ 'npmjs' ],
+                args: [1, 2]
+            }
+        );
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
-        const name = interaction.options.getString('name', true);
-        const version = interaction.options.getString('version') ?? 'latest';
+    async init(_message: Message, { args }: Arguments) {
+        const [name, version = 'latest'] = args;
         const p = await npm(name);
 
         if ('code' in p) {
@@ -42,12 +32,13 @@ export class kInteraction extends Interactions {
         const ver = version.startsWith('v') ? version.slice(1) : version;
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']];
+
         const maintainers = dist.maintainers
             .slice(0, 10)
             .map(u => u.name)
             .join(', ');
 
-        return Embed.ok()
+        return this.Embed.ok()
             .setAuthor({
                 name: 'NPM',
                 iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
@@ -69,4 +60,4 @@ export class kInteraction extends Interactions {
             .addField({ name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true })
             .addField({ name: bold('Maintainers:'), value: maintainers });
     }
-} 
+}
