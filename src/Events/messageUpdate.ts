@@ -7,61 +7,73 @@ import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isDM } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Sanitize } from '#khaf/utility/EventEvents/Message_SanitizeCommand.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { bold, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
-import { config, defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
+import { join } from 'path';
+import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
+
+const config = createFileWatcher(
+    {} as typeof import('../../config.json'),
+    join(cwd, 'config.json')
+);
 
 export class kEvent extends Event<'messageUpdate'> {
     name = 'messageUpdate' as const;
 
     async init(oldMessage: Message<true>, newMessage: Message<true>) {
+        Stats.messages++;
+
         if (!MessagesLRU.has(oldMessage.id)) return;
         if (oldMessage.content === newMessage.content) return;
         if (!Sanitize(newMessage) || isDM(newMessage.channel)) return;
 
-        Stats.messages++;
-
-        const [name, ...args] = newMessage.content.split(/\s+/g);
+        const [mention, name, ...args] = newMessage.content.split(/\s+/g);
     
+        if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
+            return;
+        } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
+            return;
+        }
+
+        const command = KhafraClient.Commands.get(name.toLowerCase())!;
         let guild!: typeof defaultSettings | kGuild;
-        const row = cache.get(newMessage.guild.id);
 
-        if (row) {
-            guild = { ...defaultSettings, ...row };
-        } else {
-            const rows = await sql<kGuild[]>`
-                SELECT * 
-                FROM kbGuild
-                WHERE guild_id = ${newMessage.guildId}::text
-                LIMIT 1;
-            `;
+        if (command.init.length === 3) {
+            const row = cache.get(newMessage.guild.id);
 
-            if (rows.length !== 0) {
-                cache.set(newMessage.guild.id, rows[0]);
-
-                guild = { ...defaultSettings, ...rows.shift() };
+            if (row) {
+                guild = { ...defaultSettings, ...row };
             } else {
-                guild = { ...defaultSettings };
+                const rows = await sql<kGuild[]>`
+                    SELECT * 
+                    FROM kbGuild
+                    WHERE guild_id = ${newMessage.guildId}::text
+                    LIMIT 1;
+                `;
+
+                if (rows.length !== 0) {
+                    cache.set(newMessage.guild.id, rows[0]);
+
+                    guild = { ...defaultSettings, ...rows.shift() };
+                } else {
+                    guild = { ...defaultSettings };
+                }
             }
         }
 
-        const prefix = guild.prefix ?? config.prefix;
-        const commandName = name.slice(prefix.length).toLowerCase();
         // !say hello world -> hello world
-        const content = newMessage.content.slice(prefix.length + commandName.length + 1);
+        const content = newMessage.content.slice(mention.length + name.length + 2);
         const cli = new Minimalist(content);
 
-        if (!name.startsWith(prefix)) return;
-        if (!KhafraClient.Commands.has(commandName)) return;
-
-        const command = KhafraClient.Commands.get(commandName)!;
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(newMessage.author.id);
 
@@ -79,7 +91,7 @@ export class kEvent extends Event<'messageUpdate'> {
             }));
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
             return void dontThrow(newMessage.reply({
-                content: `${inlineCode(commandName)} is temporarily disabled!`
+                content: `${inlineCode(name)} is temporarily disabled!`
             }));
         } else {
             command.rateLimit.rateLimitUser(newMessage.author.id);
@@ -100,7 +112,7 @@ export class kEvent extends Event<'messageUpdate'> {
             
             The command requires ${min} minimum arguments and ${max} max.
             Example(s):
-            ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
+            ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
             `)] }));
         }
 
@@ -120,7 +132,7 @@ export class kEvent extends Event<'messageUpdate'> {
         Stats.session++;
 
         try {
-            const options: Arguments = { args, commandName, content, prefix, cli };
+            const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
             const returnValue = await command.init(newMessage, options, guild);
             if (!returnValue || returnValue instanceof Message) 
                 return;

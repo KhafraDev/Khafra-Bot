@@ -1,6 +1,5 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -27,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
+    async init(message: Message, { args }: Arguments) {
         folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
 
         if (args.length !== 0) {
@@ -63,7 +62,7 @@ export class kCommand extends Command {
                 this.Embed.ok(`
                 ${hyperlink('Khafra-Bot', 'https://github.com/KhafraDev/Khafra-Bot')}
                 
-                To get help on a single command use ${inlineCode(`${settings.prefix}help [command name]`)}!
+                To get help on a single command use ${inlineCode(`help [command name]`)}!
                 `)
             ],
             components: [

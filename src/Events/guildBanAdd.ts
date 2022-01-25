@@ -1,5 +1,5 @@
-import { sql } from '#khaf/database/Postgres.js';
 import { cache } from '#khaf/cache/Settings.js';
+import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -55,7 +55,7 @@ export class kEvent extends Event<'guildBanAdd'> {
         if (!item) {
             const rows = await sql<kGuild[]>`
                 SELECT 
-                    prefix, mod_log_channel, max_warning_points,
+                    mod_log_channel, max_warning_points,
                     welcome_channel, ticketChannel, "staffChannel"
                 FROM kbGuild
                 WHERE guild_id = ${guild.id}::text

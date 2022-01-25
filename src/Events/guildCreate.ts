@@ -2,14 +2,9 @@ import { KhafraClient } from '#khaf/Bot';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
-import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
-import { join } from 'path';
 import { ApplicationCommandPermissionType } from 'discord-api-types/v9';
-
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+import { Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
 
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
@@ -22,9 +17,9 @@ export class kEvent extends Event<'guildCreate'> {
 
         await sql<unknown[]>`
             INSERT INTO kbGuild (
-                guild_id, prefix, max_warning_points
+                guild_id, max_warning_points
             ) VALUES (
-                ${guild.id}::text, ${config.prefix}::text, ${20}::smallint
+                ${guild.id}::text, ${20}::smallint
             ) ON CONFLICT DO NOTHING;
         `;
 

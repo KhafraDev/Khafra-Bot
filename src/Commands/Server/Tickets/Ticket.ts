@@ -33,7 +33,7 @@ export class kCommand extends Command {
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
             return this.Embed.error(
-            `Ticket.${name} command doesn't exist, use ${inlineCode(`${settings.prefix}ticket`)} for more information!`
+            `Ticket.${name} command doesn't exist, use ${inlineCode(`ticket`)} for more information!`
             );
         }
 

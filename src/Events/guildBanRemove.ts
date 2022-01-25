@@ -55,7 +55,7 @@ export class kEvent extends Event<'guildBanRemove'> {
         if (!item) {
             const rows = await sql<kGuild[]>`
                 SELECT
-                    prefix, mod_log_channel, max_warning_points,
+                    mod_log_channel, max_warning_points,
                     welcome_channel, ticketChannel, "staffChannel"
                 FROM kbGuild
                 WHERE guild_id = ${guild.id}::text

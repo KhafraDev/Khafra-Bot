@@ -1,7 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
@@ -35,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args, content }: Arguments, settings: kGuild) {
+    async init(_message: Message, { args, content }: Arguments) {
         const inserted = await bibleInsertDB();
 
         if (inserted !== true) {
@@ -66,7 +65,7 @@ export class kCommand extends Command {
             return this.Embed.error(`
             No book with that name was found!
 
-            Use ${inlineCode(`${settings.prefix}${this.settings.name} list`)} to list all of the supported book names!
+            Use ${inlineCode(`${this.settings.name} list`)} to list all of the supported book names!
             `);
         }
 

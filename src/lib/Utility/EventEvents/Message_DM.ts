@@ -3,17 +3,21 @@ import { Arguments, Command } from '#khaf/Command';
 import { isDM } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, MessageEmbed, ReplyMessageOptions } from 'discord.js';
-import { join } from 'path';
 import { argv } from 'process';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { Stats } from '#khaf/utility/Stats.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { join } from 'path';
+import { cwd } from '#khaf/utility/Constants/Path.js';
 
-const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
+const config = createFileWatcher(
+    {} as typeof import('../../../../config.json'),
+    join(cwd, 'config.json')
+);
+
 const cooldownUsers = cooldown(10, 60000);
 const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
@@ -21,8 +25,8 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .split(',')
         .map(c => c.toLowerCase())
     : [];
+
 const defaultSettings = {
-    prefix: config.prefix,
     max_warning_points: 20,
     mod_log_channel: null,
     welcome_channel: null,
@@ -30,18 +34,19 @@ const defaultSettings = {
 
 export const DM = async (message: Message): Promise<void> => {
     if (!isDM(message.channel)) return;
-    if (!message.content.startsWith(defaultSettings.prefix)) return;
 
-    const [nameWithPrefix, ...args] = message.content.split(/\s+/g);
-    const commandName = nameWithPrefix.slice(defaultSettings.prefix.length).toLowerCase();
+    const [mention, name, ...args] = message.content.split(/\s+/g);
+
+    if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
+        return;
+    } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
+        return;
+    }
+
     // !say hello world -> hello world
-    const content = message.content.slice(defaultSettings.prefix.length + commandName.length + 1);
+    const content = message.content.slice(mention.length + name.length + 2);
     const cli = new Minimalist(content);
-
-    const command = KhafraClient.Commands.get(commandName);
-
-    if (!nameWithPrefix.startsWith(defaultSettings.prefix)) return;
-    if (!command) return;
+    const command = KhafraClient.Commands.get(name.toLowerCase())!;
 
     if (!cooldownUsers(message.author.id)) { // user is rate limited
         return void dontThrow(message.reply({
@@ -63,11 +68,11 @@ export const DM = async (message: Message): Promise<void> => {
         }));
     } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
         return void dontThrow(message.reply({
-            content: `${inlineCode(commandName)} is temporarily disabled!`
+            content: `${inlineCode(name)} is temporarily disabled!`
         }));
     } 
 
-    const options: Arguments = { args, commandName, content, prefix: defaultSettings.prefix, cli };
+    const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
     Stats.session++;
 
     try {

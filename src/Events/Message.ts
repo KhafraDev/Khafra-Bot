@@ -24,10 +24,12 @@ import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from
 import { join } from 'path';
 import { argv } from 'process';
 
-export const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+export const config = createFileWatcher(
+    {} as typeof import('../../config.json'),
+    join(cwd, 'config.json')
+);
 
 export const defaultSettings: PartialGuild = {
-    prefix: config.prefix,
     max_warning_points: 20,
     mod_log_channel: null,
     welcome_channel: null,
@@ -46,45 +48,52 @@ export const disabled = typeof processArgs.get('disabled') === 'string'
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
 
-    async init(message: Message) {
+    async init (message: Message) {
         Stats.messages++;
 
         if (message.channel.type === ChannelType.DM) return DM(message);
         if (!Sanitize(message)) return;
 
-        const [name, ...args] = message.content.split(/\s+/g);
-    
+        const [mention, name, ...args] = message.content.split(/\s+/g);
+        MessagesLRU.set(message.id, message);
+        
+        if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
+            return;
+        } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
+            return;
+        }
+
+        const command = KhafraClient.Commands.get(name.toLowerCase())!;
         let guild!: typeof defaultSettings | kGuild;
-        const row = cache.get(message.guild.id);
 
-        if (row) {
-            guild = { ...defaultSettings, ...row };
-        } else {
-            const rows = await sql<kGuild[]>`
-                SELECT * 
-                FROM kbGuild
-                WHERE guild_id = ${message.guildId}::text
-                LIMIT 1;
-            `;
+        if (command.init.length === 3) {
+            const row = cache.get(message.guild.id);
 
-            if (rows.length !== 0) {
-                cache.set(message.guild.id, rows[0]);
-
-                guild = { ...defaultSettings, ...rows.shift() };
+            if (row) {
+                guild = { ...defaultSettings, ...row };
             } else {
-                guild = { ...defaultSettings };
+                const rows = await sql<kGuild[]>`
+                    SELECT * 
+                    FROM kbGuild
+                    WHERE guild_id = ${message.guildId}::text
+                    LIMIT 1;
+                `;
+
+                if (rows.length !== 0) {
+                    cache.set(message.guild.id, rows[0]);
+
+                    guild = { ...defaultSettings, ...rows.shift() };
+                } else {
+                    guild = { ...defaultSettings };
+                }
             }
         }
 
-        const prefix = guild.prefix ?? config.prefix;
-        const commandName = name.slice(prefix.length).toLowerCase();
-        // !say hello world -> hello world
-        const content = message.content.slice(prefix.length + commandName.length + 1);
+        // @PseudoBot say hello world -> hello world
+        const content = message.content.slice(mention.length + name.length + 2);
         const cli = new Minimalist(content);
 
-        MessagesLRU.set(message.id, message);
-
-        if (!name.startsWith(prefix)) {
+        if (content.includes('imgur.com/')) {
             const imgur = await Imgur.album([name, ...args]);
             if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length < 2) return;
 
@@ -106,9 +115,6 @@ export class kEvent extends Event<'messageCreate'> {
             }));
         }
 
-        if (!KhafraClient.Commands.has(commandName)) return;
-
-        const command = KhafraClient.Commands.get(commandName)!;
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(message.author.id);
 
@@ -126,7 +132,7 @@ export class kEvent extends Event<'messageCreate'> {
             }));
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
             return void dontThrow(message.reply({
-                content: `${inlineCode(commandName)} is temporarily disabled!`
+                content: `${inlineCode(name)} is temporarily disabled!`
             }));
         } else {
             command.rateLimit.rateLimitUser(message.author.id);
@@ -149,7 +155,7 @@ export class kEvent extends Event<'messageCreate'> {
                     
                     The command requires ${min} minimum arguments and ${max} max.
                     Example(s):
-                    ${command.help.slice(1).map(c => inlineCode(`${guild.prefix}${command.settings.name} ${c || '​'}`.trim())).join('\n')}
+                    ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
                     `)
                 ]
             }));
@@ -171,7 +177,7 @@ export class kEvent extends Event<'messageCreate'> {
         Stats.session++;
 
         try {
-            const options: Arguments = { args, commandName, content, prefix, cli };
+            const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
             const returnValue = await command.init(message, options, guild);
             if (!returnValue || returnValue instanceof Message) 
                 return;

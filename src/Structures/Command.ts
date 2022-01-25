@@ -17,10 +17,8 @@ export interface Arguments {
     readonly args: string[]
     /** Command used. */
     readonly commandName: string
-    /** Text unformatted, removes prefix+command with leading whitespace. */
+    /** Text unformatted, removes mention+command with leading whitespace. */
     readonly content: string
-    /** Prefix used */
-    readonly prefix: string
     /** Any cli arguments provided by the user */
     readonly cli: Minimalist
 }

@@ -27,9 +27,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, commandName, prefix }: Arguments, settings: kGuild) {
+    async init(message: Message<true>, { args, commandName }: Arguments, settings: kGuild) {
         if (settings.ticketchannel === null) {
-            return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`${prefix}ticketchanel [channel]\`!`);
+            return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`ticketchanel [channel]\`!`);
         } else if (commandName === 'ticket' || commandName === 'tickets') {
             args.shift();
         } 
@@ -57,7 +57,7 @@ export class kCommand extends Command {
         if (isExplicitText(channel) && !privateThreads) {
             return this.Embed.error(
                 `This guild is no longer tier 2 or above, and cannot use private threads. ` +
-                `Use the \`${prefix}ticketchannel\` command to re-set the ticket channel!`
+                `Use the \`ticketchannel\` command to re-set the ticket channel!`
             );
         }
 
