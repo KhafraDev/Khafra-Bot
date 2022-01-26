@@ -33,11 +33,9 @@ export class kCommand extends Command {
         );
         
         if (res === null) {
-            if (isText(message.channel) && message.channel.nsfw) {
-                return this.Embed.error(`This channel isn't marked as NSFW!`);
-            }
-
-            return this.Embed.error(`No posts in this subreddit were found, sorry!`);
+            return this.Embed.error(`
+            No posts in this subreddit were found! If the subreddit is NSFW, make sure the channel is too!
+            `);
         } else if ('error' in res) {
             if (res.error === 404) {
                 return `❌ That subreddit doesn't exist!`;

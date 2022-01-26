@@ -68,6 +68,8 @@ export const badmeme = async (
 
     if ('error' in j) {
         return j;
+    } else if (j.data.children.length === 0) {
+        return null;
     }
 
     const urls: IBadMemeCache[] = [];

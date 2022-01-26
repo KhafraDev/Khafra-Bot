@@ -30,7 +30,7 @@ export class kInteraction extends Interactions {
         const item = await badmeme(subreddit, false);
 
         if (item === null) {
-            return '❌ No posts in this subreddit were found. This command doesn\'t work on NSFW subreddits!';
+            return '❌ No posts in this subreddit were found. This command does not post NSFW images.';
         } else if ('error' in item) {
             if (item.error === 404) {
                 return `❌ That subreddit doesn't exist!`;

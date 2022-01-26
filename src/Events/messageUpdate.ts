@@ -16,7 +16,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { bold, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
+import { Embed as MessageEmbed, inlineCode } from '@khaf/builders';
 import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
@@ -149,16 +149,6 @@ export class kEvent extends Event<'messageUpdate'> {
                 param.files = [returnValue];
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);
-            
-            if ([...command.settings.aliases!, command.settings.name].some(n => KhafraClient.Interactions.Commands.has(n))) {
-                const toAdd = `${bold('Tip: use the slash command version of this command!')}\n\n`;
-                
-                if (param.content && param.content.length + toAdd.length <= 2048) {
-                    param.content = `${toAdd}${param.content}`;
-                } else {
-                    param.content ??= toAdd;
-                }
-            }
             
             return void await newMessage.reply(param);
         } catch (e) {
