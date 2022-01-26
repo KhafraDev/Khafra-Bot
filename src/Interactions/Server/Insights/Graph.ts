@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@khaf/builders';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { URLSearchParams } from 'url';
 
 interface Insights {
@@ -117,6 +117,6 @@ export class kSubCommand extends InteractionSubCommand {
             files: [
                 new MessageAttachment(Buffer.from(blob), `chart.png`)
             ]
-        } as ReplyMessageOptions;
+        } as InteractionReplyOptions;
     }
 }

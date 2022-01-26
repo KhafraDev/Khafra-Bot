@@ -18,7 +18,7 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction) {
         const id = interaction.options.getString('id', true);
         const idList = id.includes(',')
-            ? id.split(/\s*,\s*/g).filter(v => uuidRegex.test(v))
+            ? id.split(/[ ,]+/g).filter(v => uuidRegex.test(v))
             : [id.trim()].filter(v => uuidRegex.test(v));
 
         if (idList.length === 0) {

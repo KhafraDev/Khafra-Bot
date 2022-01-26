@@ -1,12 +1,12 @@
 import { Interactions } from '#khaf/Interaction';
-import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
-import { thisDoesNotExist, DNE } from '#khaf/utility/commands/ThisDoesNotExist';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
+import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction) {
         const type = interaction.options.getString('type', true);
         if (type === 'tdne_fuhomer') {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
@@ -66,7 +66,7 @@ export class kInteraction extends Interactions {
                 return `❌ Not yet implemented or an error occurred!`;
             }
 
-            return image;
+            return image as InteractionReplyOptions;
         }
     }
 } 

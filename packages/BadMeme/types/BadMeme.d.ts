@@ -25,6 +25,11 @@ type RedditVideo = {
     }
 }
 
+type MediaObject<T extends string> = {
+    type: T
+    oembed: RedditOEmbed<T>
+}
+
 type RedditImagePreview = {
     source: RedditVideoData
     resolutions: RedditVideoData[]
@@ -231,6 +236,10 @@ interface IRedditIsVideo extends IRedditBase {
     }
 }
 
+interface IRedditImage extends IRedditBase {
+    post_hint: 'image'
+}
+
 export interface IRedditGfycat extends IRedditBase {
     is_reddit_media_domain: false
     post_hint: 'link' | 'rich:video'
@@ -242,18 +251,25 @@ export interface IRedditGfycat extends IRedditBase {
         height: number
         scrolling: boolean
     }
-    secure_media?: {
-        type: 'gfycat.com'
-        oembed: RedditOEmbed<'https://gfycat.com'>
-    }
-    media?: {
-        type: 'gfycat.com'
-        oembed: RedditOEmbed<'https://gfycat.com'>
-    }
+    secure_media?: MediaObject<'gfycat.com'>
+    media?: MediaObject<'gfycat.com'>
     preview: {
         reddit_video_preview: RedditVideo & { fallback_url: string }
         images: RedditImagePreview
     }
+}
+
+export interface IRedditImgur extends IRedditBase {
+    post_hint: 'link' | 'image'
+    media_embed: {
+        content: string
+        width: number
+        scrolling: boolean
+        height: number
+    }
+    secure_media?: MediaObject<'imgur.com' | 'i.imgur.com'>
+    domain: 'imgur.com' | 'i.imgur.com'
+    media?: MediaObject<'imgur.com' | 'i.imgur.com'>
 }
 
 /**
@@ -271,7 +287,7 @@ interface IRedditIsCrosspost extends IRedditBase {
 export type RedditData = {
     data: {
         children: {
-            data: IRedditGallery | IRedditIsVideo | IRedditGfycat | IRedditIsCrosspost
+            data: IRedditGallery | IRedditIsVideo | IRedditGfycat | IRedditImgur | IRedditIsCrosspost | IRedditImage
         }[]
     }
 }

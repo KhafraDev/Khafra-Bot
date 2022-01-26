@@ -3,7 +3,7 @@ import { isExplicitText } from '#khaf/utility/Discord.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { CategoryChannel, Permissions, TextChannel, Message } from 'discord.js';
-import { ChannelType, OverwriteType } from 'discord-api-types/v9';
+import { ChannelType, GuildPremiumTier, OverwriteType } from 'discord-api-types/v9';
 import { randomUUID } from 'crypto';
 import { inlineCode } from '@khaf/builders';
 
@@ -35,7 +35,9 @@ export class kCommand extends Command {
         } 
 
         /** guild can use private threads */
-        const privateThreads = /^TIER_[2-9]$/.test(message.guild.premiumTier);
+        const privateThreads =
+            message.guild.premiumTier !== GuildPremiumTier.None &&
+            message.guild.premiumTier !== GuildPremiumTier.Tier1;
 
         const ret = message.guild.channels.cache.has(settings.ticketchannel)
             ? message.guild.channels.cache.get(settings.ticketchannel)!

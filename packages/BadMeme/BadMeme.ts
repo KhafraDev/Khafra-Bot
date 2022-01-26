@@ -2,7 +2,13 @@ import { decodeXML } from 'entities';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
 import { setInterval } from 'timers';
-import { RedditData, IRedditGfycat, RedditMediaMetadataSuccess, IRedditBadResp } from './types/BadMeme.d';
+import {
+    RedditData,
+    IRedditGfycat,
+    IRedditImgur,
+    RedditMediaMetadataSuccess,
+    IRedditBadResp
+} from './types/BadMeme.d';
 
 export { RedditData, IRedditBadResp };
 
@@ -39,6 +45,8 @@ const getItemRespectNSFW = (
 // no, doing <post>.domain === 'gfycat.com' does not work.
 // I tried.
 const isgfycat = (p: RedditData['data']['children'][number]['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
+const isImgur = (p: RedditData['data']['children'][number]['data']): p is IRedditImgur =>
+    p.domain === 'imgur.com' || p.domain === 'i.imgur.com';
 
 export const badmeme = async (
     subreddit = 'dankmemes',
@@ -87,11 +95,22 @@ export const badmeme = async (
             }
         } else if (data.domain === 'redgifs.com') {
             urls.push({ nsfw: data.over_18, url: data.url });
+        } else if (isImgur(data)) {
+            if (!data.media && !data.secure_media) {
+                urls.push({ nsfw: data.over_18, url: data.url });
+            } else {
+                const item = data.media ?? data.secure_media!;
+                urls.push({ nsfw: data.over_18, url: item.oembed.thumbnail_url });
+            }
         } else if ('post_hint' in data) {
-            // reddit separates the video from the audio, so the best we can do is get the video
-            // not gonna waste resources combining audio + video.
-            // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
-            urls.push({ nsfw: data.over_18, url: data.media.reddit_video.fallback_url });
+            if (data.post_hint === 'image') {
+                urls.push({ nsfw: data.over_18, url: data.url });
+            } else {
+                // reddit separates the video from the audio, so the best we can do is get the video
+                // not gonna waste resources combining audio + video.
+                // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
+                urls.push({ nsfw: data.over_18, url: data.media.reddit_video.fallback_url });
+            }
         } else {
             urls.push({ nsfw: data.over_18, url: data.url });
         }
