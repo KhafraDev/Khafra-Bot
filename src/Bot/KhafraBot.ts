@@ -8,7 +8,7 @@ import { assets, cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
-import { REST } from '@discordjs/rest';
+import { REST, RestEvents } from '@discordjs/rest';
 import { Buffer } from 'buffer';
 import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
 import { Client, ClientEvents } from 'discord.js';
@@ -39,7 +39,7 @@ export const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
-    static Events: Map<keyof ClientEvents, Event> = new Map();
+    static Events: Map<keyof ClientEvents | keyof RestEvents, Event> = new Map();
     static Interactions = {
         Commands: new Map<string, Interactions>(),
         Subcommands: new Map<string, InteractionSubCommand>(),

@@ -293,7 +293,7 @@ export type RedditData = {
 }
 
 export interface IRedditBadResp {
-    reason: 'private' | 'quarantined' | 'banned'
+    reason?: 'private' | 'quarantined' | 'banned'
     message: string
     error: number
 }

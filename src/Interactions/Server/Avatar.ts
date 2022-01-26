@@ -1,10 +1,11 @@
-import { AllowedImageFormat, AllowedImageSize, ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ImageExtension, ImageSize } from '@discordjs/rest';
 
-const sizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const formats = ['webp', 'png', 'jpg', 'jpeg'];
+const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
+const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -42,8 +43,8 @@ export class kInteraction extends Interactions {
         const format = interaction.options.getString('format') ?? 'webp'
 
         const avatar = user.displayAvatarURL({
-            size: Number(size) as AllowedImageSize,
-            format: format as AllowedImageFormat
+            size: Number(size) as ImageSize,
+            extension: format as ImageExtension
         });
 
         return Embed.ok().setImage(avatar);

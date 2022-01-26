@@ -39,6 +39,10 @@ export class kCommand extends Command {
 
             return this.Embed.error(`No posts in this subreddit were found, sorry!`);
         } else if ('error' in res) {
+            if (res.error === 404) {
+                return `❌ That subreddit doesn't exist!`;
+            }
+
             switch (res.reason) {
                 case 'banned': return this.Embed.error('Subreddit is banned!');
                 case 'private': return this.Embed.error('Subreddit is set as private!');

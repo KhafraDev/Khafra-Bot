@@ -7,13 +7,13 @@ import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { AllowedMentionsTypes, PresenceUpdateStatus } from 'discord-api-types/v9';
 import { ClientEvents, Intents } from 'discord.js';
+import { RestEvents } from '@discordjs/rest';
 
+const emitted = <T extends keyof ClientEvents | keyof RestEvents>(name: T) => {
+    let event: Event | undefined;
 
-const emitted = <T extends keyof ClientEvents>(name: T) => {
-    let event: Event<keyof ClientEvents> | undefined;
-
-    return (...args: ClientEvents[T]) => {
-        if (!event) {
+    return (...args: unknown[]) => {
+        if (event === undefined) {
             if (!KhafraClient.Events.has(name)) {
                 throw new Error(`The ${name} event has no event handler!`);
             }
@@ -21,7 +21,7 @@ const emitted = <T extends keyof ClientEvents>(name: T) => {
             event = KhafraClient.Events.get(name)!;
         }
 
-        return void dontThrow(event.init(...args));
+        return void dontThrow(event.init(...args as Parameters<typeof event['init']>));
     }
 }
 
@@ -53,7 +53,8 @@ export const client = new KhafraClient({
     .on('interactionCreate',    emitted('interactionCreate'))
     .on('guildMemberAdd',       emitted('guildMemberAdd'))
     .on('guildMemberRemove',    emitted('guildMemberRemove'))
-    .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
-    .on('rateLimit',            emitted('rateLimit'));
+    .on('guildMemberUpdate',    emitted('guildMemberUpdate'));
+
+client.rest.on('rateLimited', emitted('rateLimited'));
 
 void client.init();

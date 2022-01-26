@@ -32,6 +32,10 @@ export class kInteraction extends Interactions {
         if (item === null) {
             return '❌ No posts in this subreddit were found. This command doesn\'t work on NSFW subreddits!';
         } else if ('error' in item) {
+            if (item.error === 404) {
+                return `❌ That subreddit doesn't exist!`;
+            }
+
             switch (item.reason) {
                 case 'banned': return '❌ Subreddit is banned!';
                 case 'private': return '❌ Subreddit is set as private!';
