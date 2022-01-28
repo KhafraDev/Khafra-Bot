@@ -49,7 +49,9 @@ class Wordle {
             }
         }
 
-        return Embed.ok(rows).setTitle(title.join(' '));
+        return Embed.ok(rows)
+            .setTitle(title.join(' '))
+            .setFooter({ text: `${this.guesses.length}/6 guesses!` });
     }
 }
 
