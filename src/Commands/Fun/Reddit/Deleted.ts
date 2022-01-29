@@ -4,7 +4,7 @@ import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { RedditData } from '@khaf/badmeme';
+import { Reddit } from '@khaf/badmeme';
 import { ActionRow } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
@@ -56,7 +56,7 @@ interface PushShiftGood {
             _type: string
             _id: string
             _score: number
-            _source: RedditData['data']['children'][number]['data']
+            _source: Required<Reddit>['data']['children'][number]['data']
         }[]
     }
 }

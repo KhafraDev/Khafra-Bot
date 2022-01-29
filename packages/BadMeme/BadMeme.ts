@@ -2,15 +2,9 @@ import { decodeXML } from 'entities';
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
 import { setInterval } from 'timers';
-import {
-    RedditData,
-    IRedditGfycat,
-    IRedditImgur,
-    RedditMediaMetadataSuccess,
-    IRedditBadResp
-} from './types/BadMeme.d';
+import { Reddit } from './types/BadMeme.d';
 
-export { RedditData, IRedditBadResp };
+export { Reddit };
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -42,16 +36,7 @@ const getItemRespectNSFW = (
     return item || null;
 }
 
-// no, doing <post>.domain === 'gfycat.com' does not work.
-// I tried.
-const isgfycat = (p: RedditData['data']['children'][number]['data']): p is IRedditGfycat => p.domain === 'gfycat.com';
-const isImgur = (p: RedditData['data']['children'][number]['data']): p is IRedditImgur =>
-    p.domain === 'imgur.com' || p.domain === 'i.imgur.com';
-
-export const badmeme = async (
-    subreddit = 'dankmemes',
-    nsfw = false
-) => {
+export const badmeme = async (subreddit = 'dankmemes', nsfw = false) => {
     subreddit = subreddit.toLowerCase();
 
     if (cache.has(subreddit)) {
@@ -64,58 +49,42 @@ export const badmeme = async (
 
     // https://www.reddit.com/dev/api#GET_new
     const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${o}`);
-    const j = await r.json() as RedditData | IRedditBadResp;
+    const j = await r.json() as Reddit;
 
     if ('error' in j) {
-        return j;
-    } else if (j.data.children.length === 0) {
+        return j as {
+            message: string;
+            error: number;
+            reason: string;
+        };
+    } else if (!j.data || j.data.children.length === 0) {
         return null;
     }
 
     const urls: IBadMemeCache[] = [];
 
     for (const { data } of j.data.children) {
-        if (data.is_self === true && 'crosspost_parent' in data) {
+        if (data.is_self || 'crosspost_parent' in data) { // text posts
             continue;
-        } else if ('is_gallery' in data) {
-            const galleryImages = Object
-                .values(data.media_metadata)
-                .filter((k): k is RedditMediaMetadataSuccess => k.status === 'valid' && !!k.s.u)
-                .map(k => decodeXML(k.s.u!));
-
-            urls.push({ nsfw: data.over_18, url: galleryImages });
-        } else if (isgfycat(data)) {
-            if (!data.secure_media && !data.preview.reddit_video_preview.fallback_url) {
-                urls.push({ nsfw: data.over_18, url: `${data.url}.mp4` });
-            } else {
-                urls.push({ 
-                    nsfw: data.over_18, 
-                    url: data.secure_media 
-                        ? data.secure_media.oembed.thumbnail_url
-                        : data.preview.reddit_video_preview.fallback_url
-                });
-            }
-        } else if (data.domain === 'redgifs.com') {
-            urls.push({ nsfw: data.over_18, url: data.url });
-        } else if (isImgur(data)) {
-            if (!data.media && !data.secure_media) {
-                urls.push({ nsfw: data.over_18, url: data.url });
-            } else {
-                const item = data.media ?? data.secure_media!;
-                urls.push({ nsfw: data.over_18, url: item.oembed.thumbnail_url });
-            }
-        } else if ('post_hint' in data) {
-            if (data.post_hint === 'image') {
-                urls.push({ nsfw: data.over_18, url: data.url });
-            } else {
-                // reddit separates the video from the audio, so the best we can do is get the video
-                // not gonna waste resources combining audio + video.
-                // https://www.reddit.com/r/redditdev/comments/9a16fv/videos_downloading_without_sound/
-                urls.push({ nsfw: data.over_18, url: data.media.reddit_video.fallback_url });
-            }
-        } else {
-            urls.push({ nsfw: data.over_18, url: data.url });
         }
+
+        if (data.is_gallery && data.media_metadata) {
+            const images: string[] = [];
+
+            for (const entry of Object.values(data.media_metadata)) {
+                if (entry.status !== 'valid') {
+                    continue;
+                }
+
+                const url = 'u' in entry.s ? entry.s.u : entry.s.mp4;
+                images.push(decodeXML(url));
+            }
+
+            urls.push({ nsfw: data.over_18, url: images });
+            continue;
+        }
+
+        urls.push({ nsfw: data.over_18, url: data.url });
     }
 
     const last = j.data.children.at(-1)!.data.name;

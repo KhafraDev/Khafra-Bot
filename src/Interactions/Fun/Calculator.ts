@@ -239,7 +239,10 @@ export class kInteraction extends Interactions {
         });
 
         collector.once('end', (all, reason) => {
-            const i = all.last()!;
+            const i = all.last();
+
+            // Nothing to respond to.
+            if (!i) return;
 
             if (reason === 'calculate') {
                 const parsed = parser.toParseableString();

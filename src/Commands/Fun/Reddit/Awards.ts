@@ -1,7 +1,7 @@
 import { Command, Arguments } from '#khaf/Command';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { Message } from 'discord.js';
-import { RedditData } from '@khaf/badmeme';
+import { Reddit } from '@khaf/badmeme';
 import { fetch } from 'undici';
 import { inlineCode } from '@khaf/builders';
 
@@ -41,11 +41,15 @@ export class kCommand extends Command {
         }
         
         const res = await fetch(`${url.href.replace(/.json$/, '')}.json`);
-        const json = await res.json() as [RedditData, RedditData];
+        const json = await res.json() as [Reddit, Reddit];
 
-        const post = json[0].data.children[0].data;
-        const coins = post.all_awardings.reduce((p, c) => p + (c.coin_price * c.count), 0);
-        const price = (coins * PER_COIN).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        const post = json[0].data!.children[0].data;
+        const coins = post.all_awardings.reduce(
+            (p, c) => p + c.coin_price * c.count, 0
+        );
+        const price = (coins * PER_COIN).toLocaleString('en-US',
+            { style: 'currency', currency: 'USD' }
+        );
         const count = post.all_awardings.reduce((p, c) => p + c.count, 0);
 
         return this.Embed.ok()

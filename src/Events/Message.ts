@@ -54,7 +54,7 @@ export class kEvent extends Event<'messageCreate'> {
         if (message.channel.type === ChannelType.DM) return DM(message);
         if (!Sanitize(message)) return;
 
-        const [mention, name, ...args] = message.content.split(/\s+/g);
+        const [mention, name = '', ...args] = message.content.split(/\s+/g);
         MessagesLRU.set(message.id, message);
         
         if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
