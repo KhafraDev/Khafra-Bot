@@ -57,7 +57,11 @@ export class kEvent extends Event<'messageCreate'> {
         const [mention, name = '', ...args] = message.content.split(/\s+/g);
         MessagesLRU.set(message.id, message);
         
-        if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
+        if (
+            mention !== `<@!${config.botId}>` &&
+            mention !== `<@&${config.botId}>` &&
+            mention !== `<@${config.botId}>`
+        ) {
             return;
         } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
             return;
