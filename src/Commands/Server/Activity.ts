@@ -7,10 +7,9 @@ import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
-    APIInvite, InviteTargetType,
-    RESTPostAPIChannelInviteJSONBody, Routes
+    APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
-import { Message, Permissions } from 'discord.js';
+import { Message } from 'discord.js';
 
 const enum Activities {
     POKER = '755827207812677713',
@@ -38,8 +37,8 @@ export class kCommand extends Command {
                 args: [1, 1],
                 ratelimit: 10,
                 permissions: [
-                    Permissions.FLAGS.CREATE_INSTANT_INVITE,
-                    Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
+                    PermissionFlagsBits.CreateInstantInvite,
+                    PermissionFlagsBits.StartEmbeddedActivities
                 ],
                 guildOnly: true
             }
@@ -53,10 +52,10 @@ export class kCommand extends Command {
 
         if (!isVoice(channel)) {
             return this.Embed.error('Games can only be created in voice channels!');
-        } else if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
+        } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
             return this.Embed.error('No channel with that name was found!'); 
-        } else if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.CREATE_INSTANT_INVITE)) {
-            return this.Embed.perms(channel, message.guild.me, Permissions.FLAGS.CREATE_INSTANT_INVITE);
+        } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
+            return this.Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
         }
 
         const m = await message.channel.send({

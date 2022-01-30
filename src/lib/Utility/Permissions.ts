@@ -1,7 +1,35 @@
 import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
-import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@khaf/builders';
-import { GuildMember, PermissionResolvable, Permissions, Role } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { GuildMember, PermissionResolvable, RecursiveReadonlyArray, Role } from 'discord.js';
+
+const isRecursiveReadonlyArray = <T>(item: unknown):
+    item is RecursiveReadonlyArray<T> => Array.isArray(item);
+
+export const resolvePerms = (perms: PermissionResolvable) => {
+    let bitfield: bigint | undefined;
+    if (typeof perms === 'string') {
+        bitfield = BigInt(perms);
+    } else if (typeof perms === 'bigint') {
+        bitfield = perms;
+    } else if ('bitfield' in perms) {
+        bitfield = perms.bitfield;
+    } else if (isRecursiveReadonlyArray(perms)) {
+        for (const item of perms.flat(10) as (`${bigint}` | bigint | keyof typeof PermissionFlagsBits)[]) {
+            if (typeof item === 'bigint') {
+                bitfield! |= item;
+            } else if (typeof item === 'string') {
+                if (isNaN(Number(item))) {
+                    bitfield! |= PermissionFlagsBits[item as keyof typeof PermissionFlagsBits];
+                } else {
+                    bitfield! |= BigInt(item);
+                }
+            }
+        }
+    }
+
+    return bitfield!;
+}
 
 /**
  * Check if a user or role has permissions in a channel.
@@ -40,21 +68,21 @@ export const hierarchy = (
     return a.guild.ownerId === a.id || cond;
 }
 
-export const permResolvableToString = (perms: PermissionResolvable) => {
-    const permissions = perms instanceof Permissions ? perms : new Permissions(perms);
-    const str: string[] = [];
+const all = Object.entries(PermissionFlagsBits) as [keyof typeof PermissionFlagsBits, bigint][];
 
-    if (permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-        str.push(inlineCode(`Administrator`));
-    } else {
-        for (const [permName, has] of Object.entries(permissions.serialize())) {
-            if (has) {
-                const nameParts = permName.split('_');
-                const full = inlineCode(nameParts.map(part => upperCase(part)).join(' '));
-                str.push(full);
+export const permResolvableToString = (perms: PermissionResolvable) => {
+    const bitfield = resolvePerms(perms);
+    const has: string[] = [];
+
+    for (const [name, bit] of all) {
+        if ((bit & bitfield) === bit) {
+            if (name === 'Administrator') {
+                return [inlineCode(name)];
             }
+
+            has.push(inlineCode(name));
         }
     }
 
-    return str;
+    return has;
 }

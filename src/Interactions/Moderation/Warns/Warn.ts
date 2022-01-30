@@ -7,7 +7,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { ChatInputCommandInteraction, GuildMember, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -36,8 +37,8 @@ export class kSubCommand extends InteractionSubCommand {
 
         if (member instanceof GuildMember) {
             if (
-                member.permissions.has(Permissions.FLAGS.KICK_MEMBERS) ||
-                member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)
+                member.permissions.has(PermissionFlagsBits.KickMembers) ||
+                member.permissions.has(PermissionFlagsBits.Administrator)
             ) {
                 return `❌ This member cannot be warned!`;
             } else if (!hierarchy(interaction.member, member)) {

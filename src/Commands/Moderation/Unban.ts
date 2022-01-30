@@ -1,8 +1,9 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { inlineCode } from '@khaf/builders';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -18,7 +19,7 @@ export class kCommand extends Command {
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
+                permissions: [ PermissionFlagsBits.BanMembers ]
             }
         );
     }

@@ -1,12 +1,11 @@
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { MessageType } from 'discord-api-types/v9';
-import { Message, Permissions } from 'discord.js';
+import { MessageType, PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
-const basic = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const basic =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 /**
  * Check message for required criteria.

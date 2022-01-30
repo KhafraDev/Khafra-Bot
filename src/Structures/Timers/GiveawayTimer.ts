@@ -5,7 +5,8 @@ import { Timer } from '#khaf/Timer';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Permissions, User } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { User } from 'discord.js';
 import { setInterval } from 'timers';
 
 export class GiveawayTimer extends Timer {
@@ -37,7 +38,7 @@ export class GiveawayTimer extends Timer {
                 guild.channels.cache.get(giveaway.channelid) ??
                 await client.channels.fetch(giveaway.channelid);
     
-            if (!hasPerms(channel, guild.me, Permissions.FLAGS.READ_MESSAGE_HISTORY)) return;
+            if (!hasPerms(channel, guild.me, PermissionFlagsBits.ReadMessageHistory)) return;
             if (!isText(channel)) return;
             if (!client.user) return;
     

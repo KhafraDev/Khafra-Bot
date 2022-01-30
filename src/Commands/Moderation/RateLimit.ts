@@ -1,22 +1,22 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
-import { parseStrToMs } from '#khaf/utility/ms.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
+import { Arguments, Command } from '#khaf/Command';
+import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isExplicitText, isText } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { bold, inlineCode } from '@khaf/builders';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
     constructor() {
@@ -34,7 +34,7 @@ export class kCommand extends Command {
                 aliases: [ 'slowmode', 'slow-mode', 'rl' ],
                 args: [1, 2],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
+                permissions: [ PermissionFlagsBits.ManageChannels ]
             }
         );
     }

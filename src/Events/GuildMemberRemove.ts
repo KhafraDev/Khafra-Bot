@@ -9,16 +9,16 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { time } from '@khaf/builders';
-import { AnyChannel, GuildMember, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { AnyChannel, GuildMember } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
-const basic = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const basic =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 

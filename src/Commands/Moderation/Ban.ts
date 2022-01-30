@@ -6,7 +6,8 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
-import { Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 import { argv } from 'process';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -30,7 +31,7 @@ export class kCommand extends Command {
                 aliases: [ 'bna' ],
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
+                permissions: [ PermissionFlagsBits.BanMembers ]
             }
         );
     }

@@ -1,7 +1,8 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Permissions, GuildMember, User, Message } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { inlineCode } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { GuildMember, Message, User } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -17,7 +18,7 @@ export class kCommand extends Command {
                 aliases: [ 'forcebna', 'forceban', 'massban' ],
                 args: [1, 10],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
+                permissions: [ PermissionFlagsBits.BanMembers ]
             }
         );
     }

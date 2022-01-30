@@ -5,7 +5,8 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
-import { Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
 
@@ -31,11 +32,11 @@ export class kCommand extends Command {
     async init(message: Message<true>, { args }: Arguments) {
         const newAmount = Number(args[0]!);
 
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR))
+        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))
             return this.Embed.perms(
                 message.channel,
                 message.member,
-                Permissions.FLAGS.ADMINISTRATOR
+                PermissionFlagsBits.Administrator
             );
         else if (!inRange(newAmount)) 
             return this.Embed.error(`An invalid number of points was provided, try with a positive whole number instead!`);

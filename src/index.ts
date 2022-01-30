@@ -1,13 +1,13 @@
-import '#khaf/utility/__proto__.js';
 import '#khaf/utility/load.env.js';
 import '#khaf/utility/Rejections.js';
+import '#khaf/utility/__proto__.js';
 
 import { KhafraClient } from '#khaf/Bot';
 import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { AllowedMentionsTypes, PresenceUpdateStatus } from 'discord-api-types/v9';
-import { ClientEvents, Intents } from 'discord.js';
 import { RestEvents } from '@discordjs/rest';
+import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v9';
+import { ClientEvents, Partials } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(name: T) => {
     let event: Event | undefined;
@@ -31,16 +31,16 @@ export const client = new KhafraClient({
         repliedUser: true
     },
     presence: { status: PresenceUpdateStatus.Online },
-    partials: [ 'MESSAGE', 'USER' ],
+    partials: [ Partials.Message, Partials.User ],
     intents: [
-        Intents.FLAGS.DIRECT_MESSAGES,
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_BANS,
-        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_PRESENCES
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildPresences
     ]
 })
     .on('ready',                emitted('ready'))

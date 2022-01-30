@@ -1,8 +1,9 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, MessageAttachment, Permissions } from 'discord.js';
-import { validURL } from '#khaf/utility/Valid/URL.js';
+import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validURL } from '#khaf/utility/Valid/URL.js';
 import { inlineCode } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message, MessageAttachment } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -18,7 +19,7 @@ export class kCommand extends Command {
                 folder: 'Server',
                 args: [1, 2],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
+                permissions: [ PermissionFlagsBits.ManageEmojisAndStickers ]
             }
         );
     }

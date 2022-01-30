@@ -5,13 +5,13 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
-const basic = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const basic =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
     constructor() {
@@ -31,11 +31,11 @@ export class kCommand extends Command {
     }
 
     async init(message: Message<true>) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return this.Embed.perms(
                 message.channel,
                 message.member,
-                Permissions.FLAGS.ADMINISTRATOR
+                PermissionFlagsBits.Administrator
             );
         } 
 

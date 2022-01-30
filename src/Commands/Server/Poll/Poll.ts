@@ -6,7 +6,8 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { ActionRow, inlineCode } from '@khaf/builders';
-import { Message, Permissions, TextBasedChannel } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 interface Settings {
@@ -25,11 +26,10 @@ const emojis = [
     '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
 	'6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
 ] as const;
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
     constructor() {

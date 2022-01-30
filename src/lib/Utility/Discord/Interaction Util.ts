@@ -6,11 +6,11 @@ import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Embed } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
 import {
     AnyChannel,
     ChatInputCommandInteraction,
     MessageContextMenuCommandInteraction,
-    Permissions,
     Snowflake,
     UserContextMenuCommandInteraction
 } from 'discord.js';
@@ -20,11 +20,10 @@ type Interactions =
     | UserContextMenuCommandInteraction
     | MessageContextMenuCommandInteraction;
 
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 /**
  * Fetches the guild settings given a ChatInputCommandInteraction, or

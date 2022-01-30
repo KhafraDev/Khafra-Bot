@@ -5,10 +5,9 @@ import { Errors } from '#khaf/utility/Constants/Errors.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
-import {
-    Message, PermissionResolvable, Permissions, Snowflake
-} from 'discord.js';
+import { Message, PermissionResolvable, Snowflake } from 'discord.js';
 import { join } from 'path';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -55,9 +54,9 @@ export abstract class Command implements ICommand {
 
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     readonly permissions: PermissionResolvable[] = [
-        Permissions.FLAGS.VIEW_CHANNEL,
-        Permissions.FLAGS.SEND_MESSAGES,
-        Permissions.FLAGS.EMBED_LINKS
+        PermissionFlagsBits.ViewChannel,
+        PermissionFlagsBits.SendMessages,
+        PermissionFlagsBits.EmbedLinks
     ];
     
     constructor(

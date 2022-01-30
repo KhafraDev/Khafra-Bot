@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
 const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
@@ -16,7 +17,7 @@ export class kCommand extends Command {
                 folder: 'Fun',
                 args: [1, 5],
                 ratelimit: 3,
-                permissions: [ Permissions.FLAGS.ATTACH_FILES ],
+                permissions: [ PermissionFlagsBits.AttachFiles ],
                 guildOnly: true
             }
         );

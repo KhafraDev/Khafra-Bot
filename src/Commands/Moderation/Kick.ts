@@ -1,17 +1,17 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
-import { bold, inlineCode } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { bold, inlineCode } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
     constructor() {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
+                permissions: [ PermissionFlagsBits.KickMembers ]
             }
         );
     }

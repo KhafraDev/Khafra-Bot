@@ -5,12 +5,11 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ActionRow, bold, Embed, hyperlink, inlineCode } from '@khaf/builders';
-import { ButtonInteraction, GuildChannel, Message, Permissions, Snowflake, TextBasedChannel } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ButtonInteraction, GuildChannel, Message, Snowflake, TextBasedChannel } from 'discord.js';
 import { once } from 'events';
 
-const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES
-]);
+const perms = PermissionFlagsBits.SendMessages;
 
 export class kCommand extends Command {
     constructor() {
@@ -24,7 +23,7 @@ export class kCommand extends Command {
                 aliases: [ 'rule' ],
                 args: [0, 0],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
+                permissions: [ PermissionFlagsBits.ManageChannels ]
             }
         );
     }

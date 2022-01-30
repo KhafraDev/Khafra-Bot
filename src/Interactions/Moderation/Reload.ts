@@ -7,8 +7,18 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, ApplicationCommandPermissionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ApplicationCommand, ChatInputCommandInteraction, GuildApplicationCommandPermissionData, GuildMember, Permissions } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    ApplicationCommandPermissionType,
+    PermissionFlagsBits,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
+import {
+    ApplicationCommand,
+    ChatInputCommandInteraction,
+    GuildApplicationCommandPermissionData,
+    GuildMember
+} from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
 
@@ -45,7 +55,7 @@ export class kInteraction extends Interactions {
             return `❌ Re-invite the bot with the correct permissions to use this command!`;
         }
 
-        if (!hasPerms(interaction.channel, member, Permissions.FLAGS.ADMINISTRATOR)) {
+        if (!hasPerms(interaction.channel, member, PermissionFlagsBits.Administrator)) {
             return ( 
                 `❌ Either you don't have permission or you need to re-invite the bot with default permissions ` + 
                 `- this is not a design choice by me, thanks Discord!`
@@ -61,9 +71,14 @@ export class kInteraction extends Interactions {
             return `❌ This command is already available to all guild members`;
         }
 
-        const perms = new Permissions(cachedCommand.options.permissions);
+        const perms = cachedCommand.options.permissions;
         const allRoles = await interaction.guild.roles.fetch();
-        const roles = allRoles.filter(role => role.permissions.has(perms));
+        const roles = allRoles.filter(role => perms ? role.permissions.has(perms) : false);
+
+        if (roles.size === 0) {
+            return `❌ No roles in this guild have that permission!`;
+        }
+
         const fullPermissions: GuildApplicationCommandPermissionData = {
             id: cachedCommand.id,
             permissions: []

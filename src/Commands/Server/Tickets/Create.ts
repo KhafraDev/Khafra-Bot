@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
-import { isExplicitText } from '#khaf/utility/Discord.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isExplicitText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { CategoryChannel, Permissions, TextChannel, Message } from 'discord.js';
-import { ChannelType, GuildPremiumTier, OverwriteType } from 'discord-api-types/v9';
-import { randomUUID } from 'crypto';
 import { inlineCode } from '@khaf/builders';
+import { randomUUID } from 'crypto';
+import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v9';
+import { CategoryChannel, Message, TextChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 
@@ -91,15 +91,15 @@ export class kCommand extends Command {
                     {
                         type: OverwriteType.Role,
                         id: message.guild.roles.everyone.id,
-                        deny: [ Permissions.FLAGS.VIEW_CHANNEL ]
+                        deny: [ PermissionFlagsBits.ViewChannel ]
                     },
                     {
                         type: OverwriteType.Member,
                         id: message.author.id,
                         allow: [
-                            Permissions.FLAGS.VIEW_CHANNEL,
-                            Permissions.FLAGS.SEND_MESSAGES,
-                            Permissions.FLAGS.READ_MESSAGE_HISTORY
+                            PermissionFlagsBits.ViewChannel,
+                            PermissionFlagsBits.SendMessages,
+                            PermissionFlagsBits.ReadMessageHistory
                         ]
                     }
                 ]

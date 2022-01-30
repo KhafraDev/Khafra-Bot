@@ -1,10 +1,11 @@
-import { bold, codeBlock, time } from '@khaf/builders';
-import { Message, Permissions } from 'discord.js';
-import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Arguments, Command } from '#khaf/Command';
+import { bold, codeBlock, time } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -30,7 +31,7 @@ export class kCommand extends Command {
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
             message.channel;
 
-        if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
+        if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
             return this.Embed.error('No channel with that name was found!'); 
         }
 

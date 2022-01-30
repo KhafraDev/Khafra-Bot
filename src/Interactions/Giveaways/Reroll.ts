@@ -1,18 +1,18 @@
-import { AnyChannel, ChatInputCommandInteraction, Permissions, User } from 'discord.js';
-import { bold, hyperlink, inlineCode } from '@khaf/builders';
+import { InteractionSubCommand } from '#khaf/Interaction';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
 import { plural } from '#khaf/utility/String.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { bold, hyperlink, inlineCode } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { AnyChannel, ChatInputCommandInteraction, User } from 'discord.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
-const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.READ_MESSAGE_HISTORY
-]);
+const perms =
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.ReadMessageHistory;
 
 export class kSubCommand extends InteractionSubCommand {
     constructor() {

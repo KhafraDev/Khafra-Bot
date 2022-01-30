@@ -1,8 +1,9 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
-import { parseStrToMs } from '#khaf/utility/ms.js';
+import { Arguments, Command } from '#khaf/Command';
 import { getMentions } from '#khaf/utility/Mentions.js';
+import { parseStrToMs } from '#khaf/utility/ms.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
@@ -21,7 +22,7 @@ export class kCommand extends Command {
                 aliases: [ 'softbna' ],
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
+                permissions: [ PermissionFlagsBits.BanMembers ]
             }
         );
     }

@@ -8,20 +8,16 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@khaf/builders';
-import { AuditLogEvent } from 'discord-api-types/v9';
-import { GuildBan, Permissions, User } from 'discord.js';
+import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v9';
+import { GuildBan, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
-const auditLogPerms = new Permissions([
-    Permissions.FLAGS.VIEW_AUDIT_LOG
-]);
-
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kEvent extends Event<'guildBanAdd'> {
     name = 'guildBanAdd' as const;

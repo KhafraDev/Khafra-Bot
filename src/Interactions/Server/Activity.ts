@@ -6,10 +6,10 @@ import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import {
     APIInvite,
     ApplicationCommandOptionType, ChannelType,
-    InviteTargetType, RESTPostAPIApplicationCommandsJSONBody, RESTPostAPIChannelInviteJSONBody,
-    Routes
+    InviteTargetType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody,
+    RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, Permissions, VoiceChannel } from 'discord.js';
+import { ChatInputCommandInteraction, VoiceChannel } from 'discord.js';
 
 const Activities = {
     'Poker': '755827207812677713',
@@ -53,8 +53,8 @@ export class kInteraction extends Interactions {
 
         super(sc, {
             permissions: [
-                Permissions.FLAGS.CREATE_INSTANT_INVITE,
-                Permissions.FLAGS.START_EMBEDDED_ACTIVITIES
+                PermissionFlagsBits.CreateInstantInvite,
+                PermissionFlagsBits.StartEmbeddedActivities
             ]
         });
     }

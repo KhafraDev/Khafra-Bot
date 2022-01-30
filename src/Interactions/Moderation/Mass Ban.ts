@@ -2,12 +2,17 @@ import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@khaf/builders';
-import { APIApplicationCommandOption, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, GuildMemberManager, PermissionResolvable, Permissions } from 'discord.js';
+import {
+    APIApplicationCommandOption,
+    ApplicationCommandOptionType,
+    PermissionFlagsBits,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, GuildMemberManager } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
-const perms = [ Permissions.FLAGS.BAN_MEMBERS ];
+const perms = PermissionFlagsBits.BanMembers;
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -38,9 +43,7 @@ export class kInteraction extends Interactions {
 
         super(sc, {
             defer: true,
-            permissions: [
-                Permissions.FLAGS.BAN_MEMBERS
-            ]
+            permissions: [perms]
         });
     }
 
@@ -73,11 +76,11 @@ export class kInteraction extends Interactions {
                 const member = interaction.options.getMember(`member${i}`);
 
                 if (member) {
-                    const memberPerms: PermissionResolvable = member.permissions instanceof Permissions
-                        ? member.permissions
-                        : new Permissions(BigInt(member.permissions as string));
+                    const memberPerms = typeof member.permissions !== 'string'
+                        ? member.permissions.bitfield
+                        : BigInt(member.permissions);
 
-                    if (memberPerms.has([ Permissions.FLAGS.BAN_MEMBERS ])) {
+                    if ((perms & memberPerms) === perms) {
                         return `❌ I cannot ban ${member}!`;
                     }
                 }

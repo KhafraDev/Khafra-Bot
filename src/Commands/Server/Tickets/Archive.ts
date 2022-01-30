@@ -1,17 +1,17 @@
-import { CategoryChannel, Message, NewsChannel, Permissions, TextChannel, ThreadChannel } from 'discord.js';
-import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Arguments, Command } from '#khaf/Command';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 type DeletedChannelTypes = TextChannel | NewsChannel | ThreadChannel;
 
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i;
-const memberPermsExpected = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES
-]);
+const memberPermsExpected =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages;
 
 export class kCommand extends Command {
     constructor() {
@@ -40,7 +40,7 @@ export class kCommand extends Command {
         const everyoneId = message.guild.roles.everyone.id;
 
         if (isThread(message.channel)) {
-            if (message.channel.permissionsFor(everyoneId)?.has(Permissions.FLAGS.VIEW_CHANNEL)) {
+            if (message.channel.permissionsFor(everyoneId)?.has(PermissionFlagsBits.ViewChannel)) {
                 return this.Embed.error(`${message.channel} is not private!`);
             }
         } else {
@@ -54,7 +54,7 @@ export class kCommand extends Command {
 
                 if (!memberPerms.allow.has(memberPermsExpected)) {
                     return this.Embed.error(`You are missing some required permissions in this channel.`);
-                } else if (!everyonePerms.deny.has(Permissions.FLAGS.VIEW_CHANNEL)) {
+                } else if (!everyonePerms.deny.has(PermissionFlagsBits.ViewChannel)) {
                     return this.Embed.error(`This channel is not private!`);
                 }
             }

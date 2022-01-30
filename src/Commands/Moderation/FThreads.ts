@@ -4,14 +4,14 @@ import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ActionRow, bold, inlineCode, italic } from '@khaf/builders';
-import { GuildChannel, Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { GuildChannel, Message } from 'discord.js';
 
-const threadPerms = new Permissions([
-    Permissions.FLAGS.MANAGE_THREADS,
-    Permissions.FLAGS.CREATE_PUBLIC_THREADS,
-    Permissions.FLAGS.CREATE_PRIVATE_THREADS,
-    Permissions.FLAGS.SEND_MESSAGES_IN_THREADS
-]);
+const threadPerms =
+    PermissionFlagsBits.ManageThreads |
+    PermissionFlagsBits.CreatePublicThreads |
+    PermissionFlagsBits.CreatePrivateThreads |
+    PermissionFlagsBits.SendMessagesInThreads;
 
 export class kCommand extends Command {
     constructor() {
@@ -26,7 +26,9 @@ export class kCommand extends Command {
                 args: [0],
                 guildOnly: true,
                 ratelimit: 1,
-                permissions: [Permissions.FLAGS.MANAGE_CHANNELS]
+                permissions: [
+                    PermissionFlagsBits.ManageChannels
+                ]
             }
         );
     }
@@ -84,15 +86,15 @@ export class kCommand extends Command {
             const denied = overwrites?.deny.has(threadPerms);
             
             if (!denied) {
-                if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.MANAGE_CHANNELS)) continue;
-                if (!hasPerms(channel, message.member, Permissions.FLAGS.MANAGE_CHANNELS)) continue;
+                if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.ManageChannels)) continue;
+                if (!hasPerms(channel, message.member, PermissionFlagsBits.ManageChannels)) continue;
 
                 pr.push(channel.permissionOverwrites.edit(
                     message.guild.roles.everyone,
                     {
-                        CREATE_PUBLIC_THREADS: false,
-                        CREATE_PRIVATE_THREADS: false,
-                        MANAGE_THREADS: false
+                        CreatePublicThreads: false,
+                        CreatePrivateThreads: false,
+                        ManageThreads: false
                     }
                 ));
             }

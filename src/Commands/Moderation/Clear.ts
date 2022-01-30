@@ -1,11 +1,12 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message, Permissions } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { isText } from '#khaf/utility/Discord.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 1, max: 100, inclusive: true });
 
@@ -22,7 +23,7 @@ export class kCommand extends Command {
                 aliases: [ 'bulkdelete' ],
                 args: [1, 1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_MESSAGES ]
+                permissions: [ PermissionFlagsBits.ManageMessages ]
             }
         );
     }
@@ -36,11 +37,11 @@ export class kCommand extends Command {
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
         
-        if (!isText(channel) || !hasPerms(channel, message.guild.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
+        if (!isText(channel) || !hasPerms(channel, message.guild.me, [PermissionFlagsBits.ManageMessages])) {
             return this.Embed.perms(
                 channel,
                 message.guild.me,
-                Permissions.FLAGS.MANAGE_MESSAGES
+                PermissionFlagsBits.ManageMessages
             );
         } else if (message.deletable) {
             await dontThrow(message.delete());

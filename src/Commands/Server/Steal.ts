@@ -1,5 +1,6 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Permissions, Message } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -14,7 +15,7 @@ export class kCommand extends Command {
                 folder: 'Server',
                 args: [1, 1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
+                permissions: [ PermissionFlagsBits.ManageEmojisAndStickers ]
             }
         );
     }

@@ -1,6 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { Permissions } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    PermissionFlagsBits,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -67,7 +70,7 @@ export class kInteraction extends Interactions {
         super(sc, {
             defer: true,
             permissions: [
-                Permissions.FLAGS.KICK_MEMBERS
+                PermissionFlagsBits.KickMembers
             ]
         });
     }

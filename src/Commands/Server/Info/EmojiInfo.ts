@@ -1,12 +1,12 @@
-import { bold, inlineCode } from '@khaf/builders';
-import { Message } from 'discord.js';
-import { join } from 'path';
-import { parse, toCodePoints } from 'twemoji-parser';
+import { Arguments, Command } from '#khaf/Command';
 import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { plural } from '#khaf/utility/String.js';
-import { Arguments, Command } from '#khaf/Command';
+import { bold, inlineCode } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { join } from 'path';
+import { parse, toCodePoints } from 'twemoji-parser';
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const Emojis = createFileWatcher(

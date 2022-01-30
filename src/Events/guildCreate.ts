@@ -4,7 +4,7 @@ import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ApplicationCommandPermissionType } from 'discord-api-types/v9';
-import { Guild, GuildApplicationCommandPermissionData, Permissions } from 'discord.js';
+import { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
 
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
@@ -33,7 +33,7 @@ export class kEvent extends Event<'guildCreate'> {
                 const interaction = KhafraClient.Interactions.Commands.get(slashCommand.data.name)!;
                 if (!interaction.options.permissions) continue;
 
-                const perms = new Permissions(interaction.options.permissions);
+                const perms = interaction.options.permissions;
                 const rolesWithPerms = guild.roles.cache.filter(
                     role => role.permissions.has(perms)  
                 );

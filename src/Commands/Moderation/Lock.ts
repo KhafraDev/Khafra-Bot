@@ -1,16 +1,16 @@
-import { bold } from '@khaf/builders';
-import { Message, Permissions } from 'discord.js';
-import { isText } from '#khaf/utility/Discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Arguments, Command } from '#khaf/Command';
+import { bold } from '@khaf/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
-const perms = new Permissions([
-    Permissions.FLAGS.VIEW_CHANNEL,
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS
-]);
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
     constructor() {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
                 folder: 'Moderation',
                 args: [0, 1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
+                permissions: [ PermissionFlagsBits.ManageChannels ]
             }
         );
     }
@@ -46,12 +46,12 @@ export class kCommand extends Command {
         }
 
         let lockState = 'unlocked';
-        if (!hasPerms(text, everyone, Permissions.FLAGS.SEND_MESSAGES)) {
+        if (!hasPerms(text, everyone, PermissionFlagsBits.SendMessages)) {
             await text.lockPermissions();
         } else {
             lockState = 'locked';
             await text.permissionOverwrites.set(
-                [ { id: everyone.id, deny: [Permissions.FLAGS.SEND_MESSAGES] } ]
+                [ { id: everyone.id, deny: [PermissionFlagsBits.SendMessages] } ]
             );
         }
 

@@ -4,7 +4,8 @@ import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { ActionRow, inlineCode } from '@khaf/builders';
-import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -21,7 +22,9 @@ export class kCommand extends Command {
                 args: [1, 1],
                 guildOnly: true,
                 ratelimit: 30,
-                permissions: [Permissions.FLAGS.MANAGE_CHANNELS]
+                permissions: [
+                    PermissionFlagsBits.ManageChannels
+                ]
             }
         );
     }

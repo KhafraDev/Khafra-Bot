@@ -4,9 +4,14 @@ import { isText, isThread } from '#khaf/utility/Discord.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, Permissions } from 'discord.js';
 import { bold, time } from '@khaf/builders';
+import {
+    ApplicationCommandOptionType,
+    ChannelType,
+    PermissionFlagsBits,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -41,7 +46,7 @@ export class kInteraction extends Interactions {
         super(sc, {
             defer: true,
             permissions: [
-                Permissions.FLAGS.MANAGE_MESSAGES
+                PermissionFlagsBits.ManageMessages
             ]
         });
     }
@@ -66,7 +71,7 @@ export class kInteraction extends Interactions {
 
             const everyone = channel.guild.roles.everyone.id;
             
-            if (channel.permissionsFor(everyone)?.has(Permissions.FLAGS.VIEW_CHANNEL)) {
+            if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
                 const embed = Embed.ok(`
                 ${bold('Channel:')} ${channel}
                 ${bold('Messages:')} ${amount}

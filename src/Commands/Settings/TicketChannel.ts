@@ -5,8 +5,8 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Message, Permissions } from 'discord.js';
-import { GuildPremiumTier } from 'discord-api-types/v9';
+import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v9';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -29,11 +29,11 @@ export class kCommand extends Command {
     }
 
     async init(message: Message<true>, _args: Arguments, settings: kGuild) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
+        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return this.Embed.perms(
                 message.channel,
                 message.member,
-                Permissions.FLAGS.ADMINISTRATOR
+                PermissionFlagsBits.Administrator
             );
         }
         

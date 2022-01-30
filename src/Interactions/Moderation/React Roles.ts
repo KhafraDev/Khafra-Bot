@@ -4,14 +4,18 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ActionRow, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, ChannelType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import {
+    ApplicationCommandOptionType,
+    ChannelType,
+    PermissionFlagsBits,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v9';
 import {
     ChatInputCommandInteraction,
     EmojiIdentifierResolvable,
     GuildMember,
     GuildMemberRoleManager,
     NewsChannel,
-    Permissions,
     Role,
     TextChannel,
     ThreadChannel,
@@ -22,9 +26,7 @@ import { parse } from 'twemoji-parser';
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 
 const guildEmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
-const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES
-]);
+const perms = PermissionFlagsBits.SendMessages;
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -68,7 +70,7 @@ export class kInteraction extends Interactions {
 
         super(sc, {
             permissions: [
-                Permissions.FLAGS.MANAGE_ROLES
+                PermissionFlagsBits.ManageRoles
             ]
         });
     }

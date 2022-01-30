@@ -4,7 +4,8 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, bold, inlineCode } from '@khaf/builders';
 import { Pocket } from '@khaf/pocket';
-import { Interaction, Message, Permissions } from 'discord.js';
+import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { Interaction, Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor() {
@@ -17,7 +18,10 @@ export class kCommand extends Command {
                 folder: 'Pocket',
                 args: [0, 0],
                 ratelimit: 300,
-                permissions: [ Permissions.FLAGS.ADD_REACTIONS, Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
+                permissions: [
+                    PermissionFlagsBits.AddReactions,
+                    PermissionFlagsBits.ManageEmojisAndStickers
+                ]
             }
         );
     }
