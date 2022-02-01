@@ -5,7 +5,10 @@ import { APIMessageComponentEmoji, APISelectMenuOption } from 'discord-api-types
  * @see https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-option-structure
  */
 export class SelectMenuOption implements BuildersSelectMenuOption {
-    private data = {} as APISelectMenuOption;
+    private data: APISelectMenuOption = {
+        label: '',
+        value: ''
+    };
 
     public constructor (data?: APISelectMenuOption) {
         if (data) {

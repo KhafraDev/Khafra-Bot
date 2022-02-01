@@ -6,10 +6,10 @@ import { createComponent } from '../Utility/CreateComponents.js';
 export type ActionRowComponent = ButtonComponent | SelectMenuComponent
 
 export class ActionRow<T extends ActionRowComponent> implements BuildersActionRow<T> {
-    private data = {
+    private data: APIActionRowComponent = {
         type: ComponentType.ActionRow,
         components: []
-    } as APIActionRowComponent;
+    };
 
     public constructor (data?: APIActionRowComponent) {
         if (data) {

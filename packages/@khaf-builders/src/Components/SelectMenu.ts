@@ -6,11 +6,11 @@ import { SelectMenuOption } from './SelectMenuOption.js';
  * @see https://discord.com/developers/docs/interactions/message-components#select-menus
  */
 export class SelectMenuComponent implements BuildersSelectMenu {
-    private data = {
+    private data: APISelectMenuComponent = {
         type: ComponentType.SelectMenu,
         options: [],
         custom_id: ''
-    } as APISelectMenuComponent;
+    };
 
     public constructor (data?: APISelectMenuComponent) {
         if (data) {

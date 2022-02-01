@@ -2,9 +2,9 @@ import { AuthorOptions, Embed as BuildersEmbed, FooterOptions } from '@discordjs
 import { APIEmbed, APIEmbedField } from 'discord-api-types/v9';
 
 export class Embed implements BuildersEmbed {
-    private data = {
+    private data: APIEmbed = {
         fields: []
-    } as APIEmbed;
+    };
 
     public get fields () { return this.data.fields!; }
     public set fields (value) { this.data.fields = value; }
