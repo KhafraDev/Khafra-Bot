@@ -31,8 +31,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
-        const member = await getMentions(message, 'members');
+    async init(message: Message<true>, { args, content }: Arguments, settings: kGuild) {
+        const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {
             return this.Embed.error(`You cannot kick ${member}!`);

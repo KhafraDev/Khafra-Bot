@@ -36,10 +36,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, cli }: Arguments) {
+    async init(message: Message<true>, { args, cli, content }: Arguments) {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
-        const user = await getMentions(message, 'users');
+        const user = await getMentions(message, 'users', content);
 
         const member = user && message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {

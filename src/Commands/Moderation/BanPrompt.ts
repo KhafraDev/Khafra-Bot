@@ -31,8 +31,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
-        const user = await getMentions(message, 'users');
+    async init(message: Message<true>, { args, content }: Arguments) {
+        const user = await getMentions(message, 'users', content);
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 

@@ -1,4 +1,4 @@
-import { Command } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@khaf/builders';
@@ -45,8 +45,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
-        const member = await getMentions(message, 'members') ?? message.member;
+    async init(message: Message<true>, { content }: Arguments) {
+        const member = await getMentions(message, 'members', content) ?? message.member;
 
         if (!member) {
             return this.Embed.error(`No guild member mentioned.`);

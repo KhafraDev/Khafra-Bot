@@ -27,8 +27,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
-        const member = await getMentions(message, 'users');
+    async init(message: Message<true>, { args, content }: Arguments) {
+        const member = await getMentions(message, 'users', content);
         if (!member) {
             return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }

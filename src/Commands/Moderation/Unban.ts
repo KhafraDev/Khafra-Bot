@@ -24,8 +24,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, cli }: Arguments) {
-        const user = await getMentions(message, 'users');
+    async init(message: Message<true>, { args, cli, content }: Arguments) {
+        const user = await getMentions(message, 'users', content);
 
         if (!user) 
             return this.Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');

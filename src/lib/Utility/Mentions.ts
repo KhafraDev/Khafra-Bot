@@ -15,15 +15,18 @@ const epoch = new Date('January 1, 2015 GMT-0').getTime();
 const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g;
 
 export async function getMentions(message: Message<true>, type: 'roles'): Promise<Role | null>;
-export async function getMentions(message: Message, type: 'users'): Promise<User | null>;
-export async function getMentions(message: Message<true>, type: 'members'): Promise<GuildMember | null>;
+export async function getMentions(message: Message, type: 'users', content?: string): Promise<User | null>;
+export async function getMentions(message: Message<true>, type: 'members', content?: string): Promise<GuildMember | null>;
 export async function getMentions(message: Message<true>, type: 'channels'): Promise<GuildBasedChannel | null>;
 export async function getMentions(
     message: Message, 
-    fetchType: MessageMentionTypes
+    fetchType: MessageMentionTypes,
+    text?: string
 ) {
-    const { mentions, content, guild, client} = message;
     if (fetchType !== 'users' && !message.inGuild()) return null;
+
+    const { mentions, content: messageContent, guild, client} = message;
+    const content = typeof text === 'string' ? text : messageContent;
 
     for (const [, type, id] of content.matchAll(mentionMatcher)) {
         let pr: Promise<MentionTypes | null> | MentionTypes | null | undefined; 

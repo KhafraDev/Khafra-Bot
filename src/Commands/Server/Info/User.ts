@@ -1,5 +1,5 @@
 import { client } from '#khaf/Client';
-import { Command } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -69,8 +69,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
-        const user = await getMentions(message, 'users') ?? message.author;
+    async init(message: Message<true>, { content }: Arguments) {
+        const user = await getMentions(message, 'users', content) ?? message.author;
         const member = user.equals(message.author) 
             ? message.member 
             : message.guild.members.resolve(user);
