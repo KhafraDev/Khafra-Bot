@@ -3,26 +3,20 @@ import '#khaf/utility/Rejections.js';
 import '#khaf/utility/__proto__.js';
 
 import { KhafraClient } from '#khaf/Bot';
-import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { RestEvents } from '@discordjs/rest';
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v9';
 import { ClientEvents, Partials } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(name: T) => {
-    let event: Event | undefined;
+    const event = KhafraClient.Events.get(name);
 
-    return (...args: unknown[]) => {
-        if (event === undefined) {
-            if (!KhafraClient.Events.has(name)) {
-                throw new Error(`The ${name} event has no event handler!`);
-            }
-
-            event = KhafraClient.Events.get(name)!;
-        }
-
-        return void dontThrow(event.init(...args as Parameters<typeof event['init']>));
+    if (!event) {
+        throw new TypeError(`Event "${name}" has no event handler!`);
     }
+
+    return (...args: Parameters<typeof event['init']>) =>
+        void dontThrow(event.init(...args));
 }
 
 export const client = new KhafraClient({
