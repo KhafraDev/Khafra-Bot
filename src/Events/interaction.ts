@@ -54,7 +54,7 @@ export class kEvent extends Event<'interactionCreate'> {
         }
 
         const command = interaction.isContextMenuCommand()
-            ? KhafraClient.Interactions.UserCommands.get(interaction.commandName)!
+            ? KhafraClient.Interactions.Context.get(interaction.commandName)!
             : KhafraClient.Interactions.Commands.get(interaction.commandName)!;
 
         if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {

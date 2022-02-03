@@ -44,7 +44,7 @@ export class KhafraClient extends Client {
         Commands: new Map<string, Interactions>(),
         Subcommands: new Map<string, InteractionSubCommand>(),
         Autocomplete: new Map<string, InteractionAutocomplete>(),
-        UserCommands: new Map<string, InteractionUserCommand>()
+        Context: new Map<string, InteractionUserCommand>()
     } as const;
     // static Interactions: Map<string, Interactions> = new Map();
     // static Subcommands: Map<string, InteractionSubCommand> = new Map();
@@ -144,7 +144,7 @@ export class KhafraClient extends Client {
                     );
                 } else if ('kUserCommand' in interaction.value) {
                     const userCommand = new interaction.value.kUserCommand();
-                    KhafraClient.Interactions.UserCommands.set(userCommand.data.name, userCommand);
+                    KhafraClient.Interactions.Context.set(userCommand.data.name, userCommand);
                     loaded.push(userCommand);
                     loadedUserCommands++;
                 }

@@ -152,6 +152,8 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction) {
         if (currentGames.has(interaction.user.id)) {
             return `❌ Finish your current game first!`;
+        } else if (!interaction.inGuild()) {
+            return `❌ I can't read your messages! Re-invite the bot with all permissions to use this command!`;
         }
 
         const shouldList = interaction.options.getSubcommand() === 'list';

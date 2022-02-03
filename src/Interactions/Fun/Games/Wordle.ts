@@ -1,7 +1,7 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
+import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, inlineCode } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
@@ -66,6 +66,8 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction) {
         if (games.has(interaction.user.id)) {
             return `❌ Finish your other game first!`;
+        } else if (!interaction.inGuild()) {
+            return `❌ I can't read your messages! Re-invite the bot with all permissions to use this command!`;
         }
 
         if (words.length === 0) {
@@ -115,7 +117,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             if (err !== null || c === null) {
                 return `❌ Please invite the bot with the correct permissions to use this command!`;
-            } else if (!isTextBased(c)) {
+            } else if (!isTextBased(c) || isDM(c)) {
                 return `❌ This command cannot be used in this channel!`;
             }
 
