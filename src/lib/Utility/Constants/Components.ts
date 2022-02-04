@@ -18,7 +18,11 @@ export const Components = {
     primary: (label = 'primary', id?: string) => new ButtonComponent()
         .setCustomId(id ?? 'primary')
         .setLabel(label)
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Primary),
+    link: (label: string, url: string) => new ButtonComponent()
+        .setLabel(label)
+        .setStyle(ButtonStyle.Link)
+        .setURL(url)
 }
 
 const toggleComponents = (item: Message | APIMessage, disabled: boolean) => {

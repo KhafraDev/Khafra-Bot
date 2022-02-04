@@ -1,14 +1,15 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { type Giveaway } from '#khaf/types/KhafraBot.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold, hyperlink, inlineCode, time } from '@khaf/builders';
-import { ChatInputCommandInteraction, NewsChannel, TextChannel } from 'discord.js';
+import { ActionRow, bold, inlineCode, time } from '@khaf/builders';
+import { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 
@@ -75,13 +76,18 @@ export class kSubCommand extends InteractionSubCommand {
             RETURNING id;
         `;
 
-        return stripIndents`
-        ✅ Started a giveaway in ${channel}!
-
-        • ${winners} winner${plural(winners)}
-        • Ends ${time(endsDate)}
-        • ID ${inlineCode(rows[0].id)}
-        • ${hyperlink('Giveaway Message', sent.url)}
-        `;
+        return {
+            content: stripIndents`
+            ✅ Started a giveaway in ${channel}!
+    
+            • ${winners} winner${plural(winners)}
+            • Ends ${time(endsDate)}
+            • ID ${inlineCode(rows[0].id)}`,
+            components: [
+                new ActionRow().addComponents(
+                    Components.link('Message Link', sent.url)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
 }

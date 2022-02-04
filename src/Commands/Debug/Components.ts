@@ -4,6 +4,8 @@ import { Range } from '#khaf/utility/Valid/Number.js';
 import { ActionRow } from '@khaf/builders';
 import { Message } from 'discord.js';
 
+type ComponentTypes = Exclude<keyof typeof Components, 'link'>
+
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 
 export class kCommand extends Command {
@@ -29,7 +31,9 @@ export class kCommand extends Command {
             return this.Embed.error(`Invalid number of buttons to add!`);
 
         const row = new ActionRow();
-        const keys = Object.keys(Components) as (keyof typeof Components)[];
+        const keys = Object.keys(Components) as ComponentTypes[];
+        keys.splice(keys.findIndex(i => `${i}` === 'link'), 1);
+
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)];
             const disabled = Boolean(Math.round(Math.random()));
