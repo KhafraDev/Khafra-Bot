@@ -1,12 +1,13 @@
 import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
 import { fetchMDN } from '@khaf/mdn';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
@@ -44,15 +45,17 @@ export class kInteraction extends Interactions {
             return `${emoji} No search results found!`;
 
         const document = result.documents[0]!;
+        const link = `https://developer.mozilla.org/${document.locale}/docs/${document.slug}`;
 
-        const hy = hyperlink(
-            document.title,
-            hideLinkEmbed(`https://developer.mozilla.org/${document.locale}/docs/${document.slug}`)
-        );
-
-        return stripIndents`    
-        ${emoji ?? 'MDN'} ${hy}
-        ${inlineCode(document.summary.replace(/\s+/g, ' '))}
-        `;
+        return {
+            content: stripIndents`    
+            ${emoji ?? 'MDN'} ${hyperlink(document.title, hideLinkEmbed(link))}
+            ${inlineCode(document.summary.replace(/\s+/g, ' '))}`,
+            components: [
+                new ActionRow().addComponents(
+                    Components.link(`Go to MDN`, link)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
 } 

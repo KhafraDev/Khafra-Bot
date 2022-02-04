@@ -85,7 +85,7 @@ export class kCommand extends Command {
         } else {
             // create normal text channel with permissions for message.author
             const [err, ticketChannel] = await dontThrow(message.guild.channels.create(name, {
-                type: ChannelType.GuildText as number,
+                type: ChannelType.GuildText,
                 parent: channel,
                 permissionOverwrites: [
                     {
@@ -103,7 +103,7 @@ export class kCommand extends Command {
                         ]
                     }
                 ]
-            }) as Promise<TextChannel>);
+            }));
 
             if (err !== null) {
                 return this.Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`);

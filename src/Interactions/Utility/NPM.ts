@@ -1,9 +1,10 @@
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, inlineCode, time } from '@khaf/builders';
-import { npm } from '@khaf/npm';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { ActionRow, bold, hyperlink, inlineCode, time } from '@khaf/builders';
+import { npm } from '@khaf/npm';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -42,19 +43,20 @@ export class kInteraction extends Interactions {
         const ver = version.startsWith('v') ? version.slice(1) : version;
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']];
+        const link = `https://npmjs.com/package/${dist.name}`;
         const maintainers = dist.maintainers
             .slice(0, 10)
             .map(u => u.name)
             .join(', ');
 
-        return Embed.ok()
+        const embed = Embed.ok()
             .setAuthor({
                 name: 'NPM',
                 iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
                 url: 'https://npmjs.com/'
             })
             .setDescription(`
-            [${dist.name}](https://npmjs.com/package/${dist.name})
+            ${hyperlink(dist.name, link)}
             ${inlineCode(p.description.slice(0, 2000))}
             `)
             .addField({ name: bold('Version:'), value: dist.version, inline: true })
@@ -68,5 +70,14 @@ export class kInteraction extends Interactions {
             .addField({ name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true })
             .addField({ name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true })
             .addField({ name: bold('Maintainers:'), value: maintainers });
+
+        return {
+            embeds: [ embed ],
+            components: [
+                new ActionRow().addComponents(
+                    Components.link('Go to npm', link)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
 } 

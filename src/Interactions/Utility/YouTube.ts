@@ -66,7 +66,7 @@ export class kInteraction extends Interactions {
         }) as Message;
 
         const c = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent as number,
+            interactionType: InteractionType.MessageComponent,
             message: m,
             time: 120_000,
             idle: 60_000,

@@ -1,8 +1,10 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, italic } from '@khaf/builders';
+import { ActionRow, bold, italic } from '@khaf/builders';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -30,13 +32,22 @@ export class kInteraction extends Interactions {
             return '❌ No definition found!';
         }
 
-        return `
-        ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
-        ${word.definitions
-            .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
-            .join('\n')
-            .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
-        }
-        `.trim();
+        return {
+            content: stripIndents`
+            ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
+            ${word.definitions
+                .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
+                .join('\n')
+                .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
+            }`,
+            components: [
+                new ActionRow().addComponents(
+                    Components.link(
+                        'Go to Dictionary',
+                        `https://www.dictionary.com/browse/${encodeURIComponent(phrase)}`
+                    )
+                )
+            ]
+        } as InteractionReplyOptions;
     }
 } 

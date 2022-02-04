@@ -57,13 +57,14 @@ export class kInteraction extends Interactions {
         }) as Message;
 
         const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent as number,
+            interactionType: InteractionType.MessageComponent,
             message: m,
             time: 120_000,
             idle: 30_000,
             max: wiki.pages.length,
             filter: (i) =>
-                i.user.id === interaction.user.id
+                i.user.id === interaction.user.id &&
+                i.message.id === m.id
         });
 
         c.on('collect', async (i) => {

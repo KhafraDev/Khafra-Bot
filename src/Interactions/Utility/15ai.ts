@@ -1,13 +1,14 @@
-import { hyperlink, inlineCode } from '@khaf/builders';
-import { FifteenDotAI } from '@khaf/15.ai';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction } from 'discord.js';
-import { join } from 'path';
+import { Interactions } from '#khaf/Interaction';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Interactions } from '#khaf/Interaction';
+import { FifteenDotAI } from '@khaf/15.ai';
+import { ActionRow, hyperlink, inlineCode } from '@khaf/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { join } from 'path';
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json');
 
@@ -73,6 +74,13 @@ export class kInteraction extends Interactions {
             embed.description += `${url} [Confidence: ${confidence}]\n`;
         }
 
-        return embed;
+        return {
+            embeds: [ embed ],
+            components: [
+                new ActionRow().addComponents(
+                    Components.link(`Visit 15.ai`, `https://15.ai`)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
 } 

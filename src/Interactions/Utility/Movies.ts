@@ -1,10 +1,11 @@
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, time } from '@khaf/builders';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { isDM, isText } from '#khaf/utility/Discord.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
+import { ActionRow, ActionRowComponent, bold, hyperlink, time } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 const formatMS = (ms: number) => {
     return Object.entries({
@@ -42,9 +43,11 @@ export class kInteraction extends Interactions {
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
         
-        if (!movies)
+        if (!movies) {
             return '❌ No movie with that name was found!';
+        }
 
+        const components: ActionRow<ActionRowComponent>[] = [];
         const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
@@ -65,22 +68,32 @@ export class kInteraction extends Interactions {
                 value: `[TMDB](https://www.themoviedb.org/movie/${movies.id})`,
                 inline: true
             })
-            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
+            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' });
+
+        if (movies.homepage) {
+            embed.setURL(movies.homepage);
+        }
             
-        movies.homepage && embed.setURL(movies.homepage);
         if (movies.imdb_id) {
-            embed.addField({
-                name: bold('IMDB:'),
-                value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
-                inline: true
-            });
+            const link = `https://www.imdb.com/title/${movies.imdb_id}/`;
+            embed.addField({ name: bold('IMDB:'), value: hyperlink(`IMDB`, link), inline: true });
+
+            components.push(
+                new ActionRow().addComponents(
+                    Components.link(`Go to IMDB`, link)
+                )
+            );
         }
         
-        if (movies.poster_path) 
+        if (movies.poster_path) {
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);
-        else if (movies.backdrop_path)
+        } else if (movies.backdrop_path) {
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.backdrop_path}`);
+        }
 
-        return embed;
+        return {
+            embeds: [ embed ],
+            components
+        } as InteractionReplyOptions;
     }
 } 
