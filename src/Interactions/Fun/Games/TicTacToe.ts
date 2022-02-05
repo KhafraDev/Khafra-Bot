@@ -1,7 +1,7 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, ButtonComponent, inlineCode } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
@@ -9,7 +9,7 @@ import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInte
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board) => {
+const makeRows = (turns: Board, ended = false) => {
     const rows: ButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
@@ -20,7 +20,7 @@ const makeRows = (turns: Board) => {
         } else if (row === 'O') {
             rows.push(Components.primary('O', `O,${i}`).setDisabled(true));
         } else {
-            rows.push(Components.secondary('\u200b', `empty,${i}`));
+            rows.push(Components.secondary('\u200b', `empty,${i}`).setDisabled(ended));
         }
     }
 
@@ -55,8 +55,7 @@ export class kSubCommand extends InteractionSubCommand {
             max: 5,
             filter: (i) =>
                 i.message.id === int.id &&
-                i.user.id === interaction.user.id &&
-                /^empty,\d$/.test(i.customId)
+                i.user.id === interaction.user.id
         });
 
         collector.on('collect', i => {
@@ -76,9 +75,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             return void dontThrow(i.update({
                 content: reason,
-                components: collector.ended
-                    ? disableAll(int)
-                    : makeRows(game.board)
+                components: makeRows(game.board, collector.ended)
             }));
         });
 
@@ -86,7 +83,7 @@ export class kSubCommand extends InteractionSubCommand {
             if (r === 'time' || r === 'idle') {
                 return void dontThrow(interaction.editReply({
                     content: `Game took too long, play a little faster next time!`,
-                    components: disableAll(int)
+                    components: makeRows(game.board, true)
                 }));
             }
         });
