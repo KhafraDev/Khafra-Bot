@@ -66,7 +66,7 @@ export class kInteraction extends Interactions {
             return `❌ I do not have perms to create an activity in this channel!`;
         }
 
-        const activityId = interaction.options.getString('name', true);
+        const activityId = interaction.options.getString('game', true);
         const channel = interaction.options.getChannel('channel', true) as VoiceChannel;
 
         const [fetchError, invite] = await dontThrow(rest.post(
