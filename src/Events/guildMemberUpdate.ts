@@ -19,7 +19,7 @@ type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 export class kEvent extends Event<'guildMemberUpdate'> {
     name = 'guildMemberUpdate' as const;
 
-    async init(oldMember: GuildMember, newMember: GuildMember) {
+    async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
         const premiumRole = oldMember.roles.premiumSubscriberRole;
         if (!premiumRole) return;

@@ -3,12 +3,12 @@ import { YouTube, YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, time } from '@khaf/builders';
+import { ActionRow, bold, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 
-function* format(items: YouTubeSearchResults) {
+function* format(items: YouTubeSearchResults): Generator<MessageEmbed, void, unknown> {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
         const embed = Embed.ok()
@@ -41,7 +41,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const query = interaction.options.getString('search', true);
         const results = await YouTube(query);
 

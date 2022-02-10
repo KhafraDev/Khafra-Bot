@@ -48,7 +48,7 @@ export const disabled = typeof processArgs.get('disabled') === 'string'
 export class kEvent extends Event<'messageCreate'> {
     name = 'messageCreate' as const;
 
-    async init (message: Message) {
+    async init (message: Message): Promise<void> {
         Stats.messages++;
 
         if (message.channel.type === ChannelType.DM) return DM(message);

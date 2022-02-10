@@ -1,10 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { time } from '@khaf/builders';
+import { time, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
-const formatMS = (ms: number) => Object.entries({
+const formatMS = (ms: number): string => Object.entries({
     d: Math.floor(ms / 86400000),
     h: Math.floor(ms / 3600000) % 24,
     m: Math.floor(ms / 60000) % 60,
@@ -15,7 +15,7 @@ const formatMS = (ms: number) => Object.entries({
     .join(' ');
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get information about a movie!'
         ], {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed> {
         const movies = await searchMovie(
             args.join(' '), 
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)

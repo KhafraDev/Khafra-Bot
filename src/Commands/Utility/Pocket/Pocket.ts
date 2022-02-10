@@ -1,5 +1,5 @@
-import { inlineCode } from '@khaf/builders';
 import { Command } from '#khaf/Command';
+import { inlineCode, type Embed } from '@khaf/builders';
 
 export class kCommand extends Command {
     constructor() {
@@ -15,7 +15,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         return this.Embed.ok()
             .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`

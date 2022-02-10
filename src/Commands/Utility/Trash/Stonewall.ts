@@ -8,7 +8,7 @@ import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { ActionRow } from '@khaf/builders';
+import { ActionRow, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { URL } from 'url';
@@ -53,7 +53,7 @@ const cache = once(async () => {
 });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. ' +
@@ -68,7 +68,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | void> {
         const state = await cache();
 
         if (state === null) {
@@ -105,7 +105,7 @@ export class kCommand extends Command {
                     .setImage(comics[0].link);
             }
 
-            const makeEmbed = (page = 0) => this.Embed.ok()
+            const makeEmbed = (page = 0): Embed => this.Embed.ok()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.

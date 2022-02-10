@@ -29,7 +29,7 @@ const perms =
  * Fetches the guild settings given a ChatInputCommandInteraction, or
  * null if the command is not in a guild or an error occurs. 
  */
-export const interactionGetGuildSettings = async (interaction: Interactions) => {
+export const interactionGetGuildSettings = async (interaction: Interactions): Promise<kGuild | null> => {
     if (!interaction.inGuild()) return null;
 
     let settings: kGuild;
@@ -63,12 +63,12 @@ export const interactionGetGuildSettings = async (interaction: Interactions) => 
 export const interactionFetchChannel = async (
     interaction: Interactions,
     id: Snowflake
-) => {
+): Promise<AnyChannel | null> => {
     const channelManager = interaction.guild?.channels;
     let channel: AnyChannel;
 
     if (channelManager?.cache.has(id)) {
-        return channelManager.cache.get(id);
+        return channelManager.cache.get(id) ?? null;
     } else {
         const promise = interaction.guild
             ? channelManager!.fetch(id)
@@ -90,7 +90,7 @@ export const postToModLog = async (
     interaction: ChatInputCommandInteraction,
     embeds: Embed[],
     guildSettings?: kGuild | null
-) => {
+): Promise<undefined> => {
     const settings = guildSettings ?? await interactionGetGuildSettings(interaction);
         
     if (settings?.mod_log_channel) {

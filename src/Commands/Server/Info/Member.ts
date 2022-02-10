@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
 import { ActivityType } from 'discord-api-types/v9';
 import { Activity, Message } from 'discord.js';
 
-const formatPresence = (activities: Activity[] | undefined) => {
+const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
     
     const push: string[] = [];
@@ -29,7 +29,7 @@ const formatPresence = (activities: Activity[] | undefined) => {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about a guild member.',
@@ -45,7 +45,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
         const member = await getMentions(message, 'members', content) ?? message.member;
 
         if (!member) {

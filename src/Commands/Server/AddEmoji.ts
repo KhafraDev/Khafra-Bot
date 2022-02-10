@@ -1,12 +1,12 @@
 import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validURL } from '#khaf/utility/Valid/URL.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message, MessageAttachment } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Add an emoji to the server!',
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
         if (args.length === 1 && message.attachments.size === 0)
             return this.Embed.error('No attachment was included and no image link was provided!');
 

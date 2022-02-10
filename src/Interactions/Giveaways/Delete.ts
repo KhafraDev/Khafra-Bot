@@ -11,14 +11,14 @@ type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initi
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'giveaway',
             name: 'delete'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {

@@ -1,14 +1,14 @@
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { Message } from 'discord.js';
 import { Reddit } from '@khaf/badmeme';
+import { inlineCode, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 import { fetch } from 'undici';
-import { inlineCode } from '@khaf/builders';
 
 const PER_COIN = 1.99 / 500;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Calculate how much people have spent on Reddit awards for a post.',
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {
         const url = URLFactory(args[0]);
         if (url === null)
             return this.Embed.error('Invalid Reddit post!');

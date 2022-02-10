@@ -14,7 +14,7 @@ const processId = pid;
 const host = hostname();
 const blankParam = Symbol('khafra.logging');
 
-const getLevel = (l: LoggerLevels) => {
+const getLevel = (l: LoggerLevels): string => {
     switch (l) {
         case 'DEBUG': return bright(cyan(l));
         case 'INFO': return yellow(l);
@@ -26,7 +26,11 @@ const getLevel = (l: LoggerLevels) => {
 const isDate = (something: object): something is Date => 'toISOString' in something;
 
 // TODO(@KhafraDev): update type once Error has a cause
-const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1, newLineFirst = false) => {
+const errorToReadable = (
+    err: Error & { cause?: unknown },
+    indentation = 1,
+    newLineFirst = false
+): string => {
     let error = '';
     const indent = ' '.repeat(indentation * 2);
     const moreIndent = ' '.repeat((indentation + 1) * 2);
@@ -49,7 +53,7 @@ const errorToReadable = (err: Error & { cause?: unknown }, indentation = 1, newL
 	return error;
 }
 
-const objectToReadable = (o: unknown, depth = 1) => {
+const objectToReadable = (o: unknown, depth = 1): string => {
     switch (typeof o) {
         case 'symbol': return ' ' + green(o.toString()) + EOL;
         case 'undefined': return EOL;
@@ -99,7 +103,7 @@ class Logger {
         stdoutStream.end();
     }
 
-    write (message: string, level: LoggerLevels) {
+    write (message: string, level: LoggerLevels): void {
         if (level === 'ERROR' || level === 'WARN') {
             stderrStream.write(message);
         } else {
@@ -107,7 +111,7 @@ class Logger {
         }
     }
 
-    log (message: unknown, data: unknown = blankParam, level: LoggerLevels = 'DEBUG') {
+    log (message: unknown, data: unknown = blankParam, level: LoggerLevels = 'DEBUG'): void {
         const starter = '[' + Date.now() + '] ' + getLevel(level) + ' (' + processId + ') on ' + host + ': ';
 
         if (typeof message === 'string') {
@@ -121,11 +125,11 @@ class Logger {
         }
     }
 
-    debug (a: unknown, b?: unknown) {
+    debug (a: unknown, b?: unknown): void {
         this.log(a, b, 'DEBUG');
     }
     
-    info (a: unknown, b?: unknown) {
+    info (a: unknown, b?: unknown): void {
         this.log(a, b, 'INFO');
     }
 
@@ -142,11 +146,11 @@ class Logger {
      * @param {unknown} a object or message to log.
      * @param {unknown} b object to log if a message was provided.
      */
-    error (a: unknown, b?: unknown) {
+    error (a: unknown, b?: unknown): void {
         this.log(a, b, 'ERROR');
     }
 
-    warn (a: unknown, b?: unknown) {
+    warn (a: unknown, b?: unknown): void {
         this.log(a, b, 'WARN');
     }
 }

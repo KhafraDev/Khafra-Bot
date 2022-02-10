@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { hyperlink, inlineCode } from '@khaf/builders';
+import { hyperlink, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(

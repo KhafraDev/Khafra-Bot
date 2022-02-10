@@ -6,7 +6,7 @@ const emojis = [
     '💣'
 ] as const;
 
-export const Board = () => {
+export const Board = (): string => {
     const board = chunkSafe(Array<number>(100).fill(0), 10);
 
     for (let i = 0; i < 10;) {

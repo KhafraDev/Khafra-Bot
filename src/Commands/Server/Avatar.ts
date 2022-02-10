@@ -1,13 +1,14 @@
-import { Arguments, Command } from '../../Structures/Command.js';
-import { Message } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { ImageExtension, ImageURLOptions, ImageSize } from '@discordjs/rest';
+import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
+import { type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { Arguments, Command } from '../../Structures/Command.js';
 
 const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get someone\'s avatar!',
@@ -27,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { cli, content }: Arguments) {
+    async init (message: Message, { cli, content }: Arguments): Promise<Embed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
         
         const opts: ImageURLOptions = {

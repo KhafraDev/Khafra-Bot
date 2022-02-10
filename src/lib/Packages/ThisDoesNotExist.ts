@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { fetch } from 'undici';
 
-const formatURL = new Map([
+const formatURL = new Map<DNE, string>([
     ['artwork', `https://thisartworkdoesnotexist.com/`],
     ['cat',     `https://thiscatdoesnotexist.com/`],
     ['horse',   `https://thishorsedoesnotexist.com/`],
@@ -16,7 +16,7 @@ export type DNE =
     | 'horse'
     | 'person'
 
-export const thisDoesNotExist = async (type: DNE) => {
+export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions | null> => {
     const url = formatURL.get(type);
     if (!url) return null;
 

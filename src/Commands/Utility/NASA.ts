@@ -1,11 +1,11 @@
 import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a random Astronomy Photo of the Day (APOD) supplied by NASA.'
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         if (cache.length === 0) {
             void message.channel.sendTyping();
         }

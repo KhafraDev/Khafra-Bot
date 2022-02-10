@@ -1,10 +1,10 @@
-import { Message } from 'discord.js';
 import { Command } from '#khaf/Command';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold } from '@khaf/builders';
+import { bold, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get global stats for the bot!'
         ], {
@@ -15,7 +15,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         const guilds = message.client.guilds.cache;
         const {
             globalCommandsUsed,

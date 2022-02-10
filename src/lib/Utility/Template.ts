@@ -1,7 +1,7 @@
 /**
  * Strip leading indents from a multi-lined template literal.
  */
-export const stripIndents = (raw: TemplateStringsArray, ...args: unknown[]) => {
+export const stripIndents = (raw: TemplateStringsArray, ...args: unknown[]): string => {
     const r = String.raw({ raw }, ...args);
 
     return r

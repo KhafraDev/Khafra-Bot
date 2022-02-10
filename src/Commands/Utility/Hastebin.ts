@@ -1,12 +1,12 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
 import { pasteAliases } from '#khaf/utility/commands/Pastes';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Upload a paste to a number of different pastebin services!',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content, commandName }: Arguments) {
+    async init (_message: Message, { content, commandName }: Arguments): Promise<Embed> {
         const command = commandName.toLowerCase();
 
         if (command === 'pastebin' || content.length == 0) 

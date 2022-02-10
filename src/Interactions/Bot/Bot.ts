@@ -1,14 +1,14 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, version as DJSVersion } from 'discord.js';
 import { join } from 'path';
 import { performance } from 'perf_hooks';
 import { memoryUsage, version } from 'process';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 
 enum BotInfo {
     ABOUT = 'about',
@@ -18,7 +18,7 @@ enum BotInfo {
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
-const getUptime = (ms: number) => {
+const getUptime = (ms: number): string => {
     return Object.entries({
 		d: Math.floor(ms / 86400000),
 		h: Math.floor(ms / 3600000) % 24,
@@ -32,7 +32,7 @@ const getUptime = (ms: number) => {
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'bot',
             description: 'Bot commands',
@@ -61,7 +61,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | undefined> {
         const was = performance.now();
         const subcommand = interaction.options.getSubcommand(true);
 

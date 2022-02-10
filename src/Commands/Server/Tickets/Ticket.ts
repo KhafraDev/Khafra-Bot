@@ -5,7 +5,7 @@ import { inlineCode } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Giveaways: main place to create a type of giveaway.'
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, argument: Arguments, settings: kGuild) {
+    async init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
         if (argument.args.length === 0) {
             // help message
             return this.Embed.error('not implemented yet');

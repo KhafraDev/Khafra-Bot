@@ -1,10 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
 import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get direct links to media in Tweets!',
@@ -19,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed | string> {
         const { hostname, pathname } = URLFactory(args[0]) ?? {};
 
         if (hostname !== 'twitter.com' || !pathname)

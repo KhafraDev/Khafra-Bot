@@ -1,4 +1,5 @@
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 const superscript: Record<string, string> = {
@@ -18,7 +19,7 @@ const superscript: Record<string, string> = {
 };
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Have KhafraBot superscript some text!',
@@ -33,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<Embed> {
         const split = [...content]
             .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
             .join('');

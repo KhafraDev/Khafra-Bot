@@ -1,12 +1,12 @@
 import { Arguments, Command } from '#khaf/Command';
-import { bold, time } from '@khaf/builders';
+import { bold, time, type Embed } from '@khaf/builders';
 import { weather } from '@khaf/hereweather';
 import { Message } from 'discord.js';
 
-const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
+const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the weather in a given location!',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<string | Embed> {
         const results = await weather(content);
 
         if ('status' in results) {

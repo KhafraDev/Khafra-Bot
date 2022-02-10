@@ -24,7 +24,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (!interaction.inGuild()) {
             return `❌ The bot must be re-invited with all permissions to use this command.`;
         }

@@ -1,11 +1,11 @@
 import { Command } from '#khaf/Command';
 import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed } from '@khaf/builders';
 import { StickerFormatType } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about a sticker!',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init({ stickers, guild }: Message<true>) {
+    async init ({ stickers, guild }: Message<true>): Promise<Embed> {
         if (stickers.size === 0)
             return this.Embed.error('No stickers in message! 😕');
 

@@ -9,10 +9,12 @@ import { RestEvents } from '@discordjs/rest';
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v9';
 import { ClientEvents, Partials } from 'discord.js';
 
-const emitted = <T extends keyof ClientEvents | keyof RestEvents>(name: T) => {
+const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
+    name: T
+): (...args: Parameters<Event['init']>) => undefined => {
     let event: Event;
 
-    return (...args: Parameters<typeof event['init']>) => {
+    return (...args: Parameters<typeof event['init']>): undefined => {
         event ??= KhafraClient.Events.get(name)!;
         return void dontThrow(event.init(...args));
     }

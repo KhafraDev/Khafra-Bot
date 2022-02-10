@@ -17,7 +17,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {

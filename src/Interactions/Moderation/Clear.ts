@@ -14,7 +14,7 @@ import {
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clear',
             description: 'Bulk deletes messages from a channel.',
@@ -51,7 +51,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
         const amount = interaction.options.getInteger('messages', true);
         const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 

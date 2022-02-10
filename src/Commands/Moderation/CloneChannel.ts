@@ -3,12 +3,12 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { ActionRow, inlineCode } from '@khaf/builders';
+import { ActionRow, inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Delete a channel and clone it.',
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<Embed | undefined> {
         const channel = await getMentions(message, 'channels') ?? message.channel;
         
         if (isThread(channel) || isDM(channel)) {

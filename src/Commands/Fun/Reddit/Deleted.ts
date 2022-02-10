@@ -5,13 +5,13 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { Reddit } from '@khaf/badmeme';
-import { ActionRow } from '@khaf/builders';
+import { ActionRow, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { clearTimeout, setTimeout } from 'timers';
 import { fetch } from 'undici';
 
-const fetchDeleted = async (postId: string) => {
+const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftError | null> => {
     const ac = new AbortController();
     const id = parseInt(postId, 36);
     if (Number.isNaN(id)) return null;
@@ -62,7 +62,7 @@ interface PushShiftGood {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the content of a deleted post on Reddit.',
@@ -78,7 +78,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | void> {
         const url = URLFactory(args[0]);
 
         void message.channel.sendTyping();
@@ -118,7 +118,7 @@ export class kCommand extends Command {
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
         const chunks = split(post.selftext, 2048);
-        const makeEmbed = (page = 0) => {
+        const makeEmbed = (page = 0): Embed => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
             const embed = this.Embed.ok()
                 .setTitle(title)

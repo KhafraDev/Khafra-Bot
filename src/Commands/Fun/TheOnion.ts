@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
+import { type Embed } from '@khaf/builders';
 import { decodeXML } from 'entities';
 import { fetch } from 'undici';
 
@@ -65,7 +66,7 @@ const rss = new RSSReader<ITheOnion>();
 const cache = once(() => rss.cache(`https://www.theonion.com/rss`));
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [ 
                 'Read one of the latest articles from The Onion!',
@@ -80,7 +81,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         const state = await cache();
 
         if (state === null) {

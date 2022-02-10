@@ -5,11 +5,12 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { type Embed } from '@khaf/builders';
 import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Select a channel to create private ticket threads on (if the server has enough boosts), ' +
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return this.Embed.perms(
                 message.channel,

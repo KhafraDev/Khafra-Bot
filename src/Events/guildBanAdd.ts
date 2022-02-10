@@ -22,7 +22,7 @@ const perms =
 export class kEvent extends Event<'guildBanAdd'> {
     name = 'guildBanAdd' as const;
 
-    async init({ guild, user, reason }: GuildBan) {
+    async init ({ guild, user, reason }: GuildBan): Promise<void> {
         // This event will always return "partial" bans,
         // where the reason & executor are not included!
         // Plus, the reason, if fetched, can be null anyways!

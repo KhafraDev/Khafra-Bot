@@ -17,7 +17,7 @@ export class ActionRow<T extends ActionRowComponent> implements BuildersActionRo
         }
     }
 
-    public get type () { return this.data.type; }
+    public get type (): ComponentType.ActionRow { return this.data.type; }
     public get components (): T[] {
         return this.data.components.map(o => createComponent(o)) as T[];
     }
@@ -27,7 +27,7 @@ export class ActionRow<T extends ActionRowComponent> implements BuildersActionRo
      * @param components The components to add to this action row.
      * @returns
      */
-    public addComponents (...components: T[]) {
+    public addComponents (...components: T[]): this {
         this.data.components.push(...components.map(o => o.toJSON()));
         return this;
     }
@@ -36,7 +36,7 @@ export class ActionRow<T extends ActionRowComponent> implements BuildersActionRo
      * Sets the components in this action row
      * @param components The components to set this row to
      */
-    public setComponents (components: T[]) {
+    public setComponents (components: T[]): this {
         this.data.components = components.map(o => o.toJSON());
         return this;
     }

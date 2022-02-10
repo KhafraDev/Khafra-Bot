@@ -12,7 +12,7 @@ interface Comic {
 
 const PATH = join(assets, 'JSON/Branco.json');
 
-export const migrateBranco = async () => {
+export const migrateBranco = async (): Promise<boolean> => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbBranco);`);
 
     if (r[0]['EXISTS(SELECT 1 from kbBranco)'] === 0) {
@@ -23,7 +23,7 @@ export const migrateBranco = async () => {
     return true;
 }
 
-export const brancoTransaction = async (comics: Comic[]) => {
+export const brancoTransaction = async (comics: Comic[]): Promise<void> => {
     for (const comic of comics) {
         await asyncQuery(`
             INSERT OR IGNORE INTO kbBranco (

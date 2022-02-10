@@ -1,9 +1,10 @@
-import { Message } from 'discord.js';
-import { decodeXML } from 'entities';
+import { Command } from '#khaf/Command';
 import { isText } from '#khaf/utility/Discord.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { decodeXML } from 'entities';
 
 interface ICyanideAndHappiness {
     title: string
@@ -20,7 +21,7 @@ const rss = new RSSReader<ICyanideAndHappiness>();
 const cache = once(() => rss.cache('https://explosm-1311.appspot.com/'));
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         const state = await cache();
 
         if (state === null) {

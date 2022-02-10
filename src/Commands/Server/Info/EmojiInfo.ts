@@ -3,7 +3,7 @@ import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 import { join } from 'path';
 import { parse, toCodePoints } from 'twemoji-parser';
@@ -30,7 +30,7 @@ interface DiverseUnicodeEmoji extends BaseUnicodeEmoji {
 type Emojis = Record<string, BaseUnicodeEmoji | DiverseUnicodeEmoji>;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about an emoji!',
@@ -46,7 +46,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
         const guildEmoji = guildEmojiRegex.exec(content);
 
         if (guildEmoji === null || guildEmoji.groups === undefined) {

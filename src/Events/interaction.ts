@@ -32,7 +32,7 @@ const disabled = typeof processArgs.get('disabled') === 'string'
 export class kEvent extends Event<'interactionCreate'> {
     name = 'interactionCreate' as const;
 
-    async init(interaction: Interaction): Promise<void> {
+    async init (interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
             return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
         } else if (interaction.isAutocomplete()) {

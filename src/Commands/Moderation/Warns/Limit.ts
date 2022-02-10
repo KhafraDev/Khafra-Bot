@@ -4,14 +4,14 @@ import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Set the amount of warning points it requires before a member is kicked. Max = 32,767.',
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))

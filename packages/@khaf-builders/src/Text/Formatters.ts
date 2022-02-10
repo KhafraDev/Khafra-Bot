@@ -9,8 +9,8 @@ export const underscore = <C extends string>(content: C): `__${C}__` => `__${con
 
 export function hideLinkEmbed<C extends string>(url: C): `<${C}>`;
 export function hideLinkEmbed(url: URL): `<${string}>`;
-export function hideLinkEmbed(url: string | URL) {
-    return `<${url}>`;
+export function hideLinkEmbed(url: string | URL): `<${string}>` {
+    return `<${url}>`
 }
 
 export function codeBlock<L extends string, C extends string>(language: L, content: C): `\`\`\`${L}\n${C}\`\`\``;
@@ -27,7 +27,7 @@ export const inlineCode = <C extends string>(content: C): `\`${C}\`` => `\`${con
 
 export function hyperlink<C extends string, U extends string>(content: C, url: U): `[${C}](${U})`;
 export function hyperlink<C extends string, U extends string, T extends string>(content: C, url: U, title: T): `[${C}](${U} "${T}")`;
-export function hyperlink(content: string, url: string, title?: string) {
+export function hyperlink(content: string, url: string, title?: string): string {
     if (title) {
         return `[${content}](${url} "${title}")`;
     }
@@ -41,7 +41,7 @@ export function time(date?: Date): `<t:${bigint}>`;
 export function time<S extends TimestampStyles>(date: Date, style: S): `<t:${bigint}:${S}>`;
 export function time<C extends number>(seconds: C): `<t:${C}>`;
 export function time<C extends number, S extends TimestampStyles>(seconds: C, style: S): `<t:${C}:${S}>`;
-export function time(timeOrSeconds?: number | Date, style: TimestampStyles = 'f') {
+export function time(timeOrSeconds?: number | Date, style: TimestampStyles = 'f'): string {
     if (isDate(timeOrSeconds)) {
         timeOrSeconds = Math.floor(timeOrSeconds.getTime() / 1000);
     } else if (typeof timeOrSeconds === 'string') {

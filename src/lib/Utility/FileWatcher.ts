@@ -7,12 +7,12 @@ type Watcher = Record<string, unknown> | unknown[];
 
 const watchers = new Map<string, Watcher>();
 
-const exists = async (file: string) => {
+const exists = async (file: string): Promise<boolean> => {
     const [err] = await dontThrow(stat(file), { logOnFail: false });
     return err === null;
 }
 
-export const createFileWatcher = <F extends Watcher>(storage: F, path: string) => {
+export const createFileWatcher = <F extends Watcher>(storage: F, path: string): F => {
     if (watchers.has(path)) {
         return watchers.get(path)! as F;
     }

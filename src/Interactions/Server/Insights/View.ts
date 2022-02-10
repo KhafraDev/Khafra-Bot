@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { table } from '#khaf/utility/CLITable.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock } from '@khaf/builders';
+import { codeBlock, type Embed as MessageEmbed } from '@khaf/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 interface Insights {
@@ -19,7 +19,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {

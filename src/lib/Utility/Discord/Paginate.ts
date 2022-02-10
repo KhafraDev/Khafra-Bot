@@ -8,7 +8,7 @@ export const Paginate = (
     m: Message, 
     pageData: number,
     embeds: Embed[] | ((page: number) => Embed)
-) => {
+): void => {
     let page = 0;
 
     c.on('collect', i => {

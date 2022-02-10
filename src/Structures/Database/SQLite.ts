@@ -17,7 +17,7 @@ type Message<T extends unknown[]> = {
 export const asyncQuery = async <T, P extends unknown[] = string[]>(
     sql: string, 
     ...parameters: Message<P>['parameters']
-) => {
+): Promise<T[]> => {
     await load();
     
     return new Promise<T[]>((res, rej) => {

@@ -14,6 +14,12 @@ interface IAPOD {
     url: string
 }
 
+interface NASACache {
+    copyright: string | undefined,
+    link: string,
+    title: string
+}
+
 const hour = 60 * 1000 * 60;
 
 const ratelimit = {
@@ -21,9 +27,9 @@ const ratelimit = {
     firstRequest: -1
 };
 
-export const cache: { copyright: string | undefined, link: string, title: string }[] = [];
+export const cache: NASACache[] = [];
 
-export const NASAGetRandom = async () => {
+export const NASAGetRandom = async (): Promise<NASACache | null> => {
     const params = new URLSearchParams({
         count: '25',
         api_key: env.NASA ?? 'DEMO_KEY'  

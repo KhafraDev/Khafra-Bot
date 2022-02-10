@@ -5,7 +5,7 @@ import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, type Embed } from '@khaf/builders';
 import {
     APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v9';
@@ -24,7 +24,7 @@ const enum Activities {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Play a game in VC!',
@@ -45,7 +45,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed | undefined> {
         const channel = 
             await getMentions(message, 'channels') ?? 
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());

@@ -1,10 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
-import { Message, Role } from 'discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, time } from '@khaf/builders';
+import { bold, inlineCode, time, type Embed } from '@khaf/builders';
+import { Message, Role } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get role info',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
         const role = 
             await getMentions(message, 'roles') ?? 
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());

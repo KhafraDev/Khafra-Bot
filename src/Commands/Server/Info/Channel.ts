@@ -3,12 +3,12 @@ import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, codeBlock, time } from '@khaf/builders';
+import { bold, codeBlock, time, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info on a specified channel!',
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
         const channel = 
             await getMentions(message, 'channels') ?? 
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??

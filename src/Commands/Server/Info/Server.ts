@@ -1,9 +1,9 @@
 import { Command } from '#khaf/Command';
-import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about the server!'
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) { 
+    async init (message: Message<true>): Promise<Embed> { 
         const locale = message.guild.preferredLocale;
 
         return this.Embed.ok()

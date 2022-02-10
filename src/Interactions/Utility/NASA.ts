@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -15,7 +15,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init() {
+    async init (): Promise<string | MessageEmbed> {
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {

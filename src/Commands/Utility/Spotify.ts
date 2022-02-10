@@ -1,10 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { spotify } from '@khaf/spotify';
 import { ActivityType } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Search for a song on Spotify',
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init(message: Message, { args }: Arguments): Promise<Embed> {
         const presence = message.member!.presence?.activities.filter(activity => 
             activity.type === ActivityType.Listening && activity.name === 'Spotify'
         ).pop();

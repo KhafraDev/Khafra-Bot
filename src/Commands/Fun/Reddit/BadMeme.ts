@@ -3,11 +3,11 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { badmeme, cache } from '@khaf/badmeme';
-import { ActionRow } from '@khaf/builders';
-import { Interaction, Message } from 'discord.js';
+import { ActionRow, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a bad meme!',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<string | Embed | undefined> {
         const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
         if (!cache.has(subreddit)) {
             void message.channel.sendTyping();
@@ -71,12 +71,15 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        const filter = (interaction: Interaction) =>
-            interaction.isMessageComponent() &&
-            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
+        const collector = m.createMessageComponentCollector({
+            filter: (interaction) =>
+                interaction.isMessageComponent() &&
+                ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+                interaction.user.id === message.author.id,
+            time: 60_000,
+            max: 5
+        });
 
-        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
         collector.on('collect', i => {
             if (i.customId === 'deny')
                 return collector.stop('deny');

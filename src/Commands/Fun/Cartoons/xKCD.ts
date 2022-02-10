@@ -1,7 +1,8 @@
-import { decodeXML } from 'entities';
+import { Command } from '#khaf/Command';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
+import { decodeXML } from 'entities';
 
 interface IxKCD {
     title: string
@@ -15,7 +16,7 @@ const rss = new RSSReader<IxKCD>();
 const cache = once(() => rss.cache('https://xkcd.com/rss.xml'));
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a random comic from xKCD!'
@@ -29,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         const state = await cache();
 
         if (state === null) {

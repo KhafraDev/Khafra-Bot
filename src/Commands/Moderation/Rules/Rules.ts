@@ -12,7 +12,7 @@ import { once } from 'events';
 const perms = PermissionFlagsBits.SendMessages;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Creates and posts rules for the server.'
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<undefined> {
         const m = await message.reply({
             embeds: [
                 this.Embed.ok()

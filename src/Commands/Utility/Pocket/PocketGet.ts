@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { Pocket } from '@khaf/pocket';
 import { Message } from 'discord.js';
 
@@ -11,7 +11,7 @@ interface PocketUser {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Pocket: retrieve your saved items!'
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket

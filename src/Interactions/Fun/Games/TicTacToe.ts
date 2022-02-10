@@ -3,13 +3,13 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, ButtonComponent, inlineCode } from '@khaf/builders';
+import { ActionRow, ActionRowComponent, ButtonComponent, inlineCode } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board, ended = false) => {
+const makeRows = (turns: Board, ended = false): ActionRow<ActionRowComponent>[] => {
     const rows: ButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
@@ -28,14 +28,14 @@ const makeRows = (turns: Board, ended = false) => {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'tictactoe'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const game = new TicTacToe();
 
         const [err, int] = await dontThrow(interaction.editReply({

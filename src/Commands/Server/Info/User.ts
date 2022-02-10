@@ -5,18 +5,18 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
+import { ActivityType } from 'discord-api-types/v9';
 import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
-import { ActivityType } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
 
-const formatPresence = (activities: Activity[] | undefined) => {
-    if (!Array.isArray(activities)) return null;
+const formatPresence = (activities: Activity[] | undefined): string => {
+    if (!Array.isArray(activities)) return '';
     const push: string[] = [];
 
     for (const activity of activities) {
@@ -53,7 +53,7 @@ const getEmojis = once(() => {
 // 73193882359173120 -> hypesquad events; bug hunter 2
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get basic info about any user on Discord.',
@@ -69,7 +69,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { content }: Arguments) {
+    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
         const member = user.equals(message.author) 
             ? message.member 
@@ -84,7 +84,7 @@ export class kCommand extends Command {
             .filter(f => getEmojis()?.has(f))
             .map(f => getEmojis()?.get(f));
 
-        return this.Embed.ok(formatPresence(member?.presence?.activities) ?? undefined)
+        return this.Embed.ok(formatPresence(member?.presence?.activities))
             .setAuthor({
                 name: user.tag,
                 iconURL: user.displayAvatarURL()

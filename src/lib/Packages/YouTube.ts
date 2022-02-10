@@ -40,7 +40,7 @@ export interface YouTubeSearchResults {
     }[]
 }
 
-export const YouTube = async (q: string[] | string) => {
+export const YouTube = async (q: string[] | string): Promise<YouTubeSearchResults | YouTubeError> => {
     const query = Array.isArray(q) ? q.join(' ') : q;
     const params = new URLSearchParams();
     params.append('part', 'snippet');

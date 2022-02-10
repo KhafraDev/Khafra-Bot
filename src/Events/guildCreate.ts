@@ -9,7 +9,7 @@ import { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
 
-    async init(guild: Guild) {
+    async init (guild: Guild): Promise<void> {
         logger.info(`Joined a new guild!`, {
             id: guild.id,
             name: guild.name

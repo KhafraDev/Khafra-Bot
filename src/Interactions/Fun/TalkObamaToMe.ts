@@ -6,7 +6,7 @@ import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } 
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'talkobamatome',
             description: `Have Obama say something.`,
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
         const sentence = interaction.options.getString('sentence', true);
         const [barack, obama] = await dontThrow(talkObamaToMe(sentence.slice(0, 280)));
 

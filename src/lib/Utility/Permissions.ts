@@ -6,7 +6,7 @@ import { GuildMember, PermissionResolvable, RecursiveReadonlyArray, Role } from 
 const isRecursiveReadonlyArray = <T>(item: unknown):
     item is RecursiveReadonlyArray<T> => Array.isArray(item);
 
-export const resolvePerms = (perms: PermissionResolvable) => {
+export const resolvePerms = (perms: PermissionResolvable): bigint => {
     let bitfield: bigint | undefined;
     if (typeof perms === 'string') {
         bitfield = BigInt(perms);
@@ -38,7 +38,7 @@ export const hasPerms = (
     channel: unknown, 
     memberOrRole: unknown, 
     perms: PermissionResolvable
-) => {
+): boolean => {
     if (typeof channel === 'undefined' || channel === null)
         return false;
     if (!isText(channel) && !isVoice(channel) && !isThread(channel))
@@ -58,7 +58,7 @@ export const hierarchy = (
     a: GuildMember | null,
     b: GuildMember | null,
     strict = true
-) => {
+): boolean => {
     if (!a || !b) return false;
     
     const cond = strict
@@ -68,9 +68,11 @@ export const hierarchy = (
     return a.guild.ownerId === a.id || cond;
 }
 
-const all = Object.entries(PermissionFlagsBits) as [keyof typeof PermissionFlagsBits, bigint][];
+const all = Object.entries(PermissionFlagsBits) as [
+    keyof typeof PermissionFlagsBits, bigint
+][];
 
-export const permResolvableToString = (perms: PermissionResolvable) => {
+export const permResolvableToString = (perms: PermissionResolvable): string[] => {
     const bitfield = resolvePerms(perms);
     const has: string[] = [];
 

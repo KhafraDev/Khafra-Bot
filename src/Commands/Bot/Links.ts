@@ -1,7 +1,8 @@
 import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([], {
             name: 'links',
             folder: 'Bot',
@@ -11,7 +12,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         return this.Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)

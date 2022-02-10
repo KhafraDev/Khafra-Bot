@@ -8,19 +8,19 @@ export class Minimalist extends Map<string, Value> {
         this.content = content;
     }
 
-    override has (k: string) {
+    override has (k: string): boolean {
         if (!this.parsed) this.parse();
 
         return super.has(k);
     }
 
-    override get (k: string) {
+    override get (k: string): Value | undefined {
         if (!this.parsed) this.parse();
 
         return super.get(k);
     }
 
-    private parse (s = this.content) {
+    private parse (s = this.content): void {
         this.parsed ||= true;
         const tokens = s.split(/\s+/g);
 

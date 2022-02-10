@@ -12,7 +12,7 @@ interface Comic {
 
 const PATH = join(assets, 'JSON/Garrison.json');
 
-export const migrateGarrison = async () => {
+export const migrateGarrison = async (): Promise<boolean> => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbGarrison);`);
 
     if (r[0]['EXISTS(SELECT 1 from kbGarrison)'] === 0) {
@@ -23,7 +23,7 @@ export const migrateGarrison = async () => {
     return true;
 }
 
-export const garrisonTransaction = async (comics: Comic[]) => {
+export const garrisonTransaction = async (comics: Comic[]): Promise<void> => {
     for (const comic of comics) {
         await asyncQuery(`
             INSERT OR IGNORE INTO kbGarrison (

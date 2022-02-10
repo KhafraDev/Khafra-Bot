@@ -1,9 +1,9 @@
 import { Arguments, Command } from '#khaf/Command';
+import { codeBlock, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
-import { codeBlock } from '@khaf/builders';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the content of a message stringified (guild emojis, etc.).',
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<Embed> {
         return this.Embed.ok(codeBlock(content));
     }
 }

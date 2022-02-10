@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const phrase = interaction.options.getString('word', true);
         const word = await owlbotio(phrase);
 

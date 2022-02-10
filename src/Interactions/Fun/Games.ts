@@ -8,7 +8,7 @@ const assetsPath = join(assets, 'Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'games',
             description: 'Command that handles games!',

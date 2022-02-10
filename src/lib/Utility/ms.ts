@@ -24,7 +24,7 @@ const whole = new RegExp(wholeRegex);
  * 
  * changes: seconds -> ms, remove times shorter than ms, added weeks (w), removed year
  */
-export const parseStrToMs = (str: string) => {
+export const parseStrToMs = (str: string): number | null => {
     const match = whole.exec(str);
     if (!match) return null;
 
@@ -38,5 +38,6 @@ export const parseStrToMs = (str: string) => {
         const unit = nmatch[2] as keyof typeof timeUnits;
         counter += nbr * timeUnits[unit].amount;
     }
+
     return Math.abs(counter);
 }

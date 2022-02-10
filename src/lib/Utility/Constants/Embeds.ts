@@ -21,7 +21,7 @@ const colors = {
 };
 
 export const Embed = {
-    error: (reason?: string) => {
+    error: (reason?: string): MessageEmbed => {
         const Embed = new MessageEmbed().setColor(colors.error);
 
         if (reason) {
@@ -34,7 +34,7 @@ export const Embed = {
     /**
      * An embed for a command being successfully executed!
      */
-    ok: (reason?: string) => {
+    ok: (reason?: string): MessageEmbed => {
         const Embed = new MessageEmbed().setColor(colors.ok); 
         
         if (reason) {
@@ -48,7 +48,7 @@ export const Embed = {
         inChannel: AnyChannel,
         userOrRole: GuildMember | Role | null,
         permissions: PermissionResolvable
-    ) => {
+    ): MessageEmbed => {
         const perms = permResolvableToString(permissions);
         const checkType = userOrRole && 'color' in userOrRole
             ? `The role ${userOrRole}` 
@@ -64,7 +64,7 @@ export const Embed = {
     }
 }
 
-export const padEmbedFields = (embed: MessageEmbed) => {
+export const padEmbedFields = (embed: MessageEmbed): MessageEmbed => {
     while (embed.fields.length % 3 !== 0 && embed.fields.length !== 0) {
         embed.addField({ name: '\u200b', value: '\u200b', inline: true });
     }

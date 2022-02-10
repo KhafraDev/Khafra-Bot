@@ -9,7 +9,7 @@ import { Message } from 'discord.js';
 let folders: string[] | null = null;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Display examples and description of a command!',
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | undefined> {
         folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
 
         if (args.length !== 0) {

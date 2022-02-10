@@ -3,7 +3,7 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode } from '@khaf/builders';
+import { ActionRow, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 import { clearInterval, setTimeout } from 'timers';
@@ -19,11 +19,11 @@ class Wordle {
 
     constructor (public word: string) {}
 
-    public won () {
+    public won (): boolean {
         return this.guesses.length <= 6 && this.guesses.includes(this.word);
     }
 
-    public toEmbed () {
+    public toEmbed (): MessageEmbed {
         let rows = '';
         const title = ['❔', '❔', '❔', '❔', '❔'];
 
@@ -56,14 +56,14 @@ class Wordle {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'wordle'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (games.has(interaction.user.id)) {
             return `❌ Finish your other game first!`;
         } else if (!interaction.inGuild()) {
@@ -125,7 +125,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const collector = channel.createMessageCollector({
-            filter: (m) =>
+            filter: (m): boolean =>
                 interaction.user.id === m.author.id &&
                 m.content.length === 5 &&
                 words.includes(m.content),
@@ -141,7 +141,7 @@ export class kSubCommand extends InteractionSubCommand {
                 int.id === i.message.id
         });
 
-        const checkOver = () => {
+        const checkOver = (): false | void => {
             if (game.won()) return collector.stop('winner');
             if (game.guesses.length >= 6) return collector.stop('loser');
 

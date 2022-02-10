@@ -5,7 +5,7 @@ import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, SnowflakeUtil } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'ping',
             description: 'Get the bot\'s ping!',
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<undefined> {
         const m = await interaction.reply({
             embeds: [Embed.ok('Pinging...!')],
             fetchReply: true

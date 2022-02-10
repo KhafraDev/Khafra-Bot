@@ -1,8 +1,9 @@
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Have KhafraBot say something!',
@@ -18,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed> {
         return this.Embed.ok()
             .setAuthor({
                 name: message.author.username,

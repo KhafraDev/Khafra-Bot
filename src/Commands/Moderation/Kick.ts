@@ -4,7 +4,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
@@ -14,7 +14,7 @@ const perms =
     PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Kick a member from the server.',
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, content }: Arguments, settings: kGuild) {
+    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<Embed | undefined> {
         const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {

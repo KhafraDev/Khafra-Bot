@@ -5,11 +5,12 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
+import { type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Set the mod action log channel.',
@@ -26,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<Embed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return this.Embed.perms(
                 message.channel,

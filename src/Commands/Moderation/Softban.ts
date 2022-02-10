@@ -2,13 +2,14 @@ import { Arguments, Command } from '#khaf/Command';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
+import { type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Softban a member (bans and instantly unbans them; clearing recent messages).',
@@ -27,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, content }: Arguments) {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<Embed> {
         const member = await getMentions(message, 'users', content);
         if (!member) {
             return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');

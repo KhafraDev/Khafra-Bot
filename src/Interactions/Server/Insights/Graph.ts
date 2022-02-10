@@ -12,7 +12,7 @@ interface Insights {
     k_joined: number
 }
 
-const Chart = (o: Record<string, string | number>) => {
+const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> => {
     const query = new URLSearchParams();
 
     for (const [key, value] of Object.entries(o)) {
@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {

@@ -20,14 +20,14 @@ interface Story {
     url: string
 }
 
-const fetchTop = async () => {
+const fetchTop = async (): Promise<number[]> => {
     const r = await fetch(top);
     const j = await r.json() as number[];
 
     return j.slice(0, 10);
 }
 
-const fetchEntries = async () => {
+const fetchEntries = async (): Promise<Story[]> => {
     const ids = await fetchTop();
     const stories: Story[] = [];
 

@@ -19,7 +19,7 @@ export class kUserCommand extends InteractionUserCommand {
         });
     }
 
-    async init (interaction: MessageContextMenuCommandInteraction) {        
+    async init (interaction: MessageContextMenuCommandInteraction): Promise<string> {        
         const settings = await interactionGetGuildSettings(interaction);
 
         if (!settings?.staffChannel) {

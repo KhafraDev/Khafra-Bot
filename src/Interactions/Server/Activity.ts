@@ -59,7 +59,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
         if (!interaction.inGuild()) {
             return `❌ This command is not available in this guild, please re-invite the bot with the correct permissions!`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {

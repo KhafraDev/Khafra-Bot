@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { codeBlock, inlineCode } from '@khaf/builders';
+import { codeBlock, inlineCode, type Embed } from '@khaf/builders';
 import { Pocket } from '@khaf/pocket';
 import { Message } from 'discord.js';
 
@@ -12,7 +12,7 @@ interface PocketUser {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Pocket: add an article, video, or image to your saved items!',
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket

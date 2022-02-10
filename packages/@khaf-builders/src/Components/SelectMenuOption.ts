@@ -16,17 +16,17 @@ export class SelectMenuOption implements BuildersSelectMenuOption {
         }
     }
 
-    public get label () { return this.data.label; }
-    public get value () { return this.data.value; }
-    public get description () { return this.data.description; }
-    public get emoji () { return this.data.emoji; }
-    public get default () { return this.data.default; }
+    public get label (): string { return this.data.label; }
+    public get value (): string { return this.data.value; }
+    public get description (): string | undefined { return this.data.description; }
+    public get emoji (): APIMessageComponentEmoji | undefined { return this.data.emoji; }
+    public get default (): boolean | undefined { return this.data.default; }
 
     /**
      * Sets the label of this option
      * @param label The label to show on this option
      */
-    public setLabel(label: string) {
+    public setLabel (label: string): this {
         this.data.label = label;
         return this;
     }
@@ -35,7 +35,7 @@ export class SelectMenuOption implements BuildersSelectMenuOption {
      * Sets the value of this option
      * @param value The value of this option
      */
-    public setValue(value: string) {
+    public setValue (value: string): this {
         this.data.value = value;
         return this;
     }
@@ -44,7 +44,7 @@ export class SelectMenuOption implements BuildersSelectMenuOption {
      * Sets the description of this option.
      * @param description The description of this option
      */
-    public setDescription(description: string) {
+    public setDescription (description: string): this {
         this.data.description = description;
         return this;
     }
@@ -53,7 +53,7 @@ export class SelectMenuOption implements BuildersSelectMenuOption {
      * Sets whether this option is selected by default
      * @param isDefault Whether or not this option is selected by default
      */
-    public setDefault(isDefault: boolean) {
+    public setDefault (isDefault: boolean): this {
         this.data.default = isDefault;
         return this;
     }
@@ -62,12 +62,12 @@ export class SelectMenuOption implements BuildersSelectMenuOption {
      * Sets the emoji to display on this button
      * @param emoji The emoji to display on this button
      */
-    public setEmoji(emoji: APIMessageComponentEmoji) {
+    public setEmoji (emoji: APIMessageComponentEmoji): this {
         this.data.emoji = emoji;
         return this;
     }
     
-    public toJSON(): APISelectMenuOption {
+    public toJSON (): APISelectMenuOption {
         return this.data;
     }
 }

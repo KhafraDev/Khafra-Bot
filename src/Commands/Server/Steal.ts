@@ -1,9 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Steal an emoji from another server! This command requires the user to have Nitro.',
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
         if (!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
             return this.Embed.error('Invalid Emoji provided!');
         }

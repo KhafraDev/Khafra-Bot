@@ -29,7 +29,7 @@ const config = createFileWatcher(
 export class kEvent extends Event<'messageUpdate'> {
     name = 'messageUpdate' as const;
 
-    async init(oldMessage: Message<true>, newMessage: Message<true>) {
+    async init (oldMessage: Message<true>, newMessage: Message<true>): Promise<void> {
         Stats.messages++;
 
         if (!MessagesLRU.has(oldMessage.id)) return;

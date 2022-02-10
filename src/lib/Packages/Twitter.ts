@@ -119,7 +119,7 @@ interface ITweet {
 
 let token: string | null = null;
 
-const getTwitterOAUTH = async () => {
+const getTwitterOAUTH = async (): Promise<string> => {
     const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64');
     const r = await fetch('https://api.twitter.com/oauth2/token', {
         method: 'POST',
@@ -133,7 +133,7 @@ const getTwitterOAUTH = async () => {
     return `${j.token_type} ${j.access_token}`;
 }
 
-export const getTwitterMediaURL = async (id: string): Promise<string | undefined | void> => {
+export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
     token ??= await getTwitterOAUTH();
 
     const r = await fetch(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {

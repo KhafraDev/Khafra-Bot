@@ -1,9 +1,10 @@
-import { Message } from 'discord.js';
 import { Command } from '#khaf/Command';
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
+import { type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Cartoonize an image using AI.',
@@ -24,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         if (message.attachments.size === 0)
             return this.Embed.error('No image was attached!');
 

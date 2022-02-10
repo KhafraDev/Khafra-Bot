@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow } from '@khaf/builders';
+import { ActionRow, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 type ComponentTypes = Exclude<keyof typeof Components, 'link'>
@@ -9,7 +9,7 @@ type ComponentTypes = Exclude<keyof typeof Components, 'link'>
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Send a message with a given number of random buttons attached.',
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | undefined> {
         const amount = Number(args[0]);
         if (!inRange(amount))
             return this.Embed.error(`Invalid number of buttons to add!`);

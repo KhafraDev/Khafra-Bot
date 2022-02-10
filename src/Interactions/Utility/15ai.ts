@@ -41,7 +41,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const name = interaction.options.getString('voice', true).toLowerCase();
         const text = interaction.options.getString('text', true);
         const obj = keys.find(key => key.name.toLowerCase() === name);

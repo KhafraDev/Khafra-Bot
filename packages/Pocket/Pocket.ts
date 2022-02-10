@@ -13,7 +13,7 @@ const limits: PocketRateLimit = {
     'x-limit-key-reset':      -1    // Seconds until consumer key rate limit resets
 }
 
-class Pocket {
+export class Pocket {
     consumer_key = env.POCKET_CONSUMER_KEY;
 
     redirect_uri?: string;
@@ -21,7 +21,7 @@ class Pocket {
     access_token?: string;
     username?: string;
 
-    constructor(user?: { request_token: string, access_token: string, username: string }) {
+    constructor (user?: { request_token: string, access_token: string, username: string }) {
         if (user) {
             this.request_token = this.decrypt(user.request_token);
             this.access_token = this.decrypt(user.access_token);
@@ -35,7 +35,7 @@ class Pocket {
      * Step 2: Obtain a request token
      * @throws {Error} when status isn't 200
      */
-    async requestCode() {
+    async requestCode (): Promise<string> {
         const rateLimited = checkRateLimits();
         if (rateLimited) {
             throw new Error(
@@ -75,11 +75,11 @@ class Pocket {
      * Authorization URL. User must authorize Khafra-Bot by clicking the link generated.
      * @throws {Error} if there is no request_token
      */
-    get requestAuthorization() {
+    get requestAuthorization (): string {
         return 'https://getpocket.com/auth/authorize?request_token=' + this.request_token + '&redirect_uri=' + this.redirect_uri;
     }
 
-    async accessToken() {
+    async accessToken (): Promise<string> {
         const rateLimited = checkRateLimits();
         if (rateLimited) {
             throw new Error(
@@ -116,7 +116,7 @@ class Pocket {
         return this.access_token;
     }
 
-    async getList(): Promise<PocketGetResults> {
+    async getList (): Promise<PocketGetResults> {
         const rateLimited = checkRateLimits();
         if (rateLimited) {
             throw new Error(
@@ -153,7 +153,7 @@ class Pocket {
         return await res.json() as PocketGetResults;
     }
 
-    async add(url: string | import('url').URL, title?: string) {
+    async add (url: string | import('url').URL, title?: string): Promise<PocketAddResults> {
         const rateLimited = checkRateLimits();
         if (rateLimited) {
             throw new Error(
@@ -190,7 +190,7 @@ class Pocket {
         return res.json() as Promise<PocketAddResults>;
     }
 
-    encrypt = (text: string) => {
+    encrypt = (text: string): string => {
         const iv = crypto.randomBytes(16);
         const cipher = crypto.createCipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, iv);
         const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
@@ -199,7 +199,7 @@ class Pocket {
 
     }
 
-    decrypt = (hash: string) => {
+    decrypt = (hash: string): string => {
         const [iv, content] = hash.split(':');
         const decipher = crypto.createDecipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, Buffer.from(iv, 'hex'));
         const decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()]);
@@ -207,7 +207,7 @@ class Pocket {
         return decrpyted.toString();
     }
 
-    toObject() {
+    toObject (): { request_token: string; access_token: string; username: string | undefined } {
         return {
             request_token: this.encrypt(this.request_token!),
             access_token: this.encrypt(this.access_token!),
@@ -216,7 +216,7 @@ class Pocket {
     }
 }
 
-const setRateLimits = (headers: Headers) => {
+const setRateLimits = (headers: Headers): void => {
     const keys = Object.keys(limits).map(k => k.toLowerCase());
     for (const [header, value] of Object.entries(headers)) {
         if (keys.includes(header.toLowerCase())) {
@@ -225,7 +225,7 @@ const setRateLimits = (headers: Headers) => {
     }
 }
 
-const checkRateLimits = () => {
+const checkRateLimits = (): boolean => {
     if (limits['x-limit-key-remaining'] === 0) {
         return true;
     } else if (limits['x-limit-user-remaining'] === 0) {
@@ -234,5 +234,3 @@ const checkRateLimits = () => {
 
     return false;
 }
-
-export { Pocket };

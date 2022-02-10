@@ -1,45 +1,45 @@
 import { AuthorOptions, Embed as BuildersEmbed, FooterOptions } from '@discordjs/builders';
-import { APIEmbed, APIEmbedField } from 'discord-api-types/v9';
+import { APIEmbed, APIEmbedAuthor, APIEmbedField, APIEmbedFooter, APIEmbedImage, APIEmbedProvider, APIEmbedThumbnail, APIEmbedVideo } from 'discord-api-types/v9';
 
 export class Embed implements BuildersEmbed {
     private data: APIEmbed = {
         fields: []
     };
 
-    public get fields () { return this.data.fields!; }
+    public get fields (): APIEmbedField[] { return this.data.fields!; }
     public set fields (value) { this.data.fields = value; }
 
-    public get title () { return this.data.title; }
+    public get title (): string | undefined { return this.data.title; }
     public set title (value) { this.data.title = value; }
 
-    public get description () { return this.data.description; }
+    public get description (): string | undefined { return this.data.description; }
     public set description (value) { this.data.description = value; }
 
-    public get url () { return this.data.url; }
+    public get url (): string | undefined { return this.data.url; }
     public set url (value) { this.data.url = value; }
 
-    public get color () { return this.data.color; }
+    public get color (): number | undefined { return this.data.color; }
     public set color (value) { this.data.color = value; }
 
-    public get timestamp () { return this.data.timestamp; }
+    public get timestamp (): string | undefined { return this.data.timestamp; }
     public set timestamp (value) { this.data.timestamp = value; }
 
-    public get thumbnail () { return this.data.thumbnail; }
+    public get thumbnail (): APIEmbedThumbnail | undefined { return this.data.thumbnail; }
     public set thumbnail (value) { this.data.thumbnail = value; }
 
-    public get image () { return this.data.image; }
+    public get image (): APIEmbedImage | undefined { return this.data.image; }
     public set image (value) { this.data.image = value; }
 
-    public get video () { return this.data.video; }
+    public get video (): APIEmbedVideo | undefined { return this.data.video; }
     public set video (value) { this.data.video = value; }
 
-    public get author () { return this.data.author; }
+    public get author (): APIEmbedAuthor | undefined { return this.data.author; }
     public set author (value) { this.data.author = value; }
 
-    public get provider () { return this.data.provider; }
+    public get provider (): APIEmbedProvider | undefined { return this.data.provider; }
     public set provider (value) { this.data.provider = value; }
 
-    public get footer () { return this.data.footer; }
+    public get footer (): APIEmbedFooter | undefined { return this.data.footer; }
     public set footer (value) { this.data.footer = value; }
 
     public constructor (data?: APIEmbed) {
@@ -51,7 +51,7 @@ export class Embed implements BuildersEmbed {
     /**
      * The accumulated length for the embed title, description, fields, footer text, and author name
      */
-    public get length() {
+    public get length (): number {
         return (
             (this.title?.length ?? 0) +
             (this.description?.length ?? 0) +
@@ -68,7 +68,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param field The field to add.
      */
-    public addField (field: APIEmbedField) {
+    public addField (field: APIEmbedField): this {
         this.data.fields!.push(field);
         return this;
     }
@@ -78,7 +78,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param fields The fields to add
      */
-    public addFields (...fields: APIEmbedField[]) {
+    public addFields (...fields: APIEmbedField[]): this {
         this.data.fields!.push(...fields);
         return this;
     }
@@ -90,7 +90,7 @@ export class Embed implements BuildersEmbed {
      * @param deleteCount The number of fields to remove
      * @param fields The replacing field objects
      */
-    public spliceFields (index: number, deleteCount: number, ...fields: APIEmbedField[]) {
+    public spliceFields (index: number, deleteCount: number, ...fields: APIEmbedField[]): this {
         this.data.fields!.splice(index, deleteCount, ...fields);
         return this;
     }
@@ -100,7 +100,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param options The options for the author
      */
-    public setAuthor (options: AuthorOptions | null) {
+    public setAuthor (options: AuthorOptions | null): this {
         this.data.author = options === null
             ? undefined
             : { name: options.name, icon_url: options.iconURL, url: options.url };
@@ -113,7 +113,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param color The color of the embed
      */
-    public setColor (color: number | null) {
+    public setColor (color: number | null): this {
         this.data.color = color ?? undefined;
         return this;
     }
@@ -123,7 +123,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param description The description
      */
-    public setDescription (description: string | null) {
+    public setDescription (description: string | null): this {
         this.data.description = description ?? undefined;
         return this;
     }
@@ -133,7 +133,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param options The options for the footer
      */
-    public setFooter (options: FooterOptions | null) {
+    public setFooter (options: FooterOptions | null): this {
         this.data.footer = options === null
             ? undefined
             : { text: options.text, icon_url: options.iconURL };
@@ -146,7 +146,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param url The URL of the image
      */
-    public setImage (url: string | null) {
+    public setImage (url: string | null): this {
         this.data.image = url === null ? undefined : { url };
         return this;
     }
@@ -156,7 +156,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param url The URL of the thumbnail
      */
-    public setThumbnail (url: string | null) {
+    public setThumbnail (url: string | null): this {
         this.data.thumbnail = url === null ? undefined : { url };
         return this;
     }
@@ -166,7 +166,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param timestamp The timestamp or date
      */
-    public setTimestamp (timestamp?: number | Date | null) {
+    public setTimestamp (timestamp?: number | Date | null): this {
         this.data.timestamp = timestamp == null
             ? undefined
             : new Date(timestamp).toISOString();
@@ -179,7 +179,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param title The title
      */
-    public setTitle (title: string | null) {
+    public setTitle (title: string | null): this {
         this.data.title = title ?? undefined;
         return this;
     }
@@ -189,7 +189,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param url The URL
      */
-    public setURL (url: string | null) {
+    public setURL (url: string | null): this {
         this.data.url = url ?? undefined;
         return this;
     }
@@ -206,7 +206,7 @@ export class Embed implements BuildersEmbed {
      *
      * @param fields Fields to normalize
      */
-    static normalizeFields (...fields: APIEmbedField[]) {
+    static normalizeFields (...fields: APIEmbedField[]): APIEmbedField[] {
         return fields;
     }
 }

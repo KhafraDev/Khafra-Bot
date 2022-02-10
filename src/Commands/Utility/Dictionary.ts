@@ -1,9 +1,10 @@
-import { Message } from 'discord.js';
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
+import { type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Define a word!',
@@ -21,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {
         const word = await owlbotio(args.join(' '));
 
         if (word?.definitions == null) {

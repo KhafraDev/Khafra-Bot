@@ -6,7 +6,7 @@ import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
 import { join } from 'path';
 import { clearInterval, setInterval, setTimeout } from 'timers';
 import { setTimeout as delay } from 'timers/promises';
-import { fetch } from 'undici';
+import { fetch, type Response } from 'undici';
 
 const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
@@ -72,7 +72,7 @@ export class RSSReader<T> {
      * Very rarely, a network/server side error will occur. This function retries requests
      * up to 10 times before giving up.
      */
-    forceFetch = async () => {
+    forceFetch = async (): Promise<Response | undefined> => {
         for (let i = 0; i < 10; i++) {
             try {
                 const ac = new AbortController();
@@ -97,7 +97,7 @@ export class RSSReader<T> {
         }
     }
 
-    parse = async () => {
+    parse = async (): Promise<void> => {
         const r = await this.forceFetch();
         const xml = await r?.text();
 
@@ -173,7 +173,7 @@ export class RSSReader<T> {
         return void this.afterSave();
     }
 
-    cache = async (url: string) => {
+    cache = async (url: string): Promise<NodeJS.Timer> => {
         if (this.#interval) return this.#interval;
         this.url = url;
 
@@ -182,5 +182,7 @@ export class RSSReader<T> {
             () => void this.parse(),
             this.timeout
         ).unref();
+
+        return this.#interval;
     }
 }

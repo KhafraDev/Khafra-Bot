@@ -29,7 +29,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const name = interaction.options.getString('name', true);
         const version = interaction.options.getString('version') ?? 'latest';
         const p = await npm(name);

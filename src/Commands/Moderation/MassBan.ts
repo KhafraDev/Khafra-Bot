@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { GuildMember, Message, User } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Force bans a member from the guild.',
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
         const ids = args.map(id => /^\d{17,19}$/.test(id) 
             ? id 
             : message.mentions.members?.get(id.replace(/[^\d]/g, ''))

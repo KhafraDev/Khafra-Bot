@@ -3,7 +3,7 @@ import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, codeBlock, inlineCode } from '@khaf/builders';
+import { ActionRow, codeBlock, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 import { createContext, runInContext } from 'vm';
@@ -21,7 +21,7 @@ class Parser extends Array<string> {
         return !token || ['+', '-', '*', '/'].includes(token);
     }
 
-    public add (token: string) {
+    public add (token: string): number {
         if (token === '(') {
             this.openParenthesis++;
         } else if (token === ')') {
@@ -31,7 +31,7 @@ class Parser extends Array<string> {
         return this.push(token);
     }
 
-    public valid (token: string) {
+    public valid (token: string): boolean {
         const prev = this.at(-1);
 
         // Trying to use a symbol as the first step.
@@ -82,7 +82,7 @@ class Parser extends Array<string> {
         return true;
     }
 
-    public toParseableString () {
+    public toParseableString (): string {
         let output = '';
 
         for (let i = 0; i < this.length; i++) {
@@ -117,7 +117,7 @@ class Parser extends Array<string> {
         return output;
     }
 
-    public override toString () {
+    public override toString (): string {
         let output = '';
 
         for (let i = 0; i < this.length; i++) {
@@ -141,7 +141,7 @@ const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'calculator',
             description: `Calculator in Discord!`
@@ -152,7 +152,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const rows = [
             new ActionRow().addComponents(
                 Components.approve('(', '('),
@@ -186,7 +186,7 @@ export class kInteraction extends Interactions {
             )
         ];
         
-        const makeEmbed = (m: string) =>
+        const makeEmbed = (m: string): MessageEmbed =>
             Embed.ok(`
             ${squiggles}
             ${codeBlock(m)}

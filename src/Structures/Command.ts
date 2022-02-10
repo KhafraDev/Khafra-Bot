@@ -75,7 +75,7 @@ export abstract class Command implements ICommand {
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
         Promise<HandlerReturn>
 
-    static isBotOwner = (id: Snowflake) => Array.isArray(config.botOwner) 
+    static isBotOwner = (id: Snowflake): boolean => Array.isArray(config.botOwner) 
         ? config.botOwner.includes(id) 
         : config.botOwner === id;
 }

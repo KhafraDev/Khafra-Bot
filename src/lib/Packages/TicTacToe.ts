@@ -5,7 +5,7 @@ export class TicTacToe {
     public turn: Turn = 'X';
 
     /** Go at a given position (0-8) */
-    public go(at: number) {
+    public go(at: number): true | Turn {
         if (this.winner())
             return this.turn;
 
@@ -19,7 +19,7 @@ export class TicTacToe {
     }
 
     /** Use totally legit AI (copyright 2021, @KhafraDev) to go */
-    public botGo() {
+    public botGo(): true | undefined | Turn {
         const lines = [
             // horizontal
             [0, 1, 2], [1, 2, 0], [0, 2, 1], 
@@ -54,16 +54,16 @@ export class TicTacToe {
     }
 
     /** Utility method to change turns */
-    public setTurn() {
+    public setTurn(): 'X' | 'O' {
         return this.turn = this.turn === 'X' ? 'O' : 'X';
     }
 
     /** Detect if the board is full */
-    public isFull() {
+    public isFull(): boolean {
         return this.board.every(b => b !== null);
     }
 
-    public winner() {
+    public winner(): boolean {
         // winning options
         const lines = [
             [0, 1, 2],

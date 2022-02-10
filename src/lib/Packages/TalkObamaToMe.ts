@@ -2,7 +2,7 @@ import { fetch } from 'undici';
 import { URL } from 'url';
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
-export const talkObamaToMe = async (q: string) => {
+export const talkObamaToMe = async (q: string): Promise<string> => {
     q = encodeURIComponent(q);
     
     const res = await fetch('http://talkobamato.me/synthesize.py', {

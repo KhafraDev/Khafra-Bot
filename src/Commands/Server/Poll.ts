@@ -32,7 +32,7 @@ const perms =
     PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Create a poll in a channel.', 
@@ -48,7 +48,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<void> {
         // the current option the user is setting
         let currentOption: `${Actions}` | null = null;
         const settings: Settings = {
@@ -167,7 +167,7 @@ export class kCommand extends Command {
             }
         });
 
-        const end = () => {
+        const end = (): undefined => {
             if (!interactionCollector.ended) interactionCollector.stop();
             if (!messageCollector.ended) messageCollector.stop();
 

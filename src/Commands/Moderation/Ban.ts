@@ -5,7 +5,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 import { argv } from 'process';
@@ -14,7 +14,7 @@ const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(argv.slice(2).join(' '));
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Ban a member from the guild.',
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, cli, content }: Arguments) {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<Embed> {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users', content);

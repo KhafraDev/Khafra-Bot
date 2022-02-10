@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the number of members in a guild!'
@@ -18,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>) {
+    async init (message: Message<true>): Promise<Embed> {
         return this.Embed.ok(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
         `);

@@ -25,7 +25,7 @@ type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 export class kEvent extends Event<'guildMemberRemove'> {
     name = 'guildMemberRemove' as const;
 
-    async init(member: GuildMember) {
+    async init (member: GuildMember): Promise<void> {
         if (member.id === config.botId) return;
 
         await sql<unknown[]>`

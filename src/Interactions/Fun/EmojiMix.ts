@@ -1,4 +1,4 @@
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
@@ -50,7 +50,7 @@ const list: string[] = [];
 const cache = new Map<string, string>();
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'emojimix',
             description: `Mix two emojis together!`,
@@ -96,7 +96,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | undefined> {
         const subcommand = interaction.options.getSubcommand(true);
 
         if (subcommand === 'mix') {

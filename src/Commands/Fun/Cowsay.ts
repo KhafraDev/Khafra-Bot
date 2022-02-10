@@ -1,9 +1,9 @@
-import { Command, Arguments } from '#khaf/Command';
-import { Message } from 'discord.js';
-import { readFile, readdir } from 'fs/promises';
-import { join } from 'path';
+import { Arguments, Command } from '#khaf/Command';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { codeBlock } from '@khaf/builders';
+import { codeBlock, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { readdir, readFile } from 'fs/promises';
+import { join } from 'path';
 
 const dir = join(assets, 'Cowsay');
 const start = `
@@ -13,7 +13,7 @@ const types = new Set<string>();
 const bases = new Map<string, string>();
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'The classic CowSay command for Discord!',
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {
         if (types.size === 0) { // lazy load types
             const items = await readdir(dir);
             const filtered = items

@@ -32,13 +32,15 @@ class Hangman {
     private usedHint = false;
     public lastGuessWasWrong = false;
 
-    constructor(private word: string) {}
+    constructor (
+        private word: string
+    ) {}
 
     /**
      * Guess a given phrase or word
      * @returns true if the guess was added, false otherwise
      */
-    guess(phraseOrChar: string) {
+    guess (phraseOrChar: string): boolean {
         const guess = phraseOrChar.toLowerCase();
 
         if (this.guessed.includes(guess)) {
@@ -62,7 +64,7 @@ class Hangman {
     /**
      * Replaces characters not guessed with a box.
      */
-    hide() {
+    hide (): string {
         let str = '';
 
         if (this.guessed.includes(this.word.toLowerCase())) {
@@ -82,7 +84,7 @@ class Hangman {
         return str;
     }
 
-    toJSON(title = 'Hangman'): WebhookEditMessageOptions {
+    toJSON (title = 'Hangman'): WebhookEditMessageOptions {
         const components = this.winner || this.lost
             ? []
             : [
@@ -108,7 +110,7 @@ class Hangman {
         }
     }
 
-    hint() {
+    hint (): string | null {
         if (!this.canUseHint) return null;
         const potential = [...this.word.toLowerCase()]
             .filter(l => !this.guessed.includes(l) && l !== ' ');
@@ -142,14 +144,14 @@ class Hangman {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'hangman'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (currentGames.has(interaction.user.id)) {
             return `❌ Finish your current game first!`;
         } else if (!interaction.inGuild()) {

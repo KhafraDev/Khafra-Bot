@@ -5,14 +5,14 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, bold } from '@khaf/builders';
+import { ActionRow, bold, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
-import { Interaction, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Softban a member (bans and instantly unbans them; clearing recent messages).\n' +
@@ -32,7 +32,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, content }: Arguments) {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<Embed | undefined> {
         const user = await getMentions(message, 'users', content);
         if (!user) {
             return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
@@ -57,12 +57,13 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        const filter = (interaction: Interaction) => 
-            interaction.isMessageComponent() &&
-            ['approve', 'deny'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
-
-        const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({ filter, time: 20_000 }));
+        const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({
+            filter: (interaction) => 
+                interaction.isMessageComponent() &&
+                ['approve', 'deny'].includes(interaction.customId) && 
+                interaction.user.id === message.author.id,
+            time: 20_000
+        }));
 
         if (buttonError !== null) {
             return void msg.edit({

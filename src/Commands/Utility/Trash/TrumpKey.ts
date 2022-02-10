@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 
 export class kCommand extends Command {
     constructor() {
@@ -14,7 +15,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         return this.Embed.ok(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia

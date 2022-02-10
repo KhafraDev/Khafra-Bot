@@ -1,13 +1,13 @@
 import { Arguments, Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { time } from '@khaf/builders';
+import { time, type Embed } from '@khaf/builders';
 import { Message, ReplyMessageOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get information about different CryptoCurrencies! Kill the environment!',
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | ReplyMessageOptions> {
         const currencies = await CoinGecko.get(args.join(' '), () => {
             void message.channel.sendTyping();
         });

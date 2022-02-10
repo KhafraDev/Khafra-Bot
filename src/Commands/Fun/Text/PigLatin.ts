@@ -1,10 +1,11 @@
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
 const vowels = ['A', 'E', 'I', 'O', 'U'];
 
-const splitWord = (word: string) => {
+const splitWord = (word: string): { an: string[], p: string[] } => {
     const punc = {
         // alphanumeric
         an: [] as string[],
@@ -24,7 +25,7 @@ const splitWord = (word: string) => {
     return punc;
 }
 
-const toPigLatin = (sentence: string) => {
+const toPigLatin = (sentence: string): string => {
     const words = sentence.split(/\s+/g);
     const pigLatin = [];
 
@@ -67,7 +68,7 @@ const toPigLatin = (sentence: string) => {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Convert English to Pig Latin!',
@@ -82,7 +83,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<Embed> {
         const pig = toPigLatin(content);
         return this.Embed.ok(pig.slice(0, 2048))
     }

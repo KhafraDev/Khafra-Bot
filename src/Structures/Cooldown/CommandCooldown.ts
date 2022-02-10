@@ -20,7 +20,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
         this.#createClearInterval();
     }
 
-    #createClearInterval() {
+    #createClearInterval(): void {
         setInterval(() => {
             const maxAgeMs = this.#maxAge;
             const now = Date.now();

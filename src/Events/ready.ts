@@ -14,7 +14,7 @@ const config = createFileWatcher({} as typeof import('../../config.json'), join(
 export class kEvent extends Event<'ready'> {
     name = 'ready' as const;
 
-    async init() {
+    async init (): Promise<void> {
         const s = `Logged in at ${new Date()}`;
         logger.log(yellow(s));
         

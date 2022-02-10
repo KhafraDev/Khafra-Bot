@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import {
     ApplicationCommandOptionType,
     ApplicationCommandPermissionType,
@@ -28,7 +28,7 @@ const isDev = processArgs.get('dev') === true;
 const guildDebuggingCommands: ApplicationCommand[] = [];
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reload',
             description: 'Update permissions for a slash command.',
@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         const member = interaction.member;
 
         if (!member || !interaction.guild) {

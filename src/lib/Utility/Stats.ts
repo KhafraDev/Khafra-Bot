@@ -12,11 +12,11 @@ export class Stats {
     static messages = 0;
     static session = 0;
 
-    static get stats() {
+    static get stats(): typeof config {
         return {
             globalCommandsUsed: config.globalCommandsUsed + Stats.session,
             globalMessages: config.globalMessages + Stats.messages
-        } as typeof config;
+        };
     }
 
     static write = once(() => {

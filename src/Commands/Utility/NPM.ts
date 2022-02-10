@@ -1,10 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
-import { bold, inlineCode, time } from '@khaf/builders';
+import { bold, inlineCode, time, type Embed } from '@khaf/builders';
 import { npm } from '@khaf/npm';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Search NPM\'s registry for a package',
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<string | Embed> {
         const [name, version = 'latest'] = args;
         const p = await npm(name);
 

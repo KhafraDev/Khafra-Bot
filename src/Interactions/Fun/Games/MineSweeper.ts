@@ -1,16 +1,17 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Board } from '#khaf/utility/commands/MineSweeper';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type Embed as MessageEmbed } from '@khaf/builders';
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'minesweeper'
         });
     }
 
-    async handle () {
+    async handle (): Promise<MessageEmbed> {
         return Embed.ok(Board());
     }
 } 

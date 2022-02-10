@@ -61,7 +61,7 @@ export class Interactions {
         this[kId] = body;
     }
 
-    public get id () {
+    public get id (): string {
         return this[kId];
     }
 }
@@ -69,7 +69,7 @@ export class Interactions {
 export abstract class InteractionSubCommand {
     public constructor (public data: SubcommandOptions) {}
 
-    public get references () {
+    public get references (): Interactions {
         return KhafraClient.Interactions.Commands.get(this.data.references)!;
     }
 

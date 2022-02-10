@@ -111,14 +111,14 @@ export const titles = {
 
 export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i');
 
-export const parseBible = async () => {
+export const parseBible = async (): Promise<Omit<IBibleVerse, 'idx'>[]> => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
     const buffer = await res.arrayBuffer();
     
     const zip = ZipFile(Buffer.from(buffer));
     const bible = zip.shift()!.getData().toString('utf-8');
 
-    const lines = bible
+    const lines: Omit<IBibleVerse, 'idx'>[] = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse
         .filter(l => l.trim().length > 0) // for example the last line is a newline, causing an undefined/NaN combo below
         .map(line => {
@@ -136,7 +136,7 @@ export const parseBible = async () => {
 
 let ran = false;
 
-export const bibleInsertDB = async () => {
+export const bibleInsertDB = async (): Promise<boolean> => {
     if (ran) return true;
 
     const rows = await sql<{ exists: boolean }[]>`SELECT EXISTS(SELECT 1 FROM kbBible);`;

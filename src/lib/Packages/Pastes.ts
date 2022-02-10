@@ -43,7 +43,7 @@ export interface PasteGGError {
  * 
  * Seems to have issues with the word "function" (for whatever reason).
  */
-const hatebin = async (text: string) => {
+const hatebin = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://hatebin.com/index.php', {
         method: 'POST',
         body: `text=${encodeURIComponent(text)}`,
@@ -58,7 +58,7 @@ const hatebin = async (text: string) => {
 /**
  * Upload text to https://sourceb.in
  */
-const sourcebin = async (text: string) => {
+const sourcebin = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://sourceb.in/api/bins', {
         method: 'POST',
         body: JSON.stringify({
@@ -78,7 +78,7 @@ const sourcebin = async (text: string) => {
 /**
  * Upload text to https://paste.nomsy.net
  */
-const nomsy = async (text: string) => {
+const nomsy = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://paste.nomsy.net/documents', {
         method: 'POST',
         body: text,
@@ -97,7 +97,7 @@ const nomsy = async (text: string) => {
  * Upload text to https://paste.gg
  * @see https://github.com/ascclemens/paste/blob/master/api.md#post-pastes
  */
-const pastegg = async (text: string) => {
+const pastegg = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://api.paste.gg/v1/pastes', {
         method: 'POST',
         body: JSON.stringify({
@@ -111,15 +111,15 @@ const pastegg = async (text: string) => {
         const j = await r.json() as PasteGGError | PasteGGSuccess;
         if (j.status === 'success')
             return `https://paste.gg/anonymous/${j.result.id}`;
+    } else {
+        void consumeBody(r);
     }
-
-    void consumeBody(r);
 }
 
 /**
  * Upload text to https://ghostbin.co/
  */
-const ghostbin = async (text: string) => {
+const ghostbin = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://ghostbin.co/paste/new', {
         method: 'POST',
         body: new URLSearchParams({

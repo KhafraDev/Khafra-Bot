@@ -7,7 +7,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
@@ -19,7 +19,7 @@ const perms =
     PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Sets ratelimit in seconds.',
@@ -39,7 +39,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments, settings: kGuild) {
+    async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<Embed | undefined> {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const guildChannel = channelFirst 

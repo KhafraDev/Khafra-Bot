@@ -1,11 +1,11 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, time } from '@khaf/builders';
+import { bold, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { weather } from '@khaf/hereweather';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 
-const ctof = (celcius: string | number) => (+celcius * (9/5) + 32).toFixed(2);
+const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         const location = interaction.options.getString('location', true);
         const results = await weather(location);
 

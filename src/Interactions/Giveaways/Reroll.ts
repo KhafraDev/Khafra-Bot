@@ -15,14 +15,14 @@ const perms =
     PermissionFlagsBits.ReadMessageHistory;
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'giveaway',
             name: 'reroll'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const messageURL = URLFactory(interaction.options.getString('url', true));
 
         if (messageURL === null) {

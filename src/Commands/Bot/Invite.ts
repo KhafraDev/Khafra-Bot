@@ -1,11 +1,11 @@
-import { bold } from '@khaf/builders';
-import { Message } from 'discord.js';
 import { Command } from '#khaf/Command';
+import { bold, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 const scope = `bot%20applications.commands`;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get the invite links for the bot! :)'
         ], {
@@ -17,7 +17,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed> {
         const selfId = message.client.user!.id;
 
         return this.Embed.ok()

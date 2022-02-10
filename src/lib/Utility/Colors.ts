@@ -1,4 +1,6 @@
-const color = (front: number, back: number) => (s: unknown) => `\x1b[${front}m${s}\x1b[${back}m`;
+const color = (front: number, back: number):
+    (s: unknown) => string =>
+        (s: unknown): string => `\x1b[${front}m${s}\x1b[${back}m`;
 
 export const bright = color(1, 22);
 export const dim = color(2, 22);

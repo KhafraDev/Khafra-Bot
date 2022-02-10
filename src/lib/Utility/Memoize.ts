@@ -10,7 +10,7 @@ const isAsync = (fn: SyncFn | AsyncFn): fn is AsyncFn => types.isAsyncFunction(f
  */
 export function once<T extends SyncFn>(fn: T): () => ReturnType<T> | null;
 export function once<T extends AsyncFn>(fn: T): () => ReturnType<T> | null;
-export function once(fn: SyncFn | AsyncFn) {
+export function once(fn: SyncFn | AsyncFn): ReturnType<typeof fn> | null {
     if (typeof fn !== 'function')
         throw new TypeError(`fn must be a function, received ${Object.prototype.toString.call(fn)}`);
 

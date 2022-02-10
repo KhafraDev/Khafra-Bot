@@ -7,7 +7,7 @@ import {
 } from 'discord-api-types/v9';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'giveaway',
             description: 'Giveaway settings.',

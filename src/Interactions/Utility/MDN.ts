@@ -32,7 +32,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const search = interaction.options.getString('input', true);            
         const result = await fetchMDN(search);
 

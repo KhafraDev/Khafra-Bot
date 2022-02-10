@@ -7,7 +7,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, inlineCode, time } from '@khaf/builders';
+import { ActionRow, inlineCode, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
@@ -15,7 +15,7 @@ type Row = Exclude<kReminder, 'userId'>;
 
 const inRange = Range({ min: 1, max: 20 });
 
-const chunkEmbeds = (rows: Row[]) => {
+const chunkEmbeds = (rows: Row[]): MessageEmbed[] => {
     const embeds = rows.map(row => {
         const repeats = row.once ? `does not repeat` : 'repeats';
         return `• ${inlineCode(row.id)}: ${time(row.time)} - ${ellipsis(inlineCode(row.message), 20)}, ${repeats}`
@@ -32,7 +32,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | undefined> {
         const amount = interaction.options.getInteger('amount') ?? 100;
         const trueAmount = interaction.inRawGuild()
             ? inRange(amount) ? amount : 10

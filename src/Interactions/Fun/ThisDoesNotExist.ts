@@ -4,12 +4,12 @@ import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, hyperlink, inlineCode, italic, underscore } from '@khaf/builders';
+import { bold, hyperlink, inlineCode, italic, underscore, type Embed as MessageEmbed } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'thisdoesnotexist',
             description: `Get an AI generated picture of a person or item that doesn't exist!`,
@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
         const type = interaction.options.getString('type', true);
         if (type === 'tdne_fuhomer') {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());

@@ -5,10 +5,10 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, bold, inlineCode } from '@khaf/builders';
 import { Pocket } from '@khaf/pocket';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
-import { Interaction, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Pocket: Start the process of authorizing your Pocket account.'
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<undefined> {
         const pocket = new Pocket();
         pocket.redirect_uri = `https://discord.com/channels/${message.guild!.id}/${message.channel.id}`;
 
@@ -51,13 +51,14 @@ export class kCommand extends Command {
             embeds: [embed],
             components: [row]
         });
-        
-        const filter = (interaction: Interaction) => 
-            interaction.isMessageComponent() &&
-            ['approve', 'deny'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
 
-        const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent({ filter, time: 120_000 }));
+        const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent({
+            filter: (interaction) => 
+                interaction.isMessageComponent() &&
+                ['approve', 'deny'].includes(interaction.customId) && 
+                interaction.user.id === message.author.id,
+            time: 120_000
+        }));
 
         if (buttonErr !== null) {
             return void msg.edit({

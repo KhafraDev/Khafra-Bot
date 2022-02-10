@@ -1,10 +1,11 @@
-import { Command, Arguments } from '#khaf/Command';
-import { brancoTransaction, migrateBranco } from '#khaf/migration/Branco.js';
-import { decodeXML } from 'entities';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import { Message } from 'discord.js';
-import { once } from '#khaf/utility/Memoize.js';
+import { Arguments, Command } from '#khaf/Command';
 import { asyncQuery } from '#khaf/database/SQLite.js';
+import { brancoTransaction, migrateBranco } from '#khaf/migration/Branco.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
+import { decodeXML } from 'entities';
 
 interface IBranco {
     title: string
@@ -44,7 +45,7 @@ const cache = once(async () => {
 });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'A.F. Branco Political cartoons.'
@@ -58,7 +59,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {   
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {   
         const state = await cache();
 
         if (state === null) {

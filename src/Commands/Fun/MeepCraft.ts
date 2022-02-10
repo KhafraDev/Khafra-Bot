@@ -1,6 +1,6 @@
-import { inlineCode } from '@khaf/builders';
-import { fetch } from 'undici';
 import { Command } from '#khaf/Command';
+import { inlineCode, type Embed } from '@khaf/builders';
+import { fetch } from 'undici';
 
 interface IMCOnline {
     online: true,
@@ -56,7 +56,7 @@ interface IMCOffline {
 	hostname: string
 }
 
-export const fetchMeepOnline = async () => {
+const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
 	const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
 	const j = await r.json() as IMCOnline | IMCOffline;
 
@@ -69,7 +69,7 @@ const cache = {
 }
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [ 
                 'Get the number of users playing MeepCraft right now.'
@@ -83,7 +83,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
             const sentence = cache.players === 1
 				? 'is ``1`` player'

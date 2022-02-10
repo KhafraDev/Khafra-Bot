@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Generate a random number avoiding modulo bias!',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {
         const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
         const max = +maxStr + 1;
         const min = +minStr;

@@ -35,7 +35,7 @@ export class kInteraction extends Interactions {
         super(sc, { ownerOnly: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
         if (stickers.length === 0) {
             const res = await mw();
             if (res === null) {

@@ -49,7 +49,7 @@ const defaultOpts = {
  * // Use a different locale
  * const results = await fetchMDN('fetch', { locale: 'es' });
  */
-export const fetchMDN = async (q: string, opts = defaultOpts) => {
+export const fetchMDN = async (q: string, opts = defaultOpts): Promise<MDNResult | MDNError> => {
     if (typeof q !== 'string' || q.trim().length === 0)
         throw new RangeError(`Expected query type "string", got "${typeof q}"!`);
 

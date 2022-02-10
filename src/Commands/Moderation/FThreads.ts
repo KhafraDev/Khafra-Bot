@@ -3,7 +3,7 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, bold, inlineCode, italic } from '@khaf/builders';
+import { ActionRow, bold, inlineCode, italic, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { GuildChannel, Message } from 'discord.js';
 
@@ -14,7 +14,7 @@ const threadPerms =
     PermissionFlagsBits.SendMessagesInThreads;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `By default, Discord threads are allowed to be created by ${italic('anyone')}. This command disables all 3 default permissions.`,
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<Embed | undefined> {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
                 this.Embed.ok(`

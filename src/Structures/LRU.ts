@@ -46,7 +46,7 @@ export class LRU<K extends string, V> implements Map<K, V> {
         return true;
     }
 
-    public set (key: K, value: V) {
+    public set (key: K, value: V): this {
         let element: LRUCache<K, V>;
 
         if (key in this.cache) {
@@ -77,7 +77,7 @@ export class LRU<K extends string, V> implements Map<K, V> {
         return this;
     }
 
-    public get (key: K) {
+    public get (key: K): V | undefined {
         if (!(key in this.cache)) return undefined;
 
         const element = this.cache[key];
@@ -113,11 +113,11 @@ export class LRU<K extends string, V> implements Map<K, V> {
         return key in this.cache;
     }
 
-    public clear () {
+    public clear (): void {
         this.cache = Object.create(null) as Record<K, LRUCache<K, V>>;
         this.head = null;
         this.tail = null;
-        this.length = 0
+        this.length = 0;
     }
 
     public forEach (callbackfn: (value: V, key: K, map: Map<K, V>) => void, thisArg?: unknown): void {
@@ -146,21 +146,21 @@ export class LRU<K extends string, V> implements Map<K, V> {
         }
     }
 
-    public * [Symbol.iterator] () {
+    public * [Symbol.iterator] (): IterableIterator<[K, V]> {
         for (const entry of this.entries()) {
             yield entry;
         }
     }
 
-    public get [Symbol.toStringTag] () {
+    public get [Symbol.toStringTag] (): string {
         return 'LRU';
     }
 
-    public get size () {
+    public get size (): number {
         return this.length;
     }
 
-    private unlink (key: K, prev: K, next: K) {
+    private unlink (key: K, prev: K, next: K): void {
         this.length--;
 
         if (this.length === 0) {

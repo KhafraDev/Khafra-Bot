@@ -2,6 +2,7 @@ import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 
@@ -14,7 +15,7 @@ const memberPermsExpected =
     PermissionFlagsBits.SendMessages;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Archives or deletes a ticket!'
@@ -30,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed | undefined> {
         if (settings.ticketchannel === null) {
             return this.Embed.error(`Could not archive for you, the guild's ticket channel is unset.`);
         } else if (!isDM(message.channel) && !channelTicketName.test(message.channel.name)) {

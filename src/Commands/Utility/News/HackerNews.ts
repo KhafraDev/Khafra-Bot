@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
 import { cache, fetchHN } from '#khaf/utility/commands/HackerNews';
+import { type Embed } from '@khaf/builders';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Fetch top articles from https://news.ycombinator.com/',
@@ -16,7 +17,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         await fetchHN();
         
         if (cache.size === 0) {

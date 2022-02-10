@@ -18,19 +18,19 @@ export class SelectMenuComponent implements BuildersSelectMenu {
         }
     }
 
-    public get type () { return this.data.type; }
-    public get options () { return this.data.options.map(o => new SelectMenuOption(o)); }
-    public get placeholder () { return this.data.placeholder; }
-    public get min_values () { return this.data.min_values; }
-    public get max_values () { return this.data.max_values; }
-    public get custom_id () { return this.data.custom_id; }
-    public get disabled () { return this.data.disabled; }
+    public get type (): ComponentType.SelectMenu { return this.data.type; }
+    public get options (): SelectMenuOption[] { return this.data.options.map(o => new SelectMenuOption(o)); }
+    public get placeholder (): string | undefined { return this.data.placeholder; }
+    public get min_values (): number | undefined { return this.data.min_values; }
+    public get max_values (): number | undefined { return this.data.max_values; }
+    public get custom_id (): string { return this.data.custom_id; }
+    public get disabled (): boolean | undefined { return this.data.disabled; }
 
     /**
      * Sets the placeholder for this select menu
      * @param placeholder The placeholder to use for this select menu
      */
-    public setPlaceholder (placeholder: string) {
+    public setPlaceholder (placeholder: string): this {
         this.data.placeholder = placeholder;
         return this;
     }
@@ -39,7 +39,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * Sets thes minimum values that must be selected in the select menu
      * @param minValues The minimum values that must be selected
      */
-    public setMinValues (minValues: number) {
+    public setMinValues (minValues: number): this {
         this.data.min_values = minValues;
         return this;
     }
@@ -48,7 +48,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * Sets thes maximum values that must be selected in the select menu
      * @param minValues The maximum values that must be selected
      */
-    public setMaxValues (maxValues: number) {
+    public setMaxValues (maxValues: number): this {
         this.data.max_values = maxValues;
         return this;
     }
@@ -57,7 +57,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * Sets the custom Id for this select menu
      * @param customId The custom ID to use for this select menu
      */
-    public setCustomId (customId: string) {
+    public setCustomId (customId: string): this {
         this.data.custom_id = customId;
         return this;
     }
@@ -66,7 +66,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * Sets whether or not this select menu is disabled
      * @param disabled Whether or not this select menu is disabled
      */
-    public setDisabled (disabled: boolean) {
+    public setDisabled (disabled: boolean): this {
         this.data.disabled = disabled;
         return this;
     }
@@ -76,7 +76,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * @param options The options to add to this select menu
      * @returns
      */
-    public addOptions (...options: SelectMenuOption[]) {
+    public addOptions (...options: SelectMenuOption[]): this {
         this.data.options.push(...options.map(o => o.toJSON()));
         return this;
     }
@@ -85,7 +85,7 @@ export class SelectMenuComponent implements BuildersSelectMenu {
      * Sets the options on this select menu
      * @param options The options to set on this select menu
      */
-    public setOptions (options: SelectMenuOption[]) {
+    public setOptions (options: SelectMenuOption[]): this {
         this.data.options = options.map(o => o.toJSON());
         return this;
     }

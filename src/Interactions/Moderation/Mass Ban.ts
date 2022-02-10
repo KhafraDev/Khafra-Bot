@@ -15,7 +15,7 @@ const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite
 const perms = PermissionFlagsBits.BanMembers;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'massban',
             description: 'Ban someone!',
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (!interaction.inGuild()) {
             return `❌ Invalid permissions, ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {

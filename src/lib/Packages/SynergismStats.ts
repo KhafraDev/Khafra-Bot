@@ -23,7 +23,7 @@ const cache: KongCache = {
     res: null
 };
 
-export const Kongregate = async () => {
+export const Kongregate = async (): Promise<KongregateMetrics | null> => {
     if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
         return cache.res;
     }

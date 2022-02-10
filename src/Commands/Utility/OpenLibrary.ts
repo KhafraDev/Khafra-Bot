@@ -1,10 +1,10 @@
-import { Message } from 'discord.js';
-import { Command, Arguments } from '#khaf/Command';
+import { Arguments, Command } from '#khaf/Command';
 import { openLibrary } from '#khaf/utility/commands/Openlibrary';
-import { bold, hyperlink, inlineCode, italic } from '@khaf/builders';
+import { bold, hyperlink, inlineCode, italic, type Embed } from '@khaf/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Open Library is an open, editable library catalog, building towards a web page for every book ever published.\n\n' + 
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args }: Arguments) {
+    async init (_message: Message, { args }: Arguments): Promise<Embed> {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {

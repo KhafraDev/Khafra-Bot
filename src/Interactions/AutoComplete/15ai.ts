@@ -24,7 +24,7 @@ export class kAutocomplete extends InteractionAutocomplete {
         });
     }
 
-    async handle (interaction: AutocompleteInteraction) {
+    async handle (interaction: AutocompleteInteraction): Promise<undefined> {
         const option = interaction.options.getFocused(true);
 
         if (option.name !== 'voice') return;

@@ -20,7 +20,7 @@ type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 export class kEvent extends Event<'guildMemberAdd'> {
     name = 'guildMemberAdd' as const;
 
-    async init(member: GuildMember) {  
+    async init (member: GuildMember): Promise<void> {  
         await sql<unknown[]>`
             INSERT INTO kbInsights (
                 k_guild_id, k_joined

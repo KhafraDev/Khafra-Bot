@@ -5,14 +5,14 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow } from '@khaf/builders';
+import { ActionRow, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
-import { Interaction, Message } from 'discord.js';
+import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Ban a member from the guild, prompts you for confirmation first.',
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, content }: Arguments) {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<Embed | undefined> {
         const user = await getMentions(message, 'users', content);
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
@@ -53,13 +53,12 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        const filter = (interaction: Interaction) => 
-            interaction.isMessageComponent() &&
-            ['approve', 'deny'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
-
         const [pressedError, button] = await dontThrow(msg.awaitMessageComponent({
-            filter, time: 20_000
+            filter: (interaction) => 
+                interaction.isMessageComponent() &&
+                ['approve', 'deny'].includes(interaction.customId) && 
+                interaction.user.id === message.author.id,
+            time: 20_000
         }));
 
         if (pressedError !== null) {

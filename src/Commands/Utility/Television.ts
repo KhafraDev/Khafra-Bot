@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
 import { searchTV } from '#khaf/utility/commands/TMDB';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { bold, time } from '@khaf/builders';
+import { bold, time, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get information about a tv show!'
         ], {
@@ -16,7 +16,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, { content }: Arguments) {
+    async init (message: Message, { content }: Arguments): Promise<Embed | string> {
         const tv = await searchTV(
             content,
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)

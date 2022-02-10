@@ -2,7 +2,7 @@ import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isExplicitText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { randomUUID } from 'crypto';
 import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v9';
 import { CategoryChannel, Message, TextChannel } from 'discord.js';
@@ -10,7 +10,7 @@ import { CategoryChannel, Message, TextChannel } from 'discord.js';
 type TicketChannelTypes = TextChannel | CategoryChannel;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Create a ticket!', 
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, commandName }: Arguments, settings: kGuild) {
+    async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<Embed> {
         if (settings.ticketchannel === null) {
             return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`ticketchanel [channel]\`!`);
         } else if (commandName === 'ticket' || commandName === 'tickets') {

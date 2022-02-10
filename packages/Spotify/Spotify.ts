@@ -18,7 +18,7 @@ class Spotify {
     #token: Token | null = null;
     #expires_in: number | null = null;
 
-    async search(query: string) {
+    async search (query: string): Promise<SpotifyResult> {
         // URLSearchParams encodes differently (and incorrectly for Spotify), so we use qs#stringify instead.
         const params = '?' + new URLSearchParams({
             type: 'track',
@@ -38,7 +38,7 @@ class Spotify {
         return await r.json() as SpotifyResult;
     }
   
-    async setToken() {
+    async setToken (): Promise<void> {
         const params = new URLSearchParams({ grant_type: 'client_credentials' });
 
         const r = await fetch('https://accounts.spotify.com/api/token', {
@@ -54,7 +54,7 @@ class Spotify {
         this.#expires_in = Date.now() + j.expires_in * 1000; // in milliseconds
     }
   
-    async getTokenHeader() {
+    async getTokenHeader (): Promise<{ Authorization: string }> {
         if (!this.#token || !this.#token.access_token || this.expired) {
             await this.setToken();
         }
@@ -62,8 +62,8 @@ class Spotify {
         return { Authorization: `Bearer ${this.#token!.access_token}` };
     }
 
-    get expired() {
-        return this.#token && Date.now() >= this.#expires_in!;
+    get expired(): boolean {
+        return this.#token !== null && Date.now() >= this.#expires_in!;
     }
 }
 

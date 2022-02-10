@@ -171,7 +171,7 @@ const headers = {
 export const searchMovie = async (
     query: string,
     include_adult = false
-) => {
+): Promise<ITMDBDetails | null> => {
     const params = new URLSearchParams({ 
         query, 
         include_adult: `${include_adult}`
@@ -192,7 +192,7 @@ export const searchMovie = async (
 export const searchTV = async (
     query: string,
     include_adult = false
-) => {
+): Promise<TVDetails | null> => {
     const params = new URLSearchParams({ 
         query, 
         include_adult: `${include_adult}`

@@ -5,12 +5,12 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { bold, inlineCode, italic, time } from '@khaf/builders';
+import { bold, inlineCode, italic, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { Activity, ChatInputCommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
-const formatPresence = (activities: Activity[] | undefined) => {
+const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
     
     const push: string[] = [];
@@ -76,7 +76,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | undefined> {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {

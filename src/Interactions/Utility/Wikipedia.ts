@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 

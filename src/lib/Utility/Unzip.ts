@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { inflateRawSync } from 'zlib';
 import { Buffer } from 'buffer';
 
@@ -104,3 +105,4 @@ const MainHeader = () => {
         }
     }
 }
+/* eslint-enable */

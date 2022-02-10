@@ -22,7 +22,7 @@ const tableChars = {
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
   
-const renderRow = (row: string[], columnWidths: number[]) => {
+const renderRow = (row: string[], columnWidths: number[]): string => {
 	let out = tableChars.left;
 	for (let i = 0; i < row.length; i++) {
 		const cell = row[i];
@@ -51,7 +51,7 @@ const renderRow = (row: string[], columnWidths: number[]) => {
     // │  c   │ hello │
     // └──────┴───────┘
 */
-export const table = (obj: Record<string, string[]>) => {
+export const table = (obj: Record<string, string[]>): string => {
     const head = Object.keys(obj);
     const columns = Object.values(obj);
 

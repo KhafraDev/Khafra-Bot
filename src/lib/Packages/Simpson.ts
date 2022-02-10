@@ -15,14 +15,14 @@ interface ISimpson {
 const url = 'https://www.thisfuckeduphomerdoesnotexist.com/';
 let key: string | null = null;
 
-export const fetchOGKey = async () => {
+export const fetchOGKey = async (): Promise<string | null> => {
     const res = await fetch(url);
     const text = await res.text();
 
     return /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
 }
 
-export const thisSimpsonDoesNotExist = async () => {
+export const thisSimpsonDoesNotExist = async (): Promise<string> => {
     key ??= await fetchOGKey();
 
     const res = await fetch(`${url}item/${key}`);

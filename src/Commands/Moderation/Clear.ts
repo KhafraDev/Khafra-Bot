@@ -4,14 +4,14 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 1, max: 100, inclusive: true });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Clear messages from a given channel.',
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<Embed | undefined> {
         const toDelete = Number(args[0]);
 
         if (!inRange(toDelete)) {

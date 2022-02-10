@@ -14,7 +14,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         const text = interaction.options.getString('message', true);
         const time = interaction.options.getString('time', true);
         const once = !interaction.options.getBoolean('repeat');

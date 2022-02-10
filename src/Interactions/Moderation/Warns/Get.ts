@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         const member =
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);

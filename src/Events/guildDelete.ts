@@ -5,7 +5,7 @@ import { Guild } from 'discord.js';
 export class kEvent extends Event<'guildDelete'> {
     name = 'guildDelete' as const;
 
-    async init(guild: Guild) {
+    async init (guild: Guild): Promise<void> {
         await sql<unknown[]>`
             DELETE FROM kbGuild
             WHERE guild_id = ${guild.id}::text;

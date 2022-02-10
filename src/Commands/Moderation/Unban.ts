@@ -1,12 +1,12 @@
 import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Unban a user from the guild.',
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, { args, cli, content }: Arguments) {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<Embed> {
         const user = await getMentions(message, 'users', content);
 
         if (!user) 

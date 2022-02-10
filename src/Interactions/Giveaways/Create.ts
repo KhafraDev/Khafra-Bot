@@ -16,14 +16,14 @@ type GiveawayId = Pick<Giveaway, 'id'>;
 const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true });
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'giveaway',
             name: 'create'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel;
         const prize = interaction.options.getString('prize', true);
         const ends = parseStrToMs(interaction.options.getString('ends', true));

@@ -15,7 +15,7 @@ interface IOwlBotWord {
 
 const url = 'https://owlbot.info/api/v4/dictionary/';
 
-export const owlbotio = async (word: string) => {
+export const owlbotio = async (word: string): Promise<IOwlBotWord | null> => {
     word = encodeURIComponent(word.toLowerCase());
     if (!env.OWLBOTIO) {
         return null;

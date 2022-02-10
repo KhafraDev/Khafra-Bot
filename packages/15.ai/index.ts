@@ -17,7 +17,7 @@ export class FifteenDotAI {
         character: string,
         content: string,
         emotion: string
-    ) {
+    ): Promise<Batch | null> {
         const ac = new AbortController();
         const timeout = setTimeout(() => ac.abort(), 60_000);
 

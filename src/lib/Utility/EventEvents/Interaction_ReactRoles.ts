@@ -16,7 +16,10 @@ type InteractionReply
  * 
  * Non-reactrole interactions are quickly filtered out.
  */
-export const interactionReactRoleHandler = async (interaction: MessageComponentInteraction, isDev = false) => {
+export const interactionReactRoleHandler = async (
+    interaction: MessageComponentInteraction,
+    isDev = false
+): Promise<undefined> => {
     if (!validSnowflake(interaction.customId)) return;
     if (interaction.message.author.id !== client.user?.id) return;
     if (!(interaction.member instanceof GuildMember)) return;

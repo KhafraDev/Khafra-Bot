@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
         const url = interaction.options.getString('tweet', true);
         const twitterURL = URLFactory(url);
 

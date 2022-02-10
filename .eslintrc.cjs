@@ -43,6 +43,7 @@ module.exports = {
             'URLSearchParams'
         ],
 
+        '@typescript-eslint/explicit-function-return-type': 'error',
         '@typescript-eslint/no-unnecessary-type-assertion': 'error',
         '@typescript-eslint/await-thenable': 'error',
         '@typescript-eslint/adjacent-overload-signatures': 'error',

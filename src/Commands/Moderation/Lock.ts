@@ -3,7 +3,7 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold } from '@khaf/builders';
+import { bold, type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 
@@ -13,7 +13,7 @@ const perms =
     PermissionFlagsBits.EmbedLinks;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Disables @everyone from sending messages.',
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>, _args: Arguments, settings: kGuild) {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed | undefined> {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 

@@ -18,7 +18,7 @@ const boomer1984 = `
 `;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: '1984',
             description: `It's literally 1984`
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init() {
+    async init (): Promise<string> {
         return codeBlock(boomer1984);
     }
 } 

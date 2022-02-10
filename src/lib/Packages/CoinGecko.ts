@@ -53,7 +53,7 @@ export class CoinGecko {
         return await body.json() as { id: string, name: string, symbol: string }[];
     });
 
-    static async ping() {
+    static async ping(): Promise<boolean> {
         const [e, r] = await dontThrow(client.request({
             path: '/api/v3/ping',
             method: 'GET'
@@ -64,7 +64,7 @@ export class CoinGecko {
         return e === null && r?.statusCode === 200;
     }
 
-    static async fetchAll() {
+    static async fetchAll(): Promise<boolean> {
         if (typeof CoinGecko.last !== 'number') {
             setInterval(
                 () => void dontThrow(CoinGecko.fetchAll()),
@@ -102,7 +102,7 @@ export class CoinGecko {
         return true;
     }
 
-    static async get(query: string, cb = () => {}) {
+    static async get(query: string, cb = (): void => {}): Promise<CoinGeckoRes[] | undefined> {
         if (CoinGecko.cache.size === 0) {
             cb();
             const success = await CoinGecko.fetchAll();

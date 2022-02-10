@@ -17,7 +17,7 @@ type APILanguageResponse = {
 
 export const langs: string[] = []
 
-export const getLanguages = async () => {
+export const getLanguages = async (): Promise<string[]> => {
     if (langs.length !== 0) return langs;
 
     const r = await fetch(`https://libretranslate.com/languages`);

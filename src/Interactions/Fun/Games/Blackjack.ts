@@ -3,7 +3,7 @@ import { shuffle } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, inlineCode } from '@khaf/builders';
+import { ActionRow, bold, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
 import { InteractionType } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction, Snowflake } from 'discord.js';
 
@@ -12,7 +12,7 @@ type Card = [number, typeof suits[number]];
 const games = new Set<Snowflake>();
 const suits = ['Heart', 'Diamond', 'Clover', 'Spade'] as const;
 
-const makeDeck = () => {
+const makeDeck = (): Card[] => {
     const cards: Card[] = [];
 
     for (let i = 1; i <= 13; i++) { // 1-13 (ace to king)
@@ -25,20 +25,20 @@ const makeDeck = () => {
 }
 
 // get total card values
-const getTotal = (cards: Card[]) => cards.reduce((a, b) => a + (b[0] > 9 ? 10 : b[0]), 0);
-const getName = (v: number) => v > 1 && v <= 10 
+const getTotal = (cards: Card[]): number => cards.reduce((a, b) => a + (b[0] > 9 ? 10 : b[0]), 0);
+const getName = (v: number): string => v > 1 && v <= 10 
     ? `${v}` 
-    : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v];
+    : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v]!;
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'blackjack'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (games.has(interaction.user.id)) {
             return `❌ Finish your other game before playing another!`;
         }
@@ -56,7 +56,7 @@ export class kSubCommand extends InteractionSubCommand {
             sucker: deck.splice(0, 2)
         };
 
-        const makeEmbed = (desc?: string, hide = true) => {
+        const makeEmbed = (desc?: string, hide = true): MessageEmbed => {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
             return Embed.ok(desc)

@@ -1,8 +1,8 @@
-import { italic } from '@khaf/builders';
 import { Command } from '#khaf/Command';
+import { italic, type Embed } from '@khaf/builders';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'See reviews for the worst ISP in the U.S.'
@@ -17,7 +17,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         return this.Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`

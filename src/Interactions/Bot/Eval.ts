@@ -7,7 +7,7 @@ import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'eval',
             description: 'Evaluate some javascript!',
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('string', true);
 
         const context = createContext({ interaction });

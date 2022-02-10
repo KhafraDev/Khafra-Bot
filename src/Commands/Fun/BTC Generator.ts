@@ -7,7 +7,7 @@ import { setTimeout } from 'timers/promises';
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Generate free BTC!',
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments): Promise<void> {
+    async init (message: Message, { args }: Arguments): Promise<void> {
         const num = Number(args[0]);
         const btc = inRange(num) ? num : 1000;
 

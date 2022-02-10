@@ -69,7 +69,7 @@ interface IOpenLibRes {
     docs: IOpenLib[]
 }
 
-export const openLibrary = async (q: string) => {
+export const openLibrary = async (q: string): Promise<IOpenLibRes> => {
     q = encodeURIComponent(q.replace(/\s+/g, '+'));
     const res = await fetch(`https://openlibrary.org/search.json?q=${q}&has_fulltext=true&limit=1`);
     const json = await res.json() as IOpenLibRes;

@@ -1,11 +1,11 @@
 import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
-import { request } from 'undici';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode, type Embed } from '@khaf/builders';
+import { request } from 'undici';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get play stats about Synergism!'
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         const stats = await Kongregate();
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 

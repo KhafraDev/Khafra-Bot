@@ -12,7 +12,7 @@ interface Comic {
 
 const PATH = join(assets, 'JSON/Stonewall.json');
 
-export const migrateStonewall = async () => {
+export const migrateStonewall = async (): Promise<boolean> => {
     const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbStonewall);`);
 
     if (r[0]['EXISTS(SELECT 1 from kbStonewall)'] === 0) {
@@ -23,7 +23,7 @@ export const migrateStonewall = async () => {
     return true;
 }
 
-export const stonewallTransaction = async (comics: Comic[]) => {
+export const stonewallTransaction = async (comics: Comic[]): Promise<void> => {
     for (const comic of comics) {
         await asyncQuery(`
             INSERT OR IGNORE INTO kbStonewall (

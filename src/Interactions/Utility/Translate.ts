@@ -8,6 +8,7 @@ import {
 } from '@khaf/translate'; 
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { type Embed as MessageEmbed } from '@khaf/builders';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -47,7 +48,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | string | undefined> {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);

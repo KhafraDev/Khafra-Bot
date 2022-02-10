@@ -68,15 +68,20 @@ interface ImgurAlbum {
     status: 200
 }
 
+interface ImgurCache {
+    u: string[]
+    t: string
+}
+
 export class Imgur {
-    static cache = new Map<string, { u: string[], t: string }>();
+    static cache = new Map<string, ImgurCache>();
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
         'x-ratelimit-userremaining': -1,
         'x-ratelimit-userreset': -1
     }
 
-    static setRateLimits(headers: Headers) {
+    static setRateLimits(headers: Headers): void {
         for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
             if (headers.has(key)) {
                 Imgur.ratelimit[key] = Number(headers.get(key));
@@ -84,7 +89,7 @@ export class Imgur {
         }
     }
 
-    static async album(args: string[]) {
+    static async album(args: string[]): Promise<ImgurCache | undefined> {
         if (env.IMGUR_CLIENT_ID === undefined) return;
 
         if (

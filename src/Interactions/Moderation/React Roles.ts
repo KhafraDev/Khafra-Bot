@@ -29,7 +29,7 @@ const guildEmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 const perms = PermissionFlagsBits.SendMessages;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reactrole',
             description: 'Add a button that gives members a specified role when clicked on!',
@@ -75,7 +75,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const icon = interaction.options.getString('icon');

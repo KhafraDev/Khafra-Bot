@@ -4,7 +4,7 @@ import { assets } from '#khaf/utility/Constants/Path.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { ActionRow, Embed } from '@khaf/builders';
-import { Interaction, Message, Util } from 'discord.js';
+import { Message, Util } from 'discord.js';
 import { join } from 'path';
 
 const Trump = createFileWatcher(
@@ -13,7 +13,7 @@ const Trump = createFileWatcher(
 );
 
 export class kCommand extends Command {    
-    constructor() {
+    constructor () {
         super(
             [
                 'Get atrocities committed by Trump on a given day (or a random day)!',
@@ -27,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed | void> {
         const item = args.length === 0 
             ? [Trump[Math.floor(Math.random() * Trump.length)]]
             : Trump.filter(({ date }) => date.toLowerCase() === args.join(' ').toLowerCase());      
@@ -57,12 +57,15 @@ export class kCommand extends Command {
             components: [row]
         });
 
-        const filter = (interaction: Interaction) =>
-            interaction.isMessageComponent() &&
-            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
+        const c = m.createMessageComponentCollector({
+            filter: (interaction) =>
+                interaction.isMessageComponent() &&
+                ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+                interaction.user.id === message.author.id,
+            time: 60000,
+            max: item.length * 2
+        });
 
-        const c = m.createMessageComponentCollector({ filter, time: 60000, max: item.length * 2 });
         return Paginate(c, m, item.length * 2, embeds);
     }
 }

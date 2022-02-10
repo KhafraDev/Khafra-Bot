@@ -1,7 +1,8 @@
 import { Command } from '#khaf/Command';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import { decodeXML } from 'entities';
 import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type Embed } from '@khaf/builders';
+import { decodeXML } from 'entities';
 
 const settings = {
     rss: 'https://thehill.com/rss/syndicator/19109',
@@ -23,7 +24,7 @@ const rss = new RSSReader<ITheHill>();
 const cache = once(() => rss.cache(settings.rss));
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `Get the latest articles from ${settings.main}!`
@@ -37,7 +38,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
+    async init (): Promise<Embed> {
         const state = await cache();
 
         if (state === null) {

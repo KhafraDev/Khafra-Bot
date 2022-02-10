@@ -16,7 +16,7 @@ interface NonexistentWord {
     permalink_url: string
 }
 
-export const thisWordDoesNotExist = async () => {
+export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> => {
     const res = await fetch('https://www.thisworddoesnotexist.com/api/random_word.json');
     
     if (!res.ok) {

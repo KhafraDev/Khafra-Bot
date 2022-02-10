@@ -4,7 +4,7 @@ import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'badmeme',
             description: `Get a horrible meme!`,
@@ -21,7 +21,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
         const subreddit = interaction.options.getString('subreddit') ?? 'dankmemes';
 
         if (!cache.has(subreddit))

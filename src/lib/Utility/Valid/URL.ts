@@ -19,7 +19,7 @@ const defaultOpts: FactoryOpts = {
  * 
  * Validates protocol, username, and password, and removes all search params.
  */
-export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
+export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts): URL | null => {
     try {
         const url = new URL(s);
         if (url.protocol !== 'https:' && url.protocol !== 'http:')
@@ -45,7 +45,7 @@ export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
  */
 export function validURL(s: string): Omit<ValidURL, 'idx'>;
 export function validURL(s: string[]): ValidURL[];
-export function validURL(s: string | string[]) {
+export function validURL(s: string | string[]): Omit<ValidURL, 'idx'> | ValidURL[] {
     if (Array.isArray(s)) {
         const valid: ValidURL[] = [];
         for (let i = 0; i < s.length; i++) {

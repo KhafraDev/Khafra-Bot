@@ -20,7 +20,7 @@ interface MappedComponentTypes {
 export function createComponent<T extends keyof MappedComponentTypes>(
     data: APIMessageComponent & { type: T },
 ): MappedComponentTypes[T];
-export function createComponent(data: APIMessageComponent) {
+export function createComponent(data: APIMessageComponent): MappedComponentTypes[ComponentType] {
     switch (data.type) {
         case ComponentType.ActionRow:
             return new ActionRow(data);

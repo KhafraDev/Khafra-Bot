@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
         let guild!: Guild | null;
 
         if (!interaction.guild) {

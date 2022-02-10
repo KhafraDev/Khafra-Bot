@@ -22,7 +22,7 @@ export async function getMentions(
     message: Message, 
     fetchType: MessageMentionTypes,
     text?: string
-) {
+): Promise<Role | User | GuildMember | GuildBasedChannel | MentionTypes | null> {
     if (fetchType !== 'users' && !message.inGuild()) return null;
 
     const { mentions, content: messageContent, guild, client} = message;

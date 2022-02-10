@@ -2,7 +2,7 @@ import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode, type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 interface IBibleVerse {
@@ -20,7 +20,7 @@ const R = {
 } as const;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a King James Bible verse.',
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { args, content }: Arguments) {
+    async init (_message: Message, { args, content }: Arguments): Promise<Embed | undefined> {
         const inserted = await bibleInsertDB();
 
         if (inserted !== true) {

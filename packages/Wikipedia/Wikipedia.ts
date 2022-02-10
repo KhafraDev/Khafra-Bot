@@ -26,7 +26,7 @@ export const search = async (query: string): Promise<WikipediaSearch> => {
 /**
  * Using a pageid, get an article's summary
  */
-export const getArticleById = async (id: number) => {
+export const getArticleById = async (id: number): Promise<WikipediaSummary<number>> => {
     const p = new URLSearchParams({ 
         format: 'json',
         action: 'query',

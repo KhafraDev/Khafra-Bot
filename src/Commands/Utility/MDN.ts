@@ -1,9 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { fetchMDN as mdn } from '@khaf/mdn';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Search MDN for a phrase.',
@@ -18,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<Embed> {
         const results = await mdn(args.join(' '));
 
         if ('errors' in results) {

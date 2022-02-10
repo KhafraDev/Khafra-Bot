@@ -21,14 +21,14 @@ const row = new ActionRow().addComponents(
 );
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'games',
             name: 'rockpaperscissors'
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction) {
+    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const [err, int] = await dontThrow(interaction.editReply({ 
             embeds: [
                 Embed.ok(`Rock, paper, scissors, shoot!`)

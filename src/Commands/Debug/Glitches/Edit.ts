@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { Message } from 'discord.js';
 
 const symbol = String.fromCodePoint(Number.parseInt('202B', 16));
@@ -6,7 +7,7 @@ const clean = 'The edit button won\'t be where you expect it to be!';
 const edited = `The edit button is right there -> ${symbol} !Over here ->`;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Place an edit button in the middle of a message!'
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<Embed | void> {
         const m = await message.reply({ content: clean });
 
         if (m.editable) {

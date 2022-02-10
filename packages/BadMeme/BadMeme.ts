@@ -36,7 +36,14 @@ const getItemRespectNSFW = (
     return item || null;
 }
 
-export const badmeme = async (subreddit = 'dankmemes', nsfw = false) => {
+export const badmeme = async (
+    subreddit = 'dankmemes',
+    nsfw = false
+): Promise<
+    IBadMemeCache | 
+    { message: string; error: number; reason: string } |
+    null
+> => {
     subreddit = subreddit.toLowerCase();
 
     if (cache.has(subreddit)) {

@@ -3,11 +3,11 @@ import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, ActionRowComponent, bold, hyperlink, time } from '@khaf/builders';
+import { ActionRow, ActionRowComponent, bold, hyperlink, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
-const formatMS = (ms: number) => {
+const formatMS = (ms: number): string => {
     return Object.entries({
 		d: Math.floor(ms / 86400000),
 		h: Math.floor(ms / 3600000) % 24,
@@ -37,7 +37,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction) {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
         const movies = await searchMovie(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)

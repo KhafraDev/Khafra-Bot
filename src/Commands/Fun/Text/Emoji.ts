@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { type Embed } from '@khaf/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v9';
 import { Message } from 'discord.js';
 import { parse } from 'twemoji-parser';
@@ -6,7 +7,7 @@ import { parse } from 'twemoji-parser';
 const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Enlarge an emoji!',
@@ -23,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message<true>) {
+    async init (message: Message<true>): Promise<string | Embed> {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 
