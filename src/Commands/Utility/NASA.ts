@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -10,20 +10,20 @@ export class kCommand extends Command {
             [
                 'Get a random Astronomy Photo of the Day (APOD) supplied by NASA.'
             ],
-			{
+            {
                 name: 'apod',
                 folder: 'Utility',
                 args: [0, 0],
-                aliases: [ 'nasa' ]
+                aliases: ['nasa']
             }
         );
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         if (cache.length === 0) {
             void message.channel.sendTyping();
         }
-        
+
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {
@@ -35,7 +35,7 @@ export class kCommand extends Command {
         const embed = this.Embed.ok()
             .setTitle(result.title)
             .setImage(result.link);
-            
+
         if (typeof result.copyright === 'string') {
             embed.setFooter({ text: `© ${result.copyright}` });
         }

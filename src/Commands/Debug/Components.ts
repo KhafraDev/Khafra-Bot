@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, type Embed } from '@khaf/builders';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 type ComponentTypes = Exclude<keyof typeof Components, 'link'>
@@ -25,12 +25,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<Embed | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | undefined> {
         const amount = Number(args[0]);
         if (!inRange(amount))
-            return this.Embed.error(`Invalid number of buttons to add!`);
+            return this.Embed.error('Invalid number of buttons to add!');
 
-        const row = new ActionRow();
+        const row = new ActionRow<MessageActionRowComponent>();
         const keys = Object.keys(Components) as ComponentTypes[];
         keys.splice(keys.findIndex(i => `${i}` === 'link'), 1);
 

@@ -1,7 +1,6 @@
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { asyncQuery } from '#khaf/database/SQLite.js';
-import { assets } from '#khaf/utility/Constants/Path.js';
+import { Json } from '#khaf/utility/Constants/Path.js';
+import { readFile } from 'fs/promises';
 
 type Ret = { 'EXISTS(SELECT 1 from kbBranco)': number };
 interface Comic {
@@ -10,13 +9,13 @@ interface Comic {
     link: string | null
 }
 
-const PATH = join(assets, 'JSON/Branco.json');
-
 export const migrateBranco = async (): Promise<boolean> => {
-    const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbBranco);`);
+    const r = await asyncQuery<Ret>('SELECT EXISTS(SELECT 1 from kbBranco);');
 
     if (r[0]['EXISTS(SELECT 1 from kbBranco)'] === 0) {
-        const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
+        const file = JSON.parse(
+            await readFile(Json('Branco.json'), 'utf-8')
+        ) as Comic[];
         await brancoTransaction(file);
     }
 

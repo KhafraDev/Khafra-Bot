@@ -5,8 +5,8 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 import { argv } from 'process';
 
@@ -25,18 +25,18 @@ export class kCommand extends Command {
                 '@user --reason goodbye sir! --days 3',
                 '@user --days 2 this is the reason.'
             ],
-			{
-                name: 'ban', 
+            {
+                name: 'ban',
                 folder: 'Moderation',
-                aliases: [ 'bna' ],
+                aliases: ['bna'],
                 args: [1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.BanMembers ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<Embed> {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbed> {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users', content);
@@ -45,7 +45,7 @@ export class kCommand extends Command {
         if (member && !hierarchy(message.member, member)) {
             return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error('No user id or user mentioned, no one was banned.');
         }
 
         // days of messages to clear
@@ -59,7 +59,7 @@ export class kCommand extends Command {
             }
         } else if (typeof args[1] === 'string') {
             const ms = parseStrToMs(args[1]);
-            const time = Math.ceil(ms! / 86_400_000); // ms -> days
+            const time = Math.ceil(ms / 86_400_000); // ms -> days
 
             if (ms && inRange(time)) {
                 clear = time;
@@ -96,7 +96,7 @@ export class kCommand extends Command {
 
         if (!processArgs.get('dev')) {
             const [err] = await dontThrow(message.guild.members.ban(user, {
-                days: clear,
+                deleteMessageDays: clear,
                 reason: reason
             }));
 

@@ -1,8 +1,8 @@
 import { Command } from '#khaf/Command';
-import { bold, type Embed } from '@khaf/builders';
+import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
-const scope = `bot%20applications.commands`;
+const scope = 'bot%20applications.commands';
 
 export class kCommand extends Command {
     constructor () {
@@ -13,25 +13,26 @@ export class kCommand extends Command {
             folder: 'Bot',
             args: [0, 0],
             ratelimit: 3,
-            aliases: [ 'botinvite' ]
+            aliases: ['botinvite']
         });
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         const selfId = message.client.user!.id;
 
-        return this.Embed.ok()
-            .addField({
-                name: bold('Basic Permissions:'), 
+        return this.Embed.ok().addFields(
+            {
+                name: bold('Basic Permissions:'),
                 value: `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`
-            })
-            .addField({
+            },
+            {
                 name: bold('Everything:'),
                 value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=1478811839735&scope=${scope})`
-            })
-            .addField({
+            },
+            {
                 name: bold('Enable slash commands and buttons:'),
                 value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=${scope})`
-            });
+            }
+        );
     }
 }

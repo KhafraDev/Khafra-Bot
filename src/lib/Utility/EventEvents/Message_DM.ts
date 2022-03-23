@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { isDM } from '#khaf/utility/Discord.js';
-import { inlineCode, Embed as MessageEmbed } from '@khaf/builders';
+import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { argv } from 'process';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
@@ -29,7 +29,7 @@ const disabled = typeof processArgs.get('disabled') === 'string'
 const defaultSettings = {
     max_warning_points: 20,
     mod_log_channel: null,
-    welcome_channel: null,
+    welcome_channel: null
 };
 
 export const DM = async (message: Message): Promise<void> => {
@@ -51,39 +51,39 @@ export const DM = async (message: Message): Promise<void> => {
     if (!cooldownUsers(message.author.id)) { // user is rate limited
         return void dontThrow(message.reply({
             embeds: [
-                Embed.error(`Users are limited to 10 commands a minute.`)
+                Embed.error('Users are limited to 10 commands a minute.')
             ]
         }));
     } else if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
-        return void dontThrow(message.reply({ 
+        return void dontThrow(message.reply({
             embeds: [
                 Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
-            ] 
+            ]
         }));
     } else if (command.settings.guildOnly) {
         return void dontThrow(message.reply({
             embeds: [
-                Embed.error(`This command is only available in guilds!`)
+                Embed.error('This command is only available in guilds!')
             ]
         }));
     } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
         return void dontThrow(message.reply({
             content: `${inlineCode(name)} is temporarily disabled!`
         }));
-    } 
+    }
 
     const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
     Stats.session++;
 
     try {
         const returnValue = await command.init(message, options, defaultSettings);
-        if (!returnValue || returnValue instanceof Message) 
+        if (!returnValue || returnValue instanceof Message)
             return;
 
         const param = {
             failIfNotExists: false
         } as ReplyMessageOptions;
-        
+
         if (typeof returnValue === 'string')
             param.content = returnValue;
         else if (returnValue instanceof MessageEmbed)
@@ -92,14 +92,14 @@ export const DM = async (message: Message): Promise<void> => {
             param.files = [returnValue];
         else if (typeof returnValue === 'object') // MessageOptions
             Object.assign(param, returnValue);
-        
+
         return void await message.reply(param);
     } catch (e) {
         if (processArgs.get('dev') === true) {
             console.log(e);
         }
-        
-        if (!(e instanceof Error)) { 
+
+        if (!(e instanceof Error)) {
             return;
         } else if (e instanceof DiscordAPIError) {
             // if there's an error sending a message, we should probably
@@ -108,11 +108,9 @@ export const DM = async (message: Message): Promise<void> => {
             return;
         }
 
-        const error = e.name in command.errors 
-            ? command.errors[e.name as keyof typeof command.errors] 
-            : command.errors.default;
-            
-        return void dontThrow(message.reply({ 
+        const error = 'An unexpected error has occurred!';
+
+        return void dontThrow(message.reply({
             embeds: [Embed.error(error)],
             failIfNotExists: false
         }));

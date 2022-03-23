@@ -4,13 +4,13 @@ import { isText, isThread } from '#khaf/utility/Discord.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, time } from '@khaf/builders';
+import { bold, time } from '@discordjs/builders';
 import {
     ApplicationCommandOptionType,
     ChannelType,
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
@@ -58,7 +58,7 @@ export class kInteraction extends Interactions {
         if (!isText(channel) && !isThread(channel)) {
             return `❌ I can't bulk delete messages in ${channel}!`;
         } else if (!hasPerms(channel, interaction.guild?.me, this.options.permissions!)) {
-            return `❌ Re-invite the bot with the correct permissions to use this command!`;
+            return '❌ Re-invite the bot with the correct permissions to use this command!';
         }
 
         await dontThrow(channel.bulkDelete(amount));
@@ -70,7 +70,7 @@ export class kInteraction extends Interactions {
             // information about it.
 
             const everyone = channel.guild.roles.everyone.id;
-            
+
             if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
                 const embed = Embed.ok(`
                 ${bold('Channel:')} ${channel}
@@ -83,4 +83,4 @@ export class kInteraction extends Interactions {
             }
         }
     }
-} 
+}

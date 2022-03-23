@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
 import { Buffer } from 'buffer';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { fetch } from 'undici';
 
@@ -38,10 +38,10 @@ export class kInteraction extends Interactions {
 
         const buffer = Buffer.from(await r.arrayBuffer());
         const attachment = new MessageAttachment(buffer, 'qr.png')
-            .setDescription(`A QR Code!`);
+            .setDescription('A QR Code!');
 
         return {
             files: [attachment]
         } as InteractionReplyOptions;
     }
-} 
+}

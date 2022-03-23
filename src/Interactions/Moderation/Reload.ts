@@ -6,13 +6,13 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import {
     ApplicationCommandOptionType,
     ApplicationCommandPermissionType,
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 import {
     ApplicationCommand,
     ChatInputCommandInteraction,
@@ -50,15 +50,15 @@ export class kInteraction extends Interactions {
         const member = interaction.member;
 
         if (!member || !interaction.guild) {
-            return `❌ You need to re-invite the bot with default permissions for this to work. Thank Discord for this feature.`;
+            return '❌ You need to re-invite the bot with default permissions for this to work. Thank Discord for this feature.';
         } else if (!(member instanceof GuildMember)) {
-            return `❌ Re-invite the bot with the correct permissions to use this command!`;
+            return '❌ Re-invite the bot with the correct permissions to use this command!';
         }
 
         if (!hasPerms(interaction.channel, member, PermissionFlagsBits.Administrator)) {
-            return ( 
-                `❌ Either you don't have permission or you need to re-invite the bot with default permissions ` + 
-                `- this is not a design choice by me, thanks Discord!`
+            return (
+                '❌ Either you don\'t have permission or you need to re-invite the bot with default permissions ' +
+                '- this is not a design choice by me, thanks Discord!'
             );
         }
 
@@ -66,9 +66,9 @@ export class kInteraction extends Interactions {
         const cachedCommand = KhafraClient.Interactions.Commands.get(nameOption);
 
         if (!cachedCommand) {
-            return `❌ Command does not exist.`;
+            return '❌ Command does not exist.';
         } else if (cachedCommand.data.default_permission !== false) {
-            return `❌ This command is already available to all guild members`;
+            return '❌ This command is already available to all guild members';
         }
 
         const perms = cachedCommand.options.permissions;
@@ -76,7 +76,7 @@ export class kInteraction extends Interactions {
         const roles = allRoles.filter(role => perms ? role.permissions.has(perms) : false);
 
         if (roles.size === 0) {
-            return `❌ No roles in this guild have that permission!`;
+            return '❌ No roles in this guild have that permission!';
         }
 
         const fullPermissions: GuildApplicationCommandPermissionData = {
@@ -119,4 +119,4 @@ export class kInteraction extends Interactions {
 
         return Embed.ok(`✅ Update ${inlineCode(cachedCommand.data.name)} to allow ${roles.map(v => `${v}`).join(', ')} to use it.`);
     }
-} 
+}

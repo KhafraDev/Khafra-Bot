@@ -2,9 +2,10 @@
     "botOwner": "267774648622645249",
     "botId": "736802057863823420",
     "guildId": "503024525076725771",
-    "embed": {
-        "fail": "#ff5c5c",
-        "success": "#ffe449"
+    "colors": {
+        "error": "#ff5c5c",
+        "default": "#ffe449",
+        "boost": "#8749a2"
     },
     "emoji": {
         "flags": {

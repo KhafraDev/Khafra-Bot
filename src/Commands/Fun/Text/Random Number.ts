@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
@@ -11,7 +11,7 @@ export class kCommand extends Command {
                 'Generate a random number avoiding modulo bias!',
                 '100 250', '500'
             ],
-			{
+            {
                 name: 'randomnum',
                 aliases: ['randnum', 'randomint', 'randint'],
                 folder: 'Fun',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
         const max = +maxStr + 1;
         const min = +minStr;
@@ -34,13 +34,13 @@ export class kCommand extends Command {
             !Number.isSafeInteger(min) || !Number.isSafeInteger(max)
         ) {
             return this.Embed.error(
-                `Invalid number(s) provided! Numbers ${inlineCode('cannot equal')} one another ` + 
+                `Invalid number(s) provided! Numbers ${inlineCode('cannot equal')} one another ` +
                 `and the difference between the two ${inlineCode('cannot be greater')} than 2^48-1!`
             );
         }
 
         const num = Math.floor(Math.random() * (max - min) + min);
-       
+
         return this.Embed.ok(`Your number is ${inlineCode(`${num}`)}!`);
     }
 }

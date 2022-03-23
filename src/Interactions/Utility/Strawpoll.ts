@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { fetch } from 'undici';
 
@@ -93,72 +93,72 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-3',
-                    description: 'The third choice to add to the poll.',
+                    description: 'The third choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-4',
-                    description: 'The fourth choice to add to the poll.',
+                    description: 'The fourth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-5',
-                    description: 'The fifth choice to add to the poll.',
+                    description: 'The fifth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-6',
-                    description: 'The sixth choice to add to the poll.',
+                    description: 'The sixth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-7',
-                    description: 'The seventh choice to add to the poll.',
+                    description: 'The seventh choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-8',
-                    description: 'The eighth choice to add to the poll.',
+                    description: 'The eighth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-9',
-                    description: 'The ninth choice to add to the poll.',
+                    description: 'The ninth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-10',
-                    description: 'The tenth choice to add to the poll.',
+                    description: 'The tenth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-11',
-                    description: 'The eleventh choice to add to the poll.',
+                    description: 'The eleventh choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-12',
-                    description: 'The twelfth choice to add to the poll.',
+                    description: 'The twelfth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-13',
-                    description: 'The thirteenth choice to add to the poll.',
+                    description: 'The thirteenth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-14',
-                    description: 'The fourteenth choice to add to the poll.',
+                    description: 'The fourteenth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-15',
-                    description: 'The fifteenth choice to add to the poll.',
+                    description: 'The fifteenth choice to add to the poll.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'choice-16',
-                    description: 'The sixteenth choice to add to the poll.',
+                    description: 'The sixteenth choice to add to the poll.'
                 }
             ]
         };
@@ -206,4 +206,4 @@ export class kInteraction extends Interactions {
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

@@ -5,10 +5,10 @@ import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, type Embed } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import {
     APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const enum Activities {
@@ -31,29 +31,29 @@ export class kCommand extends Command {
                 '866022233330810930 [channel id]',
                 '#general [channel mention]'
             ],
-			{
+            {
                 name: 'activity',
                 folder: 'Server',
                 args: [1, 1],
                 ratelimit: 10,
                 permissions: [
                     PermissionFlagsBits.CreateInstantInvite,
-                    PermissionFlagsBits.StartEmbeddedActivities
+                    PermissionFlagsBits.UseEmbeddedActivities
                 ],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<Embed | undefined> {
-        const channel = 
-            await getMentions(message, 'channels') ?? 
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed | undefined> {
+        const channel =
+            await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
 
         if (!isVoice(channel)) {
             return this.Embed.error('Games can only be created in voice channels!');
         } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return this.Embed.error('No channel with that name was found!'); 
+            return this.Embed.error('No channel with that name was found!');
         } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
             return this.Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
         }
@@ -63,14 +63,14 @@ export class kCommand extends Command {
                 this.Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Poker', Activities.POKER),
                     Components.deny('Betrayal.io', Activities.BETRAYALIO),
                     Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
                     Components.secondary('Fishington.io', Activities.FISHINGTONIO),
                     Components.approve('Chess in the Park', Activities.CHESS)
                 ),
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Doodle Crew', Activities.DOODLECREW),
                     Components.deny('WordSnacks', Activities.WORDSNACKS),
                     Components.primary('LetterTile', Activities.LETTERTILE)

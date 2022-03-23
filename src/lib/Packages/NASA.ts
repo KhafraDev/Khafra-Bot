@@ -32,7 +32,7 @@ export const cache: NASACache[] = [];
 export const NASAGetRandom = async (): Promise<NASACache | null> => {
     const params = new URLSearchParams({
         count: '25',
-        api_key: env.NASA ?? 'DEMO_KEY'  
+        api_key: env.NASA ?? 'DEMO_KEY'
     });
 
     // ratelimited or cached results
@@ -43,7 +43,7 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
 
     const XRateLimitRemaining = r.headers.get('x-ratelimit-remaining');
     ratelimit.remaining = Number(XRateLimitRemaining);
-    
+
     if (ratelimit.firstRequest === -1) {
         ratelimit.firstRequest = Date.now();
     } else if (Date.now() - ratelimit.firstRequest >= hour) {
@@ -56,10 +56,10 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
     }
 
     const j = await r.json() as IAPOD[];
-    
+
     for (const { copyright, hdurl, url, title } of j) {
         cache.push({ copyright, link: hdurl ?? url, title });
     }
-    
+
     return cache.shift() ?? null;
 }

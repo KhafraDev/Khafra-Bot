@@ -6,8 +6,8 @@ import { interactionGetGuildSettings, postToModLog } from '#khaf/utility/Discord
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, inlineCode } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 
 type WarnInsert = {
@@ -26,12 +26,12 @@ export class kSubCommand extends InteractionSubCommand {
 
     async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (!interaction.inCachedGuild()) {
-            return `❌ The bot must be re-invited with all permissions to use this command.`;
+            return '❌ The bot must be re-invited with all permissions to use this command.';
         }
 
         const points = interaction.options.getInteger('points', true);
         const reason = interaction.options.getString('reason');
-        const member = 
+        const member =
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
 
@@ -40,14 +40,14 @@ export class kSubCommand extends InteractionSubCommand {
                 member.permissions.has(PermissionFlagsBits.KickMembers) ||
                 member.permissions.has(PermissionFlagsBits.Administrator)
             ) {
-                return `❌ This member cannot be warned!`;
+                return '❌ This member cannot be warned!';
             } else if (!hierarchy(interaction.member, member)) {
                 return `❌ You can't warn ${member}!`;
             } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
                 return `❌ I can't warn ${member}! 😦`;
             }
         }
-        
+
         const rows = await sql<WarnInsert[]>`
             WITH warns AS (
                 SELECT id, k_points, k_ts
@@ -77,7 +77,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         // something really bad has gone wrong...
         if (rows.length === 0) {
-            return `❌ Yeah, I'm not really sure what happened. 🤯`;
+            return '❌ Yeah, I\'m not really sure what happened. 🤯';
         }
 
         const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
@@ -89,20 +89,20 @@ export class kSubCommand extends InteractionSubCommand {
             const [kickError] = 'kick' in member
                 ? await dontThrow(member.kick(reason || undefined))
                 : [''];
-            
+
             if (kickError !== null) {
                 return `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`;
             }
 
-            await interaction.editReply({ 
-                content: 
-                    `${member} was automatically kicked from the server for having ` + 
+            await interaction.editReply({
+                content:
+                    `${member} was automatically kicked from the server for having ` +
                     `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
             });
         } else {
-            await interaction.editReply({ 
-                content: 
-                    `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` + 
+            await interaction.editReply({
+                content:
+                    `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` +
                     ` Member has ${totalPoints.toLocaleString()} points total.`
             });
         }

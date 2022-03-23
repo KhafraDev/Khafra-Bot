@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@khaf/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 interface Total {
@@ -34,7 +34,7 @@ export class kSubCommand extends InteractionSubCommand {
         const id = 'id' in member ? member.id : null;
 
         if (!id || !interaction.inGuild()) {
-            return `❌ To use this command, re-invite the bot with all permissions!`;
+            return '❌ To use this command, re-invite the bot with all permissions!';
         }
 
         const rows = await sql<Total[]>`

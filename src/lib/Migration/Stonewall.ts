@@ -1,7 +1,6 @@
-import { readFile } from 'fs/promises';
-import { join } from 'path';
 import { asyncQuery } from '#khaf/database/SQLite.js';
-import { assets } from '#khaf/utility/Constants/Path.js';
+import { Json } from '#khaf/utility/Constants/Path.js';
+import { readFile } from 'fs/promises';
 
 type Ret = { 'EXISTS(SELECT 1 from kbStonewall)': number };
 interface Comic {
@@ -10,13 +9,13 @@ interface Comic {
     link: string
 }
 
-const PATH = join(assets, 'JSON/Stonewall.json');
-
 export const migrateStonewall = async (): Promise<boolean> => {
-    const r = await asyncQuery<Ret>(`SELECT EXISTS(SELECT 1 from kbStonewall);`);
+    const r = await asyncQuery<Ret>('SELECT EXISTS(SELECT 1 from kbStonewall);');
 
     if (r[0]['EXISTS(SELECT 1 from kbStonewall)'] === 0) {
-        const file = JSON.parse(await readFile(PATH, 'utf-8')) as Comic[];
+        const file = JSON.parse(
+            await readFile(Json('Stonewall.json'), 'utf-8')
+        ) as Comic[];
         await stonewallTransaction(file);
     }
 

@@ -2,7 +2,7 @@ import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 interface IBibleVerse {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
                 'Get a King James Bible verse.',
                 'Nahum 3:7', 'Proverbs 25:19'
             ],
-			{
+            {
                 name: 'bible',
                 folder: 'Fun',
                 args: [0]
@@ -34,11 +34,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args, content }: Arguments): Promise<Embed | undefined> {
+    async init (_message: Message, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
         const inserted = await bibleInsertDB();
 
         if (inserted !== true) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
 
         // no arguments provided, get a random entry
@@ -48,7 +48,7 @@ export class kCommand extends Command {
             `;
 
             // basically the same as bookAcronym down below
-            const book = Object 
+            const book = Object
                 .entries(titles)
                 .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
                 .shift()!;
@@ -89,12 +89,12 @@ export class kCommand extends Command {
                     ORDER BY verse DESC
                     LIMIT 1;
                 `;
-                
+
                 return this.Embed.ok(`
                 Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
                 `);
             }
-            
+
             // if not chapter is provided, get the number of chapters in the book
             const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible 

@@ -3,8 +3,8 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, bold, inlineCode, italic, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ActionRow, bold, inlineCode, italic, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildChannel, Message } from 'discord.js';
 
 const threadPerms =
@@ -17,9 +17,9 @@ export class kCommand extends Command {
     constructor () {
         super(
             [
-                `By default, Discord threads are allowed to be created by ${italic('anyone')}. This command disables all 3 default permissions.`,
+                `By default, Discord threads are allowed to be created by ${italic('anyone')}. This command disables all 3 default permissions.`
             ],
-			{
+            {
                 name: 'fthreads',
                 aliases: ['fthread', 'fuckthread', 'fuckthreads'],
                 folder: 'Moderation',
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<Embed | undefined> {
+    async init (message: Message<true>): Promise<UnsafeEmbed | undefined> {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
                 this.Embed.ok(`
@@ -41,7 +41,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Yes', 'approve'),
                     Components.deny('No', 'deny')
                 )
@@ -58,10 +58,10 @@ export class kCommand extends Command {
                 time: 60_000
             }));
 
-            if (e !== null || !i) {
-                return this.Embed.error(`No response, command was canceled!`);
+            if (e !== null) {
+                return this.Embed.error('No response, command was canceled!');
             } else if (i.customId === 'deny') {
-                return this.Embed.error(`Command was canceled, permissions will not be disabled!`);
+                return this.Embed.error('Command was canceled, permissions will not be disabled!');
             } else {
                 void i.update({ components: disableAll(m) });
             }
@@ -73,18 +73,18 @@ export class kCommand extends Command {
             return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
         }
 
-        const channels = allChannels.filter(c => 
+        const channels = allChannels.filter(c =>
             !isStage(c) &&
             !isThread(c) &&
             !isVoice(c) &&
             !c.permissionsLocked
         );
-    
+
         const pr: Promise<GuildChannel>[] = [];
         for (const [, channel] of channels) {
             const overwrites = channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id);
             const denied = overwrites?.deny.has(threadPerms);
-            
+
             if (!denied) {
                 if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.ManageChannels)) continue;
                 if (!hasPerms(channel, message.member, PermissionFlagsBits.ManageChannels)) continue;
@@ -116,7 +116,7 @@ export class kCommand extends Command {
             });
 
         if (success.length > 0)
-            embed.description = `${bold('Success:')}\n`;
+            embed.setDescription(`${bold('Success:')}\n`);
 
         while (success.length !== 0 && embed.description!.length < 2048) {
             const { value } = success.shift()!;
@@ -124,17 +124,18 @@ export class kCommand extends Command {
                 ? `Category ${inlineCode(value.name)}\n`
                 : `${value}\n`;
             if (embed.description!.length + line.length > 2048) break;
-            embed.description += line;
+
+            embed.setDescription(embed.description + line);
         }
 
-        if (rejected.length > 0 && embed.description!.length + `\n\n${bold('Rejected!')}\n`.length <= 2048) 
-            embed.description += `\n${bold('Rejected!')}\n`;
+        if (rejected.length > 0 && embed.description!.length + `\n\n${bold('Rejected!')}\n`.length <= 2048)
+            embed.setDescription(embed.description + `\n${bold('Rejected!')}\n`);
 
         while (rejected.length !== 0 && embed.description!.length < 2048) {
             const { reason } = rejected.shift()! as { reason: Error };
             const line = `${inlineCode(reason.message)}\n`;
             if (embed.description!.length + line.length > 2048) break;
-            embed.description += line;
+            embed.setDescription(embed.description + line);
         }
 
         return embed;

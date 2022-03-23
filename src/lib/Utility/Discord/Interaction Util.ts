@@ -5,8 +5,8 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import {
     AnyChannel,
     ChatInputCommandInteraction,
@@ -27,7 +27,7 @@ const perms =
 
 /**
  * Fetches the guild settings given a ChatInputCommandInteraction, or
- * null if the command is not in a guild or an error occurs. 
+ * null if the command is not in a guild or an error occurs.
  */
 export const interactionGetGuildSettings = async (interaction: Interactions): Promise<kGuild | null> => {
     if (!interaction.inGuild()) return null;
@@ -88,11 +88,11 @@ export const interactionFetchChannel = async (
 
 export const postToModLog = async (
     interaction: ChatInputCommandInteraction,
-    embeds: Embed[],
+    embeds: UnsafeEmbed[],
     guildSettings?: kGuild | null
 ): Promise<undefined> => {
     const settings = guildSettings ?? await interactionGetGuildSettings(interaction);
-        
+
     if (settings?.mod_log_channel) {
         const channel = await interactionFetchChannel(
             interaction,

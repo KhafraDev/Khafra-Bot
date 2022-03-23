@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@khaf/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 interface WarningDel {
@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (!interaction.inGuild()) {
-            return `❌ The bot must be re-invited with all permissions to use this command.`;
+            return '❌ The bot must be re-invited with all permissions to use this command.';
         }
 
         const uuid = interaction.options.getString('id', true);
@@ -47,7 +47,7 @@ export class kSubCommand extends InteractionSubCommand {
             return '❌ No warning with that ID could be found in the guild!';
         }
 
-        await dontThrow(interaction.editReply({ 
+        await dontThrow(interaction.editReply({
             content: `Warning ${inlineCode(deleted[0].id)} has been removed!`
         }));
 

@@ -4,15 +4,15 @@ import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { fetch } from 'undici';
 
 const formatURL = new Map<DNE, string>([
-    ['artwork', `https://thisartworkdoesnotexist.com/`],
-    ['cat',     `https://thiscatdoesnotexist.com/`],
-    ['horse',   `https://thishorsedoesnotexist.com/`],
-    ['person',  `https://thispersondoesnotexist.com/image`]
+    ['artwork', 'https://thisartworkdoesnotexist.com/'],
+    ['cat',     'https://thiscatdoesnotexist.com/'],
+    ['horse',   'https://thishorsedoesnotexist.com/'],
+    ['person',  'https://thispersondoesnotexist.com/image']
 ]);
 
-export type DNE = 
-    | 'artwork' 
-    | 'cat' 
+export type DNE =
+    | 'artwork'
+    | 'cat'
     | 'horse'
     | 'person'
 

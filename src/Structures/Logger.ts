@@ -25,32 +25,27 @@ const getLevel = (l: LoggerLevels): string => {
 
 const isDate = (something: object): something is Date => 'toISOString' in something;
 
-// TODO(@KhafraDev): update type once Error has a cause
-const errorToReadable = (
-    err: Error & { cause?: unknown },
-    indentation = 1,
-    newLineFirst = false
-): string => {
+const errorToReadable = (err: Error, indentation = 1, newLineFirst = false): string => {
     let error = '';
     const indent = ' '.repeat(indentation * 2);
     const moreIndent = ' '.repeat((indentation + 1) * 2);
 
-	if (err.stack) {
+    if (err.stack) {
         if (newLineFirst) error += EOL;
-		error += indent + err.stack.replace(errorStackIndent, moreIndent);
-	} else {
+        error += indent + err.stack.replace(errorStackIndent, moreIndent);
+    } else {
         error += indent + err.message.replace(errorStackIndent, moreIndent) + EOL;
     }
 
-	if ('cause' in err) {
+    if ('cause' in err) {
         if (err.cause instanceof Error) {
             error += errorToReadable(err.cause, indentation + 1, true);
         } else {
             error += moreIndent + ' cause: ' + objectToReadable(err.cause, indentation + 1);
         }
-	}
+    }
 
-	return error;
+    return error;
 }
 
 const objectToReadable = (o: unknown, depth = 1): string => {
@@ -128,14 +123,14 @@ class Logger {
     debug (a: unknown, b?: unknown): void {
         this.log(a, b, 'DEBUG');
     }
-    
+
     info (a: unknown, b?: unknown): void {
         this.log(a, b, 'INFO');
     }
 
     /**
      * Logs an object (typically an error) to stderr, including Error.cause(s)!
-     * @example 
+     * @example
         const l = new Logger();
 
         l.error(new Error('hello', {

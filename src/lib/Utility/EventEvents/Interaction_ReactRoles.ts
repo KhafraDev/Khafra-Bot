@@ -3,17 +3,17 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
-import { Embed as MessageEmbed } from '@khaf/builders';
+import { UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { Guild, GuildMember, MessageComponentInteraction } from 'discord.js';
 
-type InteractionReply 
-    = import('discord.js').Message<boolean> 
-    | import('discord-api-types/v9').APIMessage
+type InteractionReply
+    = import('discord.js').Message<boolean>
+    | import('discord-api-types/v10').APIMessage
     | void
 
 /**
  * Handle react roles, runs on every button interaction - including pagination that is present in other commands.
- * 
+ *
  * Non-reactrole interactions are quickly filtered out.
  */
 export const interactionReactRoleHandler = async (
@@ -23,7 +23,7 @@ export const interactionReactRoleHandler = async (
     if (!validSnowflake(interaction.customId)) return;
     if (interaction.message.author.id !== client.user?.id) return;
     if (!(interaction.member instanceof GuildMember)) return;
-    
+
     let guild: Guild | null = null; // guild can be null here
     if (!(interaction.guild instanceof Guild) && typeof interaction.guildId === 'string') {
         await dontThrow(interaction.deferReply({ ephemeral: true }));
@@ -38,7 +38,7 @@ export const interactionReactRoleHandler = async (
     if (!role || role.managed) return;
 
     if (!guild.me || !hierarchy(guild.me, interaction.member, false)) {
-        const opts = { content: `❌ I do not have permission to manage your roles!` };
+        const opts = { content: '❌ I do not have permission to manage your roles!' };
         const pr = interaction.deferred
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts});
@@ -46,11 +46,11 @@ export const interactionReactRoleHandler = async (
         return void dontThrow<InteractionReply>(pr);
     }
 
-    try {        
+    try {
         const had = interaction.member.roles.cache.has(role.id);
         if (had)
             await interaction.member.roles.remove(role);
-        else 
+        else
             await interaction.member.roles.add(role);
 
         const opts = { embeds: [] as MessageEmbed[] };
@@ -70,14 +70,16 @@ export const interactionReactRoleHandler = async (
             console.log(e);
         }
 
-        const opts = { 
-            embeds: [ Embed.error(`An error prevented me from granting you the role!`) ]
-        }
+        const opts = {
+            embeds: [
+                Embed.error('An error prevented me from granting you the role!')
+            ]
+        };
 
         const pr = interaction.deferred
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts });
-            
+
         return void dontThrow<InteractionReply>(pr);
     }
 }

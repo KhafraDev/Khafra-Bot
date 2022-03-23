@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { fetch } from 'undici';
 
 interface IMCOnline {
@@ -30,8 +30,8 @@ interface IMCOnline {
 	version: string | string[]
 	protocol?: number
 	hostname?: string
-	icon?: string 
-	software?: string 
+	icon?: string
+	software?: string
 	map: string,
 	plugins?: {
 		names: string[]
@@ -57,8 +57,8 @@ interface IMCOffline {
 }
 
 const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
-	const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
-	const j = await r.json() as IMCOnline | IMCOffline;
+    const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
+    const j = await r.json() as IMCOnline | IMCOffline;
 
     return { playersOnline: j.online ? j.players.online : 0 };
 }
@@ -71,23 +71,23 @@ const cache = {
 export class kCommand extends Command {
     constructor () {
         super(
-            [ 
+            [
                 'Get the number of users playing MeepCraft right now.'
             ],
-			{
+            {
                 name: 'meepcraft',
                 folder: 'Fun',
-                aliases: [ 'meep' ],
+                aliases: ['meep'],
                 args: [0, 0]
             }
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
             const sentence = cache.players === 1
-				? 'is ``1`` player'
-				: `are ${inlineCode(`${cache.players}`)} players`;
+                ? 'is ``1`` player'
+                : `are ${inlineCode(`${cache.players}`)} players`;
             const embed = this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
             return embed;
         }
@@ -98,8 +98,8 @@ export class kCommand extends Command {
         cache.players = players.playersOnline;
 
         const sentence = cache.players === 1
-			? 'is ``1`` player'
-			: `are ${inlineCode(`${cache.players}`)} players`;
+            ? 'is ``1`` player'
+            : `are ${inlineCode(`${cache.players}`)} players`;
         return this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
     }
 }

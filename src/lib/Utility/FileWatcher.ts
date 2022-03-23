@@ -47,12 +47,12 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string): 
         } catch (e) {
             err = e as Error;
         }
-        
+
         if (err === null) {
             if (Array.isArray(storage) && Array.isArray(file)) {
                 if (storage.length > file.length)
                     storage.splice(storage.length);
-                
+
                 for (let i = 0; i < file.length; i++) {
                     storage.splice(i, 1);
                     storage.push(file[i]);

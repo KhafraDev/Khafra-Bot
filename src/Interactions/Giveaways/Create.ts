@@ -8,7 +8,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, bold, inlineCode, time } from '@khaf/builders';
+import { ActionRow, bold, inlineCode, time } from '@discordjs/builders';
 import { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
@@ -28,9 +28,9 @@ export class kSubCommand extends InteractionSubCommand {
         const prize = interaction.options.getString('prize', true);
         const ends = parseStrToMs(interaction.options.getString('ends', true));
         const winners = interaction.options.getInteger('winners') ?? 1;
-        
-        if (ends === null || !timeRange(ends)) {
-            return `❌ A giveaway must last longer than a minute, and less than a month!`;
+
+        if (!timeRange(ends)) {
+            return '❌ A giveaway must last longer than a minute, and less than a month!';
         }
 
         const endsDate = new Date(Date.now() + ends);
@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
         const [sentError, sent] = await dontThrow(channel.send({
             embeds: [
                 Embed.ok()
-                    .setTitle(`A giveaway is starting!`)
+                    .setTitle('A giveaway is starting!')
                     .setDescription(`
                     ${prize.slice(0, 1950)}
                     

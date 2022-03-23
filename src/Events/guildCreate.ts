@@ -3,14 +3,14 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ApplicationCommandPermissionType } from 'discord-api-types/v9';
+import { ApplicationCommandPermissionType } from 'discord-api-types/v10';
 import { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
 
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
 
     async init (guild: Guild): Promise<void> {
-        logger.info(`Joined a new guild!`, {
+        logger.info('Joined a new guild!', {
             id: guild.id,
             name: guild.name
         });
@@ -26,7 +26,7 @@ export class kEvent extends Event<'guildCreate'> {
         await dontThrow(guild.roles.fetch());
 
         const fullPermissions: GuildApplicationCommandPermissionData[] = [];
-        
+
         for (const slashCommand of KhafraClient.Interactions.Commands.values()) {
             // if slash command is disabled by default
             if (slashCommand.data.default_permission === false) {
@@ -35,7 +35,7 @@ export class kEvent extends Event<'guildCreate'> {
 
                 const perms = interaction.options.permissions;
                 const rolesWithPerms = guild.roles.cache.filter(
-                    role => role.permissions.has(perms)  
+                    role => role.permissions.has(perms)
                 );
                 const commandPerms = rolesWithPerms
                     .map(v => ({ id: v.id, type: ApplicationCommandPermissionType.Role, permission: true }))

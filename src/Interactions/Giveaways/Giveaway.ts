@@ -4,7 +4,7 @@ import {
     ChannelType,
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -64,19 +64,19 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'reroll',
-                    description: `Rerolls a giveaway that has ended, picking new winners.`,
+                    description: 'Rerolls a giveaway that has ended, picking new winners.',
                     options: [
                         {
                             type: ApplicationCommandOptionType.String,
                             name: 'url',
-                            description: `The link to the giveaway message.`,
+                            description: 'The link to the giveaway message.',
                             required: true
                         }
                     ]
                 }
             ]
         };
-        
+
         super(sc, {
             defer: true,
             permissions: [

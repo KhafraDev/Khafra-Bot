@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode, type Embed } from '@khaf/builders';
+import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { request } from 'undici';
 
 export class kCommand extends Command {
@@ -10,16 +10,16 @@ export class kCommand extends Command {
             [
                 'Get play stats about Synergism!'
             ],
-			{
+            {
                 name: 'synergismstats',
                 folder: 'Fun',
                 args: [0, 0],
-                aliases: [ 'synergismstat' ]
+                aliases: ['synergismstat']
             }
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         const stats = await Kongregate();
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 
@@ -38,7 +38,7 @@ export class kCommand extends Command {
             ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
             Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
             `)
-            .addField({
+            .addFields({
                 name: bold('Quark Bonus:'),
                 value: `${quarks.bonus}%`,
                 inline: true

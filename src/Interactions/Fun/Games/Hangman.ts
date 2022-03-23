@@ -4,19 +4,19 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
-import { ActionRow, inlineCode } from '@khaf/builders';
-import { InteractionType } from 'discord-api-types/v9';
+import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import { InteractionType } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { readdirSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
 
-const assetsPath = join(assets, 'Hangman');
+const assetsPath = assets('Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
 const cachedLists = new Map<string, string[]>();
 const currentGames = new Set<Snowflake>();
 const images = [
-    'https://i.imgur.com/OmbNNhr.png', // nothing 
+    'https://i.imgur.com/OmbNNhr.png', // nothing
     'https://i.imgur.com/W9gleFt.png', // head
     'https://i.imgur.com/0MMktbo.png', // body
     'https://i.imgur.com/Y3qL8m3.png', // left arm
@@ -88,7 +88,7 @@ class Hangman {
         const components = this.winner || this.lost
             ? []
             : [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.primary('Hint', 'hint')
                         .setEmoji({ name: '❓' })
                         .setDisabled(this.usedHint)
@@ -116,7 +116,7 @@ class Hangman {
             .filter(l => !this.guessed.includes(l) && l !== ' ');
 
         this.usedHint = true;
-        
+
         const char = potential[Math.floor(Math.random() * potential.length)];
         this.guess(char);
         this.wrong++;
@@ -153,9 +153,9 @@ export class kSubCommand extends InteractionSubCommand {
 
     async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         if (currentGames.has(interaction.user.id)) {
-            return `❌ Finish your current game first!`;
+            return '❌ Finish your current game first!';
         } else if (!interaction.inGuild()) {
-            return `❌ I can't read your messages! Re-invite the bot with all permissions to use this command!`;
+            return '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!';
         }
 
         const shouldList = interaction.options.getSubcommand() === 'list';
@@ -165,7 +165,7 @@ export class kSubCommand extends InteractionSubCommand {
             const lists = listsByName
                 .map(l => `• ${inlineCode(l)}`)
                 .join('\n');
-                
+
             return `✅ Here are the word lists that you can play:\n${lists}`;
         }
 
@@ -205,12 +205,12 @@ export class kSubCommand extends InteractionSubCommand {
             const guessed = game.guess(m.content);
 
             if (guessed === false) return;
-            
+
             let json!: WebhookEditMessageOptions;
             if (game.winner) {
                 json = game.toJSON('You guessed the word!');
                 c.stop('do_not_edit');
-            } else if (game.lost) { 
+            } else if (game.lost) {
                 json = game.toJSON(`You lost! The word was "${word}"!`);
                 c.stop('do_not_edit');
             } else if (m.content.length === 1) {
@@ -219,7 +219,7 @@ export class kSubCommand extends InteractionSubCommand {
                     : `"${m.content.slice(0, 10)}" is not in the word!`
                 );
             } else {
-                json = game.toJSON(`Partial guesses are not allowed!`);
+                json = game.toJSON('Partial guesses are not allowed!');
             }
 
             return void dontThrow(interaction.editReply(json));
@@ -262,11 +262,11 @@ export class kSubCommand extends InteractionSubCommand {
             }
 
             const hint = game.hint() ?? 'N/A';
-            
+
             return void dontThrow(i.update({
                 ...game.toJSON(`The hint is: ${hint}`),
                 components: disableAll(m)
             }));
         });
     }
-} 
+}

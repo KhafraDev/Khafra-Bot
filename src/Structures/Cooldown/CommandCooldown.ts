@@ -12,7 +12,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
 
     /**
      * Max age of an item in seconds
-     * @param {number} maxAge 
+     * @param {number} maxAge
      */
     constructor(maxAge: number) {
         super();
@@ -42,7 +42,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
         if ((Date.now() - info.added) >= maxAgeMs) {
             this.delete(id);
             return false;
-        } 
+        }
 
         return true;
     }
@@ -54,7 +54,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
 
     /**
      * Whether or not a user has been notified that they're on cooldown. If they are haven't been, sets that they have been.
-     * @param {Snowflake} id 
+     * @param {Snowflake} id
      * @returns {boolean} true if the user has been notified, false if they haven't been, null if not on cooldown
      */
     isNotified(id: Snowflake): boolean | null {
@@ -64,7 +64,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
 
         info.notified = true;
         this.set(id, info);
-        
+
         return false;
     }
 

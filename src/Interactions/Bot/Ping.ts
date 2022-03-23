@@ -1,14 +1,14 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, SnowflakeUtil } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'ping',
-            description: 'Get the bot\'s ping!',
+            description: 'Get the bot\'s ping!'
         };
 
         super(sc);
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
 
         const interactionCreated = SnowflakeUtil.timestampFrom(interaction.id);
         const replyCreated = SnowflakeUtil.timestampFrom(m.id);
-        
+
         const embed = Embed.ok(`
         Pong! 🏓
 
@@ -32,4 +32,4 @@ export class kInteraction extends Interactions {
 
         return void dontThrow(interaction.followUp({ embeds: [embed] }));
     }
-} 
+}

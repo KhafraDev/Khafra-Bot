@@ -114,9 +114,9 @@ export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i');
 export const parseBible = async (): Promise<Omit<IBibleVerse, 'idx'>[]> => {
     const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
     const buffer = await res.arrayBuffer();
-    
+
     const zip = ZipFile(Buffer.from(buffer));
-    const bible = zip.shift()!.getData().toString('utf-8');
+    const bible = zip.toString('utf-8');
 
     const lines: Omit<IBibleVerse, 'idx'>[] = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse
@@ -124,9 +124,9 @@ export const parseBible = async (): Promise<Omit<IBibleVerse, 'idx'>[]> => {
         .map(line => {
             const [book, chapter, verse, content = ''] = line.split('|');
             return {
-                book: book.trim(), 
-                chapter: +chapter, 
-                verse: +verse, 
+                book: book.trim(),
+                chapter: +chapter,
+                verse: +verse,
                 content: content.trim()
             };
         });
@@ -162,7 +162,7 @@ export const bibleInsertDB = async (): Promise<boolean> => {
 
             docs.push(...doc);
         }
-      
+
         return docs;
     });
 

@@ -40,7 +40,7 @@ export interface PasteGGError {
 
 /**
  * Upload text to hatebin.com
- * 
+ *
  * Seems to have issues with the word "function" (for whatever reason).
  */
 const hatebin = async (text: string): Promise<string | undefined> => {
@@ -62,7 +62,7 @@ const sourcebin = async (text: string): Promise<string | undefined> => {
     const r = await fetch('https://sourceb.in/api/bins', {
         method: 'POST',
         body: JSON.stringify({
-            files: [ { content: text } ]
+            files: [{ content: text }]
         }),
         headers: { 'Content-Type': 'application/json;charset=utf-8' }
     });
@@ -102,7 +102,7 @@ const pastegg = async (text: string): Promise<string | undefined> => {
         method: 'POST',
         body: JSON.stringify({
             visibility: 'unlisted',
-            files: [ { content: { format: 'text', value: text } } ]
+            files: [{ content: { format: 'text', value: text } }]
         }),
         headers: { 'Content-Type': 'application/json' }
     });
@@ -124,9 +124,9 @@ const ghostbin = async (text: string): Promise<string | undefined> => {
         method: 'POST',
         body: new URLSearchParams({
             lang: 'text',
-            text, 
-            expire: '-1', 
-            password: '', 
+            text,
+            expire: '-1',
+            password: '',
             title: ''
         }),
         redirect: 'manual'

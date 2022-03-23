@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
 import { fetch } from 'undici';
 
@@ -63,29 +63,29 @@ interface ITheOnion {
 }
 
 const rss = new RSSReader<ITheOnion>();
-const cache = once(() => rss.cache(`https://www.theonion.com/rss`));
+const cache = once(() => rss.cache('https://www.theonion.com/rss'));
 
 export class kCommand extends Command {
     constructor () {
         super(
-            [ 
+            [
                 'Read one of the latest articles from The Onion!',
                 ''
             ],
-			{
+            {
                 name: 'theonion',
                 folder: 'Fun',
-                aliases: [ 'onion', 'realnews' ],
+                aliases: ['onion', 'realnews'],
                 args: [0, 0]
             }
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
 
         const i = Math.floor(Math.random() * rss.results.size);
@@ -102,7 +102,7 @@ export class kCommand extends Command {
 
         return this.Embed.ok()
             .setAuthor({
-                name: decodeXML(j.data[0].headline).slice(0, 256), 
+                name: decodeXML(j.data[0].headline).slice(0, 256),
                 iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
                 url: j.data[0].permalink
             })

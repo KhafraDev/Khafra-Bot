@@ -1,9 +1,9 @@
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { bold, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
 
@@ -43,12 +43,14 @@ export class kInteraction extends Interactions {
         return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
-            .addField({ name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
-            .addField({ name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true })
-            .addField({ name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
-            .addField({ name: bold('Humidity:'), value: `${first.humidity}%`, inline: true })
-            .addField({ name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true })
-            .addField({ name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true })
-            .setFooter({ text: `© 2020 HERE` });
+            .setFooter({ text: '© 2020 HERE' })
+            .addFields(
+                { name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
+                { name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true },
+                { name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
+                { name: bold('Humidity:'), value: `${first.humidity}%`, inline: true },
+                { name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true },
+                { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
+            );
     }
-} 
+}

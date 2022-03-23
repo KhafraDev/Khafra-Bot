@@ -4,9 +4,9 @@ import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
 import { SpotifyResult } from './types/Spotify';
 
-type Token = { 
+type Token = {
     access_token: string;
-    token_type: string; 
+    token_type: string;
     expires_in: number;
     scope?: string;
 }
@@ -28,7 +28,7 @@ class Spotify {
 
         const token = await this.getTokenHeader();
         const r = await fetch(new URL(params, 'https://api.spotify.com/v1/search'), {
-            headers: { 
+            headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 ...token
@@ -37,7 +37,7 @@ class Spotify {
 
         return await r.json() as SpotifyResult;
     }
-  
+
     async setToken (): Promise<void> {
         const params = new URLSearchParams({ grant_type: 'client_credentials' });
 
@@ -53,7 +53,7 @@ class Spotify {
         this.#token = j;
         this.#expires_in = Date.now() + j.expires_in * 1000; // in milliseconds
     }
-  
+
     async getTokenHeader (): Promise<{ Authorization: string }> {
         if (!this.#token || !this.#token.access_token || this.expired) {
             await this.setToken();

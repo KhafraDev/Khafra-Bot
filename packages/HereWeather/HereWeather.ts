@@ -5,7 +5,6 @@ import { HereResult } from './types/HereWeather';
 const consumeBody = async (res: Response): Promise<void> => {
     if (res.body === null) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for await (const _chunk of res.body) {}
 }
 

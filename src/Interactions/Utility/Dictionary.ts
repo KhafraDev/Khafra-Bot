@@ -1,10 +1,10 @@
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { ActionRow, bold, italic } from '@khaf/builders';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { stripIndents } from '#khaf/utility/Template.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { ActionRow, bold, italic } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -50,4 +50,4 @@ export class kInteraction extends Interactions {
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

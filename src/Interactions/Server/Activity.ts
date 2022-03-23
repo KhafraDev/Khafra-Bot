@@ -2,13 +2,13 @@ import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import {
     APIInvite,
     ApplicationCommandOptionType, ChannelType,
     InviteTargetType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody,
     RESTPostAPIChannelInviteJSONBody, Routes
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, VoiceChannel } from 'discord.js';
 
 const Activities = {
@@ -24,7 +24,7 @@ const Activities = {
     'Spell Cast': '852509694341283871',
     'Checkers': '832013003968348200',
     // 'Sketchy Artist': '879864070101172255',
-    'Putt Party': '832012854282158180',
+    'Putt Party': '832012854282158180'
 } as const;
 
 export class kInteraction extends Interactions {
@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Channel,
                     name: 'channel',
                     description: 'Voice channel to play the game in!',
-                    channel_types: [ ChannelType.GuildVoice ],
+                    channel_types: [ChannelType.GuildVoice],
                     required: true
                 }
             ]
@@ -54,16 +54,16 @@ export class kInteraction extends Interactions {
         super(sc, {
             permissions: [
                 PermissionFlagsBits.CreateInstantInvite,
-                PermissionFlagsBits.StartEmbeddedActivities
+                PermissionFlagsBits.UseEmbeddedActivities
             ]
         });
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<string> {
         if (!interaction.inGuild()) {
-            return `❌ This command is not available in this guild, please re-invite the bot with the correct permissions!`;
+            return '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!';
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {
-            return `❌ I do not have perms to create an activity in this channel!`;
+            return '❌ I do not have perms to create an activity in this channel!';
         }
 
         const activityId = interaction.options.getString('game', true);
@@ -90,4 +90,4 @@ export class kInteraction extends Interactions {
 
         return str;
     }
-} 
+}

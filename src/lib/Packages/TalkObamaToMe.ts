@@ -4,7 +4,7 @@ import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 export const talkObamaToMe = async (q: string): Promise<string> => {
     q = encodeURIComponent(q);
-    
+
     const res = await fetch('http://talkobamato.me/synthesize.py', {
         method: 'POST',
         body: `input_text=${q}`,
@@ -18,9 +18,9 @@ export const talkObamaToMe = async (q: string): Promise<string> => {
         throw new Error('Request wasn\'t redirected!');
     }
 
-	const u = new URL(res.url).searchParams.get('speech_key');
+    const u = new URL(res.url).searchParams.get('speech_key');
 
     void consumeBody(res);
 
-	return `http://talkobamato.me/synth/output/${u}/obama.mp4`;
+    return `http://talkobamato.me/synth/output/${u}/obama.mp4`;
 }

@@ -5,8 +5,8 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type Embed } from '@khaf/builders';
-import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v9';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
                 '866022233330810930 [channel id]',
                 '#general [channel mention]'
             ],
-			{
+            {
                 name: 'ticketchannel',
                 folder: 'Settings',
                 aliases: ['ticketchannels'],
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return this.Embed.perms(
                 message.channel,
@@ -37,18 +37,18 @@ export class kCommand extends Command {
                 PermissionFlagsBits.Administrator
             );
         }
-        
+
         /** guild can use private threads */
         const privateThreads =
             message.guild.premiumTier !== GuildPremiumTier.None &&
             message.guild.premiumTier !== GuildPremiumTier.Tier1;
 
         const ticketChannel = await getMentions(message, 'channels');
-        
+
         if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
             return this.Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
         } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return this.Embed.error(`This guild cannot use private threads, please use a category channel instead!`);
+            return this.Embed.error('This guild cannot use private threads, please use a category channel instead!');
         }
 
         const rows = await sql<kGuild[]>`

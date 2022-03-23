@@ -8,17 +8,14 @@ interface Options {
  * Resolves a promise without throwing an error.
  * @example
  * declare const message: import('discord.js').Message;
- * const [err, res] = await dontThrow(message.channel.send({ content: 'Hello, world!' })); 
+ * const [err, res] = await dontThrow(message.channel.send({ content: 'Hello, world!' }));
  */
- export async function dontThrow<T = unknown>(
+export async function dontThrow<T = unknown>(
     promise: Promise<T>,
     options: Options = {
         logOnFail: true
     }
-): Promise<
-    Readonly<[null, T]> |
-    Readonly<[Error, null]>
-> {
+): Promise<[null, T] | [Error, null]> {
     let err: Error | void;
 
     try {
@@ -28,7 +25,7 @@ interface Options {
         return [err, null];
     } finally {
         if (err && options.logOnFail) {
-            logger.warn(`An error occurred but was caught.`, err);
+            logger.warn('An error occurred but was caught.', err);
         }
     }
 }

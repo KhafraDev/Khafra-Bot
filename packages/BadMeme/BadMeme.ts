@@ -16,7 +16,7 @@ const lastUsed = new Map<string, number>();
 const after = new Map<string, string>();
 
 const getItemRespectNSFW = (
-    subreddit: string, 
+    subreddit: string,
     allowNSFW: boolean,
     cachedItems = cache.get(subreddit)
 ): IBadMemeCache | null => {
@@ -27,7 +27,7 @@ const getItemRespectNSFW = (
     const item = [...cachedItems].find(p => allowNSFW || !p.nsfw);
     if (item) {
         cachedItems.delete(item);
-        cachedItems.size === 0 
+        cachedItems.size === 0
             ? cache.delete(subreddit)
             : cache.set(subreddit, cachedItems);
     }
@@ -40,7 +40,7 @@ export const badmeme = async (
     subreddit = 'dankmemes',
     nsfw = false
 ): Promise<
-    IBadMemeCache | 
+    IBadMemeCache |
     { message: string; error: number; reason: string } |
     null
 > => {
@@ -50,7 +50,7 @@ export const badmeme = async (
         return getItemRespectNSFW(subreddit, nsfw);
     }
 
-    const o = new URLSearchParams({ limit: '100' });
+    const o = new URLSearchParams({ limit: '20' });
     if (after.has(subreddit))
         o.set('after', after.get(subreddit)!);
 

@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { bold, time, type Embed } from '@khaf/builders';
+import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import { Message } from 'discord.js';
 
@@ -13,7 +13,7 @@ export class kCommand extends Command {
                 'Berlin, Germany',
                 'Tunisia'
             ],
-			{
+            {
                 name: 'weather',
                 folder: 'Utility',
                 args: [1]
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<string | Embed> {
+    async init (_message: Message, { content }: Arguments): Promise<string | UnsafeEmbed> {
         const results = await weather(content);
 
         if ('status' in results) {
@@ -38,12 +38,14 @@ export class kCommand extends Command {
         return this.Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
-            .addField({ name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
-            .addField({ name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true })
-            .addField({ name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true })
-            .addField({ name: bold('Humidity:'), value: `${first.humidity}%`, inline: true })
-            .addField({ name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true })
-            .addField({ name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true })
-            .setFooter({ text: `© 2020 HERE` });
+            .addFields(
+                { name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
+                { name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true },
+                { name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
+                { name: bold('Humidity:'), value: `${first.humidity}%`, inline: true },
+                { name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true },
+                { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
+            )
+            .setFooter({ text: '© 2020 HERE' });
     }
 }

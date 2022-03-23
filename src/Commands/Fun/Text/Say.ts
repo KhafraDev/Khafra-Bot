@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -8,18 +8,18 @@ export class kCommand extends Command {
             [
                 'Have KhafraBot say something!',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'say',
                 folder: 'Fun',
-                aliases: [ 'speak', 'talk', 'tell' ],
+                aliases: ['speak', 'talk', 'tell'],
                 args: [1],
                 ratelimit: 3
             }
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<Embed> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         return this.Embed.ok()
             .setAuthor({
                 name: message.author.username,

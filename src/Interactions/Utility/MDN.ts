@@ -4,9 +4,9 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import { fetchMDN } from '@khaf/mdn';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
     }
 
     async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
-        const search = interaction.options.getString('input', true);            
+        const search = interaction.options.getString('input', true);
         const result = await fetchMDN(search);
 
         if ('errors' in result) {
@@ -53,9 +53,9 @@ export class kInteraction extends Interactions {
             ${inlineCode(document.summary.replace(/\s+/g, ' '))}`,
             components: [
                 new ActionRow().addComponents(
-                    Components.link(`Go to MDN`, link)
+                    Components.link('Go to MDN', link)
                 )
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

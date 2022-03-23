@@ -14,9 +14,9 @@ const defaultOpts: FactoryOpts = {
 }
 
 /**
- * Checks if a string is a valid https or http link and returns a URL object if it is. 
+ * Checks if a string is a valid https or http link and returns a URL object if it is.
  * Otherwise returns null.
- * 
+ *
  * Validates protocol, username, and password, and removes all search params.
  */
 export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts): URL | null => {
@@ -28,11 +28,9 @@ export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts): URL | nu
             return null;
 
         if (opts.stripParams === true) {
-            for (const key of Array.from(url.searchParams.keys())) {
-                url.searchParams.delete(key);
-            }
+            url.search = '';
         }
-        
+
         return url;
     } catch {
         return null;
@@ -40,7 +38,7 @@ export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts): URL | nu
 }
 
 /**
- * Gives a string or array of strings, tests for every URL present and returns a list 
+ * Gives a string or array of strings, tests for every URL present and returns a list
  * of them with an index (when an array is passed.
  */
 export function validURL(s: string): Omit<ValidURL, 'idx'>;

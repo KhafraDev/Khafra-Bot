@@ -1,14 +1,14 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
 import {
     APIApplicationCommandOption,
     ApplicationCommandOptionType,
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
-import { ChatInputCommandInteraction, GuildMemberManager } from 'discord.js';
+} from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, Guild, GuildMemberManager } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -36,7 +36,7 @@ export class kInteraction extends Interactions {
                 ...Array.from({ length: 18 }, (_, i): APIApplicationCommandOption => ({
                     type: ApplicationCommandOptionType.User,
                     name: `member${i + 1}`,
-                    description: `Member to ban.`,
+                    description: 'Member to ban.'
                 }))
             ]
         };
@@ -51,18 +51,18 @@ export class kInteraction extends Interactions {
         if (!interaction.inGuild()) {
             return `❌ Invalid permissions, ${pleaseInvite}`;
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
-            return `❌ I don't have permission to ban members in this guild!`;
+            return '❌ I don\'t have permission to ban members in this guild!';
         }
 
         const [err, guild] = interaction.guild
-            ? [null, interaction.guild]
+            ? [null, interaction.guild as Guild | null]
             : await dontThrow(interaction.client.guilds.fetch(interaction.guildId));
 
-        if (err !== null || !guild) {
+        if (err !== null || guild === null) {
             return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
         }
 
-        const days = interaction.options.getInteger('days') ?? 7;
+        const deleteMessageDays = interaction.options.getInteger('days') ?? 7;
         const reason =
             interaction.options.getString('reason') ??
             `Requested by ${interaction.user.tag} (${interaction.user.id})`;
@@ -85,12 +85,12 @@ export class kInteraction extends Interactions {
                     }
                 }
 
-                users.set(userOption.id, guild.members.ban(userOption, { reason, days }));
+                users.set(userOption.id, guild.members.ban(userOption, { reason, deleteMessageDays }));
             }
         }
 
         await dontThrow(interaction.editReply({
-            content: `✅ Starting to ban these members... if you provided multiple, it may take a minute!`
+            content: '✅ Starting to ban these members... if you provided multiple, it may take a minute!'
         }));
 
         let description = '';

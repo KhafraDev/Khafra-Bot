@@ -1,29 +1,26 @@
 import { Arguments, Command } from '#khaf/Command';
 import { openLibrary } from '#khaf/utility/commands/Openlibrary';
-import { bold, hyperlink, inlineCode, italic, type Embed } from '@khaf/builders';
+import { bold, hyperlink, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {
         super(
             [
-                'Open Library is an open, editable library catalog, building towards a web page for every book ever published.\n\n' + 
+                'Open Library is an open, editable library catalog, building towards a web page for every book ever published.\n\n' +
                 'https://openlibrary.org/about',
                 'The Great Gatsby'
             ],
-			{
+            {
                 name: 'openlibrary',
                 folder: 'Utility',
                 args: [1],
-                aliases: [ 'library', 'book', 'books' ],
-                errors: {
-                    AssertionError: 'No results found!'
-                }
+                aliases: ['library', 'book', 'books']
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {
@@ -45,7 +42,7 @@ export class kCommand extends Command {
         
         ${bold(hyperlink('Donate to the Internet Archive', 'https://archive.org/donate/'))}
         `);
-        embed.description = embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n');
+        embed.setDescription(embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n'));
 
         return embed;
     }

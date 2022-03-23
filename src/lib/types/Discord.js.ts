@@ -1,7 +1,7 @@
-import { 
-    TextChannel, 
-    NewsChannel, 
-    DMChannel, 
+import {
+    TextChannel,
+    NewsChannel,
+    DMChannel,
     VoiceChannel,
     CategoryChannel,
     StageChannel,
@@ -9,7 +9,7 @@ import {
     PartialDMChannel
 } from 'discord.js';
 
-export const isText = <T>(c: T): c is T & (TextChannel | NewsChannel) => 
+export const isText = <T>(c: T): c is T & (TextChannel | NewsChannel) =>
     c instanceof TextChannel || c instanceof NewsChannel;
 export const isTextBased = <T>(c: T): c is T & (TextChannel | DMChannel | NewsChannel | ThreadChannel) =>
     isText(c) || isDM(c) || isThread(c)

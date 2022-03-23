@@ -7,8 +7,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, inlineCode, time, type Embed as MessageEmbed } from '@khaf/builders';
-import { InteractionType } from 'discord-api-types/v9';
+import { ActionRow, inlineCode, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { InteractionType } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Row = Exclude<kReminder, 'userId'>;
@@ -17,8 +17,8 @@ const inRange = Range({ min: 1, max: 20 });
 
 const chunkEmbeds = (rows: Row[]): MessageEmbed[] => {
     const embeds = rows.map(row => {
-        const repeats = row.once ? `does not repeat` : 'repeats';
-        return `• ${inlineCode(row.id)}: ${time(row.time)} - ${ellipsis(inlineCode(row.message), 20)}, ${repeats}`
+        const repeats = row.once ? 'does not repeat' : 'repeats';
+        return `• ${inlineCode(row.id)}: ${time(row.time)} - ${inlineCode(ellipsis(row.message, 20))}, ${repeats}`
     });
 
     return chunkSafe(embeds, 7).map(lines => Embed.ok(lines.join('\n')));
@@ -56,7 +56,7 @@ export class kSubCommand extends InteractionSubCommand {
             content: `Page ${page + 1} out of ${embeds.length}`,
             embeds: [embeds[page]],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Next', 'next').setEmoji({ name: '▶️' }),
                     Components.deny('Stop', 'stop').setEmoji({ name: '🗑️' }),
                     Components.secondary('Back', 'back').setEmoji({ name: '◀️' })

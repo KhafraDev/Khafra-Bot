@@ -2,7 +2,7 @@ import { Command } from '#khaf/Command';
 import { isText } from '#khaf/utility/Discord.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 
@@ -26,7 +26,7 @@ export class kCommand extends Command {
             [
                 'Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'
             ],
-			{
+            {
                 name: 'cyanideandhappiness',
                 folder: 'Games',
                 args: [0, 0],
@@ -36,13 +36,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
-        
+
         if (isText(message.channel) && !message.channel.nsfw) {
             return this.Embed.error('Channel isn\'t marked as NSFW!');
         }

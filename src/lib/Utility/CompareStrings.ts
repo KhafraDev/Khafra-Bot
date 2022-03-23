@@ -1,5 +1,5 @@
 /**
- * Compare similarity between 2 strings using Dice's coefficient. 
+ * Compare similarity between 2 strings using Dice's coefficient.
  * Case sensitive - ``abc`` isn't ``AbC`` in my opinion.
  * @see https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient
  * @author Khafra

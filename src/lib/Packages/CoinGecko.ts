@@ -61,7 +61,7 @@ export class CoinGecko {
 
         await consumeBody(r);
 
-        return e === null && r?.statusCode === 200;
+        return e === null && r.statusCode === 200;
     }
 
     static async fetchAll(): Promise<boolean> {
@@ -72,9 +72,9 @@ export class CoinGecko {
             ).unref();
             CoinGecko.last = Date.now();
         } else if ((Date.now() - CoinGecko.last) / 1000 / 60 < 15) { // tried within last 15 mins
-            return false;    
+            return false;
         }
-        
+
         const pinged = await CoinGecko.ping();
         if (pinged === false) return false;
 
@@ -87,7 +87,7 @@ export class CoinGecko {
                 method: 'GET'
             }));
 
-            if (e !== null || r?.statusCode !== 200) {
+            if (e !== null || r.statusCode !== 200) {
                 void consumeBody(r);
                 break;
             }

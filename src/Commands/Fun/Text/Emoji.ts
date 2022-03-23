@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
@@ -13,18 +13,18 @@ export class kCommand extends Command {
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙', '<:Jack:579367928722489346>'
             ],
-			{
+            {
                 name: 'emoji',
                 folder: 'Fun',
                 args: [1, 5],
                 ratelimit: 3,
-                permissions: [ PermissionFlagsBits.AttachFiles ],
+                permissions: [PermissionFlagsBits.AttachFiles],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>): Promise<string | Embed> {
+    async init (message: Message<true>): Promise<string | UnsafeEmbed> {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 
@@ -35,7 +35,7 @@ export class kCommand extends Command {
         const all =  [...unicode, ...guild];
 
         if (all.length === 0)
-            return this.Embed.error(`No guild or unicode emojis were in the message! 😕`);
+            return this.Embed.error('No guild or unicode emojis were in the message! 😕');
 
         return all.join('\n');
     }

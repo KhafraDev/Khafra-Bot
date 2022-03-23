@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildMember, Message, User } from 'discord.js';
 
 export class kCommand extends Command {
@@ -12,25 +12,25 @@ export class kCommand extends Command {
                 '@user',
                 '239566240987742220'
             ],
-			{
-                name: 'fban', 
+            {
+                name: 'fban',
                 folder: 'Moderation',
-                aliases: [ 'forcebna', 'forceban', 'massban' ],
+                aliases: ['forcebna', 'forceban', 'massban'],
                 args: [1, 10],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.BanMembers ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
-        const ids = args.map(id => /^\d{17,19}$/.test(id) 
-            ? id 
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
+        const ids = args.map(id => /^\d{17,19}$/.test(id)
+            ? id
             : message.mentions.members?.get(id.replace(/[^\d]/g, ''))
         );
 
         if (ids.some(id => !validSnowflake(typeof id === 'string' ? id : id?.id)))
-            return this.Embed.error(`One or more ❄️❄️❄️ are invalid!`);
+            return this.Embed.error('One or more ❄️❄️❄️ are invalid!');
 
         const reason = `Force-ban by ${message.author.id} (${message.author.tag}).`;
 

@@ -1,11 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { readdirSync } from 'fs';
-import { extname, join } from 'path';
+import { extname } from 'path';
 
-const assetsPath = join(assets, 'Hangman');
-const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));
+const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''));
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -21,7 +20,7 @@ export class kInteraction extends Interactions {
                         {
                             type: ApplicationCommandOptionType.Subcommand,
                             name: 'list',
-                            description: 'list of words that you can use.',
+                            description: 'list of words that you can use.'
                         },
                         {
                             type: ApplicationCommandOptionType.Subcommand,
@@ -56,16 +55,33 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'wordle',
-                    description: 'Play a game of Wordle!'
+                    description: 'Play a game of Wordle!',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'official-word',
+                            description: 'Use the current word from the official Wordle site, might choose tomorrow\'s word based on timezones.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'highcontrast',
+                            description: 'For better vision!'
+                        }
+                    ]
                 },
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'tictactoe',
                     description: 'Play a game of Tic-Tac-Toe!'
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'slots',
+                    description: 'Play a game of slots!'
                 }
             ]
         };
-        
+
         super(sc, {
             defer: true
         });

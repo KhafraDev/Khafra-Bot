@@ -3,16 +3,16 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, Embed as MessageEmbed, inlineCode } from '@khaf/builders';
+import { ActionRow, inlineCode, MessageActionRowComponent, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import {
     ApplicationCommandOptionType,
     ChannelType,
     PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
+    RESTPostAPIApplicationCommandsJSONBody,
+    Snowflake
+} from 'discord-api-types/v10';
 import {
     ChatInputCommandInteraction,
-    EmojiIdentifierResolvable,
     GuildMember,
     GuildMemberRoleManager,
     NewsChannel,
@@ -25,7 +25,13 @@ import { parse } from 'twemoji-parser';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
 
-const guildEmojiRegex = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
+interface GuildMatchGroups {
+    animated: undefined | 'a'
+    name: string
+    id: Snowflake
+}
+
+const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
 const perms = PermissionFlagsBits.SendMessages;
 
 export class kInteraction extends Interactions {
@@ -85,58 +91,49 @@ export class kInteraction extends Interactions {
             
             Clicking the button again will take the role away!`;
 
-        if (!hasPerms(channel, interaction.guild?.me, perms)) { 
-            return `❌ I do not have permission to post a message in this channel!`;
-        } else if (!hasPerms(channel, interaction.member, perms)) { 
-            return `❌ You do not have permission to post a message in this channel!`;
+        if (!hasPerms(channel, interaction.guild?.me, perms)) {
+            return '❌ I do not have permission to post a message in this channel!';
+        } else if (!hasPerms(channel, interaction.member, perms)) {
+            return '❌ You do not have permission to post a message in this channel!';
         } else if (role.managed) {
-            return `❌ I can't give members a managed role.`;
+            return '❌ I can\'t give members a managed role.';
         } else if (
             !(role instanceof Role) ||
             !(interaction.member instanceof GuildMember) ||
             !(interaction.member.roles instanceof GuildMemberRoleManager) ||
             !interaction.guild?.me
         ) {
-            return `❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!`;
+            return '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!';
         } else if (
             role.id === interaction.guild.me.roles.highest.id ||
             // Negative if this role's position is lower (param is higher),
             // positive number if this one is higher (other's is lower), 0 if equal
             role.comparePositionTo(interaction.guild.me.roles.highest) > 0
         ) {
-            return `❌ I do not have enough permission to give others this role!`;
+            return '❌ I do not have enough permission to give others this role!';
         } else if (
             role.id === interaction.member.roles.highest.id ||
             role.comparePositionTo(interaction.member.roles.highest) > 0
         ) {
-            return `❌ You cannot give this role out to others!`;
+            return '❌ You cannot give this role out to others!';
         }
 
-        let emoji: EmojiIdentifierResolvable | undefined;
+        const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
+
         if (icon) {
             if (guildEmojiRegex.test(icon)) {
-                // The parsing is handled by Util.parseEmoji
-                // https://github.com/discordjs/discord.js/blob/2f6f365098cbab397cda124711c4bb08da850a17/src/util/Util.js#L297
-                emoji = icon;
+                const match = guildEmojiRegex.exec(icon) as RegExpExecArray & { groups: GuildMatchGroups };
+                component.setEmoji({
+                    animated: match.groups.animated ? true : undefined,
+                    id: match.groups.id,
+                    name: match.groups.name
+                });
             } else {
                 const parsed = parse(icon);
 
                 if (parsed.length !== 0) {
-                    emoji = parsed[0].text;
+                    component.setEmoji({ name: parsed[0].text });
                 }
-            }
-        }
-
-        const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
-        if (emoji) {
-            if (typeof emoji === 'string') {
-                component.setEmoji({ name: emoji });
-            } else {
-                component.setEmoji({
-                    name: emoji.name ?? undefined,
-                    animated: emoji.animated ?? undefined,
-                    id: emoji.id ?? undefined
-                });
             }
         }
 
@@ -147,7 +144,7 @@ export class kInteraction extends Interactions {
                     .setDescription(text)
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     component
                 )
             ]
@@ -157,6 +154,6 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
         }
 
-        return Embed.ok(`Ok! Click [the button here](${message?.url}) to get the ${role} role!`);
+        return Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`);
     }
-} 
+}

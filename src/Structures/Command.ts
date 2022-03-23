@@ -1,13 +1,12 @@
 import { Cooldown } from '#khaf/cooldown/CommandCooldown.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Errors } from '#khaf/utility/Constants/Errors.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message, PermissionResolvable, Snowflake } from 'discord.js';
 import { join } from 'path';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
@@ -35,20 +34,18 @@ interface ICommand {
         readonly aliases?: string[]
         readonly guildOnly?: boolean
         readonly ownerOnly?: boolean
-        readonly errors?: Record<string, string>
     }
 }
 
 type HandlerReturn =
     | string
     | import('discord.js').MessageAttachment
-    | import('@khaf/builders').Embed
+    | import('@discordjs/builders').UnsafeEmbed
     | import('discord.js').ReplyMessageOptions
     | void
     | null;
 
 export abstract class Command implements ICommand {
-    readonly errors = Errors;
     readonly Embed = Embed;
     readonly rateLimit: Cooldown;
 
@@ -58,7 +55,7 @@ export abstract class Command implements ICommand {
         PermissionFlagsBits.SendMessages,
         PermissionFlagsBits.EmbedLinks
     ];
-    
+
     constructor(
         public readonly help: string[],
         public readonly settings: ICommand['settings']
@@ -69,13 +66,14 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? []);
         this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] });
         this.rateLimit = new Cooldown(settings.ratelimit ?? 5);
-        this.errors = { ...this.errors, ...this.settings.errors };
     }
 
-    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>): 
-        Promise<HandlerReturn>
+    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
+        Promise<HandlerReturn>;
 
-    static isBotOwner = (id: Snowflake): boolean => Array.isArray(config.botOwner) 
-        ? config.botOwner.includes(id) 
-        : config.botOwner === id;
+    static isBotOwner (id: Snowflake): boolean {
+    	return Array.isArray(config.botOwner)
+    		? config.botOwner.includes(id)
+    		: config.botOwner === id;
+    }
 }

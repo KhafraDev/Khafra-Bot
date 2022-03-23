@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor() {
@@ -7,7 +7,7 @@ export class kCommand extends Command {
             [
                 'Pocket: Connect your Pocket account to Khafra-Bot!'
             ],
-			{
+            {
                 name: 'pocket',
                 folder: 'Pocket',
                 args: [0]
@@ -15,7 +15,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         return this.Embed.ok()
             .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`

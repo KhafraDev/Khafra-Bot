@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { codeBlock } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
@@ -10,20 +10,20 @@ export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'eval',
-            description: 'Evaluate some javascript!',
-            default_permission: false,
+            description: 'Eval some javascript - this is only available to a bot owner.',
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
                     name: 'string',
-                    description: 'Text to evaluate.',
+                    description: 'Text to evaluate!',
                     required: true
                 }
             ]
         };
 
         super(sc, {
-            ownerOnly: true
+            ownerOnly: true,
+            deploy: false
         });
     }
 
@@ -47,4 +47,4 @@ export class kInteraction extends Interactions {
             embeds: [embed]
         } as InteractionReplyOptions;
     }
-} 
+}

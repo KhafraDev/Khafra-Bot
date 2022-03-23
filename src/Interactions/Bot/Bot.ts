@@ -3,8 +3,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { bold, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, version as DJSVersion } from 'discord.js';
 import { join } from 'path';
 import { performance } from 'perf_hooks';
@@ -20,11 +20,11 @@ const pkg = createFileWatcher({} as typeof import('../../../package.json'), join
 
 const getUptime = (ms: number): string => {
     return Object.entries({
-		d: Math.floor(ms / 86400000),
-		h: Math.floor(ms / 3600000) % 24,
-		m: Math.floor(ms / 60000) % 60,
-		s: Math.floor(ms / 1000) % 60,
-		ms: Math.floor(ms) % 1000,
+        d: Math.floor(ms / 86400000),
+        h: Math.floor(ms / 3600000) % 24,
+        m: Math.floor(ms / 60000) % 60,
+        s: Math.floor(ms / 1000) % 60,
+        ms: Math.floor(ms) % 1000
     })
         .filter(f => f[1] > 0)
         .map(t => `${t[1]}${t[0]}`)
@@ -77,11 +77,13 @@ export class kInteraction extends Interactions {
                     ${bold('Dependencies')}
                     ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}
                     `)
-                    .addField({ name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` })
-                    .addField({ name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true })
-                    .addField({ name: bold('Discord.js:'), value: `v${DJSVersion}`, inline: true })
-                    .addField({ name: bold('Node.JS:'), value: version, inline: true })
-                    .addField({ name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` });
+                    .addFields(
+                        { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
+                        { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },
+                        { name: bold('Discord.js:'), value: `v${DJSVersion}`, inline: true },
+                        { name: bold('Node.JS:'), value: version, inline: true },
+                        { name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` }
+                    );
             } else if (option === BotInfo.PING) {
                 await interaction.reply({
                     embeds: [Embed.ok('Pinging...!')],
@@ -113,7 +115,7 @@ export class kInteraction extends Interactions {
                 const totalGuilds = guilds.size.toLocaleString();
 
                 return Embed.ok()
-                    .setTitle(`Bot Statistics`)
+                    .setTitle('Bot Statistics')
                     .addFields(
                         { name: bold('Guilds:'), value: totalGuilds, inline: true },
                         { name: bold('Members:'), value: totalMembers, inline: true },
@@ -125,4 +127,4 @@ export class kInteraction extends Interactions {
             }
         }
     }
-} 
+}

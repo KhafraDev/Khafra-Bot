@@ -6,6 +6,8 @@ export class kEvent extends Event<'guildDelete'> {
     name = 'guildDelete' as const;
 
     async init (guild: Guild): Promise<void> {
+        if (guild.available === false) return;
+
         await sql<unknown[]>`
             DELETE FROM kbGuild
             WHERE guild_id = ${guild.id}::text;

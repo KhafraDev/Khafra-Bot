@@ -8,7 +8,7 @@ import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { ActionRow, type Embed } from '@khaf/builders';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { URL } from 'url';
@@ -63,18 +63,18 @@ export class kCommand extends Command {
                 name: 'stonewall',
                 folder: 'Trash',
                 args: [0],
-                aliases: [ 'rockthrow', 'pebble' ]
+                aliases: ['rockthrow', 'pebble']
             }
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<Embed | void> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | void> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
-        
+
         if (args[0] === 'latest' && rss.results.size > 0) {
             const trash = [...rss.results.values()].shift()!;
             const { origin, pathname } = new URL(/src="(.*?)"/.exec(trash['content:encoded'])![1]);
@@ -91,9 +91,9 @@ export class kCommand extends Command {
             const comics = await asyncQuery<Comic>(`
                 SELECT * FROM kbStonewall WHERE instr(lower(title), lower(?)) > 0 ORDER BY comic_key DESC LIMIT 5;
             `, args.join(' '));
-            
+
             if (comics.length === 0) {
-                return this.Embed.error(`No comics with that query could be found. Omit the query for a random comic!`);
+                return this.Embed.error('No comics with that query could be found. Omit the query for a random comic!');
             } else if (comics.length === 1) {
                 return this.Embed.ok()
                     .setDescription(`
@@ -105,7 +105,7 @@ export class kCommand extends Command {
                     .setImage(comics[0].link);
             }
 
-            const makeEmbed = (page = 0): Embed => this.Embed.ok()
+            const makeEmbed = (page = 0): UnsafeEmbed => this.Embed.ok()
                 .setDescription(`
                 KhafraBot and its creator emphatically reject Stonewall and his twisted ideology. 
                 The \`stonewall\` command exists to enable people to laugh at the absurdity of his beliefs and call out his bigoted and hateful ideas.
@@ -117,7 +117,7 @@ export class kCommand extends Command {
             const [err, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new ActionRow().addComponents(
+                    new ActionRow<MessageActionRowComponent>().addComponents(
                         Components.approve('Next'),
                         Components.secondary('Back'),
                         Components.deny('Stop')
@@ -126,7 +126,7 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.error(`Could not send message.`);
+                return this.Embed.error('Could not send message.');
             }
 
             const c = m.createMessageComponentCollector({

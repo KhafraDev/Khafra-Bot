@@ -1,14 +1,14 @@
 import { Arguments, Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { time, type Embed } from '@khaf/builders';
+import { time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 const formatMS = (ms: number): string => Object.entries({
     d: Math.floor(ms / 86400000),
     h: Math.floor(ms / 3600000) % 24,
     m: Math.floor(ms / 60000) % 60,
-    s: Math.floor(ms / 1000) % 60,
+    s: Math.floor(ms / 1000) % 60
 })
     .filter(f => f[1] > 0)
     .map(t => `${t[1]}${t[0]}`)
@@ -26,12 +26,12 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message, { args }: Arguments): Promise<Embed> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const movies = await searchMovie(
-            args.join(' '), 
+            args.join(' '),
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
-        
+
         if (!movies)
             return this.Embed.error('No movies found!');
 
@@ -50,15 +50,15 @@ export class kCommand extends Command {
                 { name: '**TMDB:**', value: `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, inline: true }
             )
             .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
-            
+
         movies.homepage && embed.setURL(movies.homepage);
-        movies.imdb_id && embed.addField({
+        movies.imdb_id && embed.addFields({
             name: '**IMDB:**',
             value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
             inline: true
         });
-        
-        if (movies.poster_path) 
+
+        if (movies.poster_path)
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);
         else if (movies.backdrop_path)
             embed.setImage(`https://image.tmdb.org/t/p/original${movies.backdrop_path}`);

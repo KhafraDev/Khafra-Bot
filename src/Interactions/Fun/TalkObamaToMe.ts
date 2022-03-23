@@ -1,15 +1,15 @@
 import { Interactions } from '#khaf/Interaction';
 import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { inlineCode } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'talkobamatome',
-            description: `Have Obama say something.`,
+            description: 'Have Obama say something.',
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -19,7 +19,7 @@ export class kInteraction extends Interactions {
                 }
             ]
         };
-        
+
         super(sc);
     }
 
@@ -33,4 +33,4 @@ export class kInteraction extends Interactions {
 
         return obama;
     }
-} 
+}

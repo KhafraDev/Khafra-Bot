@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
-import { ActivityType } from 'discord-api-types/v9';
+import { ActivityType } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -13,7 +13,7 @@ export class kCommand extends Command {
                 'Boston - More Than a Feeling',
                 ''
             ],
-			{
+            {
                 name: 'spotify',
                 folder: 'Utility',
                 args: [0]
@@ -21,8 +21,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments): Promise<Embed> {
-        const presence = message.member!.presence?.activities.filter(activity => 
+    async init(message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+        const presence = message.member!.presence?.activities.filter(activity =>
             activity.type === ActivityType.Listening && activity.name === 'Spotify'
         ).pop();
 

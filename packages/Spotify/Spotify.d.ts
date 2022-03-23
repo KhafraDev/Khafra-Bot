@@ -6,7 +6,7 @@ declare class Spotify {
     getTokenHeader(): Promise<{
         Authorization: string;
     }>;
-    get expired(): boolean | null;
+    get expired(): boolean;
 }
 export declare const spotify: Spotify;
 export {};

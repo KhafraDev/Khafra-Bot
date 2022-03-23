@@ -2,19 +2,19 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode } from '@khaf/builders';
-import { InteractionType } from 'discord-api-types/v9';
+import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import { InteractionType } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Keys = keyof typeof emojis;
 
 const emojis = {
-    rock: '🌑', 
-    paper: '🧻', 
+    rock: '🌑',
+    paper: '🧻',
     scissors: '✂️'
 } as const;
 
-const row = new ActionRow().addComponents(
+const row = new ActionRow<MessageActionRowComponent>().addComponents(
     Components.primary('🌑', 'rock'),
     Components.secondary('🧻', 'paper'),
     Components.approve('✂️', 'scissors')
@@ -29,9 +29,9 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
-        const [err, int] = await dontThrow(interaction.editReply({ 
+        const [err, int] = await dontThrow(interaction.editReply({
             embeds: [
-                Embed.ok(`Rock, paper, scissors, shoot!`)
+                Embed.ok('Rock, paper, scissors, shoot!')
             ],
             components: [row]
         }));
@@ -64,7 +64,7 @@ export class kSubCommand extends InteractionSubCommand {
         if (canceled !== null) {
             return void dontThrow(interaction.editReply({
                 embeds: [
-                    Embed.error(`❌ Game was canceled! Play again another time.`)
+                    Embed.error('❌ Game was canceled! Play again another time.')
                 ],
                 components: []
             }));
@@ -88,4 +88,4 @@ export class kSubCommand extends InteractionSubCommand {
             components: []
         }));
     }
-} 
+}

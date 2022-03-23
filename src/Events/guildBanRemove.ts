@@ -7,8 +7,8 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@khaf/builders';
-import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, inlineCode, time } from '@discordjs/builders';
+import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildBan, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
@@ -30,7 +30,7 @@ export class kEvent extends Event<'guildBanRemove'> {
         // logs which includes the unban executor AND reason!
 
         let staff: User | null = null;
-        
+
         if (guild.me?.permissions.has(auditLogPerms)) {
             const [err, logs] = await dontThrow(guild.fetchAuditLogs({
                 type: AuditLogEvent.MemberBanRemove,
@@ -39,7 +39,7 @@ export class kEvent extends Event<'guildBanRemove'> {
 
             if (err === null) {
                 const entry = logs.entries.first();
-                
+
                 if (entry?.executor) staff = entry.executor;
                 if (entry?.reason) reason = entry.reason;
             }
@@ -68,13 +68,13 @@ export class kEvent extends Event<'guildBanRemove'> {
 
         const channel = guild.channels.cache.get(item.mod_log_channel ?? '');
 
-        if (!channel) { 
+        if (!channel) {
             return;
         } else if (!isText(channel) || !hasPerms(channel, guild.me, perms)) {
             return;
         }
 
-        return void dontThrow(channel.send({ 
+        return void dontThrow(channel.send({
             embeds: [
                 Embed.ok(`
                 ${bold('User:')} ${user} (${user.tag})
@@ -82,7 +82,7 @@ export class kEvent extends Event<'guildBanRemove'> {
                 ${bold('Staff:')} ${staff ?? 'Unknown'}
                 ${bold('Time:')} ${time(new Date())}
                 ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
-                `).setTitle('Member Unbanned') 
+                `).setTitle('Member Unbanned')
             ]
         }));
     }

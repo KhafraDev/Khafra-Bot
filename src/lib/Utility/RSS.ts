@@ -80,8 +80,8 @@ export class RSSReader<T> {
 
                 const res = await fetch(this.url, {
                     signal: ac.signal,
-                    headers: { 
-                        'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})` 
+                    headers: {
+                        'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})`
                     }
                 });
 
@@ -131,11 +131,11 @@ export class RSSReader<T> {
                 if (this.timeout <= 0) this.timeout = 60 * 1000 * 60;
 
                 this.#interval = setInterval(
-                    () => void this.parse(), 
+                    () => void this.parse(),
                     this.timeout
                 ).unref();
             } else if (
-                typeof j.rss.channel?.['sy:updateFrequency'] === 'string' && 
+                typeof j.rss.channel?.['sy:updateFrequency'] === 'string' &&
                 typeof j.rss.channel['sy:updatePeriod'] === 'number'
             ) {
                 const period = j.rss.channel['sy:updatePeriod'];
@@ -149,7 +149,7 @@ export class RSSReader<T> {
                 const time = Math.floor(period * ms[frequency]);
                 if (!validateNumber(time)) {
                     return clearInterval(this.#interval!);
-                } 
+                }
 
                 this.#interval = setInterval(
                     () => void this.parse(),
@@ -158,7 +158,7 @@ export class RSSReader<T> {
             }
         }
 
-        const i = 'rss' in j 
+        const i = 'rss' in j
             ? j.rss.channel?.item // RSS feed
             : j.feed.entry;      // Atom feed
 

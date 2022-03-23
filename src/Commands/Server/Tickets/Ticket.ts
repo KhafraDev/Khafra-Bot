@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -10,7 +10,7 @@ export class kCommand extends Command {
             [
                 'Giveaways: main place to create a type of giveaway.'
             ],
-			{
+            {
                 name: 'ticket',
                 folder: 'Server',
                 aliases: ['tickets'],
@@ -33,7 +33,7 @@ export class kCommand extends Command {
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
             return this.Embed.error(
-            `Ticket.${name} command doesn't exist, use ${inlineCode(`ticket`)} for more information!`
+                `Ticket.${name} command doesn't exist, use ${inlineCode('ticket')} for more information!`
             );
         }
 

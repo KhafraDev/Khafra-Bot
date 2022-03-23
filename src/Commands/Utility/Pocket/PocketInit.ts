@@ -2,9 +2,9 @@ import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, inlineCode } from '@khaf/builders';
+import { ActionRow, bold, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -13,7 +13,7 @@ export class kCommand extends Command {
             [
                 'Pocket: Start the process of authorizing your Pocket account.'
             ],
-			{
+            {
                 name: 'pocketinit',
                 folder: 'Pocket',
                 args: [0, 0],
@@ -40,9 +40,9 @@ export class kCommand extends Command {
         
         ${bold('Command will be canceled after 2 minutes automatically.')}
         `)
-        .setTitle('Pocket');
+            .setTitle('Pocket');
 
-        const row = new ActionRow().addComponents(
+        const row = new ActionRow<MessageActionRowComponent>().addComponents(
             Components.approve('Approve'),
             Components.deny('Cancel')
         );
@@ -53,9 +53,9 @@ export class kCommand extends Command {
         });
 
         const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent({
-            filter: (interaction) => 
+            filter: (interaction) =>
                 interaction.isMessageComponent() &&
-                ['approve', 'deny'].includes(interaction.customId) && 
+                ['approve', 'deny'].includes(interaction.customId) &&
                 interaction.user.id === message.author.id,
             time: 120_000
         }));
@@ -71,10 +71,10 @@ export class kCommand extends Command {
 
         if (button.customId === 'approve') {
             const [authError] = await dontThrow(pocket.accessToken());
-            
+
             if (authError !== null) {
                 return void dontThrow(button.editReply({
-                    embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized.')], 
+                    embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized.')],
                     components: []
                 }));
             }
@@ -83,7 +83,7 @@ export class kCommand extends Command {
 
             if (!access_token || !request_token || !username) {
                 return void dontThrow(button.editReply({
-                    embeds: [this.Embed.error(`An unexpected issue occurred.`)],
+                    embeds: [this.Embed.error('An unexpected issue occurred.')],
                     components: []
                 }));
             }

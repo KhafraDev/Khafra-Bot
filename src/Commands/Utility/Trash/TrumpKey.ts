@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor() {
@@ -7,7 +7,7 @@ export class kCommand extends Command {
             [
                 'Get the categories of atrocities committed by Trump!'
             ],
-			{
+            {
                 name: 'trumpkey',
                 folder: 'Trash',
                 args: [0, 0]
@@ -15,7 +15,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         return this.Embed.ok(`
         🔴 - Sexual Misconduct, Harassment, & Bullying
         ⚫ – White Supremacy, Racism, Homophobia, Transphobia, & Xenophobia

@@ -3,8 +3,8 @@ import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, codeBlock, time, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, codeBlock, time, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -15,24 +15,24 @@ export class kCommand extends Command {
                 '#general',
                 '705896160673661041'
             ],
-			{
+            {
                 name: 'channel',
                 folder: 'Server',
-                aliases: [ 'chan', 'channelinfo' ],
+                aliases: ['chan', 'channelinfo'],
                 args: [0, 1],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
-        const channel = 
-            await getMentions(message, 'channels') ?? 
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+        const channel =
+            await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
             message.channel;
 
         if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return this.Embed.error('No channel with that name was found!'); 
+            return this.Embed.error('No channel with that name was found!');
         }
 
         const embed = this.Embed.ok()
@@ -56,11 +56,11 @@ export class kCommand extends Command {
                     { name: bold('Name:'), value: channel.name, inline: true },
                     { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
                     { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
-                    { name: bold('Position:'), value: `${channel.position}`, inline: true },
+                    { name: bold('Position:'), value: `${channel.position}`, inline: true }
                 );
 
             if (isExplicitText(channel)) {
-                embed.addField({
+                embed.addFields({
                     name: bold('Rate-Limit:'),
                     value: channel.rateLimitPerUser + ' seconds',
                     inline: true

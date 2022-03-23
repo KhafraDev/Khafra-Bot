@@ -89,7 +89,7 @@ interface TVDetails {
     }
     episode_run_time: number[]
     first_air_date: string
-    genres: {    
+    genres: {
         id: number
         name: string
     }[]
@@ -98,7 +98,7 @@ interface TVDetails {
     in_production: boolean
     languages: string[]
     last_air_date: string
-    last_episode_to_air: {        
+    last_episode_to_air: {
         air_date: string
         episode_number: number
         id: number
@@ -172,10 +172,10 @@ export const searchMovie = async (
     query: string,
     include_adult = false
 ): Promise<ITMDBDetails | null> => {
-    const params = new URLSearchParams({ 
-        query, 
+    const params = new URLSearchParams({
+        query,
         include_adult: `${include_adult}`
-    }).toString().replace(/\+/g, '%20'); 
+    }).toString().replace(/\+/g, '%20');
     // if the question mark is appended to the base url, it's stripped by new URL(...)
     const res = await fetch(new URL(`?${params}`, base.search), { headers });
     const search = await res.json() as ITMDBSearch;
@@ -193,10 +193,10 @@ export const searchTV = async (
     query: string,
     include_adult = false
 ): Promise<TVDetails | null> => {
-    const params = new URLSearchParams({ 
-        query, 
+    const params = new URLSearchParams({
+        query,
         include_adult: `${include_adult}`
-    }).toString().replace(/\+/g, '%20'); 
+    }).toString().replace(/\+/g, '%20');
 
     const res = await fetch(new URL(`?${params}`, base.tv), { headers });
     const tv = await res.json() as TV;

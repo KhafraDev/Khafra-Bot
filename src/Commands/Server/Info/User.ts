@@ -5,8 +5,8 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
-import { ActivityType } from 'discord-api-types/v9';
+import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { ActivityType } from 'discord-api-types/v10';
 import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
@@ -22,11 +22,14 @@ const formatPresence = (activities: Activity[] | undefined): string => {
     for (const activity of activities) {
         switch (activity.type) {
             case ActivityType.Custom:
-                push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`); break;
+                push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`);
+                break;
             case ActivityType.Listening:
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); break;
-            case ActivityType.Game:
-                push.push(`Playing ${italic(activity.name)}.`); break;
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
+                break;
+            case ActivityType.Playing:
+                push.push(`Playing ${italic(activity.name)}.`);
+                break;
             default:
                 logger.log(activity);
         }
@@ -40,7 +43,7 @@ const emojis = new Map<UserFlagsString, string | undefined>();
 const getEmojis = once(() => {
     const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][];
     for (const [flag, emojiID] of flags)
-        // not ruling out the possibility of the emoji not being cached
+    // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 
     return emojis;
@@ -59,20 +62,20 @@ export class kCommand extends Command {
                 'Get basic info about any user on Discord.',
                 '@Khafra#0001', '165930518360227842'
             ],
-			{
+            {
                 name: 'user',
                 folder: 'Server',
                 args: [0, 1],
-                aliases: [ 'userinfo' ],
+                aliases: ['userinfo'],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
-        const member = user.equals(message.author) 
-            ? message.member 
+        const member = user.equals(message.author)
+            ? message.member
             : message.guild.members.resolve(user);
 
         const snowflake = SnowflakeUtil.timestampFrom(user.id);

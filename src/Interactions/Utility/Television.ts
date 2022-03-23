@@ -3,8 +3,8 @@ import { searchTV } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, bold, hyperlink, time } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ActionRow, bold, hyperlink, time } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
@@ -30,27 +30,29 @@ export class kInteraction extends Interactions {
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
-        
+
         if (!tv) {
-            return `❌ No TV show with that name was found!`;
+            return '❌ No TV show with that name was found!';
         }
 
         const link = `https://www.themoviedb.org/tv/${tv.id})`;
         const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
-            .addField({ name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true })
-            .addField({ name: bold('Status:'), value: tv.status, inline: true })
-            .addField({
-                name: bold('Premiered:'),
-                value: tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown',
-                inline: true
-            })
-            .addField({ name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true })
-            .addField({ name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true })
-            .addField({ name: bold('TMDB:'), value: hyperlink(`TMDB`, link), inline: true })
             .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
-            
+            .addFields(
+                { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
+                { name: bold('Status:'), value: tv.status, inline: true },
+                {
+                    name: bold('Premiered:'),
+                    value: tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown',
+                    inline: true
+                },
+                { name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true },
+                { name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true },
+                { name: bold('TMDB:'), value: hyperlink('TMDB', link), inline: true }
+            );
+
         if (tv.homepage) {
             embed.setURL(tv.homepage);
         }
@@ -62,7 +64,7 @@ export class kInteraction extends Interactions {
         }
 
         return {
-            embeds: [ embed ],
+            embeds: [embed],
             components: [
                 new ActionRow().addComponents(
                     Components.link('TMDB', link)
@@ -70,4 +72,4 @@ export class kInteraction extends Interactions {
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

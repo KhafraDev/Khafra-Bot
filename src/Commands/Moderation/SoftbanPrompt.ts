@@ -5,8 +5,8 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, bold, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ActionRow, bold, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -21,18 +21,18 @@ export class kCommand extends Command {
                 '@user bye!',
                 '239566240987742220'
             ],
-			{
-                name: 'softbanprompt', 
+            {
+                name: 'softbanprompt',
                 folder: 'Moderation',
-                aliases: [ 'softbnaprompt' ],
+                aliases: ['softbnaprompt'],
                 args: [1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.BanMembers ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<Embed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
         const user = await getMentions(message, 'users', content);
         if (!user) {
             return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
@@ -43,7 +43,7 @@ export class kCommand extends Command {
             : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 
-        const row = new ActionRow().addComponents(
+        const row = new ActionRow<MessageActionRowComponent>().addComponents(
             Components.approve('Yes'),
             Components.deny('No')
         );
@@ -58,9 +58,9 @@ export class kCommand extends Command {
         });
 
         const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({
-            filter: (interaction) => 
+            filter: (interaction) =>
                 interaction.isMessageComponent() &&
-                ['approve', 'deny'].includes(interaction.customId) && 
+                ['approve', 'deny'].includes(interaction.customId) &&
                 interaction.user.id === message.author.id,
             time: 20_000
         }));
@@ -76,13 +76,13 @@ export class kCommand extends Command {
             return void button.update({
                 embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
-            }); 
+            });
 
         await button.deferUpdate();
-        
+
         try {
             await message.guild.members.ban(user, {
-                days: inRange(clear) ? clear : 7,
+                deleteMessageDays: inRange(clear) ? clear : 7,
                 reason
             });
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);

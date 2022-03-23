@@ -3,8 +3,8 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { ActionRow, inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -15,7 +15,7 @@ export class kCommand extends Command {
                 '#channel',
                 '772957951941673000'
             ],
-			{
+            {
                 name: 'clonechannel',
                 aliases: ['channelclone', 'clone'],
                 folder: 'Moderation',
@@ -29,9 +29,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<Embed | undefined> {
+    async init (message: Message<true>): Promise<UnsafeEmbed | undefined> {
         const channel = await getMentions(message, 'channels') ?? message.channel;
-        
+
         if (isThread(channel) || isDM(channel)) {
             return this.Embed.error(`I cannot clone a ${channel.type} channel!`);
         }
@@ -43,7 +43,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Yes', 'approve'),
                     Components.deny('No', 'deny')
                 )
@@ -60,8 +60,8 @@ export class kCommand extends Command {
                 time: 60_000
             }));
 
-            if (e !== null || !i) {
-                return this.Embed.error(`No response, command was canceled!`);
+            if (e !== null) {
+                return this.Embed.error('No response, command was canceled!');
             } else if (i.customId === 'deny') {
                 return this.Embed.error(`Command was canceled, ${channel} will not be cloned.`);
             }
@@ -85,7 +85,7 @@ export class kCommand extends Command {
             guild: message.guild,
             permissionOverwrites: channel.permissionOverwrites
         });
-        
+
         {
             const [err] = await dontThrow<GuildBasedChannel>(channel.delete());
             if (err !== null) {

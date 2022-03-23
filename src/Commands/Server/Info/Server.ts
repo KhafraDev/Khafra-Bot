@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
+import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -8,17 +8,17 @@ export class kCommand extends Command {
             [
                 'Get info about the server!'
             ],
-			{
+            {
                 name: 'server',
                 folder: 'Server',
-                aliases: [ 'serverinfo', 'guildinfo', 'guild' ],
+                aliases: ['serverinfo', 'guildinfo', 'guild'],
                 args: [0, 0],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>): Promise<Embed> { 
+    async init (message: Message<true>): Promise<UnsafeEmbed> {
         const locale = message.guild.preferredLocale;
 
         return this.Embed.ok()

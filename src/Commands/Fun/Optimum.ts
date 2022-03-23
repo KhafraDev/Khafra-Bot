@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { italic, type Embed } from '@khaf/builders';
+import { italic, type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor () {
@@ -7,17 +7,17 @@ export class kCommand extends Command {
             [
                 'See reviews for the worst ISP in the U.S.'
             ],
-			{
+            {
                 name: 'optimum',
                 folder: 'Fun',
-                aliases: [ 'altice' ],
+                aliases: ['altice'],
                 args: [0, 0],
                 ratelimit: 3
             }
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         return this.Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`

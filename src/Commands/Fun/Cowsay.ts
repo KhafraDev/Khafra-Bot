@@ -1,11 +1,11 @@
 import { Arguments, Command } from '#khaf/Command';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { codeBlock, type Embed } from '@khaf/builders';
+import { codeBlock, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { readdir, readFile } from 'fs/promises';
 import { join } from 'path';
 
-const dir = join(assets, 'Cowsay');
+const dir = assets('Cowsay');
 const start = `
  ________________________________________
 `;
@@ -19,7 +19,7 @@ export class kCommand extends Command {
                 'The classic CowSay command for Discord!',
                 'head-in Help, I\'m stuck!', 'tux Global warming is a hoax', 'just your ordinary cow.', 'list'
             ],
-			{
+            {
                 name: 'cowsay',
                 folder: 'Fun',
                 args: [1],
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         if (types.size === 0) { // lazy load types
             const items = await readdir(dir);
             const filtered = items
@@ -52,7 +52,7 @@ export class kCommand extends Command {
         if (content.length === 0)
             return this.Embed.error('Since you provided a format, you have to provide some text to say!');
         if (!types.has(format))
-            return this.Embed.error(`Format not found! Use the command \`cowsay list\` to list all formats!`);
+            return this.Embed.error('Format not found! Use the command `cowsay list` to list all formats!');
 
         const split = content.join(' ')
             .match(/.{1,38}/g)! // split every 38 characters; removes new lines
@@ -61,7 +61,7 @@ export class kCommand extends Command {
                     return `/ ${value.trim().padEnd(38, ' ')} \\`;
                 if (index === arr.length - 1) // last item in array
                     return `\\ ${value.trim().padEnd(38, ' ')} /`;
-                                                             
+
                 return `| ${value.trim().padEnd(38, ' ')} |`; // all others
             });
 

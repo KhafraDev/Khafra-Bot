@@ -3,7 +3,7 @@ import { asyncQuery } from '#khaf/database/SQLite.js';
 import { brancoTransaction, migrateBranco } from '#khaf/migration/Branco.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 
@@ -54,18 +54,18 @@ export class kCommand extends Command {
                 name: 'branco',
                 folder: 'Trash',
                 args: [0, 1],
-                aliases: [ 'afbranco' ]
+                aliases: ['afbranco']
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {   
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
-        
+
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;
             const image = /src="(.*?)"/.exec(comic['content:encoded'])?.[1].replace(/-\d+x\d+\.(.*?)/, '.$1') ?? null;
@@ -74,7 +74,7 @@ export class kCommand extends Command {
                 .setURL(comic.link);
 
             if (image) embed.setImage(image);
-            
+
             return embed;
         }
 

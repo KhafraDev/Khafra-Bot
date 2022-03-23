@@ -1,14 +1,12 @@
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import {
-    GoogleTranslate,
-    GoogleLanguages,
-    LibreTranslate,
-    LibreTranslateGetLanguages
-} from '@khaf/translate'; 
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { type Embed as MessageEmbed } from '@khaf/builders';
+import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import {
+    GoogleLanguages, GoogleTranslate, LibreTranslate,
+    LibreTranslateGetLanguages
+} from '@khaf/translate';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -52,7 +50,7 @@ export class kInteraction extends Interactions {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);
-        const engine = interaction.options.getString('engine', true);
+        const engine = interaction.options.getString('engine') ?? 'googletranslate';
 
         const embed = Embed.ok().setAuthor({
             name: interaction.user.username,
@@ -65,7 +63,7 @@ export class kInteraction extends Interactions {
                 {
                     to: to && GoogleLanguages.includes(to.toLowerCase())
                         ? to.toLowerCase()
-                        : 'es',
+                        : 'en',
                     from: from && GoogleLanguages.includes(from.toLowerCase())
                         ? from.toLowerCase()
                         : 'auto'
@@ -86,10 +84,10 @@ export class kInteraction extends Interactions {
             });
 
             if (translated === null) {
-                return `❌ An error occurred using LibreTranslate, try another service!`;
+                return '❌ An error occurred using LibreTranslate, try another service!';
             }
 
             return embed.setDescription(translated.translatedText);
         }
     }
-} 
+}

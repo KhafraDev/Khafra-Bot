@@ -5,8 +5,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import { ActionRow, inlineCode } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
@@ -24,7 +24,7 @@ enum Actions {
 
 const emojis = [
     '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
-	'6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
+    '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
 ] as const;
 const perms =
     PermissionFlagsBits.ViewChannel |
@@ -35,10 +35,10 @@ export class kCommand extends Command {
     constructor () {
         super(
             [
-                'Create a poll in a channel.', 
+                'Create a poll in a channel.',
                 ''
             ],
-			{
+            {
                 name: 'poll',
                 folder: 'Server',
                 args: [0, 0],
@@ -55,7 +55,7 @@ export class kCommand extends Command {
             channel: null,
             options: []
         };
- 
+
         const m = await message.reply({
             embeds: [
                 this.Embed.ok(`
@@ -67,7 +67,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Add Option', Actions.ADD),
                     Components.primary('Post Poll', Actions.POST),
                     Components.secondary('Add Channel', Actions.CHANNEL),
@@ -77,7 +77,7 @@ export class kCommand extends Command {
         });
 
         const interactionCollector = m.createMessageComponentCollector({
-            filter: (interaction) => 
+            filter: (interaction) =>
                 interaction.user.id === message.author.id &&
                 currentOption === null,
             idle: 60_000,
@@ -98,7 +98,7 @@ export class kCommand extends Command {
             if (currentOption === Actions.POST) {
                 if (settings.channel === null || settings.options.length === 0) {
                     return void dontThrow(m.edit({
-                        content: `No channel or options were present. Canceled the poll creation!`,
+                        content: 'No channel or options were present. Canceled the poll creation!',
                         embeds: [],
                         components: disableAll(m)
                     }));
@@ -114,9 +114,11 @@ export class kCommand extends Command {
                 for (let i = 0; i < settings.options.length; i++) {
                     const option = settings.options[i];
                     const emoji = emojis[i];
-                    
-                    embed.description ??= '';
-                    embed.description += `${emoji}. ${option}\n`;
+
+                    embed.setDescription(
+                        (embed.description ?? '') +
+                        `${emoji}. ${option}\n`
+                    );
                 }
 
                 const [err, pollMessage] = await dontThrow(settings.channel.send({
@@ -144,11 +146,11 @@ export class kCommand extends Command {
 
                 if (!isText(channel) && !isThread(channel)) {
                     return void dontThrow(m.edit({
-                        content: `Only text, news, and thread channels are allowed to be poll channels!`
+                        content: 'Only text, news, and thread channels are allowed to be poll channels!'
                     }));
                 } else if (!hasPerms(channel, message.guild.me, perms)) {
                     return void dontThrow(m.edit({
-                        content: `I don't have enough permissions to create a poll in this channel!`
+                        content: 'I don\'t have enough permissions to create a poll in this channel!'
                     }));
                 }
 
@@ -173,7 +175,7 @@ export class kCommand extends Command {
 
             return void dontThrow(m.edit({
                 embeds: [],
-                content: `Poll creation canceled!`,
+                content: 'Poll creation canceled!',
                 components: disableAll(m)
             }))
         }

@@ -1,14 +1,14 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { URLSearchParams } from 'url';
 
 interface Insights {
     k_date: Date
-    k_left: number 
+    k_left: number
     k_joined: number
 }
 
@@ -25,7 +25,7 @@ const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> =
                 'User-Agent': 'PseudoBot'
             }
         });
-        
+
         return await res.arrayBuffer();
     }
 }
@@ -42,7 +42,7 @@ export class kSubCommand extends InteractionSubCommand {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
-            return `❌ Re-invite the bot with the correct permissions to use this command!`;
+            return '❌ Re-invite the bot with the correct permissions to use this command!';
         }
 
         const rows = await sql<Insights[]>`
@@ -61,7 +61,7 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (rows.length === 0) {
-            return `❌ There are no insights available for the last 14 days!`;
+            return '❌ There are no insights available for the last 14 days!';
         }
 
         const locale = interaction.guild?.preferredLocale ?? 'en-US';
@@ -97,7 +97,7 @@ export class kSubCommand extends InteractionSubCommand {
                         data: Leaves
                     }
                 ]
-            },
+            }
         });
 
         const chart = Chart({
@@ -115,7 +115,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new MessageAttachment(Buffer.from(blob), `chart.png`)
+                new MessageAttachment(Buffer.from(blob), 'chart.png')
             ]
         } as InteractionReplyOptions;
     }

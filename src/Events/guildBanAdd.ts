@@ -7,8 +7,8 @@ import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@khaf/builders';
-import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, inlineCode, time } from '@discordjs/builders';
+import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildBan, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
@@ -30,7 +30,7 @@ export class kEvent extends Event<'guildBanAdd'> {
         // logs which includes the unban executor AND reason!
 
         let staff: User | null = null;
-        
+
         if (guild.me?.permissions.has(auditLogPerms)) {
             const [err, logs] = await dontThrow(guild.fetchAuditLogs({
                 type: AuditLogEvent.MemberBanAdd,
@@ -39,7 +39,7 @@ export class kEvent extends Event<'guildBanAdd'> {
 
             if (err === null) {
                 const entry = logs.entries.first();
-                
+
                 if (entry?.executor) staff = entry.executor;
                 if (entry?.reason) reason = entry.reason;
             }
@@ -74,7 +74,7 @@ export class kEvent extends Event<'guildBanAdd'> {
             return;
         }
 
-        return void dontThrow(channel.send({ 
+        return void dontThrow(channel.send({
             embeds: [
                 Embed.ok(`
                 ${bold('User:')} ${user} (${user.tag})
@@ -82,8 +82,8 @@ export class kEvent extends Event<'guildBanAdd'> {
                 ${bold('Staff:')} ${staff ?? 'Unknown'}
                 ${bold('Time:')} ${time(new Date())}
                 ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
-                `).setTitle('Member Banned') 
-            ] 
+                `).setTitle('Member Banned')
+            ]
         }));
     }
 }

@@ -1,9 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActionRow, bold, hyperlink, inlineCode, time } from '@khaf/builders';
+import { ActionRow, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
@@ -59,20 +59,22 @@ export class kInteraction extends Interactions {
             ${hyperlink(dist.name, link)}
             ${inlineCode(p.description.slice(0, 2000))}
             `)
-            .addField({ name: bold('Version:'), value: dist.version, inline: true })
-            .addField({ name: bold('License:'), value: dist.license, inline: true })
-            .addField({ name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true })
-            .addField({
-                name: bold('Last Modified:'),
-                value: time(new Date(p.time?.modified ?? Date.now()), 'f'),
-                inline: true
-            })
-            .addField({ name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true })
-            .addField({ name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true })
-            .addField({ name: bold('Maintainers:'), value: maintainers });
+            .addFields(
+                { name: bold('Version:'), value: dist.version, inline: true },
+                { name: bold('License:'), value: dist.license, inline: true },
+                { name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true },
+                {
+                    name: bold('Last Modified:'),
+                    value: time(new Date(p.time?.modified ?? Date.now()), 'f'),
+                    inline: true
+                },
+                { name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true },
+                { name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true },
+                { name: bold('Maintainers:'), value: maintainers }
+            );
 
         return {
-            embeds: [ embed ],
+            embeds: [embed],
             components: [
                 new ActionRow().addComponents(
                     Components.link('Go to npm', link)
@@ -80,4 +82,4 @@ export class kInteraction extends Interactions {
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

@@ -16,7 +16,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { Embed as MessageEmbed, inlineCode } from '@khaf/builders';
+import { UnsafeEmbed as MessageEmbed, inlineCode } from '@discordjs/builders';
 import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
 import { join } from 'path';
 import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
@@ -37,7 +37,7 @@ export class kEvent extends Event<'messageUpdate'> {
         if (!Sanitize(newMessage) || isDM(newMessage.channel)) return;
 
         const [mention, name, ...args] = newMessage.content.split(/\s+/g);
-    
+
         if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
             return;
         } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
@@ -85,7 +85,7 @@ export class kEvent extends Event<'messageUpdate'> {
             const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000);
 
             return void dontThrow(newMessage.reply({
-                content: 
+                content:
                     `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
                     `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
             }));
@@ -96,12 +96,12 @@ export class kEvent extends Event<'messageUpdate'> {
         } else {
             command.rateLimit.rateLimitUser(newMessage.author.id);
         }
-        
+
         if (command.settings.ownerOnly && !Command.isBotOwner(newMessage.author.id)) {
-            return void dontThrow(newMessage.reply({ 
+            return void dontThrow(newMessage.reply({
                 embeds: [
                     Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
-                ] 
+                ]
             }));
         }
 
@@ -117,9 +117,9 @@ export class kEvent extends Event<'messageUpdate'> {
         }
 
         if (!_cooldownUsers(newMessage.author.id)) {
-            return void dontThrow(newMessage.reply({ embeds: [Embed.error(`Users are limited to 10 commands a minute.`)] }));
+            return void dontThrow(newMessage.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] }));
         } else if (!_cooldownGuild(newMessage.guild.id)) {
-            return void dontThrow(newMessage.reply({ embeds: [Embed.error(`Guilds are limited to 30 commands a minute.`)] }));
+            return void dontThrow(newMessage.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] }));
         } else if (!hasPerms(newMessage.channel, newMessage.member, command.permissions)) {
             return void dontThrow(newMessage.reply({
                 embeds: [
@@ -134,13 +134,13 @@ export class kEvent extends Event<'messageUpdate'> {
         try {
             const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
             const returnValue = await command.init(newMessage, options, guild);
-            if (!returnValue || returnValue instanceof Message) 
+            if (!returnValue || returnValue instanceof Message)
                 return;
 
             const param = {
                 failIfNotExists: false
             } as ReplyMessageOptions;
-            
+
             if (typeof returnValue === 'string')
                 param.content = returnValue;
             else if (returnValue instanceof MessageEmbed)
@@ -149,7 +149,7 @@ export class kEvent extends Event<'messageUpdate'> {
                 param.files = [returnValue];
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);
-            
+
             return void await newMessage.reply(param);
         } catch (e) {
             err = e as Error;
@@ -157,8 +157,8 @@ export class kEvent extends Event<'messageUpdate'> {
             if (processArgs.get('dev') === true) {
                 console.log(e);
             }
-            
-            if (!(e instanceof Error)) { 
+
+            if (!(e instanceof Error)) {
                 return;
             } else if (e instanceof DiscordAPIError) {
                 // if there's an error sending a message, we should probably
@@ -167,11 +167,9 @@ export class kEvent extends Event<'messageUpdate'> {
                 return;
             }
 
-            const error = e.name in command.errors 
-                ? command.errors[e.name as keyof typeof command.errors] 
-                : command.errors.default;
-                
-            return void dontThrow(newMessage.reply({ 
+            const error = 'An unexpected error has occurred!';
+
+            return void dontThrow(newMessage.reply({
                 embeds: [Embed.error(error)],
                 failIfNotExists: false
             }));

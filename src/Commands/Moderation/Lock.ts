@@ -3,8 +3,8 @@ import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const perms =
@@ -21,27 +21,27 @@ export class kCommand extends Command {
                 '543940496683434014',
                 ''
             ],
-			{
-                name: 'lock', 
+            {
+                name: 'lock',
                 folder: 'Moderation',
                 args: [0, 1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.ManageChannels ]
+                permissions: [PermissionFlagsBits.ManageChannels]
             }
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed | undefined> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 
         if (!isText(text)) {
-            return this.Embed.error(`This command only works in text & news channels.`);
+            return this.Embed.error('This command only works in text & news channels.');
         } else if (!hasPerms(text, message.guild.me, this.permissions)) {
             if (message.guild.me) {
                 return this.Embed.perms(text, message.guild.me, this.permissions);
             } else {
-                return this.Embed.error(`A caching issue prevented me from properly checking permissions!`);
+                return this.Embed.error('A caching issue prevented me from properly checking permissions!');
             }
         }
 
@@ -51,7 +51,7 @@ export class kCommand extends Command {
         } else {
             lockState = 'locked';
             await text.permissionOverwrites.set(
-                [ { id: everyone.id, deny: [PermissionFlagsBits.SendMessages] } ]
+                [{ id: everyone.id, deny: [PermissionFlagsBits.SendMessages] }]
             );
         }
 
@@ -61,7 +61,7 @@ export class kCommand extends Command {
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
-            
+
             if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 

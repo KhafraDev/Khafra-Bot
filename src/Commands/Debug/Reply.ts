@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -7,7 +7,7 @@ export class kCommand extends Command {
         super(
             [
                 'Have the bot reply to the user.'
-            ], 
+            ],
             {
                 name: 'debug:reply',
                 folder: 'Debug',
@@ -17,7 +17,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         return this.Embed.ok(`Hello, ${message.author}!`);
     }
 }

@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { bold, inlineCode, Embed } from '@khaf/builders';
+import { bold, inlineCode, UnsafeEmbed } from '@discordjs/builders';
 import {
     ChatInputCommandInteraction,
     Interaction,
@@ -18,7 +18,7 @@ import {
 import { argv } from 'process';
 
 type Interactions =
-    ChatInputCommandInteraction & 
+    ChatInputCommandInteraction &
     MessageContextMenuCommandInteraction &
     UserContextMenuCommandInteraction;
 
@@ -47,17 +47,21 @@ export class kEvent extends Event<'interactionCreate'> {
         }
 
         if (
-            !interaction.isChatInputCommand() && 
+            !interaction.isChatInputCommand() &&
             !interaction.isContextMenuCommand()
         ) {
             return;
         }
 
         const command = interaction.isContextMenuCommand()
-            ? KhafraClient.Interactions.Context.get(interaction.commandName)!
-            : KhafraClient.Interactions.Commands.get(interaction.commandName)!;
+            ? KhafraClient.Interactions.Context.get(interaction.commandName)
+            : KhafraClient.Interactions.Commands.get(interaction.commandName);
 
-        if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
+        if (!command) {
+            return void dontThrow(interaction.reply({
+                content: '❌ This command is no longer available, try to refresh your client!'
+            }));
+        } else if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
             }));
@@ -85,7 +89,7 @@ export class kEvent extends Event<'interactionCreate'> {
             } else {
                 if (typeof result === 'string') {
                     param.content = result;
-                } else if (result instanceof Embed) {
+                } else if (result instanceof UnsafeEmbed) {
                     param.embeds = [result];
                 } else if (result instanceof MessageAttachment) {
                     param.files = [result];
@@ -121,4 +125,4 @@ export class kEvent extends Event<'interactionCreate'> {
             }
         }
     }
-} 
+}

@@ -44,7 +44,7 @@ export class Minimalist extends Map<string, Value> {
 
                     value.push(token);
                 }
-                
+
                 super.set(token.slice(toSlice), value.join(' '));
             }
         }

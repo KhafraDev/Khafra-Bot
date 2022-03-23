@@ -1,8 +1,8 @@
 import { Arguments, Command } from '#khaf/Command';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -14,20 +14,20 @@ export class kCommand extends Command {
                 '9876543217654321',
                 '1234567891234567 --reason apologized nicely :)'
             ],
-			{
+            {
                 name: 'unban',
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.BanMembers ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<Embed> {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbed> {
         const user = await getMentions(message, 'users', content);
 
-        if (!user) 
+        if (!user)
             return this.Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
         const reasonAny = cli.has('reason') || cli.has('r')

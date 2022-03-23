@@ -1,5 +1,5 @@
 import type { PocketAddResults, PocketGetResults } from './types/Pocket';
-declare class Pocket {
+export declare class Pocket {
     consumer_key: string | undefined;
     redirect_uri?: string;
     request_token?: string;
@@ -23,4 +23,3 @@ declare class Pocket {
         username: string | undefined;
     };
 }
-export { Pocket };

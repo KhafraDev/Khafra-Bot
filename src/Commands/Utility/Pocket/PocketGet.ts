@@ -1,12 +1,12 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import { Message } from 'discord.js';
 
 interface PocketUser {
-    access_token: string 
-    request_token: string 
+    access_token: string
+    request_token: string
     username: string
 }
 
@@ -16,7 +16,7 @@ export class kCommand extends Command {
             [
                 'Pocket: retrieve your saved items!'
             ],
-			{
+            {
                 name: 'pocketget',
                 folder: 'Pocket',
                 args: [0, 0]
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket
@@ -45,7 +45,7 @@ export class kCommand extends Command {
         const formatted = Object.values(latest.list)
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
-        
+
         return this.Embed.ok(formatted)
             .setAuthor({
                 name: message.author.username + '\'s latest saves',

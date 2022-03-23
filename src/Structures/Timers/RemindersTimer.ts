@@ -4,17 +4,15 @@ import { logger } from '#khaf/Logger';
 import { Timer } from '#khaf/Timer';
 import { kReminder } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { time } from '@khaf/builders';
-import { setInterval } from 'timers';
+import { time } from '@discordjs/builders';
 
 export class RemindersTimer extends Timer {
     constructor () {
         super({ interval: 30 * 1000 });
     }
 
-    setInterval (): NodeJS.Timer {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        const interval = setInterval(async () => {
+    async setInterval (): Promise<void> {
+        for await (const _ of this.yieldEvery(this.options.interval)) {
             const rows = await sql<kReminder[]>`
                 WITH deleted AS (
                     DELETE FROM "kbReminders"
@@ -41,9 +39,7 @@ export class RemindersTimer extends Timer {
             for (const row of rows) {
                 void this.action(row);
             }
-        }, this.options.interval);
-
-        return interval;
+        }
     }
 
     async action (reminder: kReminder): Promise<void> {

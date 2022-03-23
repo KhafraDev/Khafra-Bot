@@ -2,11 +2,11 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
-import { time, type Embed as MessageEmbed } from '@khaf/builders';
+import { time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 interface Insights {
-    k_left: number 
+    k_left: number
     k_joined: number
 }
 
@@ -22,7 +22,7 @@ export class kSubCommand extends InteractionSubCommand {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
-            return `❌ Re-invite the bot with the correct permissions to use this command!`;
+            return '❌ Re-invite the bot with the correct permissions to use this command!';
         }
 
         const rows = await sql<Insights[]>`

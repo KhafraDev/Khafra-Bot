@@ -4,9 +4,9 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, bold, Embed, hyperlink, inlineCode } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
-import { ButtonInteraction, GuildChannel, Message, Snowflake, TextBasedChannel } from 'discord.js';
+import { ActionRow, bold, hyperlink, inlineCode, MessageActionRowComponent, UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { AnyChannel, ButtonInteraction, Message, Snowflake } from 'discord.js';
 import { once } from 'events';
 
 const perms = PermissionFlagsBits.SendMessages;
@@ -17,13 +17,13 @@ export class kCommand extends Command {
             [
                 'Creates and posts rules for the server.'
             ],
-			{
-                name: 'rules', 
+            {
+                name: 'rules',
                 folder: 'Moderation',
-                aliases: [ 'rule' ],
+                aliases: ['rule'],
                 args: [0, 0],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.ManageChannels ]
+                permissions: [PermissionFlagsBits.ManageChannels]
             }
         );
     }
@@ -33,24 +33,24 @@ export class kCommand extends Command {
             embeds: [
                 this.Embed.ok()
                     .setDescription(`Please enter the channel where rules should be posted, or click the ${inlineCode('cancel')} button to cancel.`)
-                    .setTitle('Rule Editor') 
+                    .setTitle('Rule Editor')
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.deny('Cancel', 'cancel')
                 )
             ]
         });
 
-        let channel: TextBasedChannel | GuildChannel | null;
+        let channel: AnyChannel | null;
         const rules: string[] = [];
-        
+
         {
             const cancelCollector = m.createMessageComponentCollector({
                 max: 1,
                 time: 30_000,
-                filter: (interaction) => 
-                    interaction.user.id === message.author.id && 
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id &&
                     interaction.customId === 'cancel'
             });
             const channelCollector = m.channel.createMessageCollector({
@@ -69,7 +69,7 @@ export class kCommand extends Command {
 
             if (!cancelCollector.ended) cancelCollector.stop();
             if (!channelCollector.ended) channelCollector.stop();
-            
+
             const [coll, reason] = race.shift()!;
             if (coll.length === 0 || reason === 'time') {
                 return void dontThrow(m.edit({
@@ -83,8 +83,8 @@ export class kCommand extends Command {
                 }));
             }
 
-            channel = 
-                coll[1].mentions.channels.first() ?? 
+            channel =
+                coll[1].mentions.channels.first() ??
                 await getMentions(coll[1] as Message<true>, 'channels');
 
             if (!isText(channel)) {
@@ -107,14 +107,14 @@ export class kCommand extends Command {
         await dontThrow(m.edit({
             embeds: [
                 this.Embed.ok(`
-                Send an individual message for each rule, or send them all together. I recommend using ` + 
+                Send an individual message for each rule, or send them all together. I recommend using ` +
                 `${hyperlink('markdown', 'https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-')} ` +
-                `to separate messages and make rule titles more noticeable.\n\n` +
+                'to separate messages and make rule titles more noticeable.\n\n' +
                 bold('You have to enter each rule within 2.5 minutes or the command will cancel!')
                 )
             ],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Finished', 'done'),
                     Components.deny('Cancel', 'cancel')
                 )
@@ -124,8 +124,8 @@ export class kCommand extends Command {
         {
             const buttonCollector = m.createMessageComponentCollector({
                 max: 1,
-                filter: (interaction) => 
-                    interaction.user.id === message.author.id && 
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id &&
                     interaction.customId === 'cancel' ||
                     interaction.customId === 'done'
             });
@@ -181,7 +181,7 @@ export class kCommand extends Command {
         }
 
         {
-            const embeds: Embed[] = [];
+            const embeds: UnsafeEmbed[] = [];
 
             for (const rule of rules) {
                 const embed = embeds.at(-1)!;
@@ -191,7 +191,7 @@ export class kCommand extends Command {
                     const embed = this.Embed.ok(line)
                         .setTitle(`${message.guild.name} Rules`)
                         .setThumbnail(message.guild.iconURL());
-                    
+
                     embeds.push(embed);
                 } else if (embed.description!.length >= 2048) {
                     embeds.push(this.Embed.ok(line));
@@ -201,7 +201,7 @@ export class kCommand extends Command {
                     if (desc.length + line.length > 2048) {
                         embeds.push(this.Embed.ok(line));
                     } else {
-                        embed.description += line;
+                        embed.setDescription(embed.description + line);
                     }
                 }
             }

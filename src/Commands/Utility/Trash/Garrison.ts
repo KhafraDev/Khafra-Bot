@@ -5,7 +5,7 @@ import { asyncQuery } from '#khaf/database/SQLite.js';
 import { garrisonTransaction, migrateGarrison } from '#khaf/migration/Garrison.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 
@@ -54,18 +54,18 @@ export class kCommand extends Command {
                 name: 'bengarrison',
                 folder: 'Trash',
                 args: [0, 1],
-                aliases: [ 'garrison' ]
+                aliases: ['garrison']
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {  
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
-        
+
         if (args[0] === 'latest' && rss.results.size > 0) {
             const comic = [...rss.results.values()].shift()!;
             return this.Embed.ok()

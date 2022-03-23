@@ -1,10 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 const superscript: Record<string, string> = {
     '0': '⁰', '1': '¹', '2': '²',
-    '3': '³', '4': '⁴', '5': '⁵', 
+    '3': '³', '4': '⁴', '5': '⁵',
     '6': '⁶', '7': '⁷', '8': '⁸',
     '9': '⁹', '+': '⁺', '-': '⁻',
     'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ',
@@ -24,7 +24,7 @@ export class kCommand extends Command {
             [
                 'Have KhafraBot superscript some text!',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'superscript',
                 folder: 'Fun',
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<Embed> {
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const split = [...content]
             .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
             .join('');

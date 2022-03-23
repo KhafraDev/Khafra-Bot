@@ -4,8 +4,8 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { bold, inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const perms =
@@ -21,23 +21,23 @@ export class kCommand extends Command {
                 '@user for trolling',
                 '1234567891234567'
             ],
-			{
+            {
                 name: 'kick',
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.KickMembers ]
+                permissions: [PermissionFlagsBits.KickMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<Embed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
         const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {
             return this.Embed.error(`You cannot kick ${member}!`);
         }
-        
+
         if (!member) {
             return this.Embed.error('No member was mentioned and/or an invalid ❄️ was used!');
         } else if (!member.kickable) {
@@ -54,7 +54,7 @@ export class kCommand extends Command {
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
-            
+
             if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 

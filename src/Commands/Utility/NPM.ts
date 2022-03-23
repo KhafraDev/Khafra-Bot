@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { bold, inlineCode, time, type Embed } from '@khaf/builders';
+import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import { Message } from 'discord.js';
 
@@ -10,16 +10,16 @@ export class kCommand extends Command {
                 'Search NPM\'s registry for a package',
                 'node-fetch latest', 'typescript'
             ],
-			{
+            {
                 name: 'npm',
                 folder: 'Utility',
-                aliases: [ 'npmjs' ],
+                aliases: ['npmjs'],
                 args: [1, 2]
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string | Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbed> {
         const [name, version = 'latest'] = args;
         const p = await npm(name);
 
@@ -48,16 +48,18 @@ export class kCommand extends Command {
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(p.description.slice(0, 2000))}
             `)
-            .addField({ name: bold('Version:'), value: dist.version, inline: true })
-            .addField({ name: bold('License:'), value: dist.license, inline: true })
-            .addField({ name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true })
-            .addField({
-                name: bold('Last Modified:'),
-                value: time(new Date(p.time?.modified ?? Date.now()), 'f'),
-                inline: true
-            })
-            .addField({ name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true })
-            .addField({ name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true })
-            .addField({ name: bold('Maintainers:'), value: maintainers });
+            .addFields(
+                { name: bold('Version:'), value: dist.version, inline: true },
+                { name: bold('License:'), value: dist.license, inline: true },
+                { name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true },
+                {
+                    name: bold('Last Modified:'),
+                    value: time(new Date(p.time?.modified ?? Date.now()), 'f'),
+                    inline: true
+                },
+                { name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true },
+                { name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true },
+                { name: bold('Maintainers:'), value: maintainers }
+            );
     }
 }

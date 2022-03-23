@@ -45,14 +45,14 @@ interface ITweet {
     full_text: string
     truncated: boolean
     display_text_range: Indices,
-    entities: { 
+    entities: {
         hashtags: { text: string, indices: Indices }[]
         symbols: string[]
         user_mentions: string[]
-        urls: string[] 
+        urls: string[]
         media?: Media
     }
-    extended_entities?: { 
+    extended_entities?: {
         media: ExtendedMedia[]
     }
     source: string,
@@ -141,11 +141,11 @@ export const getTwitterMediaURL = async (id: string): Promise<string | undefined
             Authorization: token
         }
     });
-    
+
     const j = await r.json() as ITweet;
-    
+
     const media = j.extended_entities?.media;
-    if (!media || media.length === 0) 
+    if (!media || media.length === 0)
         return;
 
     if (media[0]!.type === 'video' || media[0]!.type === 'animated_gif') {

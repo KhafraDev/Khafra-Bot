@@ -3,7 +3,7 @@ import {
     ApplicationCommandOptionType,
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v9';
+} from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -54,19 +54,19 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'remove',
-                    description: `Remove a warning from a user.`,
+                    description: 'Remove a warning from a user.',
                     options: [
                         {
                             type: ApplicationCommandOptionType.String,
                             name: 'id',
-                            description: `The ID of the warning (use /warns get to list warning IDs).`,
+                            description: 'The ID of the warning (use /warns get to list warning IDs).',
                             required: true
                         }
                     ]
                 }
             ]
         };
-        
+
         super(sc, {
             defer: true,
             permissions: [

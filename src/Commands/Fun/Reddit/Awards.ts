@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { Reddit } from '@khaf/badmeme';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { fetch } from 'undici';
 
@@ -13,18 +13,18 @@ export class kCommand extends Command {
             [
                 'Calculate how much people have spent on Reddit awards for a post.',
                 'https://www.reddit.com/r/pics/comments/jcjf3d/wouldbe_president_joe_biden_wrote_this_letter_to/'
-            ], 
+            ],
             {
                 name: 'award',
                 folder: 'Fun',
-                aliases: [ 'awards', 'awardprice' ],
+                aliases: ['awards', 'awardprice'],
                 args: [1, 1],
                 ratelimit: 7
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const url = URLFactory(args[0]);
         if (url === null)
             return this.Embed.error('Invalid Reddit post!');
@@ -39,7 +39,7 @@ export class kCommand extends Command {
             Make sure it's from ${inlineCode('https://www.reddit.com')} and it's a post!
             `);
         }
-        
+
         const res = await fetch(`${url.href.replace(/.json$/, '')}.json`);
         const json = await res.json() as [Reddit, Reddit];
 
@@ -54,7 +54,7 @@ export class kCommand extends Command {
 
         return this.Embed.ok()
             .setDescription(
-                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` + 
+                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
                 `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
             )
             .setFooter({ text: 'Free awards are counted in the cost!' });

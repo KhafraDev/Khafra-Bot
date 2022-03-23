@@ -1,11 +1,10 @@
 import { KhafraClient } from '#khaf/Bot';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { join } from 'path';
 import postgres from 'postgres';
 import { env } from 'process';
 
 const sqlFiles = KhafraClient.walk(
-    join(assets, 'SQL/Postgres'),
+    assets('SQL/Postgres'),
     p => p.endsWith('.sql')
 );
 
@@ -17,6 +16,6 @@ export const sql = postgres({
     onnotice: () => {}
 });
 
-for (const file of sqlFiles) {
-    await sql.file<unknown[]>(file);
-}
+await Promise.all(
+    sqlFiles.map(file => sql.file<unknown[]>(file))
+);

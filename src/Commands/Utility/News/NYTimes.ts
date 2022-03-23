@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
 
 const settings = {
@@ -43,13 +43,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error(`Try again in a minute!`);
+            return this.Embed.error('Try again in a minute!');
         }
-        
+
         if (rss.results.size === 0) {
             return this.Embed.error('An unexpected error occurred!');
         }

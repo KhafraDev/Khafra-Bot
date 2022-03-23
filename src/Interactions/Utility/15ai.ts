@@ -4,9 +4,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { ActionRow, hyperlink, inlineCode } from '@discordjs/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
-import { ActionRow, hyperlink, inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
@@ -37,7 +37,7 @@ export class kInteraction extends Interactions {
                 }
             ]
         };
-        
+
         super(sc, { defer: true });
     }
 
@@ -47,9 +47,9 @@ export class kInteraction extends Interactions {
         const obj = keys.find(key => key.name.toLowerCase() === name);
 
         if (!obj) {
-            return `❌ No character with that name could be found! Use the autocomplete functionality!`;
+            return '❌ No character with that name could be found! Use the autocomplete functionality!';
         } else if (text.length < 5) {
-            return `❌ Minimum of 5 characters required!`;
+            return '❌ Minimum of 5 characters required!';
         }
 
         const [err, voice] = await dontThrow(FifteenDotAI.getWav(
@@ -61,26 +61,26 @@ export class kInteraction extends Interactions {
         if (err !== null) {
             return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
         } else if (voice === null) {
-            return `❌ A server error occurred processing the TTS.`;
+            return '❌ A server error occurred processing the TTS.';
         }
 
         const embed = Embed.ok()
-            .setDescription(`${hyperlink('Visit 15.ai', `https://15.ai`)}\n`)
-            .setFooter({ text: `🗣️ tts provided by 15.ai` });
+            .setDescription(`${hyperlink('Visit 15.ai', 'https://15.ai')}\n`)
+            .setFooter({ text: '🗣️ tts provided by 15.ai' });
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
             const confidence = `${(voice.scores[i] * 100).toFixed(2)}%`;
-            embed.description += `${url} [Confidence: ${confidence}]\n`;
+            embed.setDescription(embed.description + `${url} [Confidence: ${confidence}]\n`);
         }
 
         return {
-            embeds: [ embed ],
+            embeds: [embed],
             components: [
                 new ActionRow().addComponents(
-                    Components.link(`Visit 15.ai`, `https://15.ai`)
+                    Components.link('Visit 15.ai', 'https://15.ai')
                 )
             ]
         } as InteractionReplyOptions;
     }
-} 
+}

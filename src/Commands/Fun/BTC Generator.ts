@@ -11,12 +11,12 @@ export class kCommand extends Command {
         super(
             [
                 'Generate free BTC!',
-                '1000',
+                '1000'
             ],
-			{
+            {
                 name: 'btc-generator',
                 folder: 'Fun',
-                aliases: [ 'btcgenerator', 'free-btc', 'freebtc', 'btcgenerate' ],
+                aliases: ['btcgenerator', 'free-btc', 'freebtc', 'btcgenerate'],
                 args: [1, 1]
             }
         );
@@ -31,7 +31,7 @@ export class kCommand extends Command {
             .setImage('https://i.imgur.com/8sIZySU.gif');
 
         const msg = await message.reply({ embeds: [embed] });
-        
+
         await setTimeout(
             Math.floor(Math.random() * (10000 - 2500 + 1) + 2500),
             undefined,

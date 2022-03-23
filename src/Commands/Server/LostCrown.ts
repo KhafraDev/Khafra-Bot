@@ -1,16 +1,16 @@
 import { Command } from '#khaf/Command';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {
         super(
             [
-                'Find out why the server owner doesn\'t have a crown!'
+                'Find out why the server owner doesn\'t have a crown icon!'
             ],
-			{
+            {
                 name: 'lostcrown',
                 folder: 'Server',
                 aliases: ['crown', 'crownlost'],
@@ -21,9 +21,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<Embed> {
-        let desc = `For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n`;
-        const next = `It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!`;
+    async init (message: Message<true>): Promise<UnsafeEmbed> {
+        let desc = 'For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n';
+        const next = 'It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!';
         let amount = 0;
 
         for (const role of message.guild.roles.cache.values()) {
@@ -39,7 +39,7 @@ export class kCommand extends Command {
         }
 
         if (amount === 0) {
-            return this.Embed.error(`The server owner already has a crown! Refresh your client to see it. 👑`);
+            return this.Embed.error('The server owner already has a crown! Refresh your client to see it. 👑');
         }
 
         desc += next;

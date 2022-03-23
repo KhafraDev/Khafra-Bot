@@ -1,7 +1,7 @@
 import { fetch } from 'undici';
 import { URLSearchParams } from 'url';
 
-import { 
+import {
     WikipediaSearch,
     WikipediaSummary
 } from './types/Wikipedia';
@@ -19,7 +19,7 @@ export const search = async (query: string): Promise<WikipediaSearch> => {
             'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)'
         }
     });
-    
+
     return await r.json() as WikipediaSearch;
 }
 
@@ -27,7 +27,7 @@ export const search = async (query: string): Promise<WikipediaSearch> => {
  * Using a pageid, get an article's summary
  */
 export const getArticleById = async (id: number): Promise<WikipediaSummary<number>> => {
-    const p = new URLSearchParams({ 
+    const p = new URLSearchParams({
         format: 'json',
         action: 'query',
         prop: 'extracts',

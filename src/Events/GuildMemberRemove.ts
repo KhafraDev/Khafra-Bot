@@ -8,8 +8,8 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { time } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { time } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { AnyChannel, GuildMember } from 'discord.js';
 import { join } from 'path';
 
@@ -40,7 +40,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
 
         const row = cache.get(member.guild.id);
         let item: WelcomeChannel | null = row ?? null;
-        
+
         if (!item) {
             const rows = await sql<kGuild[]>`
                 SELECT
@@ -50,7 +50,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
                 WHERE guild_id = ${member.guild.id}::text
                 LIMIT 1;
             `;
-            
+
             if (rows.length !== 0) {
                 cache.set(member.guild.id, rows[0]);
                 item = rows[0];
@@ -73,7 +73,7 @@ export class kEvent extends Event<'guildMemberRemove'> {
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
 
-        const joined = 
+        const joined =
             (member.joinedAt ? time(member.joinedAt) : 'N/A') +
             ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
 

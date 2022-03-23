@@ -1,12 +1,12 @@
-import { inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { Interactions } from '#khaf/Interaction';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { fetch } from 'undici';
 import { URL } from 'url';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Interactions } from '#khaf/Interaction';
 
 const enum Subcommands {
     HELP = 'help',
@@ -45,7 +45,7 @@ interface EmojiKitchen {
     next: string
 }
 
-const supportedListURL = `https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/375c7f176cedb7ae7170d65a97f382899d13abfd/emojis.txt`;
+const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/375c7f176cedb7ae7170d65a97f382899d13abfd/emojis.txt';
 const list: string[] = [];
 const cache = new Map<string, string>();
 
@@ -53,7 +53,7 @@ export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'emojimix',
-            description: `Mix two emojis together!`,
+            description: 'Mix two emojis together!',
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
@@ -92,7 +92,7 @@ export class kInteraction extends Interactions {
                 }
             ]
         };
-        
+
         super(sc);
     }
 
@@ -102,23 +102,23 @@ export class kInteraction extends Interactions {
         if (subcommand === 'mix') {
             const emojiOne = interaction.options.getString(SubcommandOptions.FIRST, true);
             const emojiTwo = interaction.options.getString(SubcommandOptions.SECOND, true);
-    
+
             const query = `${emojiOne}_${emojiTwo}`;
             const oneParsed = parse(emojiOne);
             const twoParsed = parse(emojiTwo);
-    
+
             if (oneParsed.map(p => p.text).join('') !== emojiOne) {
-                return `❌ First emoji could not be parsed correctly!`;
+                return '❌ First emoji could not be parsed correctly!';
             } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
-                return `❌ Second emoji could not be parsed correctly!`;
+                return '❌ Second emoji could not be parsed correctly!';
             }
-            
+
             if (cache.has(query)) {
                 return Embed.ok()
                     .setTitle(`${emojiOne} + ${emojiTwo} =`)
                     .setImage(cache.get(query)!);
             }
-    
+
             // https://github.com/UCYT5040/Google-Sticker-Mashup-Research
             const api = new URL('https://tenor.googleapis.com/v2/featured');
             api.searchParams.append('key', 'AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ');
@@ -130,23 +130,23 @@ export class kInteraction extends Interactions {
             api.searchParams.append('locale', 'en_US');
             api.searchParams.append('country', 'US');
             api.searchParams.append('q', query);
-    
+
             await interaction.deferReply();
             const [err, res] = await dontThrow(fetch(api));
-    
+
             if (err !== null) {
                 return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
             }
-    
-            const j = await res!.json() as EmojiKitchen;
-    
+
+            const j = await res.json() as EmojiKitchen;
+
             if (j.results.length === 0) {
-                return `❌ One or more emojis you provided are not supported, or might not work as a combo.`;
+                return '❌ One or more emojis you provided are not supported, or might not work as a combo.';
             }
-    
+
             const url = j.results[0].url;
             cache.set(query, url);
-    
+
             return Embed.ok()
                 .setTitle(`${emojiOne} + ${emojiTwo} =`)
                 .setImage(url);
@@ -157,21 +157,21 @@ export class kInteraction extends Interactions {
                 if (list.length === 0) {
                     await interaction.deferReply();
                     const [err, res] = await dontThrow(fetch(supportedListURL));
-                    
+
                     if (err !== null) {
                         return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
                     }
 
-                    const listJoined = await res!.text();
+                    const listJoined = await res.text();
                     const split = listJoined.trim().split(/\r?\n/g);
 
                     list.push(...split);
                 }
 
                 return Embed.ok(list.join(' '))
-                    .setTitle(`Supported Emojis`)
+                    .setTitle('Supported Emojis')
                     .setURL(supportedListURL);
             }
         }
     }
-} 
+}

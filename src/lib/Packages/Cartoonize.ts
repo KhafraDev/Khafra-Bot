@@ -16,7 +16,7 @@ export class Cartoonize {
     static async blobFromUrl(url: string): Promise<Blob | null> {
         const u = URLFactory(url);
         if (u === null) return null;
-        
+
         const [err, res] = await dontThrow(fetch(u));
         if (err === null) return await res.blob();
 
@@ -26,7 +26,7 @@ export class Cartoonize {
     static async cartoonize(attachment: MessageAttachment): Promise<string | null> {
         const form = new FormData();
         const blob = await Cartoonize.blobFromUrl(attachment.proxyURL);
-        
+
         if (blob === null) return null;
         form.append('image', blob, basename(attachment.proxyURL));
 

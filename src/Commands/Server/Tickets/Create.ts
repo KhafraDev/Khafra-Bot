@@ -2,9 +2,9 @@ import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isExplicitText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { randomUUID } from 'crypto';
-import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v9';
+import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { CategoryChannel, Message, TextChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
@@ -13,10 +13,10 @@ export class kCommand extends Command {
     constructor () {
         super(
             [
-                'Create a ticket!', 
+                'Create a ticket!',
                 'This is the reason that the ticket is being created'
             ],
-			{
+            {
                 name: 'ticket:create',
                 folder: 'Server',
                 aliases: ['tickets:create'],
@@ -27,12 +27,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<Embed> {
+    async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<UnsafeEmbed> {
         if (settings.ticketchannel === null) {
-            return this.Embed.error(`This guild doesn't have a ticket channel! Ask a moderator to use \`ticketchanel [channel]\`!`);
+            return this.Embed.error('This guild doesn\'t have a ticket channel! Ask a moderator to use `ticketchanel [channel]`!');
         } else if (commandName === 'ticket' || commandName === 'tickets') {
             args.shift();
-        } 
+        }
 
         /** guild can use private threads */
         const privateThreads =
@@ -47,7 +47,7 @@ export class kCommand extends Command {
         if (Array.isArray(ret)) {
             const [err, chan] = ret;
             if (err !== null) {
-                return this.Embed.error(`An error occurred trying to fetch this channel. Maybe set a new ticket channel?`);
+                return this.Embed.error('An error occurred trying to fetch this channel. Maybe set a new ticket channel?');
             } else {
                 // validation is done in the ticketchannel command
                 channel = chan as TicketChannelTypes;
@@ -58,8 +58,8 @@ export class kCommand extends Command {
 
         if (isExplicitText(channel) && !privateThreads) {
             return this.Embed.error(
-                `This guild is no longer tier 2 or above, and cannot use private threads. ` +
-                `Use the \`ticketchannel\` command to re-set the ticket channel!`
+                'This guild is no longer tier 2 or above, and cannot use private threads. ' +
+                'Use the `ticketchannel` command to re-set the ticket channel!'
             );
         }
 
@@ -91,7 +91,7 @@ export class kCommand extends Command {
                     {
                         type: OverwriteType.Role,
                         id: message.guild.roles.everyone.id,
-                        deny: [ PermissionFlagsBits.ViewChannel ]
+                        deny: [PermissionFlagsBits.ViewChannel]
                     },
                     {
                         type: OverwriteType.Member,
@@ -108,9 +108,9 @@ export class kCommand extends Command {
             if (err !== null) {
                 return this.Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`);
             }
-            
+
             void dontThrow(ticketChannel.send({ content: `${message.author}: ${args.join(' ')}` }));
-            
+
             return this.Embed.ok(`Successfully created a ticket: ${ticketChannel}!`);
         }
     }

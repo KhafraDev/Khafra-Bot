@@ -30,7 +30,7 @@ export class FifteenDotAI {
                 'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot, v1.10)',
                 'Accept': 'application/json, text/plain, */*',
                 'Accept-Language': 'en-US,en;q=0.5',
-                'Content-Type': 'application/json;charset=utf-8',
+                'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify({
                 character,
@@ -42,7 +42,7 @@ export class FifteenDotAI {
         });
 
         clearTimeout(timeout);
-        
+
         if (statusCode === 200) {
             return await json(body) as Batch;
         }

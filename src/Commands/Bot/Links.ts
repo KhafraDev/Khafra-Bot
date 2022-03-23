@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor () {
@@ -12,7 +12,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (): Promise<Embed> {
+    async init (): Promise<UnsafeEmbed> {
         return this.Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)

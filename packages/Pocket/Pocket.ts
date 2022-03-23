@@ -5,12 +5,12 @@ import { Buffer } from 'buffer';
 import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
-    'x-limit-user-limit':     -1,   // Current rate limit enforced per user
+    'x-limit-user-limit': -1,   // Current rate limit enforced per user
     'x-limit-user-remaining': -1,   // Number of calls remaining before hitting user's rate limit
-    'x-limit-user-reset':     -1,   // Seconds until user's rate limit resets
-    'x-limit-key-limit':      -1,   // Current rate limit enforced per consumer key
-    'x-limit-key-remaining':  -1,   // Number of calls remaining before hitting consumer key's rate limit
-    'x-limit-key-reset':      -1    // Seconds until consumer key rate limit resets
+    'x-limit-user-reset': -1,   // Seconds until user's rate limit resets
+    'x-limit-key-limit': -1,   // Current rate limit enforced per consumer key
+    'x-limit-key-remaining': -1,   // Number of calls remaining before hitting consumer key's rate limit
+    'x-limit-key-reset': -1    // Seconds until consumer key rate limit resets
 }
 
 export class Pocket {
@@ -31,7 +31,7 @@ export class Pocket {
 
     /**
      * Pocket Authentication:
-     * 
+     *
      * Step 2: Obtain a request token
      * @throws {Error} when status isn't 200
      */
@@ -101,7 +101,7 @@ export class Pocket {
                 code: this.request_token
             })
         });
-    
+
         setRateLimits(res.headers);
         if (!res.ok) {
             throw new Error(
@@ -109,7 +109,7 @@ export class Pocket {
                 res.headers.get('X-Error')
             )
         }
-    
+
         const body = await res.json() as { access_token: string, username: string };
         this.access_token = body.access_token;
         this.username =     body.username;
@@ -125,7 +125,7 @@ export class Pocket {
                 * ${limits['x-limit-user-reset']} seconds for the user.`
             );
         }
-    
+
         const res = await fetch('https://getpocket.com/v3/get', {
             method: 'POST',
             headers: {
@@ -141,7 +141,7 @@ export class Pocket {
                 count: 10
             })
         });
-    
+
         setRateLimits(res.headers);
         if (!res.ok) {
             throw new Error(
@@ -149,7 +149,7 @@ export class Pocket {
                 res.headers.get('X-Error')
             )
         }
-    
+
         return await res.json() as PocketGetResults;
     }
 
@@ -162,7 +162,7 @@ export class Pocket {
                 * ${limits['x-limit-user-reset']} seconds for the user.`
             );
         }
-    
+
         const res = await fetch('https://getpocket.com/v3/add', {
             method: 'POST',
             headers: {
@@ -178,7 +178,7 @@ export class Pocket {
                 access_token: this.access_token
             })
         });
-    
+
         setRateLimits(res.headers);
         if (!res.ok) {
             throw new Error(
@@ -186,7 +186,7 @@ export class Pocket {
                 res.headers.get('X-Error')
             )
         }
-    
+
         return res.json() as Promise<PocketAddResults>;
     }
 

@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
@@ -22,9 +22,9 @@ export class kSubCommand extends InteractionSubCommand {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {
-            return `❌ That id is invalid, try again!`;
+            return '❌ That id is invalid, try again!';
         } else if (!interaction.guildId || !interaction.guild) {
-            return `❌ No guild id provided in the command, re-invite the bot with the correct permissions.`;
+            return '❌ No guild id provided in the command, re-invite the bot with the correct permissions.';
         }
 
         const rows = await sql<GiveawayRow[]>`
@@ -43,7 +43,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             await giveawayMessage.delete();
         } catch {
-            return `✅ The giveaway has been stopped, but I could not delete the giveaway message!`
+            return '✅ The giveaway has been stopped, but I could not delete the giveaway message!'
         }
 
         return `✅ Giveaway ${inlineCode(rows[0].id)} has been deleted!`;

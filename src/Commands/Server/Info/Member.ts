@@ -1,24 +1,24 @@
 import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type Embed } from '@khaf/builders';
-import { ActivityType } from 'discord-api-types/v9';
+import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { ActivityType } from 'discord-api-types/v10';
 import { Activity, Message } from 'discord.js';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
-    
+
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
             case ActivityType.Custom:
-                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
+                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`);
                 break;
             case ActivityType.Listening:
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
                 break;
-            case ActivityType.Game:
-                push.push(`Playing ${italic(activity.name)}.`); 
+            case ActivityType.Playing:
+                push.push(`Playing ${italic(activity.name)}.`);
                 break;
             default:
                 logger.log(activity);
@@ -35,21 +35,21 @@ export class kCommand extends Command {
                 'Get info about a guild member.',
                 '@Khafra#0001', '267774648622645249'
             ],
-			{
+            {
                 name: 'member',
                 folder: 'Server',
-                aliases: [ 'memberinfo', 'whois' ],
+                aliases: ['memberinfo', 'whois'],
                 args: [0, 1],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
         const member = await getMentions(message, 'members', content) ?? message.member;
 
         if (!member) {
-            return this.Embed.error(`No guild member mentioned.`);
+            return this.Embed.error('No guild member mentioned.');
         }
 
         // max role length = 84 characters
@@ -66,11 +66,11 @@ export class kCommand extends Command {
             .addFields(
                 { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
                 { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: false },
-                { 
-                    name: bold('Boosting Since:'), 
-                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting', 
-                    inline: true 
-                },
+                {
+                    name: bold('Boosting Since:'),
+                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
+                    inline: true
+                }
             )
             .setFooter({ text: 'For general user info use the user command!' });
     }

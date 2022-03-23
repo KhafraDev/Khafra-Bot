@@ -3,7 +3,7 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { badmeme, cache } from '@khaf/badmeme';
-import { ActionRow, type Embed } from '@khaf/builders';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -13,32 +13,32 @@ export class kCommand extends Command {
                 'Get a bad meme!',
                 'pewdiepiesubmissions', ''
             ],
-			{
+            {
                 name: 'badmeme',
                 folder: 'Fun',
-                args: [0, 1],
+                args: [0, 1]
             }
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<string | Embed | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<string | UnsafeEmbed | undefined> {
         const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
         if (!cache.has(subreddit)) {
             void message.channel.sendTyping();
         }
-        
+
         const res = await badmeme(
-            args[0], 
+            args[0],
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
-        
+
         if (res === null) {
             return this.Embed.error(`
             No posts in this subreddit were found! If the subreddit is NSFW, make sure the channel is too!
             `);
         } else if ('error' in res) {
             if (res.error === 404) {
-                return `❌ That subreddit doesn't exist!`;
+                return '❌ That subreddit doesn\'t exist!';
             }
 
             switch (res.reason) {
@@ -59,14 +59,14 @@ export class kCommand extends Command {
             return res.url;
 
         let page = 0;
-        
-        const row = new ActionRow().addComponents(
+
+        const row = new ActionRow<MessageActionRowComponent>().addComponents(
             Components.approve('Next'),
             Components.secondary('Previous'),
             Components.deny('Stop')
         );
 
-        const m = await message.channel.send({ 
+        const m = await message.channel.send({
             content: res.url[page],
             components: [row]
         });
@@ -74,7 +74,7 @@ export class kCommand extends Command {
         const collector = m.createMessageComponentCollector({
             filter: (interaction) =>
                 interaction.isMessageComponent() &&
-                ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
+                ['approve', 'deny', 'secondary'].includes(interaction.customId) &&
                 interaction.user.id === message.author.id,
             time: 60_000,
             max: 5

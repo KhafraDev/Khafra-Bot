@@ -2,8 +2,8 @@ import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import type { UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
@@ -20,7 +20,7 @@ export class kCommand extends Command {
             [
                 'Archives or deletes a ticket!'
             ],
-			{
+            {
                 name: 'ticket:archive',
                 folder: 'Server',
                 aliases: ['tickets:archive', 'tickets:delete', 'tickets:delete'],
@@ -31,11 +31,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<Embed | undefined> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
         if (settings.ticketchannel === null) {
-            return this.Embed.error(`Could not archive for you, the guild's ticket channel is unset.`);
+            return this.Embed.error('Could not archive for you, the guild\'s ticket channel is unset.');
         } else if (!isDM(message.channel) && !channelTicketName.test(message.channel.name)) {
-            return this.Embed.error(`This is not a ticket channel.`);
+            return this.Embed.error('This is not a ticket channel.');
         }
 
         const everyoneId = message.guild.roles.everyone.id;
@@ -54,9 +54,9 @@ export class kCommand extends Command {
                 const everyonePerms = perms.get(everyoneId)!;
 
                 if (!memberPerms.allow.has(memberPermsExpected)) {
-                    return this.Embed.error(`You are missing some required permissions in this channel.`);
+                    return this.Embed.error('You are missing some required permissions in this channel.');
                 } else if (!everyonePerms.deny.has(PermissionFlagsBits.ViewChannel)) {
-                    return this.Embed.error(`This channel is not private!`);
+                    return this.Embed.error('This channel is not private!');
                 }
             }
         }
@@ -69,7 +69,7 @@ export class kCommand extends Command {
         if (Array.isArray(ret)) {
             const [err, chan] = ret;
             if (err !== null) {
-                return this.Embed.error(`An error occurred trying to fetch this channel. Maybe set a new ticket channel?`);
+                return this.Embed.error('An error occurred trying to fetch this channel. Maybe set a new ticket channel?');
             } else {
                 // validation is done in the ticketchannel command
                 channel = chan as TicketChannelTypes;
@@ -77,7 +77,7 @@ export class kCommand extends Command {
         } else {
             channel = ret as TicketChannelTypes;
         }
-        
+
         if (isExplicitText(channel) && !isThread(message.channel)) {
             return this.Embed.error(`Expected thread, got ${message.channel.type}.`);
         }
@@ -88,6 +88,6 @@ export class kCommand extends Command {
             await dontThrow<DeletedChannelTypes>(message.channel.delete());
         }
 
-        return void dontThrow(message.author.send({ content: `Ticket was archived/deleted.` }));
+        return void dontThrow(message.author.send({ content: 'Ticket was archived/deleted.' }));
     }
 }

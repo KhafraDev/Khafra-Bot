@@ -1,6 +1,6 @@
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { Arguments, Command } from '../../Structures/Command.js';
 
@@ -12,13 +12,13 @@ export class kCommand extends Command {
         super(
             [
                 'Get someone\'s avatar!',
-                '', 
-                '@Khafra#0001', 
+                '',
+                '@Khafra#0001',
                 '267774648622645249',
                 '@Khafra#0001 --size 256 --format jpg',
                 '@Khafra#0001 -s 256 -f gif'
             ],
-			{
+            {
                 name: 'avatar',
                 folder: 'Server',
                 args: [0, 5],
@@ -28,9 +28,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { cli, content }: Arguments): Promise<Embed> {
+    async init (message: Message, { cli, content }: Arguments): Promise<UnsafeEmbed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
-        
+
         const opts: ImageURLOptions = {
             size: 512,
             extension: 'png',
@@ -54,7 +54,7 @@ export class kCommand extends Command {
         }
 
         const avatar = user.displayAvatarURL(opts);
-        
+
         return this.Embed.ok(`${user}'s avatar`).setImage(avatar);
     }
 }

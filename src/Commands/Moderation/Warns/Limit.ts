@@ -4,8 +4,8 @@ import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
@@ -19,9 +19,9 @@ export class kCommand extends Command {
                 '20',
                 '32767'
             ],
-			{
+            {
                 name: 'warnlimit',
-                aliases: [ 'limit', 'setwarn' ],
+                aliases: ['limit', 'setwarn'],
                 folder: 'Moderation',
                 args: [1, 1],
                 guildOnly: true
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<Embed> {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))
@@ -38,8 +38,8 @@ export class kCommand extends Command {
                 message.member,
                 PermissionFlagsBits.Administrator
             );
-        else if (!inRange(newAmount)) 
-            return this.Embed.error(`An invalid number of points was provided, try with a positive whole number instead!`);
+        else if (!inRange(newAmount))
+            return this.Embed.error('An invalid number of points was provided, try with a positive whole number instead!');
 
         const rows = await sql<kGuild[]>`
             UPDATE kbGuild

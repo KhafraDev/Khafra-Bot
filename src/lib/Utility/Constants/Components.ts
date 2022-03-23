@@ -1,33 +1,33 @@
-import { APIMessage, ButtonStyle } from 'discord-api-types/v9';
+import { APIMessage, ButtonStyle } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
-import { ActionRow, ActionRowComponent, ButtonComponent } from '@khaf/builders';
+import { ActionRow, MessageActionRowComponent, UnsafeButtonComponent } from '@discordjs/builders';
 
 export const Components = {
-    approve: (label = 'approve', id?: string): ButtonComponent => new ButtonComponent()
+    approve: (label = 'approve', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'approve')
         .setLabel(label)
         .setStyle(ButtonStyle.Success),
-    deny: (label = 'deny', id?: string): ButtonComponent => new ButtonComponent()
+    deny: (label = 'deny', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'deny')
         .setLabel(label)
         .setStyle(ButtonStyle.Danger),
-    secondary: (label = 'next', id?: string): ButtonComponent => new ButtonComponent()
+    secondary: (label = 'next', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'secondary')
         .setLabel(label)
         .setStyle(ButtonStyle.Secondary),
-    primary: (label = 'primary', id?: string): ButtonComponent => new ButtonComponent()
+    primary: (label = 'primary', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'primary')
         .setLabel(label)
         .setStyle(ButtonStyle.Primary),
-    link: (label: string, url: string): ButtonComponent => new ButtonComponent()
+    link: (label: string, url: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setLabel(label)
         .setStyle(ButtonStyle.Link)
         .setURL(url)
 }
 
-const toggleComponents = (item: Message | APIMessage, disabled: boolean): ActionRow<ActionRowComponent>[] => {
+const toggleComponents = (item: Message | APIMessage, disabled: boolean): ActionRow<MessageActionRowComponent>[] => {
     if (!item.components) return [];
-    
+
     for (const component of item.components) {
         for (const button of component.components) {
             if ('setDisabled' in button) {
@@ -39,11 +39,11 @@ const toggleComponents = (item: Message | APIMessage, disabled: boolean): Action
     }
 
     return 'channelId' in item
-        ? item.components as ActionRow<ActionRowComponent>[]
+        ? item.components as ActionRow<MessageActionRowComponent>[]
         : item.components.map(r => new ActionRow(r));
 }
 
 export const disableAll = (item: Message | APIMessage):
-    ActionRow<ActionRowComponent>[] => toggleComponents(item, true);
+    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, true);
 export const enableAll = (item: Message | APIMessage):
-    ActionRow<ActionRowComponent>[] => toggleComponents(item, false);
+    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, false);

@@ -10,7 +10,7 @@ import { once } from '#khaf/utility/Memoize.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { REST, RestEvents } from '@discordjs/rest';
 import { Buffer } from 'buffer';
-import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v9';
+import { APIApplicationCommand, APIVersion, Routes } from 'discord-api-types/v10';
 import { Client, ClientEvents } from 'discord.js';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
@@ -20,8 +20,8 @@ import { pathToFileURL } from 'url';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
 type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>;
-type DynamicImportAppCommand = 
-    | Promise<{ kInteraction: new () => Interactions }> 
+type DynamicImportAppCommand =
+    | Promise<{ kInteraction: new () => Interactions }>
     | Promise<{ kSubCommand: new () => InteractionSubCommand }>
     | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>
     | Promise<{ kUserCommand: new () => InteractionUserCommand }>;
@@ -46,22 +46,20 @@ export class KhafraClient extends Client {
         Autocomplete: new Map<string, InteractionAutocomplete>(),
         Context: new Map<string, InteractionUserCommand>()
     } as const;
-    // static Interactions: Map<string, Interactions> = new Map();
-    // static Subcommands: Map<string, InteractionSubCommand> = new Map();
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
      */
     static walk (dir: string, fn: (path: string) => boolean): string[] {
         const ini = new Set<string>(readdirSync(dir));
-        const files = new Set<string>(); 
-    
-        while (ini.size !== 0) {        
+        const files = new Set<string>();
+
+        while (ini.size !== 0) {
             for (const d of ini) {
                 const path = resolve(dir, d);
                 ini.delete(d); // remove from set
                 const stats = statSync(path);
-    
+
                 if (stats.isDirectory()) {
                     for (const f of readdirSync(path))
                         ini.add(resolve(path, f));
@@ -70,7 +68,7 @@ export class KhafraClient extends Client {
                 }
             }
         }
-    
+
         return [...files];
     }
 
@@ -85,7 +83,7 @@ export class KhafraClient extends Client {
                 exit(1);
             } else {
                 const kCommand = new fileImport.value.kCommand();
-                
+
                 KhafraClient.Commands.set(kCommand.settings.name.toLowerCase(), kCommand);
                 kCommand.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, kCommand));
             }
@@ -139,7 +137,7 @@ export class KhafraClient extends Client {
                 } else if ('kAutocomplete' in interaction.value) {
                     const autocomplete = new interaction.value.kAutocomplete();
                     KhafraClient.Interactions.Autocomplete.set(
-                        `${autocomplete.data.references}-${autocomplete.data.name}`, 
+                        `${autocomplete.data.references}-${autocomplete.data.name}`,
                         autocomplete
                     );
                 } else if ('kUserCommand' in interaction.value) {
@@ -157,7 +155,7 @@ export class KhafraClient extends Client {
         // If we have to deal with slash commands :(
         if (loaded.length !== 0) {
             const processArgs = new Minimalist(argv.slice(2).join(' '));
-            const lastDeployedPath = join(assets, 'interaction_last_deployed.txt');
+            const lastDeployedPath = assets('interaction_last_deployed.txt');
             const loadedCommands = loaded.map(command => command.data);
 
             // https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
@@ -204,22 +202,17 @@ export class KhafraClient extends Client {
 
                 data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`));
             } else {
-                // If there are less commands on our side
-                // than there are on Discord's side, we can
-                // assume that *some* commands have been
-                // deleted.
-                if (loadedCommands.length < existingSlashCommands.length) {
-                    const deleted = existingSlashCommands.filter(
-                        c => !loadedCommands.find(n => n.name === c.name)
+                // Filters out commands that have been deleted or renamed on our side.
+                const deleted = existingSlashCommands.filter(
+                    c => !loadedCommands.find(n => n.name === c.name)
+                );
+
+                for (const deletedCommand of deleted) {
+                    logger.info(`Deleting ${deletedCommand.name}!`);
+
+                    await rest.delete(
+                        Routes.applicationCommand(config.botId, deletedCommand.id)
                     );
-
-                    for (const deletedCommand of deleted) {
-                        logger.info(`Deleting ${deletedCommand.name}!`);
-
-                        await rest.delete(
-                            Routes.applicationCommand(config.botId, deletedCommand.id)
-                        );
-                    }
                 }
 
                 // Otherwise, we need to determine whether to
@@ -229,9 +222,16 @@ export class KhafraClient extends Client {
                     const previous = previouslyDeployed.find(([n]) => n === current.name);
                     const [deployedName, deployedBase64] = previous ?? [];
                     const existing = existingSlashCommands.find(command => command.name === deployedName);
-                    
+
+                    const command = KhafraClient.Interactions.Commands.get(current.name);
+
+                    if (command?.options.deploy === false) {
+                        logger.info(`Skipping ${current.name} :)`);
+                        continue;
+                    }
+
                     // If the command has not been loaded on Discord's side,
-                    // or it hasn't previously been deployed, on our side, we
+                    // or it hasn't previously been deployed on our side, we
                     // need to on deploy it by POST request.
                     if (!existing || !previous) {
                         logger.info(`Deploying ${current.name} slash command!`);
@@ -249,11 +249,10 @@ export class KhafraClient extends Client {
                                 { body: current }
                             );
                         }
-                    }
+                    } else if (toBase64(current) !== deployedBase64) {
+                        // If the base64 for the deployed command and the current
+                        // command are different, the command must be updated.
 
-                    // If the base64 for the deployed command and the current
-                    // command are different, the command must be updated.
-                    else if (toBase64(current) !== deployedBase64) {
                         logger.info(`Updating ${deployedName} slash command!`);
                         // https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
                         const updated = await rest.patch(
@@ -262,19 +261,11 @@ export class KhafraClient extends Client {
                         ) as APIApplicationCommand;
 
                         setInteractionIds([updated]);
+                    }
 
-                        if (processArgs.get('dev') === true) {
-                            // TODO: fix this! We need the guild app id rather than the global one...
-                            // await rest.patch(
-                            //     Routes.applicationGuildCommand(config.botId, config.guildId, id),
-                            //     { body: current }
-                            // );
-                        }
-                    } 
-                    
                     // The command already exists and has not been updated.
                     // We do not have to do anything in this case.
-                    
+
                     data.push(`${current.name}|${toBase64(current)}`);
                 }
             }
@@ -300,7 +291,7 @@ export class KhafraClient extends Client {
             (p) => p.endsWith('.js')
         );
 
-        const importPromise = timers.map(timer => 
+        const importPromise = timers.map(timer =>
             import(pathToFileURL(timer).href) as Promise<{ [key: string]: new () => Timer }>
         );
         const settled = await Promise.allSettled(importPromise);
@@ -312,7 +303,7 @@ export class KhafraClient extends Client {
                 const timer = new imported.value[key]();
 
                 loadedTimers++;
-                timer.setInterval();
+                void timer.setInterval();
             } else {
                 logger.error(imported.reason);
                 exit(1);

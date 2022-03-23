@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -11,21 +11,16 @@ export class kCommand extends Command {
                 'Have Obama say something to you.',
                 'Khafra Bot is the best!'
             ],
-			{
+            {
                 name: 'talkobamatome',
                 folder: 'Fun',
-                aliases: [ 'totm' ], 
-                args: [1],
-                errors: {
-                    FetchError: 'A server error occurred, try again later!',
-                    // invalid URL
-                    TypeError: 'Server replied with an invalid response, try again later!'
-                }
+                aliases: ['totm'],
+                args: [1]
             }
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string | Embed> {
+    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbed> {
         const [barack, obama] = await dontThrow(talkObamaToMe(args.join(' ').slice(0, 280)));
 
         if (barack !== null) {

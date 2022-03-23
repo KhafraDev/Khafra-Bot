@@ -1,6 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { pasteAliases } from '#khaf/utility/commands/Pastes';
-import { inlineCode, type Embed } from '@khaf/builders';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
@@ -12,7 +12,7 @@ export class kCommand extends Command {
                 'Upload a paste to a number of different pastebin services!',
                 ...keys.slice(1).map(k => `${k} const bot = KhafraClient;`)
             ],
-			{
+            {
                 name: 'pastebin',
                 folder: 'Utility',
                 args: [0],
@@ -21,10 +21,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content, commandName }: Arguments): Promise<Embed> {
+    async init (_message: Message, { content, commandName }: Arguments): Promise<UnsafeEmbed> {
         const command = commandName.toLowerCase();
 
-        if (command === 'pastebin' || content.length == 0) 
+        if (command === 'pastebin' || content.length == 0)
             return this.Embed.ok(`
             Here is a list of the sites currently supported by this command:
             ${keys.map(k => inlineCode(k)).join(', ')}

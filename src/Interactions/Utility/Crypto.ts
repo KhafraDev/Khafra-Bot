@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { bold, inlineCode, time, type Embed as MessageEmbed } from '@khaf/builders';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { bold, inlineCode, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
@@ -34,9 +34,9 @@ export class kInteraction extends Interactions {
         );
 
         if (currencies === undefined) {
-            return `❌ The cache is being loaded for the first time, please wait a minute!`;
+            return '❌ The cache is being loaded for the first time, please wait a minute!';
         } else if (currencies.length === 0) {
-            return `❌ No currency with that name or id could be found!`;
+            return '❌ No currency with that name or id could be found!';
         }
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
@@ -75,7 +75,7 @@ export class kInteraction extends Interactions {
             If this is the wrong currency, try using one of the following IDs:
             ${currencies.map(c => inlineCode(c.id)).join(', ')}
             `.trim(),
-            embeds: [embed],
+            embeds: [embed]
         } as InteractionReplyOptions;
     }
-} 
+}

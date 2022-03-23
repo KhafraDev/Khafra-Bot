@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
-import { bold } from '@khaf/builders';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { bold } from '@discordjs/builders';
+import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, Guild } from 'discord.js';
 
 export class kInteraction extends Interactions {
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
             }
 
             if (guild === null) {
-                return `❌ The guild could not be fetched. Reinvite the bot with full permissions to use this command!`;
+                return '❌ The guild could not be fetched. Reinvite the bot with full permissions to use this command!';
             }
         } else {
             guild = interaction.guild;
@@ -31,4 +31,4 @@ export class kInteraction extends Interactions {
 
         return `✅ There are ${bold(guild.memberCount.toLocaleString())} members in ${guild.name}!`;
     }
-} 
+}

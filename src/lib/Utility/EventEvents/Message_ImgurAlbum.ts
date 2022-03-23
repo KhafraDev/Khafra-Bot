@@ -1,8 +1,8 @@
-import { env } from 'process';
-import { URL } from 'url';
-import { fetch, Headers } from 'undici';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { env } from 'process';
+import { fetch, Headers } from 'undici';
+import { URL } from 'url';
 
 interface ImgurAlbum {
     data: {
@@ -104,7 +104,7 @@ export class Imgur {
                 const url = URLFactory(arg)!;
 
                 if (
-                    url.host !== 'imgur.com' || 
+                    url.host !== 'imgur.com' ||
                     !url.pathname.startsWith('/a/') ||
                     url.pathname.length < 8
                 ) {

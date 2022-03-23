@@ -1,5 +1,5 @@
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { MessageType, PermissionFlagsBits } from 'discord-api-types/v9';
+import { MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const basic =
@@ -9,7 +9,7 @@ const basic =
 
 /**
  * Check message for required criteria.
- * @param message 
+ * @param message
  */
 export const Sanitize = (message: Message): message is Message<true> => {
     if (
@@ -18,10 +18,10 @@ export const Sanitize = (message: Message): message is Message<true> => {
         (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
         (message.guild && !message.guild.available) ||
         message.system ||
-        message.tts || 
+        message.tts ||
         message.content.length === 0 ||
         !message.guild
-    ) { 
+    ) {
         return false;
     }
 

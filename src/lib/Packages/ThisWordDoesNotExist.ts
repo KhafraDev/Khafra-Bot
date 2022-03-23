@@ -18,7 +18,7 @@ interface NonexistentWord {
 
 export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> => {
     const res = await fetch('https://www.thisworddoesnotexist.com/api/random_word.json');
-    
+
     if (!res.ok) {
         void consumeBody(res);
 

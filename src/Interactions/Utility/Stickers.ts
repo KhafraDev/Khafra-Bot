@@ -2,8 +2,8 @@ import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { inlineCode } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { inlineCode } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
         if (stickers.length === 0) {
             const res = await mw();
             if (res === null) {
-                return `The stickers are already loading, please try again in a moment.`;
+                return 'The stickers are already loading, please try again in a moment.';
             }
 
             const allStickers = [...res.values()].flatMap(p => [...p.stickers.values()]);
@@ -58,7 +58,7 @@ export class kInteraction extends Interactions {
         }
 
         if (stickerMatches.length === 0) {
-            return `❌ No stickers with that name were found.`;
+            return '❌ No stickers with that name were found.';
         }
 
         const fileNames = new Set(stickerMatches.map(n => `${n.name};${n.id}.gif`));
@@ -75,4 +75,4 @@ export class kInteraction extends Interactions {
             content: `${inlineCode(interaction.options.getString('name', true))} (${fileNames.size} similar).`
         } as InteractionReplyOptions;
     }
-} 
+}

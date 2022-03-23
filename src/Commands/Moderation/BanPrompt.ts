@@ -5,8 +5,8 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, type Embed } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
@@ -20,18 +20,18 @@ export class kCommand extends Command {
                 '@user 0 bye!',
                 '239566240987742220 7d'
             ],
-			{
-                name: 'banprompt', 
+            {
+                name: 'banprompt',
                 folder: 'Moderation',
-                aliases: [ 'bnaprompt' ],
+                aliases: ['bnaprompt'],
                 args: [1],
                 guildOnly: true,
-                permissions: [ PermissionFlagsBits.BanMembers ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<Embed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
         const user = await getMentions(message, 'users', content);
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
@@ -40,10 +40,10 @@ export class kCommand extends Command {
         if (member && !hierarchy(message.member, member)) {
             return this.Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.error(`No user id or user mentioned, no one was banned.`);
+            return this.Embed.error('No user id or user mentioned, no one was banned.');
         }
 
-        const row = new ActionRow().addComponents(
+        const row = new ActionRow<MessageActionRowComponent>().addComponents(
             Components.approve('Yes'),
             Components.deny('No')
         );
@@ -54,9 +54,9 @@ export class kCommand extends Command {
         });
 
         const [pressedError, button] = await dontThrow(msg.awaitMessageComponent({
-            filter: (interaction) => 
+            filter: (interaction) =>
                 interaction.isMessageComponent() &&
-                ['approve', 'deny'].includes(interaction.customId) && 
+                ['approve', 'deny'].includes(interaction.customId) &&
                 interaction.user.id === message.author.id,
             time: 20_000
         }));
@@ -72,12 +72,12 @@ export class kCommand extends Command {
             return void button.update({
                 embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
-            }); 
+            });
 
         await button.deferUpdate();
 
         const [banError] = await dontThrow(message.guild.members.ban(user, {
-            days: inRange(clear) ? clear : 7,
+            deleteMessageDays: inRange(clear) ? clear : 7,
             reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
         }));
 
@@ -91,8 +91,8 @@ export class kCommand extends Command {
         await button.editReply({
             embeds: [
                 this.Embed.ok(
-                    `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` + 
-                    ` days worth of messages have been removed.`
+                    `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` +
+                    ' days worth of messages have been removed.'
                 )
             ],
             components: disableAll(msg)

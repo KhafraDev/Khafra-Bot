@@ -44,7 +44,7 @@ const defaultOpts = {
  * @example
  * // Search for "fetch", locale defaults to 'en-US'
  * const results = await fetchMDN('fetch');
- * 
+ *
  * @example
  * // Use a different locale
  * const results = await fetchMDN('fetch', { locale: 'es' });

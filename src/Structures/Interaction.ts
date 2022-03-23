@@ -1,5 +1,5 @@
 import { KhafraClient } from '#khaf/Bot';
-import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
@@ -12,6 +12,10 @@ import {
 interface InteractionOptions {
     defer?: boolean
     ownerOnly?: boolean
+	/**
+	 * If the command should not be deployed automatically.
+	 */
+	deploy?: boolean
     replyOpts?: InteractionReplyOptions
     permissions?: PermissionResolvable
 }
@@ -23,7 +27,7 @@ interface SubcommandOptions {
 
 type HandlerReturn =
     | string
-    | import('@khaf/builders').Embed
+    | import('@discordjs/builders').UnsafeEmbed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
     | null
@@ -38,10 +42,10 @@ export class Interactions {
     private [kId]: APIApplicationCommand['id'];
 
     constructor(
-        public data: InteractionData, 
+        public data: InteractionData,
         public options: InteractionOptions = {}
     ) {}
-    
+
     async init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> {
         const subcommand =
             interaction.options.getSubcommandGroup(false) ??
@@ -49,11 +53,11 @@ export class Interactions {
         const subcommandName = `${this.data.name}-${subcommand}`;
 
         if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
-            return `❌ This option has not been implemented yet!`;
+            return '❌ This option has not been implemented yet!';
         }
 
         const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!;
-        
+
         return await option.handle(interaction);
     }
 

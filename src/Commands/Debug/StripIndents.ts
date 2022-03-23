@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
-import { Message } from 'discord.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { inlineCode } from '@khaf/builders';
+import { inlineCode } from '@discordjs/builders';
+import { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

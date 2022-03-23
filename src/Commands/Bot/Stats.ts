@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold, type Embed } from '@khaf/builders';
+import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -15,7 +15,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message): Promise<Embed> {
+    async init (message: Message): Promise<UnsafeEmbed> {
         const guilds = message.client.guilds.cache;
         const {
             globalCommandsUsed,
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         const totalGuilds = guilds.size.toLocaleString();
 
         return this.Embed.ok()
-            .setTitle(`Bot Statistics`)
+            .setTitle('Bot Statistics')
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },
                 { name: bold('Members:'), value: totalMembers, inline: true },

@@ -51,6 +51,6 @@ export const YouTube = async (q: string[] | string): Promise<YouTubeSearchResult
 
     const r = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
     const j = await r.json() as YouTubeSearchResults | YouTubeError;
-    
+
     return j;
 }

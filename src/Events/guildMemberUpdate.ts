@@ -2,11 +2,11 @@ import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { AnyChannel, GuildMember } from 'discord.js';
 
 const basic =
@@ -23,7 +23,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
         const premiumRole = oldMember.roles.premiumSubscriberRole;
         if (!premiumRole) return;
-        
+
         const oldHas = oldMember.roles.cache.has(premiumRole.id);
         const newHas = newMember.roles.cache.has(premiumRole.id);
 
@@ -43,7 +43,7 @@ export class kEvent extends Event<'guildMemberUpdate'> {
                 WHERE guild_id = ${oldMember.guild.id}::text
                 LIMIT 1;
             `;
-            
+
             if (rows.length !== 0) {
                 cache.set(oldMember.guild.id, rows[0]);
                 item = rows[0];
@@ -63,11 +63,12 @@ export class kEvent extends Event<'guildMemberUpdate'> {
             channel = chan;
         }
 
-        if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic)) 
+        if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic))
             return;
 
         if (oldHas && !newHas) { // lost role
             const embed = Embed.error(`${newMember} is no longer boosting the server! 😨`)
+                .setColor(colors.boost)
                 .setAuthor({
                     name: newMember.user.username,
                     iconURL: newMember.user.displayAvatarURL()

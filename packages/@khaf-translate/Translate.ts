@@ -1,4 +1,4 @@
-export { 
+export {
     translate as GoogleTranslate,
     langs as GoogleLanguages
 } from './sources/Google.js';

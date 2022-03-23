@@ -5,27 +5,27 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { bold, inlineCode, italic, time, type Embed as MessageEmbed } from '@khaf/builders';
-import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { bold, inlineCode, italic, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { Activity, ChatInputCommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
-    
+
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
             case ActivityType.Custom: {
-                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`); 
+                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`);
                 break;
             }
             case ActivityType.Listening: {
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
                 break;
             }
-            case ActivityType.Game: {
-                push.push(`Playing ${italic(activity.name)}.`); 
+            case ActivityType.Playing: {
+                push.push(`Playing ${italic(activity.name)}.`);
                 break;
             }
             case ActivityType.Streaming: {
@@ -52,7 +52,7 @@ const emojis = new Map<UserFlagsString, string | undefined>();
 const getEmojis = once(() => {
     const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][];
     for (const [flag, emojiID] of flags)
-        // not ruling out the possibility of the emoji not being cached
+    // not ruling out the possibility of the emoji not being cached
         emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
 
     return emojis;
@@ -96,11 +96,11 @@ export class kInteraction extends Interactions {
                 .addFields(
                     { name: bold('Role Color:'), value: option.displayHexColor, inline: true },
                     { name: bold('Joined Guild:'), value: time(option.joinedAt ?? new Date()), inline: false },
-                    { 
-                        name: bold('Boosting Since:'), 
-                        value: option.premiumSince ? time(option.premiumSince) : 'Not boosting', 
-                        inline: true 
-                    },
+                    {
+                        name: bold('Boosting Since:'),
+                        value: option.premiumSince ? time(option.premiumSince) : 'Not boosting',
+                        inline: true
+                    }
                 )
                 .setFooter({ text: 'For general user info mention a user!' });
         } else if (option instanceof Role) {
@@ -111,13 +111,15 @@ export class kInteraction extends Interactions {
                 Permissions: 
                 ${inlineCode(option.permissions.toArray().join(', '))}
                 `)
-                .addField({ name: bold('Name:'), value: option.name, inline: true })
-                .addField({ name: bold('Color:'), value: option.hexColor, inline: true })
-                .addField({ name: bold('Created:'), value: time(option.createdAt), inline: true })
-                .addField({ name: bold('Mentionable:'), value: option.mentionable ? 'Yes' : 'No', inline: true })
-                .addField({ name: bold('Hoisted:'), value: option.hoist ? 'Yes' : 'No', inline: true })
-                .addField({ name: bold('Position:'), value: `${option.position}`, inline: true })
-                .addField({ name: bold('Managed:'), value: option.managed ? 'Yes' : 'No' });
+                .addFields(
+                    { name: bold('Name:'), value: option.name, inline: true },
+                    { name: bold('Color:'), value: option.hexColor, inline: true },
+                    { name: bold('Created:'), value: time(option.createdAt), inline: true },
+                    { name: bold('Mentionable:'), value: option.mentionable ? 'Yes' : 'No', inline: true },
+                    { name: bold('Hoisted:'), value: option.hoist ? 'Yes' : 'No', inline: true },
+                    { name: bold('Position:'), value: `${option.position}`, inline: true },
+                    { name: bold('Managed:'), value: option.managed ? 'Yes' : 'No' }
+                );
 
             if (option.icon) {
                 embed.setImage(option.iconURL());
@@ -125,7 +127,7 @@ export class kInteraction extends Interactions {
 
             return embed;
         } else if (option instanceof User) {
-            const member = option.equals(interaction.user) 
+            const member = option.equals(interaction.user)
                 ? interaction.member
                 : interaction.guild?.members.resolve(option);
             const guildMember = member instanceof GuildMember
@@ -143,15 +145,17 @@ export class kInteraction extends Interactions {
 
             return Embed.ok(formatPresence(guildMember?.presence?.activities))
                 .setAuthor({
-                    name: option.tag, 
+                    name: option.tag,
                     iconURL: option.displayAvatarURL()
                 })
-                .addField({ name: bold('Username:'), value: option.username, inline: true })
-                .addField({ name: bold('ID:'), value: option.id, inline: true })
-                .addField({ name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true })
-                .addField({ name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true })
-                .addField({ name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true })
-                .addField({ name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true });
+                .addFields(
+                    { name: bold('Username:'), value: option.username, inline: true },
+                    { name: bold('ID:'), value: option.id, inline: true },
+                    { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
+                    { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
+                    { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
+                    { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+                );
         }
     }
-} 
+}

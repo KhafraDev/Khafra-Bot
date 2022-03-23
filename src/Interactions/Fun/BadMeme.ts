@@ -1,13 +1,13 @@
-import { badmeme, cache } from '@khaf/badmeme';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { ChatInputCommandInteraction } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
+import { badmeme, cache } from '@khaf/badmeme';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'badmeme',
-            description: `Get a horrible meme!`,
+            description: 'Get a horrible meme!',
             options: [
                 {
                     // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
             return '❌ No posts in this subreddit were found. This command does not post NSFW images.';
         } else if ('error' in item) {
             if (item.error === 404) {
-                return `❌ That subreddit doesn't exist!`;
+                return '❌ That subreddit doesn\'t exist!';
             }
 
             switch (item.reason) {
@@ -48,4 +48,4 @@ export class kInteraction extends Interactions {
 
         return Array.isArray(item.url) ? item.url[0] : item.url;
     }
-} 
+}

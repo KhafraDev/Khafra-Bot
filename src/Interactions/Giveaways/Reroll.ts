@@ -5,8 +5,8 @@ import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { bold, hyperlink, inlineCode } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { bold, hyperlink, inlineCode } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { AnyChannel, ChatInputCommandInteraction, User } from 'discord.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
@@ -26,13 +26,13 @@ export class kSubCommand extends InteractionSubCommand {
         const messageURL = URLFactory(interaction.options.getString('url', true));
 
         if (messageURL === null) {
-            return `❌ An invalid message link was provided!`;
+            return '❌ An invalid message link was provided!';
         } else if (
             messageURL.hostname !== 'discord.com' &&
             messageURL.hostname !== 'canary.discord.com' ||
             !channelsURLReg.test(messageURL.pathname)
         ) {
-            return `❌ The first argument must be a link to a message!`;
+            return '❌ The first argument must be a link to a message!';
         }
 
         const match = channelsURLReg.exec(messageURL.pathname)!.groups!;
@@ -43,11 +43,11 @@ export class kSubCommand extends InteractionSubCommand {
             !validSnowflake(channelId) ||
             !validSnowflake(guildId)
         ) {
-            return `❌ An invalid message link was sent! :(`;
+            return '❌ An invalid message link was sent! :(';
         }
 
         if (guildId !== interaction.guildId || !interaction.guild) {
-            return `❌ Please re-invite the bot with the required permissions to re-roll a giveaway!`;
+            return '❌ Please re-invite the bot with the required permissions to re-roll a giveaway!';
         }
 
         let channel: AnyChannel | null = interaction.guild.channels.cache.get(channelId) ?? null;
@@ -62,31 +62,31 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const [fetchMessageError, m] = await dontThrow(channel.messages.fetch(messageId));
-        
+
         if (fetchMessageError !== null) {
             return `❌ Could not fetch the message! Was it deleted? (${inlineCode(fetchMessageError.message)})`;
         } else if (
-            !m ||
+            !m || // eslint-disable-line @typescript-eslint/no-unnecessary-condition
             m.author.id !== interaction.client.user?.id ||
             m.embeds.length !== 1 ||
             Number(m.embeds[0].timestamp!) > Date.now()
         ) {
-            return `❌ This ${hyperlink('message', m?.url ?? 'https://discord.gg')} is not a giveaway.`;
+            return '❌ This message is not a giveaway.';
         }
-        
+
         const emoji = m.reactions.resolve('🎉');
         if (m.reactions.cache.size === 0 && emoji) {
             await dontThrow(emoji.users.fetch());
         }
 
         if (!m.reactions.cache.has('🎉')) {
-            return `❌ This message has no 🎉 reactions.`;
+            return '❌ This message has no 🎉 reactions.';
         }
 
         const { count, users } = m.reactions.cache.get('🎉')!;
         const numWinners = Number(/^(\d+)\s/.exec(m.embeds[0].footer!.text)![1]);
         const winners: User[] = [];
-        
+
         if (count !== users.cache.size) {
             await dontThrow(users.fetch());
         }

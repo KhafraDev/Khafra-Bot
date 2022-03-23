@@ -1,7 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { time, type Embed } from '@khaf/builders';
+import { time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message, ReplyMessageOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
@@ -13,24 +13,24 @@ export class kCommand extends Command {
                 'Get information about different CryptoCurrencies! Kill the environment!',
                 'btc', 'bitcoin', 'BAT'
             ],
-			{
+            {
                 name: 'crypto',
                 folder: 'Utility',
                 args: [1], // some symbols are multi-worded
-                aliases: [ 'cc' ]
+                aliases: ['cc']
             }
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<Embed | ReplyMessageOptions> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | ReplyMessageOptions> {
         const currencies = await CoinGecko.get(args.join(' '), () => {
             void message.channel.sendTyping();
         });
 
         if (currencies === undefined || currencies.length === 0) {
-            return this.Embed.error(`No currency with that name or id could be found!`);
+            return this.Embed.error('No currency with that name or id could be found!');
         }
-        
+
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
         const embed = this.Embed.ok()

@@ -42,7 +42,7 @@ export class LRU<K extends string, V> implements Map<K, V> {
         const element = this.cache[key];
         delete this.cache[key];
 
-        this.unlink(key, element.prev as K, element.next as K);
+        this.#unlink(key, element.prev as K, element.next as K);
         return true;
     }
 
@@ -52,11 +52,11 @@ export class LRU<K extends string, V> implements Map<K, V> {
         if (key in this.cache) {
             element = this.cache[key];
             element.value = value;
-            
+
             if (this.options.maxAgeMs) element.modified = Date.now();
             if (key === this.head) return this;
 
-            this.unlink(key, element.prev as K, element.next as K);
+            this.#unlink(key, element.prev as K, element.next as K);
         } else {
             element = { value, modified: 0, next: null, prev: null };
             if (this.options.maxAgeMs) element.modified = Date.now();
@@ -160,7 +160,7 @@ export class LRU<K extends string, V> implements Map<K, V> {
         return this.length;
     }
 
-    private unlink (key: K, prev: K, next: K): void {
+    #unlink (key: K, prev: K, next: K): void {
         this.length--;
 
         if (this.length === 0) {

@@ -1,6 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, time, type Embed } from '@khaf/builders';
+import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message, Role } from 'discord.js';
 
 export class kCommand extends Command {
@@ -11,19 +11,19 @@ export class kCommand extends Command {
                 '1234567891234567',
                 '@role'
             ],
-			{
+            {
                 name: 'role',
                 folder: 'Server',
-                aliases: [ 'roleinfo' ],
+                aliases: ['roleinfo'],
                 args: [1, 50],
                 guildOnly: true
             }
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<Embed> {
-        const role = 
-            await getMentions(message, 'roles') ?? 
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+        const role =
+            await getMentions(message, 'roles') ??
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
 
         if (!(role instanceof Role)) {
@@ -50,7 +50,7 @@ export class kCommand extends Command {
         if (role.icon) {
             embed.setImage(role.iconURL());
         }
-        
+
         return embed;
     }
 }

@@ -4,15 +4,15 @@ import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, hyperlink, inlineCode, italic, underscore, type Embed as MessageEmbed } from '@khaf/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { bold, hyperlink, inlineCode, italic, underscore, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'thisdoesnotexist',
-            description: `Get an AI generated picture of a person or item that doesn't exist!`,
+            description: 'Get an AI generated picture of a person or item that doesn\'t exist!',
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
 
             if (err !== null) {
-                return `❌ An unexpected error occurred getting a Homer!`;
+                return '❌ An unexpected error occurred getting a Homer!';
             }
 
             return Embed.ok().setImage(homer);
@@ -48,7 +48,7 @@ export class kInteraction extends Interactions {
             const [err, word] = await dontThrow(thisWordDoesNotExist());
 
             if (err !== null || word === null) {
-                return `❌ An unexpected error occurred getting a word!`;
+                return '❌ An unexpected error occurred getting a word!';
             }
 
             return Embed.ok(`
@@ -63,10 +63,10 @@ export class kInteraction extends Interactions {
             const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE));
 
             if (err !== null || image === null) {
-                return `❌ Not yet implemented or an error occurred!`;
+                return '❌ Not yet implemented or an error occurred!';
             }
 
             return image as InteractionReplyOptions;
         }
     }
-} 
+}

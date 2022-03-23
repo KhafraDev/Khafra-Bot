@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { type Embed } from '@khaf/builders';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
 const letters: Record<string, string> = {
@@ -18,18 +18,18 @@ export class kCommand extends Command {
             [
                 'Emojify some text.',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'blocksay',
                 folder: 'Fun',
                 args: [1],
                 ratelimit: 3,
-                aliases: [ 'block', 'blocktext' ]
+                aliases: ['block', 'blocktext']
             }
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<Embed> {     
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const blocks = [...content]
             .map(l => l.toLowerCase() in letters ? letters[l.toLowerCase()] : l)
             .join(' ');

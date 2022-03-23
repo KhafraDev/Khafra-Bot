@@ -3,8 +3,8 @@ import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, codeBlock, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
-import { InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ActionRow, codeBlock, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 import { createContext, runInContext } from 'vm';
 
@@ -54,7 +54,7 @@ class Parser extends Array<string> {
         if (this.isOperation(token) && this.isOperation(prev)) {
             return false;
         }
-        
+
         // If the calculator has no open parenthesis,
         // then a closing parenthesis would be invalid.
         if (token === ')' && this.openParenthesis === 0) {
@@ -123,30 +123,30 @@ class Parser extends Array<string> {
         for (let i = 0; i < this.length; i++) {
             const token = this[i];
             const prev = this[i - 1];
-    
+
             if (/\d/.test(token) && /\d/.test(prev)) {
-                output += token;    
+                output += token;
             } else {
                 output += ` ${token}`;
             }
         }
-    
+
         return output;
     }
 }
 
 const context = createContext(Object.create(null));
-const squiggles = 
-    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' + 
+const squiggles =
+    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~';
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'calculator',
-            description: `Calculator in Discord!`
+            description: 'Calculator in Discord!'
         };
-        
+
         super(sc, {
             defer: true
         });
@@ -154,38 +154,38 @@ export class kInteraction extends Interactions {
 
     async init (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const rows = [
-            new ActionRow().addComponents(
+            new ActionRow<MessageActionRowComponent>().addComponents(
                 Components.approve('(', '('),
                 Components.approve(')', ')'),
-                Components.approve('.', '.'),
+                Components.approve('.', '.')
                 // Components.approve('idk', 'idk')
             ),
-            new ActionRow().addComponents(
+            new ActionRow<MessageActionRowComponent>().addComponents(
                 Components.secondary('1', '1'),
                 Components.secondary('2', '2'),
                 Components.secondary('3', '3'),
                 Components.approve('+', '+')
             ),
-            new ActionRow().addComponents(
+            new ActionRow<MessageActionRowComponent>().addComponents(
                 Components.secondary('4', '4'),
                 Components.secondary('5', '5'),
                 Components.secondary('6', '6'),
                 Components.approve('-', '-')
             ),
-            new ActionRow().addComponents(
+            new ActionRow<MessageActionRowComponent>().addComponents(
                 Components.secondary('7', '7'),
                 Components.secondary('8', '8'),
                 Components.secondary('9', '9'),
                 Components.approve('*', '*')
             ),
-            new ActionRow().addComponents(
+            new ActionRow<MessageActionRowComponent>().addComponents(
                 Components.deny('Stop', 'stop'),
                 Components.secondary('0', '0'),
                 Components.deny('=', '='),
                 Components.approve('/', '/')
             )
         ];
-        
+
         const makeEmbed = (m: string): MessageEmbed =>
             Embed.ok(`
             ${squiggles}
@@ -224,7 +224,7 @@ export class kInteraction extends Interactions {
             } else if (i.customId === '=') {
                 return collector.stop('calculate');
             } else if (!parser.valid(i.customId)) {
-                const m = `You are attempting to perform an operation that isn't valid!`;
+                const m = 'You are attempting to perform an operation that isn\'t valid!';
 
                 return void dontThrow(i.update({
                     embeds: [makeEmbed(`${parser.toString()}\n${m}`)]
@@ -247,7 +247,7 @@ export class kInteraction extends Interactions {
             if (reason === 'calculate') {
                 const parsed = parser.toParseableString();
 
-                let eq: number | 'Invalid input!' = 'Invalid input!'; 
+                let eq: number | 'Invalid input!' = 'Invalid input!';
                 try {
                     eq = runInContext(parsed, context) as number;
                 } catch (e) {
@@ -273,4 +273,4 @@ export class kInteraction extends Interactions {
             }
         })
     }
-} 
+}

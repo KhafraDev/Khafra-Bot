@@ -1,12 +1,12 @@
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { GuildBasedChannel, GuildMember, Message, Role, Snowflake, SnowflakeUtil, TextBasedChannel, User } from 'discord.js';
+import { AnyChannel, GuildBasedChannel, GuildMember, Message, Role, Snowflake, SnowflakeUtil, User } from 'discord.js';
 
-type MentionTypes = User | GuildBasedChannel | TextBasedChannel | GuildMember | Role;
+type MentionTypes = User | AnyChannel | GuildMember | Role;
 
-type MessageMentionTypes = 
-    | 'roles' 
-    | 'users' 
-    | 'members' 
+type MessageMentionTypes =
+    | 'roles'
+    | 'users'
+    | 'members'
     | 'channels';
 
 const epoch = new Date('January 1, 2015 GMT-0').getTime();
@@ -19,17 +19,17 @@ export async function getMentions(message: Message, type: 'users', content?: str
 export async function getMentions(message: Message<true>, type: 'members', content?: string): Promise<GuildMember | null>;
 export async function getMentions(message: Message<true>, type: 'channels'): Promise<GuildBasedChannel | null>;
 export async function getMentions(
-    message: Message, 
+    message: Message,
     fetchType: MessageMentionTypes,
     text?: string
 ): Promise<Role | User | GuildMember | GuildBasedChannel | MentionTypes | null> {
     if (fetchType !== 'users' && !message.inGuild()) return null;
 
-    const { mentions, content: messageContent, guild, client} = message;
+    const { mentions, content: messageContent, guild, client} = message as Message<true>;
     const content = typeof text === 'string' ? text : messageContent;
 
     for (const [, type, id] of content.matchAll(mentionMatcher)) {
-        let pr: Promise<MentionTypes | null> | MentionTypes | null | undefined; 
+        let pr: Promise<MentionTypes | null> | MentionTypes | null = null;
 
         if (type) {
             // not a channel mention
@@ -41,18 +41,18 @@ export async function getMentions(
         }
 
         if (fetchType === 'channels') {
-            pr = mentions.channels.get(id) ?? guild!.channels.cache.get(id);
+            pr = mentions.channels.get(id) ?? guild.channels.cache.get(id) ?? null;
         } else if (fetchType === 'members') {
-            pr = mentions.members?.get(id) ?? guild!.members.cache.get(id);
+            pr = mentions.members?.get(id) ?? guild.members.cache.get(id) ?? null;
         } else if (fetchType === 'roles') {
-            pr = mentions.roles.get(id) ?? guild!.roles.cache.get(id);
+            pr = mentions.roles.get(id) ?? guild.roles.cache.get(id) ?? null;
         } else {
-            pr = client.users.cache.get(id);
+            pr = client.users.cache.get(id) ?? null;
         }
 
         pr ??= fetchType === 'users'
             ? client.users.fetch(id)
-            : guild![fetchType].fetch(id);
+            : guild[fetchType].fetch(id);
 
         const result = pr instanceof Promise
             ? await dontThrow(pr)
@@ -68,7 +68,7 @@ export const validSnowflake = (id: unknown): id is Snowflake => {
     if (typeof id !== 'string') return false;
     if (id.length < 17 || id.length > 19 || !/^\d{17,19}$/.test(id))
         return false;
-        
+
     const timestamp = SnowflakeUtil.timestampFrom(id);
 
     return timestamp > epoch && timestamp <= Date.now();

@@ -3,10 +3,9 @@ import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
-import { ActionRow, hideLinkEmbed, inlineCode, SelectMenuComponent, SelectMenuOption } from '@khaf/builders';
+import { ActionRow, hideLinkEmbed, inlineCode, MessageActionRowComponent, UnsafeSelectMenuComponent, UnsafeSelectMenuOption } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
-import { InteractionType } from 'discord-api-types/v9';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, Message, SelectMenuInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
@@ -40,14 +39,14 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
-                Embed.ok(`Choose an article from the dropdown below!`)
+                Embed.ok('Choose an article from the dropdown below!')
             ],
             components: [
-                new ActionRow().addComponents(
-                    new SelectMenuComponent()
+                new ActionRow<MessageActionRowComponent>().addComponents(
+                    new UnsafeSelectMenuComponent()
                         .setCustomId('wikipedia')
                         .setPlaceholder('Which article summary would you like to get?')
-                        .addOptions(...wiki.pages.map(w => new SelectMenuOption({
+                        .addOptions(...wiki.pages.map(w => new UnsafeSelectMenuOption({
                             label: ellipsis(w.title, 25),
                             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
                             value: `${w.id}`
@@ -115,4 +114,4 @@ export class kInteraction extends Interactions {
             }
         });
     }
-} 
+}

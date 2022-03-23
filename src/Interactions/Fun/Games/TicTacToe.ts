@@ -3,13 +3,13 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, ActionRowComponent, ButtonComponent, inlineCode } from '@khaf/builders';
-import { InteractionType } from 'discord-api-types/v9';
+import { ActionRow, ButtonComponent, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import { InteractionType } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board, ended = false): ActionRow<ActionRowComponent>[] => {
+const makeRows = (turns: Board, ended = false): ActionRow<MessageActionRowComponent>[] => {
     const rows: ButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
@@ -24,7 +24,9 @@ const makeRows = (turns: Board, ended = false): ActionRow<ActionRowComponent>[] 
         }
     }
 
-    return chunkSafe(rows, 3).map(r => new ActionRow().addComponents(...r))
+    return chunkSafe(rows, 3).map(r =>
+        new ActionRow<MessageActionRowComponent>().addComponents(...r)
+    );
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -70,7 +72,7 @@ export class kSubCommand extends InteractionSubCommand {
                 reason = `Game over - ${game.turn} won!`;
             } else if (game.isFull()) {
                 collector.stop('tie');
-                reason = `Looks like it's a tie!`;
+                reason = 'Looks like it\'s a tie!';
             }
 
             return void dontThrow(i.update({
@@ -82,10 +84,10 @@ export class kSubCommand extends InteractionSubCommand {
         collector.once('end', (_, r) => {
             if (r === 'time' || r === 'idle') {
                 return void dontThrow(interaction.editReply({
-                    content: `Game took too long, play a little faster next time!`,
+                    content: 'Game took too long, play a little faster next time!',
                     components: makeRows(game.board, true)
                 }));
             }
         });
     }
-} 
+}

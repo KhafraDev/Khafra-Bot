@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
-import { bold } from '@khaf/builders';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { bold } from '@discordjs/builders';
 import { plural } from '#khaf/utility/String.js';
 
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
@@ -15,16 +15,16 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
         const id = interaction.options.getString('id', true);
         const idList = id.includes(',')
             ? id.split(/[ ,]+/g).filter(v => uuidRegex.test(v))
             : [id.trim()].filter(v => uuidRegex.test(v));
 
         if (idList.length === 0) {
-            return `❌ No UUIDs provided were valid, try again!`;
+            return '❌ No UUIDs provided were valid, try again!';
         }
-        
+
         const rows = await sql`
             DELETE FROM "kbReminders"
             WHERE 
@@ -33,6 +33,9 @@ export class kSubCommand extends InteractionSubCommand {
             RETURNING "id";
         `;
 
-        return `✅ Deleted ${bold(`${rows.length}`)} row${plural(rows.length)}!`;
+        return {
+            content: `✅ Deleted ${bold(`${rows.count}`)} row${plural(rows.count)}!`,
+            ephemeral: true
+        }
     }
 }

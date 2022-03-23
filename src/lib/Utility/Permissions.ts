@@ -1,6 +1,6 @@
 import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
-import { inlineCode } from '@khaf/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { inlineCode } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { GuildMember, PermissionResolvable, RecursiveReadonlyArray, Role } from 'discord.js';
 
 const isRecursiveReadonlyArray = <T>(item: unknown):
@@ -35,8 +35,8 @@ export const resolvePerms = (perms: PermissionResolvable): bigint => {
  * Check if a user or role has permissions in a channel.
  */
 export const hasPerms = (
-    channel: unknown, 
-    memberOrRole: unknown, 
+    channel: unknown,
+    memberOrRole: unknown,
     perms: PermissionResolvable
 ): boolean => {
     if (typeof channel === 'undefined' || channel === null)
@@ -60,7 +60,7 @@ export const hierarchy = (
     strict = true
 ): boolean => {
     if (!a || !b) return false;
-    
+
     const cond = strict
         ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
         : a.roles.highest.comparePositionTo(b.roles.highest) >= 0;

@@ -1,6 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
-import { PermissionFlagsBits } from 'discord-api-types/v9';
+import { ApplicationCommandOptionType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -21,7 +20,7 @@ export class kInteraction extends Interactions {
                 }
             ]
         };
-        
+
         super(sc, {
             defer: true,
             permissions: [

@@ -1,9 +1,9 @@
 import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { hyperlink, inlineCode, type Embed as MessageEmbed } from '@khaf/builders';
+import { hyperlink, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v9';
+import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -60,7 +60,7 @@ export class kInteraction extends Interactions {
                 .trim();
 
             const line = `[${track.name}](${track.external_urls.spotify}) by ${inlineCode(artistNames)}\n`;
-            
+
             if (desc.length + line.length > 2048) break;
 
             desc += line;
@@ -70,4 +70,4 @@ export class kInteraction extends Interactions {
             .setDescription(desc)
             .setThumbnail(image.url);
     }
-} 
+}
