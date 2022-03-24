@@ -26,6 +26,7 @@
   "dependencies": {
     "@discordjs/builders": "^0.13.0-dev.1646913825.dcd4797",
     "@discordjs/rest": "^0.4.0-dev.1646913818.dcd4797",
+    "@imagemagick/magick-wasm": "^0.0.10",
     "@napi-rs/canvas": "^0.1.21",
     "@skyra/gifenc": "^1.0.0",
     "discord-api-types": "^0.29.0",
@@ -58,8 +59,7 @@
     "v1.10": "npm run dev:build && node scripts/dump",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky install",
-    "typesafe-i18n": "typesafe-i18n"
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",

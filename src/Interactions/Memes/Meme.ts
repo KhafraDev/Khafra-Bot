@@ -118,6 +118,23 @@ export class kInteraction extends Interactions {
                             description: 'Image to deep fry.'
                         }
                     ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'magik',
+                    description: 'Magik-ify a person or image!',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.User,
+                            name: 'person',
+                            description: 'Person\'s avatar to magik-ify.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Attachment,
+                            name: 'image',
+                            description: 'Image to magik-ify.'
+                        }
+                    ]
                 }
             ]
         };
