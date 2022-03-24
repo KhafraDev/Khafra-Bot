@@ -2,9 +2,6 @@
 build
 *.js
 !scripts/*.js
-assets/*.db
-assets/*.db-shm
-assets/*.db-wal
 assets/interaction_last_deployed.txt
 *.rdb
 
