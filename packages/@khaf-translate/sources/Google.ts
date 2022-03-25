@@ -4,7 +4,7 @@
  * that removes the token entirely.
  */
 
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URL, URLSearchParams } from 'url';
 
 type Opts = { to?: string, from?: string };
@@ -64,14 +64,14 @@ export const translate = async (
     params.append('tl', opts.to);
     params.append('q', text);
 
-    const r = await fetch(new URL(`?${params}`, url), {
+    const { body } = await request(new URL(`?${params}`, url), {
         headers: {
             'Accept-Encoding': 'gzip, deflate, br',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0'
         }
     });
     // setting real types for this is a waste of time
-    const j = await r.json() as unknown[][][];
+    const j = await body.json() as unknown[][][];
 
     if (!Array.isArray(j) || !Array.isArray(j[0]))
         return 'Invalid response received!';

@@ -1,7 +1,9 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { INPMPackage } from './types/NPM';
 
-export const npm = async (package_name: string): Promise<INPMPackage> => {
-    const res = await fetch('https://registry.npmjs.com/' + encodeURIComponent(package_name));
-    return await res.json() as INPMPackage;
+export const npm = async (packageName: string): Promise<INPMPackage> => {
+    const name = encodeURIComponent(packageName);
+    const { body } = await request('https://registry.npmjs.com/' + name);
+
+    return body.json() as Promise<INPMPackage>;
 }

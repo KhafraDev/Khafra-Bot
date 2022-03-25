@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface KongregateMetrics {
     gameplays_count: number
@@ -28,8 +28,8 @@ export const Kongregate = async (): Promise<KongregateMetrics | null> => {
         return cache.res;
     }
 
-    const res = await fetch('http://www.kongregate.com/games/Platonic/synergism/metrics.json');
-    const json = await res.json() as KongregateMetrics;
+    const { body } = await request('http://www.kongregate.com/games/Platonic/synergism/metrics.json');
+    const json = await body.json() as KongregateMetrics;
 
     cache.res = json;
     cache.lastFetched = Date.now();

@@ -1,7 +1,7 @@
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { setInterval } from 'timers';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 const art = 'https://hacker-news.firebaseio.com/v0/item/{id}.json';
@@ -21,8 +21,8 @@ interface Story {
 }
 
 const fetchTop = async (): Promise<number[]> => {
-    const r = await fetch(top);
-    const j = await r.json() as number[];
+    const { body } = await request(top);
+    const j = await body.json() as number[];
 
     return j.slice(0, 10);
 }
@@ -32,8 +32,8 @@ const fetchEntries = async (): Promise<Story[]> => {
     const stories: Story[] = [];
 
     for (const id of ids) {
-        const r = await fetch(art.replace('{id}', `${id}`));
-        const j = await r.json() as Story;
+        const { body } = await request(art.replace('{id}', `${id}`));
+        const j = await body.json() as Story;
         stories.push(j);
     }
 

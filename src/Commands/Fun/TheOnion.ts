@@ -4,7 +4,7 @@ import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface ITheOnionAPI {
     data: {
@@ -92,8 +92,8 @@ export class kCommand extends Command {
         const i = Math.floor(Math.random() * rss.results.size);
         const id = [...rss.results][i].guid;
 
-        const r = await fetch(`https://theonion.com/api/core/corepost/getList?id=${id}`);
-        const j = await r.json() as ITheOnionAPI;
+        const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`);
+        const j = await body.json() as ITheOnionAPI;
 
         if (j.data.length === 0)
             return Embed.error(`

@@ -5,7 +5,7 @@ import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 // Rinse - optifine and migrator cape
 // Bes - optifine cape
@@ -60,13 +60,17 @@ export class kSubCommand extends InteractionSubCommand {
         const ctx = canvas.getContext('2d');
 
         for (const url of urls) {
-            const r = await fetch(url);
+            const { body, statusCode } = await request(url);
 
-            if (urls.length === 1 && r.status !== 200) {
-                return '❌ Player has no capes, or an error occurred rendering them!';
+            if (statusCode !== 200) {
+                if (urls.length === 1) {
+                    return '❌ Player has no capes, or an error occurred rendering them!';
+                }
+
+                continue; // so we don't get an invalid body (ie. user doesn't have optifine cape)
             }
 
-            const b = Buffer.from(await r.arrayBuffer());
+            const b = Buffer.from(await body.arrayBuffer());
 
             const cape = new Image();
             cape.src = b;

@@ -1,7 +1,7 @@
-import { fetch, Headers } from 'undici';
+import { Buffer } from 'buffer';
 import crypto from 'crypto';
 import { env } from 'process';
-import { Buffer } from 'buffer';
+import { request, type Dispatcher } from 'undici';
 import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './types/Pocket';
 
 const limits: PocketRateLimit = {
@@ -45,7 +45,7 @@ export class Pocket {
             );
         }
 
-        const res = await fetch('https://getpocket.com/v3/oauth/request', {
+        const { body, headers, statusCode } = await request('https://getpocket.com/v3/oauth/request', {
             method: 'POST',
             headers: {
                 'Host': 'getpocket.com',
@@ -58,16 +58,15 @@ export class Pocket {
             })
         });
 
-        setRateLimits(res.headers);
-        if (!res.ok) {
+        setRateLimits(headers);
+        if (statusCode !== 200) {
             throw new Error(
-                res.headers.get('X-Error-Code') + ': ' +
-                res.headers.get('X-Error')
-            )
+                headers['x-error-code'] + ': ' + headers['x-error']
+            );
         }
 
-        const body = await res.json() as { code: string };
-        this.request_token = body.code;
+        const responseBody = await body.json() as { code: string };
+        this.request_token = responseBody.code;
         return this.request_token;
     }
 
@@ -89,7 +88,7 @@ export class Pocket {
             );
         }
 
-        const res = await fetch('https://getpocket.com/v3/oauth/authorize', {
+        const { body, headers, statusCode } = await request('https://getpocket.com/v3/oauth/authorize', {
             method: 'POST',
             headers: {
                 'Host': 'getpocket.com',
@@ -102,17 +101,16 @@ export class Pocket {
             })
         });
 
-        setRateLimits(res.headers);
-        if (!res.ok) {
+        setRateLimits(headers);
+        if (statusCode !== 200) {
             throw new Error(
-                res.headers.get('X-Error-Code') + ': ' +
-                res.headers.get('X-Error')
-            )
+                headers['x-error-code'] + ': ' + headers['x-error']
+            );
         }
 
-        const body = await res.json() as { access_token: string, username: string };
-        this.access_token = body.access_token;
-        this.username =     body.username;
+        const responseBody = await body.json() as { access_token: string, username: string };
+        this.access_token = responseBody.access_token;
+        this.username =     responseBody.username;
         return this.access_token;
     }
 
@@ -126,7 +124,7 @@ export class Pocket {
             );
         }
 
-        const res = await fetch('https://getpocket.com/v3/get', {
+        const { body, headers, statusCode } = await request('https://getpocket.com/v3/get', {
             method: 'POST',
             headers: {
                 'Host': 'getpocket.com',
@@ -142,15 +140,14 @@ export class Pocket {
             })
         });
 
-        setRateLimits(res.headers);
-        if (!res.ok) {
+        setRateLimits(headers);
+        if (statusCode !== 200) {
             throw new Error(
-                res.headers.get('X-Error-Code') + ': ' +
-                res.headers.get('X-Error')
-            )
+                headers['x-error-code'] + ': ' + headers['x-error']
+            );
         }
 
-        return await res.json() as PocketGetResults;
+        return await body.json() as PocketGetResults;
     }
 
     async add (url: string | import('url').URL, title?: string): Promise<PocketAddResults> {
@@ -163,7 +160,7 @@ export class Pocket {
             );
         }
 
-        const res = await fetch('https://getpocket.com/v3/add', {
+        const { body, headers, statusCode } = await request('https://getpocket.com/v3/add', {
             method: 'POST',
             headers: {
                 'Host': 'getpocket.com',
@@ -179,15 +176,14 @@ export class Pocket {
             })
         });
 
-        setRateLimits(res.headers);
-        if (!res.ok) {
+        setRateLimits(headers);
+        if (statusCode !== 200) {
             throw new Error(
-                res.headers.get('X-Error-Code') + ': ' +
-                res.headers.get('X-Error')
-            )
+                headers['x-error-code'] + ': ' + headers['x-error']
+            );
         }
 
-        return res.json() as Promise<PocketAddResults>;
+        return body.json() as Promise<PocketAddResults>;
     }
 
     encrypt = (text: string): string => {
@@ -216,11 +212,11 @@ export class Pocket {
     }
 }
 
-const setRateLimits = (headers: Headers): void => {
+const setRateLimits = (headers: Dispatcher.ResponseData['headers']): void => {
     const keys = Object.keys(limits).map(k => k.toLowerCase());
     for (const [header, value] of Object.entries(headers)) {
         if (keys.includes(header.toLowerCase())) {
-            limits[header.toLowerCase()] = +value;
+            limits[header.toLowerCase()] = Number(value);
         }
     }
 }

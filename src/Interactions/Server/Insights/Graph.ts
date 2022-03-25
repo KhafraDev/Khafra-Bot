@@ -5,6 +5,7 @@ import { inlineCode } from '@discordjs/builders';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { URLSearchParams } from 'url';
+import { request } from 'undici';
 
 interface Insights {
     k_date: Date
@@ -19,14 +20,14 @@ const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> =
         query.set(key, `${value}`);
     }
 
-    return async () => {
-        const res = await fetch(`https://image-charts.com/chart.js/2.8.0?${query}`, {
+    return async (): Promise<ArrayBuffer> => {
+        const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
             headers: {
                 'User-Agent': 'PseudoBot'
             }
         });
 
-        return await res.arrayBuffer();
+        return body.arrayBuffer();
     }
 }
 

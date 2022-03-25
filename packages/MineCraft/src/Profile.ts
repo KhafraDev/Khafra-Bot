@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { fetch } from 'undici';
+import { request } from 'undici';
 import type { Profile, ProfilePropertiesValue } from '..';
 
 const base = 'https://sessionserver.mojang.com/session/minecraft/profile/' as const;
@@ -10,8 +10,8 @@ const base = 'https://sessionserver.mojang.com/session/minecraft/profile/' as co
 export async function getProfile (uuid: string): Promise<Profile>;
 export async function getProfile (uuid: string, modifier: 'SKIN' | 'CAPE'): Promise<string[]>;
 export async function getProfile (uuid: string, modifier?: 'SKIN' | 'CAPE'): Promise<Profile | string[]> {
-    const r = await fetch(`${base}${uuid}`);
-    const j = await r.json() as Profile;
+    const { body } = await request(`${base}${uuid}`);
+    const j = await body.json() as Profile;
 
     if (modifier === undefined) {
         return j;

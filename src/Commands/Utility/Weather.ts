@@ -25,8 +25,8 @@ export class kCommand extends Command {
     async init (_message: Message, { content }: Arguments): Promise<string | UnsafeEmbed> {
         const results = await weather(content);
 
-        if ('status' in results) {
-            return `❌ An unexpected error occurred! Received status ${results.status} with text ${results.statusText}. Contact the bot owner to fix!`;
+        if (results === null) {
+            return '❌ An unexpected error occurred!';
         } else if (results.Type) {
             return `❌ ${results.Type}`;
         }

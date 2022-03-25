@@ -5,7 +5,7 @@ import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builder
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URL } from 'url';
 
 const enum Subcommands {
@@ -132,13 +132,13 @@ export class kInteraction extends Interactions {
             api.searchParams.append('q', query);
 
             await interaction.deferReply();
-            const [err, res] = await dontThrow(fetch(api));
+            const [err, res] = await dontThrow(request(api));
 
             if (err !== null) {
                 return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
             }
 
-            const j = await res.json() as EmojiKitchen;
+            const j = await res.body.json() as EmojiKitchen;
 
             if (j.results.length === 0) {
                 return '❌ One or more emojis you provided are not supported, or might not work as a combo.';
@@ -156,13 +156,13 @@ export class kInteraction extends Interactions {
             if (listOpt) {
                 if (list.length === 0) {
                     await interaction.deferReply();
-                    const [err, res] = await dontThrow(fetch(supportedListURL));
+                    const [err, res] = await dontThrow(request(supportedListURL));
 
                     if (err !== null) {
                         return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
                     }
 
-                    const listJoined = await res.text();
+                    const listJoined = await res.body.text();
                     const split = listJoined.trim().split(/\r?\n/g);
 
                     list.push(...split);

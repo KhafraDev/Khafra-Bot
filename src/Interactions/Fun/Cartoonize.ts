@@ -5,7 +5,7 @@ import { type UnsafeEmbed } from '@discordjs/builders';
 import { Buffer } from 'buffer';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -35,8 +35,8 @@ export class kInteraction extends Interactions {
             return Embed.error('Failed to extract the image from the HTML. 😕');
         }
 
-        const imageRes = await fetch(cartoon);
-        const imageBuffer = Buffer.from(await imageRes.arrayBuffer());
+        const { body } = await request(cartoon);
+        const imageBuffer = Buffer.from(await body.arrayBuffer());
         const attachment = new MessageAttachment(imageBuffer, 'cartoonized.jpeg');
 
         return {

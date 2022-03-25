@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URLSearchParams } from 'url';
 
 import {
@@ -14,13 +14,13 @@ export const search = async (query: string): Promise<WikipediaSearch> => {
     /** @link https://api.wikimedia.org/wiki/Documentation/Code_samples/Search_Wikipedia#Searching_for_Wikipedia_articles_using_Python */
     const u = `https://api.wikimedia.org/core/v1/wikipedia/en/search/page?${p}`;
 
-    const r = await fetch(u, {
+    const { body } = await request(u, {
         headers: {
             'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)'
         }
     });
 
-    return await r.json() as WikipediaSearch;
+    return body.json() as Promise<WikipediaSearch>;
 }
 
 /**
@@ -37,11 +37,11 @@ export const getArticleById = async (id: number): Promise<WikipediaSummary<numbe
     /** @link https://stackoverflow.com/a/28401782/15299271 */
     const u = `https://en.wikipedia.org/w/api.php?${p}&exintro&explaintext`;
 
-    const r = await fetch(u, {
+    const { body } = await request(u, {
         headers: {
             'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)'
         }
     });
 
-    return await r.json() as WikipediaSummary<typeof id>;
+    return body.json() as Promise<WikipediaSummary<typeof id>>;
 }

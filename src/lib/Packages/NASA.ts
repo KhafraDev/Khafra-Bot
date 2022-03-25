@@ -1,6 +1,6 @@
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
 import { env } from 'process';
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URLSearchParams } from 'url';
 
 interface IAPOD {
@@ -39,9 +39,13 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
     if (ratelimit.remaining === 0 && Date.now() - ratelimit.firstRequest < hour || cache.length >= 5)
         return cache.shift() ?? null;
 
-    const r = await fetch(`https://api.nasa.gov/planetary/apod?${params}`);
+    const {
+        body,
+        headers,
+        statusCode
+    } = await request(`https://api.nasa.gov/planetary/apod?${params}`);
 
-    const XRateLimitRemaining = r.headers.get('x-ratelimit-remaining');
+    const XRateLimitRemaining = headers['x-ratelimit-remaining'];
     ratelimit.remaining = Number(XRateLimitRemaining);
 
     if (ratelimit.firstRequest === -1) {
@@ -50,12 +54,12 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
         ratelimit.firstRequest = -1;
     }
 
-    if (!r.ok) {
-        void consumeBody(r);
+    if (statusCode !== 200) {
+        void consumeBody({ body });
         return cache.shift() ?? null;
     }
 
-    const j = await r.json() as IAPOD[];
+    const j = await body.json() as IAPOD[];
 
     for (const { copyright, hdurl, url, title } of j) {
         cache.push({ copyright, link: hdurl ?? url, title });

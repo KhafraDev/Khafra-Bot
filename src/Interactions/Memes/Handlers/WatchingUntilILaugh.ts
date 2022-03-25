@@ -5,7 +5,7 @@ import { Buffer } from 'buffer';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 let image: Image | undefined;
 
@@ -45,8 +45,8 @@ export class kSubCommand extends InteractionSubCommand {
             image.src = readFileSync(templates('watchinguntillaugh.png'));
         }
 
-        const r = await fetch(thumbnail.proxyURL);
-        const b = Buffer.from(await r.arrayBuffer());
+        const { body } = await request(thumbnail.proxyURL);
+        const b = Buffer.from(await body.arrayBuffer());
 
         const avatar = new Image();
         avatar.width = avatar.height = 256;

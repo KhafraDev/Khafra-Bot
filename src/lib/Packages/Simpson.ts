@@ -1,7 +1,7 @@
 // https://www.thisfuckeduphomerdoesnotexist.com/
 // had to include this one
 
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface ISimpson {
     url: string
@@ -16,17 +16,18 @@ const url = 'https://www.thisfuckeduphomerdoesnotexist.com/';
 let key: string | null = null;
 
 export const fetchOGKey = async (): Promise<string | null> => {
-    const res = await fetch(url);
-    const text = await res.text();
+    const { body } = await request(url);
+    const text = await body.text();
 
+    // TODO: use fast-xml-parser? Probably more reliable.
     return /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
 }
 
 export const thisSimpsonDoesNotExist = async (): Promise<string> => {
     key ??= await fetchOGKey();
 
-    const res = await fetch(`${url}item/${key}`);
-    const json = await res.json() as ISimpson;
+    const { body } = await request(`${url}item/${key}`);
+    const json = await body.json() as ISimpson;
 
     key = json.next_item_key;
     return json.next_item_url;

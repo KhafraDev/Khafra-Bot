@@ -4,7 +4,7 @@ import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } 
 import { ChatInputCommandInteraction } from 'discord.js';
 import { env } from 'process';
 import { setTimeout } from 'timers/promises';
-import { fetch, type Response } from 'undici';
+import { request, type Dispatcher } from 'undici';
 import { URLSearchParams } from 'url';
 
 const queue = new AsyncQueue();
@@ -75,14 +75,14 @@ export class kInteraction extends Interactions {
 
         await queue.wait();
 
-        let resNom: Response | undefined;
+        let resNom: Dispatcher.ResponseData | undefined;
         const queryNom = new URLSearchParams();
         queryNom.set('format', 'jsonv2');
         queryNom.set('limit', '1');
         queryNom.set('q', location);
 
         try {
-            resNom = await fetch(
+            resNom = await request(
                 `https://nominatim.openstreetmap.org/search.php?${queryNom}`,
                 {
                     headers: {
@@ -99,14 +99,14 @@ export class kInteraction extends Interactions {
             );
         }
 
-        const jNom = await resNom.json() as [NominatimResponse];
+        const jNom = await resNom.body.json() as [NominatimResponse];
         await queue2.wait();
 
         if (!isValidResponse(jNom)) {
             return '❌ The location provided could not be found!';
         }
 
-        let resTDB: Response | undefined;
+        let resTDB: Dispatcher.ResponseData | undefined;
         const queryTDB = new URLSearchParams();
         queryTDB.set('key', env.TIMEZONEDB!);
         queryTDB.set('format', 'json');
@@ -115,14 +115,14 @@ export class kInteraction extends Interactions {
         queryTDB.set('lng', jNom[0].lon);
 
         try {
-            resTDB = await fetch(`https://api.timezonedb.com/v2.1/get-time-zone?${queryTDB}`);
+            resTDB = await request(`https://api.timezonedb.com/v2.1/get-time-zone?${queryTDB}`);
         } finally {
             void setTimeout(1000).then(
                 () => queue2.dequeue()
             );
         }
 
-        const jTDB = await resTDB.json() as TimezoneDBResponse;
+        const jTDB = await resTDB.body.json() as TimezoneDBResponse;
 
         return new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(
             'en-US',

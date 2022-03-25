@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URLSearchParams } from 'url';
 import { env } from 'process';
 
@@ -49,8 +49,8 @@ export const YouTube = async (q: string[] | string): Promise<YouTubeSearchResult
     params.append('key', env.GOOGLE_API!);
 
 
-    const r = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
-    const j = await r.json() as YouTubeSearchResults | YouTubeError;
+    const { body } = await request(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
+    const j = await body.json() as YouTubeSearchResults | YouTubeError;
 
     return j;
 }

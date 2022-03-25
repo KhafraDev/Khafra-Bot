@@ -1,7 +1,7 @@
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { env } from 'process';
-import { fetch, Headers } from 'undici';
+import { request, type Dispatcher } from 'undici';
 import { URL } from 'url';
 
 interface ImgurAlbum {
@@ -81,10 +81,11 @@ export class Imgur {
         'x-ratelimit-userreset': -1
     }
 
-    static setRateLimits(headers: Headers): void {
+    static setRateLimits(headers: Dispatcher.ResponseData['headers']): void {
         for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
-            if (headers.has(key)) {
-                Imgur.ratelimit[key] = Number(headers.get(key));
+            const k = key.toLowerCase() as keyof typeof Imgur.ratelimit;
+            if (k in headers) {
+                Imgur.ratelimit[k] = Number(headers[k]);
             }
         }
     }
@@ -126,7 +127,7 @@ export class Imgur {
 
         if (typeof hash !== 'string') return;
 
-        const [err, r] = await dontThrow(fetch(`https://api.imgur.com/3/album/${hash}`, {
+        const [err, r] = await dontThrow(request(`https://api.imgur.com/3/album/${hash}`, {
             headers: {
                 'Authorization': `Client-ID ${env.IMGUR_CLIENT_ID}`
             }
@@ -138,7 +139,7 @@ export class Imgur {
 
         // on bad requests, the api will sometimes return html
         // this is a precaution because the api will not always return json
-        const [jErr, j] = await dontThrow(r.json() as Promise<ImgurAlbum>);
+        const [jErr, j] = await dontThrow(r.body.json() as Promise<ImgurAlbum>);
 
         if (jErr !== null) return;
 

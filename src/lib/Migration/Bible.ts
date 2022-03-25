@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { ZipFile } from '#khaf/utility/Unzip.js';
 import { Buffer } from 'buffer';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface IBibleVerse {
     idx: number
@@ -112,8 +112,8 @@ export const titles = {
 export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i');
 
 export const parseBible = async (): Promise<Omit<IBibleVerse, 'idx'>[]> => {
-    const res = await fetch('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
-    const buffer = await res.arrayBuffer();
+    const { body } = await request('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
+    const buffer = await body.arrayBuffer();
 
     const zip = ZipFile(Buffer.from(buffer));
     const bible = zip.toString('utf-8');

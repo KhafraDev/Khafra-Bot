@@ -7,7 +7,7 @@ import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 const options: ImageURLOptions = { extension: 'png', size: 256 };
 const mw = once(initializeImageMagick);
@@ -51,8 +51,8 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const avatarRes = await fetch(typeof avatarURL === 'string' ? avatarURL : avatarURL.proxyURL);
-        const buffer = new Uint8Array(await avatarRes.arrayBuffer());
+        const { body } = await request(typeof avatarURL === 'string' ? avatarURL : avatarURL.proxyURL);
+        const buffer = new Uint8Array(await body.arrayBuffer());
 
         const init = await mw();
 

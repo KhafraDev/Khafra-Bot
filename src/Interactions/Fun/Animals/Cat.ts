@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { ChatInputCommandInteraction } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface RandomCat {
     file: string
@@ -17,8 +17,8 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         await interaction.deferReply();
 
-        const r = await fetch('https://aws.random.cat/meow');
-        const j = await r.json() as RandomCat;
+        const { body } = await request('https://aws.random.cat/meow');
+        const j = await body.json() as RandomCat;
 
         return j.file;
     }

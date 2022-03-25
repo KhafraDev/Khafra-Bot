@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 export interface MDNSearchResult {
     mdn_url: string
@@ -55,8 +55,8 @@ export const fetchMDN = async (q: string, opts = defaultOpts): Promise<MDNResult
 
     q = encodeURIComponent(q.replace(/\s/g, '+'));
 
-    const r = await fetch(`https://developer.mozilla.org/api/v1/search/${opts.locale}?q=${q}`);
-    const j = await r.json() as MDNResult | MDNError;
+    const { body } = await request(`https://developer.mozilla.org/api/v1/search/${opts.locale}?q=${q}`);
+    const j = await body.json() as MDNResult | MDNError;
 
     return j;
 }

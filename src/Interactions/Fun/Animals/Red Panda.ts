@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { ChatInputCommandInteraction } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface SomeRandomPanda {
     link: string
@@ -17,8 +17,8 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         await interaction.deferReply();
 
-        const r = await fetch('https://some-random-api.ml/img/red_panda');
-        const j = await r.json() as SomeRandomPanda;
+        const { body } = await request('https://some-random-api.ml/img/red_panda');
+        const j = await body.json() as SomeRandomPanda;
 
         return j.link;
     }

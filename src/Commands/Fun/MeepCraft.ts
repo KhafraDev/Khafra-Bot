@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface IMCOnline {
     online: true,
@@ -58,8 +58,8 @@ interface IMCOffline {
 }
 
 const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
-    const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
-    const j = await r.json() as IMCOnline | IMCOffline;
+    const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com');
+    const j = await body.json() as IMCOnline | IMCOffline;
 
     return { playersOnline: j.online ? j.players.online : 0 };
 }

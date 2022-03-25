@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface StrawpollBody {
     poll: Partial<{
@@ -177,7 +177,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const body: StrawpollBody['poll'] = {
+        const poll: StrawpollBody['poll'] = {
             title: interaction.options.getString('title', true),
             answers: answers,
             priv: interaction.options.getBoolean('private') ?? true,
@@ -190,12 +190,12 @@ export class kInteraction extends Interactions {
             captcha: interaction.options.getBoolean('captcha') ?? true
         };
 
-        const r = await fetch('https://strawpoll.com/api/poll', {
+        const { body } = await request('https://strawpoll.com/api/poll', {
             method: 'POST',
-            body: JSON.stringify({ poll: body } as StrawpollBody)
+            body: JSON.stringify({ poll: poll } as StrawpollBody)
         });
 
-        const j = await r.json() as { admin_key: string, content_id: string, success: 1 | 0 };
+        const j = await body.json() as { admin_key: string, content_id: string, success: 1 | 0 };
 
         return {
             embeds: [

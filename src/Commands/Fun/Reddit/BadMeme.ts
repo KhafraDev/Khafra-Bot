@@ -94,7 +94,7 @@ export class kCommand extends Command {
                 .then(([e]) => e !== null && collector.stop());
         });
         collector.once('end', (c, r) => {
-            if (r === 'deny') {
+            if (r === 'deny' && c.size !== 0) {
                 return void dontThrow(c.last()!.update({ components: disableAll(m) }));
             }
 

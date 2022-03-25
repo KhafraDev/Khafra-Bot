@@ -6,7 +6,7 @@ import { X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser';
 import { join } from 'path';
 import { clearInterval, setInterval, setTimeout } from 'timers';
 import { setTimeout as delay } from 'timers/promises';
-import { fetch, type Response } from 'undici';
+import { request, type Dispatcher } from 'undici';
 
 const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
@@ -72,25 +72,21 @@ export class RSSReader<T> {
      * Very rarely, a network/server side error will occur. This function retries requests
      * up to 10 times before giving up.
      */
-    forceFetch = async (): Promise<Response | undefined> => {
+    forceFetch = async (): Promise<Dispatcher.ResponseData | undefined> => {
         for (let i = 0; i < 10; i++) {
             try {
                 const ac = new AbortController();
                 setTimeout(ac.abort.bind(ac), 15000).unref();
 
-                const res = await fetch(this.url, {
+                return request(this.url, {
                     signal: ac.signal,
                     headers: {
                         'User-Agent': `Khafra-Bot (https://github.com/khafradev/Khafra-Bot, v${config.version})`
                     }
                 });
-
-                return res;
             } catch (e) {
-                if (!(e instanceof Error))
-                    return;
-                if (e.name === 'AbortError')
-                    break;
+                if (!(e instanceof Error)) return;
+                if (e.name === 'AbortError') break; // timed out :(
 
                 await delay(1000, undefined, { ref: false });
             }
@@ -99,7 +95,7 @@ export class RSSReader<T> {
 
     parse = async (): Promise<void> => {
         const r = await this.forceFetch();
-        const xml = await r?.text();
+        const xml = await r?.body.text();
 
         const validXML = xml ? XMLValidator.validate(xml) : false;
         if (typeof xml !== 'string' || validXML !== true) {
@@ -109,9 +105,9 @@ export class RSSReader<T> {
             }
             logger.warn(`${this.url} has been disabled as invalid XML has been fetched.`);
             return clearInterval(this.#interval!);
-        } else if (r && r.redirected) {
-            logger.info(`${this.url} redirected you to ${r.url} (redirected=${r.redirected})`);
         }
+
+        // TODO log if request was redirected
 
         // if the XML is valid, we can clear the old cache
         this.results.clear();

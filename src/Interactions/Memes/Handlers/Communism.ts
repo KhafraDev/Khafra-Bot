@@ -7,7 +7,7 @@ import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 import { buffer } from 'stream/consumers';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 // Descriptive comment.
 const TWO_FIFTY_SIX = 256;
@@ -32,8 +32,8 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async image (avatarURL: string): Promise<Buffer> {
-        const r = await fetch(avatarURL);
-        const b = Buffer.from(await r.arrayBuffer());
+        const { body } = await request(avatarURL);
+        const b = Buffer.from(await body.arrayBuffer());
 
         const avatar = new Image();
         avatar.width = avatar.height = TWO_FIFTY_SIX;

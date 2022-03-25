@@ -62,4 +62,4 @@ type locationObservation = {
     utcTime: Date
 }[]
 
-export declare const weather: (q: string) => Promise<import("undici").Response | HereResult>;
+export declare const weather: (q: string) => Promise<HereResult | null>;

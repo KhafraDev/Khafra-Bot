@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface IEmoji {
     name: string
@@ -50,8 +50,8 @@ export class kCommand extends Command {
         }
 
         if (cache.length === 0) {
-            const r = await fetch('https://emojihub.herokuapp.com/api/all');
-            const j = await r.json() as IEmoji[];
+            const { body } = await request('https://emojihub.herokuapp.com/api/all');
+            const j = await body.json() as IEmoji[];
 
             cache.push(...j);
         }

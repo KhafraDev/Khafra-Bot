@@ -29,8 +29,8 @@ export class kInteraction extends Interactions {
         const location = interaction.options.getString('location', true);
         const results = await weather(location);
 
-        if ('status' in results) {
-            return `❌ An unexpected error occurred! Received status ${results.status} with text ${results.statusText}. Contact the bot owner to fix!`;
+        if (results === null) {
+            return '❌ An unexpected error occurred!';
         } else if (results.Type) {
             return `❌ ${results.Type}`;
         }

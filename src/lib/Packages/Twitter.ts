@@ -5,7 +5,7 @@
 
 import { Buffer } from 'buffer';
 import { env } from 'process';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 type Indices = [number, number];
 type Media = {
@@ -121,7 +121,7 @@ let token: string | null = null;
 
 const getTwitterOAUTH = async (): Promise<string> => {
     const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64');
-    const r = await fetch('https://api.twitter.com/oauth2/token', {
+    const { body } = await request('https://api.twitter.com/oauth2/token', {
         method: 'POST',
         body: 'grant_type=client_credentials',
         headers: {
@@ -129,20 +129,20 @@ const getTwitterOAUTH = async (): Promise<string> => {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         }
     });
-    const j = await r.json() as OAuth;
+    const j = await body.json() as OAuth;
     return `${j.token_type} ${j.access_token}`;
 }
 
 export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
     token ??= await getTwitterOAUTH();
 
-    const r = await fetch(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
+    const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
         headers: {
             Authorization: token
         }
     });
 
-    const j = await r.json() as ITweet;
+    const j = await body.json() as ITweet;
 
     const media = j.extended_entities?.media;
     if (!media || media.length === 0)

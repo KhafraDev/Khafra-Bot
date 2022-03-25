@@ -91,6 +91,7 @@ export class kInteraction extends Interactions {
         });
 
         c.once('end', (c) => {
+            if (c.size === 0) return; // user didn't use any buttons
             return void dontThrow(c.last()!.update({ components: disableAll(m) }))
         });
     }

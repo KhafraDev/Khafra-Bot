@@ -1,5 +1,5 @@
 import { decodeXML } from 'entities';
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URLSearchParams } from 'url';
 import { setInterval } from 'timers';
 import { Reddit } from './types/BadMeme.d';
@@ -55,8 +55,8 @@ export const badmeme = async (
         o.set('after', after.get(subreddit)!);
 
     // https://www.reddit.com/dev/api#GET_new
-    const r = await fetch(`https://www.reddit.com/r/${subreddit}/new.json?${o}`);
-    const j = await r.json() as Reddit;
+    const { body } = await request(`https://www.reddit.com/r/${subreddit}/new.json?${o}`);
+    const j = await body.json() as Reddit;
 
     if ('error' in j) {
         return j as {

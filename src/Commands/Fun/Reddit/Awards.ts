@@ -4,7 +4,7 @@ import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Reddit } from '@khaf/badmeme';
 import { Message } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 const PER_COIN = 1.99 / 500;
 
@@ -41,8 +41,8 @@ export class kCommand extends Command {
             `);
         }
 
-        const res = await fetch(`${url.href.replace(/.json$/, '')}.json`);
-        const json = await res.json() as [Reddit, Reddit];
+        const { body } = await request(`${url.href.replace(/.json$/, '')}.json`);
+        const json = await body.json() as [Reddit, Reddit];
 
         const post = json[0].data!.children[0].data;
         const coins = post.all_awardings.reduce(

@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 export interface IOpenLib {
     cover_i: number
@@ -71,8 +71,9 @@ interface IOpenLibRes {
 
 export const openLibrary = async (q: string): Promise<IOpenLibRes> => {
     q = encodeURIComponent(q.replace(/\s+/g, '+'));
-    const res = await fetch(`https://openlibrary.org/search.json?q=${q}&has_fulltext=true&limit=1`);
-    const json = await res.json() as IOpenLibRes;
+    // TODO: use URLSearchParams
+    const { body } = await request(`https://openlibrary.org/search.json?q=${q}&has_fulltext=true&limit=1`);
+    const json = await body.json() as IOpenLibRes;
 
     return json;
 }

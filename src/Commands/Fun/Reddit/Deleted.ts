@@ -10,7 +10,7 @@ import { Reddit } from '@khaf/badmeme';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { clearTimeout, setTimeout } from 'timers';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftError | null> => {
     const ac = new AbortController();
@@ -21,7 +21,7 @@ const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftEr
     const query = { query: { term: { id } } };
     const elasticURL = `https://elastic.pushshift.io/rs/submissions/_search?source=${JSON.stringify(query)}`;
 
-    const [err, r] = await dontThrow(fetch(elasticURL, {
+    const [err, r] = await dontThrow(request(elasticURL, {
         headers: {
             'Content-Type': 'application/json',
             'Referer': 'https://www.reddit.com/'
@@ -31,9 +31,9 @@ const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftEr
 
     clearTimeout(timeout);
     if (err !== null) return null;
-    if (!r.ok) return null;
+    if (r.statusCode !== 200) return null;
 
-    return await r.json() as PushShiftError | PushShiftGood;
+    return await r.body.json() as PushShiftError | PushShiftGood;
 }
 
 interface PushShiftError {

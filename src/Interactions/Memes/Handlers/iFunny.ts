@@ -5,7 +5,7 @@ import { createCanvas, Image } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 let image: Image | undefined;
 
@@ -45,8 +45,8 @@ export class kSubCommand extends InteractionSubCommand {
 
         ctx.drawImage(image, 0, 0);
 
-        const r = await fetch(attachment.proxyURL);
-        const b = Buffer.from(await r.arrayBuffer());
+        const { body } = await request(attachment.proxyURL);
+        const b = Buffer.from(await body.arrayBuffer());
 
         const avatar = new Image();
         avatar.width = avatar.height = 256;

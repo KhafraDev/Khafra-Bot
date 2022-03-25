@@ -1,4 +1,4 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { env } from 'process';
 
 interface IOwlBotWord {
@@ -21,12 +21,11 @@ export const owlbotio = async (word: string): Promise<IOwlBotWord | null> => {
         return null;
     }
 
-    const res = await fetch(`${url}${word}`, {
+    const { body } = await request(`${url}${word}`, {
         headers: {
             Authorization: `Token ${env.OWLBOTIO}`
         }
     });
-    const json = await res.json() as IOwlBotWord;
 
-    return json;
+    return body.json() as Promise<IOwlBotWord>;
 }

@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { ChatInputCommandInteraction } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface DogCEO {
     message: string
@@ -18,8 +18,8 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<string> {
         await interaction.deferReply();
 
-        const r = await fetch('https://dog.ceo/api/breeds/image/random');
-        const j = await r.json() as DogCEO;
+        const { body } = await request('https://dog.ceo/api/breeds/image/random');
+        const j = await body.json() as DogCEO;
 
         return j.message;
     }

@@ -4,7 +4,7 @@ import { inlineCode } from '@discordjs/builders';
 import { Buffer } from 'buffer';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
 
     async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
-        const [e, r] = await dontThrow(fetch(`https://qrcode.show/${text}`, {
+        const [e, r] = await dontThrow(request(`https://qrcode.show/${text}`, {
             headers: {
                 Accept: 'image/png'
             }
@@ -36,7 +36,7 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
         }
 
-        const buffer = Buffer.from(await r.arrayBuffer());
+        const buffer = Buffer.from(await r.body.arrayBuffer());
         const attachment = new MessageAttachment(buffer, 'qr.png')
             .setDescription('A QR Code!');
 

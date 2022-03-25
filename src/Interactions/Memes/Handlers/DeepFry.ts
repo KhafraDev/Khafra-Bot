@@ -4,7 +4,7 @@ import { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SKRSContext2D => {
     const data = ctx.getImageData(x, y, TWO_FIFTY_SIX, TWO_FIFTY_SIX);
@@ -72,11 +72,11 @@ export class kSubCommand extends InteractionSubCommand {
             return '❌ This file type is not supported.';
         }
 
-        const avatarRes = await fetch(avatarURL);
+        const { body } = await request(avatarURL);
 
         const image = new Image();
         image.width = image.height = TWO_FIFTY_SIX;
-        image.src = Buffer.from(await avatarRes.arrayBuffer());
+        image.src = Buffer.from(await body.arrayBuffer());
 
         const canvas = createCanvas(image.width, image.height);
         const ctx = canvas.getContext('2d');

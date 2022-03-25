@@ -5,7 +5,7 @@ import { ActionRow, bold, MessageActionRowComponent, UnsafeEmbed } from '@discor
 import { getSkin, UUID } from '@khaf/minecraft';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -31,8 +31,8 @@ export class kSubCommand extends InteractionSubCommand {
             return '❌ Player could not be found!';
         } else if (type === 'skin') {
             const skin = (await getSkin(uuid.id))[0];
-            const r = await fetch(skin);
-            const b = Buffer.from(await r.arrayBuffer());
+            const { body } = await request(skin);
+            const b = Buffer.from(await body.arrayBuffer());
 
             const attachment = new MessageAttachment(b, 'skin.png');
 
