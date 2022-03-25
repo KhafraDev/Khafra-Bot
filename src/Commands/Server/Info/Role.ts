@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message, Role } from 'discord.js';
@@ -27,10 +28,10 @@ export class kCommand extends Command {
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
 
         if (!(role instanceof Role)) {
-            return this.Embed.error('No role found!');
+            return Embed.error('No role found!');
         }
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setDescription(`
             ${role}
             

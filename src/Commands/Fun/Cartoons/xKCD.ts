@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
@@ -34,13 +35,13 @@ export class kCommand extends Command {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!');
         }
 
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);

@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { fetchMDN as mdn } from '@khaf/mdn';
 import { Message } from 'discord.js';
@@ -24,18 +25,18 @@ export class kCommand extends Command {
 
         if ('errors' in results) {
             const keys = Object.keys(results.errors);
-            return this.Embed.error(
+            return Embed.error(
                 // gets all errors and types of errors and joins them together.
                 keys.map(k => results.errors[k].map(e => e.message).join('\n')).join('\n')
             );
         }
 
         if (results.documents.length === 0)
-            return this.Embed.error('No results found!');
+            return Embed.error('No results found!');
 
         const best = results.documents.sort((a, b) => b.score - a.score);
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({
                 name: 'Mozilla Development Network',
                 iconURL: 'https://developer.mozilla.org/static/img/opengraph-logo.png'

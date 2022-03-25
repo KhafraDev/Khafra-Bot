@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
@@ -38,9 +39,9 @@ export class kCommand extends Command {
 
         const member = user && message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.error(`You do not have permission to ban ${member}!`);
+            return Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.error('No user id or user mentioned, no one was banned.');
+            return Embed.error('No user id or user mentioned, no one was banned.');
         }
 
         const row = new ActionRow<MessageActionRowComponent>().addComponents(
@@ -49,7 +50,7 @@ export class kCommand extends Command {
         );
 
         const msg = await message.reply({
-            embeds: [this.Embed.ok(`Are you sure you want to ban ${user}?`)],
+            embeds: [Embed.ok(`Are you sure you want to ban ${user}?`)],
             components: [row]
         });
 
@@ -63,14 +64,14 @@ export class kCommand extends Command {
 
         if (pressedError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.error(`Didn't get confirmation to ban ${user}!`)],
+                embeds: [Embed.error(`Didn't get confirmation to ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             });
 
@@ -83,14 +84,14 @@ export class kCommand extends Command {
 
         if (banError !== null) {
             return void button.editReply({
-                embeds: [this.Embed.error(`${user} isn't bannable!`)],
+                embeds: [Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
         }
 
         await button.editReply({
             embeds: [
-                this.Embed.ok(
+                Embed.ok(
                     `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` +
                     ' days worth of messages have been removed.'
                 )

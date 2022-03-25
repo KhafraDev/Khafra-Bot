@@ -2,6 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -33,7 +34,7 @@ export class kCommand extends Command {
 
     async init (message: Message<true>): Promise<UnsafeEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
-            return this.Embed.perms(
+            return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
@@ -43,9 +44,9 @@ export class kCommand extends Command {
         const channel = await getMentions(message, 'channels');
 
         if (!isText(channel)) {
-            return this.Embed.error(`${channel} is not a text channel!`);
+            return Embed.error(`${channel} is not a text channel!`);
         } else if (!hasPerms(channel, message.guild.me, basic)) {
-            return this.Embed.perms(channel, message.guild.me, basic);
+            return Embed.perms(channel, message.guild.me, basic);
         }
 
         const rows = await sql<kGuild[]>`
@@ -57,7 +58,7 @@ export class kCommand extends Command {
 
         cache.set(message.guild.id, rows[0]);
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
         `);
     }

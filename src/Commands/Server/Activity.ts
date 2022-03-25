@@ -1,6 +1,7 @@
 import { rest } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
@@ -51,16 +52,16 @@ export class kCommand extends Command {
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
 
         if (!isVoice(channel)) {
-            return this.Embed.error('Games can only be created in voice channels!');
+            return Embed.error('Games can only be created in voice channels!');
         } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return this.Embed.error('No channel with that name was found!');
+            return Embed.error('No channel with that name was found!');
         } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
-            return this.Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
+            return Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
         }
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.ok(`Please choose which activity you want! -> ${channel}`)
+                Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
                 new ActionRow<MessageActionRowComponent>().addComponents(
@@ -88,7 +89,7 @@ export class kCommand extends Command {
         if (discordError !== null) {
             return void dontThrow(m.edit({
                 embeds: [
-                    this.Embed.ok('No response, canceled the command.')
+                    Embed.ok('No response, canceled the command.')
                 ],
                 components: disableAll(m)
             }));
@@ -111,12 +112,12 @@ export class kCommand extends Command {
         ) as Promise<APIInvite>);
 
         if (fetchError !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
         }
 
         const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
         const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
 
-        return this.Embed.ok(str);
+        return Embed.ok(str);
     }
 }

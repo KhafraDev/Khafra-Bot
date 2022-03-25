@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import { Message } from 'discord.js';
@@ -33,7 +34,7 @@ export class kCommand extends Command {
         `;
 
         if (rows.length === 0)
-            return this.Embed.error(`
+            return Embed.error(`
             You haven't set-up Pocket integration!
 
             Try using the ${inlineCode('pocket')} command for more information.
@@ -46,7 +47,7 @@ export class kCommand extends Command {
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
 
-        return this.Embed.ok(formatted)
+        return Embed.ok(formatted)
             .setAuthor({
                 name: message.author.username + '\'s latest saves',
                 iconURL: message.author.displayAvatarURL(),

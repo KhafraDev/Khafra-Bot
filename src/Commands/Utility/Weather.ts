@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import { Message } from 'discord.js';
@@ -35,7 +36,7 @@ export class kCommand extends Command {
             return '❌ No location found!';
         }
 
-        return this.Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
+        return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .addFields(

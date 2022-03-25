@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -23,10 +24,10 @@ export class kCommand extends Command {
         const word = await owlbotio(args.join(' '));
 
         if (word?.definitions == null) {
-            return this.Embed.error('No definition found!');
+            return Embed.error('No definition found!');
         }
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         **${word.word}** ${word.pronunciation ? `(${word.pronunciation})` : ''}
         ${word.definitions
         .map(w => `*${w.type}* - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)

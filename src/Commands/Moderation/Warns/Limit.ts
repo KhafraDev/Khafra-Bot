@@ -2,6 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
@@ -33,13 +34,13 @@ export class kCommand extends Command {
         const newAmount = Number(args[0]!);
 
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))
-            return this.Embed.perms(
+            return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
             );
         else if (!inRange(newAmount))
-            return this.Embed.error('An invalid number of points was provided, try with a positive whole number instead!');
+            return Embed.error('An invalid number of points was provided, try with a positive whole number instead!');
 
         const rows = await sql<kGuild[]>`
             UPDATE kbGuild
@@ -50,6 +51,6 @@ export class kCommand extends Command {
 
         cache.set(message.guild.id, rows[0]);
 
-        return this.Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`);
+        return Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`);
     }
 }

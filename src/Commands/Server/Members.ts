@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -20,7 +21,7 @@ export class kCommand extends Command {
     }
 
     async init (message: Message<true>): Promise<UnsafeEmbed> {
-        return this.Embed.ok(`
+        return Embed.ok(`
         There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
         `);
     }

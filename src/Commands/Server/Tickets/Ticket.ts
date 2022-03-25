@@ -1,6 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -23,7 +24,7 @@ export class kCommand extends Command {
     async init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
         if (argument.args.length === 0) {
             // help message
-            return this.Embed.error('not implemented yet');
+            return Embed.error('not implemented yet');
         }
 
         const name = argument.args[0].toLowerCase();
@@ -32,7 +33,7 @@ export class kCommand extends Command {
             : `ticket:${name}`;
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
-            return this.Embed.error(
+            return Embed.error(
                 `Ticket.${name} command doesn't exist, use ${inlineCode('ticket')} for more information!`
             );
         }

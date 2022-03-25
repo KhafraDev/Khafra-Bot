@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import { Message } from 'discord.js';
@@ -38,7 +39,7 @@ export class kCommand extends Command {
             .map(u => u.name)
             .join(', ');
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({
                 name: 'NPM',
                 iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',

@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -58,7 +59,7 @@ export class kCommand extends Command {
 
         const m = await message.reply({
             embeds: [
-                this.Embed.ok(`
+                Embed.ok(`
                 Press a button below to make selections:
                 • ${inlineCode('Add Option')}: Once pressing, type the option in chat to add it (cut off after 200 characters).
                 • ${inlineCode('Post Poll')}: Posts the poll to the selected channel.
@@ -104,7 +105,7 @@ export class kCommand extends Command {
                     }));
                 }
 
-                const embed = this.Embed.ok()
+                const embed = Embed.ok()
                     .setTitle('Poll')
                     .setAuthor({
                         name: message.author.username,

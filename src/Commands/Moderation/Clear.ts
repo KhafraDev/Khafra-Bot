@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -32,13 +33,13 @@ export class kCommand extends Command {
         const toDelete = Number(args[0]);
 
         if (!inRange(toDelete)) {
-            return this.Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
+            return Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
 
         if (!isText(channel) || !hasPerms(channel, message.guild.me, [PermissionFlagsBits.ManageMessages])) {
-            return this.Embed.perms(
+            return Embed.perms(
                 channel,
                 message.guild.me,
                 PermissionFlagsBits.ManageMessages
@@ -50,7 +51,7 @@ export class kCommand extends Command {
         const [err] = await dontThrow(channel.bulkDelete(toDelete, true));
 
         if (err !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
     }
 }

@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { searchTV } from '#khaf/utility/commands/TMDB';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -25,7 +26,7 @@ export class kCommand extends Command {
         if (!tv)
             return '❌ No TV show with that name was found!';
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
             .addFields(

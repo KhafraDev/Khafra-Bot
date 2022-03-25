@@ -1,6 +1,7 @@
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
 import { type UnsafeEmbed } from '@discordjs/builders';
+import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
 import { Message } from 'discord.js';
 import { Arguments, Command } from '../../Structures/Command.js';
 
@@ -55,6 +56,6 @@ export class kCommand extends Command {
 
         const avatar = user.displayAvatarURL(opts);
 
-        return this.Embed.ok(`${user}'s avatar`).setImage(avatar);
+        return Embed.ok(`${user}'s avatar`).setImage(avatar);
     }
 }

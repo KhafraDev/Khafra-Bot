@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -33,12 +34,12 @@ export class kCommand extends Command {
         const channel = await getMentions(message, 'channels') ?? message.channel;
 
         if (isThread(channel) || isDM(channel)) {
-            return this.Embed.error(`I cannot clone a ${channel.type} channel!`);
+            return Embed.error(`I cannot clone a ${channel.type} channel!`);
         }
 
         const [e, m] = await dontThrow(message.reply({
             embeds: [
-                this.Embed.ok(`
+                Embed.ok(`
                 Are you sure you want to clone ${channel}? The channel will be deleted and re-created; all pins will be lost.
                 `)
             ],
@@ -61,9 +62,9 @@ export class kCommand extends Command {
             }));
 
             if (e !== null) {
-                return this.Embed.error('No response, command was canceled!');
+                return Embed.error('No response, command was canceled!');
             } else if (i.customId === 'deny') {
-                return this.Embed.error(`Command was canceled, ${channel} will not be cloned.`);
+                return Embed.error(`Command was canceled, ${channel} will not be cloned.`);
             }
         }
 
@@ -89,7 +90,7 @@ export class kCommand extends Command {
         {
             const [err] = await dontThrow<GuildBasedChannel>(channel.delete());
             if (err !== null) {
-                return this.Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`);
+                return Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`);
             }
         }
 
@@ -97,11 +98,11 @@ export class kCommand extends Command {
 
         if (err !== null) {
             return void dontThrow(message.author.send({
-                embeds: [this.Embed.error(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
+                embeds: [Embed.error(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
             }));
         }
 
-        const embed = this.Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`);
+        const embed = Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`);
 
         if (isText(cloned)) {
             return void dontThrow(cloned.send({ embeds: [embed] }));

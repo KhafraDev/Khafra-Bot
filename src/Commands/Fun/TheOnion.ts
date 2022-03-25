@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
@@ -85,7 +86,7 @@ export class kCommand extends Command {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!');
         }
 
         const i = Math.floor(Math.random() * rss.results.size);
@@ -95,12 +96,12 @@ export class kCommand extends Command {
         const j = await r.json() as ITheOnionAPI;
 
         if (j.data.length === 0)
-            return this.Embed.error(`
+            return Embed.error(`
             You'll have to read the article on TheOnion this time, sorry!
             https://www.theonion.com/${id}
             `);
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({
                 name: decodeXML(j.data[0].headline).slice(0, 256),
                 iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',

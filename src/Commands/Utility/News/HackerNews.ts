@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { cache, fetchHN } from '#khaf/utility/commands/HackerNews';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
@@ -21,11 +22,11 @@ export class kCommand extends Command {
         await fetchHN();
 
         if (cache.size === 0) {
-            return this.Embed.error('Failed to fetch the articles!');
+            return Embed.error('Failed to fetch the articles!');
         }
 
         const stories = [...cache.values()];
-        return this.Embed.ok(`
+        return Embed.ok(`
         ${stories
         .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
         .join('\n')

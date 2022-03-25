@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
@@ -40,17 +41,17 @@ export class kCommand extends Command {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!');
         }
 
         if (isText(message.channel) && !message.channel.nsfw) {
-            return this.Embed.error('Channel isn\'t marked as NSFW!');
+            return Embed.error('Channel isn\'t marked as NSFW!');
         }
 
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`https:${/src="(.*?)"/.exec(comic.description)?.[1]}`);

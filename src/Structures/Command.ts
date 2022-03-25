@@ -1,6 +1,5 @@
 import { Cooldown } from '#khaf/cooldown/CommandCooldown.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
@@ -46,7 +45,6 @@ type HandlerReturn =
     | null;
 
 export abstract class Command implements ICommand {
-    readonly Embed = Embed;
     readonly rateLimit: Cooldown;
 
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */

@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -36,12 +37,12 @@ export class kCommand extends Command {
         const everyone = message.guild.roles.everyone;
 
         if (!isText(text)) {
-            return this.Embed.error('This command only works in text & news channels.');
+            return Embed.error('This command only works in text & news channels.');
         } else if (!hasPerms(text, message.guild.me, this.permissions)) {
             if (message.guild.me) {
-                return this.Embed.perms(text, message.guild.me, this.permissions);
+                return Embed.perms(text, message.guild.me, this.permissions);
             } else {
-                return this.Embed.error('A caching issue prevented me from properly checking permissions!');
+                return Embed.error('A caching issue prevented me from properly checking permissions!');
             }
         }
 
@@ -55,7 +56,7 @@ export class kCommand extends Command {
             );
         }
 
-        await message.reply({ embeds: [this.Embed.ok(`
+        await message.reply({ embeds: [Embed.ok(`
         ${text} has been ${lockState} for ${everyone}!
         `)] });
 
@@ -65,7 +66,7 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
-            return void channel.send({ embeds: [this.Embed.ok(`
+            return void channel.send({ embeds: [Embed.ok(`
             ${bold('Channel:')} ${text} (${text.id}).
             ${bold('Staff:')} ${message.member}
             `).setTitle('Channel Locked')] });

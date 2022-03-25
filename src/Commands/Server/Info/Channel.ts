@@ -1,5 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
-import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -32,10 +32,10 @@ export class kCommand extends Command {
             message.channel;
 
         if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return this.Embed.error('No channel with that name was found!');
+            return Embed.error('No channel with that name was found!');
         }
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .addFields(
                 { name: bold('ID:'), value: channel.id, inline: true },
                 { name: bold('Type:'), value: `${channel.type}`, inline: true },

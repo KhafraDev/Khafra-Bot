@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -28,7 +29,7 @@ export class kCommand extends Command {
     async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | undefined> {
         const amount = Number(args[0]);
         if (!inRange(amount))
-            return this.Embed.error('Invalid number of buttons to add!');
+            return Embed.error('Invalid number of buttons to add!');
 
         const row = new ActionRow<MessageActionRowComponent>();
         const keys = Object.keys(Components) as ComponentTypes[];

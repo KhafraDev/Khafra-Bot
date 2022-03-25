@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         const all =  [...unicode, ...guild];
 
         if (all.length === 0)
-            return this.Embed.error('No guild or unicode emojis were in the message! 😕');
+            return Embed.error('No guild or unicode emojis were in the message! 😕');
 
         return all.join('\n');
     }

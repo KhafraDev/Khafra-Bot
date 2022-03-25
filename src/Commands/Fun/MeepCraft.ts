@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { fetch } from 'undici';
 
@@ -88,7 +89,7 @@ export class kCommand extends Command {
             const sentence = cache.players === 1
                 ? 'is ``1`` player'
                 : `are ${inlineCode(`${cache.players}`)} players`;
-            const embed = this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
+            const embed = Embed.ok(`There ${sentence} on Meepcraft right now!`);
             return embed;
         }
 
@@ -100,6 +101,6 @@ export class kCommand extends Command {
         const sentence = cache.players === 1
             ? 'is ``1`` player'
             : `are ${inlineCode(`${cache.players}`)} players`;
-        return this.Embed.ok(`There ${sentence} on Meepcraft right now!`);
+        return Embed.ok(`There ${sentence} on Meepcraft right now!`);
     }
 }

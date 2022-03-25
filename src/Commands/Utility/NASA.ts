@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -27,12 +28,12 @@ export class kCommand extends Command {
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}`);
         } else if (result === null) {
-            return this.Embed.error('No images were fetched, try again?');
+            return Embed.error('No images were fetched, try again?');
         }
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setTitle(result.title)
             .setImage(result.link);
 

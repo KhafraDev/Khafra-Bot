@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -33,9 +34,9 @@ export class kCommand extends Command {
         );
 
         if (!movies)
-            return this.Embed.error('No movies found!');
+            return Embed.error('No movies found!');
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
             .addFields(

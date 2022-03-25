@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
@@ -26,9 +27,9 @@ export class kCommand extends Command {
 
     async init (message: Message): Promise<UnsafeEmbed> {
         if (isText(message.channel) && !message.channel.nsfw)
-            return this.Embed.error('🔞 This command only works in NSFW channels.');
+            return Embed.error('🔞 This command only works in NSFW channels.');
 
         const joke = jokes[Math.floor(Math.random() * jokes.length)];
-        return this.Embed.ok(upperCase(joke));
+        return Embed.ok(upperCase(joke));
     }
 }

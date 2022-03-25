@@ -1,6 +1,7 @@
 import { client } from '#khaf/Client';
 import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
@@ -87,7 +88,7 @@ export class kCommand extends Command {
             .filter(f => getEmojis()?.has(f))
             .map(f => getEmojis()?.get(f));
 
-        return this.Embed.ok(formatPresence(member?.presence?.activities))
+        return Embed.ok(formatPresence(member?.presence?.activities))
             .setAuthor({
                 name: user.tag,
                 iconURL: user.displayAvatarURL()

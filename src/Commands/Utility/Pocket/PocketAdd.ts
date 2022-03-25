@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { codeBlock, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         `;
 
         if (rows.length === 0)
-            return this.Embed.error(`
+            return Embed.error(`
             You haven't set-up Pocket integration!
 
             Try using the ${inlineCode('pocket')} command for more information.
@@ -44,10 +45,10 @@ export class kCommand extends Command {
         const pocket = new Pocket(rows.shift());
         const article = URLFactory(args[0]);
         if (article === null)
-            return this.Embed.error('That\'s not an article URL, try again!');
+            return Embed.error('That\'s not an article URL, try again!');
         const added = await pocket.add(article, args.slice(1).join(' '));
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle(added.item.title)
             .setAuthor({
                 name: added.item.domain_metadata?.name ?? message.author.username,

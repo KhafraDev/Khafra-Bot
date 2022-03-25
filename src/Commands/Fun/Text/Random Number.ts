@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -33,7 +34,7 @@ export class kCommand extends Command {
             max < min ||                   // min is greater than max
             !Number.isSafeInteger(min) || !Number.isSafeInteger(max)
         ) {
-            return this.Embed.error(
+            return Embed.error(
                 `Invalid number(s) provided! Numbers ${inlineCode('cannot equal')} one another ` +
                 `and the difference between the two ${inlineCode('cannot be greater')} than 2^48-1!`
             );
@@ -41,6 +42,6 @@ export class kCommand extends Command {
 
         const num = Math.floor(Math.random() * (max - min) + min);
 
-        return this.Embed.ok(`Your number is ${inlineCode(`${num}`)}!`);
+        return Embed.ok(`Your number is ${inlineCode(`${num}`)}!`);
     }
 }

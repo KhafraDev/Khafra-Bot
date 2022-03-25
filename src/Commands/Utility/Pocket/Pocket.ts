@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
@@ -16,7 +17,7 @@ export class kCommand extends Command {
     }
 
     async init (): Promise<UnsafeEmbed> {
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`
             Connect your Pocket account to Khafra-Bot to get updates on the latest news.

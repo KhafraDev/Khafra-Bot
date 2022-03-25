@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
 import { ActivityType } from 'discord-api-types/v10';
@@ -27,7 +28,7 @@ export class kCommand extends Command {
         ).pop();
 
         if (!presence && args.length < 1) {
-            return this.Embed.error('If you are not listening to any songs, a search query must be provided!');
+            return Embed.error('If you are not listening to any songs, a search query must be provided!');
         }
 
         const res = await spotify.search(
@@ -41,10 +42,10 @@ export class kCommand extends Command {
         }, { height: 0, width: 0, url: '' });
 
         if (res.tracks.items.length === 0) {
-            return this.Embed.error('No songs found!');
+            return Embed.error('No songs found!');
         }
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         ${res.tracks.items.map(item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`).join('\n')}
         `).setImage(image.url);
     }

@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -27,7 +28,7 @@ export class kCommand extends Command {
         if (m.editable) {
             return void m.edit({ content: edited });
         } else {
-            return this.Embed.error('Message wasn\'t editable!');
+            return Embed.error('Message wasn\'t editable!');
         }
     }
 }

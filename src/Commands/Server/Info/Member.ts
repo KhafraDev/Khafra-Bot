@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import { ActivityType } from 'discord-api-types/v10';
@@ -49,11 +50,11 @@ export class kCommand extends Command {
         const member = await getMentions(message, 'members', content) ?? message.member;
 
         if (!member) {
-            return this.Embed.error('No guild member mentioned.');
+            return Embed.error('No guild member mentioned.');
         }
 
         // max role length = 84 characters
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({ name: member.displayName, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
             ${member} on ${italic(member.guild.name)}.

@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, bold, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
@@ -32,7 +33,7 @@ export class kCommand extends Command {
 
         await pocket.requestCode();
 
-        const embed = this.Embed.ok(`
+        const embed = Embed.ok(`
         Authorize Khafra-Bot using the link below! 
         
         [Click Here](${pocket.requestAuthorization})!
@@ -62,7 +63,7 @@ export class kCommand extends Command {
 
         if (buttonErr !== null) {
             return void msg.edit({
-                embeds: [this.Embed.error('Canceled the command, took over 2 minutes.')],
+                embeds: [Embed.error('Canceled the command, took over 2 minutes.')],
                 components: []
             });
         }
@@ -74,7 +75,7 @@ export class kCommand extends Command {
 
             if (authError !== null) {
                 return void dontThrow(button.editReply({
-                    embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized.')],
+                    embeds: [Embed.error('Khafra-Bot wasn\'t authorized.')],
                     components: []
                 }));
             }
@@ -83,7 +84,7 @@ export class kCommand extends Command {
 
             if (!access_token || !request_token || !username) {
                 return void dontThrow(button.editReply({
-                    embeds: [this.Embed.error('An unexpected issue occurred.')],
+                    embeds: [Embed.error('An unexpected issue occurred.')],
                     components: []
                 }));
             }
@@ -108,7 +109,7 @@ export class kCommand extends Command {
 
             return void button.editReply({
                 embeds: [
-                    this.Embed.ok(`
+                    Embed.ok(`
                     You have authorized ${message.guild!.me}!
 
                     Try adding an article with ${inlineCode('pocketadd')} now. 👍
@@ -119,7 +120,7 @@ export class kCommand extends Command {
         }
 
         return void button.editReply({
-            embeds: [this.Embed.error('Khafra-Bot wasn\'t authorized, command was canceled!')],
+            embeds: [Embed.error('Khafra-Bot wasn\'t authorized, command was canceled!')],
             components: disableAll(msg)
         });
     }

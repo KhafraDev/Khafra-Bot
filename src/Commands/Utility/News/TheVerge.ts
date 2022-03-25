@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
@@ -43,15 +44,15 @@ export class kCommand extends Command {
         const state = await cache();
 
         if (state === null) {
-            return this.Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!');
         }
 
         if (rss.results.size === 0) {
-            return this.Embed.error('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.ok()
+        return Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`) // the verge does not use the link item for the actual link
                 .join('\n')

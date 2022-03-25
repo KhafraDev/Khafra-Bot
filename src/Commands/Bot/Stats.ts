@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -27,7 +28,7 @@ export class kCommand extends Command {
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle('Bot Statistics')
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },

@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -36,7 +37,7 @@ export class kCommand extends Command {
     async init (message: Message<true>): Promise<UnsafeEmbed | undefined> {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
-                this.Embed.ok(`
+                Embed.ok(`
                 Are you sure you want to disable these permissions for everyone? This cannot be reverted by the bot!
                 `)
             ],
@@ -59,9 +60,9 @@ export class kCommand extends Command {
             }));
 
             if (e !== null) {
-                return this.Embed.error('No response, command was canceled!');
+                return Embed.error('No response, command was canceled!');
             } else if (i.customId === 'deny') {
-                return this.Embed.error('Command was canceled, permissions will not be disabled!');
+                return Embed.error('Command was canceled, permissions will not be disabled!');
             } else {
                 void i.update({ components: disableAll(m) });
             }
@@ -70,7 +71,7 @@ export class kCommand extends Command {
         const [fetchErr, allChannels] = await dontThrow(message.guild.channels.fetch());
 
         if (fetchErr !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`);
         }
 
         const channels = allChannels.filter(c =>
@@ -101,14 +102,14 @@ export class kCommand extends Command {
         }
 
         if (pr.length === 0) {
-            return this.Embed.ok('No channel permissions needed to be updated!');
+            return Embed.ok('No channel permissions needed to be updated!');
         }
 
         const settled = await Promise.allSettled(pr);
         const success = settled.filter((p): p is PromiseFulfilledResult<GuildChannel> => p.status === 'fulfilled');
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setTitle(`Edited ${success.length} Channel Perms!`)
             .setAuthor({
                 name: message.guild.name,

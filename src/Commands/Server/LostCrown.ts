@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
@@ -39,11 +40,11 @@ export class kCommand extends Command {
         }
 
         if (amount === 0) {
-            return this.Embed.error('The server owner already has a crown! Refresh your client to see it. 👑');
+            return Embed.error('The server owner already has a crown! Refresh your client to see it. 👑');
         }
 
         desc += next;
 
-        return this.Embed.ok(desc);
+        return Embed.ok(desc);
     }
 }

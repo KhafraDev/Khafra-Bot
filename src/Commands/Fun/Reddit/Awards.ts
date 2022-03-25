@@ -1,7 +1,8 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { Reddit } from '@khaf/badmeme';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { Reddit } from '@khaf/badmeme';
 import { Message } from 'discord.js';
 import { fetch } from 'undici';
 
@@ -27,14 +28,14 @@ export class kCommand extends Command {
     async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
         const url = URLFactory(args[0]);
         if (url === null)
-            return this.Embed.error('Invalid Reddit post!');
+            return Embed.error('Invalid Reddit post!');
 
         if (
             url.origin !== 'https://www.reddit.com' ||
             // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
             !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
         ) {
-            return this.Embed.error(`
+            return Embed.error(`
             Not a valid reddit URL!
             Make sure it's from ${inlineCode('https://www.reddit.com')} and it's a post!
             `);
@@ -52,7 +53,7 @@ export class kCommand extends Command {
         );
         const count = post.all_awardings.reduce((p, c) => p + c.count, 0);
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setDescription(
                 `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
                 `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`

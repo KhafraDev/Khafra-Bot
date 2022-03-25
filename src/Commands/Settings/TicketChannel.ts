@@ -2,6 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -31,7 +32,7 @@ export class kCommand extends Command {
 
     async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
-            return this.Embed.perms(
+            return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
@@ -46,9 +47,9 @@ export class kCommand extends Command {
         const ticketChannel = await getMentions(message, 'channels');
 
         if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
-            return this.Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
+            return Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
         } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return this.Embed.error('This guild cannot use private threads, please use a category channel instead!');
+            return Embed.error('This guild cannot use private threads, please use a category channel instead!');
         }
 
         const rows = await sql<kGuild[]>`
@@ -60,6 +61,6 @@ export class kCommand extends Command {
 
         cache.set(message.guild.id, rows[0]);
 
-        return this.Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
+        return Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
     }
 }

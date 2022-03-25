@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -35,22 +36,22 @@ export class kCommand extends Command {
         const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {
-            return this.Embed.error(`You cannot kick ${member}!`);
+            return Embed.error(`You cannot kick ${member}!`);
         }
 
         if (!member) {
-            return this.Embed.error('No member was mentioned and/or an invalid ❄️ was used!');
+            return Embed.error('No member was mentioned and/or an invalid ❄️ was used!');
         } else if (!member.kickable) {
-            return this.Embed.error(`${member} is too high up in the hierarchy for me to kick.`);
+            return Embed.error(`${member} is too high up in the hierarchy for me to kick.`);
         }
 
         const [kickError] = await dontThrow(member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`));
 
         if (kickError !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(kickError.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(kickError.message)}`);
         }
 
-        await message.reply({ embeds: [this.Embed.error(`Kicked ${member} from the server!`)] });
+        await message.reply({ embeds: [Embed.error(`Kicked ${member} from the server!`)] });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -59,7 +60,7 @@ export class kCommand extends Command {
                 return;
 
             const reason = args.slice(1).join(' ');
-            return void channel.send({ embeds: [this.Embed.ok(`
+            return void channel.send({ embeds: [Embed.ok(`
             ${bold('Offender:')} ${member}
             ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
             ${bold('Staff:')} ${message.member}

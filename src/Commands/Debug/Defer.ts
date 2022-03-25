@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -19,6 +20,10 @@ export class kCommand extends Command {
     async init (message: Message): Promise<void> {
         if (message.deletable)
             await message.delete();
-        await message.reply({ embeds: [this.Embed.error('If you\'re seeing this, something went wrong...')] });
+        await message.reply({
+            embeds: [
+                Embed.error('If you\'re seeing this, something went wrong...')
+            ]
+        });
     }
 }

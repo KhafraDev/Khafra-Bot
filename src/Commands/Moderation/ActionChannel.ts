@@ -2,6 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -29,7 +30,7 @@ export class kCommand extends Command {
 
     async init (message: Message<true>): Promise<UnsafeEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
-            return this.Embed.perms(
+            return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
@@ -38,7 +39,7 @@ export class kCommand extends Command {
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
         if (!isText(channel)) {
-            return this.Embed.error('Channel isn\'t cached or the ID is incorrect.');
+            return Embed.error('Channel isn\'t cached or the ID is incorrect.');
         }
 
         const rows = await sql<kGuild[]>`
@@ -50,7 +51,7 @@ export class kCommand extends Command {
 
         cache.set(message.guild.id, rows[0]);
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         Set public mod-logging channel to ${channel}!
         `);
     }

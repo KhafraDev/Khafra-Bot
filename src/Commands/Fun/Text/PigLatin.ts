@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -85,6 +86,6 @@ export class kCommand extends Command {
 
     async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const pig = toPigLatin(content);
-        return this.Embed.ok(pig.slice(0, 2048))
+        return Embed.ok(pig.slice(0, 2048))
     }
 }

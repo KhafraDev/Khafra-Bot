@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
@@ -31,7 +32,7 @@ export class kCommand extends Command {
     async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed> {
         const member = await getMentions(message, 'users', content);
         if (!member) {
-            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
+            return Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -46,10 +47,10 @@ export class kCommand extends Command {
             });
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
         } catch {
-            return this.Embed.error(`${member} isn't bannable!`);
+            return Embed.error(`${member} isn't bannable!`);
         }
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         ${member} has been soft-banned from the guild!
         `);
     }

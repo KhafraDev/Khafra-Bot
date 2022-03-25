@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -20,7 +21,7 @@ export class kCommand extends Command {
     }
 
     async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({
                 name: message.author.username,
                 iconURL: message.author.displayAvatarURL()

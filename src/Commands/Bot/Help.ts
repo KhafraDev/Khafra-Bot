@@ -2,6 +2,7 @@ import { KhafraClient } from '#khaf/Bot';
 import { Arguments, Command } from '#khaf/Command';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import {
     ActionRow,
@@ -42,7 +43,7 @@ export class kCommand extends Command {
         if (args.length !== 0) {
             const commandName = args[0].toLowerCase();
             if (!KhafraClient.Commands.has(commandName))
-                return this.Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
+                return Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`);
 
             const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!;
             const helpF = help.length === 2 && help[1] === ''
@@ -52,7 +53,7 @@ export class kCommand extends Command {
                 ? ['No aliases!']
                 : settings.aliases!;
 
-            return this.Embed.ok(`
+            return Embed.ok(`
             The ${inlineCode(settings.name)} command:
             ${codeBlock(help.shift()!)}
 
@@ -69,7 +70,7 @@ export class kCommand extends Command {
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.ok(`
+                Embed.ok(`
                 ${hyperlink('Khafra-Bot', 'https://github.com/KhafraDev/Khafra-Bot')}
                 
                 To get help on a single command use ${inlineCode('help [command name]')}!
@@ -123,7 +124,7 @@ export class kCommand extends Command {
                             desc += `${bold(settings.name)}: ${inlineCode('No description')}`
                     }
 
-                    pages.push(this.Embed.ok(desc));
+                    pages.push(Embed.ok(desc));
                 }
 
                 const components: ActionRow<MessageActionRowComponent>[] = [];

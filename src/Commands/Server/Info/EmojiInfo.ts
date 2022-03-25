@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
@@ -38,7 +39,7 @@ export class kCommand extends Command {
             const { id, name, animated } = match.groups as Record<string, string>;
             const url = `https://cdn.discordapp.com/emojis/${id}.webp`;
 
-            return this.Embed.ok(match[0])
+            return Embed.ok(match[0])
                 .setTitle(name)
                 .setImage(url)
                 .addFields(
@@ -67,10 +68,10 @@ export class kCommand extends Command {
             );
 
             if (emoji === undefined) {
-                return this.Embed.error('❌ This emoji is invalid or unsupported!');
+                return Embed.error('❌ This emoji is invalid or unsupported!');
             }
 
-            return this.Embed.ok(unicodeEmoji[0].text)
+            return Embed.ok(unicodeEmoji[0].text)
                 .setImage(unicodeEmoji[0].url)
                 .addFields(
                     { name: bold('Name:'), value: emoji.name, inline: true },
@@ -87,7 +88,7 @@ export class kCommand extends Command {
                 .join('');
             const unicodeEmoji = parse(unicodeEmojiText, { assetType: 'png' })[0];
 
-            return this.Embed.ok(unicodeEmoji.text)
+            return Embed.ok(unicodeEmoji.text)
                 .setImage(unicodeEmoji.url)
                 .addFields(
                     { name: bold('Name:'), value: name.name, inline: true },
@@ -96,6 +97,6 @@ export class kCommand extends Command {
                 );
         }
 
-        return this.Embed.error('❌ No emojis were found in your message!');
+        return Embed.error('❌ No emojis were found in your message!');
     }
 }

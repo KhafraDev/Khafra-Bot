@@ -1,6 +1,7 @@
 import { Arguments, Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -38,7 +39,7 @@ export class kCommand extends Command {
         const inserted = await bibleInsertDB();
 
         if (inserted !== true) {
-            return this.Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!');
         }
 
         // no arguments provided, get a random entry
@@ -53,16 +54,16 @@ export class kCommand extends Command {
                 .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
                 .shift()!;
 
-            return this.Embed.ok()
+            return Embed.ok()
                 .setTitle(`${book} ${rows[0].chapter}:${rows[0].verse}`)
                 .setDescription(rows[0].content);
         }
 
         // list all books available to the bot
         if (args[0].toLowerCase() === 'list') {
-            return this.Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '));
+            return Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '));
         } else if (!titleRegex.test(content)) {
-            return this.Embed.error(`
+            return Embed.error(`
             No book with that name was found!
 
             Use ${inlineCode(`${this.settings.name} list`)} to list all of the supported book names!
@@ -90,7 +91,7 @@ export class kCommand extends Command {
                     LIMIT 1;
                 `;
 
-                return this.Embed.ok(`
+                return Embed.ok(`
                 Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
                 `);
             }
@@ -104,7 +105,7 @@ export class kCommand extends Command {
             `;
 
             const chaper = rows.length === 0 ? 'no' : rows[0].chapter;
-            return this.Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`);
+            return Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`);
         }
 
         // Example: 13:1-5
@@ -130,12 +131,12 @@ export class kCommand extends Command {
             `;
 
             if (rows.length === 0)
-                return this.Embed.error(`
+                return Embed.error(`
                 No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
                 `);
 
             const [first, last] = [rows.at(0)!, rows.at(-1)!];
-            return this.Embed.ok()
+            return Embed.ok()
                 .setTitle(`${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`)
                 .setDescription(`
                 ${rows.map(v => v.content).join('\n')}
@@ -158,11 +159,11 @@ export class kCommand extends Command {
             `;
 
             if (rows.length === 0)
-                return this.Embed.error(`
+                return Embed.error(`
                 No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕
                 `);
 
-            return this.Embed.ok()
+            return Embed.ok()
                 .setTitle(`${bookAcronym.shift()} ${chapter}:${verse}`)
                 .setDescription(rows[0].content);
         }

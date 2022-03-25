@@ -1,9 +1,10 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { badmeme, cache } from '@khaf/badmeme';
 import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { badmeme, cache } from '@khaf/badmeme';
 import { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -33,7 +34,7 @@ export class kCommand extends Command {
         );
 
         if (res === null) {
-            return this.Embed.error(`
+            return Embed.error(`
             No posts in this subreddit were found! If the subreddit is NSFW, make sure the channel is too!
             `);
         } else if ('error' in res) {
@@ -42,13 +43,13 @@ export class kCommand extends Command {
             }
 
             switch (res.reason) {
-                case 'banned': return this.Embed.error('Subreddit is banned!');
-                case 'private': return this.Embed.error('Subreddit is set as private!');
-                case 'quarantined': return this.Embed.error('Subreddit is quarantined!');
-                default: return this.Embed.error(`Subreddit is blocked for reason "${res.reason}"!`)
+                case 'banned': return Embed.error('Subreddit is banned!');
+                case 'private': return Embed.error('Subreddit is set as private!');
+                case 'quarantined': return Embed.error('Subreddit is quarantined!');
+                default: return Embed.error(`Subreddit is blocked for reason "${res.reason}"!`)
             }
         } else if (res.url.length === 0) {
-            return this.Embed.error(`
+            return Embed.error(`
             No image posts found in this subreddit.
             
             If the channel isn't set to NSFW, adult subreddits won't work!

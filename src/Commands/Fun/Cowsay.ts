@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { codeBlock, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -40,7 +41,7 @@ export class kCommand extends Command {
         }
 
         if (args[0].toLowerCase() === 'list') {
-            return this.Embed.ok(`
+            return Embed.ok(`
             ${[...types].map(t => '``' + t + '``').join(', ')}
             `).setTitle(`${types.size} formats available`);
         }
@@ -50,9 +51,9 @@ export class kCommand extends Command {
             : ['cowsay', ...args];
 
         if (content.length === 0)
-            return this.Embed.error('Since you provided a format, you have to provide some text to say!');
+            return Embed.error('Since you provided a format, you have to provide some text to say!');
         if (!types.has(format))
-            return this.Embed.error('Format not found! Use the command `cowsay list` to list all formats!');
+            return Embed.error('Format not found! Use the command `cowsay list` to list all formats!');
 
         const split = content.join(' ')
             .match(/.{1,38}/g)! // split every 38 characters; removes new lines
@@ -77,8 +78,8 @@ export class kCommand extends Command {
         const formatted = codeBlock(`${start}${split.join('\n')}\n${art}`);
 
         if (formatted.length > 2048)
-            return this.Embed.error('Message is too long, trim it down!');
+            return Embed.error('Message is too long, trim it down!');
 
-        return this.Embed.ok(formatted);
+        return Embed.ok(formatted);
     }
 }

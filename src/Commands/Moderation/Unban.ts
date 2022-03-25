@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         const user = await getMentions(message, 'users', content);
 
         if (!user)
-            return this.Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
+            return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
         const reasonAny = cli.has('reason') || cli.has('r')
             ? (cli.get('reason') || cli.get('r'))
@@ -39,9 +40,9 @@ export class kCommand extends Command {
         const [e] = await dontThrow(message.guild.members.unban(user, reason));
 
         if (e !== null) {
-            return this.Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
+            return Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
-        return this.Embed.ok(`${user} is now unbanned!`);
+        return Embed.ok(`${user} is now unbanned!`);
     }
 }

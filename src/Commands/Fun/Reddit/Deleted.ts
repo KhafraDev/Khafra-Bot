@@ -1,11 +1,12 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { Reddit } from '@khaf/badmeme';
 import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { Reddit } from '@khaf/badmeme';
 import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { clearTimeout, setTimeout } from 'timers';
@@ -84,13 +85,13 @@ export class kCommand extends Command {
         void message.channel.sendTyping();
 
         if (url === null) {
-            return this.Embed.error('That\'s not a Reddit post!');
+            return Embed.error('That\'s not a Reddit post!');
         } else if (
             url.host !== 'www.reddit.com' &&
             url.host !== 'reddit.com' &&
             url.host !== 'old.reddit.com'
         ) {
-            return this.Embed.error(`${url.hostname} isn't Reddit!`);
+            return Embed.error(`${url.hostname} isn't Reddit!`);
         }
 
         const [rSlash, subreddit, comments, id] = url.pathname.match(/[^/?]*[^/?]/g) ?? [];
@@ -100,17 +101,17 @@ export class kCommand extends Command {
             !/^[A-z0-9_]{3,21}$/.test(subreddit) ||
             comments !== 'comments'
         ) {
-            return this.Embed.error('Invalid or unsupported Reddit link!');
+            return Embed.error('Invalid or unsupported Reddit link!');
         }
 
         const r = await fetchDeleted(id);
 
         if (r === null) {
-            return this.Embed.error('No post given the URL was indexed, sorry!');
+            return Embed.error('No post given the URL was indexed, sorry!');
         } else if ('error' in r) {
-            return this.Embed.error('No results found, some posts might not be cached yet!');
+            return Embed.error('No results found, some posts might not be cached yet!');
         } else if (r.hits.total < 1) {
-            return this.Embed.error('No results were found!');
+            return Embed.error('No results were found!');
         }
 
         const post = r.hits.hits[0]._source;
@@ -120,7 +121,7 @@ export class kCommand extends Command {
         const chunks = split(post.selftext, 2048);
         const makeEmbed = (page = 0): UnsafeEmbed => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
-            const embed = this.Embed.ok()
+            const embed = Embed.ok()
                 .setTitle(title)
                 .setDescription(desc);
 

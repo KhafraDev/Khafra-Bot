@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { italic, type UnsafeEmbed } from '@discordjs/builders';
 
 export class kCommand extends Command {
@@ -18,7 +19,7 @@ export class kCommand extends Command {
     }
 
     async init (): Promise<UnsafeEmbed> {
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`
             Reviews by ${italic('real')} people:

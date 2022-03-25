@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { openLibrary } from '#khaf/utility/commands/Openlibrary';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, hyperlink, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -24,12 +25,12 @@ export class kCommand extends Command {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {
-            return this.Embed.error('No books found on OpenLibrary!');
+            return Embed.error('No books found on OpenLibrary!');
         }
 
         const book = books.docs.shift()!;
 
-        const embed = this.Embed.ok(`
+        const embed = Embed.ok(`
         ${italic(book.title)} by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
         ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: ${inlineCode(book.isbn[0])}` : ''}

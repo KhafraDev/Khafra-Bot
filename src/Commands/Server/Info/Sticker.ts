@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { StickerFormatType } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
@@ -23,7 +23,7 @@ export class kCommand extends Command {
 
     async init ({ stickers, guild }: Message<true>): Promise<UnsafeEmbed> {
         if (stickers.size === 0)
-            return this.Embed.error('No stickers in message! 😕');
+            return Embed.error('No stickers in message! 😕');
 
         const sticker = stickers.first()!;
 
@@ -31,7 +31,7 @@ export class kCommand extends Command {
             await guild.stickers.fetch(sticker.id);
         }
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setTitle(`${sticker.name}${sticker.description ? ` - ${sticker.description}` : ''}`)
             .addFields(
                 { name: bold('Name:'), value: inlineCode(sticker.name), inline: true },

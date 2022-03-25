@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -20,7 +21,7 @@ export class kCommand extends Command {
     async init (message: Message): Promise<UnsafeEmbed> {
         const selfId = message.client.user!.id;
 
-        return this.Embed.ok().addFields(
+        return Embed.ok().addFields(
             {
                 name: bold('Basic Permissions:'),
                 value: `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`

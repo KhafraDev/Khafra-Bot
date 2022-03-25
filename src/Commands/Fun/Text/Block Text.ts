@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -34,6 +35,6 @@ export class kCommand extends Command {
             .map(l => l.toLowerCase() in letters ? letters[l.toLowerCase()] : l)
             .join(' ');
 
-        return this.Embed.ok(blocks);
+        return Embed.ok(blocks);
     }
 }

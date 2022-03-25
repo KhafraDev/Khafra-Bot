@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
@@ -24,7 +25,7 @@ export class kCommand extends Command {
         const [barack, obama] = await dontThrow(talkObamaToMe(args.join(' ').slice(0, 280)));
 
         if (barack !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(barack.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(barack.message)}`);
         }
 
         return obama;

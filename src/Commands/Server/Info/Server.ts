@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
 
@@ -21,7 +22,7 @@ export class kCommand extends Command {
     async init (message: Message<true>): Promise<UnsafeEmbed> {
         const locale = message.guild.preferredLocale;
 
-        return this.Embed.ok()
+        return Embed.ok()
             .setAuthor({
                 name: message.client.user!.username,
                 iconURL: message.client.user!.displayAvatarURL()

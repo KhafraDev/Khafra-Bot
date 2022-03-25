@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
@@ -35,7 +36,7 @@ export class kCommand extends Command {
     async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
         const user = await getMentions(message, 'users', content);
         if (!user) {
-            return this.Embed.error('No user mentioned and/or an invalid ❄️ was used!');
+            return Embed.error('No user mentioned and/or an invalid ❄️ was used!');
         }
 
         const clear = typeof args[1] === 'string'
@@ -49,7 +50,7 @@ export class kCommand extends Command {
         );
 
         const msg = await message.reply({
-            embeds: [this.Embed.ok(`
+            embeds: [Embed.ok(`
             Are you sure you want to soft-ban ${user}? 
     
             This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
@@ -67,14 +68,14 @@ export class kCommand extends Command {
 
         if (buttonError !== null) {
             return void msg.edit({
-                embeds: [this.Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
+                embeds: [Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []
             });
         }
 
         if (button.customId === 'deny')
             return void button.update({
-                embeds: [this.Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
+                embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
             });
 
@@ -88,13 +89,13 @@ export class kCommand extends Command {
             await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
         } catch {
             return void button.editReply({
-                embeds: [this.Embed.error(`${user} isn't bannable!`)],
+                embeds: [Embed.error(`${user} isn't bannable!`)],
                 components: []
             });
         }
 
         return void button.editReply({
-            embeds: [this.Embed.ok(`${user} has been soft-banned from the guild!`)],
+            embeds: [Embed.ok(`${user} has been soft-banned from the guild!`)],
             components: disableAll(msg)
         });
     }

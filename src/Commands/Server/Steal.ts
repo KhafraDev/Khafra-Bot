@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import { Message } from 'discord.js';
@@ -23,12 +24,12 @@ export class kCommand extends Command {
 
     async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
         if (!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
-            return this.Embed.error('Invalid Emoji provided!');
+            return Embed.error('Invalid Emoji provided!');
         }
 
         const [,, name, id] = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/.exec(args[0]) ?? [];
         if (!name || !id) {
-            return this.Embed.error('Invalid guild emoji provided!');
+            return Embed.error('Invalid guild emoji provided!');
         }
 
         const emoji = await message.guild.emojis.create(
@@ -37,7 +38,7 @@ export class kCommand extends Command {
             { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
         );
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         Created emoji ${emoji} with name ${name}.
         `);
     }

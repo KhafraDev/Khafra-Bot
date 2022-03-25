@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -52,22 +53,22 @@ export class kCommand extends Command {
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) || '0s')! / 1000;
 
         if (!inRange(secs))
-            return this.Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
+            return Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`);
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
         if (!isExplicitText(guildChannel))
-            return this.Embed.error('Rate-limits can only be set in text channels!');
+            return Embed.error('Rate-limits can only be set in text channels!');
 
         const [rlError] = await dontThrow(guildChannel.setRateLimitPerUser(secs,
             `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
         ));
 
         if (rlError !== null) {
-            return this.Embed.error(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
+            return Embed.error(`An unexpected error has occurred: ${inlineCode(rlError.message)}`);
         }
 
         void message.reply({
-            embeds: [this.Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
+            embeds: [Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
         });
 
         if (settings.mod_log_channel !== null) {
@@ -78,7 +79,7 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    this.Embed.ok(`
+                    Embed.ok(`
                     ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
                     ${bold('Staff:')} ${message.member}
                     ${bold('Duration:')} ${secs} second${plural(secs)}

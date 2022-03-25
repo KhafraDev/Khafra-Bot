@@ -1,5 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { request } from 'undici';
@@ -24,14 +25,14 @@ export class kCommand extends Command {
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 
         if (stats === null) {
-            return this.Embed.error('Failed to fetch the stats!');
+            return Embed.error('Failed to fetch the stats!');
         } else if (err !== null) {
-            return this.Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
 
         const quarks = await quarkBonus.body.json() as { bonus: number };
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        return this.Embed.ok()
+        return Embed.ok()
             .setTitle('Synergism Stats (Kongregate)')
             .setDescription(`
             ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}

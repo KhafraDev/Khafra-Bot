@@ -1,4 +1,5 @@
 import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
@@ -43,9 +44,9 @@ export class kCommand extends Command {
 
         const member = user && message.guild.members.resolve(user);
         if (member && !hierarchy(message.member, member)) {
-            return this.Embed.error(`You do not have permission to ban ${member}!`);
+            return Embed.error(`You do not have permission to ban ${member}!`);
         } else if (!user) {
-            return this.Embed.error('No user id or user mentioned, no one was banned.');
+            return Embed.error('No user id or user mentioned, no one was banned.');
         }
 
         // days of messages to clear
@@ -101,11 +102,11 @@ export class kCommand extends Command {
             }));
 
             if (err !== null) {
-                return this.Embed.error(`${member ?? user} is not bannable!`);
+                return Embed.error(`${member ?? user} is not bannable!`);
             }
         }
 
-        return this.Embed.ok(`
+        return Embed.ok(`
         ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!
         `).setFooter({
             text: `${clear} days of messages removed.`

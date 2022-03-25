@@ -1,5 +1,6 @@
 import { Arguments, Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message, ReplyMessageOptions } from 'discord.js';
@@ -28,12 +29,12 @@ export class kCommand extends Command {
         });
 
         if (currencies === undefined || currencies.length === 0) {
-            return this.Embed.error('No currency with that name or id could be found!');
+            return Embed.error('No currency with that name or id could be found!');
         }
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = this.Embed.ok()
+        const embed = Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)
