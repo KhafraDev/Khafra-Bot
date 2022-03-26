@@ -1,26 +1,27 @@
-import { fetch } from 'undici';
-import { URL } from 'url';
+import { request } from 'undici';
+import type { URL } from 'url';
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 export const talkObamaToMe = async (q: string): Promise<string> => {
     q = encodeURIComponent(q);
 
-    const res = await fetch('http://talkobamato.me/synthesize.py', {
+    const { context: ctx, body } = await request('http://talkobamato.me/synthesize.py', {
         method: 'POST',
         body: `input_text=${q}`,
         headers: {
             'Referer': 'http://talkobamato.me/',
             'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        },
+        // https://github.com/nodejs/undici/pull/769
+        maxRedirections: 1
     });
 
-    if (!res.redirected) {
-        throw new Error('Request wasn\'t redirected!');
-    }
+    const context = ctx as { history: URL[] };
 
-    const u = new URL(res.url).searchParams.get('speech_key');
+    void consumeBody({ body });
 
-    void consumeBody(res);
+    const u = context.history[context.history.length - 1];
+    const speechKey = u.searchParams.get('speech_key');
 
-    return `http://talkobamato.me/synth/output/${u}/obama.mp4`;
+    return `http://talkobamato.me/synth/output/${speechKey}/obama.mp4`;
 }
