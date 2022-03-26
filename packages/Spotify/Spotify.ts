@@ -1,7 +1,7 @@
-import { env } from 'process';
-import { fetch } from 'undici';
-import { URL, URLSearchParams } from 'url';
 import { Buffer } from 'buffer';
+import { env } from 'process';
+import { request } from 'undici';
+import { URL, URLSearchParams } from 'url';
 import { SpotifyResult } from './types/Spotify';
 
 type Token = {
@@ -19,15 +19,14 @@ class Spotify {
     #expires_in: number | null = null;
 
     async search (query: string): Promise<SpotifyResult> {
-        // URLSearchParams encodes differently (and incorrectly for Spotify), so we use qs#stringify instead.
         const params = '?' + new URLSearchParams({
             type: 'track',
             limit: '10',
-            q: query // automatically encoded
-        }).toString().replace(/\+/g, '%20');
+            q: encodeURIComponent(query)
+        }).toString();
 
         const token = await this.getTokenHeader();
-        const r = await fetch(new URL(params, 'https://api.spotify.com/v1/search'), {
+        const { body } = await request(new URL(params, 'https://api.spotify.com/v1/search'), {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -35,21 +34,22 @@ class Spotify {
             }
         })
 
-        return await r.json() as SpotifyResult;
+        return await body.json() as SpotifyResult;
     }
 
     async setToken (): Promise<void> {
         const params = new URLSearchParams({ grant_type: 'client_credentials' });
 
-        const r = await fetch('https://accounts.spotify.com/api/token', {
+        const { body } = await request('https://accounts.spotify.com/api/token', {
             method: 'POST',
-            body: params,
+            body: params.toString(),
             headers: {
-                Authorization: `Basic ${Buffer.from(`${this.#id}:${this.#secret}`).toString('base64')}`
+                Authorization: `Basic ${Buffer.from(`${this.#id}:${this.#secret}`).toString('base64')}`,
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
         });
 
-        const j = await r.json() as Token;
+        const j = await body.json() as Token;
         this.#token = j;
         this.#expires_in = Date.now() + j.expires_in * 1000; // in milliseconds
     }
