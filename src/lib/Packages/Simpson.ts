@@ -19,7 +19,6 @@ export const fetchOGKey = async (): Promise<string | null> => {
     const { body } = await request(url);
     const text = await body.text();
 
-    // TODO: use fast-xml-parser? Probably more reliable.
     return /"next_item_key": "(?<key>.*?)"/.exec(text)?.groups?.key ?? null;
 }
 

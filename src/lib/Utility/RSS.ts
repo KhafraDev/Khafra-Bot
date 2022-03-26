@@ -7,6 +7,7 @@ import { join } from 'path';
 import { clearInterval, setInterval, setTimeout } from 'timers';
 import { setTimeout as delay } from 'timers/promises';
 import { request, type Dispatcher } from 'undici';
+import { isRedirect } from '#khaf/utility/FetchUtils.js';
 
 const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 
@@ -105,9 +106,9 @@ export class RSSReader<T> {
             }
             logger.warn(`${this.url} has been disabled as invalid XML has been fetched.`);
             return clearInterval(this.#interval!);
+        } else if (r !== undefined && isRedirect(r.statusCode)) {
+            logger.info(`${this.url} redirected you to ${r.headers['location']}`);
         }
-
-        // TODO log if request was redirected
 
         // if the XML is valid, we can clear the old cache
         this.results.clear();
