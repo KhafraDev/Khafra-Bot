@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { badmeme, cache } from '@khaf/badmeme';
+import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
 
@@ -14,6 +14,22 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.String,
                     name: 'subreddit',
                     description: 'Subreddit to get a bad meme on.'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'sort-by',
+                    description: 'Sort posts by the given modifier.',
+                    choices: Object.values(SortBy).map(
+                        choice => ({ name: choice, value: choice })
+                    )
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'timeframe',
+                    description: 'Timeframe to sort posts by (only if "sort-by" is top).',
+                    choices: Object.values(Timeframe).map(
+                        choice => ({ name: choice, value: choice })
+                    )
                 }
             ]
         };
@@ -25,12 +41,21 @@ export class kInteraction extends Interactions {
         const subreddit =
             interaction.options.getString('subreddit')?.toLowerCase() ??
             'dankmemes';
+        const modifier = interaction.options.getString('sort-by') as `${SortBy}` | null;
+        const timeframe = modifier === 'top'
+            ? interaction.options.getString('timeframe') as `${Timeframe}` | null
+            : undefined
 
         if (!cache.has(subreddit))
             await interaction.deferReply();
 
         const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw);
-        const item = await badmeme(subreddit, isNSFW);
+        const item = await badmeme(
+            subreddit,
+            isNSFW,
+            modifier ?? undefined,
+            timeframe ?? undefined
+        );
 
         if (item === null) {
             const nsfwWarning = interaction.channel !== null && !isNSFW

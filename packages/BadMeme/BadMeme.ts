@@ -38,10 +38,12 @@ const getItemRespectNSFW = (
 
 export const badmeme = async (
     subreddit = 'dankmemes',
-    nsfw = false
+    nsfw = false,
+    modifier: `${SortBy}` = SortBy.NEW,
+    timeframe: `${Timeframe}` = Timeframe.MONTH
 ): Promise<
     IBadMemeCache |
-    { message: string; error: number; reason: string } |
+    { message: string; error: number; reason?: string } |
     null
 > => {
     subreddit = subreddit.toLowerCase();
@@ -51,11 +53,17 @@ export const badmeme = async (
     }
 
     const o = new URLSearchParams({ limit: '20' });
-    if (after.has(subreddit))
+
+    if (after.has(subreddit)) {
         o.set('after', after.get(subreddit)!);
+    }
+
+    if (modifier === SortBy.TOP) {
+        o.set('t', timeframe);
+    }
 
     // https://www.reddit.com/dev/api#GET_new
-    const { body } = await request(`https://www.reddit.com/r/${subreddit}/new.json?${o}`);
+    const { body } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`);
     const j = await body.json() as Reddit;
 
     if ('error' in j) {
@@ -100,6 +108,25 @@ export const badmeme = async (
     cache.set(subreddit, cachedSet);
 
     return getItemRespectNSFW(subreddit, nsfw, cachedSet);
+}
+
+export enum SortBy {
+    CONTROVERSIAL = 'controversial',
+    BEST = 'best',
+    HOT = 'hot',
+    NEW = 'new',
+    RANDOM = 'random',
+    RISING = 'rising',
+    TOP = 'top'
+}
+
+export enum Timeframe {
+    HOUR = 'hour',
+    DAY = 'day',
+    WEEK = 'week',
+    MONTH = 'month',
+    YEAR = 'year',
+    ALL = 'all'
 }
 
 setInterval(() => {
