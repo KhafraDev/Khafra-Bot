@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { badmeme, cache } from '@khaf/badmeme';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -22,18 +22,25 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<string> {
-        const subreddit = interaction.options.getString('subreddit') ?? 'dankmemes';
+        const subreddit =
+            interaction.options.getString('subreddit')?.toLowerCase() ??
+            'dankmemes';
 
         if (!cache.has(subreddit))
             await interaction.deferReply();
 
-        const item = await badmeme(subreddit, false);
+        const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw);
+        const item = await badmeme(subreddit, isNSFW);
 
         if (item === null) {
-            return '❌ No posts in this subreddit were found. This command does not post NSFW images.';
+            const nsfwWarning = interaction.channel !== null && !isNSFW
+                ? ' NSFW subreddits do not work in age restricted channels!'
+                : '';
+
+            return `❌ No posts in this subreddit were found.${nsfwWarning}`;
         } else if ('error' in item) {
             if (item.error === 404) {
-                return '❌ That subreddit doesn\'t exist!';
+                return '❌ This subreddit doesn\'t exist!';
             }
 
             switch (item.reason) {
@@ -43,7 +50,7 @@ export class kInteraction extends Interactions {
                 default: return `❌ Subreddit is blocked for reason "${item.reason}"!`;
             }
         } else if (item.url.length === 0) {
-            return '❌ No valid posts in this subreddit!';
+            return '❌ The requested post was filtered incorrectly.';
         }
 
         return Array.isArray(item.url) ? item.url[0] : item.url;
