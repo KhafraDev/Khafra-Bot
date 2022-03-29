@@ -87,9 +87,7 @@ export class kEvent extends Event<'interactionCreate'> {
                 param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
                 param.ephemeral = true;
             } else {
-                if (typeof result === 'string') {
-                    param.content = result;
-                } else if (result instanceof UnsafeEmbed) {
+                if (result instanceof UnsafeEmbed) {
                     param.embeds = [result];
                 } else if (result instanceof MessageAttachment) {
                     param.files = [result];

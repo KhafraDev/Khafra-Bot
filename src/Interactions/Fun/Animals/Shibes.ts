@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { request } from 'undici';
 
 const shibes: string[] = [];
@@ -12,7 +12,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         if (shibes.length === 0) {
             await interaction.deferReply();
 
@@ -22,6 +22,8 @@ export class kSubCommand extends InteractionSubCommand {
             shibes.push(...j);
         }
 
-        return shibes.shift()!;
+        return {
+            content: shibes.shift()
+        }
     }
 }

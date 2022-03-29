@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { request } from 'undici';
 
 interface DogCEO {
@@ -15,12 +15,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         await interaction.deferReply();
 
         const { body } = await request('https://dog.ceo/api/breeds/image/random');
         const j = await body.json() as DogCEO;
 
-        return j.message;
+        return {
+            content: j.message
+        }
     }
 }

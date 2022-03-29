@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { request } from 'undici';
 
 interface SomeRandomPanda {
@@ -14,12 +14,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         await interaction.deferReply();
 
         const { body } = await request('https://some-random-api.ml/img/panda');
         const j = await body.json() as SomeRandomPanda;
 
-        return j.link;
+        return {
+            content: j.link
+        }
     }
 }

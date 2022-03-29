@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const sentence = interaction.options.getString('sentence', true);
         const [barack, obama] = await dontThrow(talkObamaToMe(sentence.slice(0, 280)));
 
@@ -34,6 +34,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return obama;
+        return {
+            content: obama
+        }
     }
 }

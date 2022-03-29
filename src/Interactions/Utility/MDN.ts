@@ -32,17 +32,23 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const search = interaction.options.getString('input', true);
         const result = await fetchMDN(search);
 
         if ('errors' in result) {
             const keys = Object.keys(result.errors);
-            return `${emoji} ${keys.map(k => result.errors[k].map(e => e.message).join('\n')).join('\n')}`;
+            return {
+                content: `${emoji} ${keys.map(k => result.errors[k].map(e => e.message).join('\n')).join('\n')}`
+            }
         }
 
-        if (result.documents.length === 0)
-            return `${emoji} No search results found!`;
+        if (result.documents.length === 0) {
+            return {
+                content: `${emoji} No search results found!`,
+                ephemeral: true
+            }
+        }
 
         const document = result.documents[0]!;
         const link = `https://developer.mozilla.org/${document.locale}/docs/${document.slug}`;

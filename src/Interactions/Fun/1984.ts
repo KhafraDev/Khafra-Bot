@@ -1,6 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { codeBlock } from '@discordjs/builders';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { InteractionReplyOptions } from 'discord.js';
 
 const boomer1984 = `
 ⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
@@ -27,7 +28,9 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (): Promise<string> {
-        return codeBlock(boomer1984);
+    async init (): Promise<InteractionReplyOptions> {
+        return {
+            content: codeBlock(boomer1984)
+        }
     }
 }

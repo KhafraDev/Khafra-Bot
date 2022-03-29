@@ -31,7 +31,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment> {
         const user = interaction.options.getUser('person', true);
         const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
 

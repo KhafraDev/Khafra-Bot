@@ -26,7 +26,6 @@ interface SubcommandOptions {
 }
 
 type HandlerReturn =
-    | string
     | import('@discordjs/builders').UnsafeEmbed
     | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
@@ -53,7 +52,9 @@ export class Interactions {
         const subcommandName = `${this.data.name}-${subcommand}`;
 
         if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
-            return '❌ This option has not been implemented yet!';
+            return {
+                content: '❌ This option has not been implemented yet!'
+            }
         }
 
         const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!;

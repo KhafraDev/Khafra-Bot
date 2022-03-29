@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { request } from 'undici';
 
 interface NekosLifeLizard {
@@ -14,12 +14,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         await interaction.deferReply();
 
         const { body } = await request('https://nekos.life/api/v2/img/lizard');
         const j = await body.json() as NekosLifeLizard;
 
-        return j.url;
+        return {
+            content: j.url
+        }
     }
 }

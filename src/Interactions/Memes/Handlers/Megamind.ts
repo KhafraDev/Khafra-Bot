@@ -16,7 +16,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment> {
         const buffer = await this.image(interaction);
 
         return new MessageAttachment(buffer, 'no_beaches.png');
