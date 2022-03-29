@@ -9,13 +9,17 @@ import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { ActionRow, inlineCode, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 
 type Row = Exclude<kReminder, 'userId'>;
 
 const inRange = Range({ min: 1, max: 20 });
 
 const chunkEmbeds = (rows: Row[]): MessageEmbed[] => {
+    if (rows.length === 0) {
+        return [];
+    }
+
     const embeds = rows.map(row => {
         const repeats = row.once ? 'does not repeat' : 'repeats';
         return `• ${inlineCode(row.id)}: ${time(row.time)} - ${inlineCode(ellipsis(row.message, 20))}, ${repeats}`
@@ -32,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | undefined> {
         const amount = interaction.options.getInteger('amount') ?? 100;
         const trueAmount = interaction.inRawGuild()
             ? inRange(amount) ? amount : 10
@@ -48,7 +52,14 @@ export class kSubCommand extends InteractionSubCommand {
         const embeds = chunkEmbeds(rows);
         let page = 0;
 
-        if (embeds.length === 1 || interaction.inRawGuild()) {
+        console.log({embeds})
+
+        if (embeds.length === 0) {
+            return {
+                content: 'You don\'t have any reminders, silly!',
+                ephemeral: true
+            }
+        } else if (embeds.length === 1 || interaction.inRawGuild()) {
             return embeds[0];
         }
 
@@ -65,7 +76,10 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
