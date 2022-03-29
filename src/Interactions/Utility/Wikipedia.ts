@@ -6,7 +6,7 @@ import { ellipsis, plural } from '#khaf/utility/String.js';
 import { ActionRow, hideLinkEmbed, inlineCode, MessageActionRowComponent, UnsafeSelectMenuComponent, UnsafeSelectMenuOption } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
 import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, Message, SelectMenuInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, Message, SelectMenuInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -26,14 +26,20 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 
         if (err !== null) {
-            return `❌ An error occurred processing this request: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An error occurred processing this request: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         } else if (wiki.pages.length === 0) {
-            return '❌ No Wikipedia articles for that query were found!';
+            return {
+                content: '❌ No Wikipedia articles for that query were found!',
+                ephemeral: true
+            }
         }
 
         const m = await interaction.editReply({

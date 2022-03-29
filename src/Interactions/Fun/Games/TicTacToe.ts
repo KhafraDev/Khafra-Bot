@@ -5,7 +5,7 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, ButtonComponent, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
@@ -37,7 +37,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const game = new TicTacToe();
 
         const [err, int] = await dontThrow(interaction.editReply({
@@ -46,7 +46,10 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {

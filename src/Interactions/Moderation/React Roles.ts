@@ -15,6 +15,7 @@ import {
     ChatInputCommandInteraction,
     GuildMember,
     GuildMemberRoleManager,
+    InteractionReplyOptions,
     NewsChannel,
     Role,
     TextChannel,
@@ -81,7 +82,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const icon = interaction.options.getString('icon');
@@ -92,30 +93,48 @@ export class kInteraction extends Interactions {
             Clicking the button again will take the role away!`;
 
         if (!hasPerms(channel, interaction.guild?.me, perms)) {
-            return '❌ I do not have permission to post a message in this channel!';
+            return {
+                content: '❌ I do not have permission to post a message in this channel!',
+                ephemeral: true
+            }
         } else if (!hasPerms(channel, interaction.member, perms)) {
-            return '❌ You do not have permission to post a message in this channel!';
+            return {
+                content: '❌ You do not have permission to post a message in this channel!',
+                ephemeral: true
+            }
         } else if (role.managed) {
-            return '❌ I can\'t give members a managed role.';
+            return {
+                content: '❌ I can\'t give members a managed role.',
+                ephemeral: true
+            }
         } else if (
             !(role instanceof Role) ||
             !(interaction.member instanceof GuildMember) ||
             !(interaction.member.roles instanceof GuildMemberRoleManager) ||
             !interaction.guild?.me
         ) {
-            return '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!';
+            return {
+                content: '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!',
+                ephemeral: true
+            }
         } else if (
             role.id === interaction.guild.me.roles.highest.id ||
             // Negative if this role's position is lower (param is higher),
             // positive number if this one is higher (other's is lower), 0 if equal
             role.comparePositionTo(interaction.guild.me.roles.highest) > 0
         ) {
-            return '❌ I do not have enough permission to give others this role!';
+            return {
+                content: '❌ I do not have enough permission to give others this role!',
+                ephemeral: true
+            }
         } else if (
             role.id === interaction.member.roles.highest.id ||
             role.comparePositionTo(interaction.member.roles.highest) > 0
         ) {
-            return '❌ You cannot give this role out to others!';
+            return {
+                content: '❌ You cannot give this role out to others!',
+                ephemeral: true
+            }
         }
 
         const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
@@ -151,7 +170,10 @@ export class kInteraction extends Interactions {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         return Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`);

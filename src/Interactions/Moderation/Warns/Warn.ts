@@ -8,7 +8,7 @@ import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, InteractionReplyOptions } from 'discord.js';
 
 type WarnInsert = {
     insertedid: Warning['id']
@@ -24,9 +24,12 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (!interaction.inCachedGuild()) {
-            return '❌ The bot must be re-invited with all permissions to use this command.';
+            return {
+                content: '❌ The bot must be re-invited with all permissions to use this command.',
+                ephemeral: true
+            }
         }
 
         const points = interaction.options.getInteger('points', true);
@@ -40,11 +43,20 @@ export class kSubCommand extends InteractionSubCommand {
                 member.permissions.has(PermissionFlagsBits.KickMembers) ||
                 member.permissions.has(PermissionFlagsBits.Administrator)
             ) {
-                return '❌ This member cannot be warned!';
+                return {
+                    content: '❌ This member cannot be warned!',
+                    ephemeral: true
+                }
             } else if (!hierarchy(interaction.member, member)) {
-                return `❌ You can't warn ${member}!`;
+                return {
+                    content: `❌ You can't warn ${member}!`,
+                    ephemeral: true
+                }
             } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
-                return `❌ I can't warn ${member}! 😦`;
+                return {
+                    content: `❌ I can't warn ${member}! 😦`,
+                    ephemeral: true
+                }
             }
         }
 
@@ -77,7 +89,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         // something really bad has gone wrong...
         if (rows.length === 0) {
-            return '❌ Yeah, I\'m not really sure what happened. 🤯';
+            return {
+                content: '❌ Yeah, I\'m not really sure what happened. 🤯',
+                ephemeral: true
+            }
         }
 
         const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
@@ -91,7 +106,10 @@ export class kSubCommand extends InteractionSubCommand {
                 : [''];
 
             if (kickError !== null) {
-                return `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`;
+                return {
+                    content: `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`,
+                    ephemeral: true
+                }
             }
 
             await interaction.editReply({

@@ -6,7 +6,7 @@ import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface WarningDel {
     id: Warning['id']
@@ -24,15 +24,21 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (!interaction.inGuild()) {
-            return '❌ The bot must be re-invited with all permissions to use this command.';
+            return {
+                content: '❌ The bot must be re-invited with all permissions to use this command.',
+                ephemeral: true
+            }
         }
 
         const uuid = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(uuid)) {
-            return '❌ That ID is not formatted correctly, please use a valid ID next time!';
+            return {
+                content: '❌ That ID is not formatted correctly, please use a valid ID next time!',
+                ephemeral: true
+            }
         }
 
         const deleted = await sql<WarningDel[]>`
@@ -44,7 +50,10 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (deleted.length === 0) {
-            return '❌ No warning with that ID could be found in the guild!';
+            return {
+                content: '❌ No warning with that ID could be found in the guild!',
+                ephemeral: true
+            }
         }
 
         await dontThrow(interaction.editReply({

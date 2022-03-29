@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { request } from 'undici';
 import { URL } from 'url';
@@ -96,7 +96,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | undefined> {
         const subcommand = interaction.options.getSubcommand(true);
 
         if (subcommand === 'mix') {
@@ -108,9 +108,15 @@ export class kInteraction extends Interactions {
             const twoParsed = parse(emojiTwo);
 
             if (oneParsed.map(p => p.text).join('') !== emojiOne) {
-                return '❌ First emoji could not be parsed correctly!';
+                return {
+                    content: '❌ First emoji could not be parsed correctly!',
+                    ephemeral: true
+                }
             } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
-                return '❌ Second emoji could not be parsed correctly!';
+                return {
+                    content: '❌ Second emoji could not be parsed correctly!',
+                    ephemeral: true
+                }
             }
 
             if (cache.has(query)) {
@@ -135,13 +141,19 @@ export class kInteraction extends Interactions {
             const [err, res] = await dontThrow(request(api));
 
             if (err !== null) {
-                return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+                return {
+                    content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                    ephemeral: true
+                }
             }
 
             const j = await res.body.json() as EmojiKitchen;
 
             if (j.results.length === 0) {
-                return '❌ One or more emojis you provided are not supported, or might not work as a combo.';
+                return {
+                    content: '❌ One or more emojis you provided are not supported, or might not work as a combo.',
+                    ephemeral: true
+                }
             }
 
             const url = j.results[0].url;
@@ -159,7 +171,10 @@ export class kInteraction extends Interactions {
                     const [err, res] = await dontThrow(request(supportedListURL));
 
                     if (err !== null) {
-                        return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+                        return {
+                            content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                            ephemeral: true
+                        }
                     }
 
                     const listJoined = await res.body.text();

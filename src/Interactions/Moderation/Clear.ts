@@ -11,7 +11,7 @@ import {
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -51,20 +51,28 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const amount = interaction.options.getInteger('messages', true);
         const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 
         if (!isText(channel) && !isThread(channel)) {
-            return `❌ I can't bulk delete messages in ${channel}!`;
+            return {
+                content: `❌ I can't bulk delete messages in ${channel}!`,
+                ephemeral: true
+            }
         } else if (!hasPerms(channel, interaction.guild?.me, this.options.permissions!)) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         await dontThrow(channel.bulkDelete(amount));
 
         try {
-            return `✅ Cleared ${amount} messages from ${channel}`;
+            return {
+                content: `✅ Cleared ${amount} messages from ${channel}`
+            }
         } finally {
             // If the channel is private, we shouldn't broadcast
             // information about it.

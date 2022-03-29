@@ -15,9 +15,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (
-        interaction: ChatInputCommandInteraction
-    ): Promise<InteractionReplyOptions | UnsafeEmbed | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | UnsafeEmbed> {
         const username = interaction.options.getString('username', true);
         const type = interaction.options.getString('type') ?? 'frontfull';
         const uuid = await UUID(username);
@@ -28,7 +26,10 @@ export class kSubCommand extends InteractionSubCommand {
 		`;
 
         if (uuid === null) {
-            return '❌ Player could not be found!';
+            return {
+                content: '❌ Player could not be found!',
+                ephemeral: true
+            }
         } else if (type === 'skin') {
             const skin = (await getSkin(uuid.id))[0];
             const { body } = await request(skin);

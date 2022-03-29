@@ -3,7 +3,7 @@ import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -23,12 +23,15 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+    async init (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const sentence = interaction.options.getString('sentence', true);
         const [barack, obama] = await dontThrow(talkObamaToMe(sentence.slice(0, 280)));
 
         if (barack !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(barack.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(barack.message)}`,
+                ephemeral: true
+            }
         }
 
         return obama;

@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, bold, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, Message, MessageComponentInteraction } from 'discord.js';
 
 function * format(items: YouTubeSearchResults): Generator<MessageEmbed, void, unknown> {
     for (let i = 0; i < items.items.length; i++) {
@@ -42,14 +42,20 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const query = interaction.options.getString('search', true);
         const results = await YouTube(query);
 
         if ('error' in results) {
-            return `❌ ${results.error.code}: ${results.error.message}`;
+            return {
+                content: `❌ ${results.error.code}: ${results.error.message}`,
+                ephemeral: true
+            }
         } else if (results.pageInfo.totalResults === 0 || results.items.length === 0) {
-            return '❌ No results found!';
+            return {
+                content: '❌ No results found!',
+                ephemeral: true
+            }
         }
 
         const embeds = [...format(results)];

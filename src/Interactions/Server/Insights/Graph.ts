@@ -39,11 +39,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Insights[]>`
@@ -62,7 +65,10 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (rows.length === 0) {
-            return '❌ There are no insights available for the last 14 days!';
+            return {
+                content: '❌ There are no insights available for the last 14 days!',
+                ephemeral: true
+            }
         }
 
         const locale = interaction.guild?.preferredLocale ?? 'en-US';
@@ -111,13 +117,16 @@ export class kSubCommand extends InteractionSubCommand {
         const [err, blob] = await dontThrow(chart());
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         return {
             files: [
                 new MessageAttachment(Buffer.from(blob), 'chart.png')
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

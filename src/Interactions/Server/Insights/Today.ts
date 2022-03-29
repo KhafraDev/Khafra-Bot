@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
 import { time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Insights {
     k_left: number
@@ -18,11 +18,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Insights[]>`

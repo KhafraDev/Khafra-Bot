@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
 
@@ -18,13 +18,19 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {
-            return '❌ That id is invalid, try again!';
+            return {
+                content: '❌ That id is invalid, try again!',
+                ephemeral: true
+            }
         } else if (!interaction.guildId || !interaction.guild) {
-            return '❌ No guild id provided in the command, re-invite the bot with the correct permissions.';
+            return {
+                content: '❌ No guild id provided in the command, re-invite the bot with the correct permissions.',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<GiveawayRow[]>`
@@ -43,9 +49,15 @@ export class kSubCommand extends InteractionSubCommand {
 
             await giveawayMessage.delete();
         } catch {
-            return '✅ The giveaway has been stopped, but I could not delete the giveaway message!'
+            return {
+                content: '✅ The giveaway has been stopped, but I could not delete the giveaway message!',
+                ephemeral: true
+            }
         }
 
-        return `✅ Giveaway ${inlineCode(rows[0].id)} has been deleted!`;
+        return {
+            content: `✅ Giveaway ${inlineCode(rows[0].id)} has been deleted!`,
+            ephemeral: true
+        }
     }
 }

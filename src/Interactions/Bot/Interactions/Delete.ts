@@ -4,7 +4,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { inlineCode } from '@discordjs/builders';
 import { APIApplicationCommand, Routes } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher(
@@ -20,15 +20,21 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const commandName = interaction.options.getString('command-name', true);
         const command = KhafraClient.Interactions.Commands.get(commandName.toLowerCase());
         const globally = interaction.options.getBoolean('globally');
 
         if (!command) {
-            return `❌ Command "${inlineCode(commandName)}" does not exist, idiot.`;
+            return {
+                content: `❌ Command "${inlineCode(commandName)}" does not exist, idiot.`,
+                ephemeral: true
+            }
         } else if (!interaction.guild) {
-            return '❌ Not in a guild.';
+            return {
+                content: '❌ Not in a guild.',
+                ephemeral: true
+            }
         }
 
         if (globally !== true) {
@@ -38,7 +44,10 @@ export class kSubCommand extends InteractionSubCommand {
             const commandId = commands.find(c => c.name === command.data.name);
 
             if (!commandId) {
-                return '❌ Command doesn\'t exist in the guild.';
+                return {
+                    content: '❌ Command doesn\'t exist in the guild.',
+                    ephemeral: true
+                }
             }
 
             // https://discord.com/developers/docs/interactions/application-commands#delete-guild-application-command
@@ -53,7 +62,10 @@ export class kSubCommand extends InteractionSubCommand {
             const commandId = commands.find(c => c.name === command.data.name);
 
             if (!commandId) {
-                return '❌ Command doesn\'t exist.';
+                return {
+                    content: '❌ Command doesn\'t exist.',
+                    ephemeral: true
+                }
             }
 
             // https://discord.com/developers/docs/interactions/application-commands#delete-global-application-command
@@ -62,6 +74,8 @@ export class kSubCommand extends InteractionSubCommand {
             );
         }
 
-        return `✅ Command "${inlineCode(commandName)}" has been deleted!`;
+        return {
+            content: `✅ Command "${inlineCode(commandName)}" has been deleted!`
+        }
     }
 }

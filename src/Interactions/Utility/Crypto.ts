@@ -27,16 +27,22 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions | string> {
+    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
         const currencies = await CoinGecko.get(
             interaction.options.getString('search', true),
             () => void dontThrow(interaction.deferReply())
         );
 
         if (currencies === undefined) {
-            return '❌ The cache is being loaded for the first time, please wait a minute!';
+            return {
+                content: '❌ The cache is being loaded for the first time, please wait a minute!',
+                ephemeral: true
+            }
         } else if (currencies.length === 0) {
-            return '❌ No currency with that name or id could be found!';
+            return {
+                content: '❌ No currency with that name or id could be found!',
+                ephemeral: true
+            }
         }
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
@@ -76,6 +82,6 @@ export class kInteraction extends Interactions {
             ${currencies.map(c => inlineCode(c.id)).join(', ')}
             `.trim(),
             embeds: [embed]
-        } as InteractionReplyOptions;
+        }
     }
 }

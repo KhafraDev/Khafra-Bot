@@ -8,7 +8,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, bold, inlineCode, time } from '@discordjs/builders';
+import { ActionRow, bold, inlineCode, MessageActionRowComponent, time } from '@discordjs/builders';
 import { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
@@ -23,14 +23,17 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel;
         const prize = interaction.options.getString('prize', true);
         const ends = parseStrToMs(interaction.options.getString('ends', true));
         const winners = interaction.options.getInteger('winners') ?? 1;
 
         if (!timeRange(ends)) {
-            return '❌ A giveaway must last longer than a minute, and less than a month!';
+            return {
+                content: '❌ A giveaway must last longer than a minute, and less than a month!',
+                ephemeral: true
+            }
         }
 
         const endsDate = new Date(Date.now() + ends);
@@ -50,7 +53,10 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (sentError !== null) {
-            return `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sentError.message)}`;
+            return {
+                content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sentError.message)}`,
+                ephemeral: true
+            }
         } else {
             void dontThrow(sent.react('🎉'));
         }
@@ -84,10 +90,10 @@ export class kSubCommand extends InteractionSubCommand {
             • Ends ${time(endsDate)}
             • ID ${inlineCode(rows[0].id)}`,
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.link('Message Link', sent.url)
                 )
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

@@ -4,7 +4,7 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { fetchMDN } from '@khaf/mdn';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -52,10 +52,10 @@ export class kInteraction extends Interactions {
             ${emoji ?? 'MDN'} ${hyperlink(document.title, hideLinkEmbed(link))}
             ${inlineCode(document.summary.replace(/\s+/g, ' '))}`,
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.link('Go to MDN', link)
                 )
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

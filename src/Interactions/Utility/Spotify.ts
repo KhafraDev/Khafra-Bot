@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { ChatInputCommandInteraction, GuildMember, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(
@@ -36,13 +36,19 @@ export class kInteraction extends Interactions {
         }
 
         if (typeof search !== 'string') {
-            return '❌ If you are not listening to any songs, a search query must be provided!';
+            return {
+                content: '❌ If you are not listening to any songs, a search query must be provided!',
+                ephemeral: true
+            }
         }
 
         const res = await spotify.search(search);
 
         if (res.tracks.items.length === 0) {
-            return '❌ No songs found!';
+            return {
+                content: '❌ No songs found!',
+                ephemeral: true
+            }
         }
 
         const image = res.tracks.items[0].album.images.reduce((a, b) => {

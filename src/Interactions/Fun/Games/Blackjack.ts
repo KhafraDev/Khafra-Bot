@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, bold, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction, Snowflake } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
 
 type Card = [number, typeof suits[number]];
 
@@ -38,9 +38,12 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (games.has(interaction.user.id)) {
-            return '❌ Finish your other game before playing another!';
+            return {
+                content: '❌ Finish your other game before playing another!',
+                ephemeral: true
+            }
         }
 
         const rows = [
@@ -77,7 +80,10 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {

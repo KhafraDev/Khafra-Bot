@@ -17,11 +17,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.options.getString('id', true);
 
         if (!uuidRegex.test(id)) {
-            return '❌ An invalid ID was provided!';
+            return {
+                content: '❌ An invalid ID was provided!',
+                ephemeral: true
+            }
         }
 
         const text = interaction.options.getString('message');
@@ -31,9 +34,15 @@ export class kSubCommand extends InteractionSubCommand {
         const parsedTime = time ? parseStrToMs(time) : null;
 
         if (parsedTime && parsedTime < 60 * 1000 * 15) {
-            return '❌ The shortest reminder you can set is 15 minutes.';
+            return {
+                content: '❌ The shortest reminder you can set is 15 minutes.',
+                ephemeral: true
+            }
         } else if (parsedTime && parsedTime > 60 * 1000 * 60 * 24 * 7 * 4) {
-            return '❌ The longest reminder you can set is 4 weeks.';
+            return {
+                content: '❌ The longest reminder you can set is 4 weeks.',
+                ephemeral: true
+            }
         }
 
         const date = parsedTime ? new Date(Date.now() + parsedTime) : null;
@@ -50,7 +59,10 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (rows.count === 0) {
-            return '❌ You do not have any reminders with that ID.';
+            return {
+                content: '❌ You do not have any reminders with that ID.',
+                ephemeral: true
+            }
         }
 
         const updatedFields: string[] = [];

@@ -15,14 +15,17 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.options.getString('id', true);
         const idList = id.includes(',')
             ? id.split(/[ ,]+/g).filter(v => uuidRegex.test(v))
             : [id.trim()].filter(v => uuidRegex.test(v));
 
         if (idList.length === 0) {
-            return '❌ No UUIDs provided were valid, try again!';
+            return {
+                content: '❌ No UUIDs provided were valid, try again!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql`

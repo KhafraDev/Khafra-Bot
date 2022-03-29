@@ -6,7 +6,7 @@ import {
     LibreTranslateGetLanguages
 } from '@khaf/translate';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | string | undefined> {
+    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions | undefined> {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);
@@ -84,7 +84,10 @@ export class kInteraction extends Interactions {
             });
 
             if (translated === null) {
-                return '❌ An error occurred using LibreTranslate, try another service!';
+                return {
+                    content: '❌ An error occurred using LibreTranslate, try another service!',
+                    ephemeral: true
+                }
             }
 
             return embed.setDescription(translated.translatedText);

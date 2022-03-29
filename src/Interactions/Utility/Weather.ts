@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
 
@@ -25,19 +25,28 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
         const location = interaction.options.getString('location', true);
         const results = await weather(location);
 
         if (results === null) {
-            return '❌ An unexpected error occurred!';
+            return {
+                content: '❌ An unexpected error occurred!',
+                ephemeral: true
+            }
         } else if (results.Type) {
-            return `❌ ${results.Type}`;
+            return {
+                content: `❌ ${results.Type}`,
+                ephemeral: true
+            }
         }
 
         const first = results.observations?.location[0].observation[0];
         if (first === undefined) {
-            return '❌ No location found!';
+            return {
+                content: '❌ No location found!',
+                ephemeral: true
+            }
         }
 
         return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)

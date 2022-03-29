@@ -45,6 +45,6 @@ export class kInteraction extends Interactions {
         return {
             ephemeral: true,
             embeds: [embed]
-        } as InteractionReplyOptions;
+        }
     }
 }

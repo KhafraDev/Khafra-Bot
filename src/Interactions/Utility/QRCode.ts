@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
         const [e, r] = await dontThrow(request(`https://qrcode.show/${text}`, {
             headers: {
@@ -33,7 +33,10 @@ export class kInteraction extends Interactions {
         }));
 
         if (e !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(e.message)}.`,
+                ephemeral: true
+            }
         }
 
         const buffer = Buffer.from(await r.body.arrayBuffer());
@@ -42,6 +45,6 @@ export class kInteraction extends Interactions {
 
         return {
             files: [attachment]
-        } as InteractionReplyOptions;
+        }
     }
 }

@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, Message, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, Message, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { readdirSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { extname, join } from 'path';
@@ -151,11 +151,17 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (currentGames.has(interaction.user.id)) {
-            return '❌ Finish your current game first!';
+            return {
+                content: '❌ Finish your current game first!',
+                ephemeral: true
+            }
         } else if (!interaction.inGuild()) {
-            return '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!';
+            return {
+                content: '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const shouldList = interaction.options.getSubcommand() === 'list';
@@ -166,7 +172,9 @@ export class kSubCommand extends InteractionSubCommand {
                 .map(l => `• ${inlineCode(l)}`)
                 .join('\n');
 
-            return `✅ Here are the word lists that you can play:\n${lists}`;
+            return {
+                content: `✅ Here are the word lists that you can play:\n${lists}`
+            }
         }
 
         let words!: string[];
@@ -191,7 +199,12 @@ export class kSubCommand extends InteractionSubCommand {
 
         // I assume the bot only has only been invited with slash command perms.
         if (!(m instanceof Message)) {
-            return `❌ To play ${inlineCode('hangman')}, please invite the bot to the guild using the ${inlineCode('/invite')} command!`;
+            return {
+                content:
+                    `❌ To play ${inlineCode('hangman')}, please invite the bot` +
+                    ` to the guild using the ${inlineCode('/invite')} command!`,
+                ephemeral: true
+            }
         }
 
         const c = m.channel.createMessageCollector({

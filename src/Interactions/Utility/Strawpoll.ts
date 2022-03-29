@@ -192,7 +192,7 @@ export class kInteraction extends Interactions {
 
         const { body } = await request('https://strawpoll.com/api/poll', {
             method: 'POST',
-            body: JSON.stringify({ poll: poll } as StrawpollBody)
+            body: JSON.stringify({ poll } as StrawpollBody)
         });
 
         const j = await body.json() as { admin_key: string, content_id: string, success: 1 | 0 };
@@ -204,6 +204,6 @@ export class kInteraction extends Interactions {
                 https://strawpoll.com/${j.content_id}
                 `)
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

@@ -6,7 +6,7 @@ import { ImageURLOptions } from '@discordjs/rest';
 import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 
 const options: ImageURLOptions = { extension: 'png', size: 256 };
@@ -21,7 +21,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | InteractionReplyOptions> {
         const option =
 			interaction.options.getAttachment('image') ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
@@ -30,7 +30,7 @@ export class kSubCommand extends InteractionSubCommand {
         const buffer = await this.image(option);
 
         if (typeof buffer === 'string') {
-            return buffer;
+            return { content: buffer }
         }
 
         return new MessageAttachment(Buffer.from(buffer), 'magik.png');

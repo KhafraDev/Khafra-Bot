@@ -7,7 +7,7 @@ import { plural } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, ChatInputCommandInteraction, User } from 'discord.js';
+import { AnyChannel, ChatInputCommandInteraction, InteractionReplyOptions, User } from 'discord.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
 const perms =
@@ -22,17 +22,23 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const messageURL = URLFactory(interaction.options.getString('url', true));
 
         if (messageURL === null) {
-            return '❌ An invalid message link was provided!';
+            return {
+                content: '❌ An invalid message link was provided!',
+                ephemeral: true
+            }
         } else if (
             messageURL.hostname !== 'discord.com' &&
             messageURL.hostname !== 'canary.discord.com' ||
             !channelsURLReg.test(messageURL.pathname)
         ) {
-            return '❌ The first argument must be a link to a message!';
+            return {
+                content: '❌ The first argument must be a link to a message!',
+                ephemeral: true
+            }
         }
 
         const match = channelsURLReg.exec(messageURL.pathname)!.groups!;
@@ -43,11 +49,17 @@ export class kSubCommand extends InteractionSubCommand {
             !validSnowflake(channelId) ||
             !validSnowflake(guildId)
         ) {
-            return '❌ An invalid message link was sent! :(';
+            return {
+                content: '❌ An invalid message link was sent! :(',
+                ephemeral: true
+            }
         }
 
         if (guildId !== interaction.guildId || !interaction.guild) {
-            return '❌ Please re-invite the bot with the required permissions to re-roll a giveaway!';
+            return {
+                content: '❌ Please re-invite the bot with the required permissions to re-roll a giveaway!',
+                ephemeral: true
+            }
         }
 
         let channel: AnyChannel | null = interaction.guild.channels.cache.get(channelId) ?? null;
@@ -56,22 +68,34 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         if (!isText(channel)) {
-            return `❌ ${channel} isn't a text or news channel! You can't have a giveaway here.`;
+            return {
+                content: `❌ ${channel} isn't a text or news channel! You can't have a giveaway here.`,
+                ephemeral: true
+            }
         } else if (!hasPerms(channel, interaction.guild.me, perms)) {
-            return `❌ I do not have enough permission to edit the giveaway in ${channel}!`;
+            return {
+                content: `❌ I do not have enough permission to edit the giveaway in ${channel}!`,
+                ephemeral: true
+            }
         }
 
         const [fetchMessageError, m] = await dontThrow(channel.messages.fetch(messageId));
 
         if (fetchMessageError !== null) {
-            return `❌ Could not fetch the message! Was it deleted? (${inlineCode(fetchMessageError.message)})`;
+            return {
+                content: `❌ Could not fetch the message! Was it deleted? (${inlineCode(fetchMessageError.message)})`,
+                ephemeral: true
+            }
         } else if (
             !m || // eslint-disable-line @typescript-eslint/no-unnecessary-condition
             m.author.id !== interaction.client.user?.id ||
             m.embeds.length !== 1 ||
             Number(m.embeds[0].timestamp!) > Date.now()
         ) {
-            return '❌ This message is not a giveaway.';
+            return {
+                content: '❌ This message is not a giveaway.',
+                ephemeral: true
+            }
         }
 
         const emoji = m.reactions.resolve('🎉');
@@ -80,7 +104,10 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         if (!m.reactions.cache.has('🎉')) {
-            return '❌ This message has no 🎉 reactions.';
+            return {
+                content: '❌ This message has no 🎉 reactions.',
+                ephemeral: true
+            }
         }
 
         const { count, users } = m.reactions.cache.get('🎉')!;
@@ -132,6 +159,9 @@ export class kSubCommand extends InteractionSubCommand {
             }));
         }
 
-        return `✅ Re-rolled the giveaway! [${hyperlink('URL', m.url)}]`;
+        return {
+            content: `✅ Re-rolled the giveaway! [${hyperlink('URL', m.url)}]`,
+            ephemeral: true
+        }
     }
 }

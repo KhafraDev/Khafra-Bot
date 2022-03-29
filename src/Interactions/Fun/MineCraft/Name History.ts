@@ -2,7 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, bold, time, UnsafeEmbed } from '@discordjs/builders';
 import { getNameHistory, UUID } from '@khaf/minecraft';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -12,13 +12,16 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<UnsafeEmbed | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<UnsafeEmbed | InteractionReplyOptions> {
         const username = interaction.options.getString('username', true);
         const uuid = await UUID(username);
         const nameHistory = uuid !== null ? await getNameHistory(uuid.id) : null;
 
         if (uuid === null || nameHistory === null) {
-            return '❌ Player could not be found!';
+            return {
+                content: '❌ Player could not be found!',
+                ephemeral: true
+            }
         }
 
         let description = `● ${bold('Original Name:')} ${inlineCode(nameHistory[0].name)}\n`;

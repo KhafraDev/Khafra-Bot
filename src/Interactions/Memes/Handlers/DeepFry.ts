@@ -3,7 +3,7 @@ import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 
 const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SKRSContext2D => {
@@ -52,7 +52,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | InteractionReplyOptions> {
         const option =
 			interaction.options.getAttachment('image')?.proxyURL ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
@@ -61,7 +61,7 @@ export class kSubCommand extends InteractionSubCommand {
         const buffer = await this.image(option);
 
         if (typeof buffer === 'string') {
-            return buffer;
+            return { content: buffer }
         }
 
         return new MessageAttachment(buffer, 'deepfry.jpeg');

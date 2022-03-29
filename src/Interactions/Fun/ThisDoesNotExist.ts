@@ -34,13 +34,16 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | InteractionReplyOptions> {
         const type = interaction.options.getString('type', true);
         if (type === 'tdne_fuhomer') {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
 
             if (err !== null) {
-                return '❌ An unexpected error occurred getting a Homer!';
+                return {
+                    content: '❌ An unexpected error occurred getting a Homer!',
+                    ephemeral: true
+                }
             }
 
             return Embed.ok().setImage(homer);
@@ -48,7 +51,10 @@ export class kInteraction extends Interactions {
             const [err, word] = await dontThrow(thisWordDoesNotExist());
 
             if (err !== null || word === null) {
-                return '❌ An unexpected error occurred getting a word!';
+                return {
+                    content: '❌ An unexpected error occurred getting a word!',
+                    ephemeral: true
+                }
             }
 
             return Embed.ok(`
@@ -63,7 +69,10 @@ export class kInteraction extends Interactions {
             const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE));
 
             if (err !== null || image === null) {
-                return '❌ Not yet implemented or an error occurred!';
+                return {
+                    content: '❌ Not yet implemented or an error occurred!',
+                    ephemeral: true
+                }
             }
 
             return image as InteractionReplyOptions;

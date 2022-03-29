@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { AsyncQueue } from '#khaf/structures/AsyncQueue.js';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { env } from 'process';
 import { setTimeout } from 'timers/promises';
 import { request, type Dispatcher } from 'undici';
@@ -69,7 +69,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const location = interaction.options.getString('location', true);
         const hour12 = interaction.options.getBoolean('12hour') ?? true;
 
@@ -103,7 +103,10 @@ export class kInteraction extends Interactions {
         await queue2.wait();
 
         if (!isValidResponse(jNom)) {
-            return '❌ The location provided could not be found!';
+            return {
+                content: '❌ The location provided could not be found!',
+                ephemeral: true
+            }
         }
 
         let resTDB: Dispatcher.ResponseData | undefined;
@@ -124,12 +127,14 @@ export class kInteraction extends Interactions {
 
         const jTDB = await resTDB.body.json() as TimezoneDBResponse;
 
-        return new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(
-            'en-US',
-            {
-                timeZone: jTDB.zoneName,
-                hour12
-            }
-        );
+        return {
+            content: new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(
+                'en-US',
+                {
+                    timeZone: jTDB.zoneName,
+                    hour12
+                }
+            )
+        }
     }
 }

@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Warning } from '#khaf/types/KhafraBot.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Total {
     total_points: string
@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const member =
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true);
@@ -34,7 +34,10 @@ export class kSubCommand extends InteractionSubCommand {
         const id = 'id' in member ? member.id : null;
 
         if (!id || !interaction.inGuild()) {
-            return '❌ To use this command, re-invite the bot with all permissions!';
+            return {
+                content: '❌ To use this command, re-invite the bot with all permissions!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Total[]>`
@@ -51,7 +54,10 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length)
-            return `✅ ${member} has no warning points!`;
+            return {
+                content: `✅ ${member} has no warning points!`,
+                ephemeral: true
+            }
 
         const { dates, ids, points, total_points } = rows.shift()!;
         const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]]);
@@ -69,6 +75,9 @@ export class kSubCommand extends InteractionSubCommand {
             content += line;
         }
 
-        return content;
+        return {
+            content,
+            ephemeral: true
+        }
     }
 }

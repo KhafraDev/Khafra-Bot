@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 
 type Keys = keyof typeof emojis;
 
@@ -28,7 +28,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const [err, int] = await dontThrow(interaction.editReply({
             embeds: [
                 Embed.ok('Rock, paper, scissors, shoot!')
@@ -37,7 +37,10 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {

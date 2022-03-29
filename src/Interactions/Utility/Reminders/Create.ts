@@ -14,7 +14,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('message', true);
         const time = interaction.options.getString('time', true);
         const once = !interaction.options.getBoolean('repeat');
@@ -22,9 +22,15 @@ export class kSubCommand extends InteractionSubCommand {
         const parsedTime = parseStrToMs(time);
 
         if (parsedTime < 60 * 1000 * 1) {
-            return '❌ The shortest reminder you can set is 1 minute.';
+            return {
+                content: '❌ The shortest reminder you can set is 1 minute.',
+                ephemeral: true
+            }
         } else if (parsedTime > 60 * 1000 * 60 * 24 * 7 * 4) {
-            return '❌ The longest reminder you can set is 4 weeks.';
+            return {
+                content: '❌ The longest reminder you can set is 4 weeks.',
+                ephemeral: true
+            }
         }
 
         const date = new Date(Date.now() + parsedTime);

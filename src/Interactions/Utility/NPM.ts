@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActionRow, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, inlineCode, MessageActionRowComponent, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -29,15 +29,21 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const name = interaction.options.getString('name', true);
         const version = interaction.options.getString('version') ?? 'latest';
         const p = await npm(name);
 
         if ('code' in p) {
-            return '❌ No package with that name was found!';
+            return {
+                content: '❌ No package with that name was found!',
+                ephemeral: true
+            }
         } else if ('error' in p) {
-            return `❌ An unexpected error has occurred: ${inlineCode(p.error)}!`;
+            return {
+                content: `❌ An unexpected error has occurred: ${inlineCode(p.error)}!`,
+                ephemeral: true
+            }
         }
 
         const ver = version.startsWith('v') ? version.slice(1) : version;
@@ -76,10 +82,10 @@ export class kInteraction extends Interactions {
         return {
             embeds: [embed],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.link('Go to npm', link)
                 )
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

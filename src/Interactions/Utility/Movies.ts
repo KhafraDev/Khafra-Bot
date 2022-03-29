@@ -3,7 +3,7 @@ import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, bold, hyperlink, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -37,17 +37,20 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
         const movies = await searchMovie(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
 
         if (!movies) {
-            return '❌ No movie with that name was found!';
+            return {
+                content: '❌ No movie with that name was found!',
+                ephemeral: true
+            }
         }
 
-        const components: ActionRow[] = [];
+        const components: ActionRow<MessageActionRowComponent>[] = [];
         const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
@@ -81,7 +84,7 @@ export class kInteraction extends Interactions {
             embed.addFields({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
 
             components.push(
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.link('Go to IMDB', link)
                 )
             );
@@ -96,6 +99,6 @@ export class kInteraction extends Interactions {
         return {
             embeds: [embed],
             components
-        } as InteractionReplyOptions;
+        }
     }
 }

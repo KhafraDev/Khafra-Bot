@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders';
 import { ApplicationCommandType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { MessageContextMenuCommandInteraction } from 'discord.js';
+import { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js';
 import { argv } from 'process';
 
 const args = new Minimalist(argv.slice(2).join(' '));
@@ -24,11 +24,14 @@ export class kUserCommand extends InteractionUserCommand {
         });
     }
 
-    async init (interaction: MessageContextMenuCommandInteraction): Promise<string | void> {
+    async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | void> {
         const settings = await interactionGetGuildSettings(interaction);
 
         if (!settings?.staffChannel) {
-            return '❌ The staff channel hasn\'t been setup in the guild yet, ask an admin to set it up!';
+            return {
+                content: '❌ The staff channel hasn\'t been setup in the guild yet, ask an admin to set it up!',
+                ephemeral: true
+            }
         }
 
         const channel = await interactionFetchChannel(interaction, settings.staffChannel);
@@ -36,9 +39,15 @@ export class kUserCommand extends InteractionUserCommand {
 
         if (isDev === false) {
             if (author.id === interaction.user.id) {
-                return '❌ You cannot report your own message.';
+                return {
+                    content: '❌ You cannot report your own message.',
+                    ephemeral: true
+                }
             } else if (author.bot === true) {
-                return '❌ You cannot report messages from bots.';
+                return {
+                    content: '❌ You cannot report messages from bots.',
+                    ephemeral: true
+                }
             }
         }
 
@@ -48,9 +57,15 @@ export class kUserCommand extends InteractionUserCommand {
         const messageURL = `https://discord.com/channels/${interaction.guildId ?? '@me'}/${channelId}/${id}`;
 
         if (!channel) {
-            return '❌ No staff channel could be found, was it deleted or were my perms taken away?';
+            return {
+                content: '❌ No staff channel could be found, was it deleted or were my perms taken away?',
+                ephemeral: true
+            }
         } else if (!isTextBased(channel)) {
-            return '❌ I can only send messages in text based channels, sorry!';
+            return {
+                content: '❌ I can only send messages in text based channels, sorry!',
+                ephemeral: true
+            }
         }
 
         const m = `<@${author.id}>'s ${hyperlink('message', hideLinkEmbed(messageURL))}`;
@@ -73,7 +88,10 @@ export class kUserCommand extends InteractionUserCommand {
         }));
 
         if (err !== null) {
-            return '❌ I could not report this message to the staff channel.';
+            return {
+                content: '❌ I could not report this message to the staff channel.',
+                ephemeral: true
+            }
         }
 
         // Context menu replies cannot be ephemeral, but you can send a

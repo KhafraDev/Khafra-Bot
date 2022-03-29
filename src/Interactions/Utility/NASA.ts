@@ -4,6 +4,7 @@ import { NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -15,13 +16,19 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init (): Promise<string | MessageEmbed> {
+    async init (): Promise<InteractionReplyOptions | MessageEmbed> {
         const [err, result] = await dontThrow(NASAGetRandom());
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         } else if (result === null) {
-            return '❌ No images were fetched, try again?';
+            return {
+                content: '❌ No images were fetched, try again?',
+                ephemeral: true
+            }
         }
 
         const embed = Embed.ok()

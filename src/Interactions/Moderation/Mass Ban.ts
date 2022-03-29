@@ -8,7 +8,7 @@ import {
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Guild, GuildMemberManager } from 'discord.js';
+import { ChatInputCommandInteraction, Guild, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
@@ -47,11 +47,17 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (!interaction.inGuild()) {
-            return `❌ Invalid permissions, ${pleaseInvite}`;
+            return {
+                content: `❌ Invalid permissions, ${pleaseInvite}`,
+                ephemeral: true
+            }
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
-            return '❌ I don\'t have permission to ban members in this guild!';
+            return {
+                content: '❌ I don\'t have permission to ban members in this guild!',
+                ephemeral: true
+            }
         }
 
         const [err, guild] = interaction.guild
@@ -59,7 +65,10 @@ export class kInteraction extends Interactions {
             : await dontThrow(interaction.client.guilds.fetch(interaction.guildId));
 
         if (err !== null || guild === null) {
-            return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
+            return {
+                content: `❌ I couldn't fetch this guild, ${pleaseInvite}`,
+                ephemeral: true
+            }
         }
 
         const deleteMessageDays = interaction.options.getInteger('days') ?? 7;
@@ -81,7 +90,10 @@ export class kInteraction extends Interactions {
                         : BigInt(member.permissions);
 
                     if ((perms & memberPerms) === perms) {
-                        return `❌ I cannot ban ${member}!`;
+                        return {
+                            content: `❌ I cannot ban ${member}!`,
+                            ephemeral: true
+                        }
                     }
                 }
 

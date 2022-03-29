@@ -17,7 +17,8 @@ import {
     ApplicationCommand,
     ChatInputCommandInteraction,
     GuildApplicationCommandPermissionData,
-    GuildMember
+    GuildMember,
+    InteractionReplyOptions
 } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
@@ -46,29 +47,43 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
         const member = interaction.member;
 
         if (!member || !interaction.guild) {
-            return '❌ You need to re-invite the bot with default permissions for this to work. Thank Discord for this feature.';
+            return {
+                content: '❌ You need to re-invite the bot with default permissions for this to work. Thank Discord for this feature.',
+                ephemeral: true
+            }
         } else if (!(member instanceof GuildMember)) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         if (!hasPerms(interaction.channel, member, PermissionFlagsBits.Administrator)) {
-            return (
-                '❌ Either you don\'t have permission or you need to re-invite the bot with default permissions ' +
-                '- this is not a design choice by me, thanks Discord!'
-            );
+            return {
+                content:
+                    '❌ Either you don\'t have permission or you need to re-invite the bot with default permissions ' +
+                    '- this is not a design choice by me, thanks Discord!',
+                ephemeral: true
+            }
         }
 
         const nameOption = interaction.options.getString('command', true).toLowerCase();
         const cachedCommand = KhafraClient.Interactions.Commands.get(nameOption);
 
         if (!cachedCommand) {
-            return '❌ Command does not exist.';
+            return {
+                content: '❌ Command does not exist.',
+                ephemeral: true
+            }
         } else if (cachedCommand.data.default_permission !== false) {
-            return '❌ This command is already available to all guild members';
+            return {
+                content: '❌ This command is already available to all guild members',
+                ephemeral: true
+            }
         }
 
         const perms = cachedCommand.options.permissions;
@@ -76,7 +91,10 @@ export class kInteraction extends Interactions {
         const roles = allRoles.filter(role => perms ? role.permissions.has(perms) : false);
 
         if (roles.size === 0) {
-            return '❌ No roles in this guild have that permission!';
+            return {
+                content: '❌ No roles in this guild have that permission!',
+                ephemeral: true
+            }
         }
 
         const fullPermissions: GuildApplicationCommandPermissionData = {
@@ -98,7 +116,10 @@ export class kInteraction extends Interactions {
         }));
 
         if (setError !== null) {
-            return `❌ An unexpected error occured: ${inlineCode(setError.message)}`;
+            return {
+                content: `❌ An unexpected error occured: ${inlineCode(setError.message)}`,
+                ephemeral: true
+            }
         }
 
         if (isDev && interaction.guildId === config.guildId) {

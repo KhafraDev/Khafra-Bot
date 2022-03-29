@@ -7,7 +7,7 @@ import {
     PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Role } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -68,11 +68,17 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         if (!interaction.inCachedGuild()) {
-            return '❌ Please re-invite the bot with default permissions to use this command.';
+            return {
+                content: '❌ Please re-invite the bot with default permissions to use this command.',
+                ephemeral: true
+            }
         } else if (!hasPerms(interaction.channel, interaction.guild.me, this.options.permissions!)) {
-            return '❌ I need permission to manage emojis to use this command.';
+            return {
+                content: '❌ I need permission to manage emojis to use this command.',
+                ephemeral: true
+            }
         }
 
         const attachment = interaction.options.getAttachment('emoji', true);
@@ -90,7 +96,10 @@ export class kInteraction extends Interactions {
 
         if (attachment.size > 256_000) {
             const kb = (attachment.size / 1000).toLocaleString(interaction.locale);
-            return `❌ Emoji must be under 256 KB in size (got ${inlineCode(kb)} kb).`;
+            return {
+                content: `❌ Emoji must be under 256 KB in size (got ${inlineCode(kb)} kb).`,
+                ephemeral: true
+            }
         }
 
         const [err, emoji] = await dontThrow(interaction.guild.emojis.create(
@@ -100,9 +109,14 @@ export class kInteraction extends Interactions {
         ));
 
         if (err !== null) {
-            return `❌ An unexpected error has occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error has occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         }
 
-        return `${emoji} is now a guild emoji!`;
+        return {
+            content: `${emoji} is now a guild emoji!`
+        }
     }
 }

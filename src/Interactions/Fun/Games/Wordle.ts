@@ -11,6 +11,7 @@ import { InteractionType } from 'discord-api-types/v10';
 import {
     ChatInputCommandInteraction,
     InteractionCollector,
+    InteractionReplyOptions,
     Message,
     MessageAttachment,
     MessageComponentInteraction,
@@ -90,11 +91,17 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         if (games.has(interaction.user.id)) {
-            return '❌ Finish your other game first!';
+            return {
+                content: '❌ Finish your other game first!',
+                ephemeral: true
+            }
         } else if (!interaction.inGuild()) {
-            return '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!';
+            return {
+                content: '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const highContrast = interaction.options.getBoolean('official-word') ?? false;
@@ -149,9 +156,15 @@ export class kSubCommand extends InteractionSubCommand {
         }));
 
         if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
         } else if (!(int instanceof Message)) {
-            return '❌ Ask an administrator to re-invite the bot with full permissions!';
+            return {
+                content: '❌ Ask an administrator to re-invite the bot with full permissions!',
+                ephemeral: true
+            }
         }
 
         let channel = interaction.channel;
@@ -160,9 +173,15 @@ export class kSubCommand extends InteractionSubCommand {
             const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
 
             if (err !== null || c === null) {
-                return '❌ Please invite the bot with the correct permissions to use this command!';
+                return {
+                    content: '❌ Please invite the bot with the correct permissions to use this command!',
+                    ephemeral: true
+                }
             } else if (!isTextBased(c) || isDM(c)) {
-                return '❌ This command cannot be used in this channel!';
+                return {
+                    content: '❌ This command cannot be used in this channel!',
+                    ephemeral: true
+                }
             }
 
             channel = c;

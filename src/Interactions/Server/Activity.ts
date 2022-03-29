@@ -9,7 +9,7 @@ import {
     InviteTargetType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody,
     RESTPostAPIChannelInviteJSONBody, Routes
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, VoiceChannel } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js';
 
 const Activities = {
     'Poker': '755827207812677713',
@@ -59,11 +59,17 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         if (!interaction.inGuild()) {
-            return '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!';
+            return {
+                content: '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!',
+                ephemeral: true
+            }
         } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {
-            return '❌ I do not have perms to create an activity in this channel!';
+            return {
+                content: '❌ I do not have perms to create an activity in this channel!',
+                ephemeral: true
+            }
         }
 
         const activityId = interaction.options.getString('game', true);
@@ -82,12 +88,15 @@ export class kInteraction extends Interactions {
         ) as Promise<APIInvite>);
 
         if (fetchError !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(fetchError.message)}`;
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(fetchError.message)}`,
+                ephemeral: true
+            }
         }
 
         const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
-        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
-
-        return str;
+        return {
+            content: `${hl} to open ${invite.target_application!.name} in ${channel}!`
+        }
     }
 }

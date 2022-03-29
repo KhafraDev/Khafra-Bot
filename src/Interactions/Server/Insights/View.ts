@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { table } from '#khaf/utility/CLITable.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { codeBlock, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Insights {
     k_date: Date
@@ -19,11 +19,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Insights[]>`
@@ -42,7 +45,10 @@ export class kSubCommand extends InteractionSubCommand {
         `;
 
         if (rows.length === 0) {
-            return '❌ There are no insights available for the last 14 days!';
+            return {
+                content: '❌ There are no insights available for the last 14 days!',
+                ephemeral: true
+            }
         }
 
         const locale = interaction.guild?.preferredLocale ?? 'en-US';

@@ -3,7 +3,7 @@ import { searchTV } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, bold, hyperlink, time } from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, MessageActionRowComponent, time } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -25,14 +25,17 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const tv = await searchTV(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
 
         if (!tv) {
-            return '❌ No TV show with that name was found!';
+            return {
+                content: '❌ No TV show with that name was found!',
+                ephemeral: true
+            }
         }
 
         const link = `https://www.themoviedb.org/tv/${tv.id})`;
@@ -66,10 +69,10 @@ export class kInteraction extends Interactions {
         return {
             embeds: [embed],
             components: [
-                new ActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.link('TMDB', link)
                 )
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

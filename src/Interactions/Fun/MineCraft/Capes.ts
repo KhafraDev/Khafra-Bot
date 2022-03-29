@@ -24,20 +24,23 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const username = interaction.options.getString('username', true);
 
         const uuid = await UUID(username);
         const capes = uuid !== null ? await getCapes(uuid.id) : [];
 
         if (uuid === null) {
-            return '❌ Player could not be found!';
+            return {
+                content: '❌ Player could not be found!',
+                ephemeral: true
+            }
         }
 
         const buffer = await this.image([...capes, `http://s.optifine.net/capes/${username}.png`]);
 
         if (typeof buffer === 'string') {
-            return buffer;
+            return { content: buffer }
         }
 
         const attachment = new MessageAttachment(buffer, 'capes.png');

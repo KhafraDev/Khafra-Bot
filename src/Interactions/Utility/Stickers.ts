@@ -35,11 +35,14 @@ export class kInteraction extends Interactions {
         super(sc, { ownerOnly: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         if (stickers.length === 0) {
             const res = await mw();
             if (res === null) {
-                return 'The stickers are already loading, please try again in a moment.';
+                return {
+                    content: '❌ The stickers are already loading, please try again in a moment.',
+                    ephemeral: true
+                }
             }
 
             const allStickers = [...res.values()].flatMap(p => [...p.stickers.values()]);
@@ -58,7 +61,10 @@ export class kInteraction extends Interactions {
         }
 
         if (stickerMatches.length === 0) {
-            return '❌ No stickers with that name were found.';
+            return {
+                content: '❌ No stickers with that name were found.',
+                ephemeral: true
+            }
         }
 
         const fileNames = new Set(stickerMatches.map(n => `${n.name};${n.id}.gif`));
@@ -73,6 +79,6 @@ export class kInteraction extends Interactions {
                 ).setDescription(`A sticker for ${interaction.options.getString('name', true)}!`)
             ],
             content: `${inlineCode(interaction.options.getString('name', true))} (${fileNames.size} similar).`
-        } as InteractionReplyOptions;
+        }
     }
 }
