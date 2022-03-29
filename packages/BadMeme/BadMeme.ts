@@ -110,6 +110,8 @@ export const badmeme = async (
     return getItemRespectNSFW(subreddit, nsfw, cachedSet);
 }
 
+// https://www.jcchouinard.com/documentation-on-reddit-apis-json/
+
 export enum SortBy {
     CONTROVERSIAL = 'controversial',
     BEST = 'best',
