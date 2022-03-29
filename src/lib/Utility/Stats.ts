@@ -1,32 +1,31 @@
+import { Json } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { writeFile } from 'fs/promises';
-import { join } from 'path';
-import { cwd } from './Constants/Path.js';
-import { createFileWatcher } from './FileWatcher.js';
-import { once } from './Memoize.js';
+import { setInterval } from 'timers';
 
-const config = {} as typeof import('../../../assets/stats.json');
-const path = join(cwd, 'assets/stats.json');
-createFileWatcher(config, path);
+const path = Json('stats.json');
+const config = createFileWatcher({} as typeof import('../../../assets/JSON/stats.json'), path);
 
 export class Stats {
     static messages = 0;
     static session = 0;
 
-    static get stats() {
+    static get stats(): typeof config {
         return {
             globalCommandsUsed: config.globalCommandsUsed + Stats.session,
             globalMessages: config.globalMessages + Stats.messages
-        } as typeof config;
+        };
     }
 
     static write = once(() => {
-        setInterval(async () => {
+        setInterval(() => {
             const {
                 globalCommandsUsed,
                 globalMessages
             } = Stats.stats;
 
-            await writeFile(path, JSON.stringify({
+            void writeFile(path, JSON.stringify({
                 globalCommandsUsed: globalCommandsUsed + Stats.session,
                 globalMessages: globalMessages + Stats.messages
             } as typeof config));

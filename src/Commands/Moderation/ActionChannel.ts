@@ -1,25 +1,26 @@
-import { Command } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { pool } from '../../Structures/Database/Postgres.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { client } from '../../Structures/Database/Redis.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
+import { cache } from '#khaf/cache/Settings.js';
+import { Command } from '#khaf/Command';
+import { sql } from '#khaf/database/Postgres.js';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Set the mod action log channel.',
                 '#channel',
                 '772957951941673000'
             ],
-			{
+            {
                 name: 'actionchannel',
-                aliases: [ 'modlog', 'modlogs' ],
+                aliases: ['modlog', 'modlogs'],
                 folder: 'Moderation',
                 args: [1, 1],
                 guildOnly: true
@@ -27,26 +28,30 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
-        if (!hasPerms(message.channel, message.member, Permissions.FLAGS.ADMINISTRATOR)) {
-            return this.Embed.missing_perms(true);
-        } 
-
-        const channel = await getMentions(message, 'channels') ?? message.channel;
-        if (!channel || !isText(channel)) {
-            return this.Embed.fail(`Channel isn't cached or the ID is incorrect.`);
+    async init (message: Message<true>): Promise<UnsafeEmbed> {
+        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
+            return Embed.perms(
+                message.channel,
+                message.member,
+                PermissionFlagsBits.Administrator
+            );
         }
 
-        const { rows } = await pool.query<kGuild>(`
+        const channel = await getMentions(message, 'channels') ?? message.channel;
+        if (!isText(channel)) {
+            return Embed.error('Channel isn\'t cached or the ID is incorrect.');
+        }
+
+        const rows = await sql<kGuild[]>`
             UPDATE kbGuild 
-            SET mod_log_channel = $1::text
-            WHERE kbGuild.guild_id = $2::text
+            SET mod_log_channel = ${channel.id}::text
+            WHERE kbGuild.guild_id = ${message.guildId}::text
             RETURNING *;
-        `, [channel.id, message.guild.id]);
+        `;
 
-        await client.set(message.guild.id, JSON.stringify({ ...rows[0] }), 'EX', 600);
+        cache.set(message.guild.id, rows[0]);
 
-        return this.Embed.success(`
+        return Embed.ok(`
         Set public mod-logging channel to ${channel}!
         `);
     }

@@ -1,28 +1,31 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Have KhafraBot say something!',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'say',
                 folder: 'Fun',
-                aliases: [ 'speak', 'talk', 'tell' ],
+                aliases: ['speak', 'talk', 'tell'],
                 args: [1],
                 ratelimit: 3
             }
         );
     }
 
-    init(message: Message, { args }: Arguments) {
-        return this.Embed.success()
-            .setAuthor(message.author.username, message.author.displayAvatarURL())
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+        return Embed.ok()
+            .setAuthor({
+                name: message.author.username,
+                iconURL: message.author.displayAvatarURL()
+            })
             .setDescription(args.join(' '));
     }
 }

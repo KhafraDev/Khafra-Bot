@@ -1,15 +1,16 @@
-import { Arguments, Command } from '../../Structures/Command.js';
-import { Message, MessageActionRow } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { Components } from '../../lib/Utility/Constants/Components.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { Message } from 'discord.js';
 
-const range = Range(1, 5, true);
+type ComponentTypes = Exclude<keyof typeof Components, 'link'>
 
-@RegisterCommand
+const inRange = Range({ min: 1, max: 5, inclusive: true });
+
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Send a message with a given number of random buttons attached.',
@@ -25,13 +26,15 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | undefined> {
         const amount = Number(args[0]);
-        if (!validateNumber(amount) || !range.isInRange(amount))
-            return this.Embed.fail(`Invalid number of buttons to add!`);
+        if (!inRange(amount))
+            return Embed.error('Invalid number of buttons to add!');
 
-        const row = new MessageActionRow();
-        const keys = Object.keys(Components) as (keyof typeof Components)[];
+        const row = new ActionRow<MessageActionRowComponent>();
+        const keys = Object.keys(Components) as ComponentTypes[];
+        keys.splice(keys.findIndex(i => `${i}` === 'link'), 1);
+
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)];
             const disabled = Boolean(Math.round(Math.random()));

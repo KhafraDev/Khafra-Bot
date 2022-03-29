@@ -1,13 +1,14 @@
-import { InteractionCollector, Message, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { disableAll } from '../Constants/Components.js';
-import { dontThrow } from '../Don\'tThrow.js';
+import { disableAll } from '#khaf/utility/Constants/Components.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { InteractionCollector, Message, MessageComponentInteraction } from 'discord.js';
 
 export const Paginate = (
-    c: InteractionCollector<MessageComponentInteraction>, 
-    m: Message, 
+    c: InteractionCollector<MessageComponentInteraction>,
+    m: Message,
     pageData: number,
-    embeds: MessageEmbed[] | ((page: number) => MessageEmbed)
-) => {
+    embeds: UnsafeEmbed[] | ((page: number) => UnsafeEmbed)
+): void => {
     let page = 0;
 
     c.on('collect', i => {
@@ -34,8 +35,8 @@ export const Paginate = (
             }));
         }
 
-        if (i.last()!.replied) return; 
-        
+        if (i.last()!.replied) return;
+
         return void dontThrow(i.last()!.update({
             components: disableAll(m)
         }));

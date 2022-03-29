@@ -1,48 +1,93 @@
-import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { translate, langs } from '../../lib/Packages/Translate.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import {
+    GoogleLanguages, GoogleTranslate, LibreTranslate,
+    LibreTranslateGetLanguages
+} from '@khaf/translate';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('translate')
-            .addStringOption(option => option
-                .setName('text')
-                .setDescription('text to translate')
-                .setRequired(true)
-            )
-            .addStringOption(option => option
-                .setName('to')
-                .setDescription('language code to translate to (default: "en")')
-                .setRequired(false)
-            )
-            .addStringOption(option => option
-                .setName('from')
-                .setDescription('language code to translate from (default: "from")')
-                .setRequired(false)
-            )
-            .setDescription('Use Google Translate to translate some text!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'translate',
+            description: 'Use Google Translate to translate some text!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'engine',
+                    description: 'The translating service to use.',
+                    required: true,
+                    choices: [
+                        { name: 'LibreTranslate', value: 'libretranslate' },
+                        { name: 'Google Translate', value: 'googletranslate' }
+                    ]
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'text',
+                    description: 'Text to translate.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'to',
+                    description: 'Language code to translate to (default: "en").'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'from',
+                    description: 'Language code to translate from (default: "from").'
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
-        const to = interaction.options.getString('to') ?? 'en';
-        const from = interaction.options.getString('from') ?? 'auto';
+    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | string | undefined> {
+        const to = interaction.options.getString('to');
+        const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);
-        
-        const translated = await translate(
-            text,
-            {
-                to: langs.includes(to.toLowerCase()) ? to.toLowerCase() : 'en',
-                from: langs.includes(from.toLowerCase()) ? from.toLowerCase() : 'auto'
-            }
-        );
+        const engine = interaction.options.getString('engine') ?? 'googletranslate';
 
-        return Embed.success()
-            .setDescription(translated)
-            .setAuthor(interaction.user.username, interaction.user.displayAvatarURL());
+        const embed = Embed.ok().setAuthor({
+            name: interaction.user.username,
+            iconURL: interaction.user.displayAvatarURL()
+        });
+
+        if (engine === 'googletranslate') {
+            const translated = await GoogleTranslate(
+                text,
+                {
+                    to: to && GoogleLanguages.includes(to.toLowerCase())
+                        ? to.toLowerCase()
+                        : 'en',
+                    from: from && GoogleLanguages.includes(from.toLowerCase())
+                        ? from.toLowerCase()
+                        : 'auto'
+                }
+            );
+
+            return embed.setDescription(translated);
+        } else if (engine === 'libretranslate') {
+            const supported = await LibreTranslateGetLanguages();
+            const translated = await LibreTranslate({
+                query: text,
+                to: to && supported.includes(to.toLowerCase())
+                    ? to.toLowerCase()
+                    : 'es',
+                from: from && supported.includes(from.toLowerCase())
+                    ? from.toLowerCase()
+                    : 'en'
+            });
+
+            if (translated === null) {
+                return '❌ An error occurred using LibreTranslate, try another service!';
+            }
+
+            return embed.setDescription(translated.translatedText);
+        }
     }
-} 
+}

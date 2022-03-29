@@ -1,3 +1,5 @@
+import { setInterval } from 'timers';
+
 /**
  * Create and use a cooldown everywhere in 2 steps.
  * @example
@@ -8,7 +10,7 @@
  * @param max Max uses allows in ``ms`` milliseconds
  * @param ms How long cooldown applies for
  */
-export const cooldown = (max: number, ms: number) => {
+export const cooldown = (max: number, ms: number): (id: string) => boolean => {
     const m = new Map<string, number[]>();
     setInterval(() => { // clear out old entries
         m.forEach((v, k) => {
@@ -21,7 +23,7 @@ export const cooldown = (max: number, ms: number) => {
         })
     }, 1000 * 60 * 10).unref(); // 10 minutes
 
-    return (id: string) => {
+    return (id: string): boolean => {
         const now = Date.now();
         if (!m.has(id)) {
             m.set(id, [now]);

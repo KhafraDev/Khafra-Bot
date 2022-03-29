@@ -1,5 +1,5 @@
-import { fetch } from 'undici';
-import { URL, URLSearchParams } from 'url';
+import { request } from 'undici';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 
@@ -39,92 +39,82 @@ export interface PasteGGError {
 
 /**
  * Upload text to hatebin.com
- * 
+ *
  * Seems to have issues with the word "function" (for whatever reason).
  */
-const hatebin = async (text: string) => {
-    const r = await fetch('https://hatebin.com/index.php', {
+const hatebin = async (text: string): Promise<string | undefined> => {
+    const { body, statusCode } = await request('https://hatebin.com/index.php', {
         method: 'POST',
         body: `text=${encodeURIComponent(text)}`,
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
     });
 
-    if (r.ok) return `https://hatebin.com/${(await r.text()).trim()}`;
+    if (statusCode === 200) {
+        return `https://hatebin.com/${(await body.text()).trim()}`;
+    }
+
+    void consumeBody({ body });
 }
 
 /**
  * Upload text to https://sourceb.in
  */
-const sourcebin = async (text: string) => {
-    const r = await fetch('https://sourceb.in/api/bins', {
+const sourcebin = async (text: string): Promise<string | undefined> => {
+    const { body, statusCode } = await request('https://sourceb.in/api/bins', {
         method: 'POST',
         body: JSON.stringify({
-            files: [ { content: text } ]
+            files: [{ content: text }]
         }),
         headers: { 'Content-Type': 'application/json;charset=utf-8' }
     });
 
-    if (r.ok) {
-        const j = await r.json() as ISourcebin;
+    if (statusCode === 200) {
+        const j = await body.json() as ISourcebin;
         return `https://sourceb.in/${j.key}`;
-    } 
+    }
+
+    void consumeBody({ body });
 }
 
 /**
  * Upload text to https://paste.nomsy.net
  */
-const nomsy = async (text: string) => {
-    const r = await fetch('https://paste.nomsy.net/documents', {
+const nomsy = async (text: string): Promise<string | undefined> => {
+    const { body, statusCode } = await request('https://paste.nomsy.net/documents', {
         method: 'POST',
         body: text,
         headers: { 'Content-Type': 'application/json; charset=utf-8' }
     });
 
-    if (r.ok) {
-        const j = await r.json() as HasteServer;
+    if (statusCode === 200) {
+        const j = await body.json() as HasteServer;
         return `https://paste.nomsy.net/${j.key}`;
-    } 
+    }
+
+    void consumeBody({ body });
 }
 
 /**
  * Upload text to https://paste.gg
  * @see https://github.com/ascclemens/paste/blob/master/api.md#post-pastes
  */
-const pastegg = async (text: string) => {
-    const r = await fetch('https://api.paste.gg/v1/pastes', {
+const pastegg = async (text: string): Promise<string | undefined> => {
+    const { body, statusCode } = await request('https://api.paste.gg/v1/pastes', {
         method: 'POST',
         body: JSON.stringify({
             visibility: 'unlisted',
-            files: [ { content: { format: 'text', value: text } } ]
+            files: [{ content: { format: 'text', value: text } }]
         }),
         headers: { 'Content-Type': 'application/json' }
     });
 
-    if (r.ok) {
-        const j = await r.json() as PasteGGError | PasteGGSuccess;
+    if (statusCode === 200) {
+        const j = await body.json() as PasteGGError | PasteGGSuccess;
         if (j.status === 'success')
             return `https://paste.gg/anonymous/${j.result.id}`;
+    } else {
+        void consumeBody({ body });
     }
-}
-
-/**
- * Upload text to https://ghostbin.co/
- */
-const ghostbin = async (text: string) => {
-    const r = await fetch('https://ghostbin.co/paste/new', {
-        method: 'POST',
-        body: new URLSearchParams({
-            lang: 'text',
-            text, 
-            expire: '-1', 
-            password: '', 
-            title: ''
-        }),
-        redirect: 'manual'
-    });
-
-    if (r.status === 303)
-        return new URL(r.headers.get('location')!, 'https://ghostbin.co').toString();
 }
 
 /**
@@ -135,6 +125,5 @@ export const pasteAliases = new Map<string, PasteFn>([
     ['sourcebin', sourcebin],
     ['nomsy', nomsy],
     ['paste', pastegg],
-    ['pastegg', pastegg],
-    ['ghostbin', ghostbin]
+    ['pastegg', pastegg]
 ]);

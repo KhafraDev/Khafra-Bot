@@ -1,14 +1,15 @@
-import { Command } from '../../../Structures/Command.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://www.latimes.com/world/rss2.0.xml',
     main: 'https://www.latimes.com',
     command: ['latimes'],
-    author: ['LATimes', 'https://cdn.shopify.com/s/files/1/0249/9326/7772/products/logo_grande_grande_a5b034b5-8b86-47bc-af3c-eba114fdea8b_600x.jpg']
+    author: { name: 'LATimes', iconURL: 'https://i.imgur.com/6vhBYjW.png' }
 } as const;
 
 interface ILATimes {
@@ -28,9 +29,8 @@ interface ILATimes {
 const rss = new RSSReader<ILATimes>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `Get the latest articles from ${settings.main}!`
@@ -44,19 +44,24 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
+
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
+
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

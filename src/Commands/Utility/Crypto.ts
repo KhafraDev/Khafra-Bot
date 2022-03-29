@@ -1,41 +1,40 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
+import { Arguments, Command } from '#khaf/Command';
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message, ReplyMessageOptions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
-import { time } from '@discordjs/builders';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
-                'Get information about different CryptoCurrencies!',
+                'Get information about different CryptoCurrencies! Kill the environment!',
                 'btc', 'bitcoin', 'BAT'
             ],
-			{
+            {
                 name: 'crypto',
                 folder: 'Utility',
                 args: [1], // some symbols are multi-worded
-                aliases: [ 'cc' ]
+                aliases: ['cc']
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | ReplyMessageOptions> {
         const currencies = await CoinGecko.get(args.join(' '), () => {
             void message.channel.sendTyping();
         });
 
-        if (currencies === undefined) {
-            return this.Embed.fail(`No currency with that name or id could be found!`);
+        if (currencies === undefined || currencies.length === 0) {
+            return Embed.error('No currency with that name or id could be found!');
         }
-        
+
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = this.Embed.success()
+        const embed = Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)
@@ -66,7 +65,6 @@ export class kCommand extends Command {
         return {
             content: currencies.length === 1 ? null : stripIndents`
             There were ${currencies.length} cryptocurrencies with that search query provided.
-
             If this is the wrong currency, try using one of the following IDs:
             \`\`${currencies.map(c => c.id).join('``, ``')}\`\`
             `.trim(),

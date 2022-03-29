@@ -1,36 +1,39 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { Message, MessageActionRow } from 'discord.js';
-import { RedditData } from '@khaf/badmeme';
-import { fetch } from 'undici';
+import { Arguments, Command } from '#khaf/Command';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Paginate } from '#khaf/utility/Discord/Paginate.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { split } from '#khaf/utility/String.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import { Reddit } from '@khaf/badmeme';
+import { Message } from 'discord.js';
 import { decodeXML } from 'entities';
-import { split } from '../../../lib/Utility/String.js';
-import { Components } from '../../../lib/Utility/Constants/Components.js';
-import { Paginate } from '../../../lib/Utility/Discord/Paginate.js';
+import { clearTimeout, setTimeout } from 'timers';
+import { request } from 'undici';
 
-const fetchDeleted = async (postId: string) => {
+const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftError | null> => {
     const ac = new AbortController();
     const id = parseInt(postId, 36);
     if (Number.isNaN(id)) return null;
 
     const timeout = setTimeout(() => ac.abort(), 30000).unref();
-	const query = { query: { term: { id } } };
+    const query = { query: { term: { id } } };
     const elasticURL = `https://elastic.pushshift.io/rs/submissions/_search?source=${JSON.stringify(query)}`;
 
-	const [err, r] = await dontThrow(fetch(elasticURL, {
+    const [err, r] = await dontThrow(request(elasticURL, {
         headers: {
             'Content-Type': 'application/json',
-            'Referer': 'https://www.reddit.com/',
+            'Referer': 'https://www.reddit.com/'
         },
         signal: ac.signal
     }));
 
     clearTimeout(timeout);
     if (err !== null) return null;
+    if (r.statusCode !== 200) return null;
 
-    return await r.json() as PushShiftError | PushShiftGood;
+    return await r.body.json() as PushShiftError | PushShiftGood;
 }
 
 interface PushShiftError {
@@ -54,62 +57,61 @@ interface PushShiftGood {
             _type: string
             _id: string
             _score: number
-            _source: RedditData['data']['children'][number]['data']
+            _source: Required<Reddit>['data']['children'][number]['data']
         }[]
     }
 }
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the content of a deleted post on Reddit.',
                 'https://www.reddit.com/r/gaming/comments/odbzl1/beware_of_a_very_well_made_phishing_scam_on_steam/'
-            ], 
+            ],
             {
                 name: 'removeddit',
                 folder: 'Fun',
-                aliases: [ 'ceddit', 'reveddit' ],
+                aliases: ['ceddit', 'reveddit'],
                 args: [1, 1],
                 ratelimit: 7
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | void> {
         const url = URLFactory(args[0]);
 
         void message.channel.sendTyping();
 
         if (url === null) {
-            return this.Embed.fail(`That's not a Reddit post!`);
+            return Embed.error('That\'s not a Reddit post!');
         } else if (
-            url.host !== 'www.reddit.com' && 
+            url.host !== 'www.reddit.com' &&
             url.host !== 'reddit.com' &&
             url.host !== 'old.reddit.com'
         ) {
-            return this.Embed.fail(`${url.hostname} isn't Reddit!`);
+            return Embed.error(`${url.hostname} isn't Reddit!`);
         }
 
-        const [rSlash, subreddit, comments, id, /*threadName*/] = url.pathname.match(/[^/?]*[^/?]/g) ?? [];
+        const [rSlash, subreddit, comments, id] = url.pathname.match(/[^/?]*[^/?]/g) ?? [];
 
         if (
             rSlash !== 'r' ||
             !/^[A-z0-9_]{3,21}$/.test(subreddit) ||
             comments !== 'comments'
         ) {
-            return this.Embed.fail(`Invalid or unsupported Reddit link!`);
+            return Embed.error('Invalid or unsupported Reddit link!');
         }
 
         const r = await fetchDeleted(id);
 
         if (r === null) {
-            return this.Embed.fail(`No post given the URL was indexed, sorry!`);
+            return Embed.error('No post given the URL was indexed, sorry!');
         } else if ('error' in r) {
-            return this.Embed.fail(`No results found, some posts might not be cached yet!`);
+            return Embed.error('No results found, some posts might not be cached yet!');
         } else if (r.hits.total < 1) {
-            return this.Embed.fail(`No results were found!`);
+            return Embed.error('No results were found!');
         }
 
         const post = r.hits.hits[0]._source;
@@ -117,9 +119,9 @@ export class kCommand extends Command {
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
         const chunks = split(post.selftext, 2048);
-        const makeEmbed = (page = 0) => {
+        const makeEmbed = (page = 0): UnsafeEmbed => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
-            const embed = this.Embed.success()
+            const embed = Embed.ok()
                 .setTitle(title)
                 .setDescription(desc);
 
@@ -134,7 +136,7 @@ export class kCommand extends Command {
             const [e, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new MessageActionRow().addComponents(
+                    new ActionRow<MessageActionRowComponent>().addComponents(
                         Components.approve('Next', 'next'),
                         Components.primary('Back', 'back'),
                         Components.deny('Stop', 'stop')

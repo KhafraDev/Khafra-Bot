@@ -1,7 +1,7 @@
 import { URL } from 'url';
 
 interface ValidURL {
-    url: URL
+    url: URL | null
     idx: number
 }
 
@@ -14,25 +14,23 @@ const defaultOpts: FactoryOpts = {
 }
 
 /**
- * Checks if a string is a valid https or http link and returns a URL object if it is. 
+ * Checks if a string is a valid https or http link and returns a URL object if it is.
  * Otherwise returns null.
- * 
+ *
  * Validates protocol, username, and password, and removes all search params.
  */
-export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
+export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts): URL | null => {
     try {
         const url = new URL(s);
         if (url.protocol !== 'https:' && url.protocol !== 'http:')
             return null;
-        else if (url.username !== '' || url.password !== '')
+        if (url.username !== '' || url.password !== '')
             return null;
 
         if (opts.stripParams === true) {
-            for (const key of Array.from(url.searchParams.keys())) {
-                url.searchParams.delete(key);
-            }
+            url.search = '';
         }
-        
+
         return url;
     } catch {
         return null;
@@ -40,12 +38,12 @@ export const URLFactory = (s: string, opts: FactoryOpts = defaultOpts) => {
 }
 
 /**
- * Gives a string or array of strings, tests for every URL present and returns a list 
+ * Gives a string or array of strings, tests for every URL present and returns a list
  * of them with an index (when an array is passed.
  */
 export function validURL(s: string): Omit<ValidURL, 'idx'>;
 export function validURL(s: string[]): ValidURL[];
-export function validURL(s: string | string[]) {
+export function validURL(s: string | string[]): Omit<ValidURL, 'idx'> | ValidURL[] {
     if (Array.isArray(s)) {
         const valid: ValidURL[] = [];
         for (let i = 0; i < s.length; i++) {

@@ -1,41 +1,58 @@
-import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { URLFactory } from '../../lib/Utility/Valid/URL.js';
-import { getTwitterMediaURL } from '../../lib/Packages/Twitter.js';
+import { Interactions } from '#khaf/Interaction';
+import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { ActionRow } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('twitter')
-            .addStringOption(option => option
-                .setName('twitter')
-                .setDescription('Twitter URL to get media of')
-                .setRequired(true)
-            )
-            .setDescription('Get a list of media embedded in a Tweet!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'twitter',
+            description: 'Gets a list of media embedded in a tweet!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'tweet',
+                    description: 'Twitter URL to get the media of.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
-        const url = interaction.options.getString('twitter', true);
-        const { hostname, pathname } = URLFactory(url) ?? {};
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
+        const url = interaction.options.getString('tweet', true);
+        const twitterURL = URLFactory(url);
 
-        if (hostname !== 'twitter.com' || !pathname)
+        if (!twitterURL || twitterURL.hostname !== 'twitter.com' || !twitterURL.pathname) {
             return '❌ Not a Twitter status!';
+        }
+
         // Your username can only contain letters, numbers and '_'
         // Your username must be shorter than 15 characters.
-        else if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname ?? ''))
-            return `❌ Invalid Twitter status!`;
+        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(twitterURL.pathname)) {
+            return '❌ Invalid Twitter status!';
+        }
 
-        const id = /\/(\d+)$/.exec(pathname)![1];
+        const id = /\/(\d+)$/.exec(twitterURL.pathname)![1];
         const media = await getTwitterMediaURL(id);
 
-        if (!media)
+        if (!media) {
             return '❌ No media found in Tweet!';
-            
-        return Embed.success(media);
+        }
+
+        return {
+            embeds: [Embed.ok(media)],
+            components: [
+                new ActionRow().addComponents(
+                    Components.link('Go to Twitter', twitterURL.toString())
+                )
+            ]
+        } as InteractionReplyOptions;
     }
-} 
+}

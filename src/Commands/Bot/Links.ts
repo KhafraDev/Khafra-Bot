@@ -1,9 +1,9 @@
-import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([], {
             name: 'links',
             folder: 'Bot',
@@ -13,8 +13,8 @@ export class kCommand extends Command {
         });
     }
 
-    init() {
-        return this.Embed.success(`
+    async init (): Promise<UnsafeEmbed> {
+        return Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)
 

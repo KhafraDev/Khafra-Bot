@@ -1,13 +1,27 @@
 type Value = true | string;
 
 export class Minimalist extends Map<string, Value> {
-    constructor(s: string) {
-        super();
+    private parsed = false;
 
-        this.parse(s);
+    public constructor (public content: string) {
+        super();
+        this.content = content;
     }
 
-    parse(s: string) {
+    override has (k: string): boolean {
+        if (!this.parsed) this.parse();
+
+        return super.has(k);
+    }
+
+    override get (k: string): Value | undefined {
+        if (!this.parsed) this.parse();
+
+        return super.get(k);
+    }
+
+    private parse (s = this.content): void {
+        this.parsed ||= true;
         const tokens = s.split(/\s+/g);
 
         for (let i = 0; i < tokens.length; i++) {
@@ -19,7 +33,7 @@ export class Minimalist extends Map<string, Value> {
             if (token.includes('=')) { // --prop=value
                 const [n, value] = token.split('=', 2);
                 super.set(n.slice(toSlice), value);
-            } else if (tokens[i + 1] === undefined || tokens[i + 1].charAt(0) === '-') { // --prop --prop2
+            } else if (!tokens[i + 1] || tokens[i + 1].charAt(0) === '-') { // --prop --prop2
                 super.set(token.slice(toSlice), true);
             } else { // --prop value
                 const value: string[] = [];
@@ -30,7 +44,7 @@ export class Minimalist extends Map<string, Value> {
 
                     value.push(token);
                 }
-                
+
                 super.set(token.slice(toSlice), value.join(' '));
             }
         }

@@ -1,58 +1,63 @@
-import { Command } from '../../../Structures/Command.js';
-import { Message, Activity } from 'discord.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
+import { Arguments, Command } from '#khaf/Command';
+import { logger } from '#khaf/Logger';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { ActivityType } from 'discord-api-types/v10';
+import { Activity, Message } from 'discord.js';
 
-const formatPresence = (activities: Activity[] | undefined) => {
+const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
-    
+
     const push: string[] = [];
     for (const activity of activities) {
         switch (activity.type) {
-            case 'CUSTOM':
-                push.push(`${activity.emoji ?? ''}\`\`${activity.state ?? 'N/A'}\`\``); 
+            case ActivityType.Custom:
+                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`);
                 break;
-            case 'LISTENING':
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`); 
+            case ActivityType.Listening:
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
                 break;
-            case 'PLAYING':
-                push.push(`Playing *${activity.name}*.`); 
+            case ActivityType.Playing:
+                push.push(`Playing ${italic(activity.name)}.`);
                 break;
             default:
-                console.log(activity);
+                logger.log(activity);
         }
     }
 
     return push.join('\n');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about a guild member.',
                 '@Khafra#0001', '267774648622645249'
             ],
-			{
+            {
                 name: 'member',
                 folder: 'Server',
-                aliases: [ 'memberinfo', 'whois' ],
+                aliases: ['memberinfo', 'whois'],
                 args: [0, 1],
                 guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
-        const member = await getMentions(message, 'members') ?? message.member;
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+        const member = await getMentions(message, 'members', content) ?? message.member;
+
+        if (!member) {
+            return Embed.error('No guild member mentioned.');
+        }
 
         // max role length = 84 characters
-        return this.Embed.success()
-            .setAuthor(member.displayName, member.user.displayAvatarURL())
+        return Embed.ok()
+            .setAuthor({ name: member.displayName, iconURL: member.user.displayAvatarURL() })
             .setDescription(`
-            ${member} on *${member.guild.name}*.
+            ${member} on ${italic(member.guild.name)}.
             ${formatPresence(member.presence?.activities)}
             
             Roles:
@@ -60,14 +65,14 @@ export class kCommand extends Command {
             `)
             .setThumbnail(member.user.displayAvatarURL())
             .addFields(
-                { name: '**Role Color:**', value: member.displayHexColor, inline: true },
-                { name: '**Joined Guild:**', value: time(member.joinedAt ?? new Date()), inline: false },
-                { 
-                    name: '**Boosting Since:**', 
-                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting', 
-                    inline: true 
-                },
+                { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
+                { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: false },
+                {
+                    name: bold('Boosting Since:'),
+                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
+                    inline: true
+                }
             )
-            .setFooter('For general user info use the **user** command!');
+            .setFooter({ text: 'For general user info use the user command!' });
     }
 }

@@ -1,4 +1,5 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface NonexistentWord {
     word: {
@@ -15,10 +16,16 @@ interface NonexistentWord {
     permalink_url: string
 }
 
-export const thisWordDoesNotExist = async () => {
-    const res = await fetch('https://www.thisworddoesnotexist.com/api/random_word.json');
-    if (!res.ok) return null;
-    const json = await res.json() as NonexistentWord;
+export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> => {
+    const { body, statusCode } = await request('https://www.thisworddoesnotexist.com/api/random_word.json');
+
+    if (statusCode !== 200) {
+        void consumeBody({ body });
+
+        return null;
+    }
+
+    const json = await body.json() as NonexistentWord;
 
     if (!('word' in json) || !('permalink_url' in json)) {
         return null;

@@ -3,7 +3,9 @@
  * look at how Twitter does it, and then do the EXACT OPPOSITE.
  */
 
-import { fetch } from 'undici';
+import { Buffer } from 'buffer';
+import { env } from 'process';
+import { request } from 'undici';
 
 type Indices = [number, number];
 type Media = {
@@ -43,14 +45,14 @@ interface ITweet {
     full_text: string
     truncated: boolean
     display_text_range: Indices,
-    entities: { 
+    entities: {
         hashtags: { text: string, indices: Indices }[]
         symbols: string[]
         user_mentions: string[]
-        urls: string[] 
+        urls: string[]
         media?: Media
     }
-    extended_entities?: { 
+    extended_entities?: {
         media: ExtendedMedia[]
     }
     source: string,
@@ -117,9 +119,9 @@ interface ITweet {
 
 let token: string | null = null;
 
-const getTwitterOAUTH = async () => {
-    const creds = Buffer.from(`${process.env.TWITTER_API}:${process.env.TWITTER_API_SECRET}`).toString('base64');
-    const r = await fetch('https://api.twitter.com/oauth2/token', {
+const getTwitterOAUTH = async (): Promise<string> => {
+    const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64');
+    const { body } = await request('https://api.twitter.com/oauth2/token', {
         method: 'POST',
         body: 'grant_type=client_credentials',
         headers: {
@@ -127,23 +129,23 @@ const getTwitterOAUTH = async () => {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         }
     });
-    const j = await r.json() as OAuth;
+    const j = await body.json() as OAuth;
     return `${j.token_type} ${j.access_token}`;
 }
 
-export const getTwitterMediaURL = async (id: string): Promise<string | undefined | void> => {
+export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
     token ??= await getTwitterOAUTH();
 
-    const r = await fetch(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
+    const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
         headers: {
             Authorization: token
         }
     });
-    
-    const j = await r.json() as ITweet;
-    
+
+    const j = await body.json() as ITweet;
+
     const media = j.extended_entities?.media;
-    if (!media || media.length === 0) 
+    if (!media || media.length === 0)
         return;
 
     if (media[0]!.type === 'video' || media[0]!.type === 'animated_gif') {

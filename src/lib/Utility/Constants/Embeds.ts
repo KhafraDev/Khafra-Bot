@@ -1,85 +1,73 @@
-import { MessageEmbed, PermissionResolvable, Permissions } from 'discord.js';
-import { Command } from '../../../Structures/Command.js';
-import { permResolvableToString } from '../Permissions.js';
-import { plural } from '../String.js';
-import { createFileWatcher } from '../FileWatcher.js';
-import { cwd } from './Path.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { permResolvableToString } from '#khaf/utility/Permissions.js';
+import { UnsafeEmbed } from '@discordjs/builders';
+import {
+    AnyChannel,
+    GuildMember,
+    PermissionResolvable,
+    Role
+} from 'discord.js';
 import { join } from 'path';
 
-const config = {} as typeof import('../../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher(
+    {} as typeof import('../../../../config.json'),
+    join(cwd, 'config.json')
+);
 
-type PartialCommand = {
-    settings: Command['settings'],
-    help: Command['help']
-}
-
-const defaultPerms = [ 
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS,
-    Permissions.FLAGS.VIEW_CHANNEL, 
-    Permissions.FLAGS.READ_MESSAGE_HISTORY 
-];
+export const colors = {
+    ok: Number.parseInt(config.colors.default.slice(1), 16),
+    error: Number.parseInt(config.colors.error.slice(1), 16),
+    boost: Number.parseInt(config.colors.boost.slice(1), 16)
+} as const;
 
 export const Embed = {
-    fail: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.fail as `#${string}`);
-        reason && Embed.setDescription(reason);
-        
+    error: (reason?: string): UnsafeEmbed => {
+        const Embed = new UnsafeEmbed().setColor(colors.error);
+
+        if (reason) {
+            Embed.setDescription(reason);
+        }
+
         return Embed;
     },
 
     /**
      * An embed for a command being successfully executed!
      */
-    success: (reason?: string) => {
-        const Embed = new MessageEmbed().setColor(config.embed.success as `#${string}`); 
-        reason && Embed.setDescription(reason);
-        
+    ok: (reason?: string): UnsafeEmbed => {
+        const Embed = new UnsafeEmbed().setColor(colors.ok);
+
+        if (reason) {
+            Embed.setDescription(reason);
+        }
+
         return Embed;
     },
 
-    /**
-     * An embed for missing permissions!
-     */
-    missing_perms: (admin?: boolean, perms: PermissionResolvable = defaultPerms) => {
-        return new MessageEmbed()
-            .setColor(config.embed.fail as `#${string}`)
-            .setDescription(`
-            One of us doesn't have the needed permissions!
+    perms: (
+        inChannel: AnyChannel,
+        userOrRole: GuildMember | Role | null,
+        permissions: PermissionResolvable
+    ): UnsafeEmbed => {
+        const perms = permResolvableToString(permissions);
+        const checkType = userOrRole && 'color' in userOrRole
+            ? `The role ${userOrRole}`
+            : userOrRole
+                ? `User ${userOrRole}`
+                : 'The user';
+        const amountMissing = perms.length === 1 ? 'this permission' : 'these permissions';
 
-            Both of us must have ${permResolvableToString(perms)} permissions to use this command!
-            ${admin ? 'You must have ``ADMINISTRATOR`` perms to use this command!' : '' }
-            `);
-    },
+        const reason =
+            `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`;
 
-    /**
-     * A generic help embed useful for most situations.
-     */
-    generic: ({ settings, help }: PartialCommand, reason?: string) => {
-        const [min, max = 'no'] = settings.args;
-        const r = reason ?? `Missing ${min} minimum argument${plural(min)} (${max} maximum).`;
-        
-        return new MessageEmbed()
-            .setColor(config.embed.fail as `#${string}`)
-            .setDescription(`
-            ${r}
-
-            Aliases: ${settings.aliases!.map(a => `\`\`${a}\`\``).join(', ')}
-
-            Example Usage:
-            ${help.slice(1).map((e: string) => `\`\`${settings.name}${e.length > 0 ? ` ${e}` : ''}\`\``).join('\n')}
-            `)
-            .addFields(
-                { name: '**Guild Only:**', value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-                { name: '**Owner Only:**', value: settings.ownerOnly ? 'Yes' : 'No', inline: true }
-            );
+        return Embed.error(reason);
     }
 }
 
-export const padEmbedFields = (embed: MessageEmbed) => {
-    while (embed.fields.length % 3 !== 0 && embed.fields.length !== 0) {
-        embed.addField('\u200b', '\u200b', true);
+export const padEmbedFields = (embed: UnsafeEmbed): UnsafeEmbed => {
+    while (embed.fields!.length % 3 !== 0 && embed.fields!.length !== 0) {
+        embed.addFields({ name: '\u200b', value: '\u200b', inline: true });
     }
 
     return embed;

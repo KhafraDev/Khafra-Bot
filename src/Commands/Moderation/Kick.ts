@@ -1,64 +1,69 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { hasPerms, hierarchy } from '../../lib/Utility/Permissions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { kGuild } from '../../lib/types/KhafraBot.js';
-import { isText, Message } from '../../lib/types/Discord.js.js';
+import { Arguments, Command } from '#khaf/Command';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
+import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-@RegisterCommand
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
+
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Kick a member from the server.',
                 '@user for trolling',
                 '1234567891234567'
             ],
-			{
+            {
                 name: 'kick',
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.KICK_MEMBERS ]
+                permissions: [PermissionFlagsBits.KickMembers]
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments, settings: kGuild) {
-        const member = await getMentions(message, 'members');
+    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
+        const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {
-            return this.Embed.fail(`You cannot kick ${member}!`);
+            return Embed.error(`You cannot kick ${member}!`);
         }
-        
+
         if (!member) {
-            return this.Embed.fail('No member was mentioned and/or an invalid ❄️ was used!');
+            return Embed.error('No member was mentioned and/or an invalid ❄️ was used!');
         } else if (!member.kickable) {
-            return this.Embed.fail(`${member} is too high up in the hierarchy for me to kick.`);
+            return Embed.error(`${member} is too high up in the hierarchy for me to kick.`);
         }
 
-        try {
-            await member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`);
-        } catch {
-            return this.Embed.fail(`
-            An unexpected error occurred!
-            `);
+        const [kickError] = await dontThrow(member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`));
+
+        if (kickError !== null) {
+            return Embed.error(`An unexpected error occurred: ${inlineCode(kickError.message)}`);
         }
 
-        await message.reply({ embeds: [this.Embed.fail(`Kicked ${member} from the server!`)] });
+        await message.reply({ embeds: [Embed.error(`Kicked ${member} from the server!`)] });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
-            
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, [ Permissions.FLAGS.SEND_MESSAGES, Permissions.FLAGS.EMBED_LINKS ]))
+
+            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
             const reason = args.slice(1).join(' ');
-            return void channel.send({ embeds: [this.Embed.success(`
-            **Offender:** ${member}
-            **Reason:** ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
-            **Staff:** ${message.member}
+            return void channel.send({ embeds: [Embed.ok(`
+            ${bold('Offender:')} ${member}
+            ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+            ${bold('Staff:')} ${message.member}
             `).setTitle('Member Kicked')] });
         }
     }

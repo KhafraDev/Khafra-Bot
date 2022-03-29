@@ -1,35 +1,73 @@
-import { SlashCommandBuilder } from '@discordjs/builders';
-import { badmeme, cache } from '@khaf/badmeme';
-import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
+import { Interactions } from '#khaf/Interaction';
+import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('badmeme')
-            .addStringOption(option => option
-                .setName('subreddit')
-                .setDescription('Subreddit to get a bad meme on.')
-                .setRequired(false)    
-            )
-            .setDescription('Get a horrible meme!')
+    constructor () {
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'badmeme',
+            description: 'Get a horrible meme!',
+            options: [
+                {
+                    // see https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+                    type: ApplicationCommandOptionType.String,
+                    name: 'subreddit',
+                    description: 'Subreddit to get a bad meme on.'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'sort-by',
+                    description: 'Sort posts by the given modifier.',
+                    choices: Object.values(SortBy).map(
+                        choice => ({ name: choice, value: choice })
+                    )
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'timeframe',
+                    description: 'Timeframe to sort posts by (only if "sort-by" is top).',
+                    choices: Object.values(Timeframe).map(
+                        choice => ({ name: choice, value: choice })
+                    )
+                }
+            ]
+        };
 
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
-        const subreddit = interaction.options.get('subreddit')?.value ?? 'dankmemes';
-        if (typeof subreddit !== 'string')
-            return 'Invalid option received!';
+    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+        const subreddit =
+            interaction.options.getString('subreddit')?.toLowerCase() ??
+            'dankmemes';
+        const modifier = interaction.options.getString('sort-by') as `${SortBy}` | null;
+        const timeframe = modifier === 'top'
+            ? interaction.options.getString('timeframe') as `${Timeframe}` | null
+            : undefined
 
         if (!cache.has(subreddit))
             await interaction.deferReply();
 
-        const item = await badmeme(subreddit, false);
+        const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw);
+        const item = await badmeme(
+            subreddit,
+            isNSFW,
+            modifier ?? undefined,
+            timeframe ?? undefined
+        );
 
         if (item === null) {
-            return '❌ No posts in this subreddit were found. This command doesn\'t work on NSFW subreddits!';
+            const nsfwWarning = interaction.channel !== null && !isNSFW
+                ? ' NSFW subreddits do not work in age restricted channels!'
+                : '';
+
+            return `❌ No posts in this subreddit were found.${nsfwWarning}`;
         } else if ('error' in item) {
+            if (item.error === 404) {
+                return '❌ This subreddit doesn\'t exist!';
+            }
+
             switch (item.reason) {
                 case 'banned': return '❌ Subreddit is banned!';
                 case 'private': return '❌ Subreddit is set as private!';
@@ -37,9 +75,9 @@ export class kInteraction extends Interactions {
                 default: return `❌ Subreddit is blocked for reason "${item.reason}"!`;
             }
         } else if (item.url.length === 0) {
-            return '❌ No valid posts in this subreddit!';
+            return '❌ The requested post was filtered incorrectly.';
         }
 
         return Array.isArray(item.url) ? item.url[0] : item.url;
     }
-} 
+}

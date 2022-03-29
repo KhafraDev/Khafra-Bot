@@ -1,12 +1,12 @@
-import { chunkSafe } from '../Utility/Array.js';
+import { chunkSafe } from '#khaf/utility/Array.js';
 
 const emojis = [
-    '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', 
+    '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣',
     '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣',
     '💣'
 ] as const;
 
-export const Board = () => {
+export const Board = (): string => {
     const board = chunkSafe(Array<number>(100).fill(0), 10);
 
     for (let i = 0; i < 10;) {
@@ -17,7 +17,7 @@ export const Board = () => {
         if (board[x][y] <= 8) {
             board[x][y] = 10; //'💣';
             i++;
-            
+
             // horizontal + vertical
             typeof board[x-1]?.[y] === 'number' && board[x-1][y] < 8 && board[x-1][y]++; // 1 row back
             typeof board[x+1]?.[y] === 'number' && board[x+1][y] < 8 && board[x+1][y]++; // 1 row forward
@@ -42,7 +42,7 @@ export const Board = () => {
         }
     }
 
-    const emojified = board.map(row => 
+    const emojified = board.map(row =>
         row.map(spot =>
             spot === -1 ? emojis[0] : `|| ${emojis[spot]} ||`
         ).join('')

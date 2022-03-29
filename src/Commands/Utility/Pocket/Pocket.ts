@@ -1,14 +1,14 @@
-import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
     constructor() {
         super(
             [
                 'Pocket: Connect your Pocket account to Khafra-Bot!'
             ],
-			{
+            {
                 name: 'pocket',
                 folder: 'Pocket',
                 args: [0]
@@ -16,16 +16,16 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        return this.Embed.success()
-            .setAuthor('GetPocket', undefined, 'https://app.getpocket.com/')
+    async init (): Promise<UnsafeEmbed> {
+        return Embed.ok()
+            .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`
             Connect your Pocket account to Khafra-Bot to get updates on the latest news.
             
             Examples:
-            \`\`pocketinit\`\` - Start the process of authorizing your Pocket account.
-            \`\`pocketget\`\` - List your favorited articles.
-            \`\`pocketadd [article] [optional title]\`\`
+            ${inlineCode('pocketinit')} - Start the process of authorizing your Pocket account.
+            ${inlineCode('pocketget')} - List your favorited articles.
+            ${inlineCode('pocketadd [article] [optional title]')}
             `);
     }
 }

@@ -3,11 +3,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS kbGuild (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     guild_id TEXT NOT NULL,
-    prefix TEXT DEFAULT '!' NOT NULL,
     max_warning_points SMALLINT DEFAULT 20,
     mod_log_channel TEXT DEFAULT NULL,
     welcome_channel TEXT DEFAULT NULL,
-    reactRoleChannel TEXT DEFAULT NULL,
+    ticketChannel TEXT DEFAULT NULL,
+    "staffChannel" TEXT DEFAULT NULL,
     UNIQUE (guild_id)
 );
 

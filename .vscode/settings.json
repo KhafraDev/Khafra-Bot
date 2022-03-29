@@ -1,4 +1,6 @@
 {
-    "typescript.tsdk": "node_modules\\typescript\\lib",
-    "editor.bracketPairColorization.enabled": true
+    "editor.bracketPairColorization.enabled": true,
+    "files.exclude": {
+        "node_modules": true
+    }
 }

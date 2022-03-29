@@ -1,4 +1,5 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
+import { env } from 'process';
 
 interface IOwlBotWord {
     definitions: {
@@ -13,25 +14,18 @@ interface IOwlBotWord {
 }
 
 const url = 'https://owlbot.info/api/v4/dictionary/';
-class OwlBotError extends Error {
-    constructor(m?: string) {
-        super(m);
-        this.name = 'OwlBotError';
-    }
-}
 
-export const owlbotio = async (word: string) => {
+export const owlbotio = async (word: string): Promise<IOwlBotWord | null> => {
     word = encodeURIComponent(word.toLowerCase());
-    if (!process.env.OWLBOTIO) {
-        return Promise.reject(new OwlBotError('No API token found in env variables.'));
+    if (!env.OWLBOTIO) {
+        return null;
     }
 
-    const res = await fetch(`${url}${word}`, {
+    const { body } = await request(`${url}${word}`, {
         headers: {
-            Authorization: `Token ${process.env.OWLBOTIO}`
+            Authorization: `Token ${env.OWLBOTIO}`
         }
     });
-    const json = await res.json() as IOwlBotWord;
 
-    return json;
+    return body.json() as Promise<IOwlBotWord>;
 }

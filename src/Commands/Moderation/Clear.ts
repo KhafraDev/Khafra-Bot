@@ -1,75 +1,57 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { Message, Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { isText } from '../../lib/types/Discord.js.js';
-import { Range } from '../../lib/Utility/Range.js';
-import { validateNumber } from '../../lib/Utility/Valid/Number.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { Range } from '#khaf/utility/Valid/Number.js';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-const range = Range(1, 100, true);
+const inRange = Range({ min: 1, max: 100, inclusive: true });
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Clear messages from a given channel.',
                 '100', '53'
-            ], 
+            ],
             {
                 name: 'clear',
                 folder: 'Moderation',
-                aliases: [ 'bulkdelete' ],
+                aliases: ['bulkdelete'],
                 args: [1, 1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_MESSAGES ]
+                permissions: [PermissionFlagsBits.ManageMessages]
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed | undefined> {
         const toDelete = Number(args[0]);
 
-        if (!validateNumber(toDelete)) {
-            return this.Embed.fail(`
-            Received: ${toDelete}, this command requires a valid integer!
-
-            Example: \`\`${this.settings.name} 100\`\`
-            `);
-        } else if (!range.isInRange(toDelete)) {
-            return this.Embed.fail(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
+        if (!inRange(toDelete)) {
+            return Embed.error(`${toDelete.toLocaleString()} is not within the range of 0-100 messages!`);
         }
 
-        const channel = await getMentions(message, 'channels', { idx: 1 }) ?? message.channel;
-        
-        if (!isText(channel) || !hasPerms(channel, message.guild!.me, [Permissions.FLAGS.MANAGE_MESSAGES])) {
-            return this.Embed.fail('Can\'t delete messages from this type of channel, sorry!');
+        const channel = await getMentions(message, 'channels') ?? message.channel;
+
+        if (!isText(channel) || !hasPerms(channel, message.guild.me, [PermissionFlagsBits.ManageMessages])) {
+            return Embed.perms(
+                channel,
+                message.guild.me,
+                PermissionFlagsBits.ManageMessages
+            );
         } else if (message.deletable) {
             await dontThrow(message.delete());
         }
 
-        const [err, deleted] = await dontThrow(channel.bulkDelete(toDelete, true));
+        const [err] = await dontThrow(channel.bulkDelete(toDelete, true));
 
         if (err !== null) {
-            return this.Embed.fail(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
         }
-
-        const embed = this.Embed.success()
-            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
-            .setTimestamp()
-            .setFooter(`Requested by ${message.author.tag}!`)
-            .setDescription(`
-            Successfully deleted ${deleted.size} messages!
-
-            If this number isn't correct, it is because messages older than 2 weeks cannot be deleted!
-            `);
-
-        const [, m] = await dontThrow(message.reply({ embeds: [embed] }));
-        setTimeout(() => {
-            if (m?.deletable) void dontThrow(m.delete());
-        }, 5000).unref();
     }
 }

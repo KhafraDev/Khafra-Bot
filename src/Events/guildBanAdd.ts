@@ -1,75 +1,89 @@
-import { Event } from '../Structures/Event.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
-import { GuildBan } from 'discord.js';
-import { defaultKGuild, pool } from '../Structures/Database/Postgres.js';
-import { kGuild, PartialGuild } from '../lib/types/KhafraBot.js';
-import { isText } from '../lib/types/Discord.js.js';
-import { Embed } from '../lib/Utility/Constants/Embeds.js';
-import { bans } from '../lib/Cache/Bans.js';
-import { time } from '@discordjs/builders';
-import { delay } from '../lib/Utility/Constants/OneLiners.js';
-import { client } from '../Structures/Database/Redis.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
+import { cache } from '#khaf/cache/Settings.js';
+import { sql } from '#khaf/database/Postgres.js';
+import { Event } from '#khaf/Event';
+import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isTextBased } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { ellipsis } from '#khaf/utility/String.js';
+import { bold, inlineCode, time } from '@discordjs/builders';
+import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
+import { GuildBan, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
-@RegisterEvent
+const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
+const perms =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
+
 export class kEvent extends Event<'guildBanAdd'> {
     name = 'guildBanAdd' as const;
 
-    async init({ guild, user, reason }: GuildBan) {
-        const key = `${guild.id},${user.id}`;
-        const cached = await client.exists(guild.id) === 1;
-        let item: ModLogChannel | null = null
+    async init ({ guild, user, reason }: GuildBan): Promise<void> {
+        // This event will always return "partial" bans,
+        // where the reason & executor are not included!
+        // Plus, the reason, if fetched, can be null anyways!
+        // So, it's far more useful to try fetching the audit
+        // logs which includes the unban executor AND reason!
 
-        if (cached) {
-            item = JSON.parse(await client.get(guild.id)) as kGuild;
-        } else {
-            const { rows } = await pool.query<ModLogChannel>(`
-                SELECT ${defaultKGuild} FROM kbGuild
-                WHERE guild_id = $1::text
+        let staff: User | null = null;
+
+        if (guild.me?.permissions.has(auditLogPerms)) {
+            const [err, logs] = await dontThrow(guild.fetchAuditLogs({
+                type: AuditLogEvent.MemberBanAdd,
+                limit: 1
+            }));
+
+            if (err === null) {
+                const entry = logs.entries.first();
+
+                if (entry?.executor) staff = entry.executor;
+                if (entry?.reason) reason = entry.reason;
+            }
+        }
+
+        const row = cache.get(guild.id);
+        let item: ModLogChannel | null = row ?? null;
+
+        if (!item) {
+            const rows = await sql<kGuild[]>`
+                SELECT 
+                    mod_log_channel, max_warning_points,
+                    welcome_channel, ticketChannel, "staffChannel"
+                FROM kbGuild
+                WHERE guild_id = ${guild.id}::text
                 LIMIT 1;
-            `, [guild.id]);
+            `;
 
-            void client.set(guild.id, JSON.stringify(rows[0]), 'EX', 600);
-            item = rows[0];
+            if (rows.length !== 0) {
+                cache.set(guild.id, rows[0]);
+                item = rows[0];
+            } else {
+                return;
+            }
         }
 
-        if (
-            !item || // precaution
-            item.mod_log_channel === null || // default value, not set
-            !guild.channels.cache.has(item.mod_log_channel) // channel isn't cached
-        ) 
-            return bans.delete(key);
+        const channel = guild.channels.cache.get(item.mod_log_channel ?? '');
 
-        const channel = guild.channels.cache.get(item.mod_log_channel);
-        if (!isText(channel))
-            return bans.delete(key);
-
-        // so you might be thinking "this is disgusting"
-        // and I would mostly agree with you. This event is propagated
-        // right after the ban and it's entirely possible for the event to fire
-        // before the cache is set.
-        for (let i = 0; i < 10; i++) {
-            if (bans.has(key)) break;
-            await delay(1000);
+        if (!channel) {
+            return;
+        } else if (!isTextBased(channel) || !hasPerms(channel, guild.me, perms)) {
+            return;
         }
 
-        const ban = bans.has(key) ? bans.get(key) : null;
-        const reasonStr = reason ?? (ban?.reason || 'Unknown');
-
-        await dontThrow(channel.send({ 
+        return void dontThrow(channel.send({
             embeds: [
-                Embed.success(`
-                **User:** ${user} (${user.tag})
-                **ID:** ${user.id}
-                **Staff:** ${ban?.member ?? 'Unknown'}
-                **Time:** ${time(new Date())}
-                **Reason:** \`\`${reasonStr.length > 1500 ? `${reasonStr.slice(1500)}...` : reasonStr}\`\`
-                `).setTitle('Member Banned') 
-            ] 
+                Embed.ok(`
+                ${bold('User:')} ${user} (${user.tag})
+                ${bold('ID:')} ${user.id}
+                ${bold('Staff:')} ${staff ?? 'Unknown'}
+                ${bold('Time:')} ${time(new Date())}
+                ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
+                `).setTitle('Member Banned')
+            ]
         }));
-
-        bans.delete(key);
     }
 }

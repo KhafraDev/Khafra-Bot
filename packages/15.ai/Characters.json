@@ -1,0 +1,677 @@
+{
+  "MLP": [
+    {
+      "name": "Twilight Sparkle",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Fluttershy",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Rarity",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Rainbow Dash",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Pinkie Pie",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Applejack",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Princess Celestia",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Princess Luna",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Spike",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Starlight Glimmer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Trixie",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Apple Bloom",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sweetie Belle",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Scootaloo",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Zecora",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Derpy Hooves",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Lyra",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Bon Bon",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Princess Cadance",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Cozy Glow",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Queen Chrysalis",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Spitfire",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Big Mac",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sunburst",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Minuette",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Cheerilee",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Coco Pommel",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Maud Pie",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Shining Armor",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sugar Belle",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Vapor Trail",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Moondancer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Lightning Dust",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Discord",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Soarin'",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Diamond Tiara",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Silver Spoon",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Octavia",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Gilda",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Gabby",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Limestone Pie",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Braeburn",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Daring Do",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Snips",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Snails",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Equestria": [
+    {
+      "name": "Sunset Shimmer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Adagio Dazzle",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Aria Blaze",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sonata Dusk",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Hal": [
+    {
+      "name": "HAL 9000",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Portal": [
+    {
+      "name": "GLaDOS",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Wheatley",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sentry Turret",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Chell",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "TF2": [
+    {
+      "name": "Miss Pauling",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Scout",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Soldier",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Demoman",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Heavy",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Engineer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Medic",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Sniper",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Spy",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Persona4": [
+    {
+      "name": "Rise Kujikawa",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "SpongeBob": [
+    {
+      "name": "SpongeBob SquarePants",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Super-Smash-Bros": [
+    {
+      "name": "Announcer",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Steven-Universe": [
+    {
+      "name": "Steven Universe",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "The-Stanley-Parable": [
+    {
+      "name": "The Narrator",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Stanley",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Fallout-New-Vegas": [
+    {
+      "name": "Yes Man",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Aqua-Teen-Hunger-Force": [
+    {
+      "name": "Carl Brutananadilewski",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Dan": [
+    {
+      "name": "Dan",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Daria": [
+    {
+      "name": "Daria Morgendorffer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Jane Lane",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Half-Life": [
+    {
+      "name": "Black Mesa Announcer",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Overwatch",
+      "emotions": [
+        "Contextual"
+      ]
+    },
+    {
+      "name": "Gordon Freeman",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "HuniePop": [
+    {
+      "name": "Kyu Sugardust",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Doctor-Who": [
+    {
+      "name": "Tenth Doctor",
+      "emotions": [
+        "Contextual"
+      ]
+    }
+  ],
+  "Undertale": [
+    {
+      "name": "Sans",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Papyrus",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Flowey",
+      "emotions": [
+        "Normal",
+        "Evil"
+      ]
+    },
+    {
+      "name": "Toriel",
+      "emotions": [
+        "Normal",
+        "Injured",
+        "Dying"
+      ]
+    },
+    {
+      "name": "Asgore",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Asriel",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Alphys",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Undyne",
+      "emotions": [
+        "Normal",
+        "Undying"
+      ]
+    },
+    {
+      "name": "Mettaton",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Temmie",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Susie",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Noelle",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Berdly",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Rudolph",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Ralsei",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Lancer",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "King",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Queen",
+      "emotions": [
+        "Normal",
+        "Serious"
+      ]
+    },
+    {
+      "name": "Jevil",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Spamton",
+      "emotions": [
+        "Normal",
+        "Neo"
+      ]
+    },
+    {
+      "name": "Gaster",
+      "emotions": [
+        "Normal",
+        "Noisy"
+      ]
+    }
+  ],
+  "Celeste": [
+    {
+      "name": "Madeline",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Theo",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Badeline",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Oshiro",
+      "emotions": [
+        "Normal"
+      ]
+    },
+    {
+      "name": "Granny",
+      "emotions": [
+        "Normal"
+      ]
+    }
+  ]
+}

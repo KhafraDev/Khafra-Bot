@@ -1,47 +1,49 @@
-import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about the server!'
             ],
-			{
+            {
                 name: 'server',
                 folder: 'Server',
-                aliases: [ 'serverinfo', 'guildinfo', 'guild' ],
+                aliases: ['serverinfo', 'guildinfo', 'guild'],
                 args: [0, 0],
                 guildOnly: true
             }
         );
     }
 
-    init(message: Message) { 
+    async init (message: Message<true>): Promise<UnsafeEmbed> {
         const locale = message.guild.preferredLocale;
 
-        return this.Embed.success()
-            .setAuthor(message.client.user!.username, message.client.user!.displayAvatarURL())
+        return Embed.ok()
+            .setAuthor({
+                name: message.client.user!.username,
+                iconURL: message.client.user!.displayAvatarURL()
+            })
             .setTimestamp()
-            .setThumbnail(message.guild.bannerURL()!)
+            .setThumbnail(message.guild.bannerURL())
             .setDescription(`
-            *${message.guild.name}*
-            \`\`${message.guild.description?.length ? message.guild.description : 'No description set'}\`\`
+            ${italic(message.guild.name)}
+            ${inlineCode(message.guild.description ?? 'No description set')}
             `)
             .addFields(
-                { name: '**ID:**', value: message.guild.id, inline: true },
-                { name: '**Verified:**', value: message.guild.verified ? 'Yes' : 'No', inline: true },
-                { name: '**Partnered:**', value: message.guild.partnered ? 'Yes' : 'No', inline: true },
-                { name: '**Members:**', value: message.guild.memberCount.toLocaleString(locale), inline: true },
-                { name: '**Owner:**', value: `<@!${message.guild.ownerId}>`, inline: true },
-                { name: '**Boosts:**', value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
-                { name: '**Tier:**', value: `${message.guild.premiumTier}`, inline: true },
-                { name: '**Vanity URL:**', value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
-                { name: '**Verification:**', value: message.guild.verificationLevel, inline: true },
-                { name: '**Created:**', value: time(message.guild.createdAt), inline: false }
+                { name: bold('ID:'), value: message.guild.id, inline: true },
+                { name: bold('Verified:'), value: message.guild.verified ? 'Yes' : 'No', inline: true },
+                { name: bold('Partnered:'), value: message.guild.partnered ? 'Yes' : 'No', inline: true },
+                { name: bold('Members:'), value: message.guild.memberCount.toLocaleString(locale), inline: true },
+                { name: bold('Owner:'), value: `<@!${message.guild.ownerId}>`, inline: true },
+                { name: bold('Boosts:'), value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
+                { name: bold('Tier:'), value: `${message.guild.premiumTier}`, inline: true },
+                { name: bold('Vanity URL:'), value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
+                { name: bold('Verification:'), value: `Level ${message.guild.verificationLevel}`, inline: true },
+                { name: bold('Created:'), value: time(message.guild.createdAt), inline: false }
             );
     }
 }

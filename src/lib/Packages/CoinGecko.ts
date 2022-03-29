@@ -1,7 +1,9 @@
-import { fetch } from 'undici';
-import { once } from '../Utility/Memoize.js';
-import { dontThrow } from '../Utility/Don\'tThrow.js';
-import { chunkSafe } from '../Utility/Array.js';
+import { chunkSafe } from '#khaf/utility/Array.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { consumeBody } from '#khaf/utility/FetchUtils.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { setInterval } from 'timers';
+import { Client } from 'undici';
 
 interface CoinGeckoRes {
     id: string,
@@ -36,81 +38,83 @@ interface CoinGeckoRes {
     last_updated: Date
 }
 
+const client = new Client('https://api.coingecko.com');
+
 export class CoinGecko {
-    static cache = new Map<string, CoinGeckoRes>();
-    static cache2: { id: string, name: string, symbol: string }[] = [];
-
+    public static cache = new Map<string, CoinGeckoRes>();
     private static last: number;
-    private static int: NodeJS.Timer;
 
-    static interval = once(() => {
-        if (!CoinGecko.int) {
-            CoinGecko.int = setInterval(
+    static list = once(async () => {
+        const { body } = await client.request({
+            path: '/api/v3/coins/list?include_platform=false',
+            method: 'GET'
+        });
+
+        return await body.json() as { id: string, name: string, symbol: string }[];
+    });
+
+    static async ping(): Promise<boolean> {
+        const [e, r] = await dontThrow(client.request({
+            path: '/api/v3/ping',
+            method: 'GET'
+        }));
+
+        await consumeBody(r);
+
+        return e === null && r.statusCode === 200;
+    }
+
+    static async fetchAll(): Promise<boolean> {
+        if (typeof CoinGecko.last !== 'number') {
+            setInterval(
                 () => void dontThrow(CoinGecko.fetchAll()),
                 60 * 1000 * 30
             ).unref();
-        }
-    });
-
-    static list = once(async () => {
-        const r = await fetch('https://api.coingecko.com/api/v3/coins/list?include_platform=false');
-        const j = await r.json() as typeof CoinGecko.cache2;
-
-        CoinGecko.cache2.push(...j);
-
-        return j;
-    });
-
-    static async ping() {
-        const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/ping`));
-        
-        return e === null && r.ok;
-    }
-
-    static async fetchAll() {
-        if (!CoinGecko.last) {
             CoinGecko.last = Date.now();
         } else if ((Date.now() - CoinGecko.last) / 1000 / 60 < 15) { // tried within last 15 mins
-            return;    
+            return false;
         }
-        
+
         const pinged = await CoinGecko.ping();
-        if (pinged === false) return;
+        if (pinged === false) return false;
 
         const list = await CoinGecko.list();
-        const ids = list.map(i => i.id);
+        const ids = list ? list.map(i => i.id) : [];
 
         for (const idChunk of chunkSafe(ids, 250)) {
-            const [e, r] = await dontThrow(fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`));
-            if (e !== null || !r.ok) break;
+            const [e, r] = await dontThrow(client.request({
+                path: `/api/v3/coins/markets?vs_currency=usd&ids=${idChunk.join(',')}`,
+                method: 'GET'
+            }));
 
-            const j = await r.json() as CoinGeckoRes[];
+            if (e !== null || r.statusCode !== 200) {
+                void consumeBody(r);
+                break;
+            }
+
+            const j = await r.body.json() as CoinGeckoRes[];
 
             for (const currency of j) {
-                if (CoinGecko.cache.has(currency.id)) {
-                    CoinGecko.cache.delete(currency.id);
-                }
-
                 CoinGecko.cache.set(currency.id, currency);
             }
         }
 
-        CoinGecko.interval();
-
         return true;
     }
 
-    static async get(query: string, cb = () => {}) {
-        if (CoinGecko.cache2.length === 0 || CoinGecko.cache.size === 0) {
+    static async get(query: string, cb = (): void => {}): Promise<CoinGeckoRes[] | undefined> {
+        if (CoinGecko.cache.size === 0) {
             cb();
             const success = await CoinGecko.fetchAll();
             if (success !== true) return;
         }
 
+        const list = await CoinGecko.list() ?? [];
+
         const found: CoinGeckoRes[] = [];
         const q = query.toLowerCase();
 
-        for (const { id, name, symbol } of CoinGecko.cache2) {
+        for (const { id, name, symbol } of list) {
             if (id === q || symbol === q || name.toLowerCase() === q) {
                 found.push(CoinGecko.cache.get(id)!);
             }

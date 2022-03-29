@@ -1,11 +1,12 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
 const vowels = ['A', 'E', 'I', 'O', 'U'];
 
-const splitWord = (word: string) => {
+const splitWord = (word: string): { an: string[], p: string[] } => {
     const punc = {
         // alphanumeric
         an: [] as string[],
@@ -25,7 +26,7 @@ const splitWord = (word: string) => {
     return punc;
 }
 
-const toPigLatin = (sentence: string) => {
+const toPigLatin = (sentence: string): string => {
     const words = sentence.split(/\s+/g);
     const pigLatin = [];
 
@@ -33,7 +34,7 @@ const toPigLatin = (sentence: string) => {
         const start = word.charAt(0).toUpperCase();
         if (consonants.includes(start)) {
             if (word.length > 1 && consonants.includes(word.charAt(1).toUpperCase())) {
-                // When words begin with consonant clusters (multiple consonants that form one sound), 
+                // When words begin with consonant clusters (multiple consonants that form one sound),
                 // the whole sound is added to the end when speaking or writing
                 let consonantsStart = 0;
                 for (let i = 0; i < word.length; i++) {
@@ -49,7 +50,7 @@ const toPigLatin = (sentence: string) => {
                 pigLatin.push(`${front.an.join('')}${back.an.join('')}ay${front.p.join('')}${back.p.join('')}`)
                 // pigLatin.push(`${word.slice(consonantsStart)}${word.slice(0, consonantsStart)}ay`);
             } else {
-                // For words that begin with consonant sounds, all letters before the initial 
+                // For words that begin with consonant sounds, all letters before the initial
                 // vowel are placed at the end of the word sequence. Then, "ay" is added
                 const { an, p } = splitWord(word);
                 pigLatin.push(`${an.slice(1).join('')}${an[0]}ay${p.join('')}`)
@@ -67,15 +68,14 @@ const toPigLatin = (sentence: string) => {
     return pigLatin.join(' ');
 }
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Convert English to Pig Latin!',
                 'To make pure ice, you freeze water. Oak is strong and also gives shade.'
             ],
-			{
+            {
                 name: 'piglatin',
                 folder: 'Fun',
                 args: [1],
@@ -84,8 +84,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const pig = toPigLatin(content);
-        return this.Embed.success(pig.slice(0, 2048))
+        return Embed.ok(pig.slice(0, 2048))
     }
 }

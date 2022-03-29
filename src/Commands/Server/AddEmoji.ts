@@ -1,12 +1,13 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { GuildEmoji, MessageAttachment, Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { validURL } from '../../lib/Utility/Valid/URL.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validURL } from '#khaf/utility/Valid/URL.js';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message, MessageAttachment } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Add an emoji to the server!',
@@ -14,19 +15,19 @@ export class kCommand extends Command {
                 'amogus https://cdn.discordapp.com/emojis/812093828978311219.png?v=1',
                 'https://cdn.discordapp.com/emojis/812093828978311219.png?v=1 amogus'
             ],
-			{
+            {
                 name: 'addemoji',
                 folder: 'Server',
                 args: [1, 2],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_EMOJIS_AND_STICKERS ]
+                permissions: [PermissionFlagsBits.ManageEmojisAndStickers]
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
         if (args.length === 1 && message.attachments.size === 0)
-            return this.Embed.generic(this, 'No attachment was included and no image link was provided!');
+            return Embed.error('No attachment was included and no image link was provided!');
 
         let name: string | null = null,
             link: string | MessageAttachment | null = null;
@@ -37,7 +38,7 @@ export class kCommand extends Command {
         } else {
             const info = validURL(args);
             if (info.length === 0 || info[0].url === null)
-                return this.Embed.fail(`No image link provided!`);
+                return Embed.error('No image link provided!');
 
             name = args[Number(!info[0].idx)];
             link = `${info[0].url}`;
@@ -45,26 +46,23 @@ export class kCommand extends Command {
 
         if (link instanceof MessageAttachment) {
             if (link.size > 256_000)
-                return this.Embed.fail(`Guild emojis can only be a maximum of 256kb! Try a smaller image!`);
+                return Embed.error('Guild emojis can only be a maximum of 256kb! Try a smaller image!');
 
             link = link.url;
         } else if (typeof link !== 'string') {
-            return this.Embed.fail('Invalid link!');
+            return Embed.error('Invalid link!');
         }
 
-        let e: GuildEmoji | null = null;
-        try {
-            e = await message.guild.emojis.create(
-                link,
-                name,
-                { reason: `${message.author.id} (${message.author.tag}) requested.` }
-            );
-        } catch (e) {
-            if (e instanceof Error) {
-                return this.Embed.fail(e.message);
-            }
+        const [createError, e] = await dontThrow(message.guild.emojis.create(
+            link,
+            name,
+            { reason: `${message.author.id} (${message.author.tag}) requested.` }
+        ));
+
+        if (createError !== null) {
+            return Embed.error(`An unexpected error occurred: ${inlineCode(createError.message)}`);
         }
 
-        return this.Embed.success(`Added ${e} to the guild emojis!`);
+        return Embed.ok(`Added ${e} to the guild emojis!`);
     }
 }

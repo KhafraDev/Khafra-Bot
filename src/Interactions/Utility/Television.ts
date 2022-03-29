@@ -1,51 +1,75 @@
-import { CommandInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder, time } from '@discordjs/builders';
-import { searchTV } from '../../lib/Packages/TMDB.js';
-import { isDM, isText } from '../../lib/types/Discord.js.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction';
+import { searchTV } from '#khaf/utility/commands/TMDB';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
+import { ActionRow, bold, hyperlink, time } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('tv')
-            .addStringOption(option => option
-                .setName('name')
-                .setDescription('TV Show name to get info about.')
-                .setRequired(true)
-            )
-            .setDescription('Get information about a tv show!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'tv',
+            description: 'Gets information about a TV show!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'name',
+                    description: 'TV show to get information about.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | string> {
         const tv = await searchTV(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
         );
-        
-        if (!tv)
-            return `❌ No TV show with that name was found!`;
 
-        const embed = Embed.success()
+        if (!tv) {
+            return '❌ No TV show with that name was found!';
+        }
+
+        const link = `https://www.themoviedb.org/tv/${tv.id})`;
+        const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
-            .addField('**Genres:**', tv.genres.map(g => g.name).join(', '), true)
-            .addField('**Status:**', tv.status, true)
-            .addField('**Premiered:**', tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
-            .addField('**Seasons:**', `${tv.number_of_seasons}`, true)
-            .addField('**Episodes:**', `${tv.number_of_episodes}`, true)
-            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
-            .setFooter('Data provided by https://www.themoviedb.org/')
-            
-        tv.homepage && embed.setURL(tv.homepage);
-        
-        if (tv.poster_path) 
-            embed.setImage(`https://image.tmdb.org/t/p/original${tv.poster_path}`);
-        else if (tv.backdrop_path)
-            embed.setImage(`https://image.tmdb.org/t/p/original${tv.backdrop_path}`);
+            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
+            .addFields(
+                { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
+                { name: bold('Status:'), value: tv.status, inline: true },
+                {
+                    name: bold('Premiered:'),
+                    value: tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown',
+                    inline: true
+                },
+                { name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true },
+                { name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true },
+                { name: bold('TMDB:'), value: hyperlink('TMDB', link), inline: true }
+            );
 
-        return embed;
+        if (tv.homepage) {
+            embed.setURL(tv.homepage);
+        }
+
+        if (tv.poster_path) {
+            embed.setImage(`https://image.tmdb.org/t/p/original${tv.poster_path}`);
+        } else if (tv.backdrop_path) {
+            embed.setImage(`https://image.tmdb.org/t/p/original${tv.backdrop_path}`);
+        }
+
+        return {
+            embeds: [embed],
+            components: [
+                new ActionRow().addComponents(
+                    Components.link('TMDB', link)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
-} 
+}

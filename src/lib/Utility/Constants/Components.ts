@@ -1,42 +1,49 @@
-import { Message, MessageButton } from 'discord.js';
+import { APIMessage, ButtonStyle } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
+import { ActionRow, MessageActionRowComponent, UnsafeButtonComponent } from '@discordjs/builders';
 
 export const Components = {
-    approve: (label = 'approve', id?: string) => new MessageButton()
+    approve: (label = 'approve', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'approve')
         .setLabel(label)
-        .setStyle('SUCCESS'),
-    deny: (label = 'deny', id?: string) => new MessageButton()
+        .setStyle(ButtonStyle.Success),
+    deny: (label = 'deny', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'deny')
         .setLabel(label)
-        .setStyle('DANGER'),
-    secondary: (label = 'next', id?: string) => new MessageButton()
+        .setStyle(ButtonStyle.Danger),
+    secondary: (label = 'next', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'secondary')
         .setLabel(label)
-        .setStyle('SECONDARY'),
-    primary: (label = 'primary', id?: string) => new MessageButton()
+        .setStyle(ButtonStyle.Secondary),
+    primary: (label = 'primary', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
         .setCustomId(id ?? 'primary')
         .setLabel(label)
-        .setStyle('PRIMARY')
+        .setStyle(ButtonStyle.Primary),
+    link: (label: string, url: string): UnsafeButtonComponent => new UnsafeButtonComponent()
+        .setLabel(label)
+        .setStyle(ButtonStyle.Link)
+        .setURL(url)
 }
 
-type Component = { components: Message['components'] }
+const toggleComponents = (item: Message | APIMessage, disabled: boolean): ActionRow<MessageActionRowComponent>[] => {
+    if (!item.components) return [];
 
-export const disableAll = ({ components }: Component) => {
-    for (const component of components) {
+    for (const component of item.components) {
         for (const button of component.components) {
-            button.setDisabled(true);
+            if ('setDisabled' in button) {
+                button.setDisabled(disabled);
+            } else {
+                button.disabled = disabled;
+            }
         }
     }
 
-    return components;
+    return 'channelId' in item
+        ? item.components as ActionRow<MessageActionRowComponent>[]
+        : item.components.map(r => new ActionRow(r));
 }
 
-export const enableAll = ({ components }: Component) => {
-    for (const component of components) {
-        for (const button of component.components) {
-            button.setDisabled(false);
-        }
-    }
-
-    return components;
-}
+export const disableAll = (item: Message | APIMessage):
+    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, true);
+export const enableAll = (item: Message | APIMessage):
+    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, false);

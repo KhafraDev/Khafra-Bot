@@ -1,28 +1,21 @@
-import { readdir, readFile } from 'fs/promises';
-import { join, resolve } from 'path';
-import pg from 'pg';
+import { KhafraClient } from '#khaf/Bot';
+import { assets } from '#khaf/utility/Constants/Path.js';
+import postgres from 'postgres';
+import { env } from 'process';
 
-export const defaultKGuild = [
-    'prefix',
-    'mod_log_channel',
-    'max_warning_points',
-    'welcome_channel',
-    'reactRoleChannel',
-    'ticketChannel'
-].join(', ');
+const sqlFiles = KhafraClient.walk(
+    assets('SQL/Postgres'),
+    p => p.endsWith('.sql')
+);
 
-const dir = await readdir(join(process.cwd(), 'assets/SQL/Postgres'));
-
-export const pool = new pg.Pool({
-    user: process.env.POSTGRES_USER!,
-    password: process.env.POSTGRES_PASS!,
-    database: 'kb'
+export const sql = postgres({
+    user: env.POSTGRES_USER,
+    pass: env.POSTGRES_PASS,
+    database: 'kb',
+    host: '127.0.0.1',
+    onnotice: () => {}
 });
 
-// create tables and other defaults if needed
-const sql = dir.map(f => resolve(process.cwd(), 'assets/SQL/Postgres', f));
-
-for (const file of sql) {
-    const text = await readFile(file, 'utf-8');
-    await pool.query(text);
-}
+await Promise.all(
+    sqlFiles.map(file => sql.file<unknown[]>(file))
+);

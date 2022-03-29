@@ -1,32 +1,36 @@
-import { CommandInteraction, InteractionCollector, Message, MessageActionRow, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { hideLinkEmbed, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { Interactions } from '#khaf/Interaction';
+import { disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ellipsis, plural } from '#khaf/utility/String.js';
+import { ActionRow, hideLinkEmbed, inlineCode, MessageActionRowComponent, UnsafeSelectMenuComponent, UnsafeSelectMenuOption } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
-import { ellipsis, plural } from '../../lib/Utility/String.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
-import { InteractionType } from 'discord-api-types';
-import { disableAll } from '../../lib/Utility/Constants/Components.js';
+import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionCollector, Message, SelectMenuInteraction } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('wikipedia')
-            .addStringOption(option => option
-                .setName('article')
-                .setDescription('Article name to get content or summary of.')
-                .setRequired(true)
-            )
-            .setDescription('Retrieve the content of a Wikipedia article.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'wikipedia',
+            description: 'Retrieves the content of a Wikipedia article.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'article',
+                    description: 'Article name to get a summary for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | undefined> {
         const content = interaction.options.getString('article', true);
         const [err, wiki] = await dontThrow(search(content));
 
-        if (err) {
+        if (err !== null) {
             return `❌ An error occurred processing this request: ${inlineCode(err.message)}`;
         } else if (wiki.pages.length === 0) {
             return '❌ No Wikipedia articles for that query were found!';
@@ -35,14 +39,14 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
-                Embed.success(`Choose an article from the dropdown below!`)
+                Embed.ok('Choose an article from the dropdown below!')
             ],
             components: [
-                new MessageActionRow().addComponents(
-                    new MessageSelectMenu()
+                new ActionRow<MessageActionRowComponent>().addComponents(
+                    new UnsafeSelectMenuComponent()
                         .setCustomId('wikipedia')
                         .setPlaceholder('Which article summary would you like to get?')
-                        .addOptions(wiki.pages.map(w => ({
+                        .addOptions(...wiki.pages.map(w => new UnsafeSelectMenuOption({
                             label: ellipsis(w.title, 25),
                             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
                             value: `${w.id}`
@@ -52,13 +56,14 @@ export class kInteraction extends Interactions {
         }) as Message;
 
         const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent as number,
+            interactionType: InteractionType.MessageComponent,
             message: m,
             time: 120_000,
             idle: 30_000,
             max: wiki.pages.length,
             filter: (i) =>
-                i.user.id === interaction.user.id
+                i.user.id === interaction.user.id &&
+                i.message.id === m.id
         });
 
         c.on('collect', async (i) => {
@@ -82,13 +87,13 @@ export class kInteraction extends Interactions {
                 }));
             }
 
-            const embed = Embed.success()
+            const embed = Embed.ok()
                 .setDescription(ellipsis(summary.extract, 2048))
                 .setTitle(summary.title)
                 .setURL(`https://en.wikipedia.org/wiki/${article.key}`)
 
             if (article.thumbnail) {
-                const image = article.thumbnail.url?.startsWith('http')
+                const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
                     : `https:${article.thumbnail.url}`;
 
@@ -109,4 +114,4 @@ export class kInteraction extends Interactions {
             }
         });
     }
-} 
+}

@@ -5,12 +5,11 @@ type UUID4 = `${string}-${string}-${string}-${string}-${string}`;
 export interface kGuild {
     id: UUID4
     guild_id: Snowflake
-    prefix: string
     max_warning_points: number
     mod_log_channel: Snowflake | null
     welcome_channel: Snowflake | null
-    reactrolechannel: Snowflake | null
     ticketchannel: Snowflake | null
+    staffChannel: Snowflake | null
 }
 
 export interface Warning {
@@ -32,4 +31,13 @@ export interface Giveaway {
     winners: number
 }
 
-export type PartialGuild = Pick<kGuild, 'prefix' | 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;
+export type PartialGuild = Pick<kGuild, 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;
+
+export interface kReminder {
+    id: UUID4
+    userId: string
+    message: string
+    time: Date
+    once: boolean
+    interval: string
+}

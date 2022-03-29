@@ -1,10 +1,10 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { RSSReader } from '../../lib/Utility/RSS.js';
-import { once } from '../../lib/Utility/Memoize.js';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
-import { fetch } from 'undici';
+import { request } from 'undici';
 
 interface ITheOnionAPI {
     data: {
@@ -64,46 +64,49 @@ interface ITheOnion {
 }
 
 const rss = new RSSReader<ITheOnion>();
-const cache = once(() => rss.cache(`https://www.theonion.com/rss`));
+const cache = once(() => rss.cache('https://www.theonion.com/rss'));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
-            [ 
+            [
                 'Read one of the latest articles from The Onion!',
                 ''
             ],
-			{
+            {
                 name: 'theonion',
                 folder: 'Fun',
-                aliases: [ 'onion', 'realnews' ],
+                aliases: ['onion', 'realnews'],
                 args: [0, 0]
             }
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
 
-        const i = await rand(rss.results.size);
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
+
+        const i = Math.floor(Math.random() * rss.results.size);
         const id = [...rss.results][i].guid;
 
-        const r = await fetch(`https://theonion.com/api/core/corepost/getList?id=${id}`);
-        const j = await r.json() as ITheOnionAPI;
+        const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`);
+        const j = await body.json() as ITheOnionAPI;
 
         if (j.data.length === 0)
-            return this.Embed.fail(`
+            return Embed.error(`
             You'll have to read the article on TheOnion this time, sorry!
             https://www.theonion.com/${id}
             `);
 
-        return this.Embed.success()
-            .setAuthor(
-                decodeXML(j.data[0].headline).slice(0, 256), 
-                'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
-                j.data[0].permalink
-            )
+        return Embed.ok()
+            .setAuthor({
+                name: decodeXML(j.data[0].headline).slice(0, 256),
+                iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
+                url: j.data[0].permalink
+            })
             .setTimestamp(j.data[0].publishTimeMillis)
             .setDescription(j.data[0].plaintext.slice(0, 2048));
     }

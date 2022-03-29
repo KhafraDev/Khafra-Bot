@@ -1,7 +1,8 @@
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { env } from 'process';
+import { request, type Dispatcher } from 'undici';
 import { URL } from 'url';
-import { fetch, Headers } from 'undici';
-import { dontThrow } from '../Don\'tThrow.js';
-import { URLFactory } from '../Valid/URL.js';
 
 interface ImgurAlbum {
     data: {
@@ -67,24 +68,30 @@ interface ImgurAlbum {
     status: 200
 }
 
+interface ImgurCache {
+    u: string[]
+    t: string
+}
+
 export class Imgur {
-    static cache = new Map<string, { u: string[], t: string }>();
+    static cache = new Map<string, ImgurCache>();
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
         'x-ratelimit-userremaining': -1,
         'x-ratelimit-userreset': -1
     }
 
-    static setRateLimits(headers: Headers) {
+    static setRateLimits(headers: Dispatcher.ResponseData['headers']): void {
         for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
-            if (headers.has(key)) {
-                Imgur.ratelimit[key] = Number(headers.get(key));
+            const k = key.toLowerCase() as keyof typeof Imgur.ratelimit;
+            if (k in headers) {
+                Imgur.ratelimit[k] = Number(headers[k]);
             }
         }
     }
 
-    static async album(args: string[]) {
-        if (process.env['IMGUR_CLIENT_ID'] === undefined) return;
+    static async album(args: string[]): Promise<ImgurCache | undefined> {
+        if (env.IMGUR_CLIENT_ID === undefined) return;
 
         if (
             Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
@@ -98,7 +105,7 @@ export class Imgur {
                 const url = URLFactory(arg)!;
 
                 if (
-                    url.host !== 'imgur.com' || 
+                    url.host !== 'imgur.com' ||
                     !url.pathname.startsWith('/a/') ||
                     url.pathname.length < 8
                 ) {
@@ -120,9 +127,9 @@ export class Imgur {
 
         if (typeof hash !== 'string') return;
 
-        const [err, r] = await dontThrow(fetch(`https://api.imgur.com/3/album/${hash}`, {
+        const [err, r] = await dontThrow(request(`https://api.imgur.com/3/album/${hash}`, {
             headers: {
-                'Authorization': `Client-ID ${process.env['IMGUR_CLIENT_ID']}`
+                'Authorization': `Client-ID ${env.IMGUR_CLIENT_ID}`
             }
         }));
 
@@ -132,7 +139,7 @@ export class Imgur {
 
         // on bad requests, the api will sometimes return html
         // this is a precaution because the api will not always return json
-        const [jErr, j] = await dontThrow(r.json() as Promise<ImgurAlbum>);
+        const [jErr, j] = await dontThrow(r.body.json() as Promise<ImgurAlbum>);
 
         if (jErr !== null) return;
 

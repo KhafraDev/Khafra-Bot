@@ -1,14 +1,15 @@
-import { Command } from '../../../Structures/Command.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://feeds.nbcnews.com/nbcnews/public/news',
     main: 'https://nbcnews.com',
     command: ['nbc', 'nbcnews'],
-    author: ['NBC', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png']
+    author: { name: 'NBC', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/NBC_logo.svg/1200px-NBC_logo.svg.png' }
 } as const;
 
 interface INBC {
@@ -31,9 +32,8 @@ interface INBC {
 const rss = new RSSReader<INBC>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `Get the latest articles from ${settings.main}!`
@@ -47,19 +47,24 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
+
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
+
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

@@ -1,32 +1,33 @@
-import { fetch } from 'undici';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Buffer } from 'buffer';
 import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
-import { Embed } from '../Utility/Constants/Embeds.js';
+import { request } from 'undici';
 
-const formatURL = new Map<DNE, (type: DNE) => string>([
-    ['artwork', t => `https://this${t}doesnotexist.com/`],
-    ['cat',     t => `https://this${t}doesnotexist.com/`],
-    ['horse',   t => `https://this${t}doesnotexist.com/`],
-    ['person',  t => `https://this${t}doesnotexist.com/image`]
+const formatURL = new Map<DNE, string>([
+    ['artwork', 'https://thisartworkdoesnotexist.com/'],
+    ['cat',     'https://thiscatdoesnotexist.com/'],
+    ['horse',   'https://thishorsedoesnotexist.com/'],
+    ['person',  'https://thispersondoesnotexist.com/image']
 ]);
 
-export type DNE = 
-    | 'artwork' 
-    | 'cat' 
+export type DNE =
+    | 'artwork'
+    | 'cat'
     | 'horse'
     | 'person'
 
-export const thisDoesNotExist = async (type: DNE) => {
-    if (!formatURL.has(type)) return null;
+export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions | null> => {
+    const url = formatURL.get(type);
+    if (!url) return null;
 
-    const url = formatURL.get(type)!(type);
-
-    const res = await fetch(url);
-    const buffer = Buffer.from(await res.arrayBuffer());
-    const attach = new MessageAttachment(buffer, `t${type}dne.jpeg`);
+    const { body } = await request(url);
+    const buffer = Buffer.from(await body.arrayBuffer());
+    const attach = new MessageAttachment(buffer, `t${type}dne.jpeg`)
+        .setDescription(`A random${type === 'artwork' ? ' piece of' : ''} ${type}!`);
 
     return {
         embeds: [
-            Embed.success().setImage(`attachment://t${type}dne.jpeg`)
+            Embed.ok().setImage(`attachment://t${type}dne.jpeg`)
         ],
         files: [attach],
         failIfNotExists: false

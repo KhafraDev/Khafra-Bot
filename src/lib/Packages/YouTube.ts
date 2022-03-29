@@ -1,5 +1,6 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URLSearchParams } from 'url';
+import { env } from 'process';
 
 interface YouTubeError {
     error: {
@@ -39,17 +40,17 @@ export interface YouTubeSearchResults {
     }[]
 }
 
-export const YouTube = async (q: string[] | string) => {
+export const YouTube = async (q: string[] | string): Promise<YouTubeSearchResults | YouTubeError> => {
     const query = Array.isArray(q) ? q.join(' ') : q;
     const params = new URLSearchParams();
     params.append('part', 'snippet');
     params.append('q', encodeURIComponent(query.replace(/\s+/, '+')));
     params.append('type', 'video');
-    params.append('key', process.env.GOOGLE_API!);
+    params.append('key', env.GOOGLE_API!);
 
 
-    const r = await fetch(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
-    const j = await r.json() as YouTubeSearchResults | YouTubeError;
-    
+    const { body } = await request(`https://www.googleapis.com/youtube/v3/search?${params.toString()}`)
+    const j = await body.json() as YouTubeSearchResults | YouTubeError;
+
     return j;
 }

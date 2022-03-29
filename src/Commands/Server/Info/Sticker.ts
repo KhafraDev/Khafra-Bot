@@ -1,53 +1,61 @@
-import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { padEmbedFields } from '../../../lib/Utility/Constants/Embeds.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { Message } from '../../../lib/types/Discord.js.js';
+import { Command } from '#khaf/Command';
+import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { StickerFormatType } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get info about a sticker!',
                 '<sticker>'
             ],
-			{
+            {
                 name: 'sticker',
                 folder: 'Server',
-                aliases: [ 'stickers' ],
+                aliases: ['stickers'],
                 args: [0, 0],
                 guildOnly: true
             }
         );
     }
 
-    async init({ stickers, guild }: Message) {
+    async init ({ stickers, guild }: Message<true>): Promise<UnsafeEmbed> {
         if (stickers.size === 0)
-            return this.Embed.fail('No stickers in message! 😕');
+            return Embed.error('No stickers in message! 😕');
 
         const sticker = stickers.first()!;
-        
+
         if (sticker.partial) {
             await guild.stickers.fetch(sticker.id);
         }
 
-        const embed = this.Embed.success()
+        const embed = Embed.ok()
             .setTitle(`${sticker.name}${sticker.description ? ` - ${sticker.description}` : ''}`)
-            .addField(bold('Name:'), inlineCode(sticker.name), true)
-            .addField(bold('ID:'), inlineCode(sticker.id), true);
+            .addFields(
+                { name: bold('Name:'), value: inlineCode(sticker.name), inline: true },
+                { name: bold('ID:'), value: inlineCode(sticker.id), inline: true }
+            );
 
         if (sticker.packId !== null) {
-            embed.addField(bold('Pack ID:'), inlineCode(sticker.packId), true);
+            embed.addFields({
+                name: bold('Pack ID:'),
+                value: inlineCode(sticker.packId),
+                inline: true
+            });
         } else if (sticker.guildId !== null) {
-            embed.addField(bold('Guild Sticker:'), inlineCode(`Yes - ${sticker.guild}`));
+            embed.addFields({
+                name: bold('Guild Sticker:'),
+                value: inlineCode(`Yes - ${sticker.guild}`)
+            });
         }
-        
+
         if (Array.isArray(sticker.tags) && sticker.tags.length > 0) {
             embed.setDescription(`${bold('Tags:')}\n${sticker.tags.map(t => inlineCode(t)).join(', ')}`);
         }
 
-        if (sticker.format === 'LOTTIE') {
+        if (sticker.format === StickerFormatType.Lottie) {
             embed.setImage(`http://distok.top/stickers/${sticker.packId}/${sticker.id}.gif`);
         } else {
             embed.setImage(sticker.url);

@@ -1,6 +1,7 @@
-import { fetch } from 'undici';
-import { dontThrow } from '../Utility/Don\'tThrow.js';
-import { once } from '../Utility/Memoize.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { setInterval } from 'timers';
+import { request } from 'undici';
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json';
 const art = 'https://hacker-news.firebaseio.com/v0/item/{id}.json';
@@ -19,20 +20,20 @@ interface Story {
     url: string
 }
 
-const fetchTop = async () => {
-    const r = await fetch(top);
-    const j = await r.json() as number[];
+const fetchTop = async (): Promise<number[]> => {
+    const { body } = await request(top);
+    const j = await body.json() as number[];
 
     return j.slice(0, 10);
 }
 
-const fetchEntries = async () => {
+const fetchEntries = async (): Promise<Story[]> => {
     const ids = await fetchTop();
     const stories: Story[] = [];
 
     for (const id of ids) {
-        const r = await fetch(art.replace('{id}', `${id}`));
-        const j = await r.json() as Story;
+        const { body } = await request(art.replace('{id}', `${id}`));
+        const j = await body.json() as Story;
         stories.push(j);
     }
 
@@ -44,5 +45,5 @@ const fetchEntries = async () => {
 
 export const fetchHN = once(async () => {
     await dontThrow(fetchEntries());
-    return setInterval(() => dontThrow(fetchEntries()), 60 * 1000 * 10).unref();
+    return setInterval(() => void dontThrow(fetchEntries()), 60 * 1000 * 10).unref();
 });

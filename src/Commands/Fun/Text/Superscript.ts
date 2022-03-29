@@ -1,10 +1,11 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const superscript: Record<string, string> = {
     '0': '⁰', '1': '¹', '2': '²',
-    '3': '³', '4': '⁴', '5': '⁵', 
+    '3': '³', '4': '⁴', '5': '⁵',
     '6': '⁶', '7': '⁷', '8': '⁸',
     '9': '⁹', '+': '⁺', '-': '⁻',
     'a': 'ᵃ', 'b': 'ᵇ', 'c': 'ᶜ',
@@ -18,14 +19,13 @@ const superscript: Record<string, string> = {
     'z': 'ᶻ'
 };
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Have KhafraBot superscript some text!',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'superscript',
                 folder: 'Fun',
@@ -35,11 +35,11 @@ export class kCommand extends Command {
         );
     }
 
-    init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const split = [...content]
-            .map(c => superscript[c.toLowerCase()] ?? c)
+            .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
             .join('');
 
-        return this.Embed.success(split);
+        return Embed.ok(split);
     }
 }

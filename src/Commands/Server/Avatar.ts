@@ -1,24 +1,25 @@
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
+import { Message } from 'discord.js';
 import { Arguments, Command } from '../../Structures/Command.js';
-import { AllowedImageFormat, AllowedImageSize, ImageURLOptions, Message } from 'discord.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-const avatarSizes = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const avatarFormats = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
+const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
+const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get someone\'s avatar!',
-                '', 
-                '@Khafra#0001', 
+                '',
+                '@Khafra#0001',
                 '267774648622645249',
                 '@Khafra#0001 --size 256 --format jpg',
                 '@Khafra#0001 -s 256 -f gif'
             ],
-			{
+            {
                 name: 'avatar',
                 folder: 'Server',
                 args: [0, 5],
@@ -28,33 +29,33 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { cli }: Arguments) {
-        const user = await getMentions(message, 'users') ?? message.author;
-        
+    async init (message: Message, { cli, content }: Arguments): Promise<UnsafeEmbed> {
+        const user = await getMentions(message, 'users', content) ?? message.author;
+
         const opts: ImageURLOptions = {
             size: 512,
-            format: 'png',
-            dynamic: true
+            extension: 'png',
+            forceStatic: false
         };
 
         if (cli.size !== 0) {
             if (cli.has('size') || cli.has('s')) {
-                const value = Number(cli.get('size') || cli.get('s'));
+                const value = Number(cli.get('size') || cli.get('s')) as ImageSize;
                 if (avatarSizes.includes(value)) {
-                    opts.size = value as AllowedImageSize;
+                    opts.size = value;
                 }
             }
 
             if (cli.has('format') || cli.has('f')) {
                 const value = cli.get('format') || cli.get('f');
-                if (typeof value === 'string' && avatarFormats.includes(value)) {
-                    opts.format = value as AllowedImageFormat & 'gif';
+                if (typeof value === 'string' && avatarFormats.includes(value as ImageExtension)) {
+                    opts.extension = value as ImageExtension;
                 }
             }
         }
 
         const avatar = user.displayAvatarURL(opts);
-        
-        return this.Embed.success(`${user}'s avatar`).setImage(avatar);
+
+        return Embed.ok(`${user}'s avatar`).setImage(avatar);
     }
 }

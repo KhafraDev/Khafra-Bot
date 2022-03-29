@@ -1,11 +1,10 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { inlineCode } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Test the stripIndents function.'
@@ -19,9 +18,9 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
+    async init (_message: Message, { content }: Arguments): Promise<string> {
         return stripIndents`
-        \`\`${content.slice(0, 2040)}\`\`
+        ${inlineCode(content.slice(0, 2040))}
         `;
     }
 }

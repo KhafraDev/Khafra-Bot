@@ -1,42 +1,42 @@
-const timeUnits = {
-    w: { unit: 'w', amount: 1000 * 60 * 60 * 24 * 7 },
-    d: { unit: 'd', amount: 1000 * 60 * 60 * 24 },
-    h: { unit: 'h', amount: 1000 * 60 * 60 },
-    m: { unit: 'm', amount: 1000 * 60 },
-    s: { unit: 's', amount: 1000 },
-    ms: { unit: 'ms', amount: 1e-3 }
-} as const;
+const durationRE = /(-?(?:\d+\.?\d*|\d*\.?\d+)(?:e[-+]?\d+)?)\s*([\p{L}]*)/uig;
 
-const wsRegex = '[ \\t]';
-const positiveNumberRegex = '(?:0|[1-9]\\d*)(?:\\.\\d+)?';
-const unitRegex = '(?:ms|s|m|h|d|w)';
-const elementRegex = `(?:(${positiveNumberRegex})${wsRegex}*(${unitRegex}))`;
-const wholeRegex = `^${wsRegex}*(-)?((?:${wsRegex}*${elementRegex}${wsRegex}*)+)$`;
+const conversions: Record<string, number> = {};
 
-const re = new RegExp(elementRegex, 'g');
-const whole = new RegExp(wholeRegex);
+conversions.millisecond = conversions.ms = conversions[''] = 1;
+conversions.second = conversions.sec = conversions.s = conversions.ms * 1_000;
+conversions.minute = conversions.min = conversions.m = conversions.s * 60;
+conversions.hour = conversions.hr = conversions.h = conversions.m * 60;
+conversions.day = conversions.d = conversions.h * 24;
+conversions.week = conversions.wk = conversions.w = conversions.d * 7;
+conversions.month = conversions.b = conversions.d * (365.25 / 12);
+conversions.year = conversions.yr = conversions.y = conversions.d * 365.25;
 
 /**
  * parse human readable string to ms
- * 
- * initial implementation: https://github.com/nicolas-van/simple-duration
- * @license https://github.com/nicolas-van/simple-duration/blob/468ed595cdaf83d65a743c1dc9a3f2a333fe8e24/LICENSE.md
- * 
- * changes: seconds -> ms, remove times shorter than ms, added weeks (w), removed year
+ *
+ * initial implementation: https://github.com/jkroso/parse-duration/
+ * @license https://raw.githubusercontent.com/jkroso/parse-duration/7520a9855cdce7ec9219e8153059b566c1c8a426/License MIT
+ *
+ * changes: remove times less than a ms, remove some dead/extraneous/old code
  */
-export const parseStrToMs = (str: string) => {
-    const match = whole.exec(str);
-    if (!match) return null;
+export const parseStrToMs = (str: string): number => {
+  	let result = 0;
+  	// remove commas/placeholders
+  	str = str.replace(/(\d)[,_](\d)/g, '$1$2');
+  	str.replace(durationRE, (_, n, units) => {
+    	const unit = unitRatio(units);
 
-    const elements = match[2];
+    	if (unit) {
+            result += parseFloat(n) * unit;
+        }
 
-    let nmatch: RegExpExecArray | null = null,
-        counter = 0;
+        return ''; // so typescript is happy
+  	});
 
-    while ((nmatch = re.exec(elements)) !== null) {
-        const nbr = parseFloat(nmatch[1]);
-        const unit = nmatch[2] as keyof typeof timeUnits;
-        counter += nbr * timeUnits[unit].amount;
-    }
-    return Math.abs(counter);
+    return result / Math.max(unitRatio(), 1);
+}
+
+const unitRatio = (str = 'ms'): number => {
+    str = str.toLowerCase();
+    return conversions[str] || conversions[str.replace(/s$/, '')];
 }

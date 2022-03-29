@@ -1,33 +1,27 @@
-import { Message, Permissions } from 'discord.js';
-import { Message as kMessage } from '../../types/Discord.js.js';
-import { isDM } from '../../types/Discord.js.js';
-import { hasPerms } from '../Permissions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-const basic = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.EMBED_LINKS,
-    Permissions.FLAGS.VIEW_CHANNEL,
-    // TODO(@KhafraDev): do we really need this perm?
-    Permissions.FLAGS.READ_MESSAGE_HISTORY
-]);
+const basic =
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.EmbedLinks;
 
 /**
  * Check message for required criteria.
- * @param message 
+ * @param message
  */
-export const Sanitize = (message: Message): message is kMessage => {
+export const Sanitize = (message: Message): message is Message<true> => {
     if (
         message.webhookId || // author is null in webhook messages
         message.author.bot ||
-        !['DEFAULT', 'REPLY'].includes(message.type) ||
+        (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
         (message.guild && !message.guild.available) ||
         message.system ||
-        message.partial ||
-        message.tts || 
+        message.tts ||
         message.content.length === 0 ||
-        isDM(message.channel) ||
         !message.guild
-    ) { 
+    ) {
         return false;
     }
 

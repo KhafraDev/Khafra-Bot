@@ -1,0 +1,28 @@
+{
+  "name": "@khaf/minecraft",
+  "version": "1.0.0",
+  "description": "Handles MineCraft stuff for Khafra-Bot",
+  "main": "./dist/index.js",
+  "types": "./types/MineCraft.d.ts",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khafradev/Khafra-Bot.git",
+    "directory": "packages"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "tsc"
+  },
+  "keywords": [
+    "npm",
+    "registry",
+    "khafra-bot"
+  ],
+  "author": "KhafraDev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/khafradev/Khafra-Bot/issues"
+  },
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
+}

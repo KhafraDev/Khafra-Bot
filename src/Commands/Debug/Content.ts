@@ -1,10 +1,10 @@
-import { Arguments, Command } from '../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { codeBlock, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get the content of a message stringified (guild emojis, etc.).',
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(_message: Message, { content }: Arguments) {
-        return this.Embed.success(`\`\`\`${content}\`\`\``);
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
+        return Embed.ok(codeBlock(content));
     }
 }

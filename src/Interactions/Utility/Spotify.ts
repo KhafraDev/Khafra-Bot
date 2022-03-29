@@ -1,28 +1,33 @@
-import { CommandInteraction, GuildMember } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { hyperlink, inlineCode, SlashCommandBuilder } from '@discordjs/builders';
+import { ChatInputCommandInteraction, GuildMember } from 'discord.js';
+import { Interactions } from '#khaf/Interaction';
+import { hyperlink, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('spotify')
-            .addStringOption(option => option
-                .setName('song')
-                .setDescription('Song name to search for.')
-                .setRequired(true)
-            )
-            .setDescription('Search for a song on Spotify!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'spotify',
+            description: 'Search for a song on Spotify!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'song',
+                    description: 'The song\'s name to search for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(
-                a => a.type === 'LISTENING' && a.name === 'Spotify'
+                a => a.type === ActivityType.Listening && a.name === 'Spotify'
             );
 
             if (p) {
@@ -55,14 +60,14 @@ export class kInteraction extends Interactions {
                 .trim();
 
             const line = `[${track.name}](${track.external_urls.spotify}) by ${inlineCode(artistNames)}\n`;
-            
+
             if (desc.length + line.length > 2048) break;
 
             desc += line;
         }
 
-        return Embed.success()
+        return Embed.ok()
             .setDescription(desc)
             .setThumbnail(image.url);
     }
-} 
+}

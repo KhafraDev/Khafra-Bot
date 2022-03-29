@@ -1,25 +1,57 @@
-import { Event } from '../Structures/Event.js';
-import { pool } from '../Structures/Database/Postgres.js'; 
-import { Guild } from 'discord.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
-import { createFileWatcher } from '../lib/Utility/FileWatcher.js';
-import { cwd } from '../lib/Utility/Constants/Path.js';
-import { join } from 'path';
+import { KhafraClient } from '#khaf/Bot';
+import { sql } from '#khaf/database/Postgres.js';
+import { Event } from '#khaf/Event';
+import { logger } from '#khaf/Logger';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ApplicationCommandPermissionType } from 'discord-api-types/v10';
+import { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
 
-const config = {} as typeof import('../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
-
-@RegisterEvent
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;
 
-    async init(guild: Guild) {
-        await pool.query(`
+    async init (guild: Guild): Promise<void> {
+        logger.info('Joined a new guild!', {
+            id: guild.id,
+            name: guild.name
+        });
+
+        await sql<unknown[]>`
             INSERT INTO kbGuild (
-                guild_id, prefix, max_warning_points
+                guild_id, max_warning_points
             ) VALUES (
-                $1::text, $2::text, $3::smallint
+                ${guild.id}::text, ${20}::smallint
             ) ON CONFLICT DO NOTHING;
-        `, [guild.id, config.prefix, 20]);
+        `;
+
+        await dontThrow(guild.roles.fetch());
+
+        const fullPermissions: GuildApplicationCommandPermissionData[] = [];
+
+        for (const slashCommand of KhafraClient.Interactions.Commands.values()) {
+            // if slash command is disabled by default
+            if (slashCommand.data.default_permission === false) {
+                const interaction = KhafraClient.Interactions.Commands.get(slashCommand.data.name)!;
+                if (!interaction.options.permissions) continue;
+
+                const perms = interaction.options.permissions;
+                const rolesWithPerms = guild.roles.cache.filter(
+                    role => role.permissions.has(perms)
+                );
+                const commandPerms = rolesWithPerms
+                    .map(v => ({ id: v.id, type: ApplicationCommandPermissionType.Role, permission: true }))
+                    .values();
+
+                fullPermissions.push({
+                    id: slashCommand.id,
+                    permissions: [...commandPerms]
+                });
+            }
+        }
+
+        try {
+            return void await guild.commands.permissions.set({ fullPermissions });
+        } catch {
+            // No permission to create slash commands, don't bother.
+        }
     }
 }

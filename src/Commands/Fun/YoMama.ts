@@ -1,24 +1,23 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { assets } from '#khaf/utility/Constants/Path.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { upperCase } from '#khaf/utility/String.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { rand } from '../../lib/Utility/Constants/OneLiners.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { isText } from '../../lib/types/Discord.js.js';
-import { upperCase } from '../../lib/Utility/String.js';
+import { readFileSync } from 'fs';
 
 // "jokes"
-const file = await readFile(join(process.cwd(), 'assets/yomama.txt'), 'utf-8');
-const jokes = file.split(/\r\n|\n/g).slice(0, -1); // last line will be empty
+const file = readFileSync(assets('yomama.txt'), 'utf-8');
+const jokes = file.split(/\r?\n/g).slice(0, -1); // last line will be empty
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'The most funny and epic jokes on the planet: Yo Mama jokes!'
             ],
-			{
+            {
                 name: 'yomama',
                 folder: 'Fun',
                 args: [0, 0]
@@ -26,10 +25,11 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<UnsafeEmbed> {
         if (isText(message.channel) && !message.channel.nsfw)
-            return this.Embed.fail('🔞 This command only works in NSFW channels.');
+            return Embed.error('🔞 This command only works in NSFW channels.');
 
-        return this.Embed.success(upperCase(jokes[await rand(jokes.length)]));
+        const joke = jokes[Math.floor(Math.random() * jokes.length)];
+        return Embed.ok(upperCase(joke));
     }
 }

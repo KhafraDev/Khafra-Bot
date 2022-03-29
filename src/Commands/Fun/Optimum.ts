@@ -1,28 +1,28 @@
-import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { italic, type UnsafeEmbed } from '@discordjs/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'See reviews for the worst ISP in the U.S.'
             ],
-			{
+            {
                 name: 'optimum',
                 folder: 'Fun',
-                aliases: [ 'altice' ],
+                aliases: ['altice'],
                 args: [0, 0],
                 ratelimit: 3
             }
         );
     }
 
-    init() {
-        return this.Embed.success()
+    async init (): Promise<UnsafeEmbed> {
+        return Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`
-            Reviews by *real* people:
+            Reviews by ${italic('real')} people:
 
             [Consumer Affairs](https://www.consumeraffairs.com/cable_tv/optimum.html) - 1 ⭐
             [Moneysavingpro](https://www.moneysavingpro.com/internet-providers/optimum-reviews/) - 2 ⭐

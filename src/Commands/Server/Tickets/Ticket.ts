@@ -1,18 +1,17 @@
-import { Arguments, Command } from '../../../Structures/Command.js';
-import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { KhafraClient } from '../../../Bot/KhafraBot.js';
+import { KhafraClient } from '#khaf/Bot';
+import { Arguments, Command } from '#khaf/Command';
+import { kGuild } from '#khaf/types/KhafraBot.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
-import { kGuild } from '../../../lib/types/KhafraBot.js';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Giveaways: main place to create a type of giveaway.'
             ],
-			{
+            {
                 name: 'ticket',
                 folder: 'Server',
                 aliases: ['tickets'],
@@ -22,10 +21,10 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, argument: Arguments, settings: kGuild) {
+    async init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
         if (argument.args.length === 0) {
             // help message
-            return this.Embed.fail('not implemented yet');
+            return Embed.error('not implemented yet');
         }
 
         const name = argument.args[0].toLowerCase();
@@ -34,8 +33,8 @@ export class kCommand extends Command {
             : `ticket:${name}`;
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
-            return this.Embed.fail(
-            `Ticket.${name} command doesn't exist, use ${inlineCode(`${settings.prefix}ticket`)} for more information!`
+            return Embed.error(
+                `Ticket.${name} command doesn't exist, use ${inlineCode('ticket')} for more information!`
             );
         }
 

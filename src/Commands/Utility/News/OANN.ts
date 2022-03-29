@@ -1,15 +1,16 @@
-import { Command } from '../../../Structures/Command.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { URLFactory } from '../../../lib/Utility/Valid/URL.js';
 
 const settings = {
     rss: 'https://www.oann.com/feed/',
     main: 'https://oann.com',
     command: ['oann'],
-    author: ['OANN', 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg']
+    author: { name: 'OANN', iconURL: 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg' }
 } as const;
 
 interface IOANN {
@@ -28,9 +29,8 @@ interface IOANN {
 const rss = new RSSReader<IOANN>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `Get the latest articles from ${settings.main}!`
@@ -44,10 +44,15 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
+
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
+
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()].map(p => {
@@ -55,12 +60,12 @@ export class kCommand extends Command {
             p.link = u.toString();
             return p;
         });
-        return this.Embed.success()
+        return Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

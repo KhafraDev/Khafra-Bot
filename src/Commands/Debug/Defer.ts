@@ -1,10 +1,9 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Delete the message reference and then send a message.'
@@ -18,9 +17,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<void> {
         if (message.deletable)
             await message.delete();
-        await message.reply({ embeds: [this.Embed.fail('If you\'re seeing this, something went wrong...')] });
+        await message.reply({
+            embeds: [
+                Embed.error('If you\'re seeing this, something went wrong...')
+            ]
+        });
     }
 }

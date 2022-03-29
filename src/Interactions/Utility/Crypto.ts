@@ -1,62 +1,69 @@
-import { CommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { SlashCommandBuilder, time } from '@discordjs/builders';
-import { CoinGecko } from '../../lib/Packages/CoinGecko.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
-import { Embed } from '../../lib/Utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction';
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { bold, inlineCode, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('crypto')
-            .addStringOption(option => option
-                .setName('search')
-                .setDescription('The cryptocurrency\'s name.')
-                .setRequired(true)    
-            )
-            .setDescription('Gets info about cryptocurrency! Kill the environment!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'crypto',
+            description: 'Gets information about a cryptocurrency. Kill the environment!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'search',
+                    description: 'The cryptocurrency\'s name.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc);
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions | string> {
         const currencies = await CoinGecko.get(
             interaction.options.getString('search', true),
             () => void dontThrow(interaction.deferReply())
         );
 
         if (currencies === undefined) {
-            return `❌ No currency with that name or id could be found!`;
+            return '❌ The cache is being loaded for the first time, please wait a minute!';
+        } else if (currencies.length === 0) {
+            return '❌ No currency with that name or id could be found!';
         }
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = Embed.success()
+        const embed = Embed.ok()
             .setThumbnail(currency.image)
             .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
             .setTimestamp(currency.last_updated)
             .addFields(
-                { name: '**Current Price:**', value: f(currency.current_price), inline: true },
-                { name: '**High 24H:**',      value: f(currency.high_24h), inline: true },
-                { name: '**Low 24H:**',       value: f(currency.low_24h), inline: true },
+                { name: bold('Current Price:'), value: f(currency.current_price), inline: true },
+                { name: bold('High 24H:'),      value: f(currency.high_24h), inline: true },
+                { name: bold('Low 24H:'),       value: f(currency.low_24h), inline: true },
 
-                { name: '**Market Cap:**',    value: currency.market_cap.toLocaleString(), inline: true },
-                { name: '**Total Volume:**',  value: currency.total_volume.toLocaleString(), inline: true },
-                { name: '**Circulating:**',   value: currency.circulating_supply.toLocaleString(), inline: true },
+                { name: bold('Market Cap:'),    value: currency.market_cap.toLocaleString(), inline: true },
+                { name: bold('Total Volume:'),  value: currency.total_volume.toLocaleString(), inline: true },
+                { name: bold('Circulating:'),   value: currency.circulating_supply.toLocaleString(), inline: true },
 
-                { name: '**All Time High:**', value: f(currency.ath), inline: true },
-                { name: '**% Change ATH:**',  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATH Date:**',      value: time(new Date(currency.ath_date), 'D'), inline: true },
+                { name: bold('All Time High:'), value: f(currency.ath), inline: true },
+                { name: bold('% Change ATH:'),  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
+                { name: bold('ATH Date:'),      value: time(new Date(currency.ath_date), 'D'), inline: true },
 
-                { name: '**All Time Low:**',  value: f(currency.atl), inline: true },
-                { name: '**% Change ATL:**',  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
-                { name: '**ATL Date:**',      value: time(new Date(currency.atl_date), 'D'), inline: true },
+                { name: bold('All Time Low:'),  value: f(currency.atl), inline: true },
+                { name: bold('% Change ATL:'),  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
+                { name: bold('ATL Date:'),      value: time(new Date(currency.atl_date), 'D'), inline: true },
 
-                { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
-                { name: '**% Change 24H:**',  value: `${currency.price_change_percentage_24h}%`, inline: true }
+                { name: bold('Change 24H:'),    value: f(currency.price_change_24h), inline: true },
+                { name: bold('% Change 24H:'),  value: `${currency.price_change_percentage_24h}%`, inline: true }
             );
 
         if (!Array.isArray(currencies)) return embed;
@@ -66,9 +73,9 @@ export class kInteraction extends Interactions {
             There were ${currencies.length} cryptocurrencies with that search query provided.
 
             If this is the wrong currency, try using one of the following IDs:
-            \`\`${currencies.map(c => c.id).join('``, ``')}\`\`
+            ${currencies.map(c => inlineCode(c.id)).join(', ')}
             `.trim(),
-            embeds: [embed],
+            embeds: [embed]
         } as InteractionReplyOptions;
     }
-} 
+}

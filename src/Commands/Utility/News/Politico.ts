@@ -1,14 +1,15 @@
-import { Command } from '../../../Structures/Command.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { once } from '../../../lib/Utility/Memoize.js';
 
 const settings = {
     rss: 'https://rss.politico.com/politics-news.xml',
     main: 'https://politico.com',
     command: ['politico'],
-    author: ['Politico', 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png']
+    author: { name: 'Politico', iconURL: 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png' }
 } as const;
 
 interface IPolitico {
@@ -30,9 +31,8 @@ interface IPolitico {
 const rss = new RSSReader<IPolitico>();
 const cache = once(() => rss.cache(settings.rss));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 `Get the latest articles from ${settings.main}!`
@@ -46,19 +46,24 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
+
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
+
         if (rss.results.size === 0) {
-            return this.Embed.fail('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!');
         }
 
         const posts = [...rss.results.values()];
-        return this.Embed.success()
+        return Embed.ok()
             .setDescription(posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
             )
-            .setAuthor(...settings.author);
+            .setAuthor(settings.author);
     }
 }

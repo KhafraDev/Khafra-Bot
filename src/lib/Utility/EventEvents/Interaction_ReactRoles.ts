@@ -1,19 +1,29 @@
-import { Guild, GuildMember, MessageComponentInteraction, MessageEmbed } from 'discord.js';
-import { client } from '../../../index.js';
-import { Embed } from '../Constants/Embeds.js';
-import { dontThrow } from '../Don\'tThrow.js';
-import { validSnowflake } from '../Mentions.js';
+import { client } from '#khaf/Client';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { validSnowflake } from '#khaf/utility/Mentions.js';
+import { hierarchy } from '#khaf/utility/Permissions.js';
+import { UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { Guild, GuildMember, MessageComponentInteraction } from 'discord.js';
+
+type InteractionReply
+    = import('discord.js').Message<boolean>
+    | import('discord-api-types/v10').APIMessage
+    | void
 
 /**
  * Handle react roles, runs on every button interaction - including pagination that is present in other commands.
- * 
+ *
  * Non-reactrole interactions are quickly filtered out.
  */
-export const interactionReactRoleHandler = async (interaction: MessageComponentInteraction, isDev = false) => {
+export const interactionReactRoleHandler = async (
+    interaction: MessageComponentInteraction,
+    isDev = false
+): Promise<undefined> => {
     if (!validSnowflake(interaction.customId)) return;
-    if (interaction.message.author.id !== client.user!.id) return;
+    if (interaction.message.author.id !== client.user?.id) return;
     if (!(interaction.member instanceof GuildMember)) return;
-    
+
     let guild: Guild | null = null; // guild can be null here
     if (!(interaction.guild instanceof Guild) && typeof interaction.guildId === 'string') {
         await dontThrow(interaction.deferReply({ ephemeral: true }));
@@ -25,43 +35,51 @@ export const interactionReactRoleHandler = async (interaction: MessageComponentI
     if (!guild?.roles.cache.has(interaction.customId)) return;
 
     const role = guild.roles.cache.get(interaction.customId);
-    if (!role || role.deleted || role.managed) return;
+    if (!role || role.managed) return;
+
+    if (!guild.me || !hierarchy(guild.me, interaction.member, false)) {
+        const opts = { content: '❌ I do not have permission to manage your roles!' };
+        const pr = interaction.deferred
+            ? interaction.editReply(opts)
+            : interaction.reply({ ephemeral: true, ...opts});
+
+        return void dontThrow<InteractionReply>(pr);
+    }
 
     try {
-        if (interaction.member.partial)
-            await interaction.member.fetch();
-        
         const had = interaction.member.roles.cache.has(role.id);
         if (had)
             await interaction.member.roles.remove(role);
-        else 
+        else
             await interaction.member.roles.add(role);
 
         const opts = { embeds: [] as MessageEmbed[] };
         if (had) {
-            opts.embeds.push(Embed.success(`Removed role ${role} from you!`));
+            opts.embeds.push(Embed.ok(`Removed role ${role} from you!`));
         } else {
-            opts.embeds.push(Embed.success(`Granted you the ${role} role!`));
+            opts.embeds.push(Embed.ok(`Granted you the ${role} role!`));
         }
 
         const pr = interaction.deferred
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts});
 
-        return void dontThrow(pr);
+        return void dontThrow<InteractionReply>(pr);
     } catch (e) {
         if (isDev) {
-            console.log(e);
+            console.log(e); // eslint-disable-line no-console
         }
 
-        const opts = { 
-            embeds: [ Embed.fail(`An error prevented me from granting you the role!`) ]
-        }
+        const opts = {
+            embeds: [
+                Embed.error('An error prevented me from granting you the role!')
+            ]
+        };
 
         const pr = interaction.deferred
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts });
-            
-        return void dontThrow(pr);
+
+        return void dontThrow<InteractionReply>(pr);
     }
 }

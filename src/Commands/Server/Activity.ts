@@ -1,60 +1,80 @@
-import { Arguments, Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { getMentions, validSnowflake } from '../../lib/Utility/Mentions.js';
-import { isVoice, Message } from '../../lib/types/Discord.js.js';
-import { Components, disableAll } from '../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
-import { hasPerms } from '../../lib/Utility/Permissions.js';
-import { hyperlink } from '@discordjs/builders';
-import { MessageActionRow, Permissions } from 'discord.js';
-import { InviteTargetType, APIInvite, RESTPostAPIChannelInviteJSONBody, APIVersion } from 'discord-api-types/v9';
-import { fetch } from 'undici';
+import { rest } from '#khaf/Bot';
+import { Arguments, Command } from '#khaf/Command';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isVoice } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import {
+    APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
+} from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-@RegisterCommand
+const enum Activities {
+    POKER = '755827207812677713',
+    BETRAYALIO = '773336526917861400',
+    YOUTUBE_TOGETHER = '755600276941176913',
+    FISHINGTONIO = '814288819477020702',
+    CHESS = '832012774040141894',
+    DOODLECREW = '878067389634314250',
+    WORDSNACKS = '879863976006127627',
+    LETTERTILE = '879863686565621790',
+    SPELLCAST = '852509694341283871'
+}
+
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Play a game in VC!',
                 '866022233330810930 [channel id]',
                 '#general [channel mention]'
             ],
-			{
+            {
                 name: 'activity',
                 folder: 'Server',
                 args: [1, 1],
                 ratelimit: 10,
                 permissions: [
-                    Permissions.FLAGS.CREATE_INSTANT_INVITE
-                ]
+                    PermissionFlagsBits.CreateInstantInvite,
+                    PermissionFlagsBits.UseEmbeddedActivities
+                ],
+                guildOnly: true
             }
         );
     }
 
-    async init(message: Message, { content }: Arguments) {
-        const channel = 
-            await getMentions(message, 'channels') ?? 
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed | undefined> {
+        const channel =
+            await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
 
         if (!isVoice(channel)) {
-            return this.Embed.fail('Games can only be created in voice channels!');
-        } else if (!hasPerms(channel, message.member, Permissions.FLAGS.VIEW_CHANNEL)) {
-            return this.Embed.fail('No channel with that name was found!'); 
-        } else if (!hasPerms(channel, message.guild.me, Permissions.FLAGS.CREATE_INSTANT_INVITE)) {
-            return this.Embed.fail(`I don't have permission to create invites in ${channel}`);
+            return Embed.error('Games can only be created in voice channels!');
+        } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
+            return Embed.error('No channel with that name was found!');
+        } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
+            return Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
         }
 
         const m = await message.channel.send({
             embeds: [
-                this.Embed.success(`Please choose which activity you want! -> ${channel}`)
+                Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new MessageActionRow().addComponents(
-                    Components.approve('Poker', '755827207812677713'),
-                    Components.deny('Betrayal.io', '773336526917861400'),
-                    Components.primary('YouTube Together', '755600276941176913'),
-                    Components.secondary('Fishington.io', '814288819477020702'),
-                    Components.approve('Chess in the Park', '832012774040141894')
+                new ActionRow<MessageActionRowComponent>().addComponents(
+                    Components.approve('Poker', Activities.POKER),
+                    Components.deny('Betrayal.io', Activities.BETRAYALIO),
+                    Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
+                    Components.secondary('Fishington.io', Activities.FISHINGTONIO),
+                    Components.approve('Chess in the Park', Activities.CHESS)
+                ),
+                new ActionRow<MessageActionRowComponent>().addComponents(
+                    Components.approve('Doodle Crew', Activities.DOODLECREW),
+                    Components.deny('WordSnacks', Activities.WORDSNACKS),
+                    Components.primary('LetterTile', Activities.LETTERTILE)
                 )
             ]
         });
@@ -69,7 +89,7 @@ export class kCommand extends Command {
         if (discordError !== null) {
             return void dontThrow(m.edit({
                 embeds: [
-                    this.Embed.success('No response, canceled the command.')
+                    Embed.ok('No response, canceled the command.')
                 ],
                 components: disableAll(m)
             }));
@@ -79,31 +99,25 @@ export class kCommand extends Command {
             }));
         }
 
-        const [fetchError, r] = await dontThrow(fetch(`https://discord.com/api/v${APIVersion}/channels/${channel.id}/invites`, {
-            method: 'POST',
-            headers: { 
-                'Authorization': `Bot ${process.env.TOKEN}`, 
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({
-                max_age: 86400,
-                target_type: InviteTargetType.EmbeddedApplication,
-                target_application_id: interaction.customId
-            } as RESTPostAPIChannelInviteJSONBody)
-        }));
-
-        if (fetchError !== null || !r.ok) {
-            if (!r.ok) {
-                return this.Embed.fail(`Received a ${r.status} status trying to create the invite!`);
-            } else {
-                return this.Embed.fail(`An error occurred trying to create the invite! :(`);
+        const [fetchError, invite] = await dontThrow(rest.post(
+            Routes.channelInvites(channel.id),
+            {
+                headers: { 'Content-Type': 'application/json' },
+                body: {
+                    max_age: 86400,
+                    target_type: InviteTargetType.EmbeddedApplication,
+                    target_application_id: interaction.customId
+                } as RESTPostAPIChannelInviteJSONBody
             }
+        ) as Promise<APIInvite>);
+
+        if (fetchError !== null) {
+            return Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
         }
 
-        const invite = await r.json() as APIInvite;
+        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
+        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
 
-        return this.Embed.success(`
-        ${hyperlink('Click Here', `<https://discord.gg/${invite.code}>`)} to open ${invite.target_application!.name} in ${channel}!
-        `);
+        return Embed.ok(str);
     }
 }

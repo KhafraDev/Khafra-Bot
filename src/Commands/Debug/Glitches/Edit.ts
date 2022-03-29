@@ -1,14 +1,14 @@
-import { Command } from '../../../Structures/Command.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const symbol = String.fromCodePoint(Number.parseInt('202B', 16));
 const clean = 'The edit button won\'t be where you expect it to be!';
 const edited = `The edit button is right there -> ${symbol} !Over here ->`;
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Place an edit button in the middle of a message!'
@@ -22,13 +22,13 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<UnsafeEmbed | void> {
         const m = await message.reply({ content: clean });
 
         if (m.editable) {
             return void m.edit({ content: edited });
         } else {
-            return this.Embed.fail(`Message wasn't editable!`);
+            return Embed.error('Message wasn\'t editable!');
         }
     }
 }

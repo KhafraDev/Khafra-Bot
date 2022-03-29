@@ -1,12 +1,11 @@
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Stats } from '#khaf/utility/Stats.js';
+import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { Stats } from '../../lib/Utility/Stats.js';
-import { bold } from '@discordjs/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get global stats for the bot!'
         ], {
@@ -17,20 +16,20 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message) {
+    async init (message: Message): Promise<UnsafeEmbed> {
         const guilds = message.client.guilds.cache;
         const {
             globalCommandsUsed,
             globalMessages
         } = Stats.stats;
 
-        const totalMembers = [...guilds.map(g => g.memberCount).values()]
+        const totalMembers = guilds.map(g => g.memberCount)
             .reduce((a, b) => a + b, 0)
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        return this.Embed.success()
-            .setTitle(`Bot Statistics`)
+        return Embed.ok()
+            .setTitle('Bot Statistics')
             .addFields(
                 { name: bold('Guilds:'), value: totalGuilds, inline: true },
                 { name: bold('Members:'), value: totalMembers, inline: true },

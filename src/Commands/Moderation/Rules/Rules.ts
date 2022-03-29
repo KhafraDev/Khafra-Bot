@@ -1,60 +1,57 @@
-import { Command } from '../../../Structures/Command.js';
-import { isText, Message } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
-import { getMentions } from '../../../lib/Utility/Mentions.js';
-import { hasPerms } from '../../../lib/Utility/Permissions.js';
-import { ButtonInteraction, GuildChannel, MessageActionRow, MessageEmbed, Permissions, Snowflake } from 'discord.js';
-import { hyperlink, inlineCode } from '@discordjs/builders';
+import { Command } from '#khaf/Command';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isText } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { hasPerms } from '#khaf/utility/Permissions.js';
+import { ActionRow, bold, hyperlink, inlineCode, MessageActionRowComponent, UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { AnyChannel, ButtonInteraction, Message, Snowflake } from 'discord.js';
 import { once } from 'events';
 
-const perms = new Permissions([
-    Permissions.FLAGS.SEND_MESSAGES,
-    Permissions.FLAGS.VIEW_CHANNEL
-]);
+const perms = PermissionFlagsBits.SendMessages;
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Creates and posts rules for the server.'
             ],
-			{
-                name: 'rules', 
+            {
+                name: 'rules',
                 folder: 'Moderation',
-                aliases: [ 'rule' ],
+                aliases: ['rule'],
                 args: [0, 0],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.MANAGE_CHANNELS ]
+                permissions: [PermissionFlagsBits.ManageChannels]
             }
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message<true>): Promise<undefined> {
         const m = await message.reply({
             embeds: [
-                this.Embed.success()
+                Embed.ok()
                     .setDescription(`Please enter the channel where rules should be posted, or click the ${inlineCode('cancel')} button to cancel.`)
-                    .setTitle('Rule Editor') 
+                    .setTitle('Rule Editor')
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.deny('Cancel', 'cancel')
                 )
             ]
         });
 
-        let channel!: GuildChannel;
+        let channel: AnyChannel | null;
         const rules: string[] = [];
-        
+
         {
             const cancelCollector = m.createMessageComponentCollector({
                 max: 1,
                 time: 30_000,
-                filter: (interaction) => 
-                    interaction.user.id === message.author.id && 
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id &&
                     interaction.customId === 'cancel'
             });
             const channelCollector = m.channel.createMessageCollector({
@@ -73,35 +70,35 @@ export class kCommand extends Command {
 
             if (!cancelCollector.ended) cancelCollector.stop();
             if (!channelCollector.ended) channelCollector.stop();
-            
+
             const [coll, reason] = race.shift()!;
             if (coll.length === 0 || reason === 'time') {
                 return void dontThrow(m.edit({
-                    embeds: [this.Embed.fail('Command was canceled!')],
+                    embeds: [Embed.error('Command was canceled!')],
                     components: disableAll(m)
                 }));
             } else if (coll[1] instanceof ButtonInteraction) {
                 return void dontThrow(coll[1].update({
-                    embeds: [this.Embed.fail('Command was canceled!')],
+                    embeds: [Embed.error('Command was canceled!')],
                     components: disableAll(m)
                 }));
             }
 
-            channel = 
-                coll[1].mentions.channels.first() as GuildChannel || 
-                await getMentions(coll[1], 'channels', { idx: 0 });
+            channel =
+                coll[1].mentions.channels.first() ??
+                await getMentions(coll[1] as Message<true>, 'channels');
 
             if (!isText(channel)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail('Channel must be a text channel or a news channel!')
+                        Embed.error('Channel must be a text channel or a news channel!')
                     ],
                     components: []
                 }));
             } else if (!hasPerms(channel, message.guild.me, perms)) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail(`I do not have permission to send messages in ${channel}!`)
+                        Embed.perms(channel, message.guild.me, perms)
                     ],
                     components: []
                 }));
@@ -110,15 +107,15 @@ export class kCommand extends Command {
 
         await dontThrow(m.edit({
             embeds: [
-                this.Embed.success(`
-                Send an individual message for each rule, or send them all together. I recommend using ` + 
+                Embed.ok(`
+                Send an individual message for each rule, or send them all together. I recommend using ` +
                 `${hyperlink('markdown', 'https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline-')} ` +
-                `to separate messages and make rule titles more noticeable.\n\n` +
-                `**You have to enter each rule within 2.5 minutes or the command will cancel!**`
+                'to separate messages and make rule titles more noticeable.\n\n' +
+                bold('You have to enter each rule within 2.5 minutes or the command will cancel!')
                 )
             ],
             components: [
-                new MessageActionRow().addComponents(
+                new ActionRow<MessageActionRowComponent>().addComponents(
                     Components.approve('Finished', 'done'),
                     Components.deny('Cancel', 'cancel')
                 )
@@ -128,8 +125,8 @@ export class kCommand extends Command {
         {
             const buttonCollector = m.createMessageComponentCollector({
                 max: 1,
-                filter: (interaction) => 
-                    interaction.user.id === message.author.id && 
+                filter: (interaction) =>
+                    interaction.user.id === message.author.id &&
                     interaction.customId === 'cancel' ||
                     interaction.customId === 'done'
             });
@@ -147,21 +144,21 @@ export class kCommand extends Command {
                 if (i.customId === 'done' && rules.length === 0) {
                     return void dontThrow(i.update({
                         embeds: [
-                            this.Embed.fail('No rules were entered, command was canceled!')
+                            Embed.error('No rules were entered, command was canceled!')
                         ],
                         components: []
                     }));
                 } else if (i.customId === 'cancel') {
                     return void dontThrow(i.update({
                         embeds: [
-                            this.Embed.fail('Command was canceled!')
+                            Embed.error('Command was canceled!')
                         ],
                         components: []
                     }));
                 } else {
                     void dontThrow(i.update({
                         embeds: [
-                            this.Embed.success(`Posting rules to ${channel} now!`)
+                            Embed.ok(`Posting rules to ${channel} now!`)
                         ],
                         components: disableAll(m)
                     }));
@@ -177,7 +174,7 @@ export class kCommand extends Command {
             if (rules.length === 0) {
                 return void dontThrow(m.edit({
                     embeds: [
-                        this.Embed.fail('No rules were entered, command was canceled!')
+                        Embed.error('No rules were entered, command was canceled!')
                     ],
                     components: []
                 }));
@@ -185,27 +182,27 @@ export class kCommand extends Command {
         }
 
         {
-            const embeds: MessageEmbed[] = [];
+            const embeds: UnsafeEmbed[] = [];
 
             for (const rule of rules) {
                 const embed = embeds.at(-1)!;
                 const line = rule.endsWith('\n') ? `${rule}\n` : `${rule}\n\n`;
 
                 if (embeds.length === 0) {
-                    const embed = this.Embed.success(line)
+                    const embed = Embed.ok(line)
                         .setTitle(`${message.guild.name} Rules`)
-                        .setThumbnail(message.guild.iconURL()!)
-                    
+                        .setThumbnail(message.guild.iconURL());
+
                     embeds.push(embed);
                 } else if (embed.description!.length >= 2048) {
-                    embeds.push(this.Embed.success(line));
+                    embeds.push(Embed.ok(line));
                 } else {
                     const desc = embed.description!;
 
                     if (desc.length + line.length > 2048) {
-                        embeds.push(this.Embed.success(line));
+                        embeds.push(Embed.ok(line));
                     } else {
-                        embed.description += line;
+                        embed.setDescription(embed.description + line);
                     }
                 }
             }

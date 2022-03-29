@@ -1,6 +1,7 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 const letters: Record<string, string> = {
     a: '🇦', b: '🇧', c: '🇨', d: '🇩',
@@ -12,29 +13,28 @@ const letters: Record<string, string> = {
     y: '🇾', z: '🇿'
 }
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Emojify some text.',
                 'Have a great day!', 'You suck.'
-            ], 
+            ],
             {
                 name: 'blocksay',
                 folder: 'Fun',
                 args: [1],
                 ratelimit: 3,
-                aliases: [ 'block', 'blocktext' ]
+                aliases: ['block', 'blocktext']
             }
         );
     }
 
-    init(_message: Message, { content }: Arguments) {     
+    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbed> {
         const blocks = [...content]
-            .map(l => letters[l.toLowerCase()] ?? l)
+            .map(l => l.toLowerCase() in letters ? letters[l.toLowerCase()] : l)
             .join(' ');
 
-        return this.Embed.success(blocks);
+        return Embed.ok(blocks);
     }
 }

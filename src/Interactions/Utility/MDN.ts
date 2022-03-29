@@ -1,37 +1,39 @@
-import { CommandInteraction } from 'discord.js';
-import { fetchMDN } from 'search-mdn';
-import { client } from '../../index.js';
-import { stripIndents } from '../../lib/Utility/Template.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { createFileWatcher } from '../../lib/Utility/FileWatcher.js';
-import { cwd } from '../../lib/Utility/Constants/Path.js';
+import { client } from '#khaf/Client';
+import { Interactions } from '#khaf/Interaction';
+import { Components } from '#khaf/utility/Constants/Components.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
+import { stripIndents } from '#khaf/utility/Template.js';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { fetchMDN } from '@khaf/mdn';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
-import { SlashCommandBuilder } from '@discordjs/builders';
 
-const config = {} as typeof import('../../../config.json');
-createFileWatcher(config, join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 
 const emoji = client.emojis.cache.get(config.interactions.mdn);
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('mdn')
-            .addStringOption(option => option
-                .setName('input')
-                .setDescription('Your search query on MDN')
-                .setRequired(true)    
-            )
-            .setDescription('Searches MDN and returns the top result!');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'mdn',
+            description: 'Searches MDN and returns the top result!',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'input',
+                    description: 'Search query to search for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
-        const search = interaction.options.get('input', true).value;
-        if (typeof search !== 'string')
-            return 'Invalid option received!';
-            
+    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
+        const search = interaction.options.getString('input', true);
         const result = await fetchMDN(search);
 
         if ('errors' in result) {
@@ -43,10 +45,17 @@ export class kInteraction extends Interactions {
             return `${emoji} No search results found!`;
 
         const document = result.documents[0]!;
+        const link = `https://developer.mozilla.org/${document.locale}/docs/${document.slug}`;
 
-        return stripIndents`    
-        ${emoji ?? 'MDN'} [${document.title}](<https://developer.mozilla.org/${document.locale}/docs/${document.slug}>)
-        \`\`${document.summary.replace(/\s+/g, ' ')}\`\`
-        `;
+        return {
+            content: stripIndents`    
+            ${emoji ?? 'MDN'} ${hyperlink(document.title, hideLinkEmbed(link))}
+            ${inlineCode(document.summary.replace(/\s+/g, ' '))}`,
+            components: [
+                new ActionRow().addComponents(
+                    Components.link('Go to MDN', link)
+                )
+            ]
+        } as InteractionReplyOptions;
     }
-} 
+}

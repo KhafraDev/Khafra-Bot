@@ -1,26 +1,32 @@
-import { CommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { Interactions } from '../../Structures/Interaction.js';
-import { inlineCode, SlashCommandBuilder } from '@discordjs/builders';
-import { fetch } from 'undici';
-import { dontThrow } from '../../lib/Utility/Don\'tThrow.js';
+import { Interactions } from '#khaf/Interaction';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { inlineCode } from '@discordjs/builders';
+import { Buffer } from 'buffer';
+import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import { request } from 'undici';
 
 export class kInteraction extends Interactions {
     constructor() {
-        const sc = new SlashCommandBuilder()
-            .setName('qr')
-            .addStringOption(option => option
-                .setName('input')
-                .setDescription('text to get a QR code for')
-                .setRequired(true)
-            )
-            .setDescription('Get the QR code for some text.');
+        const sc: RESTPostAPIApplicationCommandsJSONBody = {
+            name: 'qr',
+            description: 'Gets the QR code for some text.',
+            options: [
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'input',
+                    description: 'Text to get a QR code for.',
+                    required: true
+                }
+            ]
+        };
 
         super(sc, { defer: true });
     }
 
-    async init(interaction: CommandInteraction) {
+    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
-        const [e, r] = await dontThrow(fetch(`https://qrcode.show/${text}`, {
+        const [e, r] = await dontThrow(request(`https://qrcode.show/${text}`, {
             headers: {
                 Accept: 'image/png'
             }
@@ -30,11 +36,12 @@ export class kInteraction extends Interactions {
             return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
         }
 
-        const qr = Buffer.from(await r.arrayBuffer());
-        const attachment = new MessageAttachment(qr, 'qr.png');
+        const buffer = Buffer.from(await r.body.arrayBuffer());
+        const attachment = new MessageAttachment(buffer, 'qr.png')
+            .setDescription('A QR Code!');
 
         return {
             files: [attachment]
         } as InteractionReplyOptions;
     }
-} 
+}

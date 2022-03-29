@@ -1,46 +1,47 @@
-import './lib/Utility/load.env.js';
-import './lib/Utility/Rejections.js';
-import './lib/Utility/Timers/Giveaways.js';
+import '#khaf/utility/load.env.js';
+import '#khaf/utility/Rejections.js';
+import '#khaf/utility/__proto__.js';
+import '#khaf/utility/ImageFonts.js';
 
-import { KhafraClient } from './Bot/KhafraBot.js';
-import { ClientEvents, Intents, Options, LimitedCollection } from 'discord.js';
-import { dontThrow } from './lib/Utility/Don\'tThrow.js';
+import { KhafraClient } from '#khaf/Bot';
+import { Event } from '#khaf/Event';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { RestEvents } from '@discordjs/rest';
+import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10';
+import { ClientEvents, Partials } from 'discord.js';
 
-const emitted = <T extends keyof ClientEvents>(name: T) => {
-    return (...args: ClientEvents[T]): void => 
-        void dontThrow(KhafraClient.Events.get(name)!.init(...args) as Promise<unknown>);
+const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
+    name: T
+): (...args: Parameters<Event['init']>) => void => {
+    let event: Event;
+
+    return (...args: Parameters<typeof event['init']>): void => {
+        event ??= KhafraClient.Events.get(name)!;
+        return void dontThrow(event.init(...args));
+    }
 }
 
 export const client = new KhafraClient({
-    allowedMentions: { parse: [ 'users', 'roles' ], repliedUser: true },
-    presence: { status: 'online' },
-    makeCache: Options.cacheWithLimits({
-        MessageManager: {
-            sweepFilter: LimitedCollection.filterByLifetime({
-                lifetime: 1800
-            }),
-            sweepInterval: 1800
-        },
-        ThreadManager: {
-            sweepFilter: LimitedCollection.filterByLifetime({
-                excludeFromSweep: (thread) => !thread.archived,
-            }),
-            sweepInterval: 1800
-        }
-    }),
-    partials: [ 'MESSAGE', 'USER' ],
-    intents: [ 
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_BANS,
-        Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-        Intents.FLAGS.GUILD_PRESENCES
+    allowedMentions: {
+        parse: [AllowedMentionsTypes.Role, AllowedMentionsTypes.User],
+        repliedUser: true
+    },
+    presence: { status: PresenceUpdateStatus.Online },
+    partials: [Partials.Message, Partials.User],
+    intents: [
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildBans,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildPresences
     ]
 })
     .on('ready',                emitted('ready'))
     .on('messageCreate',        emitted('messageCreate'))
+    .on('messageUpdate',        emitted('messageUpdate'))
     .on('guildBanAdd',          emitted('guildBanAdd'))
     .on('guildBanRemove',       emitted('guildBanRemove'))
     .on('guildCreate',          emitted('guildCreate'))
@@ -48,7 +49,8 @@ export const client = new KhafraClient({
     .on('interactionCreate',    emitted('interactionCreate'))
     .on('guildMemberAdd',       emitted('guildMemberAdd'))
     .on('guildMemberRemove',    emitted('guildMemberRemove'))
-    .on('guildMemberUpdate',    emitted('guildMemberUpdate'))
-    .on('rateLimit',            emitted('rateLimit'));
+    .on('guildMemberUpdate',    emitted('guildMemberUpdate'));
+
+client.rest.on('rateLimited', emitted('rateLimited'));
 
 void client.init();

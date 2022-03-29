@@ -1,36 +1,67 @@
-import { Event } from '../Structures/Event.js';
-import { Interaction, InteractionReplyOptions, MessageAttachment, MessageEmbed } from 'discord.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
-import { KhafraClient } from '../Bot/KhafraBot.js';
-import { dontThrow } from '../lib/Utility/Don\'tThrow.js';
-import { upperCase } from '../lib/Utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { Command } from '../Structures/Command.js';
-import { Minimalist } from '../lib/Utility/Minimalist.js';
-import { interactionReactRoleHandler } from '../lib/Utility/EventEvents/Interaction_ReactRoles.js';
+import { KhafraClient } from '#khaf/Bot';
+import { Command } from '#khaf/Command';
+import { Event } from '#khaf/Event';
+import { logger } from '#khaf/Logger';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
+import { Minimalist } from '#khaf/utility/Minimalist.js';
+import { upperCase } from '#khaf/utility/String.js';
+import { bold, inlineCode, UnsafeEmbed } from '@discordjs/builders';
+import {
+    ChatInputCommandInteraction,
+    Interaction,
+    InteractionReplyOptions,
+    MessageAttachment,
+    MessageContextMenuCommandInteraction,
+    UserContextMenuCommandInteraction
+} from 'discord.js';
+import { argv } from 'process';
 
-const processArgs = new Minimalist(process.argv.slice(2).join(' '));
+type Interactions =
+    ChatInputCommandInteraction &
+    MessageContextMenuCommandInteraction &
+    UserContextMenuCommandInteraction;
+
+const processArgs = new Minimalist(argv.slice(2).join(' '));
 const disabled = typeof processArgs.get('disabled') === 'string'
     ? (processArgs.get('disabled') as string)
         .split(',')
         .map(c => c.toLowerCase())
     : [];
 
-@RegisterEvent
 export class kEvent extends Event<'interactionCreate'> {
     name = 'interactionCreate' as const;
 
-    async init(interaction: Interaction): Promise<void> {
+    async init (interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
             return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
+        } else if (interaction.isAutocomplete()) {
+            const autocomplete = interaction.options.getFocused(true);
+            const handler = KhafraClient.Interactions.Autocomplete.get(
+                `${interaction.commandName}-${autocomplete.name}`
+            );
+
+            if (handler) {
+                return handler.handle(interaction);
+            }
         }
-        
-        if (!interaction.isCommand()) return;
-        if (!KhafraClient.Interactions.has(interaction.commandName)) return;
 
-        const command = KhafraClient.Interactions.get(interaction.commandName)!;
+        if (
+            !interaction.isChatInputCommand() &&
+            !interaction.isContextMenuCommand()
+        ) {
+            return;
+        }
 
-        if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
+        const command = interaction.isContextMenuCommand()
+            ? KhafraClient.Interactions.Context.get(interaction.commandName)
+            : KhafraClient.Interactions.Commands.get(interaction.commandName);
+
+        if (!command) {
+            return void dontThrow(interaction.reply({
+                content: '❌ This command is no longer available, try to refresh your client!'
+            }));
+        } else if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
             return void dontThrow(interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
             }));
@@ -40,23 +71,25 @@ export class kEvent extends Event<'interactionCreate'> {
             }));
         }
 
+        let err: Error | void;
+
         try {
             if (command.options.defer)
                 await interaction.deferReply();
 
-            const result = await command.init(interaction);
+            const result = await command.init(interaction as Interactions);
             const param = {} as InteractionReplyOptions;
 
             if (interaction.replied) {
                 return;
             } else if (result == null) {
-                const type = result == null ? `${result}` : Object.prototype.toString.call(result);
+                const type = Object.prototype.toString.call(result);
                 param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
                 param.ephemeral = true;
             } else {
                 if (typeof result === 'string') {
                     param.content = result;
-                } else if (result instanceof MessageEmbed) {
+                } else if (result instanceof UnsafeEmbed) {
                     param.embeds = [result];
                 } else if (result instanceof MessageAttachment) {
                     param.files = [result];
@@ -69,13 +102,27 @@ export class kEvent extends Event<'interactionCreate'> {
                 Object.assign(param, command.options.replyOpts);
 
             if (interaction.deferred)
-                return void interaction.editReply(param);
+                return void await interaction.editReply(param);
 
-            return void interaction.reply(param);
+            return void await interaction.reply(param);
         } catch (e) {
+            err = e as Error;
+
             if (processArgs.get('dev') === true) {
-                console.log(e);
+                console.log(e); // eslint-disable-line no-console
+            }
+        } finally {
+            if (err) {
+                logger.error(err);
+            } else {
+                logger.log(
+                    `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+                    {
+                        time: interaction.createdAt,
+                        channel: interaction.channelId
+                    }
+                );
             }
         }
     }
-} 
+}

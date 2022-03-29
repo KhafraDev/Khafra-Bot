@@ -1,14 +1,14 @@
-import { Command } from '../../Structures/Command.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Have the bot reply to the user.'
-            ], 
+            ],
             {
                 name: 'debug:reply',
                 folder: 'Debug',
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message) {
-        return this.Embed.success(`Hello, ${message.author}!`);
+    async init (message: Message): Promise<UnsafeEmbed> {
+        return Embed.ok(`Hello, ${message.author}!`);
     }
 }

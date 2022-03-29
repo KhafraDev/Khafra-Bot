@@ -1,22 +1,11 @@
-import { Event } from '../Structures/Event.js';
-import { RegisterEvent } from '../Structures/Decorator.js';
-import { Logger } from '../Structures/Logger.js';
-import { trim } from '../lib/Utility/Template.js';
-import type { RateLimitData } from 'discord.js';
+import { Event } from '#khaf/Event';
+import { logger } from '#khaf/Logger';
+import type { RateLimitData } from '@discordjs/rest';
 
-const logger = new Logger('RateLimit');
+export class kEvent extends Event<'rateLimited'> {
+    name = 'rateLimited' as const;
 
-@RegisterEvent
-export class kEvent extends Event<'rateLimit'> {
-    name = 'rateLimit' as const;
-
-    async init(data: RateLimitData) {
-        logger.log(trim`
-        Timeout: ${data.timeout} 
-        | Limit: ${data.limit} 
-        | HTTP Method: ${data.method} 
-        | Route: ${data.route} 
-        | Path: ${data.path}
-        `);
+    async init (data: RateLimitData): Promise<void> {
+        logger.warn(data);
     }
 }

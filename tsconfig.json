@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
 
     /* Basic Options */
-    // "incremental": true,                   /* Enable incremental compilation */
+    "incremental": true,                   /* Enable incremental compilation */
     "target": "ESNext",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */
     "module": "ESNext",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */
     "lib": [ "ESNext" ],                             /* Specify library files to be included in the compilation. */
@@ -12,7 +12,7 @@
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     // "declaration": true,                   /* Generates corresponding '.d.ts' file. */
     // "declarationMap": true,                /* Generates a sourcemap for each corresponding '.d.ts' file. */
-    // "sourceMap": true,                     /* Generates corresponding '.map' file. */
+    "sourceMap": true,                     /* Generates corresponding '.map' file. */
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
     "outDir": "./build",                        /* Redirect output structure to the directory. */
     // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
@@ -43,8 +43,27 @@
 
     /* Module Resolution Options */
     "moduleResolution": "node",            /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    // "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
-    // "paths": {},                           /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
+    "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "#khaf/utility/*": ["./src/lib/Utility/*"],
+      "#khaf/utility/commands/*": ["./src/lib/Packages/*"],
+      "#khaf/utility/Discord.js": ["./src/lib/types/Discord.js.js"],
+      "#khaf/database/*": ["./src/Structures/Database/*"],
+      "#khaf/migration/*": ["./src/lib/Migration/*"],
+      "#khaf/cache/*": ["./src/lib/Cache/*"],
+      "#khaf/cooldown/*": ["./src/Structures/Cooldown/*"],
+      "#khaf/Command": ["./src/Structures/Command.js"],
+      "#khaf/Interaction": ["./src/Structures/Interaction.js"],
+      "#khaf/Event": ["./src/Structures/Event.js"],
+      "#khaf/types/*": ["./src/lib/types/*"],
+      "#khaf/Logger": ["./src/Structures/Logger.js"],
+      "#khaf/Bot": ["./src/Bot/KhafraBot.js"],
+      "#khaf/Client": ["./src/index.js"],
+      "#khaf/LRU": ["./src/Structures/LRU.js"],
+      "#khaf/Timer": ["./src/Structures/Timer.js"],
+      "#khaf/Images/*": ["./src/Images/*"],
+      "#khaf/structures/*": ["./src/Structures/*"]
+    },                                        /* A series of entries which re-map imports to lookup locations relative to the 'baseUrl'. */
     // "rootDirs": [],                        /* List of root folders whose combined content represents the structure of the project at runtime. */
     // "typeRoots": [],                       /* List of folders to include type definitions from. */
     // "types": [],                           /* Type declaration files to be included in compilation. */
@@ -60,8 +79,8 @@
     // "inlineSources": true,                 /* Emit the source alongside the sourcemaps within a single file; requires '--inlineSourceMap' or '--sourceMap' to be set. */
 
     /* Experimental Options */
-    "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
-    "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
+    "experimentalDecorators": false,        /* Enables experimental support for ES7 decorators. */
+    "emitDecoratorMetadata": false,         /* Enables experimental support for emitting type metadata for decorators. */
 
     /* Advanced Options */
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
@@ -76,13 +95,6 @@
   "exclude": [
     "node_modules", 
     "scripts", 
-    "*.json",
-    "src/lib/Packages/BadMeme",
-    "src/lib/Packages/Spotify",
-    "src/lib/Packages/Wikipedia",
-    "src/lib/Packages/HereWeather",
-    "src/lib/Packages/NPM",
-    "src/lib/Packages/Pocket",
-    "src/lib/Packages/Vaccines"
+    "*.json"
   ]
 }

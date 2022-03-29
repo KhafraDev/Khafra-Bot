@@ -1,5 +1,6 @@
-import { fetch } from 'undici';
+import { request } from 'undici';
 import { URL, URLSearchParams } from 'url';
+import { env } from 'process';
 
 interface ITMDBSearch {
     page: number
@@ -33,7 +34,7 @@ interface ITMDBDetails {
     id: number
     imdb_id: string | null
     original_language: string
-    original_title: string
+    original_title: string | null
     overview: string | null
     popularity: number
     poster_path: string | null
@@ -88,7 +89,7 @@ interface TVDetails {
     }
     episode_run_time: number[]
     first_air_date: string
-    genres: {    
+    genres: {
         id: number
         name: string
     }[]
@@ -97,7 +98,7 @@ interface TVDetails {
     in_production: boolean
     languages: string[]
     last_air_date: string
-    last_episode_to_air: {        
+    last_episode_to_air: {
         air_date: string
         episode_number: number
         id: number
@@ -163,27 +164,27 @@ const base = {
     detail_tv: 'https://api.themoviedb.org/3/tv/'
 } as const;
 const headers = {
-    'Authorization': `Bearer ${process.env.TMDB}`,
+    'Authorization': `Bearer ${env.TMDB}`,
     'Content-Type': 'application/json;charset=utf-8'
 };
 
 export const searchMovie = async (
     query: string,
     include_adult = false
-) => {
-    const params = new URLSearchParams({ 
-        query, 
+): Promise<ITMDBDetails | null> => {
+    const params = new URLSearchParams({
+        query,
         include_adult: `${include_adult}`
-    }).toString().replace(/\+/g, '%20'); 
+    }).toString().replace(/\+/g, '%20');
     // if the question mark is appended to the base url, it's stripped by new URL(...)
-    const res = await fetch(new URL(`?${params}`, base.search), { headers });
-    const search = await res.json() as ITMDBSearch;
+    const { body } = await request(new URL(`?${params}`, base.search), { headers });
+    const search = await body.json() as ITMDBSearch;
 
     if (search.total_results === 0 || search.results.length === 0)
         return null;
 
-    const dRes = await fetch(`${base.detail}${search.results[0].id}`, { headers });
-    const details = await dRes.json() as ITMDBDetails;
+    const { body: otherBody } = await request(`${base.detail}${search.results[0].id}`, { headers });
+    const details = await otherBody.json() as ITMDBDetails;
 
     return details;
 }
@@ -191,20 +192,20 @@ export const searchMovie = async (
 export const searchTV = async (
     query: string,
     include_adult = false
-) => {
-    const params = new URLSearchParams({ 
-        query, 
+): Promise<TVDetails | null> => {
+    const params = new URLSearchParams({
+        query,
         include_adult: `${include_adult}`
-    }).toString().replace(/\+/g, '%20'); 
+    }).toString().replace(/\+/g, '%20');
 
-    const res = await fetch(new URL(`?${params}`, base.tv), { headers });
-    const tv = await res.json() as TV;
+    const { body } = await request(new URL(`?${params}`, base.tv), { headers });
+    const tv = await body.json() as TV;
 
     if (tv.total_results === 0 || tv.results.length === 0)
         return null;
 
-    const tRes = await fetch(`${base.detail_tv}${tv.results[0].id}`, { headers });
-    const details = await tRes.json() as TVDetails;
+    const { body: otherBody } = await request(`${base.detail_tv}${tv.results[0].id}`, { headers });
+    const details = await otherBody.json() as TVDetails;
 
     return details;
 }

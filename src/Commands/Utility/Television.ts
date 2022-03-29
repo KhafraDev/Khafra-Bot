@@ -1,13 +1,12 @@
+import { Arguments, Command } from '#khaf/Command';
+import { searchTV } from '#khaf/utility/commands/TMDB';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
+import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
 import { Message } from 'discord.js';
-import { searchTV } from '../../lib/Packages/TMDB.js';
-import { isDM, isText } from '../../lib/types/Discord.js.js';
-import { Command, Arguments } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { time } from '@discordjs/builders';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super([
             'Get information about a tv show!'
         ], {
@@ -18,28 +17,35 @@ export class kCommand extends Command {
         });
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { content }: Arguments): Promise<UnsafeEmbed | string> {
         const tv = await searchTV(
-            args.join(' '), 
+            content,
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
-        
-        if (!tv)
-            return this.Embed.fail('No tv shows found!');
 
-        const embed = this.Embed.success()
+        if (!tv)
+            return '❌ No TV show with that name was found!';
+
+        const embed = Embed.ok()
             .setTitle(tv.name)
             .setDescription(tv.overview)
-            .addField('**Genres:**', tv.genres.map(g => g.name).join(', '), true)
-            .addField('**Status:**', tv.status, true)
-            .addField('**Premiered:**', tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown', true)
-            .addField('**Seasons:**', `${tv.number_of_seasons}`, true)
-            .addField('**Episodes:**', `${tv.number_of_episodes}`, true)
-            .addField('**TMDB:**', `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, true)
-            .setFooter('Data provided by https://www.themoviedb.org/')
-            
+            .addFields(
+                { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
+                { name: bold('Status:'), value: tv.status, inline: true },
+                {
+                    name: bold('Premiered:'),
+                    value: tv.first_air_date ? time(new Date(tv.first_air_date), 'D') : 'Unknown',
+                    inline: true
+                },
+                { name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true },
+                { name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true },
+                { name: bold('TMDB:'), value: `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, inline: true }
+            )
+            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
+
         tv.homepage && embed.setURL(tv.homepage);
-        if (tv.poster_path) 
+
+        if (tv.poster_path)
             embed.setImage(`https://image.tmdb.org/t/p/original${tv.poster_path}`);
         else if (tv.backdrop_path)
             embed.setImage(`https://image.tmdb.org/t/p/original${tv.backdrop_path}`);

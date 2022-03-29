@@ -1,13 +1,13 @@
-import { Command, Arguments } from '../../Structures/Command.js';
-import { Permissions } from 'discord.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
-import { getMentions } from '../../lib/Utility/Mentions.js';
-import { unbans } from '../../lib/Cache/Unban.js';
-import { Message } from '../../lib/types/Discord.js.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { getMentions } from '#khaf/utility/Mentions.js';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Unban a user from the guild.',
@@ -15,21 +15,21 @@ export class kCommand extends Command {
                 '9876543217654321',
                 '1234567891234567 --reason apologized nicely :)'
             ],
-			{
+            {
                 name: 'unban',
                 folder: 'Moderation',
                 args: [1],
                 guildOnly: true,
-                permissions: [ Permissions.FLAGS.BAN_MEMBERS ]
+                permissions: [PermissionFlagsBits.BanMembers]
             }
         );
     }
 
-    async init(message: Message, { args, cli }: Arguments) {
-        const user = await getMentions(message, 'users');
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbed> {
+        const user = await getMentions(message, 'users', content);
 
-        if (!user) 
-            return this.Embed.fail('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
+        if (!user)
+            return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕');
 
         const reasonAny = cli.has('reason') || cli.has('r')
             ? (cli.get('reason') || cli.get('r'))
@@ -37,15 +37,12 @@ export class kCommand extends Command {
 
         const reason = typeof reasonAny === 'string' ? reasonAny : '';
 
-        try {
-            await message.guild.members.unban(user, reason);
+        const [e] = await dontThrow(message.guild.members.unban(user, reason));
 
-            if (!unbans.has(`${message.guild.id},${user.id}`))
-                unbans.set(`${message.guild.id},${user.id}`, { member: message.member, reason });
-        } catch (e) {
-            return this.Embed.fail(`Couldn't unban ${user}, try again?\n\`\`${e}\`\``);
+        if (e !== null) {
+            return Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`);
         }
 
-        return this.Embed.success(`${user} is now unbanned!`);
+        return Embed.ok(`${user} is now unbanned!`);
     }
 }

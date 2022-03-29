@@ -1,30 +1,31 @@
-import { Command } from '../../../Structures/Command.js';
-import { Permissions } from 'discord.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
+import { PermissionFlagsBits } from 'discord-api-types/v10';
+import { Message } from 'discord.js';
 import { parse } from 'twemoji-parser';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { Message } from '../../../lib/types/Discord.js.js';
 
 const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g;
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Enlarge an emoji!',
                 '🦸 🤠', '🥙', '<:Jack:579367928722489346>'
             ],
-			{
+            {
                 name: 'emoji',
                 folder: 'Fun',
                 args: [1, 5],
                 ratelimit: 3,
-                permissions: [ Permissions.FLAGS.ATTACH_FILES ]
+                permissions: [PermissionFlagsBits.AttachFiles],
+                guildOnly: true
             }
         );
     }
 
-    async init(message: Message) {
+    async init (message: Message<true>): Promise<string | UnsafeEmbed> {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         const all =  [...unicode, ...guild];
 
         if (all.length === 0)
-            return this.Embed.fail(`No guild or unicode emojis were in the message! 😕`);
+            return Embed.error('No guild or unicode emojis were in the message! 😕');
 
         return all.join('\n');
     }

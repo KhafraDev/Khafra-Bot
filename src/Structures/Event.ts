@@ -1,6 +1,15 @@
-import { Awaited, ClientEvents } from 'discord.js';
+import type { RestEvents } from '@discordjs/rest';
+import type { ClientEvents } from 'discord.js';
 
-export abstract class Event<T extends keyof ClientEvents = keyof ClientEvents> {
+type EventArguments<T> = T extends keyof ClientEvents
+    ? ClientEvents[T]
+    : T extends keyof RestEvents
+        ? RestEvents[T]
+        : never
+
+export abstract class Event<
+    T extends keyof ClientEvents | keyof RestEvents = keyof ClientEvents | keyof RestEvents
+> {
     abstract name: T;
-    abstract init(...args: ClientEvents[T]): Awaited<unknown>;
+    abstract init(...args: EventArguments<T>): Promise<void>;
 }

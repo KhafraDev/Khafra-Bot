@@ -1,53 +1,55 @@
-import { Command, Arguments } from '../../../Structures/Command.js';
-import { Interaction, Message, MessageActionRow } from 'discord.js';
+import { Arguments, Command } from '#khaf/Command';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { isDM, isText } from '#khaf/utility/Discord.js';
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
-import { isDM, isText } from '../../../lib/types/Discord.js.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
-import { Components, disableAll } from '../../../lib/Utility/Constants/Components.js';
-import { dontThrow } from '../../../lib/Utility/Don\'tThrow.js';
+import { Message } from 'discord.js';
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a bad meme!',
                 'pewdiepiesubmissions', ''
             ],
-			{
+            {
                 name: 'badmeme',
                 folder: 'Fun',
-                args: [0, 1],
+                args: [0, 1]
             }
         );
     }
 
-    async init(message: Message, { args }: Arguments) {
+    async init (message: Message, { args }: Arguments): Promise<string | UnsafeEmbed | undefined> {
         const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
         if (!cache.has(subreddit)) {
             void message.channel.sendTyping();
         }
-        
+
         const res = await badmeme(
-            args[0], 
+            args[0],
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
         );
-        
+
         if (res === null) {
-            if (isText(message.channel) && message.channel.nsfw) {
-                return this.Embed.fail(`This channel isn't marked as NSFW!`);
+            return Embed.error(`
+            No posts in this subreddit were found! If the subreddit is NSFW, make sure the channel is too!
+            `);
+        } else if ('error' in res) {
+            if (res.error === 404) {
+                return '❌ That subreddit doesn\'t exist!';
             }
 
-            return this.Embed.fail(`No posts in this subreddit were found, sorry!`);
-        } else if ('error' in res) {
             switch (res.reason) {
-                case 'banned': return this.Embed.fail('Subreddit is banned!');
-                case 'private': return this.Embed.fail('Subreddit is set as private!');
-                case 'quarantined': return this.Embed.fail('Subreddit is quarantined!');
-                default: return this.Embed.fail(`Subreddit is blocked for reason "${res.reason}"!`)
+                case 'banned': return Embed.error('Subreddit is banned!');
+                case 'private': return Embed.error('Subreddit is set as private!');
+                case 'quarantined': return Embed.error('Subreddit is quarantined!');
+                default: return Embed.error(`Subreddit is blocked for reason "${res.reason}"!`)
             }
         } else if (res.url.length === 0) {
-            return this.Embed.fail(`
+            return Embed.error(`
             No image posts found in this subreddit.
             
             If the channel isn't set to NSFW, adult subreddits won't work!
@@ -58,29 +60,29 @@ export class kCommand extends Command {
             return res.url;
 
         let page = 0;
-        
-        const row = new MessageActionRow()
-			.addComponents(
-                Components.approve('Next'),
-                Components.secondary('Previous'),
-                Components.deny('Stop')
-            );
 
-        const m = await message.channel.send({ 
+        const row = new ActionRow<MessageActionRowComponent>().addComponents(
+            Components.approve('Next'),
+            Components.secondary('Previous'),
+            Components.deny('Stop')
+        );
+
+        const m = await message.channel.send({
             content: res.url[page],
             components: [row]
         });
 
-        const filter = (interaction: Interaction) =>
-            interaction.isMessageComponent() &&
-            ['approve', 'deny', 'secondary'].includes(interaction.customId) && 
-            interaction.user.id === message.author.id;
+        const collector = m.createMessageComponentCollector({
+            filter: (interaction) =>
+                interaction.isMessageComponent() &&
+                ['approve', 'deny', 'secondary'].includes(interaction.customId) &&
+                interaction.user.id === message.author.id,
+            time: 60_000,
+            max: 5
+        });
 
-        const collector = m.createMessageComponentCollector({ filter, time: 60000, max: 5 });
         collector.on('collect', i => {
-            if (m.deleted) 
-                return collector.stop();
-            else if (i.customId === 'deny')
+            if (i.customId === 'deny')
                 return collector.stop('deny');
 
             i.customId === 'approve' ? page++ : page--;
@@ -88,10 +90,11 @@ export class kCommand extends Command {
             if (page < 0) page = res.url.length - 1;
             if (page >= res.url.length) page = 0;
 
-            return void dontThrow(i.update({ content: res.url[page] }));
+            return void dontThrow(i.update({ content: res.url[page] }))
+                .then(([e]) => e !== null && collector.stop());
         });
-        collector.on('end', (c, r) => {
-            if (r === 'deny') {
+        collector.once('end', (c, r) => {
+            if (r === 'deny' && c.size !== 0) {
                 return void dontThrow(c.last()!.update({ components: disableAll(m) }));
             }
 

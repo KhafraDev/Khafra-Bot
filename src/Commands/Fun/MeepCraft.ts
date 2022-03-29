@@ -1,6 +1,7 @@
-import { fetch } from 'undici';
-import { Command } from '../../Structures/Command.js';
-import { RegisterCommand } from '../../Structures/Decorator.js';
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { request } from 'undici';
 
 interface IMCOnline {
     online: true,
@@ -30,8 +31,8 @@ interface IMCOnline {
 	version: string | string[]
 	protocol?: number
 	hostname?: string
-	icon?: string 
-	software?: string 
+	icon?: string
+	software?: string
 	map: string,
 	plugins?: {
 		names: string[]
@@ -56,9 +57,9 @@ interface IMCOffline {
 	hostname: string
 }
 
-export const fetchMeepOnline = async () => {
-	const r = await fetch('https://api.mcsrvstat.us/2/meepcraft.com');
-	const j = await r.json() as IMCOnline | IMCOffline;
+const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
+    const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com');
+    const j = await body.json() as IMCOnline | IMCOffline;
 
     return { playersOnline: j.online ? j.players.online : 0 };
 }
@@ -68,26 +69,27 @@ const cache = {
     players: 0
 }
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
-            [ 
+            [
                 'Get the number of users playing MeepCraft right now.'
             ],
-			{
+            {
                 name: 'meepcraft',
                 folder: 'Fun',
-                aliases: [ 'meep' ],
+                aliases: ['meep'],
                 args: [0, 0]
             }
         );
     }
 
-    async init() {
+    async init (): Promise<UnsafeEmbed> {
         if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
-            const sentence = cache.players === 1 ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
-            const embed = this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+            const sentence = cache.players === 1
+                ? 'is ``1`` player'
+                : `are ${inlineCode(`${cache.players}`)} players`;
+            const embed = Embed.ok(`There ${sentence} on Meepcraft right now!`);
             return embed;
         }
 
@@ -96,7 +98,9 @@ export class kCommand extends Command {
         cache.time = Date.now();
         cache.players = players.playersOnline;
 
-        const sentence = cache.players === 1 ? 'is ``1`` player' : `are \`\`${cache.players}\`\` players`;
-        return this.Embed.success(`There ${sentence} on Meepcraft right now!`);
+        const sentence = cache.players === 1
+            ? 'is ``1`` player'
+            : `are ${inlineCode(`${cache.players}`)} players`;
+        return Embed.ok(`There ${sentence} on Meepcraft right now!`);
     }
 }

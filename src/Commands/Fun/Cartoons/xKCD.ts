@@ -1,8 +1,9 @@
+import { Command } from '#khaf/Command';
+import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
+import { RSSReader } from '#khaf/utility/RSS.js';
+import { type UnsafeEmbed } from '@discordjs/builders';
 import { decodeXML } from 'entities';
-import { once } from '../../../lib/Utility/Memoize.js';
-import { RSSReader } from '../../../lib/Utility/RSS.js';
-import { Command } from '../../../Structures/Command.js';
-import { RegisterCommand } from '../../../Structures/Decorator.js';
 
 interface IxKCD {
     title: string
@@ -15,14 +16,13 @@ interface IxKCD {
 const rss = new RSSReader<IxKCD>();
 const cache = once(() => rss.cache('https://xkcd.com/rss.xml'));
 
-@RegisterCommand
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Get a random comic from xKCD!'
             ],
-			{
+            {
                 name: 'xkcd',
                 folder: 'Games',
                 args: [0, 0],
@@ -31,13 +31,17 @@ export class kCommand extends Command {
         );
     }
 
-    async init() {
-        await cache();
+    async init (): Promise<UnsafeEmbed> {
+        const state = await cache();
+
+        if (state === null) {
+            return Embed.error('Try again in a minute!');
+        }
 
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return this.Embed.success()
+        return Embed.ok()
             .setTitle(decodeXML(comic.title))
             .setURL(comic.link)
             .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);

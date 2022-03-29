@@ -511,7 +511,8 @@
 
 </details>
 
-# v1.10
+<details><summary><b>v1.10.0</b></summary>
+
 * Update: General updates for Discord.js v13.
 * Update: `softbanprompt`, `banprompt`, `pocketinit`, `trump`, `youtube`, `badmeme`, `thenounproject` commands now use buttons instead of reactions.
 * Update: `talkobamatome` will now output the video url rather than a link to the video.
@@ -540,3 +541,25 @@
 * Remove: `forgotify` command.
 * Remove: `longestpoemintheworld` command.
 * Remove: `Fetcher` structure.
+
+</details>
+
+# v1.11.0
+* Remove unused assets (`CyanideAndHappiness.json`, `Emojis.json`).
+* Use a new color for boosters in the welcome log.
+* BadMeme: limit amount of results to 20 as using more entries is very rare.
+* Commands: add `deploy` command to deploy a slash command in the bot's guild.
+* Guild Delete Event: fix potential error where unavailable guilds would cause the `guildDelete` event to be triggered on start-up.
+* Eval Interaction: deploy only from the `deploy` command.
+* Interaction Interaction: add in `interaction` slash command to allow the bot owner to manage slash commands.
+* Add in `animal` slash command.
+* Add in `cartoonize` slash command and download the image to prevent auto-deletion after 15 minutes.
+* Add in `wordle` game.
+* Add in `slots` game.
+* Add in `minecraft` slash command.
+* Add in `meme` slash command along with image editing.
+* Add in `timezone` slash command.
+* Add in `addemoji` slash command.
+* Add in `color` slash command.
+* Remove `errors` property in commands.
+* Upgrade `parseStrToMs` utility function.

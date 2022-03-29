@@ -1,23 +1,29 @@
 import { join } from 'path';
 import { existsSync, readFileSync } from 'fs';
+import { cwd, env } from 'process';
 
-const Env = new Map<string, string>();
+const propertyDescriptors: PropertyDescriptor = {
+    writable: true,
+    configurable: true,
+    enumerable: true
+}
 
-const path = join(process.cwd(), '.env');
+const path = join(cwd(), '.env');
 if (!existsSync(path)) {
     throw new Error('.env: No .env file found at the root of the repo!');
 }
 
-const file = readFileSync(path, 'utf-8').split(/\r\n|\n/g);
+const file = readFileSync(path, 'utf-8').split(/\r?\n/g);
 for (const line of file) {
-    const [k, ...v] = line.split('=');
-    Env.set(k, v.join('='));
-}
+    if (line.startsWith('#')) continue;
 
-// keys aren't assigned to the process.env object
-// which means env variables set by user aren't enumerable
-process.env = new Proxy(process.env, {
-    get: (env /* process.env */, p: string /* prop */) => {
-        return Env.has(p) ? Env.get(p) : env[p];
-    }
-});
+    const [k, ...v] = line.split('=');
+    const value = v.join('=');
+
+    Object.defineProperty(env, k, {
+        value: value.startsWith('"') && value.endsWith('"')
+            ? value.slice(1, -1)
+            : value,
+        ...propertyDescriptors
+    });
+}
