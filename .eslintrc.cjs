@@ -62,6 +62,7 @@ module.exports = {
 			'URL',
 			'URLSearchParams'
 		],
+		'no-console': 'error',
 
 		'@typescript-eslint/no-unused-vars': ['error', { 'varsIgnorePattern': '_' }],
 		'@typescript-eslint/explicit-function-return-type': 'error',

@@ -52,8 +52,6 @@ export class kSubCommand extends InteractionSubCommand {
         const embeds = chunkEmbeds(rows);
         let page = 0;
 
-        console.log({embeds})
-
         if (embeds.length === 0) {
             return {
                 content: 'You don\'t have any reminders, silly!',

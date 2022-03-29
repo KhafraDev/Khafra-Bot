@@ -67,7 +67,7 @@ export const interactionReactRoleHandler = async (
         return void dontThrow<InteractionReply>(pr);
     } catch (e) {
         if (isDev) {
-            console.log(e);
+            console.log(e); // eslint-disable-line no-console
         }
 
         const opts = {

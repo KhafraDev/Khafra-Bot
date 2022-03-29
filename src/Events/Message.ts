@@ -204,7 +204,7 @@ export class kEvent extends Event<'messageCreate'> {
             err = e as Error;
 
             if (processArgs.get('dev') === true) {
-                console.log(e);
+                console.log(e); // eslint-disable-line no-console
             }
 
             if (!(e instanceof Error)) {

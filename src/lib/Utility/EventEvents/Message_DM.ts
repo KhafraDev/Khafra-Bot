@@ -96,7 +96,7 @@ export const DM = async (message: Message): Promise<void> => {
         return void await message.reply(param);
     } catch (e) {
         if (processArgs.get('dev') === true) {
-            console.log(e);
+            console.log(e); // eslint-disable-line no-console
         }
 
         if (!(e instanceof Error)) {
