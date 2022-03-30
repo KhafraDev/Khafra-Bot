@@ -1,15 +1,19 @@
+import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
+import { chunkSafe } from '#khaf/utility/Array.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { randomUUID } from 'crypto';
+import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v10';
+import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { request } from 'undici';
 import { URL } from 'url';
 
 const enum Subcommands {
-    HELP = 'help',
+    LIST = 'list',
     MIX = 'mix'
 }
 
@@ -45,9 +49,8 @@ interface EmojiKitchen {
     next: string
 }
 
-const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/375c7f176cedb7ae7170d65a97f382899d13abfd/emojis.txt';
+const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/main/emojis.txt';
 const list: string[] = [];
-const cache = new Map<string, string>();
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -76,19 +79,8 @@ export class kInteraction extends Interactions {
                 },
                 {
                     type: ApplicationCommandOptionType.Subcommand,
-                    name: Subcommands.HELP,
-                    description: 'Get help with this slash command!',
-                    options: [
-                        {
-                            type: ApplicationCommandOptionType.String,
-                            name: 'list',
-                            description: 'Option to get help with.',
-                            required: true,
-                            choices: [
-                                { name: 'list emojis', value: 'list emojis' }
-                            ]
-                        }
-                    ]
+                    name: Subcommands.LIST,
+                    description: 'List the emojis currently supported'
                 }
             ]
         };
@@ -96,97 +88,140 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | void> {
         const subcommand = interaction.options.getSubcommand(true);
 
-        if (subcommand === 'mix') {
-            const emojiOne = interaction.options.getString(SubcommandOptions.FIRST, true);
-            const emojiTwo = interaction.options.getString(SubcommandOptions.SECOND, true);
+        if (subcommand === Subcommands.LIST) {
+            if (list.length === 0) {
+                const [err, res] = await dontThrow(request(supportedListURL));
 
-            const query = `${emojiOne}_${emojiTwo}`;
-            const oneParsed = parse(emojiOne);
-            const twoParsed = parse(emojiTwo);
+                if (err !== null) {
+                    return {
+                        content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                        ephemeral: true
+                    }
+                }
 
-            if (oneParsed.map(p => p.text).join('') !== emojiOne) {
-                return {
-                    content: '❌ First emoji could not be parsed correctly!',
-                    ephemeral: true
-                }
-            } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
-                return {
-                    content: '❌ Second emoji could not be parsed correctly!',
-                    ephemeral: true
-                }
+                const listJoined = await res.body.text();
+                const emojis = parse(listJoined);
+
+                list.push(...emojis.map(e => e.text));
             }
 
-            if (cache.has(query)) {
-                return Embed.ok()
-                    .setTitle(`${emojiOne} + ${emojiTwo} =`)
-                    .setImage(cache.get(query)!);
+            let page = 0;
+            const uuid = randomUUID();
+            const pages = chunkSafe(list, 195).map(
+                items => Embed.ok(items.join(' '))
+            );
+
+            const i = await interaction.reply({
+                embeds: [pages[page]],
+                components: [
+                    new ActionRow<MessageActionRowComponent>().addComponents(
+                        Components.approve('Next', `${uuid}-next`),
+                        Components.primary('Back', `${uuid}-prev`),
+                        Components.deny('Stop', `${uuid}-trash`)
+                    )
+                ],
+                fetchReply: true
+            });
+
+            const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+                interactionType: InteractionType.MessageComponent,
+                message: i,
+                idle: 30_000,
+                filter: (i) =>
+                    i.user.id === interaction.user.id &&
+                    i.customId === `${uuid}-next` ||
+                    i.customId === `${uuid}-prev` ||
+                    i.customId === `${uuid}-trash`
+            });
+
+            for await (const [collected] of collector) {
+                if (collected.customId.endsWith('-trash')) break;
+
+                collected.customId.endsWith('next') ? page++ : page--;
+                if (page < 0) page = pages.length - 1;
+                if (page >= pages.length) page = 0;
+
+                await collected.update({
+                    embeds: [pages[page]],
+                    components: i.components
+                });
             }
 
-            // https://github.com/UCYT5040/Google-Sticker-Mashup-Research
-            const api = new URL('https://tenor.googleapis.com/v2/featured');
-            api.searchParams.append('key', 'AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ');
-            api.searchParams.append('client_key', 'gboard');
-            api.searchParams.append('contentfilter', 'high');
-            api.searchParams.append('media_filter', 'png_transparent');
-            api.searchParams.append('component', 'proactive');
-            api.searchParams.append('collection', 'emoji_kitchen_v5');
-            api.searchParams.append('locale', 'en_US');
-            api.searchParams.append('country', 'US');
-            api.searchParams.append('q', query);
+            const last = collector.collected.last();
 
-            await interaction.deferReply();
-            const [err, res] = await dontThrow(request(api));
-
-            if (err !== null) {
-                return {
-                    content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                    ephemeral: true
-                }
-            }
-
-            const j = await res.body.json() as EmojiKitchen;
-
-            if (j.results.length === 0) {
-                return {
-                    content: '❌ One or more emojis you provided are not supported, or might not work as a combo.',
-                    ephemeral: true
-                }
-            }
-
-            const url = j.results[0].url;
-            cache.set(query, url);
-
-            return Embed.ok()
-                .setTitle(`${emojiOne} + ${emojiTwo} =`)
-                .setImage(url);
-        } else {
-            const listOpt = interaction.options.getString(SubcommandOptions.LIST);
-
-            if (listOpt) {
-                if (list.length === 0) {
-                    await interaction.deferReply();
-                    const [err, res] = await dontThrow(request(supportedListURL));
-
-                    if (err !== null) {
-                        return {
-                            content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                            ephemeral: true
+            if (
+                collector.collected.size !== 0 &&
+                last?.replied === false
+            ) {
+                return void await last.update({
+                    components: disableAll(i)
+                });
+            } else {
+                return void await rest.patch(
+                    Routes.channelMessage('channelId' in i ? i.channelId : i.channel_id, i.id),
+                    {
+                        body: {
+                            components: disableAll(i).map(e => e.toJSON())
                         }
                     }
-
-                    const listJoined = await res.body.text();
-                    const split = listJoined.trim().split(/\r?\n/g);
-
-                    list.push(...split);
-                }
-
-                return Embed.ok(list.join(' '))
-                    .setTitle('Supported Emojis')
-                    .setURL(supportedListURL);
+                );
             }
         }
+
+        const emojiOne = interaction.options.getString(SubcommandOptions.FIRST, true);
+        const emojiTwo = interaction.options.getString(SubcommandOptions.SECOND, true);
+
+        const query = `${emojiOne}_${emojiTwo}`;
+        const oneParsed = parse(emojiOne);
+        const twoParsed = parse(emojiTwo);
+
+        if (oneParsed.map(p => p.text).join('') !== emojiOne) {
+            return {
+                content: '❌ First emoji could not be parsed correctly!',
+                ephemeral: true
+            }
+        } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
+            return {
+                content: '❌ Second emoji could not be parsed correctly!',
+                ephemeral: true
+            }
+        }
+
+        // https://github.com/UCYT5040/Google-Sticker-Mashup-Research
+        const api = new URL('https://tenor.googleapis.com/v2/featured');
+        api.searchParams.append('key', 'AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ');
+        api.searchParams.append('client_key', 'gboard');
+        api.searchParams.append('contentfilter', 'high');
+        api.searchParams.append('media_filter', 'png_transparent');
+        api.searchParams.append('component', 'proactive');
+        api.searchParams.append('collection', 'emoji_kitchen_v5');
+        api.searchParams.append('locale', 'en_US');
+        api.searchParams.append('country', 'US');
+        api.searchParams.append('q', query);
+
+        const [err, res] = await dontThrow(request(api));
+
+        if (err !== null) {
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                ephemeral: true
+            }
+        }
+
+        const j = await res.body.json() as EmojiKitchen;
+
+        if (j.results.length === 0) {
+            return {
+                content: '❌ One or more emojis you provided are not supported, or might not work as a combo.',
+                ephemeral: true
+            }
+        }
+
+        return Embed.ok()
+            .setTitle(`${emojiOne} + ${emojiTwo} =`)
+            .setImage(j.results[0].url);
     }
 }
