@@ -12,6 +12,7 @@ import {
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { setTimeout } from 'timers/promises';
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -44,14 +45,13 @@ export class kInteraction extends Interactions {
         };
 
         super(sc, {
-            defer: true,
             permissions: [
                 PermissionFlagsBits.ManageMessages
             ]
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
         const amount = interaction.options.getInteger('messages', true);
         const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 
@@ -67,28 +67,27 @@ export class kInteraction extends Interactions {
             }
         }
 
+        await interaction.reply({
+            content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`
+        });
+        await setTimeout(5_000);
+        await interaction.deleteReply();
         await dontThrow(channel.bulkDelete(amount));
 
-        try {
-            return {
-                content: `✅ Cleared ${amount} messages from ${channel}`
-            }
-        } finally {
-            // If the channel is private, we shouldn't broadcast
-            // information about it.
+        // If the channel is private, we shouldn't broadcast
+        // information about it.
 
-            const everyone = channel.guild.roles.everyone.id;
+        const everyone = channel.guild.roles.everyone.id;
 
-            if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
-                const embed = Embed.ok(`
-                ${bold('Channel:')} ${channel}
-                ${bold('Messages:')} ${amount}
-                ${bold('Staff:')} ${interaction.user}
-                ${bold('Time:')} ${time(new Date())}
-                `).setTitle('Channel Messages Cleared');
+        if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
+            const embed = Embed.ok(`
+            ${bold('Channel:')} ${channel}
+            ${bold('Messages:')} ${amount}
+            ${bold('Staff:')} ${interaction.user}
+            ${bold('Time:')} ${time(new Date())}
+            `).setTitle('Channel Messages Cleared');
 
-                void postToModLog(interaction, [embed]);
-            }
+            void postToModLog(interaction, [embed]);
         }
     }
 }
