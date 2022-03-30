@@ -17,14 +17,18 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const buffer = await this.image(interaction);
 
         if (typeof buffer === 'string') {
             return { content: buffer }
         }
 
-        return new MessageAttachment(buffer, 'disabled.png');
+        return {
+            files: [
+                new MessageAttachment(buffer, 'disabled.png')
+            ]
+        }
     }
 
     async image (interaction: ChatInputCommandInteraction): Promise<Buffer | string> {

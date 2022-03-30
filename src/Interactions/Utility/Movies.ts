@@ -3,7 +3,7 @@ import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, bold, hyperlink, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, MessageActionRowComponent, time } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -37,7 +37,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const movies = await searchMovie(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)

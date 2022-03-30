@@ -5,9 +5,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@discordjs/builders';
 import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { Activity, ChatInputCommandInteraction, GuildMember, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
+import { Activity, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
 import { join } from 'path';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
@@ -76,11 +76,11 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {
-            return Embed.ok()
+            const embed = Embed.ok()
                 .setAuthor({
                     name: option.displayName,
                     iconURL: option.user.displayAvatarURL()
@@ -103,6 +103,10 @@ export class kInteraction extends Interactions {
                     }
                 )
                 .setFooter({ text: 'For general user info mention a user!' });
+
+            return {
+                embeds: [embed]
+            }
         } else if (option instanceof Role) {
             const embed = Embed.ok()
                 .setDescription(`
@@ -125,7 +129,9 @@ export class kInteraction extends Interactions {
                 embed.setImage(option.iconURL());
             }
 
-            return embed;
+            return {
+                embeds: [embed]
+            }
         } else if (option instanceof User) {
             const member = option.equals(interaction.user)
                 ? interaction.member
@@ -143,7 +149,7 @@ export class kInteraction extends Interactions {
                 .filter(f => getEmojis()?.has(f))
                 .map(f => getEmojis()?.get(f));
 
-            return Embed.ok(formatPresence(guildMember?.presence?.activities))
+            const embed = Embed.ok(formatPresence(guildMember?.presence?.activities))
                 .setAuthor({
                     name: option.tag,
                     iconURL: option.displayAvatarURL()
@@ -156,6 +162,10 @@ export class kInteraction extends Interactions {
                     { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
                     { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
                 );
+
+            return {
+                embeds: [embed]
+            }
         }
     }
 }

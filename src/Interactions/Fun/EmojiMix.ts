@@ -4,7 +4,7 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
 import { randomUUID } from 'crypto';
 import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
@@ -88,7 +88,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | void> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
         const subcommand = interaction.options.getSubcommand(true);
 
         if (subcommand === Subcommands.LIST) {
@@ -220,8 +220,12 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return Embed.ok()
+        const embed = Embed.ok()
             .setTitle(`${emojiOne} + ${emojiTwo} =`)
             .setImage(j.results[0].url);
+
+        return {
+            embeds: [embed]
+        }
     }
 }

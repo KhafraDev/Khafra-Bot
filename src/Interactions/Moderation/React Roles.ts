@@ -82,7 +82,7 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const icon = interaction.options.getString('icon');
@@ -176,6 +176,10 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`);
+        return {
+            embeds: [
+                Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`)
+            ]
+        }
     }
 }

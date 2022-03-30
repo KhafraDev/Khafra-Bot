@@ -1,6 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import {
     GoogleLanguages, GoogleTranslate, LibreTranslate,
     LibreTranslateGetLanguages
@@ -46,7 +45,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions | undefined> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);
@@ -70,7 +69,11 @@ export class kInteraction extends Interactions {
                 }
             );
 
-            return embed.setDescription(translated);
+            return {
+                embeds: [
+                    embed.setDescription(translated)
+                ]
+            }
         } else if (engine === 'libretranslate') {
             const supported = await LibreTranslateGetLanguages();
             const translated = await LibreTranslate({
@@ -90,7 +93,11 @@ export class kInteraction extends Interactions {
                 }
             }
 
-            return embed.setDescription(translated.translatedText);
+            return {
+                embeds: [
+                    embed.setDescription(translated.translatedText)
+                ]
+            }
         }
     }
 }

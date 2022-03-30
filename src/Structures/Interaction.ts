@@ -26,8 +26,6 @@ interface SubcommandOptions {
 }
 
 type HandlerReturn =
-    | import('@discordjs/builders').UnsafeEmbed
-    | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
     | null
     | void;

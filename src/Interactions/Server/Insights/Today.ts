@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
-import { time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { time } from '@discordjs/builders';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Insights {
@@ -18,7 +18,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
@@ -46,12 +46,15 @@ export class kSubCommand extends InteractionSubCommand {
             ? rows[0]
             : {};
         const locale = interaction.guild?.preferredLocale ?? 'en-US';
-
-        return Embed.ok().setDescription(`
+        const embed = Embed.ok().setDescription(`
         ✅ Here are the insights for today, as of ${time(new Date(), 'f')}!
         
         • ${k_joined.toLocaleString(locale)} member${plural(k_joined)} joined!
         • ${k_left.toLocaleString(locale)} member${plural(k_left)} left!
         `);
+
+        return {
+            embeds: [embed]
+        }
     }
 }

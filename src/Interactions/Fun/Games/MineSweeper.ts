@@ -1,7 +1,7 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Board } from '#khaf/utility/commands/MineSweeper';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -11,7 +11,11 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (): Promise<MessageEmbed> {
-        return Embed.ok(Board());
+    async handle (): Promise<InteractionReplyOptions> {
+        return {
+            embeds: [
+                Embed.ok(Board())
+            ]
+        }
     }
 }

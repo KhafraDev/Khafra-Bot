@@ -52,7 +52,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const option =
 			interaction.options.getAttachment('image')?.proxyURL ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
@@ -64,7 +64,11 @@ export class kSubCommand extends InteractionSubCommand {
             return { content: buffer }
         }
 
-        return new MessageAttachment(buffer, 'deepfry.jpeg');
+        return {
+            files: [
+                new MessageAttachment(buffer, 'deepfry.jpeg')
+            ]
+        }
     }
 
     async image (avatarURL: string): Promise<Buffer | string> {

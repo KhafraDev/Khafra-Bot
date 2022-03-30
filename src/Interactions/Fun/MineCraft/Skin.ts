@@ -1,7 +1,7 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActionRow, bold, MessageActionRowComponent, UnsafeEmbed } from '@discordjs/builders';
+import { ActionRow, bold, MessageActionRowComponent } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
 import { Buffer } from 'buffer';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
@@ -15,7 +15,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | UnsafeEmbed> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const username = interaction.options.getString('username', true);
         const type = interaction.options.getString('type') ?? 'frontfull';
         const uuid = await UUID(username);
@@ -53,8 +53,12 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        return Embed.ok(description).setImage(
+        const embed = Embed.ok(description).setImage(
             `https://visage.surgeplay.com/${type}/512/${uuid.id}`
         );
+
+        return {
+            embeds: [embed]
+        }
     }
 }

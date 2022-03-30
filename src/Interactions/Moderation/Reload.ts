@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import {
     ApplicationCommandOptionType,
     ApplicationCommandPermissionType,
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const member = interaction.member;
 
         if (!member || !interaction.guild) {
@@ -138,6 +138,12 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return Embed.ok(`✅ Update ${inlineCode(cachedCommand.data.name)} to allow ${roles.map(v => `${v}`).join(', ')} to use it.`);
+        return {
+            embeds: [
+                Embed.ok(
+                    `✅ Update ${inlineCode(cachedCommand.data.name)} to allow ${roles.map(v => `${v}`).join(', ')} to use it.`
+                )
+            ]
+        }
     }
 }

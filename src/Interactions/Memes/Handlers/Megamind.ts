@@ -3,7 +3,7 @@ import { templates } from '#khaf/utility/Constants/Path.js';
 import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 
 let image: Image | undefined;
@@ -16,10 +16,14 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const buffer = await this.image(interaction);
 
-        return new MessageAttachment(buffer, 'no_beaches.png');
+        return {
+            files: [
+                new MessageAttachment(buffer, 'no_beaches.png')
+            ]
+        }
     }
 
     async image (interaction: ChatInputCommandInteraction): Promise<Buffer> {

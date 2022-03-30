@@ -21,7 +21,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const option =
 			interaction.options.getAttachment('image') ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
@@ -33,7 +33,11 @@ export class kSubCommand extends InteractionSubCommand {
             return { content: buffer }
         }
 
-        return new MessageAttachment(Buffer.from(buffer), 'magik.png');
+        return {
+            files: [
+                new MessageAttachment(Buffer.from(buffer), 'magik.png')
+            ]
+        }
     }
 
     async image (avatarURL: string | MessageAttachment): Promise<Uint8Array | string> {

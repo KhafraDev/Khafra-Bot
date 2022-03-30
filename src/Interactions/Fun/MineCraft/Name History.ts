@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, bold, time, UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, bold, time } from '@discordjs/builders';
 import { getNameHistory, UUID } from '@khaf/minecraft';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -12,7 +12,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<UnsafeEmbed | InteractionReplyOptions> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const username = interaction.options.getString('username', true);
         const uuid = await UUID(username);
         const nameHistory = uuid !== null ? await getNameHistory(uuid.id) : null;
@@ -37,8 +37,12 @@ export class kSubCommand extends InteractionSubCommand {
             description += line;
         }
 
-        return Embed.ok(description).setAuthor({
+        const embed = Embed.ok(description).setAuthor({
             name: `${uuid.name} (${uuid.id})`
         });
+
+        return {
+            embeds: [embed]
+        }
     }
 }

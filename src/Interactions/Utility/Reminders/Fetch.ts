@@ -36,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const amount = interaction.options.getInteger('amount') ?? 100;
         const trueAmount = interaction.inRawGuild()
             ? inRange(amount) ? amount : 10
@@ -58,7 +58,9 @@ export class kSubCommand extends InteractionSubCommand {
                 ephemeral: true
             }
         } else if (embeds.length === 1 || interaction.inRawGuild()) {
-            return embeds[0];
+            return {
+                embeds: [embeds[0]]
+            }
         }
 
         const [err, int] = await dontThrow(interaction.editReply({

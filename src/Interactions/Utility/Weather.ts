@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { bold, time } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const location = interaction.options.getString('location', true);
         const results = await weather(location);
 
@@ -49,7 +49,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
+        const embed = Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
             .setThumbnail(first.iconLink)
             .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
             .setFooter({ text: '© 2020 HERE' })
@@ -61,5 +61,9 @@ export class kInteraction extends Interactions {
                 { name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true },
                 { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
             );
+
+        return {
+            embeds: [embed]
+        }
     }
 }

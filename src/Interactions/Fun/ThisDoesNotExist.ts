@@ -4,7 +4,7 @@ import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, hyperlink, inlineCode, italic, underscore, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const type = interaction.options.getString('type', true);
         if (type === 'tdne_fuhomer') {
             const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
@@ -46,7 +46,11 @@ export class kInteraction extends Interactions {
                 }
             }
 
-            return Embed.ok().setImage(homer);
+            return {
+                embeds: [
+                    Embed.ok().setImage(homer)
+                ]
+            }
         } else if (type === 'tdne_word') {
             const [err, word] = await dontThrow(thisWordDoesNotExist());
 
@@ -57,7 +61,7 @@ export class kInteraction extends Interactions {
                 }
             }
 
-            return Embed.ok(`
+            const embed = Embed.ok(`
             ${bold(word.word.word.toUpperCase())} - ${word.word.pos}
             ${italic(word.word.syllables.join(' − '))}
             ${inlineCode(word.word.definition)}
@@ -65,6 +69,8 @@ export class kInteraction extends Interactions {
 
             ${hyperlink('View Online', word.permalink_url)}
             `);
+
+            return { embeds: [embed] }
         } else {
             const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE));
 

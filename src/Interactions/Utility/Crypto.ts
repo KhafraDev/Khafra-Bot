@@ -3,7 +3,7 @@ import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { bold, inlineCode, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const currencies = await CoinGecko.get(
             interaction.options.getString('search', true),
             () => void dontThrow(interaction.deferReply())
@@ -72,7 +72,11 @@ export class kInteraction extends Interactions {
                 { name: bold('% Change 24H:'),  value: `${currency.price_change_percentage_24h}%`, inline: true }
             );
 
-        if (!Array.isArray(currencies)) return embed;
+        if (!Array.isArray(currencies)) {
+            return {
+                embeds: [embed]
+            }
+        }
 
         return {
             content: currencies.length === 1 ? null : stripIndents`

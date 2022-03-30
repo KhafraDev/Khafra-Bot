@@ -6,12 +6,11 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { bold, inlineCode, UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import {
     ChatInputCommandInteraction,
     Interaction,
     InteractionReplyOptions,
-    MessageAttachment,
     MessageContextMenuCommandInteraction,
     UserContextMenuCommandInteraction
 } from 'discord.js';
@@ -87,13 +86,7 @@ export class kEvent extends Event<'interactionCreate'> {
                 param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`;
                 param.ephemeral = true;
             } else {
-                if (result instanceof UnsafeEmbed) {
-                    param.embeds = [result];
-                } else if (result instanceof MessageAttachment) {
-                    param.files = [result];
-                } else {
-                    Object.assign(param, result);
-                }
+                Object.assign(param, result);
             }
 
             if (command.options.replyOpts)

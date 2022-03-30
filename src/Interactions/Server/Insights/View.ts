@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { table } from '#khaf/utility/CLITable.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { codeBlock } from '@discordjs/builders';
 import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Insights {
@@ -19,7 +19,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const id = interaction.guildId ?? interaction.guild?.id;
 
         if (!id) {
@@ -68,6 +68,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         const t = table({ Dates, Joins, Leaves });
 
-        return Embed.ok().setDescription(codeBlock(t));
+        return {
+            embeds: [
+                Embed.ok().setDescription(codeBlock(t))
+            ]
+        }
     }
 }

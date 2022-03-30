@@ -1,7 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
 import { Buffer } from 'buffer';
 import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
@@ -27,12 +26,16 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | UnsafeEmbed> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const image = interaction.options.getAttachment('image', true);
         const cartoon = await Cartoonize.cartoonize(image);
 
         if (!cartoon) {
-            return Embed.error('Failed to extract the image from the HTML. 😕');
+            return {
+                embeds: [
+                    Embed.error('Failed to extract the image from the HTML. 😕')
+                ]
+            }
         }
 
         const { body } = await request(cartoon);

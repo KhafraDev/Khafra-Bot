@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, GuildMember, InteractionReplyOptions } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
-import { hyperlink, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | MessageEmbed> {
+    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(
@@ -72,8 +72,12 @@ export class kInteraction extends Interactions {
             desc += line;
         }
 
-        return Embed.ok()
+        const embed = Embed.ok()
             .setDescription(desc)
             .setThumbnail(image.url);
+
+        return {
+            embeds: [embed]
+        }
     }
 }

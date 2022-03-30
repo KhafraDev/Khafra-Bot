@@ -3,7 +3,7 @@ import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { GifEncoder } from '@skyra/gifenc';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
+import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 import { buffer } from 'stream/consumers';
 import { request } from 'undici';
@@ -31,13 +31,17 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const user = interaction.options.getUser('person', true);
         const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
 
         const buffer = await this.image(avatarURL);
 
-        return new MessageAttachment(buffer, 'triggered.gif');
+        return {
+            files: [
+                new MessageAttachment(buffer, 'triggered.gif')
+            ]
+        }
     }
 
     async image (avatarURL: string): Promise<Buffer> {
