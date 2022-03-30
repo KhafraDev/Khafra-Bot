@@ -3,7 +3,6 @@ build
 *.js
 !scripts/*.js
 assets/interaction_last_deployed.txt
-assets/JSON/stats.json
 *.rdb
 
 # Logs
