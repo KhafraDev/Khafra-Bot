@@ -1,8 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { codeBlock } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { inspect } from 'util';
 import { createContext, runInContext } from 'vm';
 

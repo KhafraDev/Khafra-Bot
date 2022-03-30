@@ -1,7 +1,7 @@
 import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
@@ -10,7 +10,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { time } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, GuildMember } from 'discord.js';
+import type { AnyChannel, GuildMember } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));

@@ -1,9 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

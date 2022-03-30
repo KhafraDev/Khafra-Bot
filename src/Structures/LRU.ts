@@ -1,14 +1,14 @@
 import { setInterval } from 'timers';
 
 interface LRUOptions {
-    maxSize?: number,
+    maxSize?: number
     maxAgeMs?: number
 }
 
-type LRUCache<K extends string, V> = {
-    value: V,
-    modified: number,
-    next: K | null,
+interface LRUCache<K extends string, V> {
+    value: V
+    modified: number
+    next: K | null
     prev: K | null
 }
 

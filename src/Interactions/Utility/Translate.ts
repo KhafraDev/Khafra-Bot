@@ -4,8 +4,8 @@ import {
     GoogleLanguages, GoogleTranslate, LibreTranslate,
     LibreTranslateGetLanguages
 } from '@khaf/translate';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

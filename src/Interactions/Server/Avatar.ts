@@ -1,8 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ImageExtension, ImageSize } from '@discordjs/rest';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ImageExtension, ImageSize } from '@discordjs/rest';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];

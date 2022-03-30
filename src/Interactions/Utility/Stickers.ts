@@ -3,8 +3,10 @@ import { Interactions } from '#khaf/Interaction';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { inlineCode } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment, Sticker } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, Sticker } from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 

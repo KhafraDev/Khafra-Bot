@@ -2,7 +2,7 @@ import { Command } from '#khaf/Command';
 import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { StickerFormatType } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

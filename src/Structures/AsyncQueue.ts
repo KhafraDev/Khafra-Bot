@@ -1,6 +1,6 @@
 interface DeferredPromise {
-    resolve: () => void,
-    reject: () => void,
+    resolve: () => void
+    reject: () => void
     promise: Promise<void>
 }
 

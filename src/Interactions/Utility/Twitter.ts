@@ -3,9 +3,9 @@ import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { ActionRow, MessageActionRowComponent } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { ActionRow, type MessageActionRowComponent } from '@discordjs/builders';
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

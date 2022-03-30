@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

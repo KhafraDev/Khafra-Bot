@@ -2,13 +2,13 @@ import { Buffer } from 'buffer';
 import { env } from 'process';
 import { request } from 'undici';
 import { URL, URLSearchParams } from 'url';
-import { SpotifyResult } from './types/Spotify';
+import type { SpotifyResult } from './types/Spotify';
 
-type Token = {
-    access_token: string;
-    token_type: string;
-    expires_in: number;
-    scope?: string;
+interface Token {
+    access_token: string
+    token_type: string
+    expires_in: number
+    scope?: string
 }
 
 class Spotify {

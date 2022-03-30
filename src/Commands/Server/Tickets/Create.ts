@@ -1,12 +1,13 @@
-import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { randomUUID } from 'crypto';
 import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { CategoryChannel, Message, TextChannel } from 'discord.js';
+import type { CategoryChannel, Message, TextChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 

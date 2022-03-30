@@ -1,9 +1,10 @@
 import { KhafraClient } from '#khaf/Bot';
-import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

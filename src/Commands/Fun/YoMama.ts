@@ -4,7 +4,7 @@ import { assets } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 import { readFileSync } from 'fs';
 
 // "jokes"

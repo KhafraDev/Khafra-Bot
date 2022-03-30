@@ -2,7 +2,7 @@ import { InteractionAutocomplete } from '#khaf/Interaction';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { ApplicationCommandOptionChoice, AutocompleteInteraction } from 'discord.js';
+import type { ApplicationCommandOptionChoice, AutocompleteInteraction } from 'discord.js';
 import { join } from 'path';
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json');

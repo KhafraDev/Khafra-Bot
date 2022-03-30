@@ -4,11 +4,11 @@ import '#khaf/utility/__proto__.js';
 import '#khaf/utility/ImageFonts.js';
 
 import { KhafraClient } from '#khaf/Bot';
-import { Event } from '#khaf/Event';
+import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { RestEvents } from '@discordjs/rest';
+import type { RestEvents } from '@discordjs/rest';
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10';
-import { ClientEvents, Partials } from 'discord.js';
+import { type ClientEvents, Partials } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     name: T

@@ -3,7 +3,8 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { URLSearchParams } from 'url';
 import { request } from 'undici';
 

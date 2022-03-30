@@ -2,7 +2,7 @@ import { client } from '#khaf/Client';
 import { sql } from '#khaf/database/Postgres.js';
 import { logger } from '#khaf/Logger';
 import { Timer } from '#khaf/Timer';
-import { kReminder } from '#khaf/types/KhafraBot.js';
+import type { kReminder } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { time } from '@discordjs/builders';
 

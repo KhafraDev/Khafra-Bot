@@ -1,21 +1,23 @@
 import { KhafraClient } from '#khaf/Bot';
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import type {
+    MessageActionRowComponent,
+    UnsafeEmbed} from '@discordjs/builders';
 import {
     ActionRow,
     bold,
     codeBlock,
     hyperlink,
     inlineCode,
-    MessageActionRowComponent,
-    UnsafeEmbed,
     UnsafeSelectMenuComponent,
     UnsafeSelectMenuOption
 } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 let folders: string[] | null = null;
 

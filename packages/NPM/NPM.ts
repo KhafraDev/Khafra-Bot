@@ -1,5 +1,5 @@
 import { request } from 'undici';
-import { INPMPackage } from './types/NPM';
+import type { INPMPackage } from './types/NPM';
 
 export const npm = async (packageName: string): Promise<INPMPackage> => {
     const name = encodeURIComponent(packageName);

@@ -2,9 +2,9 @@ import { decodeXML } from 'entities';
 import { request } from 'undici';
 import { URLSearchParams } from 'url';
 import { setInterval } from 'timers';
-import { Reddit } from './types/BadMeme.d';
+import type { Reddit } from './types/BadMeme.d';
 
-export { Reddit };
+export type { Reddit };
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -43,7 +43,7 @@ export const badmeme = async (
     timeframe: `${Timeframe}` = Timeframe.MONTH
 ): Promise<
     IBadMemeCache |
-    { message: string; error: number; reason?: string } |
+    { message: string, error: number, reason?: string } |
     null
 > => {
     subreddit = subreddit.toLowerCase();
@@ -68,9 +68,9 @@ export const badmeme = async (
 
     if ('error' in j) {
         return j as {
-            message: string;
-            error: number;
-            reason: string;
+            message: string
+            error: number
+            reason: string
         };
     } else if (!j.data || j.data.children.length === 0) {
         return null;

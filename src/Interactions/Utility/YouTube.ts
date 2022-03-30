@@ -1,11 +1,15 @@
 import { Interactions } from '#khaf/Interaction';
-import { YouTube, YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
+import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, MessageActionRowComponent, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, Message, MessageComponentInteraction } from 'discord.js';
+import { ActionRow, bold, time, type MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import {
+    InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions,
+    type Message,
+    type MessageComponentInteraction
+} from 'discord.js';
 
 function * format(items: YouTubeSearchResults): Generator<MessageEmbed, void, unknown> {
     for (let i = 0; i < items.items.length; i++) {

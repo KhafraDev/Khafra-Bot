@@ -1,7 +1,7 @@
 import { env } from 'process';
 import { request, type Dispatcher } from 'undici';
 import { URLSearchParams } from 'url';
-import { HereResult } from './types/HereWeather';
+import type { HereResult } from './types/HereWeather';
 
 const consumeBody = async (res: Dispatcher.ResponseData['body']): Promise<void> => {
     for await (const _chunk of res) {}

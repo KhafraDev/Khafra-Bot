@@ -5,9 +5,11 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, bold, hyperlink, inlineCode, MessageActionRowComponent, UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent, UnsafeEmbed } from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, ButtonInteraction, Message, Snowflake } from 'discord.js';
+import type { AnyChannel, Message, Snowflake } from 'discord.js';
+import { ButtonInteraction } from 'discord.js';
 import { once } from 'events';
 
 const perms = PermissionFlagsBits.SendMessages;

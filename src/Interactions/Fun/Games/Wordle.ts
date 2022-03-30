@@ -4,18 +4,21 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
 import type { Buffer } from 'buffer';
 import { InteractionType } from 'discord-api-types/v10';
-import {
+import type {
     ChatInputCommandInteraction,
-    InteractionCollector,
     InteractionReplyOptions,
-    Message,
-    MessageAttachment,
     MessageComponentInteraction,
     WebhookEditMessageOptions
+} from 'discord.js';
+import {
+    InteractionCollector,
+    Message,
+    MessageAttachment
 } from 'discord.js';
 import { readFileSync } from 'fs';
 import { clearInterval, setTimeout } from 'timers';

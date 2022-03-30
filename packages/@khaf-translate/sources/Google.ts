@@ -7,7 +7,7 @@
 import { request } from 'undici';
 import { URL, URLSearchParams } from 'url';
 
-type Opts = { to?: string, from?: string };
+interface Opts { to?: string, from?: string }
 
 export const langs = [
     'auto', 'af', 'sq', 'am', 'ar',

@@ -1,7 +1,7 @@
 import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildMember, PermissionResolvable, RecursiveReadonlyArray, Role } from 'discord.js';
+import { GuildMember, type PermissionResolvable, type RecursiveReadonlyArray, Role } from 'discord.js';
 
 const isRecursiveReadonlyArray = <T>(item: unknown):
     item is RecursiveReadonlyArray<T> => Array.isArray(item);

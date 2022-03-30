@@ -39,12 +39,12 @@ interface ITheOnionAPI {
         isRoundup: boolean
         relatedModule: unknown
         defaultBlogId: number
-        approved: boolean,
-        headline:string,
-        headlineSfw:string,
+        approved: boolean
+        headline:string
+        headlineSfw:string
         subhead: unknown[]
         body: unknown[]
-        lightbox: boolean,
+        lightbox: boolean
         imageRights: string
         hideCredit: boolean
         type: string

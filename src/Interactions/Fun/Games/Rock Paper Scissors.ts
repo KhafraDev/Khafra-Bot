@@ -2,9 +2,11 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import { InteractionCollector } from 'discord.js';
 
 type Keys = keyof typeof emojis;
 

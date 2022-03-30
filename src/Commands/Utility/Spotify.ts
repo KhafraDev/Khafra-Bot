@@ -1,9 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
 import { ActivityType } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

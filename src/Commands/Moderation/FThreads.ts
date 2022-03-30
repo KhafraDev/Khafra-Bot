@@ -4,9 +4,10 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, bold, inlineCode, italic, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, bold, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildChannel, Message } from 'discord.js';
+import type { GuildChannel, Message } from 'discord.js';
 
 const threadPerms =
     PermissionFlagsBits.ManageThreads |

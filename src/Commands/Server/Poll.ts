@@ -6,9 +6,10 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, TextBasedChannel } from 'discord.js';
+import type { Message, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 interface Settings {

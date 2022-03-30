@@ -1,9 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

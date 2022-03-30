@@ -2,11 +2,11 @@ import { client } from '#khaf/Client';
 import { sql } from '#khaf/database/Postgres.js';
 import { logger } from '#khaf/Logger';
 import { Timer } from '#khaf/Timer';
-import { Giveaway } from '#khaf/types/KhafraBot.js';
+import type { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { User } from 'discord.js';
+import type { User } from 'discord.js';
 
 export class GiveawayTimer extends Timer {
     constructor () {

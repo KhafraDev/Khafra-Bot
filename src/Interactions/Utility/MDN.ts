@@ -4,10 +4,12 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import { fetchMDN } from '@khaf/mdn';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));

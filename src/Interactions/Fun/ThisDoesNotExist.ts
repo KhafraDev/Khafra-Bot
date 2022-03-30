@@ -1,12 +1,14 @@
 import { Interactions } from '#khaf/Interaction';
 import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
-import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
+import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist';
+import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor () {

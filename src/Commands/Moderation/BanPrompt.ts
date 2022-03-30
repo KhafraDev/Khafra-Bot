@@ -1,4 +1,5 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -6,9 +7,10 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 

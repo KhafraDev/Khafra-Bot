@@ -1,11 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { request } from 'undici';
 
 interface BunniesIO {
     thisServed: number
     totalServed: number
-    id: `${number}`,
+    id: `${number}`
     media: {
         gif: string
         poster: string

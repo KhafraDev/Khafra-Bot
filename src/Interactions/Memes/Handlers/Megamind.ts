@@ -2,8 +2,9 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
-import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { Buffer } from 'buffer';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 
 let image: Image | undefined;

@@ -1,9 +1,11 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
+import type { Message } from 'discord.js';
 
 type ComponentTypes = Exclude<keyof typeof Components, 'link'>
 

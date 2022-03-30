@@ -1,5 +1,6 @@
-import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -10,7 +11,7 @@ import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 const MAX_SECS = parseStrToMs('6h')! / 1000;
 const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true });

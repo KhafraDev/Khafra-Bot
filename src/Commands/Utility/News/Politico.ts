@@ -22,7 +22,7 @@ interface IPolitico {
         'media:credit': string
         'media:title': string
         'media:thumbnail': string
-    },
+    }
     'dc:creator': string
     'dc:contributor': string
     'content:encoded': string

@@ -1,7 +1,7 @@
 import { request } from 'undici';
 import { URLSearchParams } from 'url';
 
-import {
+import type {
     WikipediaSearch,
     WikipediaSummary
 } from './types/Wikipedia';

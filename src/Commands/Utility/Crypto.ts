@@ -1,9 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { time, type UnsafeEmbed } from '@discordjs/builders';
-import { Message, ReplyMessageOptions } from 'discord.js';
+import type { Message, ReplyMessageOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
 

@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { plural } from '#khaf/utility/String.js';
 import { time } from '@discordjs/builders';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Insights {
     k_left: number

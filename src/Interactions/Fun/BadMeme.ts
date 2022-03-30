@@ -1,7 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js';
 
 const getReasonString = (reason: string): string => {
     switch (reason) {

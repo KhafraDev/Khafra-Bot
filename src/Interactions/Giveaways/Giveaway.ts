@@ -1,9 +1,11 @@
 import { Interactions } from '#khaf/Interaction';
+import type {
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10';
 import {
     ApplicationCommandOptionType,
     ChannelType,
-    PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
+    PermissionFlagsBits
 } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {

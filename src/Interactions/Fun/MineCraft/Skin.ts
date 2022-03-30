@@ -1,10 +1,12 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActionRow, bold, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, bold } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 
 export class kSubCommand extends InteractionSubCommand {

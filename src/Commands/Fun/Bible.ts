@@ -1,10 +1,11 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 interface IBibleVerse {
     idx: number

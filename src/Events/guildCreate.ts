@@ -4,7 +4,7 @@ import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ApplicationCommandPermissionType } from 'discord-api-types/v10';
-import { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
+import type { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
 
 export class kEvent extends Event<'guildCreate'> {
     name = 'guildCreate' as const;

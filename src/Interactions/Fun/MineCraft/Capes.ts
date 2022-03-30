@@ -4,7 +4,8 @@ import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 
 // Rinse - optifine and migrator cape

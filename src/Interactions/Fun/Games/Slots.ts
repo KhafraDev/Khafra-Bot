@@ -4,8 +4,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
-import { Buffer } from 'buffer';
-import { InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { Buffer } from 'buffer';
+import type { InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 
 const enum Dims {

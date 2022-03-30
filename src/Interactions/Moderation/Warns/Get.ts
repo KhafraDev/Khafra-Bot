@@ -1,9 +1,9 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Warning } from '#khaf/types/KhafraBot.js';
+import type { Warning } from '#khaf/types/KhafraBot.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface Total {
     total_points: string

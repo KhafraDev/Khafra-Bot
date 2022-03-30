@@ -1,6 +1,6 @@
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 const basic =
     PermissionFlagsBits.ViewChannel |

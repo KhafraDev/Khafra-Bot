@@ -3,8 +3,9 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { inlineCode } from '@discordjs/builders';
-import { APIApplicationCommand, Routes } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { APIApplicationCommand} from 'discord-api-types/v10';
+import { Routes } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher(

@@ -1,8 +1,9 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER });

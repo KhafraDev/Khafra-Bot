@@ -1,7 +1,7 @@
 import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -9,7 +9,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
 import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildBan, User } from 'discord.js';
+import type { GuildBan, User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 

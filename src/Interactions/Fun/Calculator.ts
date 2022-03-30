@@ -3,9 +3,12 @@ import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, codeBlock, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, codeBlock, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { InteractionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import { InteractionCollector } from 'discord.js';
 import { createContext, runInContext } from 'vm';
 
 class Parser extends Array<string> {

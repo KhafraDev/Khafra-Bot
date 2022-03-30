@@ -1,6 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import { readdirSync } from 'fs';
 import { extname } from 'path';
 

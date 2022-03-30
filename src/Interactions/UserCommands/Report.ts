@@ -5,8 +5,9 @@ import { interactionFetchChannel, interactionGetGuildSettings } from '#khaf/util
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders';
-import { ApplicationCommandType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandType } from 'discord-api-types/v10';
+import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js';
 import { argv } from 'process';
 
 const args = new Minimalist(argv.slice(2).join(' '));

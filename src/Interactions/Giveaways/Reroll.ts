@@ -7,7 +7,7 @@ import { plural } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, ChatInputCommandInteraction, InteractionReplyOptions, User } from 'discord.js';
+import type { AnyChannel, ChatInputCommandInteraction, InteractionReplyOptions, User } from 'discord.js';
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
 const perms =

@@ -6,8 +6,10 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { bold, inlineCode, italic, time } from '@discordjs/builders';
-import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { Activity, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, Role, Snowflake, SnowflakeUtil, User, UserFlagsString } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js';
+import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js';
 import { join } from 'path';
 
 const formatPresence = (activities: Activity[] | undefined): string => {

@@ -1,6 +1,6 @@
 import { KhafraClient } from '#khaf/Bot';
-import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import {
+import type { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     InteractionReplyOptions,

@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { codeBlock } from '@discordjs/builders';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { InteractionReplyOptions } from 'discord.js';
 
 const boomer1984 = (): string =>
     `⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 

@@ -4,9 +4,11 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message } from 'discord.js';
+import type { GuildBasedChannel, GuildChannelCloneOptions, Message } from 'discord.js';
+import { GuildChannel } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

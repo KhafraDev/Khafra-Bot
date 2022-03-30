@@ -1,12 +1,12 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Warning } from '#khaf/types/KhafraBot.js';
+import type { Warning } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 interface WarningDel {
     id: Warning['id']

@@ -1,5 +1,6 @@
 import { client } from '#khaf/Client';
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -8,7 +9,8 @@ import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import { ActivityType } from 'discord-api-types/v10';
-import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
+import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js';
+import { SnowflakeUtil } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));

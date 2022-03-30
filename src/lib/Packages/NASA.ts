@@ -15,8 +15,8 @@ interface IAPOD {
 }
 
 interface NASACache {
-    copyright: string | undefined,
-    link: string,
+    copyright: string | undefined
+    link: string
     title: string
 }
 

@@ -21,7 +21,7 @@ interface IHeavy {
     guid: string
     description: string
     'post-id': number
-    'media:thumbnail': string,
+    'media:thumbnail': string
     'media:content': { 'media:title': string }[]
 }
 

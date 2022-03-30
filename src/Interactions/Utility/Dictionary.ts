@@ -2,9 +2,11 @@ import { Interactions } from '#khaf/Interaction';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { ActionRow, bold, italic, MessageActionRowComponent } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, bold, italic } from '@discordjs/builders';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

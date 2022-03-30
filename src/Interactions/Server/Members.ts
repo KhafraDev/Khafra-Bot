@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold } from '@discordjs/builders';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

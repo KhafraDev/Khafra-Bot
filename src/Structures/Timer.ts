@@ -13,7 +13,7 @@ export abstract class Timer {
 
     public abstract action (...items: unknown[]): Promise<void>;
 
-    public yieldEvery (ms: number): { [Symbol.asyncIterator](): Generator; } {
+    public yieldEvery (ms: number): { [Symbol.asyncIterator](): Generator } {
     	let i = 0;
     	return {
     		async * [Symbol.asyncIterator](): Generator {

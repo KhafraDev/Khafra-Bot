@@ -7,7 +7,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import {
+import type {
     AnyChannel,
     ChatInputCommandInteraction,
     MessageContextMenuCommandInteraction,

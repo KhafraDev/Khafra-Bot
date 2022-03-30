@@ -1,13 +1,13 @@
 import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, GuildMember } from 'discord.js';
+import type { AnyChannel, GuildMember } from 'discord.js';
 
 const basic =
     PermissionFlagsBits.ViewChannel |

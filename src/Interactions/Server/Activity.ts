@@ -3,13 +3,14 @@ import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import type {
+    APIInvite, RESTPostAPIApplicationCommandsJSONBody,
+    RESTPostAPIChannelInviteJSONBody} from 'discord-api-types/v10';
 import {
-    APIInvite,
     ApplicationCommandOptionType, ChannelType,
-    InviteTargetType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody,
-    RESTPostAPIChannelInviteJSONBody, Routes
+    InviteTargetType, PermissionFlagsBits, Routes
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js';
 
 const Activities = {
     'Poker': '755827207812677713',

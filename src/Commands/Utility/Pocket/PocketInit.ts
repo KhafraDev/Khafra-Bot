@@ -3,10 +3,11 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, bold, inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

@@ -1,14 +1,15 @@
 import { cache } from '#khaf/cache/Settings.js';
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {

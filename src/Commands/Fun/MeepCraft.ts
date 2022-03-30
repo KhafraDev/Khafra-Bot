@@ -4,7 +4,7 @@ import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { request } from 'undici';
 
 interface IMCOnline {
-    online: true,
+    online: true
 	ip: string
 	port: number
 	debug: {
@@ -33,7 +33,7 @@ interface IMCOnline {
 	hostname?: string
 	icon?: string
 	software?: string
-	map: string,
+	map: string
 	plugins?: {
 		names: string[]
 		raw: string[]

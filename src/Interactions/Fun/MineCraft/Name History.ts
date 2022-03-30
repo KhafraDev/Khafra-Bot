@@ -2,7 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, bold, time } from '@discordjs/builders';
 import { getNameHistory, UUID } from '@khaf/minecraft';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {

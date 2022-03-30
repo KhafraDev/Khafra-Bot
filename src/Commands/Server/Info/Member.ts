@@ -1,10 +1,11 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import { ActivityType } from 'discord-api-types/v10';
-import { Activity, Message } from 'discord.js';
+import type { Activity, Message } from 'discord.js';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';

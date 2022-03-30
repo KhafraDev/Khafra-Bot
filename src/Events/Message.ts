@@ -1,12 +1,13 @@
 import { KhafraClient } from '#khaf/Bot';
 import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { cache } from '#khaf/cache/Settings.js';
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
-import { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -20,7 +21,8 @@ import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { ChannelType } from 'discord-api-types/v10';
-import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import type { ReplyMessageOptions } from 'discord.js';
+import { DiscordAPIError, Message, MessageAttachment } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';
 

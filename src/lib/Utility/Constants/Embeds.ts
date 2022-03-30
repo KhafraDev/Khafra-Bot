@@ -2,7 +2,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
 import { UnsafeEmbed } from '@discordjs/builders';
-import {
+import type {
     AnyChannel,
     GuildMember,
     PermissionResolvable,

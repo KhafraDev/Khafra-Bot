@@ -11,7 +11,7 @@ export const cache = new Set<Story>();
 interface Story {
     by: string
     descendants: number
-    id: number,
+    id: number
     kids: number[]
     score: number
     time: number

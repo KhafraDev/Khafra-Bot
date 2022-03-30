@@ -6,7 +6,7 @@ import {
     CategoryChannel,
     StageChannel,
     ThreadChannel,
-    PartialDMChannel
+    type PartialDMChannel
 } from 'discord.js';
 
 export const isText = <T>(c: T): c is T & (TextChannel | NewsChannel) =>

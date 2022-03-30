@@ -203,7 +203,7 @@ export class Pocket {
         return decrpyted.toString();
     }
 
-    toObject (): { request_token: string; access_token: string; username: string | undefined } {
+    toObject (): { request_token: string, access_token: string, username: string | undefined } {
         return {
             request_token: this.encrypt(this.request_token!),
             access_token: this.encrypt(this.access_token!),

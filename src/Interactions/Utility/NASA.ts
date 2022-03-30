@@ -3,8 +3,8 @@ import { inlineCode } from '@discordjs/builders';
 import { NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

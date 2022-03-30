@@ -7,7 +7,7 @@ import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interacti
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
-import {
+import type {
     ChatInputCommandInteraction,
     Interaction,
     InteractionReplyOptions,

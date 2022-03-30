@@ -1,16 +1,19 @@
 import { rest } from '#khaf/Bot';
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
-import {
-    APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import type {
+    APIInvite, RESTPostAPIChannelInviteJSONBody} from 'discord-api-types/v10';
+import { InviteTargetType, PermissionFlagsBits, Routes
 } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 const enum Activities {
     POKER = '755827207812677713',

@@ -3,13 +3,13 @@ import { env } from 'process';
 
 interface IOwlBotWord {
     definitions: {
-        type: string,
-        definition: string,
-        example: string | null,
-        image_url: string | null,
+        type: string
+        definition: string
+        example: string | null
+        image_url: string | null
         emoji: string | null
-    }[],
-    word: string,
+    }[]
+    word: string
     pronunciation: string | null
 }
 

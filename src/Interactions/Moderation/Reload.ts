@@ -7,18 +7,22 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
-import {
-    ApplicationCommandOptionType,
-    ApplicationCommandPermissionType,
-    PermissionFlagsBits,
+import type {
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
 import {
+    ApplicationCommandOptionType,
+    ApplicationCommandPermissionType,
+    PermissionFlagsBits
+} from 'discord-api-types/v10';
+import type {
     ApplicationCommand,
     ChatInputCommandInteraction,
     GuildApplicationCommandPermissionData,
-    GuildMember,
     InteractionReplyOptions
+} from 'discord.js';
+import {
+    GuildMember
 } from 'discord.js';
 import { join } from 'path';
 import { argv } from 'process';

@@ -4,37 +4,37 @@ import { env } from 'process';
 
 interface YouTubeError {
     error: {
-        code: number,
-        message: string,
-        errors: unknown[],
+        code: number
+        message: string
+        errors: unknown[]
         status: string
     }
 }
 
 export interface YouTubeSearchResults {
-    kind: 'youtube#searchListResponse',
-    etag: string,
-    nextPageToken: string,
-    regionCode: string,
-    pageInfo: { totalResults: number, resultsPerPage: number },
+    kind: 'youtube#searchListResponse'
+    etag: string
+    nextPageToken: string
+    regionCode: string
+    pageInfo: { totalResults: number, resultsPerPage: number }
     items: {
-        kind: 'youtube#searchResult',
-        etag: string,
-        id: { kind: 'youtube#video', videoId: string },
+        kind: 'youtube#searchResult'
+        etag: string
+        id: { kind: 'youtube#video', videoId: string }
         snippet: {
-            publishedAt: Date,
-            channelId: string,
-            title: string,
-            description: string,
+            publishedAt: Date
+            channelId: string
+            title: string
+            description: string
             thumbnails: {
                 [key in 'default' | 'medium' | 'high']: {
-                    url: string,
-                    width: number,
+                    url: string
+                    width: number
                     height: number
                 }
-            },
-            channelTitle: string,
-            liveBroadcastContent: string,
+            }
+            channelTitle: string
+            liveBroadcastContent: string
             publishTime: Date
         }
     }[]

@@ -2,11 +2,12 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ImageURLOptions } from '@discordjs/rest';
+import type { ImageURLOptions } from '@discordjs/rest';
 import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
 import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 
 const options: ImageURLOptions = { extension: 'png', size: 256 };

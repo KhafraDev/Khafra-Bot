@@ -1,11 +1,12 @@
-import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
+import type { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 
 type TicketChannelTypes = TextChannel | CategoryChannel;
 type DeletedChannelTypes = TextChannel | NewsChannel | ThreadChannel;

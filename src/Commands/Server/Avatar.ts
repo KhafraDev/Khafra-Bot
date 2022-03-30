@@ -1,9 +1,10 @@
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
-import { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
-import { Message } from 'discord.js';
-import { Arguments, Command } from '../../Structures/Command.js';
+import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
+import type { Message } from 'discord.js';
+import type { Arguments} from '../../Structures/Command.js';
+import { Command } from '../../Structures/Command.js';
 
 const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];

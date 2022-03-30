@@ -1,6 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import { MessageAttachment } from 'discord.js';
 import type { Buffer } from 'buffer';
 import { createCanvas } from '@napi-rs/canvas';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';

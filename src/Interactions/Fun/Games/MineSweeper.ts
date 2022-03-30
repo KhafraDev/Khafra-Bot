@@ -1,7 +1,7 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Board } from '#khaf/utility/commands/MineSweeper';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { InteractionReplyOptions } from 'discord.js';
+import type { InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {

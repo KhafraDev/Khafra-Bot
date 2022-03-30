@@ -1,9 +1,11 @@
-import { ChatInputCommandInteraction, GuildMember, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { GuildMember } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActivityType, ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
     constructor() {

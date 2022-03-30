@@ -1,6 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { Guild } from 'discord.js';
+import type { Guild } from 'discord.js';
 
 export class kEvent extends Event<'guildDelete'> {
     name = 'guildDelete' as const;

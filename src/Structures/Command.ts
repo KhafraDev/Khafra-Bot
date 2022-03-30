@@ -1,10 +1,10 @@
 import { Cooldown } from '#khaf/cooldown/CommandCooldown.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
+import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Minimalist } from '#khaf/utility/Minimalist.js';
+import type { Minimalist } from '#khaf/utility/Minimalist.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, PermissionResolvable, Snowflake } from 'discord.js';
+import type { Message, PermissionResolvable, Snowflake } from 'discord.js';
 import { join } from 'path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));

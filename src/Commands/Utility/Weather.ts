@@ -1,8 +1,9 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
 

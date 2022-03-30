@@ -8,8 +8,9 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { ActionRow, bold, inlineCode, MessageActionRowComponent, time } from '@discordjs/builders';
-import { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, bold, inlineCode, time } from '@discordjs/builders';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
 

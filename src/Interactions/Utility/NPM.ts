@@ -1,10 +1,12 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ActionRow, bold, hyperlink, inlineCode, MessageActionRowComponent, time } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

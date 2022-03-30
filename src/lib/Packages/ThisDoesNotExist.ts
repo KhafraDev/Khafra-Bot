@@ -1,6 +1,6 @@
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Buffer } from 'buffer';
-import { MessageAttachment, ReplyMessageOptions } from 'discord.js';
+import { MessageAttachment, type ReplyMessageOptions } from 'discord.js';
 import { request } from 'undici';
 
 const formatURL = new Map<DNE, string>([

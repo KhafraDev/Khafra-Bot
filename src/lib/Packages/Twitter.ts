@@ -8,7 +8,7 @@ import { env } from 'process';
 import { request } from 'undici';
 
 type Indices = [number, number];
-type Media = {
+interface Media {
     id: number
     id_str: string
     indices: Indices
@@ -22,7 +22,8 @@ type Media = {
         [K in 'thumb' | 'large' | 'small' | 'medium']: { w: number, h: number, resize: 'crop' | 'fit' }
     }
 }
-type ExtendedMedia = Media & {
+
+interface ExtendedMedia extends Media {
     video_info: {
         aspect_ratio: Indices
         variants: {
@@ -44,7 +45,7 @@ interface ITweet {
     id_str: string
     full_text: string
     truncated: boolean
-    display_text_range: Indices,
+    display_text_range: Indices
     entities: {
         hashtags: { text: string, indices: Indices }[]
         symbols: string[]
@@ -55,7 +56,7 @@ interface ITweet {
     extended_entities?: {
         media: ExtendedMedia[]
     }
-    source: string,
+    source: string
     in_reply_to_status_id: unknown
     in_reply_to_status_id_str: unknown
     in_reply_to_user_id: unknown
@@ -104,7 +105,7 @@ interface ITweet {
         follow_request_sent: unknown
         notifications: unknown
         translator_type: string
-    },
+    }
     geo: unknown
     coordinates: unknown
     place: unknown

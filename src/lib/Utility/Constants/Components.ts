@@ -1,6 +1,6 @@
-import { APIMessage, ButtonStyle } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
-import { ActionRow, MessageActionRowComponent, UnsafeButtonComponent } from '@discordjs/builders';
+import { type APIMessage, ButtonStyle } from 'discord-api-types/v10';
+import type { Message } from 'discord.js';
+import { ActionRow, type MessageActionRowComponent, UnsafeButtonComponent } from '@discordjs/builders';
 
 export const Components = {
     approve: (label = 'approve', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()

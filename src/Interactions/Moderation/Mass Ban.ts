@@ -2,13 +2,15 @@ import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
-import {
+import type {
     APIApplicationCommandOption,
-    ApplicationCommandOptionType,
-    PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Guild, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
+} from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, Guild, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
 import { setTimeout } from 'timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;

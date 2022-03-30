@@ -3,23 +3,27 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, inlineCode, MessageActionRowComponent, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import {
-    ApplicationCommandOptionType,
-    ChannelType,
-    PermissionFlagsBits,
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type {
     RESTPostAPIApplicationCommandsJSONBody,
     Snowflake
 } from 'discord-api-types/v10';
 import {
+    ApplicationCommandOptionType,
+    ChannelType,
+    PermissionFlagsBits
+} from 'discord-api-types/v10';
+import type {
     ChatInputCommandInteraction,
-    GuildMember,
-    GuildMemberRoleManager,
     InteractionReplyOptions,
     NewsChannel,
-    Role,
     TextChannel,
-    ThreadChannel,
+    ThreadChannel} from 'discord.js';
+import {
+    GuildMember,
+    GuildMemberRoleManager,
+    Role,
     Util
 } from 'discord.js';
 import { parse } from 'twemoji-parser';

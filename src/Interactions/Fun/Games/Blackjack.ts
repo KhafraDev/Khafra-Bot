@@ -3,9 +3,11 @@ import { shuffle } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, inlineCode, MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponent} from '@discordjs/builders';
+import { ActionRow, bold, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
+import { InteractionCollector } from 'discord.js';
 
 type Card = [number, typeof suits[number]];
 

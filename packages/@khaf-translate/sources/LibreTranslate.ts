@@ -1,17 +1,17 @@
 import { fetch, FormData } from 'undici';
 
-type Options = {
-    to: string,
-    from: string,
+interface Options {
+    to: string
+    from: string
     query: string
 }
 
-type APITranslatedResponse = {
+interface APITranslatedResponse {
     translatedText: string
 }
 
 type APILanguageResponse = {
-    code: string,
+    code: string
     name: string
 }[]
 

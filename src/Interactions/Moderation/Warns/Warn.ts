@@ -1,6 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Warning } from '#khaf/types/KhafraBot.js';
+import type { Warning } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { interactionGetGuildSettings, postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -8,9 +8,10 @@ import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, GuildMember, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { GuildMember } from 'discord.js';
 
-type WarnInsert = {
+interface WarnInsert {
     insertedid: Warning['id']
     insertedpoints: Warning['k_points']
     k_ts: Warning['k_ts']

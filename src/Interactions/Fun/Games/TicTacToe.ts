@@ -3,9 +3,11 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, ButtonComponent, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { ButtonComponent, MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import { InteractionCollector } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 

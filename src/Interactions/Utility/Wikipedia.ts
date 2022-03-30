@@ -3,10 +3,11 @@ import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
-import { ActionRow, hideLinkEmbed, inlineCode, MessageActionRowComponent, UnsafeSelectMenuComponent, UnsafeSelectMenuOption } from '@discordjs/builders';
+import { ActionRow, hideLinkEmbed, inlineCode, UnsafeSelectMenuComponent, UnsafeSelectMenuOption, type MessageActionRowComponent } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
-import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, Message, SelectMenuInteraction } from 'discord.js';
+import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import type { SelectMenuInteraction} from 'discord.js';
+import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions, type Message } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {

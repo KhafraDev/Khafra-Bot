@@ -4,10 +4,13 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
+import { ActionRow, inlineCode } from '@discordjs/builders';
 import { randomUUID } from 'crypto';
-import { ApplicationCommandOptionType, InteractionType, RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { RESTPostAPIApplicationCommandsJSONBody} from 'discord-api-types/v10';
+import { ApplicationCommandOptionType, InteractionType, Routes } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import { InteractionCollector } from 'discord.js';
 import { parse } from 'twemoji-parser';
 import { request } from 'undici';
 import { URL } from 'url';
@@ -36,16 +39,16 @@ interface EmojiKitchen {
                 dims: number[]
                 size: number
             }
-        },
+        }
         created: number
         content_description: string
         h1_title: string
-        itemurl: string,
+        itemurl: string
         url: string
         tags: string[]
         flags: string[]
         hasaudio: boolean
-    }[],
+    }[]
     next: string
 }
 

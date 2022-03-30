@@ -4,7 +4,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { inlineCode, time as formatTime } from '@discordjs/builders';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
     constructor() {

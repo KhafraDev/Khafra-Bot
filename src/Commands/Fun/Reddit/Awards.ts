@@ -1,9 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { Reddit } from '@khaf/badmeme';
-import { Message } from 'discord.js';
+import type { Reddit } from '@khaf/badmeme';
+import type { Message } from 'discord.js';
 import { request } from 'undici';
 
 const PER_COIN = 1.99 / 500;

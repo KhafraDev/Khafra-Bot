@@ -1,10 +1,11 @@
-import { Arguments, Command } from '#khaf/Command';
+import type { Arguments} from '#khaf/Command';
+import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { codeBlock, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
 
 interface PocketUser {
     access_token: string
