@@ -23,7 +23,7 @@ interface ITMZ {
 }
 
 const rss = new RSSReader<ITMZ>();
-const cache = once(() => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss));
 
 export class kCommand extends Command {
     constructor () {

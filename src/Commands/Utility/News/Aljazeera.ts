@@ -22,7 +22,7 @@ interface IAljazeera {
 }
 
 const rss = new RSSReader<IAljazeera>();
-const cache = once(() => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss));
 
 export class kCommand extends Command {
     constructor () {

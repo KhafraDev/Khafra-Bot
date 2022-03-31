@@ -24,7 +24,7 @@ interface IBusinessInsider {
 }
 
 const rss = new RSSReader<IBusinessInsider>();
-const cache = once(() => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss));
 
 export class kCommand extends Command {
     constructor () {

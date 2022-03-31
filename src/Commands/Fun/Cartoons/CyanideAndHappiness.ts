@@ -19,7 +19,7 @@ interface ICyanideAndHappiness {
 const rss = new RSSReader<ICyanideAndHappiness>();
 // https://github.com/daniellowtw/explosm-rss
 // does the scraping for us, so might as well use until it's no longer available
-const cache = once(() => rss.cache('https://explosm-1311.appspot.com/'));
+const cache = once(async () => rss.cache('https://explosm-1311.appspot.com/'));
 
 export class kCommand extends Command {
     constructor () {

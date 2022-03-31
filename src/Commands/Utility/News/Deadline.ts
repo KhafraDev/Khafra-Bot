@@ -28,7 +28,7 @@ interface IDeadline {
 }
 
 const rss = new RSSReader<IDeadline>();
-const cache = once(() => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss));
 
 export class kCommand extends Command {
     constructor () {

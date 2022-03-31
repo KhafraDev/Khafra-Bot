@@ -14,7 +14,7 @@ interface IxKCD {
 }
 
 const rss = new RSSReader<IxKCD>();
-const cache = once(() => rss.cache('https://xkcd.com/rss.xml'));
+const cache = once(async () => rss.cache('https://xkcd.com/rss.xml'));
 
 export class kCommand extends Command {
     constructor () {

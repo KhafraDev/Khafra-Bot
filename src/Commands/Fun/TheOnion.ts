@@ -64,7 +64,7 @@ interface ITheOnion {
 }
 
 const rss = new RSSReader<ITheOnion>();
-const cache = once(() => rss.cache('https://www.theonion.com/rss'));
+const cache = once(async () => rss.cache('https://www.theonion.com/rss'));
 
 export class kCommand extends Command {
     constructor () {

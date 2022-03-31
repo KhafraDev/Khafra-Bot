@@ -23,7 +23,7 @@ interface INationalGeographic {
 
 const rss = new RSSReader<INationalGeographic>();
 // their official rss feed is not updated very often
-const cache = once(() => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss));
 
 export class kCommand extends Command {
     constructor () {

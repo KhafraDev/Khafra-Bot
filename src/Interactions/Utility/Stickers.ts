@@ -11,7 +11,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 const stickers: Sticker[] = [];
-const mw = once(() => client.fetchPremiumStickerPacks());
+const mw = once(async () => client.fetchPremiumStickerPacks());
 
 export class kInteraction extends Interactions {
     constructor() {
