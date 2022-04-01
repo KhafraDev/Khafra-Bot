@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -28,11 +28,14 @@ export class kCommand extends Command {
                 iconURL: message.client.user!.displayAvatarURL()
             })
             .setTimestamp()
-            .setThumbnail(message.guild.bannerURL())
+            .setThumbnail(message.guild.iconURL())
             .setDescription(`
             ${italic(message.guild.name)}
             ${inlineCode(message.guild.description ?? 'No description set')}
-            `)
+
+            ${message.guild.icon ? hyperlink('Server icon', message.guild.iconURL()!) : ''}
+            ${message.guild.banner ? hyperlink('Server banner', message.guild.bannerURL()!) : ''}
+            `.trimEnd())
             .addFields(
                 { name: bold('ID:'), value: message.guild.id, inline: true },
                 { name: bold('Verified:'), value: message.guild.verified ? 'Yes' : 'No', inline: true },
