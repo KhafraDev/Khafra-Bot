@@ -1,21 +1,60 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { once } from '#khaf/utility/Memoize.js';
 import { bold, type UnsafeEmbed } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
 import { request } from 'undici';
 
-interface IEmoji {
-    name: string
-    category: string
+type IEmoji = {
+    codePoints: string
+    identifier: string
+    comment: string
+    isSub: undefined
+    group: undefined
+} | {
+    codePoints: undefined
+    identifier: undefined
+    comment: undefined
+    isSub: string
     group: string
-    htmlCode: string[]
-    unicode: string[]
 }
 
-const cache: IEmoji[] = [];
+const cache: Record<string, { [key in keyof IEmoji]: string }> = {};
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
+const unicodeRegex = /^((?<codePoints>.*?)\s+; (?<identifier>[a-z-]+)\s+# (?<comment>(.*?))|# (?<isSub>sub)?group: (?<group>(.*?)))$/gm;
+
+const parseEmojiList = once(async () => {
+    const { body } = await request('https://unicode.org/Public/emoji/14.0/emoji-test.txt');
+    const fullList = await body.text();
+
+    const list = fullList.matchAll(unicodeRegex);
+
+    let group = '', subgroup = '';
+
+    for (const item of list) {
+        const {
+            group: newGroup,
+            isSub,
+            codePoints,
+            identifier,
+            comment
+        } = item.groups as unknown as IEmoji;
+
+        if (newGroup !== undefined) {
+            if (isSub === 'sub') {
+                subgroup = newGroup
+            } else {
+                group = newGroup;
+            }
+
+            continue;
+        }
+
+        cache[codePoints] = { group, isSub: subgroup, codePoints, identifier, comment }
+    }
+});
 
 export class kCommand extends Command {
     constructor () {
@@ -50,51 +89,41 @@ export class kCommand extends Command {
                 );
         }
 
-        if (cache.length === 0) {
-            const { body } = await request('https://emojihub.herokuapp.com/api/all');
-            const j = await body.json() as IEmoji[];
-
-            cache.push(...j);
+        if ('1F600' in cache === false) {
+            await parseEmojiList();
         }
 
         const unicodeEmoji = parse(content, { assetType: 'png' });
 
         if (unicodeEmoji.length !== 0) {
             const codePoints = toCodePoints(unicodeEmoji[0].text);
-            const emoji = cache.find(e =>
-                e.unicode.length === codePoints.length &&
-				e.unicode.every(
-				    cp => codePoints.includes(cp.slice(2).toLowerCase())
-				)
-            );
+            const key = codePoints.join(' ').toUpperCase();
 
-            if (emoji === undefined) {
+            if (key in cache === false) {
                 return Embed.error('❌ This emoji is invalid or unsupported!');
             }
 
+            const emoji = cache[key]
             return Embed.ok(unicodeEmoji[0].text)
                 .setImage(unicodeEmoji[0].url)
                 .addFields(
-                    { name: bold('Name:'), value: emoji.name, inline: true },
-                    { name: bold('Category:'), value: emoji.category, inline: true },
-                    { name: bold('Unicode:'), value: emoji.unicode.join(' '), inline: true }
+                    { name: bold('Name:'), value: emoji.comment, inline: true },
+                    { name: bold('Category:'), value: emoji.group, inline: true },
+                    { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
                 );
         }
 
-        const name = cache.find(e => e.name === content);
+        const name = Object.values(cache).find(n => n.comment.endsWith(content));
 
         if (name) {
-            const unicodeEmojiText = name.unicode
-                .map(t => String.fromCodePoint(Number.parseInt(t, 16)))
-                .join('');
-            const unicodeEmoji = parse(unicodeEmojiText, { assetType: 'png' })[0];
+            const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0];
 
             return Embed.ok(unicodeEmoji.text)
                 .setImage(unicodeEmoji.url)
                 .addFields(
-                    { name: bold('Name:'), value: name.name, inline: true },
-                    { name: bold('Category:'), value: name.category, inline: true },
-                    { name: bold('Unicode:'), value: name.unicode.join(' '), inline: true }
+                    { name: bold('Name:'), value: name.comment, inline: true },
+                    { name: bold('Category:'), value: name.group, inline: true },
+                    { name: bold('Unicode:'), value: name.codePoints, inline: true }
                 );
         }
 
