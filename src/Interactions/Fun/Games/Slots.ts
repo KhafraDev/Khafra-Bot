@@ -9,10 +9,10 @@ import type { InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 
-const enum Dims {
-    Width = 1280,
-    Height = 720
-}
+const Dims = {
+    Width: 1280,
+    Height: 720
+} as const;
 
 let image: Image | undefined;
 let bar: Image | undefined;

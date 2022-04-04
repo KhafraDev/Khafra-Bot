@@ -12,11 +12,11 @@ import { join } from 'path';
 import { performance } from 'perf_hooks';
 import { memoryUsage, version } from 'process';
 
-enum BotInfo {
-    ABOUT = 'about',
-    PING = 'ping',
-    STATS = 'stats',
-}
+const BotInfo = {
+    ABOUT: 'about',
+    PING: 'ping',
+    STATS: 'stats'
+} as const;
 
 const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
 

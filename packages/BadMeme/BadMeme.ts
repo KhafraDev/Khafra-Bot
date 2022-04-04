@@ -39,8 +39,8 @@ const getItemRespectNSFW = (
 export const badmeme = async (
     subreddit = 'dankmemes',
     nsfw = false,
-    modifier: `${SortBy}` = SortBy.NEW,
-    timeframe: `${Timeframe}` = Timeframe.MONTH
+    modifier: typeof SortBy[keyof typeof SortBy] = SortBy.NEW,
+    timeframe: typeof Timeframe[keyof typeof Timeframe] = Timeframe.MONTH
 ): Promise<
     IBadMemeCache |
     { message: string, error: number, reason?: string } |
@@ -112,24 +112,24 @@ export const badmeme = async (
 
 // https://www.jcchouinard.com/documentation-on-reddit-apis-json/
 
-export enum SortBy {
-    CONTROVERSIAL = 'controversial',
-    BEST = 'best',
-    HOT = 'hot',
-    NEW = 'new',
-    RANDOM = 'random',
-    RISING = 'rising',
-    TOP = 'top'
-}
+export const SortBy = {
+    CONTROVERSIAL: 'controversial',
+    BEST: 'best',
+    HOT: 'hot',
+    NEW: 'new',
+    RANDOM: 'random',
+    RISING: 'rising',
+    TOP: 'top'
+} as const;
 
-export enum Timeframe {
-    HOUR = 'hour',
-    DAY = 'day',
-    WEEK = 'week',
-    MONTH = 'month',
-    YEAR = 'year',
-    ALL = 'all'
-}
+export const Timeframe = {
+    HOUR: 'hour',
+    DAY: 'day',
+    WEEK: 'week',
+    MONTH: 'month',
+    YEAR: 'year',
+    ALL: 'all'
+} as const;
 
 setInterval(() => {
     const now = Date.now();

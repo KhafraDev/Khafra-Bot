@@ -23,11 +23,11 @@ import {
 import { readFileSync } from 'fs';
 import { clearInterval, setTimeout } from 'timers';
 
-const enum Dims {
-    Width = 330,
-    Box = 62,
-    GuessWidth = 29
-}
+const Dims = {
+    Width: 330,
+    Box: 62,
+    GuessWidth: 29
+} as const;
 
 // https://reichel.dev/blog/reverse-engineering-wordle.html#looking-at-the-source
 // This article did help, however none of the code

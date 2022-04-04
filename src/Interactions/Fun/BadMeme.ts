@@ -51,10 +51,10 @@ export class kInteraction extends Interactions {
         const subreddit =
             interaction.options.getString('subreddit')?.toLowerCase() ??
             'dankmemes';
-        const modifier = interaction.options.getString('sort-by') as `${SortBy}` | null;
+        const modifier = interaction.options.getString('sort-by') as typeof SortBy[keyof typeof SortBy] | null;
         const timeframe = modifier === 'top'
-            ? interaction.options.getString('timeframe') as `${Timeframe}` | null
-            : undefined
+            ? interaction.options.getString('timeframe') as typeof Timeframe[keyof typeof Timeframe] | null
+            : undefined;
 
         if (!cache.has(subreddit))
             await interaction.deferReply();

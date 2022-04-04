@@ -9,11 +9,11 @@ import { readFileSync } from 'fs';
 import { buffer } from 'stream/consumers';
 import { request } from 'undici';
 
-const enum Dimensions {
-    Width = 256,
-    Height = 256,
-    Template = 40
-}
+const Dims = {
+    Width: 256,
+    Height: 256,
+    Template: 40
+} as const;
 
 let image: Image | undefined;
 const coords =  [
@@ -48,8 +48,8 @@ export class kSubCommand extends InteractionSubCommand {
     async image (avatarURL: string): Promise<Buffer> {
         if (!image) {
             image = new Image();
-            image.width = Dimensions.Width;
-            image.height = Dimensions.Template;
+            image.width = Dims.Width;
+            image.height = Dims.Template;
             image.src = readFileSync(templates('triggered.png'));
         }
 
@@ -57,11 +57,11 @@ export class kSubCommand extends InteractionSubCommand {
         const b = Buffer.from(await body.arrayBuffer());
 
         const avatar = new Image();
-        avatar.width = Dimensions.Width;
-        avatar.height = Dimensions.Height;
+        avatar.width = Dims.Width;
+        avatar.height = Dims.Height;
         avatar.src = b;
 
-        const encoder = new GifEncoder(Dimensions.Width, Dimensions.Height + Dimensions.Template)
+        const encoder = new GifEncoder(Dims.Width, Dims.Height + Dims.Template)
             .setRepeat(0)
             .setDelay(50)
             .setQuality(100);
@@ -69,7 +69,7 @@ export class kSubCommand extends InteractionSubCommand {
         const stream = encoder.createReadStream();
         encoder.start();
 
-        const canvas = createCanvas(Dimensions.Width, Dimensions.Height + Dimensions.Template);
+        const canvas = createCanvas(Dims.Width, Dims.Height + Dims.Template);
         const ctx = canvas.getContext('2d');
 
         for (const [x, y] of coords) {
@@ -80,13 +80,13 @@ export class kSubCommand extends InteractionSubCommand {
             ctx.drawImage(
                 image,
                 0,
-                Dimensions.Width,
-                Dimensions.Height,
-                Dimensions.Template
+                Dims.Width,
+                Dims.Height,
+                Dims.Template
             );
             ctx.fillStyle = 'rgba(255, 100, 0, 0.35)';
-            ctx.fillRect(0, 0, Dimensions.Width, Dimensions.Height);
-            const bytes = ctx.getImageData(0, 0, Dimensions.Width, Dimensions.Height + Dimensions.Template).data;
+            ctx.fillRect(0, 0, Dims.Width, Dims.Height);
+            const bytes = ctx.getImageData(0, 0, Dims.Width, Dims.Height + Dims.Template).data;
             encoder.addFrame(bytes);
         }
 

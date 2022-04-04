@@ -17,12 +17,12 @@ interface Settings {
     options: string[]
 }
 
-enum Actions {
-    ADD = 'add',
-    POST = 'post',
-    CHANNEL = 'channel',
-    CANCEL = 'cancel'
-}
+const Actions = {
+    ADD: 'add',
+    POST: 'post',
+    CHANNEL: 'channel',
+    CANCEL: 'cancel'
+} as const;
 
 const emojis = [
     '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
@@ -52,7 +52,7 @@ export class kCommand extends Command {
 
     async init (message: Message<true>): Promise<void> {
         // the current option the user is setting
-        let currentOption: `${Actions}` | null = null;
+        let currentOption: typeof Actions[keyof typeof Actions] | null = null;
         const settings: Settings = {
             channel: null,
             options: []
@@ -95,7 +95,7 @@ export class kCommand extends Command {
         });
 
         interactionCollector.on('collect', async (i) => {
-            currentOption = i.customId as `${Actions}`;
+            currentOption = i.customId as typeof Actions[keyof typeof Actions];
 
             if (currentOption === Actions.POST) {
                 if (settings.channel === null || settings.options.length === 0) {

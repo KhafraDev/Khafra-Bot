@@ -15,16 +15,16 @@ import { parse } from 'twemoji-parser';
 import { request } from 'undici';
 import { URL } from 'url';
 
-const enum Subcommands {
-    LIST = 'list',
-    MIX = 'mix'
-}
+const Subcommands = {
+    LIST: 'list',
+    MIX: 'mix'
+} as const;
 
-const enum SubcommandOptions {
-    LIST = 'list',
-    FIRST = 'first',
-    SECOND = 'second'
-}
+const SubcommandOptions = {
+    LIST: 'list',
+    FIRST: 'first',
+    SECOND: 'second'
+} as const;
 
 interface EmojiKitchen {
     locale: string
