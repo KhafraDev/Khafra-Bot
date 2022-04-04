@@ -1,7 +1,7 @@
 import '#khaf/utility/load.env.js';
 import '#khaf/utility/Rejections.js';
 import '#khaf/utility/__proto__.js';
-import '#khaf/utility/ImageFonts.js';
+import '#khaf/image/ImageFonts.js';
 
 import { KhafraClient } from '#khaf/Bot';
 import type { Event } from '#khaf/Event';

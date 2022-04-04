@@ -38,7 +38,10 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const buffer = await this.image([...capes, `http://s.optifine.net/capes/${username}.png`]);
+        const buffer = await this.image([
+            ...capes,
+            `http://s.optifine.net/capes/${uuid.name}.png`
+        ]);
 
         if (typeof buffer === 'string') {
             return { content: buffer }
@@ -60,8 +63,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async image (urls: string[]): Promise<Buffer | string> {
-        const canvas = createCanvas((120 * urls.length) + (5 * urls.length), 170); // 12x17 w/ scale 10
-        const ctx = canvas.getContext('2d');
+        const buffers: Buffer[] = [];
 
         for (const url of urls) {
             const { body, statusCode } = await request(url);
@@ -74,8 +76,16 @@ export class kSubCommand extends InteractionSubCommand {
                 continue; // so we don't get an invalid body (ie. user doesn't have optifine cape)
             }
 
-            const b = Buffer.from(await body.arrayBuffer());
+            buffers.push(Buffer.from(await body.arrayBuffer()));
+        }
 
+        const canvas = createCanvas(
+            (120 * buffers.length) + (5 * (buffers.length === 1 ? 0 : buffers.length)),
+            170
+        ); // 12x17 w/ scale 10 (5 pixels between each cape, unless there is only 1 cape)
+        const ctx = canvas.getContext('2d');
+
+        for (const b of buffers) {
             const cape = new Image();
             cape.src = b;
 
@@ -84,7 +94,7 @@ export class kSubCommand extends InteractionSubCommand {
             tmpCtx.drawImage(cape, 0, 0);
 
             const data = tmpCtx.getImageData(0, 0, 12, 17);
-            const idx = urls.indexOf(url);
+            const idx = buffers.indexOf(b);
             const xOffset = (120 * idx) + (5 * idx);
 
             for (let i = 0; i < data.data.length; i += 4) {

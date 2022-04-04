@@ -1,9 +1,9 @@
+import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import type { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import { Buffer } from 'buffer';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
 import { request } from 'undici';
 

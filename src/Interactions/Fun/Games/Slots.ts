@@ -1,11 +1,11 @@
+import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { templates } from '#khaf/utility/Constants/Path.js';
-import { ImageUtil } from '#khaf/utility/ImageUtil.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { Buffer } from 'buffer';
-import type { InteractionReplyOptions} from 'discord.js';
+import type { InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
 import { readFileSync } from 'fs';
 

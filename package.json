@@ -21,7 +21,8 @@
     "#khaf/LRU": "./src/Structures/LRU.js",
     "#khaf/Timer": "./src/Structures/Timer.js",
     "#khaf/Images": "./src/Images/*",
-    "#khaf/structures/*": "./src/Structures/*"
+    "#khaf/structures/*": "./src/Structures/*",
+    "#khaf/image/*": "./src/lib/Image/*"
   },
   "dependencies": {
     "@discordjs/builders": "^0.13.0-dev.1646913825.dcd4797",
