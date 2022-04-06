@@ -1,6 +1,6 @@
+import { json } from 'node:stream/consumers';
+import { clearTimeout, setTimeout } from 'node:timers';
 import { request } from 'undici';
-import { json } from 'stream/consumers';
-import { setTimeout, clearTimeout } from 'timers';
 
 interface Batch {
     batch: number[]

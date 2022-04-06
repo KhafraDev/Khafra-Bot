@@ -4,8 +4,8 @@ import { codeBlock } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { inspect } from 'util';
-import { createContext, runInContext } from 'vm';
+import { inspect } from 'node:util';
+import { createContext, runInContext } from 'node:vm';
 
 export class kInteraction extends Interactions {
     constructor () {

@@ -1,6 +1,6 @@
+import { env } from 'node:process';
+import { URL, URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URL, URLSearchParams } from 'url';
-import { env } from 'process';
 
 interface ITMDBSearch {
     page: number

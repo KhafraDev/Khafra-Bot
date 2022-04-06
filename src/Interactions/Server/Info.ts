@@ -10,7 +10,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js';
 import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';

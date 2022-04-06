@@ -3,10 +3,10 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { inlineCode } from '@discordjs/builders';
-import type { APIApplicationCommand} from 'discord-api-types/v10';
+import type { APIApplicationCommand } from 'discord-api-types/v10';
 import { Routes } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher(
 	{} as typeof import('../../../../config.json'),

@@ -4,10 +4,10 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
-import type { Buffer } from 'buffer';
 import type { InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
-import { readFileSync } from 'fs';
+import type { Buffer } from 'node:buffer';
+import { readFileSync } from 'node:fs';
 
 const Dims = {
     Width: 1280,

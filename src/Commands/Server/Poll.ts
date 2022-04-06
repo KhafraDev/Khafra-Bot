@@ -10,7 +10,7 @@ import type { MessageActionRowComponent } from '@discordjs/builders';
 import { ActionRow, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message, TextBasedChannel } from 'discord.js';
-import { setTimeout } from 'timers/promises';
+import { setTimeout } from 'node:timers/promises';
 
 interface Settings {
     channel: TextBasedChannel | null

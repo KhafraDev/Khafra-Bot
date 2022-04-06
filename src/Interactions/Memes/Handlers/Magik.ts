@@ -5,9 +5,9 @@ import { Range } from '#khaf/utility/Valid/Number.js';
 import type { ImageURLOptions } from '@discordjs/rest';
 import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
-import { Buffer } from 'buffer';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
+import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 const options: ImageURLOptions = { extension: 'png', size: 256 };

@@ -1,4 +1,4 @@
-import { setInterval } from 'timers';
+import { setInterval } from 'node:timers';
 
 interface LRUOptions {
     maxSize?: number

@@ -1,12 +1,12 @@
 import { Interactions } from '#khaf/Interaction';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
-import { MessageAttachment } from 'discord.js';
-import type { Buffer } from 'buffer';
-import { createCanvas } from '@napi-rs/canvas';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
+import { createCanvas } from '@napi-rs/canvas';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType } from 'discord-api-types/v10';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { MessageAttachment } from 'discord.js';
+import type { Buffer } from 'node:buffer';
 
 type RGB = [number, number, number];
 

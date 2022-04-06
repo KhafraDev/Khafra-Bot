@@ -3,7 +3,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import type { ApplicationCommandOptionChoice, AutocompleteInteraction } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json');
 

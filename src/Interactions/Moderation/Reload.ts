@@ -24,8 +24,8 @@ import type {
 import {
     GuildMember
 } from 'discord.js';
-import { join } from 'path';
-import { argv } from 'process';
+import { join } from 'node:path';
+import { argv } from 'node:process';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 const processArgs = new Minimalist(argv.slice(2).join(' '));

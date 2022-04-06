@@ -14,7 +14,7 @@ import {
     PermissionFlagsBits
 } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { setTimeout } from 'timers/promises';
+import { setTimeout } from 'node:timers/promises';
 
 export class kInteraction extends Interactions {
     constructor () {

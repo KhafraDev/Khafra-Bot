@@ -1,5 +1,5 @@
-import { join } from 'path';
-import { cwd as processCwd } from 'process';
+import { join } from 'node:path';
+import { cwd as processCwd } from 'node:process';
 
 export const cwd = processCwd();
 export const assets = (...args: string[]): string => join(cwd, 'assets', ...args);

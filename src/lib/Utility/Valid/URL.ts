@@ -1,4 +1,4 @@
-import { URL } from 'url';
+import { URL } from 'node:url';
 
 interface ValidURL {
     url: URL | null

@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { assets } from '#khaf/utility/Constants/Path.js';
+import { env } from 'node:process';
 import postgres from 'postgres';
-import { env } from 'process';
 
 const sqlFiles = KhafraClient.walk(
     assets('SQL/Postgres'),

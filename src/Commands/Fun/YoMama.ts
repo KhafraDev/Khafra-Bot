@@ -5,7 +5,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { type UnsafeEmbed } from '@discordjs/builders';
 import type { Message } from 'discord.js';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 // "jokes"
 const file = readFileSync(assets('yomama.txt'), 'utf-8');

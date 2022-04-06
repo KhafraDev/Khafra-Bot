@@ -8,7 +8,7 @@ import type {
     PermissionResolvable,
     Role
 } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher(
     {} as typeof import('../../../../config.json'),

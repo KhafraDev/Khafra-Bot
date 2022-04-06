@@ -11,7 +11,7 @@ import {
     PermissionFlagsBits
 } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, Guild, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
-import { setTimeout } from 'timers/promises';
+import { setTimeout } from 'node:timers/promises';
 
 const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const perms = PermissionFlagsBits.BanMembers;

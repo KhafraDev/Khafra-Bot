@@ -2,7 +2,7 @@ import { client as DiscordClient } from '#khaf/Client';
 import { sql as PostgresClient } from '#khaf/database/Postgres.js';
 import { logger } from '#khaf/Logger';
 import Graceful from 'node-graceful';
-import { exit } from 'process';
+import { exit } from 'node:process';
 
 Graceful.captureExceptions = true;
 

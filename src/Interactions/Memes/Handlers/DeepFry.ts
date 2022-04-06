@@ -2,9 +2,9 @@ import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
-import { Buffer } from 'buffer';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
+import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SKRSContext2D => {

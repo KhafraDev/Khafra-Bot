@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command';
+import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -10,7 +10,7 @@ import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
-import { argv } from 'process';
+import { argv } from 'node:process';
 
 const inRange = Range({ min: 0, max: 7, inclusive: true });
 const processArgs = new Minimalist(argv.slice(2).join(' '));

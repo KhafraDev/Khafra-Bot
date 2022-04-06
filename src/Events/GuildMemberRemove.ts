@@ -11,7 +11,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { time } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { AnyChannel, GuildMember } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

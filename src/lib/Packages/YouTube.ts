@@ -1,6 +1,6 @@
+import { env } from 'node:process';
+import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URLSearchParams } from 'url';
-import { env } from 'process';
 
 interface YouTubeError {
     error: {

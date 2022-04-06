@@ -1,8 +1,8 @@
 import {
     bright, cyan, green, magenta, red, yellow
 } from '#khaf/utility/Colors.js';
-import { EOL, hostname } from 'os';
-import { pid, stderr, stdout } from 'process';
+import { EOL, hostname } from 'node:os';
+import { pid, stderr, stdout } from 'node:process';
 import SonicBoom from 'sonic-boom';
 
 type LoggerLevels = 'DEBUG' | 'INFO' | 'ERROR' | 'WARN';

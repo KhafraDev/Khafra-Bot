@@ -1,5 +1,5 @@
+import { env } from 'node:process';
 import { request } from 'undici';
-import { env } from 'process';
 
 interface IOwlBotWord {
     definitions: {

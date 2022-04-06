@@ -10,7 +10,7 @@ import { FifteenDotAI } from '@khaf/15.ai';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json');
 

@@ -1,7 +1,7 @@
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
-import { env } from 'process';
+import { env } from 'node:process';
+import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URLSearchParams } from 'url';
 
 interface IAPOD {
     copyright?: string

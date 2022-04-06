@@ -1,6 +1,6 @@
-import { request } from 'undici';
-import type { URL } from 'url';
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
+import type { URL } from 'node:url';
+import { request } from 'undici';
 
 export const talkObamaToMe = async (q: string): Promise<string> => {
     q = encodeURIComponent(q);

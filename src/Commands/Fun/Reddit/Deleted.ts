@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command';
+import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -6,12 +6,12 @@ import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
 import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
 import type { Message } from 'discord.js';
 import { decodeXML } from 'entities';
-import { clearTimeout, setTimeout } from 'timers';
+import { clearTimeout, setTimeout } from 'node:timers';
 import { request } from 'undici';
 
 const fetchDeleted = async (postId: string): Promise<PushShiftGood | PushShiftError | null> => {

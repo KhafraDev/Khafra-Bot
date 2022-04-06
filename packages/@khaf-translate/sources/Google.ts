@@ -4,8 +4,8 @@
  * that removes the token entirely.
  */
 
+import { URL, URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URL, URLSearchParams } from 'url';
 
 interface Opts { to?: string, from?: string }
 

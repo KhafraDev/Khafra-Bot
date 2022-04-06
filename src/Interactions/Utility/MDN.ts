@@ -10,7 +10,7 @@ import { fetchMDN } from '@khaf/mdn';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
 

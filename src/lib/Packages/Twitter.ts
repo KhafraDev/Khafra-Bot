@@ -3,8 +3,8 @@
  * look at how Twitter does it, and then do the EXACT OPPOSITE.
  */
 
-import { Buffer } from 'buffer';
-import { env } from 'process';
+import { Buffer } from 'node:buffer';
+import { env } from 'node:process';
 import { request } from 'undici';
 
 type Indices = [number, number];

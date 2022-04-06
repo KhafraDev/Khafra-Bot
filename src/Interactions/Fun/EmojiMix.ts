@@ -6,14 +6,14 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { MessageActionRowComponent } from '@discordjs/builders';
 import { ActionRow, inlineCode } from '@discordjs/builders';
-import { randomUUID } from 'crypto';
-import type { RESTPostAPIApplicationCommandsJSONBody} from 'discord-api-types/v10';
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, Routes } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
+import { randomUUID } from 'node:crypto';
+import { URL } from 'node:url';
 import { parse } from 'twemoji-parser';
 import { request } from 'undici';
-import { URL } from 'url';
 
 const Subcommands = {
     LIST: 'list',

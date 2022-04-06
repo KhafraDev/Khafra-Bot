@@ -1,12 +1,12 @@
 import { KhafraClient, rest } from '#khaf/Bot';
-import type { Arguments} from '#khaf/Command';
+import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { inlineCode } from '@discordjs/builders';
 import { Routes } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher(
 	{} as typeof import('../../../config.json'),

@@ -5,7 +5,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import type { Minimalist } from '#khaf/utility/Minimalist.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message, PermissionResolvable, Snowflake } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

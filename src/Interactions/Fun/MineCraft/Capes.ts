@@ -3,9 +3,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
-import { Buffer } from 'buffer';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
+import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 // Rinse - optifine and migrator cape

@@ -1,6 +1,6 @@
-import { Buffer } from 'buffer';
-import crypto from 'crypto';
-import { env } from 'process';
+import { Buffer } from 'node:buffer';
+import crypto from 'node:crypto';
+import { env } from 'node:process';
 import { request, type Dispatcher } from 'undici';
 import type { PocketAddResults, PocketGetResults, PocketRateLimit } from './types/Pocket';
 

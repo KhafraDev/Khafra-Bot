@@ -1,8 +1,8 @@
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { writeFile } from 'fs/promises';
-import { setInterval } from 'timers';
+import { writeFile } from 'node:fs/promises';
+import { setInterval } from 'node:timers';
 
 const path = Json('stats.json');
 const config = createFileWatcher({} as typeof import('../../../assets/JSON/stats.json'), path);

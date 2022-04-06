@@ -1,7 +1,7 @@
-import { Buffer } from 'buffer';
-import { env } from 'process';
+import { Buffer } from 'node:buffer';
+import { env } from 'node:process';
+import { URL, URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URL, URLSearchParams } from 'url';
 import type { SpotifyResult } from './types/Spotify';
 
 interface Token {

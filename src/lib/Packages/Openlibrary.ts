@@ -1,5 +1,5 @@
+import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URLSearchParams } from 'url';
 
 export interface IOpenLib {
     cover_i: number

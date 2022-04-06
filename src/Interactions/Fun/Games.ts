@@ -2,8 +2,8 @@ import { Interactions } from '#khaf/Interaction';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import { readdirSync } from 'fs';
-import { extname } from 'path';
+import { readdirSync } from 'node:fs';
+import { extname } from 'node:path';
 
 const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''));
 

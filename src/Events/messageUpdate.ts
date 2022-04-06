@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { MessagesLRU } from '#khaf/cache/Messages.js';
 import { cache } from '#khaf/cache/Settings.js';
-import type { Arguments} from '#khaf/Command';
+import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
@@ -17,10 +17,10 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { UnsafeEmbed as MessageEmbed, inlineCode } from '@discordjs/builders';
+import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import type { ReplyMessageOptions } from 'discord.js';
 import { DiscordAPIError, Message, MessageAttachment } from 'discord.js';
-import { join } from 'path';
+import { join } from 'node:path';
 import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 const config = createFileWatcher(

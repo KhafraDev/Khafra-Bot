@@ -1,9 +1,9 @@
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { type Blob } from 'buffer';
 import type { MessageAttachment } from 'discord.js';
 import { decodeXML } from 'entities';
-import { basename } from 'path';
+import { type Blob } from 'node:buffer';
+import { basename } from 'node:path';
 import { fetch, FormData } from 'undici';
 
 /*** Get the image from the html */

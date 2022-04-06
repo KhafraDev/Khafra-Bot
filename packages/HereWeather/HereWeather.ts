@@ -1,6 +1,6 @@
-import { env } from 'process';
+import { env } from 'node:process';
+import { URLSearchParams } from 'node:url';
 import { request, type Dispatcher } from 'undici';
-import { URLSearchParams } from 'url';
 import type { HereResult } from './types/HereWeather';
 
 const consumeBody = async (res: Dispatcher.ResponseData['body']): Promise<void> => {

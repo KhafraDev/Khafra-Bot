@@ -7,7 +7,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { join } from 'path';
+import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 

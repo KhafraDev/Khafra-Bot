@@ -8,7 +8,7 @@ import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandType } from 'discord-api-types/v10';
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js';
-import { argv } from 'process';
+import { argv } from 'node:process';
 
 const args = new Minimalist(argv.slice(2).join(' '));
 const isDev = args.get('dev') === true;

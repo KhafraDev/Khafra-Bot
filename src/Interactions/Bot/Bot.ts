@@ -6,11 +6,11 @@ import { Stats } from '#khaf/utility/Stats.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { version as DJSVersion } from 'discord.js';
-import { join } from 'path';
-import { performance } from 'perf_hooks';
-import { memoryUsage, version } from 'process';
+import { join } from 'node:path';
+import { performance } from 'node:perf_hooks';
+import { memoryUsage, version } from 'node:process';
 
 const BotInfo = {
     ABOUT: 'about',

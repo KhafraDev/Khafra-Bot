@@ -1,4 +1,4 @@
-import { types } from 'util';
+import { types } from 'node:util';
 
 type SyncFn = (...args: unknown[]) => unknown;
 type AsyncFn = (...args: unknown[]) => Promise<unknown>;

@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities';
+import { setInterval } from 'node:timers';
+import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URLSearchParams } from 'url';
-import { setInterval } from 'timers';
 import type { Reddit } from './types/BadMeme.d';
 
 export type { Reddit };

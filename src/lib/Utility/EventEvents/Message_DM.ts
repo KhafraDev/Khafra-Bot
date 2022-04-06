@@ -1,17 +1,17 @@
 import { KhafraClient } from '#khaf/Bot';
-import { type Arguments, Command } from '#khaf/Command';
-import { isDM } from '#khaf/utility/Discord.js';
-import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { DiscordAPIError, Message, MessageAttachment, type ReplyMessageOptions } from 'discord.js';
-import { argv } from 'process';
+import { Command, type Arguments } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { cwd } from '#khaf/utility/Constants/Path.js';
+import { isDM } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { join } from 'path';
-import { cwd } from '#khaf/utility/Constants/Path.js';
+import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { DiscordAPIError, Message, MessageAttachment, type ReplyMessageOptions } from 'discord.js';
+import { join } from 'node:path';
+import { argv } from 'node:process';
 
 const config = createFileWatcher(
     {} as typeof import('../../../../config.json'),

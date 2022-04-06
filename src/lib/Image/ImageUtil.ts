@@ -1,6 +1,6 @@
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import type { Image, SKRSContext2D } from '@napi-rs/canvas';
-import { extname } from 'path';
+import { extname } from 'node:path';
 
 export class ImageUtil {
     /**

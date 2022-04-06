@@ -1,11 +1,11 @@
 import { Interactions } from '#khaf/Interaction';
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Buffer } from 'buffer';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
+import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 export class kInteraction extends Interactions {

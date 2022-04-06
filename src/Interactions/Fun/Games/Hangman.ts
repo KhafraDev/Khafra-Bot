@@ -9,9 +9,9 @@ import { ActionRow, inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { InteractionCollector, Message } from 'discord.js';
-import { readdirSync } from 'fs';
-import { readFile } from 'fs/promises';
-import { extname, join } from 'path';
+import { readdirSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
+import { extname, join } from 'node:path';
 
 const assetsPath = assets('Hangman');
 const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''));

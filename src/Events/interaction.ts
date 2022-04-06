@@ -14,7 +14,7 @@ import type {
     MessageContextMenuCommandInteraction,
     UserContextMenuCommandInteraction
 } from 'discord.js';
-import { argv } from 'process';
+import { argv } from 'node:process';
 
 type Interactions =
     ChatInputCommandInteraction &

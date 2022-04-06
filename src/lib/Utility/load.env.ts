@@ -1,6 +1,6 @@
-import { join } from 'path';
-import { existsSync, readFileSync } from 'fs';
-import { cwd, env } from 'process';
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { cwd, env } from 'node:process';
 
 const propertyDescriptors: PropertyDescriptor = {
     writable: true,

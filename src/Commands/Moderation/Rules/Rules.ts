@@ -10,7 +10,7 @@ import { ActionRow, bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { AnyChannel, Message, Snowflake } from 'discord.js';
 import { ButtonInteraction } from 'discord.js';
-import { once } from 'events';
+import { once } from 'node:events';
 
 const perms = PermissionFlagsBits.SendMessages;
 

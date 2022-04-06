@@ -1,6 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { ZipFile } from '#khaf/utility/Unzip.js';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 interface IBibleVerse {

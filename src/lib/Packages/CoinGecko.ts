@@ -2,7 +2,7 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { consumeBody } from '#khaf/utility/FetchUtils.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { setInterval } from 'timers';
+import { setInterval } from 'node:timers';
 import { Client } from 'undici';
 
 interface CoinGeckoRes {

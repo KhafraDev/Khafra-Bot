@@ -1,6 +1,5 @@
+import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import { URLSearchParams } from 'url';
-
 import type {
     WikipediaSearch,
     WikipediaSummary

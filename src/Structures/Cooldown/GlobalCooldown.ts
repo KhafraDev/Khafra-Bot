@@ -1,4 +1,4 @@
-import { setInterval } from 'timers';
+import { setInterval } from 'node:timers';
 
 /**
  * Create and use a cooldown everywhere in 2 steps.

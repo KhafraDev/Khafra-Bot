@@ -2,10 +2,10 @@ import { Interactions } from '#khaf/Interaction';
 import { AsyncQueue } from '#khaf/structures/AsyncQueue.js';
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { env } from 'process';
-import { setTimeout } from 'timers/promises';
+import { env } from 'node:process';
+import { setTimeout } from 'node:timers/promises';
+import { URLSearchParams } from 'node:url';
 import { request, type Dispatcher } from 'undici';
-import { URLSearchParams } from 'url';
 
 const queue = new AsyncQueue();
 const queue2 = new AsyncQueue();

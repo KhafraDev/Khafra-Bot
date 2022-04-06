@@ -1,3 +1,5 @@
+const { builtinModules } = require('node:module');
+
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
@@ -41,6 +43,7 @@ module.exports = {
 		'keyword-spacing': ['error', { 'before': true }],
 		'max-statements-per-line': ['error', { 'max': 1 }],
 		'newline-per-chained-call': ['error', { 'ignoreChainWithDepth': 3 }],
+		'no-restricted-imports': [2, ...builtinModules.map((m) => ({ name: m, message: `Import node:${m} instead` }))],
 		'no-trailing-spaces': 'error',
 		'no-whitespace-before-property': 'error',
 

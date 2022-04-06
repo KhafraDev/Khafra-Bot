@@ -4,10 +4,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
+import type { MessageActionRowComponent } from '@discordjs/builders';
 import { ActionRow, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
-import type { Buffer } from 'buffer';
 import { InteractionType } from 'discord-api-types/v10';
 import type {
     ChatInputCommandInteraction,
@@ -20,8 +19,9 @@ import {
     Message,
     MessageAttachment
 } from 'discord.js';
-import { readFileSync } from 'fs';
-import { clearInterval, setTimeout } from 'timers';
+import type { Buffer } from 'node:buffer';
+import { readFileSync } from 'node:fs';
+import { clearInterval, setTimeout } from 'node:timers';
 
 const Dims = {
     Width: 330,

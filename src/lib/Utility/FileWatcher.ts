@@ -1,7 +1,7 @@
-import { readFileSync, watch } from 'fs';
-import { readFile, stat } from 'fs/promises';
-import { dirname, basename, join } from 'path';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
+import { readFileSync, watch } from 'node:fs';
+import { readFile, stat } from 'node:fs/promises';
+import { basename, dirname, join } from 'node:path';
 
 type Watcher = Record<string, unknown> | unknown[];
 

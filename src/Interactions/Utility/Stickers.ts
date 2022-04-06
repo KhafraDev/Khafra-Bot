@@ -7,8 +7,8 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, Sticker } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 
 const stickers: Sticker[] = [];
 const mw = once(async () => client.fetchPremiumStickerPacks());

@@ -2,11 +2,11 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { GifEncoder } from '@skyra/gifenc';
-import { Buffer } from 'buffer';
-import type { ChatInputCommandInteraction, InteractionReplyOptions} from 'discord.js';
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { MessageAttachment } from 'discord.js';
-import { readFileSync } from 'fs';
-import { buffer } from 'stream/consumers';
+import { Buffer } from 'node:buffer';
+import { readFileSync } from 'node:fs';
+import { buffer } from 'node:stream/consumers';
 import { request } from 'undici';
 
 const Dims = {
