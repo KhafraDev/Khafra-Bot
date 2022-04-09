@@ -4,7 +4,7 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
+import { inlineCode, type MessageActionRowComponent} from '@discordjs/builders';
 import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
 import type { Message } from 'discord.js';
@@ -42,6 +42,8 @@ export class kCommand extends Command {
         } else if ('error' in res) {
             if (res.error === 404) {
                 return '❌ That subreddit doesn\'t exist!';
+            } else if (res.reason === undefined) {
+                return `❌ An unexpected error occurred: ${inlineCode(res.message)}`;
             }
 
             switch (res.reason) {

@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
+import { inlineCode } from '@discordjs/builders';
 import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
@@ -82,10 +83,15 @@ export class kInteraction extends Interactions {
                     content: '❌ This subreddit doesn\'t exist!',
                     ephemeral: true
                 }
+            } else if (item.reason === undefined) {
+                return {
+                    content: `❌ An unexpected error occurred: ${inlineCode(item.message)}`,
+                    ephemeral: true
+                }
             }
 
             return {
-                content: getReasonString(item.reason as string)
+                content: getReasonString(item.reason)
             }
         } else if (item.url.length === 0) {
             return {

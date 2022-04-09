@@ -39,7 +39,7 @@ const getItemRespectNSFW = (
 export const badmeme = async (
     subreddit = 'dankmemes',
     nsfw = false,
-    modifier: typeof SortBy[keyof typeof SortBy] = SortBy.NEW,
+    modifier: typeof SortBy[keyof typeof SortBy] = SortBy.HOT,
     timeframe: typeof Timeframe[keyof typeof Timeframe] = Timeframe.MONTH
 ): Promise<
     IBadMemeCache |
@@ -63,7 +63,16 @@ export const badmeme = async (
     }
 
     // https://www.reddit.com/dev/api#GET_new
-    const { body } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`);
+    const { body, statusCode } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`);
+
+    // When a subreddit doesn't exist, reddit automatically redirects to a search API URL.
+    if (statusCode !== 200) {
+        return {
+            message: `Received status ${statusCode} when looking up posts for ${subreddit}.`,
+            error: statusCode
+        }
+    }
+
     const j = await body.json() as Reddit;
 
     if ('error' in j) {
