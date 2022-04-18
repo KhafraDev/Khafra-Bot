@@ -4,7 +4,7 @@ import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, codeBlock, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, codeBlock, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
         const channel =
             await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??

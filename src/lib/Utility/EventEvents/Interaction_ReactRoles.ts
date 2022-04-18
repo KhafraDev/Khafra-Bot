@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
-import type { UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import { Guild, GuildMember, type MessageComponentInteraction } from 'discord.js';
 
 type InteractionReply
@@ -41,9 +41,9 @@ export const interactionReactRoleHandler = async (
         const opts = { content: '❌ I do not have permission to manage your roles!' };
         const pr = interaction.deferred
             ? interaction.editReply(opts)
-            : interaction.reply({ ephemeral: true, ...opts});
+            : interaction.reply({ ephemeral: true, ...opts });
 
-        return void dontThrow<InteractionReply>(pr);
+        return void dontThrow<InteractionReply>(pr as Promise<InteractionReply>);
     }
 
     try {
@@ -64,7 +64,7 @@ export const interactionReactRoleHandler = async (
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts});
 
-        return void dontThrow<InteractionReply>(pr);
+        return void dontThrow<InteractionReply>(pr as Promise<InteractionReply>);
     } catch (e) {
         if (isDev) {
             console.log(e); // eslint-disable-line no-console
@@ -80,6 +80,6 @@ export const interactionReactRoleHandler = async (
             ? interaction.editReply(opts)
             : interaction.reply({ ephemeral: true, ...opts });
 
-        return void dontThrow<InteractionReply>(pr);
+        return void dontThrow<InteractionReply>(pr as Promise<InteractionReply>);
     }
 }

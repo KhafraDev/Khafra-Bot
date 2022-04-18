@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
         const max = +maxStr + 1;
         const min = +minStr;

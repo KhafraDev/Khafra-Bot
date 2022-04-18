@@ -3,16 +3,16 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { ButtonComponent, MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, inlineCode } from '@discordjs/builders';
+import type { ButtonBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board, ended = false): ActionRow<MessageActionRowComponent>[] => {
-    const rows: ButtonComponent[] = [];
+const makeRows = (turns: Board, ended = false): ActionRowBuilder<MessageActionRowComponentBuilder>[] => {
+    const rows: ButtonBuilder[] = [];
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
@@ -27,7 +27,7 @@ const makeRows = (turns: Board, ended = false): ActionRow<MessageActionRowCompon
     }
 
     return chunkSafe(rows, 3).map(r =>
-        new ActionRow<MessageActionRowComponent>().addComponents(...r)
+        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(...r)
     );
 }
 

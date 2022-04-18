@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { openLibrary } from '#khaf/utility/commands/Openlibrary';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {
@@ -30,8 +30,7 @@ export class kCommand extends Command {
         }
 
         const book = books.docs.shift()!;
-
-        const embed = Embed.ok(`
+        const description = `
         ${italic(book.title)} by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
         ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: ${inlineCode(book.isbn[0])}` : ''}
@@ -43,9 +42,8 @@ export class kCommand extends Command {
         ${book.id_google?.[0] ? `[Google Books](https://books.google.com/books?id=${book.id_google[0]})` : ''}
         
         ${bold(hyperlink('Donate to the Internet Archive', 'https://archive.org/donate/'))}
-        `);
-        embed.setDescription(embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n'));
+        `.trim();
 
-        return embed;
+        return Embed.ok().setDescription(description.replace(/^(\s*\r?\n){2,}/gm, '\n'));
     }
 }

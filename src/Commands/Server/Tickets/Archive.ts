@@ -4,7 +4,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { UnsafeEmbed } from '@discordjs/builders';
+import type { UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js';
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
         if (settings.ticketchannel === null) {
             return Embed.error('Could not archive for you, the guild\'s ticket channel is unset.');
         } else if (!isDM(message.channel) && !channelTicketName.test(message.channel.name)) {

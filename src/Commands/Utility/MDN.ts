@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { fetchMDN as mdn } from '@khaf/mdn';
 import type { Message } from 'discord.js';
 
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const results = await mdn(args.join(' '));
 
         if ('errors' in results) {

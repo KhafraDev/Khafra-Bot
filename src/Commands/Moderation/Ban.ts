@@ -7,7 +7,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { argv } from 'node:process';
@@ -38,7 +38,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbedBuilder> {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users', content);

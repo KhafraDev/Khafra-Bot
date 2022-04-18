@@ -7,7 +7,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, italic, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { ActivityType } from 'discord-api-types/v10';
 import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js';
 import { SnowflakeUtil } from 'discord.js';
@@ -75,7 +75,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
         const user = await getMentions(message, 'users', content) ?? message.author;
         const member = user.equals(message.author)
             ? message.member

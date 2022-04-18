@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { decodeXML } from 'entities';
 
 const settings = {
@@ -44,7 +44,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbed> {
+    async init (): Promise<UnsafeEmbedBuilder> {
         const state = await cache();
 
         if (state === null) {

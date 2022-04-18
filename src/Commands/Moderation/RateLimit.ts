@@ -9,7 +9,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -41,7 +41,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const guildChannel = channelFirst

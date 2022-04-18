@@ -3,7 +3,7 @@ import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTu
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, bold, time, type MessageActionRowComponent, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { ActionRowBuilder, bold, time, type MessageActionRowComponentBuilder, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
     InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions,
@@ -68,7 +68,7 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             embeds: [embeds[0]],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Next'),
                     Components.secondary('Previous'),
                     Components.deny('Stop')

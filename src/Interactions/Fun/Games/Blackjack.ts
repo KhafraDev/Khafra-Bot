@@ -3,8 +3,8 @@ import { shuffle } from '#khaf/utility/Array.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, inlineCode, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -49,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const rows = [
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.approve('Hit', 'hit'),
                 Components.secondary('Stay', 'stay')
             )

@@ -6,8 +6,8 @@ import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
 import type { Message } from 'discord.js';
 import { decodeXML } from 'entities';
@@ -81,7 +81,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | void> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | void> {
         const url = URLFactory(args[0]);
 
         void message.channel.sendTyping();
@@ -121,7 +121,7 @@ export class kCommand extends Command {
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
         const chunks = split(post.selftext, 2048);
-        const makeEmbed = (page = 0): UnsafeEmbed => {
+        const makeEmbed = (page = 0): UnsafeEmbedBuilder => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
             const embed = Embed.ok()
                 .setTitle(title)
@@ -138,7 +138,7 @@ export class kCommand extends Command {
             const [e, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new ActionRow<MessageActionRowComponent>().addComponents(
+                    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                         Components.approve('Next', 'next'),
                         Components.primary('Back', 'back'),
                         Components.deny('Stop', 'stop')

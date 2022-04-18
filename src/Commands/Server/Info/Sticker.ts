@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { StickerFormatType } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init ({ stickers, guild }: Message<true>): Promise<UnsafeEmbed> {
+    async init ({ stickers, guild }: Message<true>): Promise<UnsafeEmbedBuilder> {
         if (stickers.size === 0)
             return Embed.error('No stickers in message! 😕');
 

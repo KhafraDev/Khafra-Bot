@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command';
 import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed | string> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | string> {
         const { hostname, pathname } = URLFactory(args[0]) ?? {};
 
         if (hostname !== 'twitter.com' || !pathname)

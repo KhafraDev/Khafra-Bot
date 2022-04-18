@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, italic, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { ActivityType } from 'discord-api-types/v10';
 import type { Activity, Message } from 'discord.js';
 
@@ -47,7 +47,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
         const member = await getMentions(message, 'members', content) ?? message.member;
 
         if (!member) {

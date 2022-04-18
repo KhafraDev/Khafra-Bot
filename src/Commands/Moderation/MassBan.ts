@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildMember, Message, User } from 'discord.js';
 
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const ids = args.map(id => /^\d{17,19}$/.test(id)
             ? id
             : message.mentions.members?.get(id.replace(/[^\d]/g, ''))

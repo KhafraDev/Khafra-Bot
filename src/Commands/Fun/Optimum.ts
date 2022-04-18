@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { italic, type UnsafeEmbed } from '@discordjs/builders';
+import { italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor () {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbed> {
+    async init (): Promise<UnsafeEmbedBuilder> {
         return Embed.ok()
             .setTitle('Optimum by Altice')
             .setDescription(`

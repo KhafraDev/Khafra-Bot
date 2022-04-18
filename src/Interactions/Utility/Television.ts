@@ -3,8 +3,8 @@ import { searchTV } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, hyperlink, time } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, hyperlink, time } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -71,7 +71,7 @@ export class kInteraction extends Interactions {
         return {
             embeds: [embed],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link('TMDB', link)
                 )
             ]

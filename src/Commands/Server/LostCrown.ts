@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbed> {
+    async init (message: Message<true>): Promise<UnsafeEmbedBuilder> {
         let desc = 'For the server owner to regain the crown icon, the following roles must have admin perms removed, or must be unhoisted:\n';
         const next = 'It is recommended to have a role with admin perms that is not hoisted, and have separate role(s) without perms that are hoisted!';
         let amount = 0;

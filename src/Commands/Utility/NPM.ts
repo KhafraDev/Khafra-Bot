@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import type { Message } from 'discord.js';
 
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbedBuilder> {
         const [name, version = 'latest'] = args;
         const p = await npm(name);
 

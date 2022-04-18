@@ -27,18 +27,18 @@
   "dependencies": {
     "@discordjs/builders": "^0.13.0-dev.1646913825.dcd4797",
     "@discordjs/rest": "^0.4.0-dev.1646913818.dcd4797",
-    "@imagemagick/magick-wasm": "^0.0.10",
+    "@imagemagick/magick-wasm": "^0.0.11",
     "@napi-rs/canvas": "^0.1.21",
     "@skyra/gifenc": "^1.0.0",
-    "discord-api-types": "^0.29.0",
-    "discord.js": "^14.0.0-dev.1646395406.6f7a366",
-    "entities": "^3.0.1",
+    "discord-api-types": "^0.31.1",
+    "discord.js": "^14.0.0-dev.1650197065-b94a876",
+    "entities": "^4.3.0",
     "fast-xml-parser": "^4.0.7",
     "node-graceful": "^3.1.0",
-    "postgres": "^3.0.0",
-    "sonic-boom": "^2.6.0",
+    "postgres": "^3.0.5",
+    "sonic-boom": "^2.7.0",
     "twemoji-parser": "^14.0.0",
-    "undici": "^4.16.0"
+    "undici": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",

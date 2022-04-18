@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { bold, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
 import { request } from 'undici';
@@ -73,7 +73,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
         if (guildEmojiRegex.test(content)) {
             const match = guildEmojiRegex.exec(content)!;
             const { id, name, animated } = match.groups as Record<string, string>;

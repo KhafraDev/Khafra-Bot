@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { time, type UnsafeEmbed } from '@discordjs/builders';
+import { time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message, ReplyMessageOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | ReplyMessageOptions> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | ReplyMessageOptions> {
         const currencies = await CoinGecko.get(args.join(' '), () => {
             void message.channel.sendTyping();
         });

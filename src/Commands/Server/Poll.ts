@@ -6,8 +6,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, inlineCode } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
@@ -69,7 +69,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Add Option', Actions.ADD),
                     Components.primary('Post Poll', Actions.POST),
                     Components.secondary('Add Channel', Actions.CHANNEL),
@@ -106,6 +106,7 @@ export class kCommand extends Command {
                     }));
                 }
 
+                let description = '';
                 const embed = Embed.ok()
                     .setTitle('Poll')
                     .setAuthor({
@@ -117,11 +118,10 @@ export class kCommand extends Command {
                     const option = settings.options[i];
                     const emoji = emojis[i];
 
-                    embed.setDescription(
-                        (embed.description ?? '') +
-                        `${emoji}. ${option}\n`
-                    );
+                    description += `${emoji}. ${option}\n`;
                 }
+
+                embed.setDescription(description);
 
                 const [err, pollMessage] = await dontThrow(settings.channel.send({
                     embeds: [embed]

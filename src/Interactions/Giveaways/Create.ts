@@ -8,8 +8,8 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, inlineCode, time } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, inlineCode, time } from '@discordjs/builders';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
@@ -91,7 +91,7 @@ export class kSubCommand extends InteractionSubCommand {
             • Ends ${time(endsDate)}
             • ID ${inlineCode(rows[0].id)}`,
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link('Message Link', sent.url)
                 )
             ]

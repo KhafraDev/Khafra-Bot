@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const word = await owlbotio(args.join(' '));
 
         if (word?.definitions == null) {

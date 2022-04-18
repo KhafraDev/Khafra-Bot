@@ -8,8 +8,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { DiscordAPIError, Message, MessageAttachment, type ReplyMessageOptions } from 'discord.js';
+import { inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { DiscordAPIError, Message, Attachment, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
 import { argv } from 'node:process';
 
@@ -88,7 +88,7 @@ export const DM = async (message: Message): Promise<void> => {
             param.content = returnValue;
         else if (returnValue instanceof MessageEmbed)
             param.embeds = [returnValue];
-        else if (returnValue instanceof MessageAttachment)
+        else if (returnValue instanceof Attachment)
             param.files = [returnValue];
         else if (typeof returnValue === 'object') // MessageOptions
             Object.assign(param, returnValue);

@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 const scope = 'bot%20applications.commands';
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message): Promise<UnsafeEmbed> {
+    async init (message: Message): Promise<UnsafeEmbedBuilder> {
         const selfId = message.client.user!.id;
 
         return Embed.ok().addFields(

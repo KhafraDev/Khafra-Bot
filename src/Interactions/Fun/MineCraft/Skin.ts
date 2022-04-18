@@ -1,11 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, bold } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, bold } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -37,14 +37,14 @@ export class kSubCommand extends InteractionSubCommand {
             const { body } = await request(skin);
             const b = Buffer.from(await body.arrayBuffer());
 
-            const attachment = new MessageAttachment(b, 'skin.png');
+            const attachment = new Attachment(b, 'skin.png');
 
             return {
                 embeds: [
                     Embed.ok(description).setImage('attachment://skin.png')
                 ],
                 components: [
-                    new ActionRow<MessageActionRowComponent>().addComponents(
+                    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                         Components.link(
                             'Change Skin',
                             `https://www.minecraft.net/en-us/profile/skin/remote?url=${skin}&model=classic`

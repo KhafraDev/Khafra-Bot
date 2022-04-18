@@ -4,7 +4,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 interface IBibleVerse {
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (_message: Message, { args, content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
         const inserted = await bibleInsertDB();
 
         if (inserted !== true) {

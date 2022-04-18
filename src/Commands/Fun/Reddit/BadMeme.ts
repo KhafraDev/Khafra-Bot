@@ -4,8 +4,8 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
 import type { Message } from 'discord.js';
 
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<string | UnsafeEmbed | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<string | UnsafeEmbedBuilder | undefined> {
         const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
         if (!cache.has(subreddit)) {
             void message.channel.sendTyping();
@@ -65,7 +65,7 @@ export class kCommand extends Command {
 
         let page = 0;
 
-        const row = new ActionRow<MessageActionRowComponent>().addComponents(
+        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
             Components.approve('Next'),
             Components.secondary('Previous'),
             Components.deny('Stop')

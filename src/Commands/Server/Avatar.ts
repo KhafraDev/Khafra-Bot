@@ -1,6 +1,6 @@
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
 import type { Message } from 'discord.js';
 import type { Arguments} from '../../Structures/Command.js';
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { cli, content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message, { cli, content }: Arguments): Promise<UnsafeEmbedBuilder> {
         const user = await getMentions(message, 'users', content) ?? message.author;
 
         const opts: ImageURLOptions = {

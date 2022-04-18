@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -19,7 +19,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbed> {
+    async init (message: Message<true>): Promise<UnsafeEmbedBuilder> {
         const locale = message.guild.preferredLocale;
 
         return Embed.ok()

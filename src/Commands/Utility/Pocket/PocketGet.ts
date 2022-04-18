@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import type { Message } from 'discord.js';
 
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbed> {
+    async init (message: Message): Promise<UnsafeEmbedBuilder> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket

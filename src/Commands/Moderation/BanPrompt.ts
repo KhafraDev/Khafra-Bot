@@ -7,8 +7,8 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
         const user = await getMentions(message, 'users', content);
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
@@ -46,7 +46,7 @@ export class kCommand extends Command {
             return Embed.error('No user id or user mentioned, no one was banned.');
         }
 
-        const row = new ActionRow<MessageActionRowComponent>().addComponents(
+        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
             Components.approve('Yes'),
             Components.deny('No')
         );

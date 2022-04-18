@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import type { Message } from 'discord.js';
 
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<string | UnsafeEmbed> {
+    async init (_message: Message, { content }: Arguments): Promise<string | UnsafeEmbedBuilder> {
         const results = await weather(content);
 
         if (results === null) {

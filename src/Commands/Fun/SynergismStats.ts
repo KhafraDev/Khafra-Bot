@@ -2,7 +2,7 @@ import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { request } from 'undici';
 
 export class kCommand extends Command {
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbed> {
+    async init (): Promise<UnsafeEmbedBuilder> {
         const stats = await Kongregate();
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 

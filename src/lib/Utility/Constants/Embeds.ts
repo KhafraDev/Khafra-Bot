@@ -1,7 +1,8 @@
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
-import { UnsafeEmbed } from '@discordjs/builders';
+import { UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type {
     AnyChannel,
     GuildMember,
@@ -22,8 +23,8 @@ export const colors = {
 } as const;
 
 export const Embed = {
-    error: (reason?: string): UnsafeEmbed => {
-        const Embed = new UnsafeEmbed().setColor(colors.error);
+    error (reason?: string): UnsafeEmbedBuilder {
+        const Embed = new UnsafeEmbedBuilder().setColor(colors.error);
 
         if (reason) {
             Embed.setDescription(reason);
@@ -35,8 +36,8 @@ export const Embed = {
     /**
      * An embed for a command being successfully executed!
      */
-    ok: (reason?: string): UnsafeEmbed => {
-        const Embed = new UnsafeEmbed().setColor(colors.ok);
+    ok (reason?: string): UnsafeEmbedBuilder {
+        const Embed = new UnsafeEmbedBuilder().setColor(colors.ok);
 
         if (reason) {
             Embed.setDescription(reason);
@@ -45,11 +46,11 @@ export const Embed = {
         return Embed;
     },
 
-    perms: (
+    perms (
         inChannel: AnyChannel,
         userOrRole: GuildMember | Role | null,
         permissions: PermissionResolvable
-    ): UnsafeEmbed => {
+    ): UnsafeEmbedBuilder {
         const perms = permResolvableToString(permissions);
         const checkType = userOrRole && 'color' in userOrRole
             ? `The role ${userOrRole}`
@@ -62,13 +63,30 @@ export const Embed = {
             `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`;
 
         return Embed.error(reason);
+    },
+
+    json (): APIEmbed {
+        return {
+            fields: []
+        }
     }
 }
 
-export const padEmbedFields = (embed: UnsafeEmbed): UnsafeEmbed => {
-    while (embed.fields!.length % 3 !== 0 && embed.fields!.length !== 0) {
+export const padEmbedFields = (embed: UnsafeEmbedBuilder): UnsafeEmbedBuilder => {
+    const { fields } = embed.toJSON();
+
+    if (fields === undefined) return embed;
+
+    while (fields.length % 3 !== 0 && fields.length !== 0) {
         embed.addFields({ name: '\u200b', value: '\u200b', inline: true });
     }
 
     return embed;
+}
+
+export const EmbedUtil = {
+    setColor (embed: APIEmbed, color: number): APIEmbed {
+        embed.color = color;
+        return embed;
+    }
 }

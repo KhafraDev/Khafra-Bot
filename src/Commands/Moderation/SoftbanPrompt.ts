@@ -7,8 +7,8 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -35,7 +35,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
         const user = await getMentions(message, 'users', content);
         if (!user) {
             return Embed.error('No user mentioned and/or an invalid ❄️ was used!');
@@ -46,7 +46,7 @@ export class kCommand extends Command {
             : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
 
-        const row = new ActionRow<MessageActionRowComponent>().addComponents(
+        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
             Components.approve('Yes'),
             Components.deny('No')
         );

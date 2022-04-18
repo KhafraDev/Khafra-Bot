@@ -6,7 +6,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { bold, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
         const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {

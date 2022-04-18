@@ -6,16 +6,17 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type {
-    MessageActionRowComponent,
-    UnsafeEmbed} from '@discordjs/builders';
+    MessageActionRowComponentBuilder,
+    UnsafeEmbedBuilder
+} from '@discordjs/builders';
 import {
-    ActionRow,
+    ActionRowBuilder,
     bold,
     codeBlock,
     hyperlink,
     inlineCode,
-    UnsafeSelectMenuComponent,
-    UnsafeSelectMenuOption
+    UnsafeSelectMenuBuilder,
+    UnsafeSelectMenuOptionBuilder
 } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
@@ -39,7 +40,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
         folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
 
         if (args.length !== 0) {
@@ -70,6 +71,17 @@ export class kCommand extends Command {
                 );
         }
 
+        const categoryComponent = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+            new UnsafeSelectMenuBuilder()
+                .setCustomId('help')
+                .setPlaceholder('Select a category of commands!')
+                .addOptions(...folders.map(f => new UnsafeSelectMenuOptionBuilder({
+                    label: f,
+                    description: `Select the ${f} category!`,
+                    value: f
+                })))
+        );
+
         const m = await message.channel.send({
             embeds: [
                 Embed.ok(`
@@ -78,21 +90,10 @@ export class kCommand extends Command {
                 To get help on a single command use ${inlineCode('help [command name]')}!
                 `)
             ],
-            components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    new UnsafeSelectMenuComponent()
-                        .setCustomId('help')
-                        .setPlaceholder('Select a category of commands!')
-                        .addOptions(...folders.map(f => new UnsafeSelectMenuOption({
-                            label: f,
-                            description: `Select the ${f} category!`,
-                            value: f
-                        })))
-                )
-            ]
+            components: [categoryComponent]
         });
 
-        let pages: UnsafeEmbed[] = [],
+        let pages: UnsafeEmbedBuilder[] = [],
             page = 0;
 
         const c = m.createMessageComponentCollector({
@@ -129,10 +130,10 @@ export class kCommand extends Command {
                     pages.push(Embed.ok(desc));
                 }
 
-                const components: ActionRow<MessageActionRowComponent>[] = [];
+                const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [];
                 if (pages.length > 1) {
                     components.push(
-                        new ActionRow<MessageActionRowComponent>().addComponents(
+                        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                             Components.deny('Previous', 'previous'),
                             Components.approve('Next', 'next'),
                             Components.secondary('Stop', 'stop')
@@ -140,13 +141,7 @@ export class kCommand extends Command {
                     );
                 }
 
-                if (m.components.length === 1) {
-                    components.push(...m.components.map(
-                        c => new ActionRow<MessageActionRowComponent>(c.toJSON())
-                    ));
-                } else {
-                    components.push(new ActionRow(m.components.at(-1)!.toJSON()));
-                }
+                components.push(categoryComponent);
 
                 return void dontThrow(i.update({
                     embeds: [pages[page]],

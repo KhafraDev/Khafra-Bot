@@ -3,7 +3,14 @@ import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
-import { ActionRow, hideLinkEmbed, inlineCode, UnsafeSelectMenuComponent, UnsafeSelectMenuOption, type MessageActionRowComponent } from '@discordjs/builders';
+import {
+    ActionRowBuilder,
+    hideLinkEmbed,
+    inlineCode,
+    UnsafeSelectMenuBuilder,
+    UnsafeSelectMenuOptionBuilder,
+    type MessageActionRowComponentBuilder
+} from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { SelectMenuInteraction} from 'discord.js';
@@ -49,11 +56,11 @@ export class kInteraction extends Interactions {
                 Embed.ok('Choose an article from the dropdown below!')
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    new UnsafeSelectMenuComponent()
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+                    new UnsafeSelectMenuBuilder()
                         .setCustomId('wikipedia')
                         .setPlaceholder('Which article summary would you like to get?')
-                        .addOptions(...wiki.pages.map(w => new UnsafeSelectMenuOption({
+                        .addOptions(...wiki.pages.map(w => new UnsafeSelectMenuOptionBuilder({
                             label: ellipsis(w.title, 25),
                             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
                             value: `${w.id}`

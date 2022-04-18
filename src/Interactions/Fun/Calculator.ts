@@ -3,8 +3,8 @@ import { logger } from '#khaf/Logger';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, codeBlock, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, codeBlock, inlineCode, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
@@ -157,31 +157,31 @@ export class kInteraction extends Interactions {
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const rows = [
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.approve('(', '('),
                 Components.approve(')', ')'),
                 Components.approve('.', '.')
                 // Components.approve('idk', 'idk')
             ),
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.secondary('1', '1'),
                 Components.secondary('2', '2'),
                 Components.secondary('3', '3'),
                 Components.approve('+', '+')
             ),
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.secondary('4', '4'),
                 Components.secondary('5', '5'),
                 Components.secondary('6', '6'),
                 Components.approve('-', '-')
             ),
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.secondary('7', '7'),
                 Components.secondary('8', '8'),
                 Components.secondary('9', '9'),
                 Components.approve('*', '*')
             ),
-            new ActionRow<MessageActionRowComponent>().addComponents(
+            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                 Components.deny('Stop', 'stop'),
                 Components.secondary('0', '0'),
                 Components.deny('=', '='),

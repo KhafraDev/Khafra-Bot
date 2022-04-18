@@ -4,8 +4,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, hyperlink, inlineCode } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, hyperlink, inlineCode } from '@discordjs/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
@@ -78,20 +78,21 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const embed = Embed.ok()
-            .setDescription(`${hyperlink('Visit 15.ai', 'https://15.ai')}\n`)
-            .setFooter({ text: '🗣️ tts provided by 15.ai' });
+        let description = `${hyperlink('Visit 15.ai', 'https://15.ai')}\n`;
+        const embed = Embed.ok().setFooter({ text: '🗣️ tts provided by 15.ai' });
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
             const confidence = `${(voice.scores[i] * 100).toFixed(2)}%`;
-            embed.setDescription(embed.description + `${url} [Confidence: ${confidence}]\n`);
+            description += `${url} [Confidence: ${confidence}]\n`;
         }
+
+        embed.setDescription(description);
 
         return {
             embeds: [embed],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link('Visit 15.ai', 'https://15.ai')
                 )
             ]

@@ -1,4 +1,4 @@
-import { SpotifyResult } from './types/Spotify';
+import type { SpotifyResult } from './types/Spotify';
 declare class Spotify {
     #private;
     search(query: string): Promise<SpotifyResult>;

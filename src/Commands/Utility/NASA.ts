@@ -2,7 +2,7 @@ import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -20,7 +20,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbed> {
+    async init (message: Message): Promise<UnsafeEmbedBuilder> {
         if (cache.length === 0) {
             void message.channel.sendTyping();
         }

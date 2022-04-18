@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { parse } from 'twemoji-parser';
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<string | UnsafeEmbed> {
+    async init (message: Message<true>): Promise<string | UnsafeEmbedBuilder> {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url);
 

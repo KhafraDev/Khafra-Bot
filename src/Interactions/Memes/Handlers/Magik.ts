@@ -6,7 +6,7 @@ import type { ImageURLOptions } from '@discordjs/rest';
 import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -36,12 +36,12 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new MessageAttachment(Buffer.from(buffer), 'magik.png')
+                new Attachment(Buffer.from(buffer), 'magik.png')
             ]
         }
     }
 
-    async image (avatarURL: string | MessageAttachment): Promise<Uint8Array | string> {
+    async image (avatarURL: string | Attachment): Promise<Uint8Array | string> {
         if (typeof avatarURL === 'string') {
             if (!ImageUtil.isImage(avatarURL)) {
             	return '❌ This file type is not supported.';

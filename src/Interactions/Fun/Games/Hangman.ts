@@ -4,8 +4,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, inlineCode } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { InteractionCollector, Message } from 'discord.js';
@@ -90,7 +90,7 @@ class Hangman {
         const components = this.winner || this.lost
             ? []
             : [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.primary('Hint', 'hint')
                         .setEmoji({ name: '❓' })
                         .setDisabled(this.usedHint)

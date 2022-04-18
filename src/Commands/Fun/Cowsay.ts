@@ -2,7 +2,7 @@ import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { codeBlock, type UnsafeEmbed } from '@discordjs/builders';
+import { codeBlock, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         if (types.size === 0) { // lazy load types
             const items = await readdir(dir);
             const filtered = items

@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
@@ -84,7 +84,7 @@ export class kInteraction extends Interactions {
         return {
             embeds: [embed],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link('Go to npm', link)
                 )
             ]

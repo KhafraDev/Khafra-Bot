@@ -3,8 +3,8 @@ import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, hyperlink, time } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, hyperlink, time } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -52,7 +52,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const components: ActionRow<MessageActionRowComponent>[] = [];
+        const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [];
         const embed = Embed.ok()
             .setTitle(movies.original_title ?? movies.title)
             .setDescription(movies.overview ?? '')
@@ -86,7 +86,7 @@ export class kInteraction extends Interactions {
             embed.addFields({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
 
             components.push(
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link('Go to IMDB', link)
                 )
             );

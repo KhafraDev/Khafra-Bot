@@ -7,8 +7,8 @@ import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, hideLinkEmbed, hyperlink, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type {
     APIInvite, RESTPostAPIChannelInviteJSONBody} from 'discord-api-types/v10';
 import { InviteTargetType, PermissionFlagsBits, Routes
@@ -49,7 +49,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
         const channel =
             await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
@@ -67,14 +67,14 @@ export class kCommand extends Command {
                 Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Poker', Activities.POKER),
                     Components.deny('Betrayal.io', Activities.BETRAYALIO),
                     Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
                     Components.secondary('Fishington.io', Activities.FISHINGTONIO),
                     Components.approve('Chess in the Park', Activities.CHESS)
                 ),
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Doodle Crew', Activities.DOODLECREW),
                     Components.deny('WordSnacks', Activities.WORDSNACKS),
                     Components.primary('LetterTile', Activities.LETTERTILE)

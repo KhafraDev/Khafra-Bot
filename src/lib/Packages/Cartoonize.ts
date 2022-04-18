@@ -1,6 +1,6 @@
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import type { MessageAttachment } from 'discord.js';
+import type { Attachment } from 'discord.js';
 import { decodeXML } from 'entities';
 import { type Blob } from 'node:buffer';
 import { basename } from 'node:path';
@@ -23,7 +23,7 @@ export class Cartoonize {
         return null;
     }
 
-    static async cartoonize(attachment: MessageAttachment): Promise<string | null> {
+    static async cartoonize(attachment: Attachment): Promise<string | null> {
         const form = new FormData();
         const blob = await Cartoonize.blobFromUrl(attachment.proxyURL);
 

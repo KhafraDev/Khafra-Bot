@@ -3,10 +3,10 @@ import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validURL } from '#khaf/utility/Valid/URL.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message} from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 
 export class kCommand extends Command {
     constructor () {
@@ -27,12 +27,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         if (args.length === 1 && message.attachments.size === 0)
             return Embed.error('No attachment was included and no image link was provided!');
 
         let name: string | null = null,
-            link: string | MessageAttachment | null = null;
+            link: string | Attachment | null = null;
 
         if (args.length === 1) {
             name = args[0];
@@ -46,7 +46,7 @@ export class kCommand extends Command {
             link = `${info[0].url}`;
         }
 
-        if (link instanceof MessageAttachment) {
+        if (link instanceof Attachment) {
             if (link.size > 256_000)
                 return Embed.error('Guild emojis can only be a maximum of 256kb! Try a smaller image!');
 

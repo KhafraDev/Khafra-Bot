@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { cache, fetchHN } from '#khaf/utility/commands/HackerNews';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor () {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbed> {
+    async init (): Promise<UnsafeEmbedBuilder> {
         await fetchHN();
 
         if (cache.size === 0) {

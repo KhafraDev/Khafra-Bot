@@ -3,8 +3,8 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import type {
     RESTPostAPIApplicationCommandsJSONBody,
     Snowflake
@@ -167,7 +167,7 @@ export class kInteraction extends Interactions {
                     .setDescription(text)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     component
                 )
             ]

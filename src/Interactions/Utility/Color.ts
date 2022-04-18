@@ -5,7 +5,7 @@ import { createCanvas } from '@napi-rs/canvas';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 import type { Buffer } from 'node:buffer';
 
 type RGB = [number, number, number];
@@ -48,7 +48,7 @@ export class kInteraction extends Interactions {
         const isRandom = hex === hexColor ? 'Random Color' : '';
 
         const buffer = await this.image(hexColor);
-        const attachment = new MessageAttachment(buffer, 'color.png');
+        const attachment = new Attachment(buffer, 'color.png');
 
         return {
             embeds: [

@@ -4,8 +4,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, bold, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, bold, inlineCode, italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildChannel, Message } from 'discord.js';
 
@@ -35,7 +35,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>): Promise<UnsafeEmbedBuilder | undefined> {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
                 Embed.ok(`
@@ -43,7 +43,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Yes', 'approve'),
                     Components.deny('No', 'deny')
                 )
@@ -110,6 +110,7 @@ export class kCommand extends Command {
         const success = settled.filter((p): p is PromiseFulfilledResult<GuildChannel> => p.status === 'fulfilled');
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
 
+        let description = '';
         const embed = Embed.ok()
             .setTitle(`Edited ${success.length} Channel Perms!`)
             .setAuthor({
@@ -118,26 +119,26 @@ export class kCommand extends Command {
             });
 
         if (success.length > 0)
-            embed.setDescription(`${bold('Success:')}\n`);
+            description += `${bold('Success:')}\n`;
 
-        while (success.length !== 0 && embed.description!.length < 2048) {
+        while (success.length !== 0 && description.length < 2048) {
             const { value } = success.shift()!;
             const line = isCategory(value)
                 ? `Category ${inlineCode(value.name)}\n`
                 : `${value}\n`;
-            if (embed.description!.length + line.length > 2048) break;
+            if (description.length + line.length > 2048) break;
 
-            embed.setDescription(embed.description + line);
+            description += line;
         }
 
-        if (rejected.length > 0 && embed.description!.length + `\n\n${bold('Rejected!')}\n`.length <= 2048)
-            embed.setDescription(embed.description + `\n${bold('Rejected!')}\n`);
+        if (rejected.length > 0 && description.length + `\n\n${bold('Rejected!')}\n`.length <= 2048)
+            description += `\n${bold('Rejected!')}\n`;
 
-        while (rejected.length !== 0 && embed.description!.length < 2048) {
+        while (rejected.length !== 0 && description.length < 2048) {
             const { reason } = rejected.shift()! as { reason: Error };
             const line = `${inlineCode(reason.message)}\n`;
-            if (embed.description!.length + line.length > 2048) break;
-            embed.setDescription(embed.description + line);
+            if (description.length + line.length > 2048) break;
+            description += line;
         }
 
         return embed;

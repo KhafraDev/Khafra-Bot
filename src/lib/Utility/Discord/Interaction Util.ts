@@ -5,7 +5,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type {
     AnyChannel,
@@ -88,7 +88,7 @@ export const interactionFetchChannel = async (
 
 export const postToModLog = async (
     interaction: ChatInputCommandInteraction,
-    embeds: UnsafeEmbed[],
+    embeds: UnsafeEmbedBuilder[],
     guildSettings?: kGuild | null
 ): Promise<undefined> => {
     const settings = guildSettings ?? await interactionGetGuildSettings(interaction);

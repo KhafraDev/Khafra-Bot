@@ -7,8 +7,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponent} from '@discordjs/builders';
-import { ActionRow, inlineCode, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode, time, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -69,7 +69,7 @@ export class kSubCommand extends InteractionSubCommand {
             content: `Page ${page + 1} out of ${embeds.length}`,
             embeds: [embeds[page]],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Next', 'next').setEmoji({ name: '▶️' }),
                     Components.deny('Stop', 'stop').setEmoji({ name: '🗑️' }),
                     Components.secondary('Back', 'back').setEmoji({ name: '◀️' })

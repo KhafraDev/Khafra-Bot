@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 
 export class kCommand extends Command {
     constructor() {
@@ -16,7 +16,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbed> {
+    async init (): Promise<UnsafeEmbedBuilder> {
         return Embed.ok()
             .setAuthor({ name: 'GetPocket', url: 'https://app.getpocket.com/' })
             .setDescription(`

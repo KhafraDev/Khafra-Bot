@@ -2,8 +2,8 @@ import { Interactions } from '#khaf/Interaction';
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
 import { Components } from '#khaf/utility/Constants/Components.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, bold, italic } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, bold, italic } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
             ${bold(word.word)} ${word.pronunciation ? `(${word.pronunciation})` : ''}
             ${definitions}`,
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.link(
                         'Go to Dictionary',
                         `https://www.dictionary.com/browse/${encodeURIComponent(phrase)}`

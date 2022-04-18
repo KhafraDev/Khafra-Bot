@@ -1,5 +1,5 @@
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { MessageAttachment, type ReplyMessageOptions } from 'discord.js';
+import { Attachment, type ReplyMessageOptions } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -22,7 +22,7 @@ export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions |
 
     const { body } = await request(url);
     const buffer = Buffer.from(await body.arrayBuffer());
-    const attach = new MessageAttachment(buffer, `t${type}dne.jpeg`)
+    const attach = new Attachment(buffer, `t${type}dne.jpeg`)
         .setDescription(`A random${type === 'artwork' ? ' piece of' : ''} ${type}!`);
 
     return {

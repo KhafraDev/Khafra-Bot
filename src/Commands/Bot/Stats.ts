@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -16,7 +16,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message): Promise<UnsafeEmbed> {
+    async init (message: Message): Promise<UnsafeEmbedBuilder> {
         const guilds = message.client.guilds.cache;
         const {
             globalCommandsUsed,

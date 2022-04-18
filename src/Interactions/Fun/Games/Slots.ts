@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { InteractionReplyOptions } from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 import type { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 
@@ -42,7 +42,7 @@ export class kSubCommand extends InteractionSubCommand {
         ), 3);
 
         const slots = await this.image(board);
-        const attachment = new MessageAttachment(slots, 'slots.png');
+        const attachment = new Attachment(slots, 'slots.png');
 
         return {
             embeds: [

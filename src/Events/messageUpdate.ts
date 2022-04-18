@@ -17,9 +17,9 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { inlineCode, UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import type { ReplyMessageOptions } from 'discord.js';
-import { DiscordAPIError, Message, MessageAttachment } from 'discord.js';
+import { DiscordAPIError, Message, Attachment } from 'discord.js';
 import { join } from 'node:path';
 import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
@@ -147,7 +147,7 @@ export class kEvent extends Event<'messageUpdate'> {
                 param.content = returnValue;
             else if (returnValue instanceof MessageEmbed)
                 param.embeds = [returnValue];
-            else if (returnValue instanceof MessageAttachment)
+            else if (returnValue instanceof Attachment)
                 param.files = [returnValue];
             else if (typeof returnValue === 'object') // MessageOptions
                 Object.assign(param, returnValue);

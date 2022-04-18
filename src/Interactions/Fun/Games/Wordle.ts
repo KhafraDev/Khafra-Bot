@@ -4,8 +4,8 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, inlineCode, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
 import { InteractionType } from 'discord-api-types/v10';
 import type {
@@ -17,7 +17,7 @@ import type {
 import {
     InteractionCollector,
     Message,
-    MessageAttachment
+    Attachment
 } from 'discord.js';
 import type { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
@@ -49,10 +49,10 @@ const wordleChoose = (): string => {
 }
 
 const wordleGetShareComponent = (
-    c: ActionRow<MessageActionRowComponent>[],
+    c: ActionRowBuilder<MessageActionRowComponentBuilder>[],
     { word, guesses }: { word: string, guesses: string[] },
     highContrast: boolean
-): ActionRow<MessageActionRowComponent> => {
+): ActionRowBuilder<MessageActionRowComponentBuilder> => {
     // const dayOffset = Math.floor((Date.now() - WordleEpoch) / 86_400_000);
     let board = `Wordle ${guesses.length}/6\n\n`;
 
@@ -80,7 +80,7 @@ const wordleGetShareComponent = (
         `https://twitter.com/compose/tweet?text=${encodeURIComponent(board)}`
     );
 
-    return new ActionRow<MessageActionRowComponent>().addComponents(
+    return new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
         ...c[0].components,
         link
     );
@@ -139,7 +139,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         const attachGame = async (): Promise<WebhookEditMessageOptions> => {
             const buffer = await this.image(game.interaction, game.guesses, game.word);
-            const attachment = new MessageAttachment(buffer, 'wordle.png');
+            const attachment = new Attachment(buffer, 'wordle.png');
 
             return {
                 embeds: [
@@ -152,7 +152,7 @@ export class kSubCommand extends InteractionSubCommand {
         const [err, int] = await dontThrow(interaction.editReply({
             ...await attachGame(),
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
+                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                     Components.approve('Quit', 'quit')
                 )
             ]

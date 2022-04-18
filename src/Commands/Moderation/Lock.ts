@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -33,7 +33,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 

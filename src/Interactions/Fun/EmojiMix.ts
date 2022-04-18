@@ -4,8 +4,8 @@ import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponent } from '@discordjs/builders';
-import { ActionRow, inlineCode } from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, Routes } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
@@ -120,7 +120,7 @@ export class kInteraction extends Interactions {
             const i = await interaction.reply({
                 embeds: [pages[page]],
                 components: [
-                    new ActionRow<MessageActionRowComponent>().addComponents(
+                    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
                         Components.approve('Next', `${uuid}-next`),
                         Components.primary('Back', `${uuid}-prev`),
                         Components.deny('Stop', `${uuid}-trash`)

@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command';
 import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbedBuilder> {
         const [barack, obama] = await dontThrow(talkObamaToMe(args.join(' ').slice(0, 280)));
 
         if (barack !== null) {

@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
+import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         if (!/<?(a)?:?(\w{2,32}):(\d{17,19})>?/.test(args[0])) {
             return Embed.error('Invalid Emoji provided!');
         }

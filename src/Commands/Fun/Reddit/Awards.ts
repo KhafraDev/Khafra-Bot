@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
 import type { Message } from 'discord.js';
 import { request } from 'undici';
@@ -26,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const url = URLFactory(args[0]);
         if (url === null)
             return Embed.error('Invalid Reddit post!');

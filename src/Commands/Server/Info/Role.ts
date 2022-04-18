@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
+import { bold, inlineCode, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message} from 'discord.js';
 import { Role } from 'discord.js';
 
@@ -24,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
         const role =
             await getMentions(message, 'roles') ??
             message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());

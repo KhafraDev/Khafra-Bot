@@ -4,8 +4,8 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits, ThreadAutoArchiveDuration } from 'discord-api-types/v10';
 import type { CategoryChannel, Message, TextChannel } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder> {
         if (settings.ticketchannel === null) {
             return Embed.error('This guild doesn\'t have a ticket channel! Ask a moderator to use `ticketchanel [channel]`!');
         } else if (commandName === 'ticket' || commandName === 'tickets') {
@@ -72,7 +72,7 @@ export class kCommand extends Command {
             const [err, thread] = await dontThrow(channel.threads.create({
                 type: ChannelType.GuildPrivateThread,
                 name: name,
-                autoArchiveDuration: 'MAX',
+                autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
                 reason: `${message.author.tag} (${message.author.id}) created a support ticket.`
             }));
 

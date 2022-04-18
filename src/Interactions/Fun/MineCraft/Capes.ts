@@ -4,7 +4,7 @@ import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { MessageAttachment } from 'discord.js';
+import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -47,7 +47,7 @@ export class kSubCommand extends InteractionSubCommand {
             return { content: buffer }
         }
 
-        const attachment = new MessageAttachment(buffer, 'capes.png');
+        const attachment = new Attachment(buffer, 'capes.png');
 
         return {
             embeds: [

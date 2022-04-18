@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { time, type UnsafeEmbed } from '@discordjs/builders';
+import { time, type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { Message } from 'discord.js';
 
 const formatMS = (ms: number): string => Object.entries({
@@ -28,7 +28,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
         const movies = await searchMovie(
             args.join(' '),
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
