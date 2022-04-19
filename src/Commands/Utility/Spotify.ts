@@ -1,8 +1,8 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { spotify } from '@khaf/spotify';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { ActivityType } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -23,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init(message: Message, { args }: Arguments): Promise<APIEmbed> {
         const presence = message.member!.presence?.activities.filter(activity =>
             activity.type === ActivityType.Listening && activity.name === 'Spotify'
         ).pop();
@@ -46,8 +46,12 @@ export class kCommand extends Command {
             return Embed.error('No songs found!');
         }
 
-        return Embed.ok(`
-        ${res.tracks.items.map(item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`).join('\n')}
-        `).setImage(image.url);
+        const embed = Embed.ok(
+            res.tracks.items.map(
+                item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`
+            ).join('\n')
+        );
+
+        return EmbedUtil.setImage(embed, { url: image.url });
     }
 }

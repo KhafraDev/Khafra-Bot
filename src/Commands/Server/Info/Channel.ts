@@ -1,10 +1,11 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, codeBlock, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, codeBlock, time } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -26,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         const channel =
             await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
@@ -36,39 +37,44 @@ export class kCommand extends Command {
             return Embed.error('No channel with that name was found!');
         }
 
-        const embed = Embed.ok()
-            .addFields(
-                { name: bold('ID:'), value: channel.id, inline: true },
-                { name: bold('Type:'), value: `${channel.type}`, inline: true },
-                {
-                    name: bold('Created:'),
-                    value: channel.createdAt ? time(channel.createdAt, 'f') : 'Unknown!',
-                    inline: true
-                }
-            );
+        const embed = EmbedUtil.addFields(
+            Embed.ok(),
+            { name: bold('ID:'), value: channel.id, inline: true },
+            { name: bold('Type:'), value: `${channel.type}`, inline: true },
+            {
+                name: bold('Created:'),
+                value: channel.createdAt ? time(channel.createdAt, 'f') : 'Unknown!',
+                inline: true
+            }
+        );
 
         if (isText(channel)) {
-            embed
-                .setDescription(`
-                ${channel}
-                ${channel.topic ? codeBlock(`${channel.topic}`) : ''}
-                `)
-                .addFields(
-                    { name: bold('Name:'), value: channel.name, inline: true },
-                    { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
-                    { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
-                    { name: bold('Position:'), value: `${channel.position}`, inline: true }
-                );
+            EmbedUtil.setDescription(
+                embed,
+                `${channel}
+                ${channel.topic ? codeBlock(`${channel.topic}`) : ''}`
+            );
+            EmbedUtil.addFields(
+                embed,
+                { name: bold('Name:'), value: channel.name, inline: true },
+                { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
+                { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
+                { name: bold('Position:'), value: `${channel.position}`, inline: true }
+            );
 
             if (isExplicitText(channel)) {
-                embed.addFields({
-                    name: bold('Rate-Limit:'),
-                    value: channel.rateLimitPerUser + ' seconds',
-                    inline: true
-                });
+                EmbedUtil.addFields(
+                    embed,
+                    {
+                        name: bold('Rate-Limit:'),
+                        value: channel.rateLimitPerUser + ' seconds',
+                        inline: true
+                    }
+                );
             }
         } else if (isVoice(channel)) {
-            embed.addFields(
+            EmbedUtil.addFields(
+                embed,
                 { name: bold('Bitrate:'), value: channel.bitrate.toLocaleString(), inline: true },
                 { name: bold('Full:'), value: channel.full ? 'Yes' : 'No', inline: true },
                 {

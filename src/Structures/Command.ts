@@ -38,8 +38,8 @@ interface ICommand {
 
 type HandlerReturn =
     | string
+    | import('discord-api-types/v10').APIEmbed
     | import('discord.js').Attachment
-    | import('@discordjs/builders').UnsafeEmbedBuilder
     | import('discord.js').ReplyMessageOptions
     | void
     | null;

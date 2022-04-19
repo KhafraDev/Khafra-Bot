@@ -1,11 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
 import { InteractionType } from 'discord-api-types/v10';
 import type {
@@ -143,7 +143,10 @@ export class kSubCommand extends InteractionSubCommand {
 
             return {
                 embeds: [
-                    Embed.ok().setImage('attachment://wordle.png')
+                    EmbedUtil.setImage(
+                        Embed.ok(),
+                        { url: 'attachment://wordle.png' }
+                    )
                 ],
                 files: [attachment]
             }
@@ -232,19 +235,21 @@ export class kSubCommand extends InteractionSubCommand {
 
         collector.once('end', async (_, reason) => {
             const options = await attachGame();
-            const embed = options.embeds![0] as MessageEmbed;
+            const embed = 'toJSON' in options.embeds![0]
+                ? options.embeds![0].toJSON()
+                : options.embeds![0];
 
-            embed.setTitle(game.word.split('').join(' '));
+            EmbedUtil.setTitle(embed, game.word.split('').join(' '));
             games.delete(interaction.user.id);
 
             if (!rCollector.ended) rCollector.stop(reason);
 
             if (reason === 'winner') {
-                embed.setDescription('You win!');
+                EmbedUtil.setDescription(embed, 'You win!');
             } else if (reason === 'loser') {
-                embed.setDescription(`You lost!\n\nThe word was ${inlineCode(game.word)}!`);
+                EmbedUtil.setDescription(embed, `You lost!\n\nThe word was ${inlineCode(game.word)}!`);
             } else {
-                embed.setDescription(`Game over (reason = ${inlineCode(reason)})!`);
+                EmbedUtil.setDescription(embed, `Game over (reason = ${inlineCode(reason)})!`);
             }
 
             return void dontThrow(int.edit({

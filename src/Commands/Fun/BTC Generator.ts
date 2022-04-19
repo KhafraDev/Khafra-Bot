@@ -1,6 +1,6 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import type { Message } from 'discord.js';
@@ -28,9 +28,9 @@ export class kCommand extends Command {
         const num = Number(args[0]);
         const btc = inRange(num) ? num : 1000;
 
-        const embed = Embed.ok()
-            .setTitle(`Generating ${btc.toLocaleString()} BTC!`)
-            .setImage('https://i.imgur.com/8sIZySU.gif');
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, `Generating ${btc.toLocaleString()} BTC!`);
+        EmbedUtil.setImage(embed, { url: 'https://i.imgur.com/8sIZySU.gif' });
 
         const msg = await message.reply({ embeds: [embed] });
 
@@ -40,8 +40,10 @@ export class kCommand extends Command {
             { ref: false }
         );
 
-        const embed2 = Embed.ok()
-            .setTitle(`Generated ${btc.toLocaleString()} BTC!`);
+        const embed2 = EmbedUtil.setTitle(
+            Embed.ok(),
+            `Generated ${btc.toLocaleString()} BTC!`
+        );
 
         return void dontThrow(msg.edit({ embeds: [embed2] }));
     }

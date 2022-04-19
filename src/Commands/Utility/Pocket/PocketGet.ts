@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 interface PocketUser {
@@ -25,7 +26,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket
@@ -47,11 +48,13 @@ export class kCommand extends Command {
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
 
-        return Embed.ok(formatted)
-            .setAuthor({
+        return EmbedUtil.setAuthor(
+            Embed.ok(formatted),
+            {
                 name: message.author.username + '\'s latest saves',
-                iconURL: message.author.displayAvatarURL(),
+                icon_url: message.author.displayAvatarURL(),
                 url: 'https://getpocket.com/'
-            });
+            }
+        );
     }
 }

@@ -1,8 +1,9 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
 import { request } from 'undici';
@@ -73,20 +74,21 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         if (guildEmojiRegex.test(content)) {
             const match = guildEmojiRegex.exec(content)!;
             const { id, name, animated } = match.groups as Record<string, string>;
             const url = `https://cdn.discordapp.com/emojis/${id}.webp`;
 
-            return Embed.ok(match[0])
-                .setTitle(name)
-                .setImage(url)
-                .addFields(
-                    { name: bold('ID:'), value: id, inline: true },
-                    { name: bold('Name:'), value: name, inline: true },
-                    { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true }
-                );
+            const embed = Embed.ok(match[0]);
+            EmbedUtil.setTitle(embed, name);
+            EmbedUtil.setImage(embed, { url });
+            return EmbedUtil.addFields(
+                embed,
+                { name: bold('ID:'), value: id, inline: true },
+                { name: bold('Name:'), value: name, inline: true },
+                { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true }
+            );
         }
 
         if ('1F600' in cache === false) {
@@ -104,13 +106,14 @@ export class kCommand extends Command {
             }
 
             const emoji = cache[key]
-            return Embed.ok(unicodeEmoji[0].text)
-                .setImage(unicodeEmoji[0].url)
-                .addFields(
-                    { name: bold('Name:'), value: emoji.comment, inline: true },
-                    { name: bold('Category:'), value: emoji.group, inline: true },
-                    { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
-                );
+            const embed = Embed.ok(unicodeEmoji[0].text);
+            EmbedUtil.setImage(embed, { url: unicodeEmoji[0].url });
+            return EmbedUtil.addFields(
+                embed,
+                { name: bold('Name:'), value: emoji.comment, inline: true },
+                { name: bold('Category:'), value: emoji.group, inline: true },
+                { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
+            );
         }
 
         const name = Object.values(cache).find(n => n.comment.endsWith(content));
@@ -118,13 +121,14 @@ export class kCommand extends Command {
         if (name) {
             const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0];
 
-            return Embed.ok(unicodeEmoji.text)
-                .setImage(unicodeEmoji.url)
-                .addFields(
-                    { name: bold('Name:'), value: name.comment, inline: true },
-                    { name: bold('Category:'), value: name.group, inline: true },
-                    { name: bold('Unicode:'), value: name.codePoints, inline: true }
-                );
+            const embed = Embed.ok(unicodeEmoji.text);
+            EmbedUtil.setImage(embed, { url: unicodeEmoji.url });
+            return EmbedUtil.addFields(
+                embed,
+                { name: bold('Name:'), value: name.comment, inline: true },
+                { name: bold('Category:'), value: name.group, inline: true },
+                { name: bold('Unicode:'), value: name.codePoints, inline: true }
+            );
         }
 
         return Embed.error('❌ No emojis were found in your message!');

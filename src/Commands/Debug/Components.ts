@@ -4,7 +4,8 @@ import { Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 type ComponentTypes = Exclude<keyof typeof Components, 'link'>
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
         const amount = Number(args[0]);
         if (!inRange(amount))
             return Embed.error('Invalid number of buttons to add!');

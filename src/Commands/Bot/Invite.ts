@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { bold } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const scope = 'bot%20applications.commands';
@@ -18,10 +19,11 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         const selfId = message.client.user!.id;
 
-        return Embed.ok().addFields(
+        return EmbedUtil.addFields(
+            Embed.ok(),
             {
                 name: bold('Basic Permissions:'),
                 value: `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`

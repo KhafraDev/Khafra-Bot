@@ -2,7 +2,7 @@ import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
 import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
@@ -223,9 +223,9 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const embed = Embed.ok()
-            .setTitle(`${emojiOne} + ${emojiTwo} =`)
-            .setImage(j.results[0].url);
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, `${emojiOne} + ${emojiTwo} =`);
+        EmbedUtil.setImage(embed, { url: j.results[0].url });
 
         return {
             embeds: [embed]

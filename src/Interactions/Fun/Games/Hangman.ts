@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
@@ -97,17 +97,17 @@ class Hangman {
                 )
             ];
 
+        const embed = Embed.ok();
+        EmbedUtil.setDescription(embed, `
+        ${this.hide()}
+        ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
+        Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}
+        `);
+        EmbedUtil.setImage(embed, { url: images[this.wrong] });
+        EmbedUtil.setTitle(embed, title);
+
         return {
-            embeds: [
-                Embed.ok()
-                    .setDescription(`
-                    ${this.hide()}
-                    ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
-                    Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}
-                    `)
-                    .setImage(images[this.wrong])
-                    .setTitle(title)
-            ],
+            embeds: [embed],
             components
         }
     }

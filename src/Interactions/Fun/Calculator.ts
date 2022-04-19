@@ -4,8 +4,8 @@ import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, codeBlock, inlineCode, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { ActionRowBuilder, codeBlock, inlineCode } from '@discordjs/builders';
+import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -189,7 +189,7 @@ export class kInteraction extends Interactions {
             )
         ];
 
-        const makeEmbed = (m: string): MessageEmbed =>
+        const makeEmbed = (m: string): APIEmbed =>
             Embed.ok(`
             ${squiggles}
             ${codeBlock(m)}

@@ -1,8 +1,8 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { decodeXML } from 'entities';
 
 interface IxKCD {
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         const state = await cache();
 
         if (state === null) {
@@ -41,9 +41,11 @@ export class kCommand extends Command {
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        return Embed.ok()
-            .setTitle(decodeXML(comic.title))
-            .setURL(comic.link)
-            .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, decodeXML(comic.title));
+        EmbedUtil.setURL(embed, comic.link);
+        EmbedUtil.setImage(embed, { url: `${/src="(.*?)"/.exec(comic.description)?.[1]}` });
+
+        return embed;
     }
 }

@@ -1,9 +1,10 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { request } from 'undici';
 
@@ -26,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
         const url = URLFactory(args[0]);
         if (url === null)
             return Embed.error('Invalid Reddit post!');
@@ -54,11 +55,14 @@ export class kCommand extends Command {
         );
         const count = post.all_awardings.reduce((p, c) => p + c.count, 0);
 
-        return Embed.ok()
-            .setDescription(
-                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
-                `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
-            )
-            .setFooter({ text: 'Free awards are counted in the cost!' });
+        const embed = Embed.ok();
+        EmbedUtil.setDescription(
+            embed,
+            `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
+            `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
+        );
+        EmbedUtil.setFooter(embed, { text: 'Free awards are counted in the cost!' });
+
+        return embed;
     }
 }

@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
@@ -48,11 +48,12 @@ export class kInteraction extends Interactions {
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = Embed.ok()
-            .setThumbnail(currency.image)
-            .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
-            .setTimestamp(currency.last_updated)
-            .addFields(
+        const embed = Embed.json({
+            color: colors.ok,
+            thumbnail: { url: currency.image },
+            title: `${currency.name} (${currency.symbol.toUpperCase()})`,
+            timestamp: new Date(currency.last_updated).toISOString(),
+            fields: [
                 { name: bold('Current Price:'), value: f(currency.current_price), inline: true },
                 { name: bold('High 24H:'),      value: f(currency.high_24h), inline: true },
                 { name: bold('Low 24H:'),       value: f(currency.low_24h), inline: true },
@@ -71,7 +72,8 @@ export class kInteraction extends Interactions {
 
                 { name: bold('Change 24H:'),    value: f(currency.price_change_24h), inline: true },
                 { name: bold('% Change 24H:'),  value: `${currency.price_change_percentage_24h}%`, inline: true }
-            );
+            ]
+        });
 
         if (!Array.isArray(currencies)) {
             return {

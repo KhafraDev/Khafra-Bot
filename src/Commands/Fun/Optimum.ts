@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { italic } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 
 export class kCommand extends Command {
     constructor () {
@@ -18,19 +19,21 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
-        return Embed.ok()
-            .setTitle('Optimum by Altice')
-            .setDescription(`
-            Reviews by ${italic('real')} people:
+    async init (): Promise<APIEmbed> {
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, 'Optimum by Altice');
+        EmbedUtil.setDescription(embed, `
+        Reviews by ${italic('real')} people:
 
-            [Consumer Affairs](https://www.consumeraffairs.com/cable_tv/optimum.html) - 1 ⭐
-            [Moneysavingpro](https://www.moneysavingpro.com/internet-providers/optimum-reviews/) - 2 ⭐
-            [Yelp](https://www.yelp.com/biz/optimum-cable-cablevision-brooklyn) - 1 ⭐
-            [BestCompany](https://bestcompany.com/isp/company/optimum-online) - 2 ⭐
-            [EMPLOYEE REVIEWS](https://www.indeed.com/cmp/Optimum-Cablevision/reviews) - 3.2 ⭐
-            [SiteJabber](https://www.sitejabber.com/reviews/optimum.com) - 1 ⭐
-            [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐
-            `);
+        [Consumer Affairs](https://www.consumeraffairs.com/cable_tv/optimum.html) - 1 ⭐
+        [Moneysavingpro](https://www.moneysavingpro.com/internet-providers/optimum-reviews/) - 2 ⭐
+        [Yelp](https://www.yelp.com/biz/optimum-cable-cablevision-brooklyn) - 1 ⭐
+        [BestCompany](https://bestcompany.com/isp/company/optimum-online) - 2 ⭐
+        [EMPLOYEE REVIEWS](https://www.indeed.com/cmp/Optimum-Cablevision/reviews) - 3.2 ⭐
+        [SiteJabber](https://www.sitejabber.com/reviews/optimum.com) - 1 ⭐
+        [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐
+        `);
+
+        return embed;
     }
 }

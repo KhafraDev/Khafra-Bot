@@ -1,4 +1,4 @@
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { Attachment, type ReplyMessageOptions } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
@@ -27,7 +27,10 @@ export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions |
 
     return {
         embeds: [
-            Embed.ok().setImage(`attachment://t${type}dne.jpeg`)
+            EmbedUtil.setImage(
+                Embed.ok(),
+                { url: `attachment://t${type}dne.jpeg` }
+            )
         ],
         files: [attach],
         failIfNotExists: false

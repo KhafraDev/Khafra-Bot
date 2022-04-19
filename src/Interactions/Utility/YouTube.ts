@@ -1,9 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
 import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRowBuilder, bold, time, type MessageActionRowComponentBuilder, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { ActionRowBuilder, bold, time, type MessageActionRowComponentBuilder } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
     InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions,
@@ -11,18 +12,18 @@ import {
     type MessageComponentInteraction
 } from 'discord.js';
 
-function * format(items: YouTubeSearchResults): Generator<MessageEmbed, void, unknown> {
+function * format(items: YouTubeSearchResults): Generator<APIEmbed, void, unknown> {
     for (let i = 0; i < items.items.length; i++) {
         const video = items.items[i].snippet;
-        const embed = Embed.ok()
-            .setTitle(video.title)
-            .setAuthor({ name: video.channelTitle })
-            .setThumbnail(video.thumbnails.default.url)
-            .setDescription(`${video.description.slice(0, 2048)}`)
-            .addFields(
-                { name: bold('Published:'), value: time(new Date(video.publishTime)) },
-                { name: bold('URL:'), value: `https://youtube.com/watch?v=${items.items[i].id.videoId}` }
-            );
+        const embed = Embed.ok(`${video.description.slice(0, 2048)}`);
+        EmbedUtil.setTitle(embed, video.title);
+        EmbedUtil.setAuthor(embed, { name: video.channelTitle });
+        EmbedUtil.setThumbnail(embed, { url: video.thumbnails.default.url });
+        EmbedUtil.addFields(
+            embed,
+            { name: bold('Published:'), value: time(new Date(video.publishTime)) },
+            { name: bold('URL:'), value: `https://youtube.com/watch?v=${items.items[i].id.videoId}` }
+        );
 
         yield embed;
     }

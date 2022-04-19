@@ -1,9 +1,10 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { stripIndents } from '#khaf/utility/Template.js';
-import { time, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { time } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message, ReplyMessageOptions } from 'discord.js';
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
@@ -24,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | ReplyMessageOptions> {
+    async init (message: Message, { args }: Arguments): Promise<ReplyMessageOptions | APIEmbed> {
         const currencies = await CoinGecko.get(args.join(' '), () => {
             void message.channel.sendTyping();
         });
@@ -35,11 +36,12 @@ export class kCommand extends Command {
 
         const currency = Array.isArray(currencies) ? currencies[0] : currencies;
 
-        const embed = Embed.ok()
-            .setThumbnail(currency.image)
-            .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
-            .setTimestamp(currency.last_updated)
-            .addFields(
+        const embed = Embed.json({
+            color: colors.ok,
+            thumbnail: { url: currency.image },
+            title: `${currency.name} (${currency.symbol.toUpperCase()})`,
+            timestamp: new Date(currency.last_updated).toISOString(),
+            fields: [
                 { name: '**Current Price:**', value: f(currency.current_price), inline: true },
                 { name: '**High 24H:**',      value: f(currency.high_24h), inline: true },
                 { name: '**Low 24H:**',       value: f(currency.low_24h), inline: true },
@@ -58,7 +60,8 @@ export class kCommand extends Command {
 
                 { name: '**Change 24H:**',    value: f(currency.price_change_24h), inline: true },
                 { name: '**% Change 24H:**',  value: `${currency.price_change_percentage_24h}%`, inline: true }
-            );
+            ]
+        });
 
         if (!Array.isArray(currencies))
             return embed;

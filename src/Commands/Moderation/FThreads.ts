@@ -1,11 +1,12 @@
 import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, inlineCode, italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, bold, inlineCode, italic } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildChannel, Message } from 'discord.js';
 
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>): Promise<undefined | APIEmbed> {
         const [e, m] = await dontThrow(message.reply({
             embeds: [
                 Embed.ok(`
@@ -111,12 +112,12 @@ export class kCommand extends Command {
         const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected');
 
         let description = '';
-        const embed = Embed.ok()
-            .setTitle(`Edited ${success.length} Channel Perms!`)
-            .setAuthor({
-                name: message.guild.name,
-                iconURL: message.guild.bannerURL() ?? undefined
-            });
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, `Edited ${success.length} Channel Perms!`);
+        EmbedUtil.setAuthor(embed, {
+            name: message.guild.name,
+            icon_url: message.guild.bannerURL() ?? undefined
+        });
 
         if (success.length > 0)
             description += `${bold('Success:')}\n`;
@@ -141,6 +142,6 @@ export class kCommand extends Command {
             description += line;
         }
 
-        return embed;
+        return EmbedUtil.setDescription(embed, description);
     }
 }

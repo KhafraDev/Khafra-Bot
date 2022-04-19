@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
 import {
@@ -101,17 +101,16 @@ export class kInteraction extends Interactions {
                 }));
             }
 
-            const embed = Embed.ok()
-                .setDescription(ellipsis(summary.extract, 2048))
-                .setTitle(summary.title)
-                .setURL(`https://en.wikipedia.org/wiki/${article.key}`)
+            const embed = Embed.ok(ellipsis(summary.extract, 2048));
+            EmbedUtil.setTitle(embed, summary.title);
+            EmbedUtil.setURL(embed, `https://en.wikipedia.org/wiki/${article.key}`);
 
             if (article.thumbnail) {
                 const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
                     : `https:${article.thumbnail.url}`;
 
-                embed.setThumbnail(image);
+                EmbedUtil.setThumbnail(embed, { url: image });
             }
 
             return void dontThrow(i.editReply({

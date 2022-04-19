@@ -1,10 +1,9 @@
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Command, type Arguments } from '#khaf/Command';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
 import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
-import type { Arguments} from '../../Structures/Command.js';
-import { Command } from '../../Structures/Command.js';
 
 const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
 const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
@@ -30,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { cli, content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message, { cli, content }: Arguments): Promise<APIEmbed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
 
         const opts: ImageURLOptions = {
@@ -55,8 +54,9 @@ export class kCommand extends Command {
             }
         }
 
-        const avatar = user.displayAvatarURL(opts);
-
-        return Embed.ok(`${user}'s avatar`).setImage(avatar);
+        return EmbedUtil.setImage(
+            Embed.ok(`${user}'s avatar`),
+            { url: user.displayAvatarURL(opts) }
+        );
     }
 }

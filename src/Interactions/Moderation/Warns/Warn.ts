@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { Warning } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { interactionGetGuildSettings, postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
@@ -128,14 +128,17 @@ export class kSubCommand extends InteractionSubCommand {
 
         const kicked = settings && settings.max_warning_points <= totalPoints ? 'Yes' : 'No';
         const embeds = [
-            Embed.ok(`
-            ${bold('Offender:')} ${member}
-            ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
-            ${bold('Staff:')} ${interaction.member}
-            ${bold('Points:')} ${points} warning point${plural(points)} given.
-            ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
-            ${bold('ID:')} ${inlineCode(k_id)}
-            `).setTitle('Member Warned')
+            EmbedUtil.setTitle(
+                Embed.ok(`
+                ${bold('Offender:')} ${member}
+                ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
+                ${bold('Staff:')} ${interaction.member}
+                ${bold('Points:')} ${points} warning point${plural(points)} given.
+                ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
+                ${bold('ID:')} ${inlineCode(k_id)}
+                `),
+                'Member Warned'
+            )
         ];
 
         return void postToModLog(interaction, embeds, settings);

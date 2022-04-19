@@ -2,7 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -66,14 +66,14 @@ export class kEvent extends Event<'guildMemberAdd'> {
         if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
             return;
 
-        const embed = Embed.ok()
-            .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
-            .setDescription(`
-            ${member} (${member.user.tag}) joined the server!
-            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
-            `)
-            .setFooter({ text: 'User joined' });
+        const embed = Embed.ok();
+        EmbedUtil.setAuthor(embed, { name: member.user.username, icon_url: member.user.displayAvatarURL() });
+        EmbedUtil.setDescription(embed, `
+        ${member} (${member.user.tag}) joined the server!
+        • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+        • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})
+        `);
+        EmbedUtil.setFooter(embed, { text: 'User joined' });
 
         return void dontThrow(channel.send({ embeds: [embed] }));
     }

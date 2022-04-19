@@ -2,7 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -68,19 +68,21 @@ export class kEvent extends Event<'guildMemberUpdate'> {
 
         if (oldHas && !newHas) { // lost role
             const embed = Embed.error(`${newMember} is no longer boosting the server! 😨`)
-                .setColor(colors.boost)
-                .setAuthor({
-                    name: newMember.user.username,
-                    iconURL: newMember.user.displayAvatarURL()
-                });
+            EmbedUtil.setColor(embed, colors.boost);
+            EmbedUtil.setAuthor(embed, {
+                name: newMember.user.username,
+                icon_url: newMember.user.displayAvatarURL()
+            });
 
             return void dontThrow(channel.send({ embeds: [embed] }));
         } else { // gained role
-            const embed = Embed.ok(`${newMember} just boosted the server! 🥳`)
-                .setAuthor({
+            const embed = EmbedUtil.setAuthor(
+                Embed.ok(`${newMember} just boosted the server! 🥳`),
+                {
                     name: newMember.user.username,
-                    iconURL: newMember.user.displayAvatarURL()
-                });
+                    icon_url: newMember.user.displayAvatarURL()
+                }
+            );
 
             return void dontThrow(channel.send({ embeds: [embed] }));
         }

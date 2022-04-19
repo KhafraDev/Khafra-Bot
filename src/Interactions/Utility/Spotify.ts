@@ -3,7 +3,7 @@ import { GuildMember } from 'discord.js';
 import { Interactions } from '#khaf/Interaction';
 import { hyperlink, inlineCode } from '@discordjs/builders';
 import { spotify } from '@khaf/spotify';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10';
 
@@ -74,9 +74,11 @@ export class kInteraction extends Interactions {
             desc += line;
         }
 
-        const embed = Embed.ok()
-            .setDescription(desc)
-            .setThumbnail(image.url);
+        const embed = Embed.json({
+            color: colors.ok,
+            description: desc,
+            url: image.url
+        });
 
         return {
             embeds: [embed]

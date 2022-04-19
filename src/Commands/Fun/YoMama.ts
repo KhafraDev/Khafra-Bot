@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { upperCase } from '#khaf/utility/String.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { readFileSync } from 'node:fs';
 
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         if (isText(message.channel) && !message.channel.nsfw)
             return Embed.error('🔞 This command only works in NSFW channels.');
 

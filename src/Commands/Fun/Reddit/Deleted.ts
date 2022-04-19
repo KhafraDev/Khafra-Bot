@@ -1,14 +1,15 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { decodeXML } from 'entities';
 import { clearTimeout, setTimeout } from 'node:timers';
@@ -81,7 +82,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | void> {
+    async init (message: Message, { args }: Arguments): Promise<void | APIEmbed> {
         const url = URLFactory(args[0]);
 
         void message.channel.sendTyping();
@@ -121,14 +122,14 @@ export class kCommand extends Command {
         const thumbnail = post.thumbnail !== 'self' && URLFactory(post.thumbnail) !== null;
 
         const chunks = split(post.selftext, 2048);
-        const makeEmbed = (page = 0): UnsafeEmbedBuilder => {
+        const makeEmbed = (page = 0): APIEmbed => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
-            const embed = Embed.ok()
-                .setTitle(title)
-                .setDescription(desc);
+            const embed = Embed.ok();
+            EmbedUtil.setTitle(embed, title);
+            EmbedUtil.setDescription(embed, desc);
 
             if (thumbnail) {
-                embed.setThumbnail(post.thumbnail);
+                EmbedUtil.setThumbnail(embed, { url: post.thumbnail });
             }
 
             return embed;

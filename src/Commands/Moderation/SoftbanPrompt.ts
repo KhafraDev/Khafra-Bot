@@ -8,7 +8,8 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder, bold } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -35,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<undefined | APIEmbed> {
         const user = await getMentions(message, 'users', content);
         if (!user) {
             return Embed.error('No user mentioned and/or an invalid ❄️ was used!');

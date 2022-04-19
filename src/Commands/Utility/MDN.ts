@@ -1,8 +1,8 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { fetchMDN as mdn } from '@khaf/mdn';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -21,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
         const results = await mdn(args.join(' '));
 
         if ('errors' in results) {
@@ -37,16 +37,17 @@ export class kCommand extends Command {
 
         const best = results.documents.sort((a, b) => b.score - a.score);
 
-        return Embed.ok()
-            .setAuthor({
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: 'Mozilla Development Network',
-                iconURL: 'https://developer.mozilla.org/static/img/opengraph-logo.png'
-            })
-            .setDescription(best.map(doc =>
-                `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`)
-                .join('\n')
-            )
-            .setFooter({ text: 'Requested by ' + message.author.tag })
-            .setTimestamp();
+                icon_url: 'https://developer.mozilla.org/static/img/opengraph-logo.png'
+            },
+            description: best.map(doc =>
+                `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug})`
+            ).join('\n'),
+            footer: { text: 'Requested by ' + message.author.tag },
+            timestamp: new Date().toISOString()
+        });
     }
 }

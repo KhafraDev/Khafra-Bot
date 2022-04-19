@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const symbol = String.fromCodePoint(Number.parseInt('202B', 16));
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder | void> {
+    async init (message: Message): Promise<void | APIEmbed> {
         const m = await message.reply({ content: clean });
 
         if (m.editable) {

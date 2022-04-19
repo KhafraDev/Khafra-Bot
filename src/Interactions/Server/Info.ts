@@ -1,7 +1,7 @@
 import { client } from '#khaf/Client';
 import { Interactions } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
@@ -82,20 +82,21 @@ export class kInteraction extends Interactions {
         const option = interaction.options.getMentionable('type', true);
 
         if (option instanceof GuildMember) {
-            const embed = Embed.ok()
-                .setAuthor({
+            const embed = Embed.json({
+                color: colors.ok,
+                author: {
                     name: option.displayName,
-                    iconURL: option.user.displayAvatarURL()
-                })
-                .setDescription(`
+                    icon_url: option.user.displayAvatarURL()
+                },
+                description: `
                 ${option} on ${italic(option.guild.name)}.
                 ${formatPresence(option.presence?.activities)}
                 
                 Roles:
                 ${[...option.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
-                `)
-                .setThumbnail(option.user.displayAvatarURL())
-                .addFields(
+                `,
+                thumbnail: { url: option.user.displayAvatarURL() },
+                fields: [
                     { name: bold('Role Color:'), value: option.displayHexColor, inline: true },
                     { name: bold('Joined Guild:'), value: time(option.joinedAt ?? new Date()), inline: false },
                     {
@@ -103,21 +104,23 @@ export class kInteraction extends Interactions {
                         value: option.premiumSince ? time(option.premiumSince) : 'Not boosting',
                         inline: true
                     }
-                )
-                .setFooter({ text: 'For general user info mention a user!' });
+                ],
+                footer: { text: 'For general user info mention a user!' }
+            });
 
             return {
                 embeds: [embed]
             }
         } else if (option instanceof Role) {
-            const embed = Embed.ok()
-                .setDescription(`
+            const embed = Embed.json({
+                color: colors.ok,
+                description: `
                 ${option}
                 
                 Permissions: 
                 ${inlineCode(option.permissions.toArray().join(', '))}
-                `)
-                .addFields(
+                `,
+                fields: [
                     { name: bold('Name:'), value: option.name, inline: true },
                     { name: bold('Color:'), value: option.hexColor, inline: true },
                     { name: bold('Created:'), value: time(option.createdAt), inline: true },
@@ -125,11 +128,9 @@ export class kInteraction extends Interactions {
                     { name: bold('Hoisted:'), value: option.hoist ? 'Yes' : 'No', inline: true },
                     { name: bold('Position:'), value: `${option.position}`, inline: true },
                     { name: bold('Managed:'), value: option.managed ? 'Yes' : 'No' }
-                );
-
-            if (option.icon) {
-                embed.setImage(option.iconURL());
-            }
+                ],
+                image: option.icon ? { url: option.iconURL()! } : undefined
+            });
 
             return {
                 embeds: [embed]
@@ -151,19 +152,22 @@ export class kInteraction extends Interactions {
                 .filter(f => getEmojis()?.has(f))
                 .map(f => getEmojis()?.get(f));
 
-            const embed = Embed.ok(formatPresence(guildMember?.presence?.activities))
-                .setAuthor({
+            const embed = Embed.json({
+                color: colors.ok,
+                description: formatPresence(guildMember?.presence?.activities),
+                author: {
                     name: option.tag,
-                    iconURL: option.displayAvatarURL()
-                })
-                .addFields(
+                    icon_url: option.displayAvatarURL()
+                },
+                fields: [
                     { name: bold('Username:'), value: option.username, inline: true },
                     { name: bold('ID:'), value: option.id, inline: true },
                     { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
                     { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
                     { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
                     { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
-                );
+                ]
+            });
 
             return {
                 embeds: [embed]

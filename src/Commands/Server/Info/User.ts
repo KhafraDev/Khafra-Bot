@@ -2,12 +2,13 @@ import { client } from '#khaf/Client';
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, inlineCode, italic, time } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { ActivityType } from 'discord-api-types/v10';
 import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js';
 import { SnowflakeUtil } from 'discord.js';
@@ -75,7 +76,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         const user = await getMentions(message, 'users', content) ?? message.author;
         const member = user.equals(message.author)
             ? message.member
@@ -90,18 +91,22 @@ export class kCommand extends Command {
             .filter(f => getEmojis()?.has(f))
             .map(f => getEmojis()?.get(f));
 
-        return Embed.ok(formatPresence(member?.presence?.activities))
-            .setAuthor({
+        const embed = EmbedUtil.setAuthor(
+            Embed.ok(formatPresence(member?.presence?.activities)),
+            {
                 name: user.tag,
-                iconURL: user.displayAvatarURL()
-            })
-            .addFields(
-                { name: bold('Username:'), value: user.username, inline: true },
-                { name: bold('ID:'), value: user.id, inline: true },
-                { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
-                { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
-                { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
-                { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
-            );
+                icon_url: user.displayAvatarURL()
+            }
+        );
+
+        return EmbedUtil.addFields(
+            embed,
+            { name: bold('Username:'), value: user.username, inline: true },
+            { name: bold('ID:'), value: user.id, inline: true },
+            { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
+            { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
+            { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
+            { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+        );
     }
 }

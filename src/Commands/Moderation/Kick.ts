@@ -1,12 +1,13 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js';
-import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -33,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
         const member = await getMentions(message, 'members', content);
 
         if (!hierarchy(message.member, member)) {
@@ -61,11 +62,18 @@ export class kCommand extends Command {
                 return;
 
             const reason = args.slice(1).join(' ');
-            return void channel.send({ embeds: [Embed.ok(`
-            ${bold('Offender:')} ${member}
-            ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
-            ${bold('Staff:')} ${message.member}
-            `).setTitle('Member Kicked')] });
+            return void channel.send({
+                embeds: [
+                    EmbedUtil.setTitle(
+                        Embed.ok(`
+                        ${bold('Offender:')} ${member}
+                        ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+                        ${bold('Staff:')} ${message.member}
+                        `),
+                        'Member Kicked'
+                    )
+                ]
+            });
         }
     }
 }

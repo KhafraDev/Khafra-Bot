@@ -70,7 +70,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             embeds: [
-                Embed.ok().setDescription(codeBlock(t))
+                Embed.ok(codeBlock(t))
             ]
         }
     }

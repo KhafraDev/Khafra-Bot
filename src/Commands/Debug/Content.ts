@@ -1,7 +1,8 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { codeBlock } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
         return Embed.ok(codeBlock(content));
     }
 }

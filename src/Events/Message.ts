@@ -8,7 +8,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { DM } from '#khaf/utility/EventEvents/Message_DM.js';
@@ -19,7 +19,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { ChannelType } from 'discord-api-types/v10';
 import type { ReplyMessageOptions } from 'discord.js';
 import { DiscordAPIError, Message, Attachment } from 'discord.js';
@@ -116,7 +116,10 @@ export class kEvent extends Event<'messageCreate'> {
                     'You posted an Imgur album, which don\'t embed correctly! ' +
                     'Here are all the images in the album:',
                 embeds: [
-                    Embed.ok(desc.trim()).setTitle(imgur.t)
+                    EmbedUtil.setTitle(
+                        Embed.ok(desc.trim()),
+                        imgur.t
+                    )
                 ]
             }));
         }
@@ -192,14 +195,17 @@ export class kEvent extends Event<'messageCreate'> {
                 failIfNotExists: false
             } as ReplyMessageOptions;
 
-            if (typeof returnValue === 'string')
+            if (typeof returnValue === 'string') {
                 param.content = returnValue;
-            else if (returnValue instanceof MessageEmbed)
-                param.embeds = [returnValue];
-            else if (returnValue instanceof Attachment)
+            } else if (returnValue instanceof Attachment) {
                 param.files = [returnValue];
-            else if (typeof returnValue === 'object') // MessageOptions
-                Object.assign(param, returnValue);
+            } else if (typeof returnValue === 'object') { // MessageOptions
+                if (EmbedUtil.isAPIEmbed(returnValue)) {
+                    param.embeds = [returnValue];
+                } else {
+                    Object.assign(param, returnValue);
+                }
+            }
 
             return void await message.reply(param);
         } catch (e) {

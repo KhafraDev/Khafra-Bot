@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const superscript: Record<string, string> = {
@@ -36,7 +36,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
         const split = [...content]
             .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
             .join('');

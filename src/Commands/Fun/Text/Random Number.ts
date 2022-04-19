@@ -1,7 +1,8 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const MAX_DIFF = 2 ** 48 - 1;
@@ -10,7 +11,7 @@ export class kCommand extends Command {
     constructor () {
         super(
             [
-                'Generate a random number avoiding modulo bias!',
+                'Get a random number!',
                 '100 250', '500'
             ],
             {
@@ -23,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
         const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
         const max = +maxStr + 1;
         const min = +minStr;

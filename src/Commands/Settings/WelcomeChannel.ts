@@ -6,7 +6,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -32,7 +32,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>): Promise<APIEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return Embed.perms(
                 message.channel,

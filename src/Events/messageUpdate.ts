@@ -7,7 +7,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isDM } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -17,7 +17,7 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
-import { inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import type { ReplyMessageOptions } from 'discord.js';
 import { DiscordAPIError, Message, Attachment } from 'discord.js';
 import { join } from 'node:path';
@@ -143,14 +143,17 @@ export class kEvent extends Event<'messageUpdate'> {
                 failIfNotExists: false
             } as ReplyMessageOptions;
 
-            if (typeof returnValue === 'string')
+            if (typeof returnValue === 'string') {
                 param.content = returnValue;
-            else if (returnValue instanceof MessageEmbed)
-                param.embeds = [returnValue];
-            else if (returnValue instanceof Attachment)
+            } else if (returnValue instanceof Attachment) {
                 param.files = [returnValue];
-            else if (typeof returnValue === 'object') // MessageOptions
-                Object.assign(param, returnValue);
+            } else if (typeof returnValue === 'object') { // MessageOptions
+                if (EmbedUtil.isAPIEmbed(returnValue)) {
+                    param.embeds = [returnValue];
+                } else {
+                    Object.assign(param, returnValue);
+                }
+            }
 
             return void await newMessage.reply(param);
         } catch (e) {

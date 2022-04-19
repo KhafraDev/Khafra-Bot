@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
 import { ActionRowBuilder, bold, inlineCode } from '@discordjs/builders';
@@ -41,8 +41,8 @@ export class kCommand extends Command {
         After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
         
         ${bold('Command will be canceled after 2 minutes automatically.')}
-        `)
-            .setTitle('Pocket');
+        `);
+        EmbedUtil.setTitle(embed, 'Pocket');
 
         const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
             Components.approve('Approve'),

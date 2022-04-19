@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time } from '@discordjs/builders';
 import { weather } from '@khaf/hereweather';
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -49,18 +49,21 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const embed = Embed.ok(`Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`)
-            .setThumbnail(first.iconLink)
-            .setTitle(`Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`)
-            .setFooter({ text: '© 2020 HERE' })
-            .addFields(
+        const embed = Embed.json({
+            color: colors.ok,
+            description: `Last updated ${time(new Date(first.utcTime), 'f')}\n\n${first.description}`,
+            thumbnail: { url: first.iconLink },
+            title: `Weather in ${first.city}, ${first.state ?? first.country ?? first.city}`,
+            footer: { text: '© 2020 HERE' },
+            fields: [
                 { name: bold('Temperature:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
                 { name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true },
                 { name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
                 { name: bold('Humidity:'), value: `${first.humidity}%`, inline: true },
                 { name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true },
                 { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
-            );
+            ]
+        });
 
         return {
             embeds: [embed]

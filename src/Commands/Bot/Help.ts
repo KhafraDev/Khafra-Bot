@@ -3,12 +3,9 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type {
-    MessageActionRowComponentBuilder,
-    UnsafeEmbedBuilder
-} from '@discordjs/builders';
+import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
 import {
     ActionRowBuilder,
     bold,
@@ -18,6 +15,7 @@ import {
     UnsafeSelectMenuBuilder,
     UnsafeSelectMenuOptionBuilder
 } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 let folders: string[] | null = null;
@@ -40,7 +38,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
         folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))];
 
         if (args.length !== 0) {
@@ -56,19 +54,21 @@ export class kCommand extends Command {
                 ? ['No aliases!']
                 : settings.aliases!;
 
-            return Embed.ok(`
+            const embed = Embed.ok(`
             The ${inlineCode(settings.name)} command:
             ${codeBlock(help.shift()!)}
 
             Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
             Example:
             ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}
-            `)
-                .addFields(
-                    { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-                    { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-                    { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
-                );
+            `);
+
+            return EmbedUtil.addFields(
+                embed,
+                { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
+                { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+                { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
+            );
         }
 
         const categoryComponent = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
@@ -93,7 +93,7 @@ export class kCommand extends Command {
             components: [categoryComponent]
         });
 
-        let pages: UnsafeEmbedBuilder[] = [],
+        let pages: APIEmbed[] = [],
             page = 0;
 
         const c = m.createMessageComponentCollector({

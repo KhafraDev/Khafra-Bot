@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         if (cache.length === 0) {
             void message.channel.sendTyping();
         }
@@ -33,12 +34,14 @@ export class kCommand extends Command {
             return Embed.error('No images were fetched, try again?');
         }
 
-        const embed = Embed.ok()
-            .setTitle(result.title)
-            .setImage(result.link);
+        const embed = Embed.json({
+            color: colors.ok,
+            image: { url: result.link },
+            title: result.title
+        });
 
         if (typeof result.copyright === 'string') {
-            embed.setFooter({ text: `© ${result.copyright}` });
+            EmbedUtil.setFooter(embed, { text: `© ${result.copyright}` });
         }
 
         return embed;

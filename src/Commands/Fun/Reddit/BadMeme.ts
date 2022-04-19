@@ -5,8 +5,9 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode, type MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder } from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -24,7 +25,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<string | UnsafeEmbedBuilder | undefined> {
+    async init (message: Message, { args }: Arguments): Promise<string | undefined | APIEmbed> {
         const subreddit = typeof args[0] === 'string' ? args[0].toLowerCase() : 'dankmemes';
         if (!cache.has(subreddit)) {
             void message.channel.sendTyping();

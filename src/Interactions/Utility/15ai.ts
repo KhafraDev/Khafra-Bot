@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -79,7 +79,10 @@ export class kInteraction extends Interactions {
         }
 
         let description = `${hyperlink('Visit 15.ai', 'https://15.ai')}\n`;
-        const embed = Embed.ok().setFooter({ text: '🗣️ tts provided by 15.ai' });
+        const embed = EmbedUtil.setFooter(
+            Embed.ok(),
+            { text: '🗣️ tts provided by 15.ai' }
+        );
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
@@ -87,7 +90,7 @@ export class kInteraction extends Interactions {
             description += `${url} [Confidence: ${confidence}]\n`;
         }
 
-        embed.setDescription(description);
+        EmbedUtil.setDescription(embed, description);
 
         return {
             embeds: [embed],

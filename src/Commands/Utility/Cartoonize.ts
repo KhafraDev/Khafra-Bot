@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -22,7 +22,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         if (message.attachments.size === 0)
             return Embed.error('No image was attached!');
 
@@ -32,8 +32,9 @@ export class kCommand extends Command {
         if (!cartoon)
             return Embed.error('Failed to extract the image from the HTML. 😕');
 
-        return Embed
-            .ok(`[Click Here](${cartoon}) to download!`)
-            .setImage(cartoon);
+        return EmbedUtil.setImage(
+            Embed.ok(`[Click Here](${cartoon}) to download!`),
+            { url: cartoon }
+        );
     }
 }

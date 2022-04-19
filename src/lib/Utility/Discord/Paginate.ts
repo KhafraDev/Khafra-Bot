@@ -1,6 +1,6 @@
 import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { InteractionCollector, Message} from 'discord.js';
 import { type MessageComponentInteraction } from 'discord.js';
 
@@ -8,7 +8,7 @@ export const Paginate = (
     c: InteractionCollector<MessageComponentInteraction>,
     m: Message,
     pageData: number,
-    embeds: UnsafeEmbedBuilder[] | ((page: number) => UnsafeEmbedBuilder)
+    embeds: APIEmbed[] | ((page: number) => APIEmbed)
 ): void => {
     let page = 0;
 

@@ -1,11 +1,12 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -33,7 +34,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
         const text = await getMentions(message, 'channels') ?? message.channel;
         const everyone = message.guild.roles.everyone;
 
@@ -57,9 +58,11 @@ export class kCommand extends Command {
             );
         }
 
-        await message.reply({ embeds: [Embed.ok(`
-        ${text} has been ${lockState} for ${everyone}!
-        `)] });
+        await message.reply({
+            embeds: [
+                Embed.ok(`${text} has been ${lockState} for ${everyone}!`)
+            ]
+        });
 
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
@@ -67,10 +70,17 @@ export class kCommand extends Command {
             if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
                 return;
 
-            return void channel.send({ embeds: [Embed.ok(`
-            ${bold('Channel:')} ${text} (${text.id}).
-            ${bold('Staff:')} ${message.member}
-            `).setTitle('Channel Locked')] });
+            return void channel.send({
+                embeds: [
+                    EmbedUtil.setTitle(
+                        Embed.ok(`
+                        ${bold('Channel:')} ${text} (${text.id}).
+                        ${bold('Staff:')} ${message.member}
+                        `),
+                        'Channel Locked'
+                    )
+                ]
+            });
         }
     }
 }

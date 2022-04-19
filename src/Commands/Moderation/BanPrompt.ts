@@ -8,7 +8,8 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { ActionRowBuilder } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -34,7 +35,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<undefined | APIEmbed> {
         const user = await getMentions(message, 'users', content);
         const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7;
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');

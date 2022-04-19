@@ -6,7 +6,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -30,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { args }: Arguments): Promise<undefined | APIEmbed> {
         const toDelete = Number(args[0]);
 
         if (!inRange(toDelete)) {

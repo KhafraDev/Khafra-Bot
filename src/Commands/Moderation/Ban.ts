@@ -1,13 +1,14 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { argv } from 'node:process';
@@ -38,7 +39,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<APIEmbed> {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users', content);
@@ -107,10 +108,9 @@ export class kCommand extends Command {
             }
         }
 
-        return Embed.ok(`
-        ${member ?? user} has been banned from the guild for ${inlineCode(reason)}!
-        `).setFooter({
-            text: `${clear} days of messages removed.`
-        });
+        return EmbedUtil.setFooter(
+            Embed.ok(`${member ?? user} has been banned from the guild for ${inlineCode(reason)}!`),
+            { text: `${clear} days of messages removed.` }
+        );
     }
 }

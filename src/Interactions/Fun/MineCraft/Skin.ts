@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
 import { ActionRowBuilder, bold } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
@@ -41,7 +41,10 @@ export class kSubCommand extends InteractionSubCommand {
 
             return {
                 embeds: [
-                    Embed.ok(description).setImage('attachment://skin.png')
+                    EmbedUtil.setImage(
+                        Embed.ok(description),
+                        { url: 'attachment://skin.png' }
+                    )
                 ],
                 components: [
                     new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
@@ -55,8 +58,9 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const embed = Embed.ok(description).setImage(
-            `https://visage.surgeplay.com/${type}/512/${uuid.id}`
+        const embed = EmbedUtil.setImage(
+            Embed.ok(description),
+            { url: `https://visage.surgeplay.com/${type}/512/${uuid.id}` }
         );
 
         return {

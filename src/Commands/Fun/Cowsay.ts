@@ -1,8 +1,9 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { codeBlock, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { codeBlock } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -30,7 +31,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
         if (types.size === 0) { // lazy load types
             const items = await readdir(dir);
             const filtered = items
@@ -42,9 +43,12 @@ export class kCommand extends Command {
         }
 
         if (args[0].toLowerCase() === 'list') {
-            return Embed.ok(`
+            const embed = Embed.ok(`
             ${[...types].map(t => '``' + t + '``').join(', ')}
-            `).setTitle(`${types.size} formats available`);
+            `);
+            EmbedUtil.setTitle(embed, `${types.size} formats available`);
+
+            return embed;
         }
 
         const [format, ...content] = types.has(args[0].toLowerCase())

@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -107,12 +107,15 @@ export class kCommand extends Command {
                 }
 
                 let description = '';
-                const embed = Embed.ok()
-                    .setTitle('Poll')
-                    .setAuthor({
+                const embed = Embed.ok();
+                EmbedUtil.setTitle(embed, 'Poll');
+                EmbedUtil.setAuthor(
+                    embed,
+                    {
                         name: message.author.username,
-                        iconURL: message.author.displayAvatarURL()
-                    });
+                        icon_url: message.author.displayAvatarURL()
+                    }
+                );
 
                 for (let i = 0; i < settings.options.length; i++) {
                     const option = settings.options[i];
@@ -121,7 +124,7 @@ export class kCommand extends Command {
                     description += `${emoji}. ${option}\n`;
                 }
 
-                embed.setDescription(description);
+                EmbedUtil.setDescription(embed, description);
 
                 const [err, pollMessage] = await dontThrow(settings.channel.send({
                     embeds: [embed]

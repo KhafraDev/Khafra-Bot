@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
-import type { UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { Guild, GuildMember, type MessageComponentInteraction } from 'discord.js';
 
 type InteractionReply
@@ -53,7 +53,7 @@ export const interactionReactRoleHandler = async (
         else
             await interaction.member.roles.add(role);
 
-        const opts = { embeds: [] as MessageEmbed[] };
+        const opts = { embeds: [] as APIEmbed[] };
         if (had) {
             opts.embeds.push(Embed.ok(`Removed role ${role} from you!`));
         } else {

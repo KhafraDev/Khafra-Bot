@@ -3,7 +3,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { logger } from '#khaf/Logger';
 import { Timer } from '#khaf/Timer';
 import type { kReminder } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { time } from '@discordjs/builders';
 
 export class RemindersTimer extends Timer {
@@ -47,9 +47,10 @@ export class RemindersTimer extends Timer {
             const user = await client.users.fetch(reminder.userId);
 
             const willRemind = reminder.once ? '' : `\n\nWill repeat at ${time(reminder.time)}!`;
-            const remind = Embed.ok()
-                .setAuthor({ name: user.tag, iconURL: user.displayAvatarURL() })
-                .setDescription(`${reminder.message}${willRemind}`);
+            const remind = EmbedUtil.setAuthor(
+                Embed.ok(`${reminder.message}${willRemind}`),
+                { name: user.tag, icon_url: user.displayAvatarURL() }
+            );
 
             await user.send({ embeds: [remind] });
         } catch (e) {

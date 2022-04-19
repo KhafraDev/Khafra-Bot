@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { type Giveaway } from '#khaf/types/KhafraBot.js';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
@@ -38,19 +38,18 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const endsDate = new Date(Date.now() + ends);
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, 'A giveaway is starting!');
+        EmbedUtil.setDescription(embed, `
+        ${prize.slice(0, 1950)}
+        
+        ${bold('React with 🎉 to enter!')}
+        `);
+        EmbedUtil.setFooter(embed, { text: `${winners} winner${plural(winners)}` });
+        EmbedUtil.setTimestamp(embed, endsDate.toISOString());
 
         const [sentError, sent] = await dontThrow(channel.send({
-            embeds: [
-                Embed.ok()
-                    .setTitle('A giveaway is starting!')
-                    .setDescription(`
-                    ${prize.slice(0, 1950)}
-                    
-                    ${bold('React with 🎉 to enter!')}
-                    `)
-                    .setFooter({ text: `${winners} winner${plural(winners)}` })
-                    .setTimestamp(endsDate)
-            ]
+            embeds: [embed]
         }));
 
         if (sentError !== null) {

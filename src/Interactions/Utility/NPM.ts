@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
 import { ActionRowBuilder, bold, hyperlink, inlineCode, time } from '@discordjs/builders';
 import { npm } from '@khaf/npm';
@@ -57,17 +57,18 @@ export class kInteraction extends Interactions {
             .map(u => u.name)
             .join(', ');
 
-        const embed = Embed.ok()
-            .setAuthor({
+        const embed = Embed.json({
+            color: colors.ok,
+            author: {
                 name: 'NPM',
-                iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
+                icon_url: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
                 url: 'https://npmjs.com/'
-            })
-            .setDescription(`
+            },
+            description: `
             ${hyperlink(dist.name, link)}
             ${inlineCode(p.description.slice(0, 2000))}
-            `)
-            .addFields(
+            `,
+            fields: [
                 { name: bold('Version:'), value: dist.version, inline: true },
                 { name: bold('License:'), value: dist.license, inline: true },
                 { name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true },
@@ -79,7 +80,8 @@ export class kInteraction extends Interactions {
                 { name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true },
                 { name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true },
                 { name: bold('Maintainers:'), value: maintainers }
-            );
+            ]
+        });
 
         return {
             embeds: [embed],

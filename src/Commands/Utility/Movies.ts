@@ -1,9 +1,10 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import { time, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { time } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const formatMS = (ms: number): string => Object.entries({
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
         const movies = await searchMovie(
             args.join(' '),
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
@@ -37,10 +38,11 @@ export class kCommand extends Command {
         if (!movies)
             return Embed.error('No movies found!');
 
-        const embed = Embed.ok()
-            .setTitle(movies.original_title ?? movies.title)
-            .setDescription(movies.overview ?? '')
-            .addFields(
+        const embed = Embed.json({
+            color: colors.ok,
+            title: movies.original_title ?? movies.title,
+            description: movies.overview ?? '',
+            fields: [
                 { name: '**Genres:**', value: movies.genres.map(g => g.name).join(', '), inline: true },
                 { name: '**Runtime:**', value: formatMS(Number(movies.runtime) * 60000), inline: true },
                 { name: '**Status:**', value: movies.status, inline: true },
@@ -50,20 +52,24 @@ export class kCommand extends Command {
                     inline: true
                 },
                 { name: '**TMDB:**', value: `[TMDB](https://www.themoviedb.org/movie/${movies.id})`, inline: true }
-            )
-            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
-
-        movies.homepage && embed.setURL(movies.homepage);
-        movies.imdb_id && embed.addFields({
-            name: '**IMDB:**',
-            value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
-            inline: true
+            ],
+            footer: { text: 'Data provided by https://www.themoviedb.org/' },
+            url: movies.homepage ? movies.homepage : undefined
         });
 
-        if (movies.poster_path)
-            embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);
-        else if (movies.backdrop_path)
-            embed.setImage(`https://image.tmdb.org/t/p/original${movies.backdrop_path}`);
+        if (movies.imdb_id) {
+            EmbedUtil.addField(embed, {
+                name: '**IMDB:**',
+                value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
+                inline: true
+            });
+        }
+
+        if (movies.poster_path) {
+            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` });
+        } else if (movies.backdrop_path) {
+            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` });
+        }
 
         return embed;
     }

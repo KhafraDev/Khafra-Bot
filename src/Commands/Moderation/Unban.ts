@@ -3,7 +3,8 @@ import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -26,7 +27,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<APIEmbed> {
         const user = await getMentions(message, 'users', content);
 
         if (!user)

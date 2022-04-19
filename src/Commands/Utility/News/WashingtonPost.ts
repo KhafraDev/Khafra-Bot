@@ -1,9 +1,9 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { decodeXML } from 'entities';
 
 const settings = {
@@ -43,7 +43,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         const state = await cache();
 
         if (state === null) {
@@ -60,12 +60,14 @@ export class kCommand extends Command {
             return p;
         });
 
-        return Embed.ok()
-            .setDescription(posts
+        const embed = Embed.ok();
+        EmbedUtil.setDescription(
+            embed, posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
                 .slice(0, 2048)
-            )
-            .setAuthor(settings.author);
+        );
+
+        return EmbedUtil.setAuthor(embed, settings.author);
     }
 }

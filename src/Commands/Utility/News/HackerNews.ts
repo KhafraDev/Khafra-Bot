@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command';
 import { cache, fetchHN } from '#khaf/utility/commands/HackerNews';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 
 export class kCommand extends Command {
     constructor () {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         await fetchHN();
 
         if (cache.size === 0) {
@@ -26,11 +26,10 @@ export class kCommand extends Command {
         }
 
         const stories = [...cache.values()];
-        return Embed.ok(`
-        ${stories
-        .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
-        .join('\n')
-}
-        `);
+        const list = stories
+            .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
+            .join('\n');
+
+        return Embed.ok(list);
     }
 }

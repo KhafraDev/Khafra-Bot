@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -52,11 +52,14 @@ export class kInteraction extends Interactions {
 
         return {
             embeds: [
-                Embed.ok(`
-				${isRandom}
-				● ${bold('Hex Color Code:')} ${hexColor}
-				● ${bold('RGB:')} (${rgb.join(', ')})
-				`).setImage('attachment://color.png')
+                EmbedUtil.setImage(
+                    Embed.ok(`
+                    ${isRandom}
+                    ● ${bold('Hex Color Code:')} ${hexColor}
+                    ● ${bold('RGB:')} (${rgb.join(', ')})
+                    `),
+                    { url: 'attachment://color.png' }
+                )
             ],
             files: [attachment]
         }

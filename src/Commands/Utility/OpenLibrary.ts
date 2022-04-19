@@ -2,7 +2,8 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { openLibrary } from '#khaf/utility/commands/Openlibrary';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, hyperlink, inlineCode, italic } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -22,7 +23,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
         const books = await openLibrary(args.join(' '));
 
         if (books.numFound === 0 || books.docs.length === 0) {
@@ -44,6 +45,6 @@ export class kCommand extends Command {
         ${bold(hyperlink('Donate to the Internet Archive', 'https://archive.org/donate/'))}
         `.trim();
 
-        return Embed.ok().setDescription(description.replace(/^(\s*\r?\n){2,}/gm, '\n'));
+        return Embed.ok(description.replace(/^(\s*\r?\n){2,}/gm, '\n'));
     }
 }

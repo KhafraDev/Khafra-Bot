@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 
 export class kCommand extends Command {
     constructor () {
@@ -13,7 +13,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         return Embed.ok(`
         [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
         [Synergism Discord](https://discord.gg/synergism)

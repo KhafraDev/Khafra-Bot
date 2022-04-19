@@ -46,7 +46,7 @@ export class kSubCommand extends InteractionSubCommand {
             ? rows[0]
             : {};
         const locale = interaction.guild?.preferredLocale ?? 'en-US';
-        const embed = Embed.ok().setDescription(`
+        const embed = Embed.ok(`
         ✅ Here are the insights for today, as of ${time(new Date(), 'f')}!
         
         • ${k_joined.toLocaleString(locale)} member${plural(k_joined)} joined!

@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -30,7 +30,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args, content }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
         const member = await getMentions(message, 'users', content);
         if (!member) {
             return Embed.error('No user mentioned and/or an invalid ❄️ was used!');
@@ -51,8 +51,6 @@ export class kCommand extends Command {
             return Embed.error(`${member} isn't bannable!`);
         }
 
-        return Embed.ok(`
-        ${member} has been soft-banned from the guild!
-        `);
+        return Embed.ok(`${member} has been soft-banned from the guild!`);
     }
 }

@@ -46,9 +46,10 @@ export class kInteraction extends Interactions {
 
         return {
             embeds: [
-                Embed
-                    .ok(`[Click Here](${cartoon}) to download (link is only valid for a few minutes)!`)
-                    .setImage('attachment://cartoonized.jpeg')
+                Embed.json({
+                    description: `[Click Here](${cartoon}) to download (link is only valid for a few minutes)!`,
+                    image: { url: 'attachment://cartoonized.jpeg' }
+                })
             ],
             files: [attachment]
         }

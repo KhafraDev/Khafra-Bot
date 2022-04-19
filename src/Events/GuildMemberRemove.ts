@@ -2,7 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -77,15 +77,15 @@ export class kEvent extends Event<'guildMemberRemove'> {
             (member.joinedAt ? time(member.joinedAt) : 'N/A') +
             ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`;
 
-        const embed = Embed.ok()
-            .setAuthor({ name: member.user.username, iconURL: member.user.displayAvatarURL() })
-            .setDescription(`
-            ${member} (${member.user.tag}) has left the server!
-            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${joined}
-            • Left: ${time(new Date())} (${time(new Date(), 'R')})
-            `)
-            .setFooter({ text: 'User left' });
+        const embed = Embed.ok();
+        EmbedUtil.setAuthor(embed, { name: member.user.username, icon_url: member.user.displayAvatarURL() });
+        EmbedUtil.setDescription(embed, `
+        ${member} (${member.user.tag}) has left the server!
+        • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+        • Joined: ${joined}
+        • Left: ${time(new Date())} (${time(new Date(), 'R')})
+        `);
+        EmbedUtil.setFooter(embed, { text: 'User left' });
 
         return void dontThrow(channel.send({ embeds: [embed] }));
     }

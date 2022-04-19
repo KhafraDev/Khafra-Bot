@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, time, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { bold, hyperlink, inlineCode, italic, time } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -19,34 +20,44 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message<true>): Promise<APIEmbed> {
         const locale = message.guild.preferredLocale;
 
-        return Embed.ok()
-            .setAuthor({
+        const embed = Embed.ok();
+        EmbedUtil.setAuthor(
+            embed,
+            {
                 name: message.client.user!.username,
-                iconURL: message.client.user!.displayAvatarURL()
-            })
-            .setTimestamp()
-            .setThumbnail(message.guild.iconURL())
-            .setDescription(`
-            ${italic(message.guild.name)}
+                icon_url: message.client.user!.displayAvatarURL()
+            }
+        );
+        EmbedUtil.setTimestamp(embed, new Date().toISOString());
+
+        if (message.guild.icon) {
+            EmbedUtil.setThumbnail(embed, { url: message.guild.iconURL()! });
+        }
+
+        EmbedUtil.setDescription(
+            embed,
+            `${italic(message.guild.name)}
             ${inlineCode(message.guild.description ?? 'No description set')}
 
             ${message.guild.icon ? hyperlink('Server icon', message.guild.iconURL()!) : ''}
             ${message.guild.banner ? hyperlink('Server banner', message.guild.bannerURL()!) : ''}
-            `.trimEnd())
-            .addFields(
-                { name: bold('ID:'), value: message.guild.id, inline: true },
-                { name: bold('Verified:'), value: message.guild.verified ? 'Yes' : 'No', inline: true },
-                { name: bold('Partnered:'), value: message.guild.partnered ? 'Yes' : 'No', inline: true },
-                { name: bold('Members:'), value: message.guild.memberCount.toLocaleString(locale), inline: true },
-                { name: bold('Owner:'), value: `<@!${message.guild.ownerId}>`, inline: true },
-                { name: bold('Boosts:'), value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
-                { name: bold('Tier:'), value: `${message.guild.premiumTier}`, inline: true },
-                { name: bold('Vanity URL:'), value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
-                { name: bold('Verification:'), value: `Level ${message.guild.verificationLevel}`, inline: true },
-                { name: bold('Created:'), value: time(message.guild.createdAt), inline: false }
-            );
+            `.trimEnd()
+        );
+        return EmbedUtil.addFields(
+            embed,
+            { name: bold('ID:'), value: message.guild.id, inline: true },
+            { name: bold('Verified:'), value: message.guild.verified ? 'Yes' : 'No', inline: true },
+            { name: bold('Partnered:'), value: message.guild.partnered ? 'Yes' : 'No', inline: true },
+            { name: bold('Members:'), value: message.guild.memberCount.toLocaleString(locale), inline: true },
+            { name: bold('Owner:'), value: `<@!${message.guild.ownerId}>`, inline: true },
+            { name: bold('Boosts:'), value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
+            { name: bold('Tier:'), value: `${message.guild.premiumTier}`, inline: true },
+            { name: bold('Vanity URL:'), value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
+            { name: bold('Verification:'), value: `Level ${message.guild.verificationLevel}`, inline: true },
+            { name: bold('Created:'), value: time(message.guild.createdAt), inline: false }
+        );
     }
 }

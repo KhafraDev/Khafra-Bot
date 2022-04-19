@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { searchTV } from '#khaf/utility/commands/TMDB';
 import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
 import { ActionRowBuilder, bold, hyperlink, time } from '@discordjs/builders';
@@ -41,11 +41,12 @@ export class kInteraction extends Interactions {
         }
 
         const link = `https://www.themoviedb.org/tv/${tv.id})`;
-        const embed = Embed.ok()
-            .setTitle(tv.name)
-            .setDescription(tv.overview)
-            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' })
-            .addFields(
+        const embed = Embed.json({
+            color: colors.ok,
+            title: tv.name,
+            description: tv.overview,
+            footer: { text: 'Data provided by https://www.themoviedb.org/' },
+            fields: [
                 { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
                 { name: bold('Status:'), value: tv.status, inline: true },
                 {
@@ -56,16 +57,17 @@ export class kInteraction extends Interactions {
                 { name: bold('Seasons:'), value: `${tv.number_of_seasons}`, inline: true },
                 { name: bold('Episodes:'), value: `${tv.number_of_episodes}`, inline: true },
                 { name: bold('TMDB:'), value: hyperlink('TMDB', link), inline: true }
-            );
+            ]
+        });
 
         if (tv.homepage) {
-            embed.setURL(tv.homepage);
+            EmbedUtil.setURL(embed, tv.homepage);
         }
 
         if (tv.poster_path) {
-            embed.setImage(`https://image.tmdb.org/t/p/original${tv.poster_path}`);
+            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` });
         } else if (tv.backdrop_path) {
-            embed.setImage(`https://image.tmdb.org/t/p/original${tv.backdrop_path}`);
+            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` });
         }
 
         return {

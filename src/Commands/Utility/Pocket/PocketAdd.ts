@@ -1,10 +1,11 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { codeBlock, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { codeBlock, inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 interface PocketUser {
@@ -28,7 +29,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
         const rows = await sql<PocketUser[]>`
             SELECT access_token, request_token, username
             FROM kbPocket
@@ -49,18 +50,19 @@ export class kCommand extends Command {
             return Embed.error('That\'s not an article URL, try again!');
         const added = await pocket.add(article, args.slice(1).join(' '));
 
-        return Embed.ok()
-            .setTitle(added.item.title)
-            .setAuthor({
-                name: added.item.domain_metadata?.name ?? message.author.username,
-                url: added.item.domain_metadata?.logo,
-                iconURL: added.item.resolved_normal_url
-            })
-            .setDescription(`
-            Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
-            ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}
-            `)
-            .setTimestamp(new Date(added.item.date_published))
-            .setFooter({ text: 'Published' });
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, added.item.title);
+        EmbedUtil.setAuthor(embed, {
+            name: added.item.domain_metadata?.name ?? message.author.username,
+            url: added.item.domain_metadata?.logo,
+            icon_url: added.item.resolved_normal_url
+        });
+        EmbedUtil.setDescription(embed, `
+        Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
+        ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}
+        `);
+        EmbedUtil.setTimestamp(embed, new Date(added.item.date_published).toISOString());
+
+        return EmbedUtil.setFooter(embed, { text: 'Published' });
     }
 }

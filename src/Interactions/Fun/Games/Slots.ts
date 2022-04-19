@@ -1,7 +1,7 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { InteractionReplyOptions } from 'discord.js';
@@ -46,7 +46,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             embeds: [
-                Embed.ok().setImage('attachment://slots.png')
+                EmbedUtil.setImage(
+                    Embed.ok(),
+                    { url: 'attachment://slots.png' }
+                )
             ],
             files: [attachment]
         }

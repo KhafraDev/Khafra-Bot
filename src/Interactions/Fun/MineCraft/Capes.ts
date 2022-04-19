@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
@@ -51,12 +51,15 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             embeds: [
-                Embed.ok(`
-				${missingCapeWarning}
+                EmbedUtil.setImage(
+                    Embed.ok(`
+                    ${missingCapeWarning}
 
-				● ${bold('Username:')} ${uuid.name}
-				● ${bold('ID:')} ${uuid.id}
-				`).setImage('attachment://capes.png')
+                    ● ${bold('Username:')} ${uuid.name}
+                    ● ${bold('ID:')} ${uuid.id}
+                    `),
+                    { url: 'attachment://capes.png' }
+                )
             ],
             files: [attachment]
         }

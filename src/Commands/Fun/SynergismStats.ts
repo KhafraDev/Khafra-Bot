@@ -1,8 +1,9 @@
 import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { request } from 'undici';
 
 export class kCommand extends Command {
@@ -20,7 +21,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         const stats = await Kongregate();
         const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
 
@@ -32,17 +33,22 @@ export class kCommand extends Command {
 
         const quarks = await quarkBonus.body.json() as { bonus: number };
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        return Embed.ok()
-            .setTitle('Synergism Stats (Kongregate)')
-            .setDescription(`
-            ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
-            ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
-            Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
-            `)
-            .addFields({
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, 'Synergism Stats (Kongregate)');
+        EmbedUtil.setDescription(embed, `
+        ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
+        ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
+        Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
+        `);
+        EmbedUtil.addField(
+            embed,
+            {
                 name: bold('Quark Bonus:'),
                 value: `${quarks.bonus}%`,
                 inline: true
-            });
+            }
+        );
+
+        return embed;
     }
 }

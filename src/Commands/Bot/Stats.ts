@@ -1,7 +1,8 @@
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { Stats } from '#khaf/utility/Stats.js';
-import { bold, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -16,7 +17,7 @@ export class kCommand extends Command {
         });
     }
 
-    async init (message: Message): Promise<UnsafeEmbedBuilder> {
+    async init (message: Message): Promise<APIEmbed> {
         const guilds = message.client.guilds.cache;
         const {
             globalCommandsUsed,
@@ -28,15 +29,18 @@ export class kCommand extends Command {
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        return Embed.ok()
-            .setTitle('Bot Statistics')
-            .addFields(
-                { name: bold('Guilds:'), value: totalGuilds, inline: true },
-                { name: bold('Members:'), value: totalMembers, inline: true },
-                { name: '\u200b', value: '\u200b', inline: true },
-                { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
-                { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
-                { name: '\u200b', value: '\u200b', inline: true }
-            );
+        const embed = Embed.ok();
+        EmbedUtil.setTitle(embed, 'Bot Statistics');
+        EmbedUtil.addFields(
+            embed,
+            { name: bold('Guilds:'), value: totalGuilds, inline: true },
+            { name: bold('Members:'), value: totalMembers, inline: true },
+            { name: '\u200b', value: '\u200b', inline: true },
+            { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
+            { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
+            { name: '\u200b', value: '\u200b', inline: true }
+        );
+
+        return embed;
     }
 }

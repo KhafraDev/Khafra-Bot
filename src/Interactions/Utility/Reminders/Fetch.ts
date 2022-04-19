@@ -8,7 +8,8 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode, time, type UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode, time } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -17,7 +18,7 @@ type Row = Exclude<kReminder, 'userId'>;
 
 const inRange = Range({ min: 1, max: 20 });
 
-const chunkEmbeds = (rows: Row[]): MessageEmbed[] => {
+const chunkEmbeds = (rows: Row[]): APIEmbed[] => {
     if (rows.length === 0) {
         return [];
     }

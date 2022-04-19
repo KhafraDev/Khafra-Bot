@@ -2,7 +2,7 @@ import { cache } from '#khaf/cache/Settings.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -76,13 +76,16 @@ export class kEvent extends Event<'guildBanRemove'> {
 
         return void dontThrow(channel.send({
             embeds: [
-                Embed.ok(`
-                ${bold('User:')} ${user} (${user.tag})
-                ${bold('ID:')} ${user.id}
-                ${bold('Staff:')} ${staff ?? 'Unknown'}
-                ${bold('Time:')} ${time(new Date())}
-                ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
-                `).setTitle('Member Unbanned')
+                EmbedUtil.setTitle(
+                    Embed.ok(`
+                    ${bold('User:')} ${user} (${user.tag})
+                    ${bold('ID:')} ${user.id}
+                    ${bold('Staff:')} ${staff ?? 'Unknown'}
+                    ${bold('Time:')} ${time(new Date())}
+                    ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}
+                    `),
+                    'Member Unbanned'
+                )
             ]
         }));
     }

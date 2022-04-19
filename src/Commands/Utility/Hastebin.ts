@@ -2,7 +2,8 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { pasteAliases } from '#khaf/utility/commands/Pastes';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const keys = ['pastebin', ...pasteAliases.keys()];
@@ -23,7 +24,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (_message: Message, { content, commandName }: Arguments): Promise<UnsafeEmbedBuilder> {
+    async init (_message: Message, { content, commandName }: Arguments): Promise<APIEmbed> {
         const command = commandName.toLowerCase();
 
         if (command === 'pastebin' || content.length == 0)

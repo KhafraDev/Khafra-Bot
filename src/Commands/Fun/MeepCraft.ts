@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { request } from 'undici';
 
 interface IMCOnline {
@@ -84,13 +85,12 @@ export class kCommand extends Command {
         );
     }
 
-    async init (): Promise<UnsafeEmbedBuilder> {
+    async init (): Promise<APIEmbed> {
         if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
             const sentence = cache.players === 1
                 ? 'is ``1`` player'
                 : `are ${inlineCode(`${cache.players}`)} players`;
-            const embed = Embed.ok(`There ${sentence} on Meepcraft right now!`);
-            return embed;
+            return Embed.ok(`There ${sentence} on Meepcraft right now!`);
         }
 
         const players = await fetchMeepOnline();

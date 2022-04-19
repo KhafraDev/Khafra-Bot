@@ -8,11 +8,9 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, hideLinkEmbed, hyperlink, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
-import type {
-    APIInvite, RESTPostAPIChannelInviteJSONBody} from 'discord-api-types/v10';
-import { InviteTargetType, PermissionFlagsBits, Routes
-} from 'discord-api-types/v10';
+import { ActionRowBuilder, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import type { APIEmbed, APIInvite, RESTPostAPIChannelInviteJSONBody } from 'discord-api-types/v10';
+import { InviteTargetType, PermissionFlagsBits, Routes } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 const Activities = {
@@ -49,7 +47,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { content }: Arguments): Promise<undefined | APIEmbed> {
         const channel =
             await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());

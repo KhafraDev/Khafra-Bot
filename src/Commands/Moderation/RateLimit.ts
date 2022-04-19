@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -9,7 +9,8 @@ import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold, inlineCode, type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
+import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -41,7 +42,7 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<UnsafeEmbedBuilder | undefined> {
+    async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
         // if the channel is mentioned as the first argument
         const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0]);
         const guildChannel = channelFirst
@@ -80,11 +81,14 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    Embed.ok(`
-                    ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
-                    ${bold('Staff:')} ${message.member}
-                    ${bold('Duration:')} ${secs} second${plural(secs)}
-                    `).setTitle('Channel Rate-Limited')
+                    EmbedUtil.setTitle(
+                        Embed.ok(`
+                        ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
+                        ${bold('Staff:')} ${message.member}
+                        ${bold('Duration:')} ${secs} second${plural(secs)}
+                        `),
+                        'Channel Rate-Limited'
+                    )
                 ]
             });
         }

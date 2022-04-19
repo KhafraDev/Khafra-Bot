@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode, UnsafeEmbedBuilder as MessageEmbed } from '@discordjs/builders';
+import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
 import type {
     RESTPostAPIApplicationCommandsJSONBody,
     Snowflake
@@ -162,9 +162,10 @@ export class kInteraction extends Interactions {
 
         const [err, message] = await dontThrow(channel.send({
             embeds: [
-                new MessageEmbed()
-                    .setColor(Util.resolveColor(role.hexColor))
-                    .setDescription(text)
+                Embed.json({
+                    color: Util.resolveColor(role.hexColor),
+                    description: text
+                })
             ],
             components: [
                 new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(

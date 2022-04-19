@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbedBuilder } from '@discordjs/builders';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export class kCommand extends Command {
@@ -21,12 +21,14 @@ export class kCommand extends Command {
         );
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbedBuilder> {
-        return Embed.ok()
-            .setAuthor({
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
+        const embed = EmbedUtil.setAuthor(
+            Embed.ok(),
+            {
                 name: message.author.username,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setDescription(args.join(' '));
+                icon_url: message.author.displayAvatarURL()
+            }
+        );
+        return EmbedUtil.setDescription(embed, args.join(' '));
     }
 }
