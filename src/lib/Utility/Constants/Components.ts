@@ -5,12 +5,14 @@ import {
     type APIActionRowComponent,
     type APIMessageActionRowComponent,
     type APIButtonComponent,
-    type APISelectMenuComponent
+    type APISelectMenuComponent,
+    type APITextInputComponent,
+    type APIActionRowComponentTypes
 } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
 export const Components = {
-    actionRow (components: APIMessageActionRowComponent[] = []): APIActionRowComponent<APIMessageActionRowComponent> {
+    actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(components: T[] = []): APIActionRowComponent<T> {
         return {
             type: ComponentType.ActionRow,
             components
@@ -19,6 +21,17 @@ export const Components = {
     selectMenu (options: Omit<APISelectMenuComponent, 'type'>): APISelectMenuComponent {
         return {
             type: ComponentType.SelectMenu,
+            ...options
+        }
+    },
+    textInput (
+        options: Required<
+            Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>> &
+            Partial<Omit<APITextInputComponent, 'type'>
+        >
+    ): APITextInputComponent {
+        return {
+            type: ComponentType.TextInput,
             ...options
         }
     }
@@ -30,7 +43,7 @@ export const Buttons = {
     approve (label = 'approve', id = 'approve', options: ButtonOptions = {}): APIButtonComponent {
         return {
             type: ComponentType.Button,
-            style: ButtonStyle.Primary,
+            style: ButtonStyle.Success,
             custom_id: id,
             label,
             ...options

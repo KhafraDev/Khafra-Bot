@@ -1,22 +1,22 @@
+import { rest } from '#khaf/Bot';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
-import { isDM, isTextBased } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
+import type { RawFile } from '@discordjs/rest';
 import { createCanvas } from '@napi-rs/canvas';
-import { type APIActionRowComponent, type APIMessageActionRowComponent, InteractionType } from 'discord-api-types/v10';
-import type {
-    ChatInputCommandInteraction,
-    InteractionReplyOptions,
-    MessageComponentInteraction,
-    WebhookEditMessageOptions
+import { Routes, TextInputStyle, type APIActionRowComponent, type APIEmbed, type APIMessageActionRowComponent } from 'discord-api-types/v10';
+import {
+    InteractionCollector, type ButtonInteraction,
+    type ChatInputCommandInteraction,
+    type FileOptions, type InteractionReplyOptions,
+    type ModalSubmitInteraction,
+    type WebhookEditMessageOptions
 } from 'discord.js';
-import { InteractionCollector, Message } from 'discord.js';
 import type { Buffer } from 'node:buffer';
+import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { clearInterval, setTimeout } from 'node:timers';
 
 const Dims = {
     Width: 330,
@@ -34,8 +34,6 @@ const guessWords: string[] = [];
 /* Words that can be chosen */
 const WordList: string[] = [];
 const WordleEpoch = new Date(2021, 5, 19, 0, 0, 0, 0).getTime();
-
-let interval: NodeJS.Timeout;
 
 const wordleChoose = (): string => {
     const t = new Date().setHours(0, 0, 0, 0) - WordleEpoch;
@@ -89,7 +87,7 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
         if (games.has(interaction.user.id)) {
             return {
                 content: '❌ Finish your other game first!',
@@ -119,20 +117,7 @@ export class kSubCommand extends InteractionSubCommand {
             ? wordleChoose()
             : WordList[Math.floor(Math.random() * WordList.length)];
 
-        const game = {
-            interaction,
-            guesses: [] as string[],
-            word: word
-        } as const;
-
-        games.add(interaction.user.id);
-        clearInterval(interval);
-        interval = setTimeout(() => {
-            guessWords.length = 0;
-            WordList.length = 0;
-        }, 60 * 1000 * 60);
-
-        const attachGame = async (): Promise<WebhookEditMessageOptions> => {
+        const attachGame = async (content: string | undefined): Promise<WebhookEditMessageOptions> => {
             const buffer = await this.image(game.interaction, game.guesses, game.word);
 
             return {
@@ -145,128 +130,138 @@ export class kSubCommand extends InteractionSubCommand {
                 files: [{
                     attachment: buffer,
                     name: 'wordle.png'
-                }]
+                }],
+                content
             }
         }
 
-        const [err, int] = await dontThrow(interaction.editReply({
-            ...await attachGame(),
+        const id = randomUUID();
+        const game = {
+            interaction,
+            guesses: [] as string[],
+            word: word
+        } as const;
+
+        const reply = await interaction.editReply({
+            ...await attachGame(undefined),
             components: [
-                Components.actionRow([Buttons.approve('Quit', 'quit')])
+                Components.actionRow([
+                    Buttons.approve('Guess', `showModal-${id}`),
+                    Buttons.deny('Quit', `quit-${id}`)
+                ])
             ]
-        }));
-
-        if (err !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        } else if (!(int instanceof Message)) {
-            return {
-                content: '❌ Ask an administrator to re-invite the bot with full permissions!',
-                ephemeral: true
-            }
-        }
-
-        let channel = interaction.channel;
-
-        if (!channel) {
-            const [err, c] = await dontThrow(interaction.client.channels.fetch(interaction.channelId));
-
-            if (err !== null || c === null) {
-                return {
-                    content: '❌ Please invite the bot with the correct permissions to use this command!',
-                    ephemeral: true
-                }
-            } else if (!isTextBased(c) || isDM(c)) {
-                return {
-                    content: '❌ This command cannot be used in this channel!',
-                    ephemeral: true
-                }
-            }
-
-            channel = c;
-        }
-
-        const collector = channel.createMessageCollector({
-            filter: (m): boolean =>
-                interaction.user.id === m.author.id &&
-                m.content.length === 5 &&
-                m.channel.id === channel!.id,
-            idle: 300_000
         });
 
-        const rCollector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent,
-            message: int,
+        const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
+            idle: 300_000,
             filter: (i) =>
-                interaction.user.id === i.user.id &&
-                int.id === i.message.id
+                i.user.id === interaction.user.id &&
+                (i.isButton() || i.isModalSubmit()) &&
+                i.customId.endsWith(`-${id}`)
         });
 
-        const checkOver = (): false | void => {
-            if (game.guesses.includes(game.word)) return collector.stop('winner');
-            if (game.guesses.length >= 6) return collector.stop('loser');
+        for await (const [i] of c) {
+            // If we receive a button interaction, there can be one of two choices:
+            //  - First, the user wants to end the game (quit button)
+            //  - Second, the user pressed the button to make a guess.
+            // Otherwise, we received a modal submit interaction.
+            if (i.isButton()) {
+                if (i.customId === `quit-${id}`) {
+                    c.stop();
 
-            return false;
+                    await i.reply({
+                        content: 'OK, play again soon! ❤️',
+                        ephemeral: true
+                    });
+
+                    break;
+                }
+
+                await i.showModal({
+                    title: 'Wordle',
+                    custom_id: `wordleModal-${id}`,
+                    components: [
+                        Components.actionRow([
+                            Components.textInput({
+                                custom_id: `textInput-${id}`,
+                                label: 'Guess',
+                                style: TextInputStyle.Short,
+                                max_length: 5,
+                                min_length: 5,
+                                required: true
+                            })
+                        ])
+                    ]
+                });
+            } else {
+                const answer = i.fields.getField(`textInput-${id}`).value.toLowerCase();
+                let content = '';
+
+                // force the idle time to refresh
+                if (guessWords.includes(answer) || WordList.includes(answer)) {
+                    game.guesses.push(answer.toLowerCase());
+                } else {
+                    content = 'That word isn\'t in my list, try another word!';
+                }
+
+                // This makes a new message, so we need to manually edit the game's message.
+                // We need to make this message or else the user will get "interaction failed".
+                await i.reply({
+                    content: `Checking your answer ${inlineCode(answer)}`,
+                    ephemeral: true
+                });
+
+                const editOptions = await attachGame(content);
+                await rest.patch(
+                    Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
+                    {
+                        body: {
+                            embeds: editOptions.embeds,
+                            content: editOptions.content
+                        },
+                        files: (editOptions.files as FileOptions[]).map((c): RawFile => ({
+                            data: c.attachment as Buffer,
+                            name: c.name!
+                        }))
+                    }
+                );
+
+                if (game.guesses.includes(game.word) || game.guesses.length === 6) {
+                    c.stop();
+                    break;
+                }
+            }
         }
 
-        collector.on('collect', async (m) => {
-            // force the idle time to refresh
-            if (
-                !guessWords.includes(m.content.toLowerCase()) &&
-                !WordList.includes(m.content.toLowerCase())
-            ) {
-                return;
+        // The game ended
+        const options = await attachGame('');
+        const embed = (options.embeds as APIEmbed[])[0];
+
+        embed.title = game.word.split('').join(' ');
+        games.delete(interaction.user.id);
+
+        if (game.guesses.includes(game.word)) {
+            embed.description = 'You win!';
+        } else if (game.guesses.length === 6) {
+            embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
+        } else {
+            embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`;
+        }
+
+        await rest.patch(
+            Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
+            {
+                body: {
+                    embeds: options.embeds,
+                    content: options.content,
+                    components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
+                },
+                files: (options.files as FileOptions[]).map((c): RawFile => ({
+                    data: c.attachment as Buffer,
+                    name: c.name!
+                }))
             }
-
-            game.guesses.push(m.content.toLowerCase());
-
-            const over = checkOver();
-            if (over !== false) return;
-
-            return void dontThrow(int.edit(await attachGame()));
-        });
-
-        collector.once('end', async (_, reason) => {
-            const options = await attachGame();
-            const embed = 'toJSON' in options.embeds![0]
-                ? options.embeds![0].toJSON()
-                : options.embeds![0];
-
-            embed.title = game.word.split('').join(' ');
-            games.delete(interaction.user.id);
-
-            if (!rCollector.ended) rCollector.stop(reason);
-
-            if (reason === 'winner') {
-                embed.description = 'You win!';
-            } else if (reason === 'loser') {
-                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
-            } else {
-                embed.description = `Game over (reason = ${inlineCode(reason)})!`;
-            }
-
-            return void dontThrow(int.edit({
-                ...options,
-                components: [wordleGetShareComponent(disableAll(int), game, highContrast)]
-            }));
-        });
-
-        rCollector.once('collect', async (i) => {
-            if (!collector.ended) collector.stop();
-            rCollector.stop();
-
-            const options = await attachGame();
-
-            games.delete(interaction.user.id);
-            game.guesses.push(word); // force correct
-
-            return void dontThrow(i.update({
-                ...options,
-                components: disableAll(int)
-            }));
-        });
+        )
     }
 
     async image (
