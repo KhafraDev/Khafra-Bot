@@ -6,7 +6,7 @@ import type { ImageURLOptions } from '@discordjs/rest';
 import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm';
 import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
+import type { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -36,7 +36,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new Attachment(Buffer.from(buffer), 'magik.png')
+                {
+                    attachment: Buffer.from(buffer),
+                    name: 'magik.png'
+                }
             ]
         }
     }

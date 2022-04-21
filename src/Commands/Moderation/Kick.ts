@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -64,14 +64,14 @@ export class kCommand extends Command {
             const reason = args.slice(1).join(' ');
             return void channel.send({
                 embeds: [
-                    EmbedUtil.setTitle(
-                        Embed.ok(`
+                    Embed.json({
+                        color: colors.ok,
+                        description: `
                         ${bold('Offender:')} ${member}
                         ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
-                        ${bold('Staff:')} ${message.member}
-                        `),
-                        'Member Kicked'
-                    )
+                        ${bold('Staff:')} ${message.member}`,
+                        title: 'Member Kicked'
+                    })
                 ]
             });
         }

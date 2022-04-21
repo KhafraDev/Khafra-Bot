@@ -1,13 +1,11 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Paginate } from '#khaf/utility/Discord/Paginate.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { split } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
@@ -124,26 +122,23 @@ export class kCommand extends Command {
         const chunks = split(post.selftext, 2048);
         const makeEmbed = (page = 0): APIEmbed => {
             const desc = post.selftext.length === 0 ? post.url : decodeXML(chunks[page]);
-            const embed = Embed.ok();
-            EmbedUtil.setTitle(embed, title);
-            EmbedUtil.setDescription(embed, desc);
-
-            if (thumbnail) {
-                EmbedUtil.setThumbnail(embed, { url: post.thumbnail });
-            }
-
-            return embed;
+            return Embed.json({
+                color: colors.ok,
+                title,
+                description: desc,
+                thumbnail: thumbnail ? { url: post.thumbnail } : undefined
+            });
         }
 
         if (post.selftext.length > 2048) {
             const [e, m] = await dontThrow(message.reply({
                 embeds: [makeEmbed()],
                 components: [
-                    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                        Components.approve('Next', 'next'),
-                        Components.primary('Back', 'back'),
-                        Components.deny('Stop', 'stop')
-                    )
+                    Components.actionRow([
+                        Buttons.approve('Next', 'next'),
+                        Buttons.primary('Back', 'back'),
+                        Buttons.deny('Stop', 'stop')
+                    ])
                 ]
             }));
 

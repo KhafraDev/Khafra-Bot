@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
@@ -81,14 +81,14 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    EmbedUtil.setTitle(
-                        Embed.ok(`
+                    Embed.json({
+                        color: colors.ok,
+                        description: `
                         ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
                         ${bold('Staff:')} ${message.member}
-                        ${bold('Duration:')} ${secs} second${plural(secs)}
-                        `),
-                        'Channel Rate-Limited'
-                    )
+                        ${bold('Duration:')} ${secs} second${plural(secs)}`,
+                        title: 'Channel Rate-Limited'
+                    })
                 ]
             });
         }

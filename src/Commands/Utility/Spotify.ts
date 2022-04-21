@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { spotify } from '@khaf/spotify';
 import type { APIEmbed } from 'discord-api-types/v10';
 import { ActivityType } from 'discord-api-types/v10';
@@ -46,12 +46,12 @@ export class kCommand extends Command {
             return Embed.error('No songs found!');
         }
 
-        const embed = Embed.ok(
-            res.tracks.items.map(
+        return Embed.json({
+            color: colors.ok,
+            description: res.tracks.items.map(
                 item => `[${item.name}](${item.external_urls.spotify}) by ${item.artists.map(a => a.name).join(' and ')}`
-            ).join('\n')
-        );
-
-        return EmbedUtil.setImage(embed, { url: image.url });
+            ).join('\n'),
+            image: { url: image.url }
+        });
     }
 }

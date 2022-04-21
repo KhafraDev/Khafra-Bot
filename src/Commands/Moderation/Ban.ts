@@ -1,6 +1,6 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
@@ -108,9 +108,10 @@ export class kCommand extends Command {
             }
         }
 
-        return EmbedUtil.setFooter(
-            Embed.ok(`${member ?? user} has been banned from the guild for ${inlineCode(reason)}!`),
-            { text: `${clear} days of messages removed.` }
-        );
+        return Embed.json({
+            color: colors.ok,
+            description: `${member ?? user} has been banned from the guild for ${inlineCode(reason)}!`,
+            footer: { text: `${clear} days of messages removed.` }
+        });
     }
 }

@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -22,13 +22,13 @@ export class kCommand extends Command {
     }
 
     async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const embed = EmbedUtil.setAuthor(
-            Embed.ok(),
-            {
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: message.author.username,
                 icon_url: message.author.displayAvatarURL()
-            }
-        );
-        return EmbedUtil.setDescription(embed, args.join(' '));
+            },
+            description: args.join(' ')
+        });
     }
 }

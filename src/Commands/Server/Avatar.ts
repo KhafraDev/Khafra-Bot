@@ -1,5 +1,5 @@
 import { Command, type Arguments } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -54,9 +54,10 @@ export class kCommand extends Command {
             }
         }
 
-        return EmbedUtil.setImage(
-            Embed.ok(`${user}'s avatar`),
-            { url: user.displayAvatarURL(opts) }
-        );
+        return Embed.json({
+            color: colors.ok,
+            description: `${user}'s avatar`,
+            image: { url: user.displayAvatarURL(opts) }
+        });
     }
 }

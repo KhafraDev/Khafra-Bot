@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { inlineCode } from '@discordjs/builders';
 import type { Reddit } from '@khaf/badmeme';
@@ -55,14 +55,12 @@ export class kCommand extends Command {
         );
         const count = post.all_awardings.reduce((p, c) => p + c.count, 0);
 
-        const embed = Embed.ok();
-        EmbedUtil.setDescription(
-            embed,
-            `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
-            `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`
-        );
-        EmbedUtil.setFooter(embed, { text: 'Free awards are counted in the cost!' });
-
-        return embed;
+        return Embed.json({
+            color: colors.ok,
+            description:
+                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
+                `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`,
+            footer: { text: 'Free awards are counted in the cost!' }
+        });
     }
 }

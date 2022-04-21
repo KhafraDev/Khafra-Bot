@@ -1,11 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, hyperlink, time } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { bold, hyperlink, time } from '@discordjs/builders';
+import type { APIActionRowComponent, APIMessageActionRowComponent, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -52,7 +51,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [];
+        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [];
         const embed = Embed.json({
             color: colors.ok,
             title: movies.original_title ?? movies.title,
@@ -80,24 +79,24 @@ export class kInteraction extends Interactions {
         });
 
         if (movies.homepage) {
-            EmbedUtil.setURL(embed, movies.homepage);
+            embed.url = movies.homepage;
         }
 
         if (movies.imdb_id) {
             const link = `https://www.imdb.com/title/${movies.imdb_id}/`;
-            EmbedUtil.addField(embed, { name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
+            embed.fields?.push({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
 
             components.push(
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.link('Go to IMDB', link)
-                )
+                Components.actionRow([
+                    Buttons.link('Go to IMDB', link)
+                ])
             );
         }
 
         if (movies.poster_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` };
         } else if (movies.backdrop_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` };
         }
 
         return {

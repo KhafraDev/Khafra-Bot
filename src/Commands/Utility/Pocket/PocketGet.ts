@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -48,13 +48,14 @@ export class kCommand extends Command {
             .map(item => `[${item.resolved_title}](${item.resolved_url})`)
             .join('\n');
 
-        return EmbedUtil.setAuthor(
-            Embed.ok(formatted),
-            {
+        return Embed.json({
+            color: colors.ok,
+            description: formatted,
+            author: {
                 name: message.author.username + '\'s latest saves',
                 icon_url: message.author.displayAvatarURL(),
                 url: 'https://getpocket.com/'
             }
-        );
+        });
     }
 }

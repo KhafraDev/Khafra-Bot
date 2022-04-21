@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -82,17 +82,17 @@ export class kInteraction extends Interactions {
         const everyone = channel.guild.roles.everyone.id;
 
         if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
-            const embed = EmbedUtil.setTitle(
-                Embed.ok(`
+            const embed = Embed.json({
+                color: colors.ok,
+                description: `
                 ${bold('Channel:')} ${channel}
                 ${bold('Messages:')} ${amount}
                 ${bold('Staff:')} ${interaction.user}
-                ${bold('Time:')} ${time(new Date())}
-                `),
-                'Channel Messages Cleared'
-            );
+                ${bold('Time:')} ${time(new Date())}`,
+                title: 'Channel Messages Cleared'
+            });
 
-            void postToModLog(interaction, [embed]);
+            return void postToModLog(interaction, [embed]);
         }
     }
 }

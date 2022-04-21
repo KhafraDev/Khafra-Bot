@@ -1,11 +1,10 @@
 import { Command } from '#khaf/Command';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildBasedChannel, GuildChannelCloneOptions, Message } from 'discord.js';
@@ -47,10 +46,10 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Yes', 'approve'),
-                    Components.deny('No', 'deny')
-                )
+                Components.actionRow([
+                    Buttons.approve('Yes', 'approve'),
+                    Buttons.deny('No', 'deny')
+                ])
             ]
         }));
 

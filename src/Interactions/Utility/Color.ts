@@ -1,11 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import type { Buffer } from 'node:buffer';
 
 type RGB = [number, number, number];
@@ -48,20 +47,22 @@ export class kInteraction extends Interactions {
         const isRandom = hex === hexColor ? 'Random Color' : '';
 
         const buffer = await this.image(hexColor);
-        const attachment = new Attachment(buffer, 'color.png');
 
         return {
             embeds: [
-                EmbedUtil.setImage(
-                    Embed.ok(`
+                Embed.json({
+                    color: colors.ok,
+                    description: `
                     ${isRandom}
                     ● ${bold('Hex Color Code:')} ${hexColor}
-                    ● ${bold('RGB:')} (${rgb.join(', ')})
-                    `),
-                    { url: 'attachment://color.png' }
-                )
+                    ● ${bold('RGB:')} (${rgb.join(', ')})`,
+                    image: { url: 'attachment://color.png' }
+                })
             ],
-            files: [attachment]
+            files: [{
+                attachment: buffer,
+                name: 'color.png'
+            }]
         }
     }
 

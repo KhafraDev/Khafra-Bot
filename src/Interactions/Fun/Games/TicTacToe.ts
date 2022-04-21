@@ -1,34 +1,36 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { ButtonBuilder, MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
-import { InteractionType } from 'discord-api-types/v10';
+import { inlineCode } from '@discordjs/builders';
+import {
+    InteractionType,
+    type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
+} from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board, ended = false): ActionRowBuilder<MessageActionRowComponentBuilder>[] => {
-    const rows: ButtonBuilder[] = [];
+const makeRows = (turns: Board, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+    const rows: APIButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
 
-        if (row === 'X') {
-            rows.push(Components.approve('X', `X,${i}`).setDisabled(true));
-        } else if (row === 'O') {
-            rows.push(Components.primary('O', `O,${i}`).setDisabled(true));
+        if (row === 'X' || row === 'O') {
+            const button = Buttons.approve(row, `${row},${i}`);
+            button.disabled = true;
+            rows.push(button);
         } else {
-            rows.push(Components.secondary('\u200b', `empty,${i}`).setDisabled(ended));
+            const button = Buttons.secondary('\u200b', `empty,${i}`);
+            button.disabled = ended;
+            rows.push(button);
         }
     }
 
-    return chunkSafe(rows, 3).map(r =>
-        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(...r)
-    );
+    return chunkSafe(rows, 3).map(r => Components.actionRow(r));
 }
 
 export class kSubCommand extends InteractionSubCommand {

@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { ImageExtension, ImageSize } from '@discordjs/rest';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
@@ -50,10 +50,10 @@ export class kInteraction extends Interactions {
 
         return {
             embeds: [
-                EmbedUtil.setImage(
-                    Embed.ok(),
-                    { url: avatar }
-                )
+                Embed.json({
+                    color: colors.ok,
+                    image: { url: avatar }
+                })
             ]
         }
     }

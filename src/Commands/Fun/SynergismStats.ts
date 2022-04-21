@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Kongregate } from '#khaf/utility/commands/SynergismStats';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -33,22 +33,15 @@ export class kCommand extends Command {
 
         const quarks = await quarkBonus.body.json() as { bonus: number };
         const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
-        const embed = Embed.ok();
-        EmbedUtil.setTitle(embed, 'Synergism Stats (Kongregate)');
-        EmbedUtil.setDescription(embed, `
-        ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
-        ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
-        Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings! 
-        `);
-        EmbedUtil.addField(
-            embed,
-            {
-                name: bold('Quark Bonus:'),
-                value: `${quarks.bonus}%`,
-                inline: true
-            }
-        );
 
-        return embed;
+        return Embed.json({
+            color: colors.ok,
+            title: 'Synergism Stats (Kongregate)',
+            description: `
+            ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
+            ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
+            Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings!`,
+            fields: [{ name: bold('Quark Bonus:'), value: `${quarks.bonus}%`, inline: true }]
+        });
     }
 }

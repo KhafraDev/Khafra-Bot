@@ -1,10 +1,9 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -47,21 +46,22 @@ export class kSubCommand extends InteractionSubCommand {
             return { content: buffer }
         }
 
-        const attachment = new Attachment(buffer, 'capes.png');
-
         return {
             embeds: [
-                EmbedUtil.setImage(
-                    Embed.ok(`
+                Embed.json({
+                    color: colors.ok,
+                    description: `
                     ${missingCapeWarning}
 
                     ● ${bold('Username:')} ${uuid.name}
-                    ● ${bold('ID:')} ${uuid.id}
-                    `),
-                    { url: 'attachment://capes.png' }
-                )
+                    ● ${bold('ID:')} ${uuid.id}`,
+                    image: { url: 'attachment://capes.png' }
+                })
             ],
-            files: [attachment]
+            files: [{
+                attachment: buffer,
+                name: 'capes.png'
+            }]
         }
     }
 

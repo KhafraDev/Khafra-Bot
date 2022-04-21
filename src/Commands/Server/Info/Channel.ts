@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -37,25 +37,22 @@ export class kCommand extends Command {
             return Embed.error('No channel with that name was found!');
         }
 
-        const embed = EmbedUtil.addFields(
-            Embed.ok(),
-            { name: bold('ID:'), value: channel.id, inline: true },
-            { name: bold('Type:'), value: `${channel.type}`, inline: true },
-            {
-                name: bold('Created:'),
-                value: channel.createdAt ? time(channel.createdAt, 'f') : 'Unknown!',
-                inline: true
-            }
-        );
+        const embed = Embed.json({
+            color: colors.ok,
+            fields: [
+                { name: bold('ID:'), value: channel.id, inline: true },
+                { name: bold('Type:'), value: `${channel.type}`, inline: true },
+                {
+                    name: bold('Created:'),
+                    value: channel.createdAt ? time(channel.createdAt, 'f') : 'Unknown!',
+                    inline: true
+                }
+            ]
+        });
 
         if (isText(channel)) {
-            EmbedUtil.setDescription(
-                embed,
-                `${channel}
-                ${channel.topic ? codeBlock(`${channel.topic}`) : ''}`
-            );
-            EmbedUtil.addFields(
-                embed,
+            embed.description =  `${channel}\n${channel.topic ? codeBlock(`${channel.topic}`) : ''}`;
+            embed.fields?.push(
                 { name: bold('Name:'), value: channel.name, inline: true },
                 { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
                 { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
@@ -63,18 +60,14 @@ export class kCommand extends Command {
             );
 
             if (isExplicitText(channel)) {
-                EmbedUtil.addFields(
-                    embed,
-                    {
-                        name: bold('Rate-Limit:'),
-                        value: channel.rateLimitPerUser + ' seconds',
-                        inline: true
-                    }
-                );
+                embed.fields?.push({
+                    name: bold('Rate-Limit:'),
+                    value: channel.rateLimitPerUser + ' seconds',
+                    inline: true
+                });
             }
         } else if (isVoice(channel)) {
-            EmbedUtil.addFields(
-                embed,
+            embed.fields?.push(
                 { name: bold('Bitrate:'), value: channel.bitrate.toLocaleString(), inline: true },
                 { name: bold('Full:'), value: channel.full ? 'Yes' : 'No', inline: true },
                 {

@@ -1,14 +1,12 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
@@ -47,10 +45,10 @@ export class kCommand extends Command {
             return Embed.error('No user id or user mentioned, no one was banned.');
         }
 
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-            Components.approve('Yes'),
-            Components.deny('No')
-        );
+        const row = Components.actionRow([
+            Buttons.approve('Yes'),
+            Buttons.deny('No')
+        ]);
 
         const msg = await message.reply({
             embeds: [Embed.ok(`Are you sure you want to ban ${user}?`)],

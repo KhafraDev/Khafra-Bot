@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Stats } from '#khaf/utility/Stats.js';
@@ -74,19 +74,19 @@ export class kInteraction extends Interactions {
                 const memoryMB = memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
                 const uptime = getUptime(interaction.client.uptime ?? 0);
 
-                const embed = Embed.ok();
-                EmbedUtil.setDescription(embed, `
-                ${bold('Dependencies')}
-                ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}
-                `);
-                EmbedUtil.addFields(
-                    embed,
-                    { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
-                    { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },
-                    { name: bold('Discord.js:'), value: `v${DJSVersion}`, inline: true },
-                    { name: bold('Node.JS:'), value: version, inline: true },
-                    { name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` }
-                );
+                const embed = Embed.json({
+                    color: colors.ok,
+                    description: `
+                    ${bold('Dependencies')}
+                    ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}`,
+                    fields: [
+                        { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
+                        { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },
+                        { name: bold('Discord.js:'), value: `v${DJSVersion}`, inline: true },
+                        { name: bold('Node.JS:'), value: version, inline: true },
+                        { name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` }
+                    ]
+                });
 
                 return {
                     embeds: [embed]
@@ -121,17 +121,18 @@ export class kInteraction extends Interactions {
                     .toLocaleString();
                 const totalGuilds = guilds.size.toLocaleString();
 
-                const embed = Embed.ok();
-                EmbedUtil.setTitle(embed, 'Bot Statistics');
-                EmbedUtil.addFields(
-                    embed,
-                    { name: bold('Guilds:'), value: totalGuilds, inline: true },
-                    { name: bold('Members:'), value: totalMembers, inline: true },
-                    { name: '\u200b', value: '\u200b', inline: true },
-                    { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
-                    { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
-                    { name: '\u200b', value: '\u200b', inline: true }
-                );
+                const embed = Embed.json({
+                    color: colors.ok,
+                    title: 'Bot Statistics',
+                    fields: [
+                        { name: bold('Guilds:'), value: totalGuilds, inline: true },
+                        { name: bold('Members:'), value: totalMembers, inline: true },
+                        { name: '\u200b', value: '\u200b', inline: true },
+                        { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
+                        { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
+                        { name: '\u200b', value: '\u200b', inline: true }
+                    ]
+                });
 
                 return {
                     embeds: [embed]

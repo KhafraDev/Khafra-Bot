@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { bold } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -80,15 +80,17 @@ export class kCommand extends Command {
             const { id, name, animated } = match.groups as Record<string, string>;
             const url = `https://cdn.discordapp.com/emojis/${id}.webp`;
 
-            const embed = Embed.ok(match[0]);
-            EmbedUtil.setTitle(embed, name);
-            EmbedUtil.setImage(embed, { url });
-            return EmbedUtil.addFields(
-                embed,
-                { name: bold('ID:'), value: id, inline: true },
-                { name: bold('Name:'), value: name, inline: true },
-                { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true }
-            );
+            return Embed.json({
+                color: colors.ok,
+                description: match[0],
+                title: name,
+                image: { url },
+                fields: [
+                    { name: bold('ID:'), value: id, inline: true },
+                    { name: bold('Name:'), value: name, inline: true },
+                    { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true }
+                ]
+            });
         }
 
         if ('1F600' in cache === false) {
@@ -105,15 +107,17 @@ export class kCommand extends Command {
                 return Embed.error('❌ This emoji is invalid or unsupported!');
             }
 
-            const emoji = cache[key]
-            const embed = Embed.ok(unicodeEmoji[0].text);
-            EmbedUtil.setImage(embed, { url: unicodeEmoji[0].url });
-            return EmbedUtil.addFields(
-                embed,
-                { name: bold('Name:'), value: emoji.comment, inline: true },
-                { name: bold('Category:'), value: emoji.group, inline: true },
-                { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
-            );
+            const emoji = cache[key];
+            return Embed.json({
+                color: colors.ok,
+                description: unicodeEmoji[0].text,
+                image: { url: unicodeEmoji[0].url },
+                fields: [
+                    { name: bold('Name:'), value: emoji.comment, inline: true },
+                    { name: bold('Category:'), value: emoji.group, inline: true },
+                    { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
+                ]
+            });
         }
 
         const name = Object.values(cache).find(n => n.comment.endsWith(content));
@@ -121,14 +125,16 @@ export class kCommand extends Command {
         if (name) {
             const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0];
 
-            const embed = Embed.ok(unicodeEmoji.text);
-            EmbedUtil.setImage(embed, { url: unicodeEmoji.url });
-            return EmbedUtil.addFields(
-                embed,
-                { name: bold('Name:'), value: name.comment, inline: true },
-                { name: bold('Category:'), value: name.group, inline: true },
-                { name: bold('Unicode:'), value: name.codePoints, inline: true }
-            );
+            return Embed.json({
+                color: colors.ok,
+                description: unicodeEmoji.text,
+                image: { url: unicodeEmoji.url },
+                fields: [
+                    { name: bold('Name:'), value: name.comment, inline: true },
+                    { name: bold('Category:'), value: name.group, inline: true },
+                    { name: bold('Unicode:'), value: name.codePoints, inline: true }
+                ]
+            });
         }
 
         return Embed.error('❌ No emojis were found in your message!');

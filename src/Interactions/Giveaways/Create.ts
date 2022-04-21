@@ -1,15 +1,14 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { type Giveaway } from '#khaf/types/KhafraBot.js';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { plural } from '#khaf/utility/String.js';
 import { stripIndents } from '#khaf/utility/Template.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, inlineCode, time } from '@discordjs/builders';
+import { bold, inlineCode, time } from '@discordjs/builders';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
 
 type GiveawayId = Pick<Giveaway, 'id'>;
@@ -38,15 +37,16 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const endsDate = new Date(Date.now() + ends);
-        const embed = Embed.ok();
-        EmbedUtil.setTitle(embed, 'A giveaway is starting!');
-        EmbedUtil.setDescription(embed, `
-        ${prize.slice(0, 1950)}
-        
-        ${bold('React with 🎉 to enter!')}
-        `);
-        EmbedUtil.setFooter(embed, { text: `${winners} winner${plural(winners)}` });
-        EmbedUtil.setTimestamp(embed, endsDate.toISOString());
+        const embed = Embed.json({
+            color: colors.ok,
+            title: 'A giveaway is starting!',
+            description: `
+            ${prize.slice(0, 1950)}
+            
+            ${bold('React with 🎉 to enter!')}`,
+            timestamp: endsDate.toISOString(),
+            footer: { text: `${winners} winner${plural(winners)}` }
+        });
 
         const [sentError, sent] = await dontThrow(channel.send({
             embeds: [embed]
@@ -90,9 +90,9 @@ export class kSubCommand extends InteractionSubCommand {
             • Ends ${time(endsDate)}
             • ID ${inlineCode(rows[0].id)}`,
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.link('Message Link', sent.url)
-                )
+                Components.actionRow([
+                    Buttons.link('Message Link', sent.url)
+                ])
             ]
         }
     }

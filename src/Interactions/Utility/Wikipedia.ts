@@ -1,16 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
-import { disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
-import {
-    ActionRowBuilder,
-    hideLinkEmbed,
-    inlineCode,
-    UnsafeSelectMenuBuilder,
-    UnsafeSelectMenuOptionBuilder,
-    type MessageActionRowComponentBuilder
-} from '@discordjs/builders';
+import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { SelectMenuInteraction} from 'discord.js';
@@ -56,16 +49,17 @@ export class kInteraction extends Interactions {
                 Embed.ok('Choose an article from the dropdown below!')
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    new UnsafeSelectMenuBuilder()
-                        .setCustomId('wikipedia')
-                        .setPlaceholder('Which article summary would you like to get?')
-                        .addOptions(...wiki.pages.map(w => new UnsafeSelectMenuOptionBuilder({
+                Components.actionRow([
+                    Components.selectMenu({
+                        custom_id: 'wikipedia',
+                        placeholder: 'Which article summary would you like to get?',
+                        options: wiki.pages.map(w => ({
                             label: ellipsis(w.title, 25),
                             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
                             value: `${w.id}`
-                        })))
-                )
+                        }))
+                    })
+                ])
             ]
         }) as Message;
 
@@ -101,16 +95,19 @@ export class kInteraction extends Interactions {
                 }));
             }
 
-            const embed = Embed.ok(ellipsis(summary.extract, 2048));
-            EmbedUtil.setTitle(embed, summary.title);
-            EmbedUtil.setURL(embed, `https://en.wikipedia.org/wiki/${article.key}`);
+            const embed = Embed.json({
+                color: colors.ok,
+                description: ellipsis(summary.extract, 2048),
+                title: summary.title,
+                url: `https://en.wikipedia.org/wiki/${article.key}`
+            });
 
             if (article.thumbnail) {
                 const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
                     : `https:${article.thumbnail.url}`;
 
-                EmbedUtil.setThumbnail(embed, { url: image });
+                embed.thumbnail = { url: image };
             }
 
             return void dontThrow(i.editReply({

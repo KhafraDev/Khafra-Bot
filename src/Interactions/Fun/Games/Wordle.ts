@@ -1,24 +1,19 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { isDM, isTextBased } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
-import { InteractionType } from 'discord-api-types/v10';
+import { type APIActionRowComponent, type APIMessageActionRowComponent, InteractionType } from 'discord-api-types/v10';
 import type {
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     MessageComponentInteraction,
     WebhookEditMessageOptions
 } from 'discord.js';
-import {
-    InteractionCollector,
-    Message,
-    Attachment
-} from 'discord.js';
+import { InteractionCollector, Message } from 'discord.js';
 import type { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 import { clearInterval, setTimeout } from 'node:timers';
@@ -49,10 +44,10 @@ const wordleChoose = (): string => {
 }
 
 const wordleGetShareComponent = (
-    c: ActionRowBuilder<MessageActionRowComponentBuilder>[],
+    c: APIActionRowComponent<APIMessageActionRowComponent>[],
     { word, guesses }: { word: string, guesses: string[] },
     highContrast: boolean
-): ActionRowBuilder<MessageActionRowComponentBuilder> => {
+): APIActionRowComponent<APIMessageActionRowComponent> => {
     // const dayOffset = Math.floor((Date.now() - WordleEpoch) / 86_400_000);
     let board = `Wordle ${guesses.length}/6\n\n`;
 
@@ -75,15 +70,15 @@ const wordleGetShareComponent = (
 
     board += '\nBy @KhafraDev!';
 
-    const link = Components.link(
+    const link = Buttons.link(
         'Share on Twitter',
         `https://twitter.com/compose/tweet?text=${encodeURIComponent(board)}`
     );
 
-    return new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
+    return Components.actionRow([
         ...c[0].components,
         link
-    );
+    ]);
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -139,25 +134,25 @@ export class kSubCommand extends InteractionSubCommand {
 
         const attachGame = async (): Promise<WebhookEditMessageOptions> => {
             const buffer = await this.image(game.interaction, game.guesses, game.word);
-            const attachment = new Attachment(buffer, 'wordle.png');
 
             return {
                 embeds: [
-                    EmbedUtil.setImage(
-                        Embed.ok(),
-                        { url: 'attachment://wordle.png' }
-                    )
+                    Embed.json({
+                        color: colors.ok,
+                        image: { url: 'attachment://wordle.png' }
+                    })
                 ],
-                files: [attachment]
+                files: [{
+                    attachment: buffer,
+                    name: 'wordle.png'
+                }]
             }
         }
 
         const [err, int] = await dontThrow(interaction.editReply({
             ...await attachGame(),
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Quit', 'quit')
-                )
+                Components.actionRow([Buttons.approve('Quit', 'quit')])
             ]
         }));
 
@@ -239,17 +234,17 @@ export class kSubCommand extends InteractionSubCommand {
                 ? options.embeds![0].toJSON()
                 : options.embeds![0];
 
-            EmbedUtil.setTitle(embed, game.word.split('').join(' '));
+            embed.title = game.word.split('').join(' ');
             games.delete(interaction.user.id);
 
             if (!rCollector.ended) rCollector.stop(reason);
 
             if (reason === 'winner') {
-                EmbedUtil.setDescription(embed, 'You win!');
+                embed.description = 'You win!';
             } else if (reason === 'loser') {
-                EmbedUtil.setDescription(embed, `You lost!\n\nThe word was ${inlineCode(game.word)}!`);
+                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
             } else {
-                EmbedUtil.setDescription(embed, `Game over (reason = ${inlineCode(reason)})!`);
+                embed.description = `Game over (reason = ${inlineCode(reason)})!`;
             }
 
             return void dontThrow(int.edit({

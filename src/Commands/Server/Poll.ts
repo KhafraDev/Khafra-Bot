@@ -1,13 +1,12 @@
 import { Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message, TextBasedChannel } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
@@ -69,12 +68,12 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Add Option', Actions.ADD),
-                    Components.primary('Post Poll', Actions.POST),
-                    Components.secondary('Add Channel', Actions.CHANNEL),
-                    Components.deny('Cancel', Actions.CANCEL)
-                )
+                Components.actionRow([
+                    Buttons.approve('Add Option', Actions.ADD),
+                    Buttons.primary('Post Poll', Actions.POST),
+                    Buttons.secondary('Add Channel', Actions.CHANNEL),
+                    Buttons.deny('Cancel', Actions.CANCEL)
+                ])
             ]
         });
 
@@ -107,15 +106,6 @@ export class kCommand extends Command {
                 }
 
                 let description = '';
-                const embed = Embed.ok();
-                EmbedUtil.setTitle(embed, 'Poll');
-                EmbedUtil.setAuthor(
-                    embed,
-                    {
-                        name: message.author.username,
-                        icon_url: message.author.displayAvatarURL()
-                    }
-                );
 
                 for (let i = 0; i < settings.options.length; i++) {
                     const option = settings.options[i];
@@ -124,7 +114,15 @@ export class kCommand extends Command {
                     description += `${emoji}. ${option}\n`;
                 }
 
-                EmbedUtil.setDescription(embed, description);
+                const embed = Embed.json({
+                    color: colors.ok,
+                    title: 'Poll',
+                    author: {
+                        name: message.author.username,
+                        icon_url: message.author.displayAvatarURL()
+                    },
+                    description
+                });
 
                 const [err, pollMessage] = await dontThrow(settings.channel.send({
                     embeds: [embed]

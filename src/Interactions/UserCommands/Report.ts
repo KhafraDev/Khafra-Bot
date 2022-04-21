@@ -1,5 +1,5 @@
 import { InteractionUserCommand } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
 import { interactionFetchChannel, interactionGetGuildSettings } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
@@ -72,14 +72,15 @@ export class kUserCommand extends InteractionUserCommand {
         const m = `<@${author.id}>'s ${hyperlink('message', hideLinkEmbed(messageURL))}`;
         const a = Array.isArray(attachments) ? attachments : [...attachments.values()];
 
-        const embed = Embed.ok();
-        EmbedUtil.setAuthor(embed, { name: interaction.user.tag, icon_url: interaction.user.displayAvatarURL() });
-        EmbedUtil.setTitle(embed, 'Message Reported!');
-        EmbedUtil.setDescription(embed, `
-        ${interaction.user} reported ${m}:
-
-        ${content.length !== 0 ? codeBlock(content) : ''}
-        `.trimEnd());
+        const embed = Embed.json({
+            color: colors.ok,
+            author: { name: interaction.user.tag, icon_url: interaction.user.displayAvatarURL() },
+            title: 'Message Reported!',
+            description: `
+            ${interaction.user} reported ${m}:
+    
+            ${content.length !== 0 ? codeBlock(content) : ''}`
+        });
 
         const [err] = await dontThrow(channel.send({
             content: a.length === 0

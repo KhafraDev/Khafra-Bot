@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { searchTV } from '#khaf/utility/commands/TMDB';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { bold, time } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -48,13 +48,13 @@ export class kCommand extends Command {
         });
 
         if (tv.homepage) {
-            EmbedUtil.setURL(embed, tv.homepage);
+            embed.url = tv.homepage;
         }
 
         if (tv.poster_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` };
         } else if (tv.backdrop_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` };
         }
 
         return embed;

@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { bold } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -29,17 +29,18 @@ export class kCommand extends Command {
             .toLocaleString();
         const totalGuilds = guilds.size.toLocaleString();
 
-        const embed = Embed.ok();
-        EmbedUtil.setTitle(embed, 'Bot Statistics');
-        EmbedUtil.addFields(
-            embed,
-            { name: bold('Guilds:'), value: totalGuilds, inline: true },
-            { name: bold('Members:'), value: totalMembers, inline: true },
-            { name: '\u200b', value: '\u200b', inline: true },
-            { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
-            { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
-            { name: '\u200b', value: '\u200b', inline: true }
-        );
+        const embed = Embed.json({
+            color: colors.ok,
+            title: 'Bot Statistics',
+            fields: [
+                { name: bold('Guilds:'), value: totalGuilds, inline: true },
+                { name: bold('Members:'), value: totalMembers, inline: true },
+                { name: '\u200b', value: '\u200b', inline: true },
+                { name: bold('Total Messages:'), value: globalMessages.toLocaleString(), inline: true },
+                { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
+                { name: '\u200b', value: '\u200b', inline: true }
+            ]
+        });
 
         return embed;
     }

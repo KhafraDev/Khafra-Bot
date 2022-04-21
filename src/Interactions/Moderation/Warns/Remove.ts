@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { Warning } from '#khaf/types/KhafraBot.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
@@ -60,15 +60,15 @@ export class kSubCommand extends InteractionSubCommand {
             content: `Warning ${inlineCode(deleted[0].id)} has been removed!`
         }));
 
-        const embed = EmbedUtil.setTitle(
-            Embed.ok(`
+        const embed = Embed.json({
+            color: colors.ok,
+            description: `
             ${bold('Removed From:')} ${deleted[0].k_user_id}
             ${bold('Staff:')} ${interaction.user}
             ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
-            ${bold('ID:')} ${inlineCode(uuid)}
-            `),
-            'Warning Removed'
-        );
+            ${bold('ID:')} ${inlineCode(uuid)}`,
+            title: 'Warning Removed'
+        });
 
         return void postToModLog(interaction, [embed]);
     }

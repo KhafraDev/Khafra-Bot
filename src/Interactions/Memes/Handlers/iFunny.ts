@@ -3,7 +3,6 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 import { request } from 'undici';
@@ -27,7 +26,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new Attachment(buffer, 'ifunny.png')
+                {
+                    attachment: buffer,
+                    name: 'ifunny.png'
+                }
             ]
         }
     }

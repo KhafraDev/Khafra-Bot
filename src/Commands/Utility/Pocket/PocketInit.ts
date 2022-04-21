@@ -1,10 +1,9 @@
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
@@ -34,20 +33,22 @@ export class kCommand extends Command {
 
         await pocket.requestCode();
 
-        const embed = Embed.ok(`
-        Authorize Khafra-Bot using the link below! 
-        
-        [Click Here](${pocket.requestAuthorization})!
-        After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
-        
-        ${bold('Command will be canceled after 2 minutes automatically.')}
-        `);
-        EmbedUtil.setTitle(embed, 'Pocket');
+        const embed = Embed.json({
+            color: colors.ok,
+            description: `
+            Authorize Khafra-Bot using the link below! 
+            
+            [Click Here](${pocket.requestAuthorization})!
+            After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
+            
+            ${bold('Command will be canceled after 2 minutes automatically.')}`,
+            title: 'Pocket'
+        });
 
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-            Components.approve('Approve'),
-            Components.deny('Cancel')
-        );
+        const row = Components.actionRow([
+            Buttons.approve('Approve'),
+            Buttons.deny('Cancel')
+        ]);
 
         const msg = await message.reply({
             embeds: [embed],
@@ -91,7 +92,7 @@ export class kCommand extends Command {
             }
 
             // Insert into the table, if username or user_id is already in,
-            // we will update the values. Useful if user unauthorizes Khafra-Bot.
+            // we will update the values. Useful if user unauthorized Khafra-Bot.
             await sql<unknown[]>`
                 INSERT INTO kbPocket (
                     user_id, access_token, request_token, username

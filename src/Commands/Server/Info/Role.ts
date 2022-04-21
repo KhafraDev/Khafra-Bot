@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -34,29 +34,22 @@ export class kCommand extends Command {
             return Embed.error('No role found!');
         }
 
-        const embed = Embed.ok();
-        EmbedUtil.setDescription(
-            embed,
-            `${role}
+        return Embed.json({
+            color: colors.ok,
+            description: `${role}
             
             Permissions: 
-            ${inlineCode(role.permissions.toArray().join(', '))}`
-        );
-        EmbedUtil.addFields(
-            embed,
-            { name: bold('Name:'), value: role.name, inline: true },
-            { name: bold('Color:'), value: role.hexColor, inline: true },
-            { name: bold('Created:'), value: time(role.createdAt), inline: true },
-            { name: bold('Mentionable:'), value: role.mentionable ? 'Yes' : 'No', inline: true },
-            { name: bold('Hoisted:'), value: role.hoist ? 'Yes' : 'No', inline: true },
-            { name: bold('Position:'), value: `${role.position}`, inline: true },
-            { name: bold('Managed:'), value: role.managed ? 'Yes' : 'No' }
-        );
-
-        if (role.icon) {
-            EmbedUtil.setImage(embed, { url: role.iconURL()! });
-        }
-
-        return embed;
+            ${inlineCode(role.permissions.toArray().join(', '))}`,
+            fields: [
+                { name: bold('Name:'), value: role.name, inline: true },
+                { name: bold('Color:'), value: role.hexColor, inline: true },
+                { name: bold('Created:'), value: time(role.createdAt), inline: true },
+                { name: bold('Mentionable:'), value: role.mentionable ? 'Yes' : 'No', inline: true },
+                { name: bold('Hoisted:'), value: role.hoist ? 'Yes' : 'No', inline: true },
+                { name: bold('Position:'), value: `${role.position}`, inline: true },
+                { name: bold('Managed:'), value: role.managed ? 'Yes' : 'No' }
+            ],
+            image: role.icon ? { url: role.iconURL()! } : undefined
+        });
     }
 }

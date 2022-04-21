@@ -1,14 +1,12 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
-type ComponentTypes = Exclude<keyof typeof Components, 'link'>
+type ComponentTypes = Exclude<keyof typeof Buttons, 'link'>
 
 const inRange = Range({ min: 1, max: 5, inclusive: true });
 
@@ -34,14 +32,17 @@ export class kCommand extends Command {
         if (!inRange(amount))
             return Embed.error('Invalid number of buttons to add!');
 
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>();
-        const keys = Object.keys(Components) as ComponentTypes[];
+        const row = Components.actionRow();
+        const keys = Object.keys(Buttons) as ComponentTypes[];
         keys.splice(keys.findIndex(i => `${i}` === 'link'), 1);
 
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)];
             const disabled = Boolean(Math.round(Math.random()));
-            row.addComponents(Components[type](type).setDisabled(disabled));
+            const button = Buttons[type](type);
+            button.disabled = disabled;
+
+            row.components.push(button);
         }
 
         await message.reply({

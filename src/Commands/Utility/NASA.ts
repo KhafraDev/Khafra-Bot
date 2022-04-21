@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { cache, NASAGetRandom } from '#khaf/utility/commands/NASA';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -34,16 +34,13 @@ export class kCommand extends Command {
             return Embed.error('No images were fetched, try again?');
         }
 
-        const embed = Embed.json({
+        return Embed.json({
             color: colors.ok,
             image: { url: result.link },
-            title: result.title
+            title: result.title,
+            footer: typeof result.copyright === 'string'
+                ? { text: `© ${result.copyright}` }
+                : undefined
         });
-
-        if (typeof result.copyright === 'string') {
-            EmbedUtil.setFooter(embed, { text: `© ${result.copyright}` });
-        }
-
-        return embed;
     }
 }

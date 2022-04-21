@@ -1,9 +1,8 @@
 import { Interactions } from '#khaf/Interaction';
 import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { ActionRowBuilder, type MessageActionRowComponentBuilder } from '@discordjs/builders';
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
@@ -58,9 +57,9 @@ export class kInteraction extends Interactions {
         return {
             embeds: [Embed.ok(media)],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.link('Go to Twitter', twitterURL.toString())
-                )
+                Components.actionRow([
+                    Buttons.link('Go to Twitter', twitterURL.toString())
+                ])
             ]
         }
     }

@@ -1,10 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, codeBlock, inlineCode } from '@discordjs/builders';
+import { codeBlock, inlineCode } from '@discordjs/builders';
 import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
@@ -157,36 +156,36 @@ export class kInteraction extends Interactions {
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const rows = [
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.approve('(', '('),
-                Components.approve(')', ')'),
-                Components.approve('.', '.')
-                // Components.approve('idk', 'idk')
-            ),
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.secondary('1', '1'),
-                Components.secondary('2', '2'),
-                Components.secondary('3', '3'),
-                Components.approve('+', '+')
-            ),
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.secondary('4', '4'),
-                Components.secondary('5', '5'),
-                Components.secondary('6', '6'),
-                Components.approve('-', '-')
-            ),
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.secondary('7', '7'),
-                Components.secondary('8', '8'),
-                Components.secondary('9', '9'),
-                Components.approve('*', '*')
-            ),
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.deny('Stop', 'stop'),
-                Components.secondary('0', '0'),
-                Components.deny('=', '='),
-                Components.approve('/', '/')
-            )
+            Components.actionRow([
+                Buttons.approve('(', '('),
+                Buttons.approve(')', ')'),
+                Buttons.approve('.', '.')
+                // Buttons.approve('idk', 'idk')
+            ]),
+            Components.actionRow([
+                Buttons.secondary('1', '1'),
+                Buttons.secondary('2', '2'),
+                Buttons.secondary('3', '3'),
+                Buttons.approve('+', '+')
+            ]),
+            Components.actionRow([
+                Buttons.secondary('4', '4'),
+                Buttons.secondary('5', '5'),
+                Buttons.secondary('6', '6'),
+                Buttons.approve('-', '-')
+            ]),
+            Components.actionRow([
+                Buttons.secondary('7', '7'),
+                Buttons.secondary('8', '8'),
+                Buttons.secondary('9', '9'),
+                Buttons.approve('*', '*')
+            ]),
+            Components.actionRow([
+                Buttons.deny('Stop', 'stop'),
+                Buttons.secondary('0', '0'),
+                Buttons.deny('=', '='),
+                Buttons.approve('/', '/')
+            ])
         ];
 
         const makeEmbed = (m: string): APIEmbed =>

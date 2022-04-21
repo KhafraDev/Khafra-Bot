@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import {
     GoogleLanguages, GoogleTranslate, LibreTranslate,
     LibreTranslateGetLanguages
@@ -51,13 +51,13 @@ export class kInteraction extends Interactions {
         const text = interaction.options.getString('text', true);
         const engine = interaction.options.getString('engine') ?? 'googletranslate';
 
-        const embed = EmbedUtil.setAuthor(
-            Embed.ok(),
-            {
+        const embed = Embed.json({
+            color: colors.ok,
+            author: {
                 name: interaction.user.username,
                 icon_url: interaction.user.displayAvatarURL()
             }
-        );
+        });
 
         if (engine === 'googletranslate') {
             const translated = await GoogleTranslate(
@@ -72,10 +72,10 @@ export class kInteraction extends Interactions {
                 }
             );
 
+            embed.description = translated;
+
             return {
-                embeds: [
-                    EmbedUtil.setDescription(embed, translated)
-                ]
+                embeds: [embed]
             }
         } else if (engine === 'libretranslate') {
             const supported = await LibreTranslateGetLanguages();
@@ -96,10 +96,10 @@ export class kInteraction extends Interactions {
                 }
             }
 
+            embed.description = translated.translatedText;
+
             return {
-                embeds: [
-                    EmbedUtil.setDescription(embed, translated.translatedText)
-                ]
+                embeds: [embed]
             }
         }
     }

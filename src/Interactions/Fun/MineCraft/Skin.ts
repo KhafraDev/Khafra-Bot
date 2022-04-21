@@ -1,11 +1,9 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, bold } from '@discordjs/builders';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { bold } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -37,34 +35,37 @@ export class kSubCommand extends InteractionSubCommand {
             const { body } = await request(skin);
             const b = Buffer.from(await body.arrayBuffer());
 
-            const attachment = new Attachment(b, 'skin.png');
-
             return {
                 embeds: [
-                    EmbedUtil.setImage(
-                        Embed.ok(description),
-                        { url: 'attachment://skin.png' }
-                    )
+                    Embed.json({
+                        color: colors.ok,
+                        description,
+                        image: { url: 'attachment://skin.png' }
+                    })
                 ],
                 components: [
-                    new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                        Components.link(
+                    Components.actionRow([
+                        Buttons.link(
                             'Change Skin',
                             `https://www.minecraft.net/en-us/profile/skin/remote?url=${skin}&model=classic`
                         )
-                    )
+                    ])
                 ],
-                files: [attachment]
+                files: [{
+                    attachment: b,
+                    name: 'skin.png'
+                }]
             }
         }
 
-        const embed = EmbedUtil.setImage(
-            Embed.ok(description),
-            { url: `https://visage.surgeplay.com/${type}/512/${uuid.id}` }
-        );
-
         return {
-            embeds: [embed]
+            embeds: [
+                Embed.json({
+                    color: colors.ok,
+                    description,
+                    image: { url: `https://visage.surgeplay.com/${type}/512/${uuid.id}` }
+                })
+            ]
         }
     }
 }

@@ -2,7 +2,7 @@ import { client } from '#khaf/Client';
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
@@ -91,22 +91,21 @@ export class kCommand extends Command {
             .filter(f => getEmojis()?.has(f))
             .map(f => getEmojis()?.get(f));
 
-        const embed = EmbedUtil.setAuthor(
-            Embed.ok(formatPresence(member?.presence?.activities)),
-            {
+        return Embed.json({
+            color: colors.ok,
+            description: formatPresence(member?.presence?.activities),
+            author: {
                 name: user.tag,
                 icon_url: user.displayAvatarURL()
-            }
-        );
-
-        return EmbedUtil.addFields(
-            embed,
-            { name: bold('Username:'), value: user.username, inline: true },
-            { name: bold('ID:'), value: user.id, inline: true },
-            { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
-            { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
-            { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
-            { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
-        );
+            },
+            fields: [
+                { name: bold('Username:'), value: user.username, inline: true },
+                { name: bold('ID:'), value: user.id, inline: true },
+                { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
+                { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
+                { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
+                { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+            ]
+        });
     }
 }

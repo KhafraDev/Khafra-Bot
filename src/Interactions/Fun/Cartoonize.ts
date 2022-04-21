@@ -4,7 +4,6 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -42,7 +41,6 @@ export class kInteraction extends Interactions {
 
         const { body } = await request(cartoon);
         const imageBuffer = Buffer.from(await body.arrayBuffer());
-        const attachment = new Attachment(imageBuffer, 'cartoonized.jpeg');
 
         return {
             embeds: [
@@ -51,7 +49,10 @@ export class kInteraction extends Interactions {
                     image: { url: 'attachment://cartoonized.jpeg' }
                 })
             ],
-            files: [attachment]
+            files: [{
+                attachment: imageBuffer,
+                name: 'cartoonized.jpeg'
+            }]
         }
     }
 }

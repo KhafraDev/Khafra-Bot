@@ -3,7 +3,7 @@ import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
 import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -50,10 +50,10 @@ export class kInteraction extends Interactions {
 
             return {
                 embeds: [
-                    EmbedUtil.setImage(
-                        Embed.ok(),
-                        { url: homer }
-                    )
+                    Embed.json({
+                        color: colors.ok,
+                        image: { url: homer }
+                    })
                 ]
             }
         } else if (type === 'tdne_word') {

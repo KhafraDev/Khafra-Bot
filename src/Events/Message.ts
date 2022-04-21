@@ -8,7 +8,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { DM } from '#khaf/utility/EventEvents/Message_DM.js';
@@ -116,10 +116,11 @@ export class kEvent extends Event<'messageCreate'> {
                     'You posted an Imgur album, which don\'t embed correctly! ' +
                     'Here are all the images in the album:',
                 embeds: [
-                    EmbedUtil.setTitle(
-                        Embed.ok(desc.trim()),
-                        imgur.t
-                    )
+                    Embed.json({
+                        color: colors.ok,
+                        description: desc.trim(),
+                        title: imgur.t
+                    })
                 ]
             }));
         }

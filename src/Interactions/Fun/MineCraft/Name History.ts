@@ -1,5 +1,5 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { inlineCode, bold, time } from '@discordjs/builders';
 import { getNameHistory, UUID } from '@khaf/minecraft';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -37,13 +37,14 @@ export class kSubCommand extends InteractionSubCommand {
             description += line;
         }
 
-        const embed = EmbedUtil.setAuthor(
-            Embed.ok(description),
-            { name: `${uuid.name} (${uuid.id})` }
-        );
-
         return {
-            embeds: [embed]
+            embeds: [
+                Embed.json({
+                    color: colors.ok,
+                    description,
+                    author: { name: `${uuid.name} (${uuid.id})` }
+                })
+            ]
         }
     }
 }

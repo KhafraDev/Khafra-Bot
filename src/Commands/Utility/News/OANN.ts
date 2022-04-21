@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
@@ -60,14 +60,13 @@ export class kCommand extends Command {
             p.link = u.toString();
             return p;
         });
-        const embed = Embed.ok();
-        EmbedUtil.setDescription(
-            embed, posts
+        return Embed.json({
+            color: colors.ok,
+            description: posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
                 .join('\n')
-                .slice(0, 2048)
-        );
-
-        return EmbedUtil.setAuthor(embed, settings.author);
+                .slice(0, 2048),
+            author: settings.author
+        });
     }
 }

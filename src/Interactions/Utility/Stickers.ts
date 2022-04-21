@@ -6,7 +6,6 @@ import { inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, Sticker } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -75,10 +74,11 @@ export class kInteraction extends Interactions {
 
         return {
             files: [
-                new Attachment(
-                    await readFile(join(cwd, `assets/Stickers/${fileName}`)),
-                    fileName
-                ).setDescription(`A sticker for ${interaction.options.getString('name', true)}!`)
+                {
+                    attachment: await readFile(join(cwd, `assets/Stickers/${fileName}`)),
+                    name: fileName,
+                    description: `A sticker for ${interaction.options.getString('name', true)}!`
+                }
             ],
             content: `${inlineCode(interaction.options.getString('name', true))} (${fileNames.size} similar).`
         }

@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command';
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -32,9 +32,10 @@ export class kCommand extends Command {
         if (!cartoon)
             return Embed.error('Failed to extract the image from the HTML. 😕');
 
-        return EmbedUtil.setImage(
-            Embed.ok(`[Click Here](${cartoon}) to download!`),
-            { url: cartoon }
-        );
+        return Embed.json({
+            color: colors.ok,
+            description: `[Click Here](${cartoon}) to download!`,
+            image: { url: cartoon }
+        });
     }
 }

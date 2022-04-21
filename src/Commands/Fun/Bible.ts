@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -56,9 +56,11 @@ export class kCommand extends Command {
                 .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
                 .shift()!;
 
-            const embed = Embed.ok();
-            EmbedUtil.setTitle(embed, `${book} ${rows[0].chapter}:${rows[0].verse}`);
-            EmbedUtil.setDescription(embed, rows[0].content);
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${book} ${rows[0].chapter}:${rows[0].verse}`,
+                description: rows[0].content
+            });
 
             return embed;
         }
@@ -140,12 +142,11 @@ export class kCommand extends Command {
                 `);
 
             const [first, last] = [rows.at(0)!, rows.at(-1)!];
-            const embed = Embed.ok();
-            EmbedUtil.setTitle(embed, `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`);
-            EmbedUtil.setDescription(
-                embed,
-                `${rows.map(v => v.content).join('\n')}`.slice(0, 2048)
-            );
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`,
+                description: `${rows.map(v => v.content).join('\n')}`.slice(0, 2048)
+            });
 
             return embed;
         }
@@ -169,9 +170,11 @@ export class kCommand extends Command {
                 return Embed.error(`No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕`);
             }
 
-            const embed = Embed.ok();
-            EmbedUtil.setTitle(embed, `${bookAcronym.shift()} ${chapter}:${verse}`);
-            EmbedUtil.setDescription(embed, rows[0].content);
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${bookAcronym.shift()} ${chapter}:${verse}`,
+                description: rows[0].content
+            });
 
             return embed;
         }

@@ -1,10 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { searchTV } from '#khaf/utility/commands/TMDB';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, hyperlink, time } from '@discordjs/builders';
+import { bold, hyperlink, time } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
@@ -61,21 +60,21 @@ export class kInteraction extends Interactions {
         });
 
         if (tv.homepage) {
-            EmbedUtil.setURL(embed, tv.homepage);
+            embed.url = tv.homepage;
         }
 
         if (tv.poster_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` };
         } else if (tv.backdrop_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` };
         }
 
         return {
             embeds: [embed],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.link('TMDB', link)
-                )
+                Components.actionRow([
+                    Buttons.link('TMDB', link)
+                ])
             ]
         }
     }

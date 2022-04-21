@@ -1,9 +1,8 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
+import { inlineCode } from '@discordjs/builders';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -16,11 +15,11 @@ const emojis = {
     scissors: '✂️'
 } as const;
 
-const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-    Components.primary('🌑', 'rock'),
-    Components.secondary('🧻', 'paper'),
-    Components.approve('✂️', 'scissors')
-);
+const row = Components.actionRow([
+    Buttons.primary('🌑', 'rock'),
+    Buttons.secondary('🧻', 'paper'),
+    Buttons.approve('✂️', 'scissors')
+]);
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {

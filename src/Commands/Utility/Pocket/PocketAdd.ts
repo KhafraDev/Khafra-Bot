@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { codeBlock, inlineCode } from '@discordjs/builders';
 import { Pocket } from '@khaf/pocket';
@@ -50,19 +50,19 @@ export class kCommand extends Command {
             return Embed.error('That\'s not an article URL, try again!');
         const added = await pocket.add(article, args.slice(1).join(' '));
 
-        const embed = Embed.ok();
-        EmbedUtil.setTitle(embed, added.item.title);
-        EmbedUtil.setAuthor(embed, {
-            name: added.item.domain_metadata?.name ?? message.author.username,
-            url: added.item.domain_metadata?.logo,
-            icon_url: added.item.resolved_normal_url
+        return Embed.json({
+            color: colors.ok,
+            title: added.item.title,
+            author: {
+                name: added.item.domain_metadata?.name ?? message.author.username,
+                url: added.item.domain_metadata?.logo,
+                icon_url: added.item.resolved_normal_url
+            },
+            description: `
+            Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
+            ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}`,
+            timestamp: new Date(added.item.date_published).toISOString(),
+            footer: { text: 'Published' }
         });
-        EmbedUtil.setDescription(embed, `
-        Added [${added.item.title}](${added.item.resolved_normal_url}) to your Pocket list!
-        ${codeBlock(added.item.excerpt?.slice(0, 1024) ?? 'N/A')}
-        `);
-        EmbedUtil.setTimestamp(embed, new Date(added.item.date_published).toISOString());
-
-        return EmbedUtil.setFooter(embed, { text: 'Published' });
     }
 }

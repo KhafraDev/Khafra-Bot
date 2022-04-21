@@ -1,11 +1,10 @@
 import { Interactions } from '#khaf/Interaction';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, hyperlink, inlineCode } from '@discordjs/builders';
+import { hyperlink, inlineCode } from '@discordjs/builders';
 import { FifteenDotAI } from '@khaf/15.ai';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
@@ -79,10 +78,10 @@ export class kInteraction extends Interactions {
         }
 
         let description = `${hyperlink('Visit 15.ai', 'https://15.ai')}\n`;
-        const embed = EmbedUtil.setFooter(
-            Embed.ok(),
-            { text: '🗣️ tts provided by 15.ai' }
-        );
+        const embed = Embed.json({
+            color: colors.ok,
+            footer: { text: '🗣️ tts provided by 15.ai' }
+        });
 
         for (let i = 0; i < voice.wavNames.length; i++) {
             const url = `https://cdn.15.ai/audio/${voice.wavNames[i]}`;
@@ -90,14 +89,14 @@ export class kInteraction extends Interactions {
             description += `${url} [Confidence: ${confidence}]\n`;
         }
 
-        EmbedUtil.setDescription(embed, description);
+        embed.description = description;
 
         return {
             embeds: [embed],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.link('Visit 15.ai', 'https://15.ai')
-                )
+                Components.actionRow([
+                    Buttons.link('Visit 15.ai', 'https://15.ai')
+                ])
             ]
         }
     }

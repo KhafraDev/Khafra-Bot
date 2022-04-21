@@ -4,7 +4,6 @@ import { templates } from '#khaf/utility/Constants/Path.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { GifEncoder } from '@skyra/gifenc';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 import { buffer } from 'node:stream/consumers';
@@ -31,7 +30,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new Attachment(buffer, 'communism.gif')
+                {
+                    attachment: buffer,
+                    name: 'communism.gif'
+                }
             ]
         }
     }

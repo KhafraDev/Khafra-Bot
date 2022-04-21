@@ -1,11 +1,10 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode, type MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder } from '@discordjs/builders';
+import { inlineCode} from '@discordjs/builders';
 import { badmeme, cache } from '@khaf/badmeme';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
@@ -66,11 +65,11 @@ export class kCommand extends Command {
 
         let page = 0;
 
-        const row = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-            Components.approve('Next'),
-            Components.secondary('Previous'),
-            Components.deny('Stop')
-        );
+        const row = Components.actionRow([
+            Buttons.approve('Next'),
+            Buttons.secondary('Previous'),
+            Buttons.deny('Stop')
+        ]);
 
         const m = await message.channel.send({
             content: res.url[page],

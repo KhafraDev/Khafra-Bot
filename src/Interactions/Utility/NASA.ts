@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { inlineCode } from '@discordjs/builders';
 import { NASAGetRandom } from '#khaf/utility/commands/NASA';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { InteractionReplyOptions } from 'discord.js';
 
@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
         });
 
         if (typeof result.copyright === 'string') {
-            EmbedUtil.setFooter(embed, { text: `© ${result.copyright}` });
+            embed.footer = { text: `© ${result.copyright}` };
         }
 
         return {

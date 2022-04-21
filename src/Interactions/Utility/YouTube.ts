@@ -1,9 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRowBuilder, bold, time, type MessageActionRowComponentBuilder } from '@discordjs/builders';
+import { bold, time } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
@@ -12,20 +12,20 @@ import {
     type MessageComponentInteraction
 } from 'discord.js';
 
-function * format(items: YouTubeSearchResults): Generator<APIEmbed, void, unknown> {
-    for (let i = 0; i < items.items.length; i++) {
-        const video = items.items[i].snippet;
-        const embed = Embed.ok(`${video.description.slice(0, 2048)}`);
-        EmbedUtil.setTitle(embed, video.title);
-        EmbedUtil.setAuthor(embed, { name: video.channelTitle });
-        EmbedUtil.setThumbnail(embed, { url: video.thumbnails.default.url });
-        EmbedUtil.addFields(
-            embed,
-            { name: bold('Published:'), value: time(new Date(video.publishTime)) },
-            { name: bold('URL:'), value: `https://youtube.com/watch?v=${items.items[i].id.videoId}` }
-        );
-
-        yield embed;
+function * format({ items }: YouTubeSearchResults): Generator<APIEmbed, void, unknown> {
+    for (let i = 0; i < items.length; i++) {
+        const video = items[i].snippet;
+        yield Embed.json({
+            color: colors.ok,
+            description: `${video.description.slice(0, 2048)}`,
+            title: video.title,
+            author: { name: video.channelTitle },
+            thumbnail: { url: video.thumbnails.default.url },
+            fields: [
+                { name: bold('Published:'), value: time(new Date(video.publishTime)) },
+                { name: bold('URL:'), value: `https://youtube.com/watch?v=${items[i].id.videoId}` }
+            ]
+        });
     }
 }
 
@@ -69,11 +69,11 @@ export class kInteraction extends Interactions {
         const m = await interaction.editReply({
             embeds: [embeds[0]],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Next'),
-                    Components.secondary('Previous'),
-                    Components.deny('Stop')
-                )
+                Components.actionRow([
+                    Buttons.approve('Next'),
+                    Buttons.secondary('Previous'),
+                    Buttons.deny('Stop')
+                ])
             ]
         }) as Message;
 

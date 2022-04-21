@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -101,18 +101,15 @@ export class kCommand extends Command {
             https://www.theonion.com/${id}
             `);
 
-        const embed = Embed.ok();
-        EmbedUtil.setAuthor(
-            embed,
-            {
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: decodeXML(j.data[0].headline).slice(0, 256),
                 icon_url: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
                 url: j.data[0].permalink
-            }
-        );
-        EmbedUtil.setTimestamp(embed, new Date(j.data[0].publishTimeMillis).toISOString());
-        EmbedUtil.setDescription(embed, j.data[0].plaintext.slice(0, 2048));
-
-        return embed;
+            },
+            timestamp: new Date(j.data[0].publishTimeMillis).toISOString(),
+            description: j.data[0].plaintext.slice(0, 2048)
+        });
     }
 }

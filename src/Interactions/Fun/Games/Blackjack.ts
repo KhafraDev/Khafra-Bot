@@ -1,10 +1,9 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { shuffle } from '#khaf/utility/Array.js';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, bold, inlineCode } from '@discordjs/builders';
+import { bold, inlineCode } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
@@ -50,10 +49,10 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const rows = [
-            new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                Components.approve('Hit', 'hit'),
-                Components.secondary('Stay', 'stay')
-            )
+            Components.actionRow([
+                Buttons.approve('Hit', 'hit'),
+                Buttons.secondary('Stay', 'stay')
+            ])
         ];
 
         const deck = makeDeck();
@@ -65,17 +64,21 @@ export class kSubCommand extends InteractionSubCommand {
         const makeEmbed = (desc?: string, hide = true): APIEmbed => {
             const dealerCards = hide ? score.dealer.slice(1) : score.dealer;
             const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`;
-            return EmbedUtil.addFields(
-                Embed.ok(desc),
-                {
-                    name: bold(`Dealer${dealerTotal}`),
-                    value: dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-                },
-                {
-                    name: bold(`Player (${getTotal(score.sucker)}):`),
-                    value: score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-                }
-            );
+
+            return Embed.json({
+                color: colors.ok,
+                description: desc,
+                fields: [
+                    {
+                        name: bold(`Dealer${dealerTotal}`),
+                        value: dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
+                    },
+                    {
+                        name: bold(`Player (${getTotal(score.sucker)}):`),
+                        value: score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
+                    }
+                ]
+            });
         }
 
         const [err, int] = await dontThrow(interaction.editReply({

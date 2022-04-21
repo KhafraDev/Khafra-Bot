@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { logger } from '#khaf/Logger';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { bold, inlineCode, italic, time } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -56,27 +56,25 @@ export class kCommand extends Command {
         }
 
         // max role length = 84 characters
-        const embed = Embed.ok();
-        EmbedUtil.setAuthor(embed, { name: member.displayName, icon_url: member.user.displayAvatarURL() });
-        EmbedUtil.setDescription(
-            embed,
-            `${member} on ${italic(member.guild.name)}.
+        return Embed.json({
+            color: colors.ok,
+            author: { name: member.displayName, icon_url: member.user.displayAvatarURL() },
+            description: `${member} on ${italic(member.guild.name)}.
             ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`
-        );
-        EmbedUtil.setThumbnail(embed, { url: member.user.displayAvatarURL() });
-        EmbedUtil.addFields(
-            embed,
-            { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
-            { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: false },
-            {
-                name: bold('Boosting Since:'),
-                value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
-                inline: true
-            }
-        );
-        return EmbedUtil.setFooter(embed, { text: 'For general user info use the user command!' });
+            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`,
+            thumbnail: { url: member.user.displayAvatarURL() },
+            fields: [
+                { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
+                { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: false },
+                {
+                    name: bold('Boosting Since:'),
+                    value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
+                    inline: true
+                }
+            ],
+            footer: { text: 'For general user info use the user command!' }
+        });
     }
 }

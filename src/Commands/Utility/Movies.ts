@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isDM, isText } from '#khaf/utility/Discord.js';
 import { time } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -58,7 +58,7 @@ export class kCommand extends Command {
         });
 
         if (movies.imdb_id) {
-            EmbedUtil.addField(embed, {
+            embed.fields?.push({
                 name: '**IMDB:**',
                 value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
                 inline: true
@@ -66,9 +66,9 @@ export class kCommand extends Command {
         }
 
         if (movies.poster_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` };
         } else if (movies.backdrop_path) {
-            EmbedUtil.setImage(embed, { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` });
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` };
         }
 
         return embed;

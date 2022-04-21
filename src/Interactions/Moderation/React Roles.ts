@@ -1,31 +1,18 @@
 import { Interactions } from '#khaf/Interaction';
-import { Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
-import type {
-    RESTPostAPIApplicationCommandsJSONBody,
-    Snowflake
-} from 'discord-api-types/v10';
-import {
-    ApplicationCommandOptionType,
-    ChannelType,
-    PermissionFlagsBits
-} from 'discord-api-types/v10';
+import { inlineCode } from '@discordjs/builders';
+import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
 import type {
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     NewsChannel,
     TextChannel,
     ThreadChannel} from 'discord.js';
-import {
-    GuildMember,
-    GuildMemberRoleManager,
-    Role,
-    Util
-} from 'discord.js';
+import { GuildMember, GuildMemberRoleManager, Role, Util } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
@@ -141,21 +128,21 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const component = Components.approve(`Get ${role.name}`.slice(0, 80), role.id);
+        const component = Buttons.approve(`Get ${role.name}`.slice(0, 80), role.id);
 
         if (icon) {
             if (guildEmojiRegex.test(icon)) {
                 const match = guildEmojiRegex.exec(icon) as RegExpExecArray & { groups: GuildMatchGroups };
-                component.setEmoji({
+                component.emoji = {
                     animated: match.groups.animated ? true : undefined,
                     id: match.groups.id,
                     name: match.groups.name
-                });
+                };
             } else {
                 const parsed = parse(icon);
 
                 if (parsed.length !== 0) {
-                    component.setEmoji({ name: parsed[0].text });
+                    component.emoji = { name: parsed[0].text };
                 }
             }
         }
@@ -168,9 +155,7 @@ export class kInteraction extends Interactions {
                 })
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    component
-                )
+                Components.actionRow([component])
             ]
         }));
 

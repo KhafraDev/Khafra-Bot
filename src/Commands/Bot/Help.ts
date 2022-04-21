@@ -2,23 +2,14 @@ import { KhafraClient } from '#khaf/Bot';
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { chunkSafe } from '#khaf/utility/Array.js';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import {
-    ActionRowBuilder,
-    bold,
-    codeBlock,
-    hyperlink,
-    inlineCode,
-    UnsafeSelectMenuBuilder,
-    UnsafeSelectMenuOptionBuilder
-} from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
+import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders';
+import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
-let folders: string[] | null = null;
+let folders: string[];
 
 export class kCommand extends Command {
     constructor () {
@@ -54,33 +45,34 @@ export class kCommand extends Command {
                 ? ['No aliases!']
                 : settings.aliases!;
 
-            const embed = Embed.ok(`
-            The ${inlineCode(settings.name)} command:
-            ${codeBlock(help.shift()!)}
-
-            Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
-            Example:
-            ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}
-            `);
-
-            return EmbedUtil.addFields(
-                embed,
-                { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
-                { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-                { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
-            );
+            return Embed.json({
+                color: colors.ok,
+                description: `
+                The ${inlineCode(settings.name)} command:
+                ${codeBlock(help.shift()!)}
+    
+                Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
+                Example:
+                ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}`,
+                fields: [
+                    { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
+                    { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
+                    { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
+                ]
+            });
         }
 
-        const categoryComponent = new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-            new UnsafeSelectMenuBuilder()
-                .setCustomId('help')
-                .setPlaceholder('Select a category of commands!')
-                .addOptions(...folders.map(f => new UnsafeSelectMenuOptionBuilder({
+        const categoryComponent = Components.actionRow([
+            Components.selectMenu({
+                custom_id: 'help',
+                placeholder: 'Select a category of commands!',
+                options: folders.map((f) => ({
                     label: f,
                     description: `Select the ${f} category!`,
                     value: f
-                })))
-        );
+                }))
+            })
+        ]);
 
         const m = await message.channel.send({
             embeds: [
@@ -130,14 +122,14 @@ export class kCommand extends Command {
                     pages.push(Embed.ok(desc));
                 }
 
-                const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [];
+                const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [];
                 if (pages.length > 1) {
                     components.push(
-                        new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                            Components.deny('Previous', 'previous'),
-                            Components.approve('Next', 'next'),
-                            Components.secondary('Stop', 'stop')
-                        )
+                        Components.actionRow([
+                            Buttons.deny('Previous', 'previous'),
+                            Buttons.approve('Next', 'next'),
+                            Buttons.secondary('Stop', 'stop')
+                        ])
                     );
                 }
 

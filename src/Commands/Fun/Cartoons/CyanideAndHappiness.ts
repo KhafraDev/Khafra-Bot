@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
@@ -51,11 +51,11 @@ export class kCommand extends Command {
         const values = Array.from(rss.results);
         const comic = values[Math.floor(Math.random() * values.length)];
 
-        const embed = Embed.ok();
-        EmbedUtil.setTitle(embed, decodeXML(comic.title));
-        EmbedUtil.setURL(embed, comic.link);
-        EmbedUtil.setImage(embed, { url: `https:${/src="(.*?)"/.exec(comic.description)?.[1]}` });
-
-        return embed;
+        return Embed.json({
+            color: colors.ok,
+            title: decodeXML(comic.title),
+            url: comic.link,
+            image: { url: `https:${/src="(.*?)"/.exec(comic.description)?.[1]}` }
+        });
     }
 }

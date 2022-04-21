@@ -25,10 +25,10 @@ export const colors = {
 
 export const Embed = {
     error (reason?: string): APIEmbed {
-        const Embed = EmbedUtil.setColor(this.json(), colors.error);
+        const Embed = this.json({ color: colors.error });
 
         if (reason) {
-            EmbedUtil.setDescription(Embed, reason);
+            Embed.description = reason;
         }
 
         return Embed;
@@ -38,10 +38,10 @@ export const Embed = {
      * An embed for a command being successfully executed!
      */
     ok (reason?: string): APIEmbed {
-        const Embed = EmbedUtil.setColor(this.json(), colors.ok);
+        const Embed = this.json({ color: colors.ok });
 
         if (reason) {
-            EmbedUtil.setDescription(Embed, reason);
+            Embed.description = reason;
         }
 
         return Embed;
@@ -60,12 +60,9 @@ export const Embed = {
                 : 'The user';
         const amountMissing = perms.length === 1 ? 'this permission' : 'these permissions';
 
-        const embed = this.json();
-        const reason =
-            `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`;
-
-        EmbedUtil.setDescription(embed, reason);
-        return embed;
+        return this.json({
+            description: `${checkType} is missing ${amountMissing}: ${perms.join(', ')} in ${inChannel}`
+        });
     },
 
     json (data?: Partial<APIEmbed>): APIEmbed {
@@ -88,7 +85,7 @@ export const padEmbedFields = (embed: APIEmbed): APIEmbed => {
     if (fields === undefined) return embed;
 
     while (fields.length % 3 !== 0 && fields.length !== 0) {
-        EmbedUtil.addField(embed, { name: '\u200b', value: '\u200b', inline: true });
+        fields.push({ name: '\u200b', value: '\u200b', inline: true });
     }
 
     return embed;

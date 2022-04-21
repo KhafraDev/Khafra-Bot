@@ -1,6 +1,6 @@
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { codeBlock } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -43,12 +43,11 @@ export class kCommand extends Command {
         }
 
         if (args[0].toLowerCase() === 'list') {
-            const embed = Embed.ok(`
-            ${[...types].map(t => '``' + t + '``').join(', ')}
-            `);
-            EmbedUtil.setTitle(embed, `${types.size} formats available`);
-
-            return embed;
+            return Embed.json({
+                color: colors.ok,
+                description: [...types].map(t => '``' + t + '``').join(', '),
+                title: `${types.size} formats available`
+            });
         }
 
         const [format, ...content] = types.has(args[0].toLowerCase())

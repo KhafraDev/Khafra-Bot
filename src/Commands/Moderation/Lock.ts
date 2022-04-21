@@ -1,7 +1,7 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText } from '#khaf/utility/Discord.js';
 import { getMentions } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -72,13 +72,13 @@ export class kCommand extends Command {
 
             return void channel.send({
                 embeds: [
-                    EmbedUtil.setTitle(
-                        Embed.ok(`
+                    Embed.json({
+                        color: colors.ok,
+                        description: `
                         ${bold('Channel:')} ${text} (${text.id}).
-                        ${bold('Staff:')} ${message.member}
-                        `),
-                        'Channel Locked'
-                    )
+                        ${bold('Staff:')} ${message.member}`,
+                        title: 'Channel Locked'
+                    })
                 ]
             });
         }

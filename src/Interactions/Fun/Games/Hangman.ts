@@ -1,12 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
-import type { MessageActionRowComponentBuilder } from '@discordjs/builders';
-import { ActionRowBuilder, inlineCode } from '@discordjs/builders';
-import { InteractionType } from 'discord-api-types/v10';
+import { inlineCode } from '@discordjs/builders';
+import { type APIActionRowComponent, type APIMessageActionRowComponent, InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
 import { InteractionCollector, Message } from 'discord.js';
 import { readdirSync } from 'node:fs';
@@ -88,23 +87,28 @@ class Hangman {
 
     toJSON (title = 'Hangman'): WebhookEditMessageOptions {
         const components = this.winner || this.lost
-            ? []
-            : [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.primary('Hint', 'hint')
-                        .setEmoji({ name: '❓' })
-                        .setDisabled(this.usedHint)
-                )
-            ];
+            ? undefined :
+            [] as APIActionRowComponent<APIMessageActionRowComponent>[];
 
-        const embed = Embed.ok();
-        EmbedUtil.setDescription(embed, `
-        ${this.hide()}
-        ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
-        Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}
-        `);
-        EmbedUtil.setImage(embed, { url: images[this.wrong] });
-        EmbedUtil.setTitle(embed, title);
+        if (components !== undefined) {
+            const row = Components.actionRow();
+            const button = Buttons.primary('Hint', 'hint');
+            button.emoji = { name: '❓' };
+            button.disabled = this.usedHint;
+            row.components.push(button);
+
+            components.push(row);
+        }
+
+        const embed = Embed.json({
+            color: colors.ok,
+            description: `
+            ${this.hide()}
+            ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
+            Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
+            image: { url: images[this.wrong] },
+            title
+        });
 
         return {
             embeds: [embed],

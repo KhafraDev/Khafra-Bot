@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command';
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { RSSReader } from '#khaf/utility/RSS.js';
 import type { APIEmbed } from 'discord-api-types/v10';
@@ -52,14 +52,13 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()];
-        const embed = Embed.ok();
-        EmbedUtil.setDescription(
-            embed, posts
+        return Embed.json({
+            color: colors.ok,
+            description: posts
                 .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.id})`)
                 .join('\n')
-                .slice(0, 2048)
-        );
-
-        return EmbedUtil.setAuthor(embed, settings.author);
+                .slice(0, 2048),
+            author: settings.author
+        });
     }
 }

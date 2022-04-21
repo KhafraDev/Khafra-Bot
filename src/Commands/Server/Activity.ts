@@ -1,14 +1,13 @@
 import { rest } from '#khaf/Bot';
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isVoice } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { MessageActionRowComponentBuilder} from '@discordjs/builders';
-import { ActionRowBuilder, hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import type { APIEmbed, APIInvite, RESTPostAPIChannelInviteJSONBody } from 'discord-api-types/v10';
 import { InviteTargetType, PermissionFlagsBits, Routes } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
@@ -65,18 +64,18 @@ export class kCommand extends Command {
                 Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Poker', Activities.POKER),
-                    Components.deny('Betrayal.io', Activities.BETRAYALIO),
-                    Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
-                    Components.secondary('Fishington.io', Activities.FISHINGTONIO),
-                    Components.approve('Chess in the Park', Activities.CHESS)
-                ),
-                new ActionRowBuilder<MessageActionRowComponentBuilder>().addComponents(
-                    Components.approve('Doodle Crew', Activities.DOODLECREW),
-                    Components.deny('WordSnacks', Activities.WORDSNACKS),
-                    Components.primary('LetterTile', Activities.LETTERTILE)
-                )
+                Components.actionRow([
+                    Buttons.approve('Poker', Activities.POKER),
+                    Buttons.deny('Betrayal.io', Activities.BETRAYALIO),
+                    Buttons.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
+                    Buttons.secondary('Fishington.io', Activities.FISHINGTONIO),
+                    Buttons.approve('Chess in the Park', Activities.CHESS)
+                ]),
+                Components.actionRow([
+                    Buttons.approve('Doodle Crew', Activities.DOODLECREW),
+                    Buttons.deny('WordSnacks', Activities.WORDSNACKS),
+                    Buttons.primary('LetterTile', Activities.LETTERTILE)
+                ])
             ]
         });
 

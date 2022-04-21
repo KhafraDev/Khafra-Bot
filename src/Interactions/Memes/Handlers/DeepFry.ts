@@ -3,7 +3,6 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import type { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Attachment } from 'discord.js';
 import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
@@ -67,7 +66,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         return {
             files: [
-                new Attachment(buffer, 'deepfry.jpeg')
+                {
+                    attachment: buffer,
+                    name: 'deepfry.jpeg'
+                }
             ]
         }
     }
