@@ -36,7 +36,8 @@ export const client = new KhafraClient({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.MessageContent
     ]
 })
     .on('ready',                emitted('ready'))
