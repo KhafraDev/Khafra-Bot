@@ -135,6 +135,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
+        let endReason: null | string = null;
         const id = randomUUID();
         const game = {
             interaction,
@@ -168,6 +169,7 @@ export class kSubCommand extends InteractionSubCommand {
             if (i.isButton()) {
                 if (i.customId === `quit-${id}`) {
                     c.stop();
+                    endReason = 'user quit';
 
                     await i.reply({
                         content: 'OK, play again soon! ❤️',
@@ -234,34 +236,45 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         // The game ended
-        const options = await attachGame('');
-        const embed = (options.embeds as APIEmbed[])[0];
+        if (endReason !== 'user quit') {
+            const options = await attachGame('');
+            const embed = (options.embeds as APIEmbed[])[0];
 
-        embed.title = game.word.split('').join(' ');
-        games.delete(interaction.user.id);
+            embed.title = game.word.split('').join(' ');
+            games.delete(interaction.user.id);
 
-        if (game.guesses.includes(game.word)) {
-            embed.description = 'You win!';
-        } else if (game.guesses.length === 6) {
-            embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
-        } else {
-            embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`;
-        }
-
-        await rest.patch(
-            Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
-            {
-                body: {
-                    embeds: options.embeds,
-                    content: options.content,
-                    components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
-                },
-                files: (options.files as FileOptions[]).map((c): RawFile => ({
-                    data: c.attachment as Buffer,
-                    name: c.name!
-                }))
+            if (game.guesses.includes(game.word)) {
+                embed.description = 'You win!';
+            } else if (game.guesses.length === 6) {
+                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
+            } else {
+                embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`;
             }
-        )
+
+            await rest.patch(
+                Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
+                {
+                    body: {
+                        embeds: options.embeds,
+                        content: options.content,
+                        components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
+                    },
+                    files: (options.files as FileOptions[]).map((c): RawFile => ({
+                        data: c.attachment as Buffer,
+                        name: c.name!
+                    }))
+                }
+            );
+        } else {
+            await rest.patch(
+                Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
+                {
+                    body: {
+                        components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
+                    }
+                }
+            );
+        }
     }
 
     async image (
