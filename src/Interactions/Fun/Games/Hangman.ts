@@ -1,13 +1,19 @@
+import { rest } from '#khaf/Bot';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
-import { type APIActionRowComponent, type APIMessageActionRowComponent, InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake, WebhookEditMessageOptions } from 'discord.js';
-import { InteractionCollector, Message } from 'discord.js';
+import { Routes, TextInputStyle, type Snowflake } from 'discord-api-types/v10';
+import {
+    InteractionCollector, type ButtonInteraction,
+    type ChatInputCommandInteraction,
+    type InteractionReplyOptions,
+    type ModalSubmitInteraction,
+    type WebhookEditMessageOptions
+} from 'discord.js';
+import { randomUUID } from 'node:crypto';
 import { readdirSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { extname, join } from 'node:path';
@@ -28,14 +34,17 @@ const images = [
 
 class Hangman {
     private guessed: string[] = [];
+    private word: string;
     private wrong = 0;
+    private id: string;
 
     private usedHint = false;
     public lastGuessWasWrong = false;
 
-    constructor (
-        private word: string
-    ) {}
+    constructor (word: string, id: string) {
+        this.word = word.toLowerCase();
+        this.id = id;
+    }
 
     /**
      * Guess a given phrase or word
@@ -48,8 +57,8 @@ class Hangman {
             return false;
         } else {
             if (
-                (guess.length === 1 && !this.word.toLowerCase().includes(guess)) ||
-                (guess.length > 1 && guess !== this.word.toLowerCase())
+                (guess.length === 1 && !this.word.includes(guess)) ||
+                (guess.length > 1 && guess !== this.word)
             ) {
                 this.lastGuessWasWrong = true;
                 ++this.wrong;
@@ -68,14 +77,12 @@ class Hangman {
     hide (): string {
         let str = '';
 
-        if (this.guessed.includes(this.word.toLowerCase())) {
+        if (this.guessed.includes(this.word)) {
             return this.word;
         }
 
-        for (const char of this.word.toLowerCase()) {
-            if (char === ' ') {
-                str += ' ';
-            } else if (this.guessed.includes(char)) {
+        for (const char of this.word) {
+            if (this.guessed.includes(char) || char === ' ') {
                 str += char;
             } else {
                 str += '☐';
@@ -86,48 +93,41 @@ class Hangman {
     }
 
     toJSON (title = 'Hangman'): WebhookEditMessageOptions {
-        const components = this.winner || this.lost
-            ? undefined :
-            [] as APIActionRowComponent<APIMessageActionRowComponent>[];
-
-        if (components !== undefined) {
-            const row = Components.actionRow();
-            const button = Buttons.primary('Hint', 'hint');
-            button.emoji = { name: '❓' };
-            button.disabled = this.usedHint;
-            row.components.push(button);
-
-            components.push(row);
-        }
-
-        const embed = Embed.json({
-            color: colors.ok,
-            description: `
-            ${this.hide()}
-            ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
-            Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
-            image: { url: images[this.wrong] },
-            title
-        });
-
         return {
-            embeds: [embed],
-            components
+            content: null,
+            embeds: [
+                Embed.json({
+                    color: colors.ok,
+                    description: `
+                    ${this.hide()}
+                    ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
+                    Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
+                    image: { url: images[this.wrong] },
+                    title
+                })
+            ],
+            components: [
+                Components.actionRow([
+                    Buttons.approve('Guess', `showModal-${this.id}`),
+                    Buttons.primary('Hint', `hint-${this.id}`, {
+                        disabled: this.usedHint,
+                        emoji: { name: '❓' }
+                    }),
+                    Buttons.deny('Quit', `quit-${this.id}`)
+                ])
+            ]
         }
     }
 
     hint (): string | null {
         if (!this.canUseHint) return null;
-        const potential = [...this.word.toLowerCase()]
-            .filter(l => !this.guessed.includes(l) && l !== ' ');
+
+        while (!this.guess(this.word[Math.floor(Math.random() * this.word.length)]));
 
         this.usedHint = true;
-
-        const char = potential[Math.floor(Math.random() * potential.length)];
-        this.guess(char);
         this.wrong++;
 
-        return char;
+        return this.guessed[this.guessed.length - 1];
     }
 
     get canUseHint(): boolean {
@@ -140,8 +140,8 @@ class Hangman {
 
     get winner(): boolean {
         const lessThan6Wrong = this.wrong < 6;
-        const guessedEntireWord = this.guessed.includes(this.word.toLowerCase());
-        const gussedEveryChar = [...this.word.toLowerCase()].every(
+        const guessedEntireWord = this.guessed.includes(this.word);
+        const gussedEveryChar = [...this.word].every(
             c => c === ' ' || this.guessed.includes(c.toLowerCase())
         );
 
@@ -163,11 +163,6 @@ export class kSubCommand extends InteractionSubCommand {
                 content: '❌ Finish your current game first!',
                 ephemeral: true
             }
-        } else if (!interaction.inGuild()) {
-            return {
-                content: '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!',
-                ephemeral: true
-            }
         }
 
         const shouldList = interaction.options.getSubcommand() === 'list';
@@ -183,7 +178,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        let words!: string[];
+        let words: string[] = [];
         if (cachedLists.has(listName)) {
             words = cachedLists.get(listName)!;
         } else {
@@ -198,94 +193,119 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         currentGames.add(interaction.user.id);
-        const word = words[Math.floor(Math.random() * words.length)];
-        const game = new Hangman(word);
 
+        const id = randomUUID();
+        const word = words[Math.floor(Math.random() * words.length)];
+        const game = new Hangman(word, id);
         const m = await interaction.editReply(game.toJSON());
 
-        // I assume the bot only has only been invited with slash command perms.
-        if (!(m instanceof Message)) {
-            return {
-                content:
-                    `❌ To play ${inlineCode('hangman')}, please invite the bot` +
-                    ` to the guild using the ${inlineCode('/invite')} command!`,
-                ephemeral: true
+        const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
+            idle: 30_000,
+            filter: (i) =>
+                i.user.id === interaction.user.id &&
+                (i.isButton() || i.isModalSubmit()) &&
+                i.customId.endsWith(`-${id}`)
+        });
+
+        for await (const [i] of c) {
+            // There are 4 interaction types possible:
+            //  1. Quit button (end game early);
+            //  2. Hint button;
+            //  3. Guess button;
+            //  4. Modal submit (answer submitted)
+
+            if (i.isButton()) {
+                if (i.customId.startsWith('quit-')) {
+                    c.stop();
+
+                    await i.reply({
+                        content: 'OK, play again soon! ❤️',
+                        ephemeral: true
+                    });
+
+                    break;
+                } else if (i.customId.startsWith('hint-')) {
+                    const hint = game.hint();
+
+                    await i.reply({
+                        content: `❓ Your hint is ${hint}!`,
+                        ephemeral: true
+                    });
+
+                    await rest.patch(
+                        Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
+                        {
+                            body: {
+                                ...game.toJSON(),
+                                content: `❓ Your hint is ${hint}!`
+                            }
+                        }
+                    );
+
+                    continue;
+                }
+
+                await i.showModal({
+                    title: 'Hangman',
+                    custom_id: `hangmanModal-${id}`,
+                    components: [
+                        Components.actionRow([
+                            Components.textInput({
+                                custom_id: `textInput-${id}`,
+                                label: 'Guess',
+                                style: TextInputStyle.Short,
+                                max_length: word.length,
+                                min_length: 1,
+                                required: true
+                            })
+                        ])
+                    ]
+                });
+            } else {
+                const guess = i.fields.getField(`textInput-${id}`).value.toLowerCase();
+                const guessed = game.guess(guess);
+
+                if (guessed === false) {
+                    await i.reply({
+                        content: 'You can\'t guess that again!',
+                        ephemeral: true
+                    });
+                    continue;
+                }
+
+                let json: WebhookEditMessageOptions | undefined = undefined;
+                if (game.winner) {
+                    json = game.toJSON('You guessed the word!');
+                    c.stop();
+                } else if (game.lost) {
+                    json = game.toJSON(`You lost! The word was "${word}"!`);
+                    c.stop();
+                } else if (guess.length === 1) {
+                    json = game.toJSON(!game.lastGuessWasWrong
+                        ? `"${guess.slice(0, 10)}" is in the word!`
+                        : `"${guess.slice(0, 10)}" is not in the word!`
+                    );
+                } else {
+                    json = game.toJSON('Partial guesses are not allowed!');
+                }
+
+                await i.reply({
+                    content: `Checking your guess: ${inlineCode(guess)}.`,
+                    ephemeral: true
+                });
+
+                await rest.patch(
+                    Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
+                    { body: json }
+                );
             }
         }
 
-        const c = m.channel.createMessageCollector({
-            filter: m =>
-                m.author.id === interaction.user.id &&
-                m.content.length > 0,
-            idle: 30_000
-        });
+        currentGames.delete(interaction.user.id);
 
-        c.on('collect', (m) => {
-            const guessed = game.guess(m.content);
-
-            if (guessed === false) return;
-
-            let json!: WebhookEditMessageOptions;
-            if (game.winner) {
-                json = game.toJSON('You guessed the word!');
-                c.stop('do_not_edit');
-            } else if (game.lost) {
-                json = game.toJSON(`You lost! The word was "${word}"!`);
-                c.stop('do_not_edit');
-            } else if (m.content.length === 1) {
-                json = game.toJSON(!game.lastGuessWasWrong
-                    ? `"${m.content.slice(0, 10)}" is in the word!`
-                    : `"${m.content.slice(0, 10)}" is not in the word!`
-                );
-            } else {
-                json = game.toJSON('Partial guesses are not allowed!');
-            }
-
-            return void dontThrow(interaction.editReply(json));
-        });
-
-        c.once('end', (_, reason) => {
-            currentGames.delete(interaction.user.id);
-            r.stop();
-
-            if (reason === 'do_not_edit') {
-                return;
-            }
-
-            const g = reason === 'idle'
-                ? 'Game over! You took too long to guess!'
-                : 'Game over! You guessed the word!';
-
-            return void dontThrow(m.edit({
-                ...game.toJSON(g),
-                components: disableAll(m)
-            }));
-        });
-
-        const r = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent,
-            message: m,
-            max: 1,
-            filter: (i) =>
-                i.message.id === m.id &&
-                i.user.id === interaction.user.id &&
-                i.customId === 'hint'
-        });
-
-        r.once('collect', i => {
-            if (!game.canUseHint) {
-                return void dontThrow(i.update({
-                    content: 'You can\'t use a hint now!',
-                    components: disableAll(m)
-                }));
-            }
-
-            const hint = game.hint() ?? 'N/A';
-
-            return void dontThrow(i.update({
-                ...game.toJSON(`The hint is: ${hint}`),
-                components: disableAll(m)
-            }));
-        });
+        await rest.patch(
+            Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
+            { body: { components: disableAll(m) } }
+        );
     }
 }

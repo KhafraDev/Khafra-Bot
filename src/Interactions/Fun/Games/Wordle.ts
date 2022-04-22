@@ -93,11 +93,6 @@ export class kSubCommand extends InteractionSubCommand {
                 content: '❌ Finish your other game first!',
                 ephemeral: true
             }
-        } else if (!interaction.inGuild()) {
-            return {
-                content: '❌ I can\'t read your messages! Re-invite the bot with all permissions to use this command!',
-                ephemeral: true
-            }
         }
 
         const highContrast = interaction.options.getBoolean('official-word') ?? false;
