@@ -2,29 +2,29 @@ import { InteractionSubCommand } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { TicTacToe } from '#khaf/utility/commands/TicTacToe';
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { randomUUID } from 'node:crypto';
 import {
     InteractionType,
     type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
 } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
 
-const makeRows = (turns: Board, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+const makeRows = (turns: Board, id: string, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
     const rows: APIButtonComponent[] = [];
 
     for (let i = 0; i < turns.length; i++) {
         const row = turns[i];
 
         if (row === 'X' || row === 'O') {
-            const button = Buttons.approve(row, `${row},${i}`);
+            const style = row === 'X' ? 'approve' : 'primary';
+            const button = Buttons[style](row, `${row},${i}-${id}`);
             button.disabled = true;
             rows.push(button);
         } else {
-            const button = Buttons.secondary('\u200b', `empty,${i}`);
+            const button = Buttons.secondary('\u200b', `empty,${i}-${id}`);
             button.disabled = ended;
             rows.push(button);
         }
@@ -41,20 +41,13 @@ export class kSubCommand extends InteractionSubCommand {
         });
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<void> {
+        const id = randomUUID();
         const game = new TicTacToe();
-
-        const [err, int] = await dontThrow(interaction.editReply({
+        const int = await interaction.editReply({
             content: 'Tic-Tac-Toe',
-            components: makeRows(game.board)
-        }));
-
-        if (err !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        }
+            components: makeRows(game.board, id)
+        });
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -64,11 +57,13 @@ export class kSubCommand extends InteractionSubCommand {
             max: 5,
             filter: (i) =>
                 i.message.id === int.id &&
-                i.user.id === interaction.user.id
+                i.user.id === interaction.user.id &&
+                i.customId.endsWith(id)
         });
 
-        collector.on('collect', i => {
-            const [, idx] = i.customId.split(',');
+        for await (const [i] of collector) {
+            const customId = i.customId.split('-')[0];
+            const idx = customId.split(',')[1];
             game.go(Number(idx));
             game.botGo();
 
@@ -82,19 +77,17 @@ export class kSubCommand extends InteractionSubCommand {
                 reason = 'Looks like it\'s a tie!';
             }
 
-            return void dontThrow(i.update({
+            await i.update({
                 content: reason,
-                components: makeRows(game.board, collector.ended)
-            }));
-        });
+                components: makeRows(game.board, id, collector.ended)
+            });
+        }
 
-        collector.once('end', (_, r) => {
-            if (r === 'time' || r === 'idle') {
-                return void dontThrow(interaction.editReply({
-                    content: 'Game took too long, play a little faster next time!',
-                    components: makeRows(game.board, true)
-                }));
-            }
-        });
+        if (collector.endReason === 'time' || collector.endReason === 'idle') {
+            await interaction.editReply({
+                content: 'Game took too long, play a little faster next time!',
+                components: makeRows(game.board, id, true)
+            });
+        }
     }
 }

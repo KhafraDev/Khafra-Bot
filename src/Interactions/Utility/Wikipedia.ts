@@ -1,13 +1,13 @@
 import { Interactions } from '#khaf/Interaction';
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis, plural } from '#khaf/utility/String.js';
-import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
+import { hideLinkEmbed } from '@discordjs/builders';
 import { getArticleById, search } from '@khaf/wikipedia';
+import { randomUUID } from 'node:crypto';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { SelectMenuInteraction} from 'discord.js';
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions, type Message } from 'discord.js';
+import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -29,14 +29,10 @@ export class kInteraction extends Interactions {
 
     async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const content = interaction.options.getString('article', true);
-        const [err, wiki] = await dontThrow(search(content));
+        const wiki = await search(content);
+        const id = randomUUID();
 
-        if (err !== null) {
-            return {
-                content: `❌ An error occurred processing this request: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        } else if (wiki.pages.length === 0) {
+        if (wiki.pages.length === 0) {
             return {
                 content: '❌ No Wikipedia articles for that query were found!',
                 ephemeral: true
@@ -51,7 +47,7 @@ export class kInteraction extends Interactions {
             components: [
                 Components.actionRow([
                     Components.selectMenu({
-                        custom_id: 'wikipedia',
+                        custom_id: `wikipedia-${id}`,
                         placeholder: 'Which article summary would you like to get?',
                         options: wiki.pages.map(w => ({
                             label: ellipsis(w.title, 25),
@@ -61,7 +57,7 @@ export class kInteraction extends Interactions {
                     })
                 ])
             ]
-        }) as Message;
+        });
 
         const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -71,28 +67,24 @@ export class kInteraction extends Interactions {
             max: wiki.pages.length,
             filter: (i) =>
                 i.user.id === interaction.user.id &&
-                i.message.id === m.id
+                i.message.id === m.id &&
+                i.customId.endsWith(id)
         });
 
-        c.on('collect', async (i) => {
-            await dontThrow(i.deferUpdate());
+        for await (const [i] of c) {
+            await i.deferUpdate();
 
             const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!;
-            const [err, summaryRes] = await dontThrow(getArticleById(article.id));
-
-            if (err) {
-                return void dontThrow(i.editReply({
-                    content: `❌ An error occurred getting this article's summary: ${inlineCode(err.message)}`,
-                    components: disableAll(m)
-                }));
-            }
-
+            const summaryRes = await getArticleById(article.id);
             const summary = summaryRes.query?.pages[`${article.id}`];
-            if (typeof summary === 'undefined') {
-                return void dontThrow(i.editReply({
+
+            if (summary === undefined) {
+                await i.editReply({
                     content: '❌ Invalid response from Wikipedia!',
                     components: disableAll(m)
-                }));
+                });
+
+                continue;
             }
 
             const embed = Embed.json({
@@ -110,18 +102,22 @@ export class kInteraction extends Interactions {
                 embed.thumbnail = { url: image };
             }
 
-            return void dontThrow(i.editReply({
+            await i.editReply({
                 content: hideLinkEmbed(`https://en.wikipedia.org/wiki/${article.key}`),
                 embeds: [embed]
-            }));
-        });
+            });
+        }
 
-        c.once('end', () => {
-            if (m.components[0].components[0].disabled === false) {
-                void dontThrow(m.edit({
-                    components: disableAll(m)
-                }));
-            }
-        });
+        // Prevent making an extra API call if the menu is already disabled
+        const componentList = m.components?.[0].components[0];
+        const raw = componentList !== undefined && 'toJSON' in componentList
+            ? componentList.toJSON()
+            : componentList;
+
+        if (raw !== undefined && raw.disabled !== true) {
+            await interaction.editReply({
+                components: disableAll(m)
+            });
+        }
     }
 }

@@ -1,13 +1,13 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { shuffle } from '#khaf/utility/Array.js';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
+import { randomUUID } from 'node:crypto';
 
 type Card = [number, typeof suits[number]];
 
@@ -48,10 +48,11 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
+        const id = randomUUID();
         const rows = [
             Components.actionRow([
-                Buttons.approve('Hit', 'hit'),
-                Buttons.secondary('Stay', 'stay')
+                Buttons.approve('Hit', `hit-${id}`),
+                Buttons.secondary('Stay', `stay-${id}`)
             ])
         ];
 
@@ -81,17 +82,10 @@ export class kSubCommand extends InteractionSubCommand {
             });
         }
 
-        const [err, int] = await dontThrow(interaction.editReply({
+        const int = await interaction.editReply({
             embeds: [makeEmbed()],
             components: rows
-        }));
-
-        if (err !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        }
+        });
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -99,11 +93,12 @@ export class kSubCommand extends InteractionSubCommand {
             idle: 30_000,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id
+                int.id === i.message.id &&
+                i.customId.endsWith(id)
         });
 
-        collector.on('collect', (i) => {
-            if (i.customId === 'hit') {
+        for await (const [i] of collector) {
+            if (i.customId.startsWith('hit')) {
                 const [card, suit] = deck.shift()!;
 
                 score.sucker.push([card, suit]);
@@ -111,12 +106,12 @@ export class kSubCommand extends InteractionSubCommand {
 
                 if (total > 21) { // player lost
                     collector.stop();
-                    return void dontThrow(i.update({
+                    await i.update({
                         embeds: [makeEmbed('You went over 21, you lose!', false)],
-                        components: []
-                    }));
+                        components: disableAll(int)
+                    });
                 } else { // continue playing
-                    return void dontThrow(i.update({ embeds: [makeEmbed()] }));
+                    await i.update({ embeds: [makeEmbed()] });
                 }
             } else {
                 const totalPlayer = getTotal(score.sucker);
@@ -129,24 +124,24 @@ export class kSubCommand extends InteractionSubCommand {
 
                 if (totalDealer > 21) { // dealer goes over 21
                     collector.stop();
-                    return void dontThrow(i.update({
+                    await i.update({
                         embeds: [makeEmbed('You win, I went over 21!', false)],
-                        components: []
-                    }));
+                        components: disableAll(int)
+                    });
                 } else if (totalDealer >= totalPlayer) { // dealer wins
                     collector.stop();
-                    return void dontThrow(i.update({
+                    await i.update({
                         embeds: [makeEmbed('You lose!', false)],
-                        components: []
-                    }));
+                        components: disableAll(int)
+                    });
                 }
             }
-        });
+        }
 
-        collector.once('end', (_, reason) => {
-            if (reason === 'idle') {
-                return void dontThrow(interaction.editReply({ components: [] }));
-            }
-        });
+        if (collector.endReason === 'idle') {
+            await interaction.editReply({
+                components: disableAll(int)
+            });
+        }
     }
 }

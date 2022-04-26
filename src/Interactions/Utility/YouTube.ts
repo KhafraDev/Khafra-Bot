@@ -2,13 +2,12 @@ import { Interactions } from '#khaf/Interaction';
 import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTube';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { bold, time } from '@discordjs/builders';
+import { randomUUID } from 'node:crypto';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
     InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions,
-    type Message,
     type MessageComponentInteraction
 } from 'discord.js';
 
@@ -63,6 +62,7 @@ export class kInteraction extends Interactions {
             }
         }
 
+        const id = randomUUID();
         const embeds = [...format(results)];
         let page = 0;
 
@@ -70,12 +70,12 @@ export class kInteraction extends Interactions {
             embeds: [embeds[0]],
             components: [
                 Components.actionRow([
-                    Buttons.approve('Next'),
-                    Buttons.secondary('Previous'),
-                    Buttons.deny('Stop')
+                    Buttons.approve('Next', `next-${id}`),
+                    Buttons.secondary('Previous', `back-${id}`),
+                    Buttons.deny('Stop', `stop-${id}`)
                 ])
             ]
-        }) as Message;
+        });
 
         const c = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -83,27 +83,30 @@ export class kInteraction extends Interactions {
             time: 120_000,
             idle: 60_000,
             filter: (i) =>
-                i.user.id === interaction.user.id
+                i.user.id === interaction.user.id &&
+                i.customId.endsWith(id)
         });
 
-        c.on('collect', i => {
-            if (i.customId === 'deny' || c.total >= embeds.length) {
-                return c.stop();
+        for await (const [i] of c) {
+            if (i.customId.startsWith('stop-') || c.total >= embeds.length) {
+                c.stop();
+                break;
             }
 
-            i.customId === 'approve' ? page++ : page--;
+            i.customId.startsWith('next-') ? page++ : page--;
 
             if (page < 0) page = embeds.length - 1;
             if (page >= embeds.length) page = 0;
 
-            return void dontThrow(i.update({
-                embeds: [embeds[page]]
-            }));
-        });
+            await i.update({ embeds: [embeds[page]] });
+        }
 
-        c.once('end', (c) => {
-            if (c.size === 0) return; // user didn't use any buttons
-            return void dontThrow(c.last()!.update({ components: disableAll(m) }))
-        });
+        if (c.collected.size !== 0) {
+            const last = c.collected.last();
+
+            if (last) {
+                await last.update({ components: disableAll(m) });
+            }
+        }
     }
 }

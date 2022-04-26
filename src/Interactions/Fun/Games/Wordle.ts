@@ -130,7 +130,6 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        let endReason: null | string = null;
         const id = randomUUID();
         const game = {
             interaction,
@@ -153,7 +152,7 @@ export class kSubCommand extends InteractionSubCommand {
             filter: (i) =>
                 i.user.id === interaction.user.id &&
                 (i.isButton() || i.isModalSubmit()) &&
-                i.customId.endsWith(`-${id}`)
+                i.customId.endsWith(id)
         });
 
         for await (const [i] of c) {
@@ -163,8 +162,7 @@ export class kSubCommand extends InteractionSubCommand {
             // Otherwise, we received a modal submit interaction.
             if (i.isButton()) {
                 if (i.customId === `quit-${id}`) {
-                    c.stop();
-                    endReason = 'user quit';
+                    c.stop('user quit');
 
                     await i.reply({
                         content: 'OK, play again soon! ❤️',
@@ -231,7 +229,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         // The game ended
-        if (endReason !== 'user quit') {
+        if (c.endReason !== 'user quit') {
             const options = await attachGame('');
             const embed = (options.embeds as APIEmbed[])[0];
 

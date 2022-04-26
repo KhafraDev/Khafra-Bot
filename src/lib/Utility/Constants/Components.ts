@@ -95,8 +95,6 @@ const toggleComponents = (item: Message | APIMessage, disabled: boolean): APIAct
     for (const { components } of item.components) {
         const newRow = Components.actionRow();
         for (const button of components) {
-            if (button.type === ComponentType.SelectMenu) continue;
-
             const rawButton = 'toJSON' in button ? button.toJSON() : button;
             rawButton.disabled = disabled;
 

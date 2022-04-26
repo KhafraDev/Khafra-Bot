@@ -72,8 +72,6 @@ export class kInteraction extends Interactions {
             bitrate: isVoice ? channel.bitrate : undefined,
             user_limit: isVoice ? channel.userLimit : undefined,
             rate_limit_per_user: !isVoice && !isNews ? channel.rateLimitPerUser : undefined,
-            // TODO(@KhafraDev): fix once types are correct
-            // @ts-expect-error Types are wrong
             position: channel.rawPosition,
             permission_overwrites: channel.permissionOverwrites.cache.toJSON().map(
                 overwrite => ({

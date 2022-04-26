@@ -204,7 +204,7 @@ export class kSubCommand extends InteractionSubCommand {
             filter: (i) =>
                 i.user.id === interaction.user.id &&
                 (i.isButton() || i.isModalSubmit()) &&
-                i.customId.endsWith(`-${id}`)
+                i.customId.endsWith(id)
         });
 
         for await (const [i] of c) {

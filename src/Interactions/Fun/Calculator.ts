@@ -2,12 +2,12 @@ import { Interactions } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { codeBlock, inlineCode } from '@discordjs/builders';
+import { codeBlock } from '@discordjs/builders';
 import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
+import { randomUUID } from 'node:crypto';
 import { createContext, runInContext } from 'node:vm';
 
 class Parser extends Array<string> {
@@ -154,37 +154,39 @@ export class kInteraction extends Interactions {
         });
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<void> {
+        const id = randomUUID();
         const rows = [
             Components.actionRow([
-                Buttons.approve('(', '('),
-                Buttons.approve(')', ')'),
-                Buttons.approve('.', '.')
+                Buttons.approve('(', `(-${id}`),
+                Buttons.approve(')', `)-${id}`),
+                Buttons.approve('.', `.-${id}`)
+                // TODO(@KhafraDev): clear button?
                 // Buttons.approve('idk', 'idk')
             ]),
             Components.actionRow([
-                Buttons.secondary('1', '1'),
-                Buttons.secondary('2', '2'),
-                Buttons.secondary('3', '3'),
-                Buttons.approve('+', '+')
+                Buttons.secondary('1', `1-${id}`),
+                Buttons.secondary('2', `2-${id}`),
+                Buttons.secondary('3', `3-${id}`),
+                Buttons.approve('+', `+-${id}`)
             ]),
             Components.actionRow([
-                Buttons.secondary('4', '4'),
-                Buttons.secondary('5', '5'),
-                Buttons.secondary('6', '6'),
-                Buttons.approve('-', '-')
+                Buttons.secondary('4', `4-${id}`),
+                Buttons.secondary('5', `5-${id}`),
+                Buttons.secondary('6', `6-${id}`),
+                Buttons.approve('-', `--${id}`)
             ]),
             Components.actionRow([
-                Buttons.secondary('7', '7'),
-                Buttons.secondary('8', '8'),
-                Buttons.secondary('9', '9'),
-                Buttons.approve('*', '*')
+                Buttons.secondary('7', `7-${id}`),
+                Buttons.secondary('8', `8-${id}`),
+                Buttons.secondary('9', `9-${id}`),
+                Buttons.approve('*', `*-${id}`)
             ]),
             Components.actionRow([
-                Buttons.deny('Stop', 'stop'),
-                Buttons.secondary('0', '0'),
-                Buttons.deny('=', '='),
-                Buttons.approve('/', '/')
+                Buttons.deny('Stop', `stop-${id}`),
+                Buttons.secondary('0', `0-${id}`),
+                Buttons.deny('=', `=-${id}`),
+                Buttons.approve('/', `/-${id}`)
             ])
         ];
 
@@ -195,19 +197,11 @@ export class kInteraction extends Interactions {
             ${squiggles}
             `);
 
-        const [err, int] = await dontThrow(interaction.editReply({
+        const parser = new Parser();
+        const int = await interaction.editReply({
             embeds: [makeEmbed('Empty')],
             components: rows
-        }));
-
-        if (err !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        }
-
-        const parser = new Parser();
+        });
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -215,67 +209,67 @@ export class kInteraction extends Interactions {
             idle: 30_000,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id
+                int.id === i.message.id &&
+                i.customId.endsWith(id)
         });
 
-        collector.on('collect', (i) => {
+        for await (const [i] of collector) {
+            const token = i.customId[0] === '-' ? '-' : i.customId.split('-')[0];
             if (parser.length > 15) {
                 collector.stop();
 
-                return void dontThrow(i.update({
+                await i.update({
                     embeds: [makeEmbed(`${parser.toString()}\nLimited to 15 characters.`)],
                     components: disableAll(int)
-                }));
-            } else if (i.customId === '=') {
-                return collector.stop('calculate');
-            } else if (!parser.valid(i.customId)) {
+                });
+            } else if (token === '=') {
+                collector.stop('calculate');
+                break;
+            } else if (!parser.valid(token)) {
                 const m = 'You are attempting to perform an operation that isn\'t valid!';
 
-                return void dontThrow(i.update({
+                await i.update({
                     embeds: [makeEmbed(`${parser.toString()}\n${m}`)]
-                }));
+                });
+            } else {
+                parser.add(token);
+
+                await i.update({
+                    embeds: [makeEmbed(parser.toString())]
+                });
             }
+        }
 
-            parser.add(i.customId);
+        if (collector.collected.size !== 0) {
+            const i = collector.collected.last()!;
 
-            return void dontThrow(i.update({
-                embeds: [makeEmbed(parser.toString())]
-            }));
-        });
-
-        collector.once('end', (all, reason) => {
-            const i = all.last();
-
-            // Nothing to respond to.
-            if (!i) return;
-
-            if (reason === 'calculate') {
+            if (collector.endReason === 'calculate') {
                 const parsed = parser.toParseableString();
 
                 let eq: number | 'Invalid input!' = 'Invalid input!';
                 try {
                     eq = runInContext(parsed, context) as number;
                 } catch (e) {
-                    logger.error(e);
+                    logger.error('error in calculator', e);
                 }
 
                 if (eq === 'Invalid input!') {
-                    return void dontThrow(i.update({
+                    await i.update({
                         embeds: [makeEmbed(eq)],
                         components: disableAll(int)
-                    }));
+                    });
+                } else {
+                    await i.update({
+                        embeds: [makeEmbed(`${parsed} = ${eq}`)],
+                        components: disableAll(int)
+                    });
                 }
-
-                return void dontThrow(i.update({
-                    embeds: [makeEmbed(`${parsed} = ${eq}`)],
-                    components: disableAll(int)
-                }));
-            } else if (reason === 'idle') {
-                return void dontThrow(i.update({
+            } else if (collector.endReason === 'idle') {
+                await i.update({
                     embeds: [makeEmbed(parser.toString())],
                     components: disableAll(int)
-                }));
+                });
             }
-        })
+        }
     }
 }

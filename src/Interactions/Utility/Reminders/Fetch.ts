@@ -2,13 +2,13 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { kReminder } from '#khaf/types/KhafraBot.js';
 import { chunkSafe } from '#khaf/utility/Array.js';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
 import { inlineCode, time } from '@discordjs/builders';
-import type { APIEmbed} from 'discord-api-types/v10';
+import { randomUUID } from 'node:crypto';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
@@ -51,6 +51,7 @@ export class kSubCommand extends InteractionSubCommand {
             LIMIT ${trueAmount}::smallint;
         `;
 
+        const id = randomUUID();
         const embeds = chunkEmbeds(rows);
         let page = 0;
 
@@ -65,24 +66,17 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const [err, int] = await dontThrow(interaction.editReply({
+        const int = await interaction.editReply({
             content: `Page ${page + 1} out of ${embeds.length}`,
             embeds: [embeds[page]],
             components: [
                 Components.actionRow([
-                    Buttons.approve('Next', 'next', { emoji: { name: '▶️' } }),
-                    Buttons.deny('Stop', 'stop', { emoji: { name: '🗑️' } }),
-                    Buttons.secondary('Back', 'back', { emoji: { name: '◀️' } })
+                    Buttons.approve('Next', `next-${id}`, { emoji: { name: '▶️' } }),
+                    Buttons.deny('Stop', `stop-${id}`, { emoji: { name: '🗑️' } }),
+                    Buttons.secondary('Back', `back-${id}`, { emoji: { name: '◀️' } })
                 ])
             ]
-        }));
-
-        if (err !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
-                ephemeral: true
-            }
-        }
+        });
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -91,27 +85,27 @@ export class kSubCommand extends InteractionSubCommand {
             max: 10,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id
+                int.id === i.message.id &&
+                i.customId.endsWith(id)
         });
 
-        collector.on('collect', (i) => {
-            if (i.customId === 'stop') {
-                return collector.stop();
+        for await (const [i] of collector) {
+            if (i.customId.startsWith('stop')) {
+                collector.stop();
+                break;
             }
 
-            i.customId === 'next' ? page++ : page--;
+            i.customId.startsWith('next') ? page++ : page--;
 
             if (page < 0) page = embeds.length - 1;
             if (page >= embeds.length) page = 0;
 
-            return void dontThrow(i.update({
+            await i.update({
                 content: `Page ${page + 1} out of ${embeds.length}`,
                 embeds: [embeds[page]]
-            }));
-        });
+            });
+        }
 
-        collector.once('end', () => {
-            return void dontThrow(interaction.editReply({ components: [] }));
-        });
+        await interaction.editReply({ components: disableAll(int) })
     }
 }
