@@ -10,7 +10,13 @@ import { request } from 'undici';
 // Rinse - optifine and migrator cape
 // Bes - optifine cape
 // Mom - minecon 2016
-// TODO: add labymod https://dl.labymod.net/capes/
+// LabyMod - labymod cape (surprising)
+// PopoSlayer6969 - labymod cape
+
+const dashUUID = (uuid: string): string => {
+    // 3a440181e05746aead7979873f03ddbe -> 3a440181-e057-46ae-ad79-79873f03ddbe
+    return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
+}
 
 const missingCapeWarning =
 	'⚠️ This account may have more capes than shown! ' +
@@ -39,7 +45,8 @@ export class kSubCommand extends InteractionSubCommand {
 
         const buffer = await this.image([
             ...capes,
-            `http://s.optifine.net/capes/${uuid.name}.png`
+            `http://s.optifine.net/capes/${uuid.name}.png`,
+            `https://dl.labymod.net/capes/${dashUUID(uuid.id)}`
         ]);
 
         if (typeof buffer === 'string') {
@@ -66,7 +73,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     async image (urls: string[]): Promise<Buffer | string> {
-        const buffers: Buffer[] = [];
+        const buffers: { url: string, b: Buffer }[] = [];
 
         for (const url of urls) {
             const { body, statusCode } = await request(url);
@@ -79,7 +86,11 @@ export class kSubCommand extends InteractionSubCommand {
                 continue; // so we don't get an invalid body (ie. user doesn't have optifine cape)
             }
 
-            buffers.push(Buffer.from(await body.arrayBuffer()));
+            buffers.push({ url, b: Buffer.from(await body.arrayBuffer()) });
+        }
+
+        if (buffers.length === 0) {
+            return '❌ Player has no capes, or an error occurred rendering them!'
         }
 
         const canvas = createCanvas(
@@ -88,17 +99,25 @@ export class kSubCommand extends InteractionSubCommand {
         ); // 12x17 w/ scale 10 (5 pixels between each cape, unless there is only 1 cape)
         const ctx = canvas.getContext('2d');
 
-        for (const b of buffers) {
+        for (const capes of buffers) {
+            const { url, b } = capes;
+
+            const idx = buffers.indexOf(capes);
+            const xOffset = (120 * idx) + (5 * idx);
             const cape = new Image();
             cape.src = b;
+
+            if (url.startsWith('https://dl.labymod.net/capes/')) {
+                // sw (195) and sh (250) were chosen by bruteforce.
+                ctx.drawImage(cape, 0, 0, 195, 250, xOffset, 0, 120, 170);
+                continue;
+            }
 
             const tmpCanvas = createCanvas(12, 17);
             const tmpCtx = tmpCanvas.getContext('2d');
             tmpCtx.drawImage(cape, 0, 0);
 
             const data = tmpCtx.getImageData(0, 0, 12, 17);
-            const idx = buffers.indexOf(b);
-            const xOffset = (120 * idx) + (5 * idx);
 
             for (let i = 0; i < data.data.length; i += 4) {
                 const x = (i / 4 % tmpCanvas.width);
