@@ -1,61 +1,13 @@
 import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { once } from '#khaf/utility/Memoize.js';
 import { bold } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 import { parse, toCodePoints } from 'twemoji-parser';
-import { request } from 'undici';
+import { parseEmojiList } from '#khaf/utility/Emoji.js';
 
-type IEmoji = {
-    codePoints: string
-    identifier: string
-    comment: string
-    isSub: undefined
-    group: undefined
-} | {
-    codePoints: undefined
-    identifier: undefined
-    comment: undefined
-    isSub: string
-    group: string
-}
-
-const cache: Record<string, { [key in keyof IEmoji]: string }> = {};
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
-const unicodeRegex = /^((?<codePoints>.*?)\s+; (?<identifier>[a-z-]+)\s+# (?<comment>(.*?))|# (?<isSub>sub)?group: (?<group>(.*?)))$/gm;
-
-const parseEmojiList = once(async () => {
-    const { body } = await request('https://unicode.org/Public/emoji/14.0/emoji-test.txt');
-    const fullList = await body.text();
-
-    const list = fullList.matchAll(unicodeRegex);
-
-    let group = '', subgroup = '';
-
-    for (const item of list) {
-        const {
-            group: newGroup,
-            isSub,
-            codePoints,
-            identifier,
-            comment
-        } = item.groups as unknown as IEmoji;
-
-        if (newGroup !== undefined) {
-            if (isSub === 'sub') {
-                subgroup = newGroup
-            } else {
-                group = newGroup;
-            }
-
-            continue;
-        }
-
-        cache[codePoints] = { group, isSub: subgroup, codePoints, identifier, comment }
-    }
-});
 
 export class kCommand extends Command {
     constructor () {
@@ -93,21 +45,23 @@ export class kCommand extends Command {
             });
         }
 
-        if ('1F600' in cache === false) {
-            await parseEmojiList();
-        }
-
+        const cache = await parseEmojiList();
         const unicodeEmoji = parse(content, { assetType: 'png' });
+
+        if (cache === null) {
+            return Embed.error('❌ Emojis are currently being cached, please wait a minute!');
+        }
 
         if (unicodeEmoji.length !== 0) {
             const codePoints = toCodePoints(unicodeEmoji[0].text);
             const key = codePoints.join(' ').toUpperCase();
 
-            if (key in cache === false) {
+            if (!cache.has(key)) {
                 return Embed.error('❌ This emoji is invalid or unsupported!');
             }
 
-            const emoji = cache[key];
+            const emoji = cache.get(key)!;
+
             return Embed.json({
                 color: colors.ok,
                 description: unicodeEmoji[0].text,
@@ -120,7 +74,7 @@ export class kCommand extends Command {
             });
         }
 
-        const name = Object.values(cache).find(n => n.comment.endsWith(content));
+        const name = [...cache.values()].find(n => n.comment.endsWith(content));
 
         if (name) {
             const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0];

@@ -3,6 +3,7 @@ import { Interactions } from '#khaf/Interaction';
 import { logger } from '#khaf/Logger';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
+import { parseEmojiList } from '#khaf/utility/Emoji.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
 import { bold, inlineCode, italic, time } from '@discordjs/builders';
@@ -11,6 +12,7 @@ import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v1
 import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js';
 import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js';
 import { join } from 'node:path';
+import { parse, toCodePoints } from 'twemoji-parser';
 
 const formatPresence = (activities: Activity[] | undefined): string => {
     if (!Array.isArray(activities)) return '';
@@ -47,9 +49,6 @@ const formatPresence = (activities: Activity[] | undefined): string => {
     return push.join('\n');
 }
 
-const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
-
-const emojis = new Map<UserFlagsString, string | undefined>();
 // lazy load emojis
 const getEmojis = once(() => {
     const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][];
@@ -60,6 +59,10 @@ const getEmojis = once(() => {
     return emojis;
 });
 
+const GUILD_EMOJI_REG = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
+const emojis = new Map<UserFlagsString, string | undefined>();
+
 export class kInteraction extends Interactions {
     constructor() {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
@@ -69,8 +72,12 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Mentionable,
                     name: 'type',
-                    description: 'Type of Discord object to get information for.',
-                    required: true
+                    description: 'Type of Discord object to get information for.'
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
+                    name: 'emoji',
+                    description: 'A guild emoji or unicode emoji to get the information of.'
                 }
             ]
         };
@@ -79,9 +86,87 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        const option = interaction.options.getMentionable('type', true);
+        const option =
+            interaction.options.getMentionable('type') ??
+            interaction.options.getString('emoji') ??
+            interaction.user;
 
-        if (option instanceof GuildMember) {
+        if (typeof option === 'string') {
+            if (GUILD_EMOJI_REG.test(option)) {
+                const { animated, name, id } = GUILD_EMOJI_REG.exec(option)!.groups as {
+                    animated: 'a' | undefined
+                    name: string
+                    id: string
+                };
+
+                const url = `https://cdn.discordapp.com/emojis/${id}.webp`;
+                const createdAt = new Date(SnowflakeUtil.timestampFrom(id));
+                const embed = Embed.json({
+                    color: colors.ok,
+                    description: option,
+                    title: name,
+                    image: { url },
+                    fields: [
+                        { name: bold('ID:'), value: id, inline: true },
+                        { name: bold('Name:'), value: name, inline: true },
+                        { name: '\u200b', value: '\u200b', inline: true },
+                        { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true },
+                        { name: bold('Created:'), value: time(createdAt, 'f'), inline: true },
+                        { name: '\u200b', value: '\u200b', inline: true }
+                    ]
+                });
+
+                return {
+                    embeds: [embed]
+                }
+            }
+
+            const unicodeEmoji = parse(option, { assetType: 'png' });
+            const cache = await parseEmojiList();
+
+            if (unicodeEmoji.length === 0) {
+                return {
+                    content: '❌ No emojis were found in your message.',
+                    ephemeral: true
+                }
+            } else if (cache === null) {
+                return {
+                    content: '❌ Emojis are being cached, please re-run this command in a minute!',
+                    ephemeral: true
+                }
+            }
+
+            const codePoints = toCodePoints(unicodeEmoji[0].text);
+            const key = codePoints.join(' ').toUpperCase();
+
+            if (!cache.has(key)) {
+                return {
+                    embeds: [
+                        Embed.json({
+                            color: colors.error,
+                            description: '❌ This emoji is invalid or unsupported!'
+                        })
+                    ],
+                    ephemeral: true
+                }
+            }
+
+            const emoji = cache.get(key)!;
+            const embed = Embed.json({
+                color: colors.ok,
+                description: unicodeEmoji[0].text,
+                image: { url: unicodeEmoji[0].url },
+                fields: [
+                    { name: bold('Name:'), value: emoji.comment, inline: true },
+                    { name: bold('Category:'), value: emoji.group, inline: true },
+                    { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
+                ]
+            });
+
+            return {
+                embeds: [embed]
+            }
+        } else if (option instanceof GuildMember) {
             const embed = Embed.json({
                 color: colors.ok,
                 author: {
