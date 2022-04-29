@@ -8,7 +8,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { time } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { AnyChannel, GuildMember } from 'discord.js';
+import { Events, type AnyChannel, type GuildMember } from 'discord.js';
 
 const basic =
     PermissionFlagsBits.ViewChannel |
@@ -17,8 +17,8 @@ const basic =
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-export class kEvent extends Event<'guildMemberAdd'> {
-    name = 'guildMemberAdd' as const;
+export class kEvent extends Event<typeof Events.GuildMemberAdd> {
+    name = Events.GuildMemberAdd;
 
     async init (member: GuildMember): Promise<void> {
         await sql<unknown[]>`

@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
+import { toString } from '#khaf/utility/Permissions.js';
 import type {
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
@@ -13,7 +14,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'giveaway',
             description: 'Giveaway settings.',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([PermissionFlagsBits.ManageEvents]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
@@ -80,10 +83,7 @@ export class kInteraction extends Interactions {
         };
 
         super(sc, {
-            defer: true,
-            permissions: [
-                PermissionFlagsBits.ManageEvents
-            ]
+            defer: true
         });
     }
 }

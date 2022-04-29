@@ -5,7 +5,6 @@ import type {
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     MessageContextMenuCommandInteraction,
-    PermissionResolvable,
     UserContextMenuCommandInteraction
 } from 'discord.js';
 
@@ -17,7 +16,6 @@ interface InteractionOptions {
 	 */
 	deploy?: boolean
     replyOpts?: InteractionReplyOptions
-    permissions?: PermissionResolvable
 }
 
 interface SubcommandOptions {
@@ -33,10 +31,8 @@ type HandlerReturn =
 type InteractionData =
     | RESTPostAPIApplicationCommandsJSONBody;
 
-const kId = Symbol('Khafra.Interaction.Id');
-
 export class Interactions {
-    private [kId]: APIApplicationCommand['id'];
+    #id: APIApplicationCommand['id'] | undefined;
 
     constructor(
         public data: InteractionData,
@@ -53,6 +49,14 @@ export class Interactions {
             return {
                 content: '❌ This option has not been implemented yet!'
             }
+            // @ts-expect-error Types aren't updated
+        } else if (this.data.default_member_permissions && interaction.memberPermissions) {
+            // @ts-expect-error Types aren't updated
+            if (!interaction.memberPermissions.has(this.data.default_member_permissions)) {
+                return {
+                    content: '❌ You do not have permission to use this command!'
+                }
+            }
         }
 
         const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!;
@@ -61,11 +65,11 @@ export class Interactions {
     }
 
     public set id (body: APIApplicationCommand['id']) {
-        this[kId] = body;
+        this.#id = body;
     }
 
     public get id (): string {
-        return this[kId];
+        return this.#id!;
     }
 }
 

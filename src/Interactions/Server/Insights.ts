@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
+import { toString } from '#khaf/utility/Permissions.js';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10';
 
@@ -7,7 +8,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'insights',
             description: 'Guild insight settings.',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([PermissionFlagsBits.ViewGuildInsights]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
@@ -23,10 +26,7 @@ export class kInteraction extends Interactions {
         };
 
         super(sc, {
-            defer: true,
-            permissions: [
-                PermissionFlagsBits.ViewGuildInsights
-            ]
+            defer: true
         });
     }
 }

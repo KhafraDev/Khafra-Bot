@@ -7,7 +7,8 @@ const used = {
     'Arial': fonts('Arial.ttf'),
     'Gabriola': fonts('Gabriola.ttf'),
     'Impact': fonts('Impact.ttf'),
-    'Roboto': fonts('Roboto.ttf')
+    'Roboto': fonts('Roboto.ttf'),
+    'Apple Color Emoji': fonts('AppleColorEmoji.ttf')
 } as const;
 
 for (const [name, path] of Object.entries(used)) {

@@ -2,6 +2,7 @@ import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
+import { toString } from '#khaf/utility/Permissions.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
 import {
     ApplicationCommandOptionType,
@@ -21,7 +22,10 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clone-channel',
             description: 'Clones a channel.',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            // https://discord.com/developers/docs/resources/guild#create-guild-channel
+            default_member_permissions: toString([PermissionFlagsBits.ManageChannels]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Channel,
@@ -43,16 +47,17 @@ export class kInteraction extends Interactions {
         };
 
         super(sc, {
-            permissions: [
-                // https://discord.com/developers/docs/resources/guild#create-guild-channel
-                PermissionFlagsBits.ManageChannels
-            ],
             defer: true
         });
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        if (interaction.guildId === null) {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        } else if (interaction.guildId === null) {
             return {
                 content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true

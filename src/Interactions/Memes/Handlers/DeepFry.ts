@@ -96,7 +96,7 @@ export class kSubCommand extends InteractionSubCommand {
         const emojis = ['😂','💯', '👌', '🔥'].filter(() => Math.random() < .75);
 
         ctx.textAlign = 'center';
-        ctx.font = '45px Arial'; // possibly needed on linux?
+        ctx.font = '45px Apple Color Emoji'; // possibly needed on linux?
 
         for (const emoji of emojis) {
             // this is the only way to rotate text :|

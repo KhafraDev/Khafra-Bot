@@ -1,13 +1,11 @@
-import { KhafraClient } from '#khaf/Bot';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ApplicationCommandPermissionType } from 'discord-api-types/v10';
-import type { Guild, GuildApplicationCommandPermissionData } from 'discord.js';
+import { Events, type Guild } from 'discord.js';
 
-export class kEvent extends Event<'guildCreate'> {
-    name = 'guildCreate' as const;
+export class kEvent extends Event<typeof Events.GuildCreate> {
+    name = Events.GuildCreate;
 
     async init (guild: Guild): Promise<void> {
         logger.info('Joined a new guild!', {
@@ -24,34 +22,5 @@ export class kEvent extends Event<'guildCreate'> {
         `;
 
         await dontThrow(guild.roles.fetch());
-
-        const fullPermissions: GuildApplicationCommandPermissionData[] = [];
-
-        for (const slashCommand of KhafraClient.Interactions.Commands.values()) {
-            // if slash command is disabled by default
-            if (slashCommand.data.default_permission === false) {
-                const interaction = KhafraClient.Interactions.Commands.get(slashCommand.data.name)!;
-                if (!interaction.options.permissions) continue;
-
-                const perms = interaction.options.permissions;
-                const rolesWithPerms = guild.roles.cache.filter(
-                    role => role.permissions.has(perms)
-                );
-                const commandPerms = rolesWithPerms
-                    .map(v => ({ id: v.id, type: ApplicationCommandPermissionType.Role, permission: true }))
-                    .values();
-
-                fullPermissions.push({
-                    id: slashCommand.id,
-                    permissions: [...commandPerms]
-                });
-            }
-        }
-
-        try {
-            return void await guild.commands.permissions.set({ fullPermissions });
-        } catch {
-            // No permission to create slash commands, don't bother.
-        }
     }
 }

@@ -1,11 +1,12 @@
 import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import type {
     APIInvite, RESTPostAPIApplicationCommandsJSONBody,
-    RESTPostAPIChannelInviteJSONBody} from 'discord-api-types/v10';
+    RESTPostAPIChannelInviteJSONBody
+} from 'discord-api-types/v10';
 import {
     ApplicationCommandOptionType, ChannelType,
     InviteTargetType, PermissionFlagsBits, Routes
@@ -33,7 +34,12 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'activity',
             description: 'Play a game in VC!',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([
+                PermissionFlagsBits.CreateInstantInvite,
+                PermissionFlagsBits.UseEmbeddedActivities
+            ]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -52,21 +58,22 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.CreateInstantInvite,
-                PermissionFlagsBits.UseEmbeddedActivities
-            ]
-        });
+        super(sc);
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        if (!interaction.inGuild()) {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        } else if (!interaction.inGuild()) {
             return {
                 content: '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!',
                 ephemeral: true
             }
-        } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {
+            // @ts-expect-error Types aren't updated
+        } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.data.default_member_permissions!)) {
             return {
                 content: '❌ I do not have perms to create an activity in this channel!',
                 ephemeral: true

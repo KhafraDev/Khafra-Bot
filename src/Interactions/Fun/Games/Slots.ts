@@ -71,13 +71,13 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         ctx.drawImage(image, 0, 0, Dims.Width, Dims.Height);
-        ctx.font = '120px Arial';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         for (let i = 0; i < board.length; i++) {
             for (let j = 0; j < board[i].length; j++) {
                 if (board[i][j].includes('BAR')) {
+                    ctx.font = '120px Arial';
                     const BAR = board[i][j].match(/(BAR)/g)!.length;
                     const x = canvas.width / 1.5 + (j * 120) + (j * 40);
                     const y = i * 155 + 150;
@@ -93,6 +93,7 @@ export class kSubCommand extends InteractionSubCommand {
                         ImageUtil.centerImage(ctx, bar, x, y, 120, 30);
                     }
                 } else {
+                    ctx.font = '120px Apple Color Emoji';
                     ctx.fillText(
                         board[i][j],
                         canvas.width / 1.5 + (j * 120) + (j * 40),

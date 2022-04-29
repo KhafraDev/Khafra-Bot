@@ -3,7 +3,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
 import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { bold, time } from '@discordjs/builders';
 import type {
     RESTPostAPIApplicationCommandsJSONBody
@@ -21,7 +21,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clear',
             description: 'Bulk deletes messages from a channel.',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([PermissionFlagsBits.ManageMessages]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Integer,
@@ -46,14 +48,17 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.ManageMessages
-            ]
-        });
+        super(sc);
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        }
+
         const amount = interaction.options.getInteger('messages', true);
         const channel = interaction.options.getChannel('channel') ?? interaction.channel;
 
@@ -62,7 +67,8 @@ export class kInteraction extends Interactions {
                 content: `❌ I can't bulk delete messages in ${channel}!`,
                 ephemeral: true
             }
-        } else if (!hasPerms(channel, interaction.guild?.me, this.options.permissions!)) {
+            // @ts-expect-error Types aren't updated
+        } else if (!hasPerms(channel, interaction.guild?.me, this.data.default_member_permissions)) {
             return {
                 content: '❌ Re-invite the bot with the correct permissions to use this command!',
                 ephemeral: true

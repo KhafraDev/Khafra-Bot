@@ -39,7 +39,7 @@ const getItemRespectNSFW = (
 export const badmeme = async (
     subreddit = 'dankmemes',
     nsfw = false,
-    modifier: typeof SortBy[keyof typeof SortBy] = SortBy.HOT,
+    modifier: typeof SortBy[keyof typeof SortBy] = SortBy.NEW,
     timeframe: typeof Timeframe[keyof typeof Timeframe] = Timeframe.MONTH
 ): Promise<
     IBadMemeCache |

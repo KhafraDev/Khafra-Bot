@@ -10,7 +10,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { time } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { AnyChannel, GuildMember } from 'discord.js';
+import { Events, type AnyChannel, type GuildMember } from 'discord.js';
 import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
@@ -22,8 +22,8 @@ const basic =
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-export class kEvent extends Event<'guildMemberRemove'> {
-    name = 'guildMemberRemove' as const;
+export class kEvent extends Event<typeof Events.GuildMemberRemove> {
+    name = Events.GuildMemberRemove;
 
     async init (member: GuildMember): Promise<void> {
         if (member.id === config.botId) return;

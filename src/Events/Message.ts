@@ -21,8 +21,7 @@ import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
 import { ChannelType } from 'discord-api-types/v10';
-import type { ReplyMessageOptions } from 'discord.js';
-import { DiscordAPIError, Message, Attachment } from 'discord.js';
+import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
 import { argv } from 'node:process';
 
@@ -47,8 +46,8 @@ export const disabled = typeof processArgs.get('disabled') === 'string'
         .map(c => c.toLowerCase())
     : [];
 
-export class kEvent extends Event<'messageCreate'> {
-    name = 'messageCreate' as const;
+export class kEvent extends Event<typeof Events.MessageCreate> {
+    name = Events.MessageCreate;
 
     async init (message: Message): Promise<void> {
         Stats.messages++;

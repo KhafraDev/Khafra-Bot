@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
 import type {
     APIApplicationCommandOption,
@@ -21,7 +21,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'massban',
             description: 'Ban someone!',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([perms]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Integer,
@@ -44,13 +46,17 @@ export class kInteraction extends Interactions {
         };
 
         super(sc, {
-            defer: true,
-            permissions: [perms]
+            defer: true
         });
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        if (!interaction.inGuild()) {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        } else if (!interaction.inGuild()) {
             return {
                 content: `❌ Invalid permissions, ${pleaseInvite}`,
                 ephemeral: true

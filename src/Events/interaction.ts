@@ -7,12 +7,13 @@ import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interacti
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
-import type {
-    ChatInputCommandInteraction,
-    Interaction,
-    InteractionReplyOptions,
-    MessageContextMenuCommandInteraction,
-    UserContextMenuCommandInteraction
+import {
+    type ChatInputCommandInteraction,
+    Events,
+    type Interaction,
+    type InteractionReplyOptions,
+    type MessageContextMenuCommandInteraction,
+    type UserContextMenuCommandInteraction
 } from 'discord.js';
 import { argv } from 'node:process';
 
@@ -28,8 +29,8 @@ const disabled = typeof processArgs.get('disabled') === 'string'
         .map(c => c.toLowerCase())
     : [];
 
-export class kEvent extends Event<'interactionCreate'> {
-    name = 'interactionCreate' as const;
+export class kEvent extends Event<typeof Events.InteractionCreate> {
+    name = Events.InteractionCreate;
 
     async init (interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles

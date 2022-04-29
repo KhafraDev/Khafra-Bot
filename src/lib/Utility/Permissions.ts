@@ -88,3 +88,9 @@ export const permResolvableToString = (perms: PermissionResolvable): string[] =>
 
     return has;
 }
+
+export const toString = (perms: bigint[]): string => {
+    return perms.reduce(
+        (a, b) => a | b, 0n
+    ).toString();
+}

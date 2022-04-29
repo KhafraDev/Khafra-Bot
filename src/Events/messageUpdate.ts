@@ -18,8 +18,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
-import type { ReplyMessageOptions } from 'discord.js';
-import { DiscordAPIError, Message, Attachment } from 'discord.js';
+import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
 import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
 
@@ -28,8 +27,8 @@ const config = createFileWatcher(
     join(cwd, 'config.json')
 );
 
-export class kEvent extends Event<'messageUpdate'> {
-    name = 'messageUpdate' as const;
+export class kEvent extends Event<typeof Events.MessageUpdate> {
+    name = Events.MessageUpdate;
 
     async init (oldMessage: Message<true>, newMessage: Message<true>): Promise<void> {
         Stats.messages++;

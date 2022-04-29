@@ -1,10 +1,26 @@
 import { Command } from '#khaf/Command';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
+import { OAuth2Scopes, PermissionFlagsBits, type APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
-const scope = 'bot%20applications.commands';
+const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands];
+const permissions = [
+    PermissionFlagsBits.AddReactions,
+    PermissionFlagsBits.AttachFiles,
+    PermissionFlagsBits.BanMembers,
+    PermissionFlagsBits.CreateInstantInvite,
+    PermissionFlagsBits.EmbedLinks,
+    PermissionFlagsBits.KickMembers,
+    PermissionFlagsBits.ManageChannels,
+    PermissionFlagsBits.ManageEmojisAndStickers,
+    PermissionFlagsBits.ManageGuild,
+    PermissionFlagsBits.ManageMessages,
+    PermissionFlagsBits.ManageRoles,
+    PermissionFlagsBits.ModerateMembers,
+    PermissionFlagsBits.ReadMessageHistory,
+    PermissionFlagsBits.SendMessages
+];
 
 export class kCommand extends Command {
     constructor () {
@@ -20,23 +36,14 @@ export class kCommand extends Command {
     }
 
     async init (message: Message): Promise<APIEmbed> {
-        const selfId = message.client.user!.id;
+        const everything = message.client.generateInvite({ scopes, permissions });
+        const slashCommands = message.client.generateInvite({ scopes, permissions: 0n });
 
         return Embed.json({
             color: colors.ok,
             fields: [
-                {
-                    name: bold('Basic Permissions:'),
-                    value: `Not everything will work! \n[Click Here](https://discord.com/oauth2/authorize?client_id=${selfId}&scope=${scope}&permissions=117824)`
-                },
-                {
-                    name: bold('Everything:'),
-                    value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=1478811839735&scope=${scope})`
-                },
-                {
-                    name: bold('Enable slash commands and buttons:'),
-                    value: `[Click Here](https://discord.com/api/oauth2/authorize?client_id=${selfId}&permissions=0&scope=${scope})`
-                }
+                { name: bold('Everything:'), value: everything },
+                { name: bold('Enable slash commands and buttons:'), value: slashCommands }
             ]
         });
     }

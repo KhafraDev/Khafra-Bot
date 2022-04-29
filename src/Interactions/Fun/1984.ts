@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: '1984',
-            description: 'It\'s literally 1984'
+            description: 'It\'s literally 1984!'
         };
 
         super(sc);

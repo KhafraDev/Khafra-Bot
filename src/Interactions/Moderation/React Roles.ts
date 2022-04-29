@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction';
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
@@ -11,7 +11,8 @@ import type {
     InteractionReplyOptions,
     NewsChannel,
     TextChannel,
-    ThreadChannel} from 'discord.js';
+    ThreadChannel
+} from 'discord.js';
 import { GuildMember, GuildMemberRoleManager, Role, Util } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
@@ -31,7 +32,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reactrole',
             description: 'Add a button that gives members a specified role when clicked on!',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([PermissionFlagsBits.ManageRoles]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Channel,
@@ -66,14 +69,17 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.ManageRoles
-            ]
-        });
+        super(sc);
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        }
+
         const channel = interaction.options.getChannel('channel', true) as Channel;
         const role = interaction.options.getRole('role', true);
         const icon = interaction.options.getString('icon');

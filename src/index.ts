@@ -6,9 +6,9 @@ import '#khaf/image/ImageFonts.js';
 import { KhafraClient } from '#khaf/Bot';
 import type { Event } from '#khaf/Event';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import type { RestEvents } from '@discordjs/rest';
+import { RESTEvents, type RestEvents } from '@discordjs/rest';
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10';
-import { type ClientEvents, Partials } from 'discord.js';
+import { type ClientEvents, Partials, Events } from 'discord.js';
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     name: T
@@ -40,18 +40,18 @@ export const client = new KhafraClient({
         GatewayIntentBits.MessageContent
     ]
 })
-    .on('ready',                emitted('ready'))
-    .on('messageCreate',        emitted('messageCreate'))
-    .on('messageUpdate',        emitted('messageUpdate'))
-    .on('guildBanAdd',          emitted('guildBanAdd'))
-    .on('guildBanRemove',       emitted('guildBanRemove'))
-    .on('guildCreate',          emitted('guildCreate'))
-    .on('guildDelete',          emitted('guildDelete'))
-    .on('interactionCreate',    emitted('interactionCreate'))
-    .on('guildMemberAdd',       emitted('guildMemberAdd'))
-    .on('guildMemberRemove',    emitted('guildMemberRemove'))
-    .on('guildMemberUpdate',    emitted('guildMemberUpdate'));
+    .on(Events.ClientReady,         emitted(Events.ClientReady))
+    .on(Events.MessageCreate,       emitted(Events.MessageCreate))
+    .on(Events.MessageUpdate,       emitted(Events.MessageUpdate))
+    .on(Events.GuildBanAdd,         emitted(Events.GuildBanAdd))
+    .on(Events.GuildBanRemove,      emitted(Events.GuildBanRemove))
+    .on(Events.GuildCreate,         emitted(Events.GuildCreate))
+    .on(Events.GuildDelete,         emitted(Events.GuildDelete))
+    .on(Events.InteractionCreate,   emitted(Events.InteractionCreate))
+    .on(Events.GuildMemberAdd,      emitted(Events.GuildMemberAdd))
+    .on(Events.GuildMemberRemove,   emitted(Events.GuildMemberRemove))
+    .on(Events.GuildMemberUpdate,   emitted(Events.GuildMemberUpdate));
 
-client.rest.on('rateLimited', emitted('rateLimited'));
+client.rest.on(RESTEvents.RateLimited, emitted(RESTEvents.RateLimited));
 
 void client.init();

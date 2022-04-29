@@ -90,6 +90,11 @@ export class kInteraction extends Interactions {
             interaction.options.getMentionable('type') ??
             interaction.options.getString('emoji') ??
             interaction.user;
+        const createdAt = typeof option === 'string'
+            ? null
+            : 'joined_at' in option
+                ? new Date(option.joined_at)
+                : new Date(SnowflakeUtil.timestampFrom(option.id));
 
         if (typeof option === 'string') {
             if (GUILD_EMOJI_REG.test(option)) {
@@ -183,12 +188,15 @@ export class kInteraction extends Interactions {
                 thumbnail: { url: option.user.displayAvatarURL() },
                 fields: [
                     { name: bold('Role Color:'), value: option.displayHexColor, inline: true },
-                    { name: bold('Joined Guild:'), value: time(option.joinedAt ?? new Date()), inline: false },
+                    { name: bold('Joined Guild:'), value: time(option.joinedAt ?? new Date()), inline: true },
+                    { name: '\u200b', value: '\u200b', inline: true },
                     {
                         name: bold('Boosting Since:'),
                         value: option.premiumSince ? time(option.premiumSince) : 'Not boosting',
                         inline: true
-                    }
+                    },
+                    { name: bold('Account Created:'), value: time(createdAt!, 'f'), inline: true },
+                    { name: '\u200b', value: '\u200b', inline: true }
                 ],
                 footer: { text: 'For general user info mention a user!' }
             });
@@ -212,7 +220,7 @@ export class kInteraction extends Interactions {
                     { name: bold('Mentionable:'), value: option.mentionable ? 'Yes' : 'No', inline: true },
                     { name: bold('Hoisted:'), value: option.hoist ? 'Yes' : 'No', inline: true },
                     { name: bold('Position:'), value: `${option.position}`, inline: true },
-                    { name: bold('Managed:'), value: option.managed ? 'Yes' : 'No' }
+                    { name: bold('Managed:'), value: option.managed ? 'Yes' : 'No', inline: true }
                 ],
                 image: option.icon ? { url: option.iconURL()! } : undefined
             });
@@ -228,7 +236,6 @@ export class kInteraction extends Interactions {
                 ? member
                 : null;
 
-            const snowflake = SnowflakeUtil.timestampFrom(option.id);
             const flags = option.flags?.bitfield
                 ? option.flags.toArray()
                 : [];
@@ -250,7 +257,7 @@ export class kInteraction extends Interactions {
                     { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
                     { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
                     { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
-                    { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+                    { name: bold('Account Created:'), value: time(createdAt!, 'f'), inline: true }
                 ]
             });
 

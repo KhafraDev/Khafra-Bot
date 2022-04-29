@@ -7,7 +7,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { AnyChannel, GuildMember } from 'discord.js';
+import { Events, type AnyChannel, type GuildMember } from 'discord.js';
 
 const basic =
     PermissionFlagsBits.ViewChannel |
@@ -16,8 +16,8 @@ const basic =
 
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
-export class kEvent extends Event<'guildMemberUpdate'> {
-    name = 'guildMemberUpdate' as const;
+export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
+    name = Events.GuildMemberUpdate;
 
     async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole

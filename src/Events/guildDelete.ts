@@ -1,9 +1,9 @@
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import type { Guild } from 'discord.js';
+import { Events, type Guild } from 'discord.js';
 
-export class kEvent extends Event<'guildDelete'> {
-    name = 'guildDelete' as const;
+export class kEvent extends Event<typeof Events.GuildDelete> {
+    name = Events.GuildDelete;
 
     async init (guild: Guild): Promise<void> {
         if (guild.available === false) return;

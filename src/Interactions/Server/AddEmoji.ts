@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
 import type {
     RESTPostAPIApplicationCommandsJSONBody
@@ -16,7 +16,9 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'addemoji',
             description: 'Adds an emoji to the server!',
-            default_permission: false,
+            // @ts-expect-error Types aren't updated
+            default_member_permissions: toString([PermissionFlagsBits.ManageEmojisAndStickers]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -63,20 +65,22 @@ export class kInteraction extends Interactions {
             ]
         };
 
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.ManageEmojisAndStickers
-            ]
-        });
+        super(sc);
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        if (!interaction.inCachedGuild()) {
+        // @ts-expect-error Types aren't updated
+        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+            return {
+                content: '❌ You do not have permission to use this command!'
+            }
+        } else if (!interaction.inCachedGuild()) {
             return {
                 content: '❌ Please re-invite the bot with default permissions to use this command.',
                 ephemeral: true
             }
-        } else if (!hasPerms(interaction.channel, interaction.guild.me, this.options.permissions!)) {
+            // @ts-expect-error Types aren't updated
+        } else if (!hasPerms(interaction.channel, interaction.guild.me, this.data.default_member_permissions!)) {
             return {
                 content: '❌ I need permission to manage emojis to use this command.',
                 ephemeral: true

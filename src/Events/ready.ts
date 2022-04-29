@@ -7,12 +7,13 @@ import { cwd } from '#khaf/utility/Constants/Path.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
+import { Events } from 'discord.js';
 import { join } from 'node:path';
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
-export class kEvent extends Event<'ready'> {
-    name = 'ready' as const;
+export class kEvent extends Event<typeof Events.ClientReady> {
+    name = Events.ClientReady;
 
     async init (): Promise<void> {
         const s = `Logged in at ${new Date()}`;
@@ -33,6 +34,6 @@ export class kEvent extends Event<'ready'> {
             }
         }
 
-        void client.loadInteractions();
+        // void client.loadInteractions();
     }
 }

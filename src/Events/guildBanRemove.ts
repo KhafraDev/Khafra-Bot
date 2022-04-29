@@ -9,7 +9,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
 import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
-import type { GuildBan, User } from 'discord.js';
+import { Events, type GuildBan, type User } from 'discord.js';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
@@ -19,8 +19,8 @@ const perms =
     PermissionFlagsBits.SendMessages |
     PermissionFlagsBits.EmbedLinks;
 
-export class kEvent extends Event<'guildBanRemove'> {
-    name = 'guildBanRemove' as const;
+export class kEvent extends Event<typeof Events.GuildBanRemove> {
+    name = Events.GuildBanRemove;
 
     async init ({ guild, user, reason }: GuildBan): Promise<void> {
         // This event will always return "partial" unbans,
