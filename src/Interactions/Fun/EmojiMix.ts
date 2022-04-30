@@ -1,4 +1,3 @@
-import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
@@ -6,7 +5,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType, InteractionType, Routes } from 'discord-api-types/v10';
+import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 import { randomUUID } from 'node:crypto';
@@ -162,10 +161,9 @@ export class kInteraction extends Interactions {
                     components: disableAll(i)
                 });
             } else {
-                return void await rest.patch(
-                    Routes.channelMessage('channelId' in i ? i.channelId : i.channel_id, i.id),
-                    { body: { components: disableAll(i) } }
-                );
+                return void await interaction.editReply({
+                    components: disableAll(i)
+                });
             }
         }
 

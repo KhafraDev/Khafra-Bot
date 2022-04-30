@@ -87,7 +87,12 @@ export const Buttons = {
     }
 }
 
-const toggleComponents = (item: Message | APIMessage, disabled: boolean): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+type ToggleableComponent =
+    | Message
+    | APIMessage
+    | { components: APIActionRowComponent<APIButtonComponent>[] }
+
+const toggleComponents = (item: ToggleableComponent, disabled: boolean): APIActionRowComponent<APIMessageActionRowComponent>[] => {
     if (!item.components) return [];
 
     const rows: APIActionRowComponent<APIMessageActionRowComponent>[] = [];
@@ -107,7 +112,7 @@ const toggleComponents = (item: Message | APIMessage, disabled: boolean): APIAct
     return rows;
 }
 
-export const disableAll = (item: Message | APIMessage):
+export const disableAll = (item: ToggleableComponent):
     APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, true);
-export const enableAll = (item: Message | APIMessage):
+export const enableAll = (item: ToggleableComponent):
     APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, false);

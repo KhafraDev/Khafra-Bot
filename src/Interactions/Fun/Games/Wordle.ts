@@ -1,16 +1,15 @@
-import { rest } from '#khaf/Bot';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { inlineCode } from '@discordjs/builders';
-import type { RawFile } from '@discordjs/rest';
 import { createCanvas } from '@napi-rs/canvas';
-import { Routes, TextInputStyle, type APIActionRowComponent, type APIEmbed, type APIMessageActionRowComponent } from 'discord-api-types/v10';
+import { TextInputStyle, type APIActionRowComponent, type APIEmbed, type APIMessageActionRowComponent } from 'discord-api-types/v10';
 import {
-    InteractionCollector, type ButtonInteraction,
+    InteractionCollector,
+    type ButtonInteraction,
     type ChatInputCommandInteraction,
-    type FileOptions, type InteractionReplyOptions,
+    type InteractionReplyOptions,
     type ModalSubmitInteraction,
     type WebhookEditMessageOptions
 } from 'discord.js';
@@ -207,19 +206,11 @@ export class kSubCommand extends InteractionSubCommand {
                 });
 
                 const editOptions = await attachGame(content);
-                await rest.patch(
-                    Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
-                    {
-                        body: {
-                            embeds: editOptions.embeds,
-                            content: editOptions.content
-                        },
-                        files: (editOptions.files as FileOptions[]).map((c): RawFile => ({
-                            data: c.attachment as Buffer,
-                            name: c.name!
-                        }))
-                    }
-                );
+                await interaction.editReply({
+                    embeds: editOptions.embeds,
+                    content: editOptions.content,
+                    files: editOptions.files
+                });
 
                 if (game.guesses.includes(game.word) || game.guesses.length === 6) {
                     c.stop();
@@ -244,29 +235,16 @@ export class kSubCommand extends InteractionSubCommand {
                 embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`;
             }
 
-            await rest.patch(
-                Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
-                {
-                    body: {
-                        embeds: options.embeds,
-                        content: options.content,
-                        components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
-                    },
-                    files: (options.files as FileOptions[]).map((c): RawFile => ({
-                        data: c.attachment as Buffer,
-                        name: c.name!
-                    }))
-                }
-            );
+            await interaction.editReply({
+                embeds: options.embeds,
+                content: options.content,
+                components: [wordleGetShareComponent(disableAll(reply), game, highContrast)],
+                files: options.files
+            });
         } else {
-            await rest.patch(
-                Routes.channelMessage('channel_id' in reply ? reply.channel_id : reply.channelId, reply.id),
-                {
-                    body: {
-                        components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
-                    }
-                }
-            );
+            await interaction.editReply({
+                components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
+            });
         }
     }
 

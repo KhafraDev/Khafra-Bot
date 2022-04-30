@@ -1,11 +1,10 @@
-import { rest } from '#khaf/Bot';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { assets } from '#khaf/utility/Constants/Path.js';
 import { plural } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
-import { Routes, TextInputStyle, type Snowflake } from 'discord-api-types/v10';
+import { TextInputStyle, type Snowflake } from 'discord-api-types/v10';
 import {
     InteractionCollector, type ButtonInteraction,
     type ChatInputCommandInteraction,
@@ -232,15 +231,10 @@ export class kSubCommand extends InteractionSubCommand {
                         ephemeral: true
                     });
 
-                    await rest.patch(
-                        Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
-                        {
-                            body: {
-                                ...game.toJSON(),
-                                content: `❓ Your hint is ${hint}!`
-                            }
-                        }
-                    );
+                    await interaction.editReply({
+                        ...game.toJSON(),
+                        content: `❓ Your hint is ${hint}!`
+                    });
 
                     continue;
                 }
@@ -294,18 +288,13 @@ export class kSubCommand extends InteractionSubCommand {
                     ephemeral: true
                 });
 
-                await rest.patch(
-                    Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
-                    { body: json }
-                );
+                await interaction.editReply(json);
             }
         }
 
         currentGames.delete(interaction.user.id);
-
-        await rest.patch(
-            Routes.channelMessage('channel_id' in m ? m.channel_id : m.channelId, m.id),
-            { body: { components: disableAll(m) } }
-        );
+        await interaction.editReply({
+            components: disableAll(m)
+        });
     }
 }

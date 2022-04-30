@@ -84,6 +84,11 @@ class Parser extends Array<string> {
         return true;
     }
 
+    public reset (): void {
+        this.openParenthesis = 0;
+        this.length = 0;
+    }
+
     public toParseableString (): string {
         let output = '';
 
@@ -149,9 +154,7 @@ export class kInteraction extends Interactions {
             description: 'Calculator in Discord!'
         };
 
-        super(sc, {
-            defer: true
-        });
+        super(sc);
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<void> {
@@ -160,9 +163,8 @@ export class kInteraction extends Interactions {
             Components.actionRow([
                 Buttons.approve('(', `(-${id}`),
                 Buttons.approve(')', `)-${id}`),
-                Buttons.approve('.', `.-${id}`)
-                // TODO(@KhafraDev): clear button?
-                // Buttons.approve('idk', 'idk')
+                Buttons.approve('.', `.-${id}`),
+                Buttons.deny('CE', `clear-${id}`)
             ]),
             Components.actionRow([
                 Buttons.secondary('1', `1-${id}`),
@@ -198,14 +200,13 @@ export class kInteraction extends Interactions {
             `);
 
         const parser = new Parser();
-        const int = await interaction.editReply({
+        const int = await interaction.reply({
             embeds: [makeEmbed('Empty')],
             components: rows
         });
 
         const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
-            message: int,
             idle: 30_000,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
@@ -220,7 +221,7 @@ export class kInteraction extends Interactions {
 
                 await i.update({
                     embeds: [makeEmbed(`${parser.toString()}\nLimited to 15 characters.`)],
-                    components: disableAll(int)
+                    components: disableAll({ components: rows })
                 });
             } else if (token === '=') {
                 collector.stop('calculate');
@@ -232,7 +233,11 @@ export class kInteraction extends Interactions {
                     embeds: [makeEmbed(`${parser.toString()}\n${m}`)]
                 });
             } else {
-                parser.add(token);
+                if (token === 'clear') {
+                    parser.reset();
+                } else {
+                    parser.add(token);
+                }
 
                 await i.update({
                     embeds: [makeEmbed(parser.toString())]
@@ -242,6 +247,8 @@ export class kInteraction extends Interactions {
 
         if (collector.collected.size !== 0) {
             const i = collector.collected.last()!;
+
+            if (i.replied) return;
 
             if (collector.endReason === 'calculate') {
                 const parsed = parser.toParseableString();
@@ -256,20 +263,19 @@ export class kInteraction extends Interactions {
                 if (eq === 'Invalid input!') {
                     await i.update({
                         embeds: [makeEmbed(eq)],
-                        components: disableAll(int)
+                        components: disableAll({ components: rows })
                     });
                 } else {
                     await i.update({
-                        embeds: [makeEmbed(`${parsed} = ${eq}`)],
-                        components: disableAll(int)
+                        embeds: [makeEmbed(`${parser.toString()} = ${eq}`)],
+                        components: disableAll({ components: rows })
                     });
                 }
-            } else if (collector.endReason === 'idle') {
-                await i.update({
-                    embeds: [makeEmbed(parser.toString())],
-                    components: disableAll(int)
-                });
             }
+        } else {
+            await interaction.editReply({
+                components: disableAll({ components: rows })
+            });
         }
     }
 }
