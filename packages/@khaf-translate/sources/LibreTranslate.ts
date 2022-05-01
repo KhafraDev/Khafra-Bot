@@ -1,4 +1,4 @@
-import { fetch, FormData } from 'undici';
+import { FormData, request } from 'undici';
 
 interface Options {
     to: string
@@ -20,8 +20,8 @@ export const langs: string[] = []
 export const getLanguages = async (): Promise<string[]> => {
     if (langs.length !== 0) return langs;
 
-    const r = await fetch('https://libretranslate.com/languages');
-    const j = await r.json() as APILanguageResponse;
+    const { body } = await request('https://libretranslate.com/languages');
+    const j = await body.json() as APILanguageResponse;
 
     langs.push(...j.map(l => l.code));
     return langs;
@@ -35,7 +35,7 @@ export const translate = async (options: Options): Promise<APITranslatedResponse
     form.set('format', 'text');
     form.set('api_key', '');
 
-    const r = await fetch('https://libretranslate.com/translate', {
+    const { body, statusCode } = await request('https://libretranslate.com/translate', {
         method: 'POST',
         body: form,
         headers: {
@@ -45,7 +45,7 @@ export const translate = async (options: Options): Promise<APITranslatedResponse
         }
     });
 
-    return r.ok
-        ? await r.json() as APITranslatedResponse
+    return statusCode === 200
+        ? await body.json() as APITranslatedResponse
         : null;
 }

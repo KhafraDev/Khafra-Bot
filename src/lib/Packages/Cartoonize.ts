@@ -4,7 +4,7 @@ import type { Attachment } from 'discord.js';
 import { decodeXML } from 'entities';
 import { type Blob } from 'node:buffer';
 import { basename } from 'node:path';
-import { fetch, FormData } from 'undici';
+import { FormData, request } from 'undici';
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/;
@@ -17,8 +17,8 @@ export class Cartoonize {
         const u = URLFactory(url);
         if (u === null) return null;
 
-        const [err, res] = await dontThrow(fetch(u));
-        if (err === null) return await res.blob();
+        const [err, res] = await dontThrow(request(u));
+        if (err === null) return res.body.blob();
 
         return null;
     }
@@ -30,12 +30,12 @@ export class Cartoonize {
         if (blob === null) return null;
         form.append('image', blob, basename(attachment.proxyURL));
 
-        const r = await fetch('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
+        const { body } = await request('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
             method: 'POST',
             body: form
         });
 
-        const j = await r.text();
+        const j = await body.text();
         const url = R.exec(j)![1];
 
         return decodeXML(url);

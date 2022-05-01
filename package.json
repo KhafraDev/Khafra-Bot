@@ -38,7 +38,7 @@
     "postgres": "^3.1.0",
     "sonic-boom": "^2.8.0",
     "twemoji-parser": "^14.0.0",
-    "undici": "^5.0.0"
+    "undici": "^5.1.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.30",
