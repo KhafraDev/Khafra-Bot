@@ -1,11 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
+import { qrcodeImage } from '@khaf/qrcode';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { Buffer } from 'node:buffer';
-import { request } from 'undici';
 
 export class kInteraction extends Interactions {
     constructor() {
@@ -27,24 +25,11 @@ export class kInteraction extends Interactions {
 
     async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
-        const [e, r] = await dontThrow(request(`https://qrcode.show/${text}`, {
-            headers: {
-                Accept: 'image/png'
-            }
-        }));
-
-        if (e !== null) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(e.message)}.`,
-                ephemeral: true
-            }
-        }
-
-        const buffer = Buffer.from(await r.body.arrayBuffer());
+        const qrcode = Buffer.from(qrcodeImage(text));
 
         return {
             files: [{
-                attachment: buffer,
+                attachment: qrcode,
                 name: 'qr.png',
                 description: 'A QR Code!'
             }]
