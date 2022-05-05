@@ -35,7 +35,6 @@
     "discord.js": "^14.0.0-dev.1650931749-df64d3e",
     "entities": "^4.3.0",
     "fast-xml-parser": "^4.0.7",
-    "node-graceful": "^3.1.0",
     "postgres": "^3.1.0",
     "sonic-boom": "^2.8.0",
     "twemoji-parser": "^14.0.0",

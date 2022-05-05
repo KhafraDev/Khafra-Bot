@@ -82,7 +82,6 @@ export class kSubCommand extends InteractionSubCommand {
         const { body } = await request(avatarURL);
 
         const image = new Image();
-        image.width = image.height = TWO_FIFTY_SIX;
         image.src = Buffer.from(await body.arrayBuffer());
 
         const canvas = createCanvas(image.width, image.height);
