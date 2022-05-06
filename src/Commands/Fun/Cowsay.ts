@@ -73,6 +73,8 @@ export class kCommand extends Command {
         if (split.length === 1) // 1-lined messages
             split.push(`\\ ${''.padEnd(38, ' ')} /`);
 
+        split.push(' ----------------------------------------');
+
         if (!bases.has(format)) { // lazy load ascii arts
             const file = await readFile(join(dir, `${format}.txt`), 'utf-8');
             bases.set(format, file);
