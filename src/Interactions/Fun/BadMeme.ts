@@ -91,7 +91,8 @@ export class kInteraction extends Interactions {
             }
 
             return {
-                content: getReasonString(item.reason)
+                content: getReasonString(item.reason),
+                ephemeral: true
             }
         } else if (item.url.length === 0) {
             return {

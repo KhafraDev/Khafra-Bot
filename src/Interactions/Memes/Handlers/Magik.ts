@@ -31,7 +31,7 @@ export class kSubCommand extends InteractionSubCommand {
         const buffer = await this.image(option);
 
         if (typeof buffer === 'string') {
-            return { content: buffer }
+            return { content: buffer, ephemeral: true }
         }
 
         return {

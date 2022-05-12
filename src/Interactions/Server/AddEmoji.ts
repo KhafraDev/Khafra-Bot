@@ -72,7 +72,8 @@ export class kInteraction extends Interactions {
         // @ts-expect-error Types aren't updated
         if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
             return {
-                content: '❌ You do not have permission to use this command!'
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
             }
         } else if (!interaction.inCachedGuild()) {
             return {

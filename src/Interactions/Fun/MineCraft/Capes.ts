@@ -50,7 +50,7 @@ export class kSubCommand extends InteractionSubCommand {
         ]);
 
         if (typeof buffer === 'string') {
-            return { content: buffer }
+            return { content: buffer, ephemeral: true }
         }
 
         return {
