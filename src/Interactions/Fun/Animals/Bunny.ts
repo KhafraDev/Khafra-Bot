@@ -24,7 +24,15 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         await interaction.deferReply();
 
-        const { body } = await request('https://api.bunnies.io/v2/loop/random/?media=gif');
+        const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif');
+
+        if (statusCode !== 200) {
+            return {
+                content: '🐰 Couldn\'t get a picture of a random bunny!',
+                ephemeral: true
+            }
+        }
+
         const j = await body.json() as BunniesIO;
 
         return {

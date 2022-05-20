@@ -1,4 +1,5 @@
 import { client } from '#khaf/Client';
+import { logger } from '#khaf/Logger';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
@@ -17,8 +18,7 @@ type InteractionReply
  * Non-reactrole interactions are quickly filtered out.
  */
 export const interactionReactRoleHandler = async (
-    interaction: MessageComponentInteraction,
-    isDev = false
+    interaction: MessageComponentInteraction
 ): Promise<undefined> => {
     if (!validSnowflake(interaction.customId)) return;
     if (interaction.message.author.id !== client.user?.id) return;
@@ -37,7 +37,7 @@ export const interactionReactRoleHandler = async (
     const role = guild.roles.cache.get(interaction.customId);
     if (!role || role.managed) return;
 
-    if (!guild.me || !hierarchy(guild.me, interaction.member, false)) {
+    if (!guild.members.me || !hierarchy(guild.members.me, interaction.member, false)) {
         const opts = { content: '❌ I do not have permission to manage your roles!' };
         const pr = interaction.deferred
             ? interaction.editReply(opts)
@@ -66,9 +66,7 @@ export const interactionReactRoleHandler = async (
 
         return void dontThrow<InteractionReply>(pr as Promise<InteractionReply>);
     } catch (e) {
-        if (isDev) {
-            console.log(e); // eslint-disable-line no-console
-        }
+        logger.log(e);
 
         const opts = {
             embeds: [

@@ -53,7 +53,7 @@ export class kSubCommand extends InteractionSubCommand {
                     content: `❌ You can't warn ${member}!`,
                     ephemeral: true
                 }
-            } else if (interaction.guild.me && !hierarchy(interaction.guild.me, member)) {
+            } else if (interaction.guild.members.me && !hierarchy(interaction.guild.members.me, member)) {
                 return {
                     content: `❌ I can't warn ${member}! 😦`,
                     ephemeral: true

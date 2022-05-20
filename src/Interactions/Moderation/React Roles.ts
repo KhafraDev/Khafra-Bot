@@ -32,7 +32,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reactrole',
             description: 'Add a button that gives members a specified role when clicked on!',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.ManageRoles]),
             dm_permission: false,
             options: [
@@ -73,10 +72,20 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        const defaultPerms = BigInt(this.data.default_member_permissions!);
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
             }
         }
@@ -90,7 +99,7 @@ export class kInteraction extends Interactions {
             
             Clicking the button again will take the role away!`;
 
-        if (!hasPerms(channel, interaction.guild?.me, perms)) {
+        if (!hasPerms(channel, interaction.guild.members.me, perms)) {
             return {
                 content: '❌ I do not have permission to post a message in this channel!',
                 ephemeral: true
@@ -108,18 +117,17 @@ export class kInteraction extends Interactions {
         } else if (
             !(role instanceof Role) ||
             !(interaction.member instanceof GuildMember) ||
-            !(interaction.member.roles instanceof GuildMemberRoleManager) ||
-            !interaction.guild?.me
+            !(interaction.member.roles instanceof GuildMemberRoleManager)
         ) {
             return {
                 content: '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!',
                 ephemeral: true
             }
         } else if (
-            role.id === interaction.guild.me.roles.highest.id ||
+            role.id === interaction.guild.members.me.roles.highest.id ||
             // Negative if this role's position is lower (param is higher),
             // positive number if this one is higher (other's is lower), 0 if equal
-            role.comparePositionTo(interaction.guild.me.roles.highest) > 0
+            role.comparePositionTo(interaction.guild.members.me.roles.highest) > 0
         ) {
             return {
                 content: '❌ I do not have enough permission to give others this role!',

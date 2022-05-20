@@ -1,7 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms, toString } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
+import { toString } from '#khaf/utility/Permissions.js';
 import type {
     APIApplicationCommandOption,
     RESTPostAPIApplicationCommandsJSONBody
@@ -10,10 +9,9 @@ import {
     ApplicationCommandOptionType,
     PermissionFlagsBits
 } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, Guild, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
+import type { ChatInputCommandInteraction, GuildMemberManager, InteractionReplyOptions } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 
-const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
 const perms = PermissionFlagsBits.BanMembers;
 
 export class kInteraction extends Interactions {
@@ -21,7 +19,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'massban',
             description: 'Ban someone!',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([perms]),
             dm_permission: false,
             options: [
@@ -51,31 +48,18 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        if (!interaction.memberPermissions?.has(perms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
                 ephemeral: true
             }
-        } else if (!interaction.inGuild()) {
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(perms)
+        ) {
             return {
-                content: `❌ Invalid permissions, ${pleaseInvite}`,
-                ephemeral: true
-            }
-        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
-            return {
-                content: '❌ I don\'t have permission to ban members in this guild!',
-                ephemeral: true
-            }
-        }
-
-        const [err, guild] = interaction.guild
-            ? [null, interaction.guild as Guild | null]
-            : await dontThrow(interaction.client.guilds.fetch(interaction.guildId));
-
-        if (err !== null || guild === null) {
-            return {
-                content: `❌ I couldn't fetch this guild, ${pleaseInvite}`,
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
             }
         }
@@ -106,7 +90,7 @@ export class kInteraction extends Interactions {
                     }
                 }
 
-                users.set(userOption.id, guild.members.ban(userOption, { reason, deleteMessageDays }));
+                users.set(userOption.id, interaction.guild.members.ban(userOption, { reason, deleteMessageDays }));
             }
         }
 

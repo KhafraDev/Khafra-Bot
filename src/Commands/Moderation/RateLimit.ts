@@ -76,7 +76,7 @@ export class kCommand extends Command {
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
 
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
+            if (!isText(channel) || !hasPerms(channel, message.guild.members.me, perms))
                 return;
 
             return void channel.send({

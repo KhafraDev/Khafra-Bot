@@ -50,7 +50,7 @@ export class ImageUtil {
     static maxTextLength (
         text: string,
         maxWidth: number,
-        ctx: SKRSContext2D | CanvasRenderingContext2D
+        ctx: SKRSContext2D
     ): string {
         const split = [...text];
         let newText = '';

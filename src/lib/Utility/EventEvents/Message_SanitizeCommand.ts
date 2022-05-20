@@ -25,5 +25,5 @@ export const Sanitize = (message: Message): message is Message<true> => {
         return false;
     }
 
-    return hasPerms(message.channel, message.guild.me, basic);
+    return hasPerms(message.channel, message.guild.members.me, basic);
 }

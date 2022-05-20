@@ -28,7 +28,7 @@ export class kEvent extends Event<typeof Events.GuildMemberRemove> {
     async init (member: GuildMember): Promise<void> {
         if (member.id === config.botId) return;
 
-        await sql<unknown[]>`
+        await sql`
             INSERT INTO kbInsights (
                 k_guild_id, k_left
             ) VALUES (
@@ -70,7 +70,7 @@ export class kEvent extends Event<typeof Events.GuildMemberRemove> {
             channel = c;
         }
 
-        if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
+        if (!isText(channel) || !hasPerms(channel, member.guild.members.me, basic))
             return;
 
         const joined =

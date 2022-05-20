@@ -21,7 +21,7 @@ export class kEvent extends Event<typeof Events.GuildMemberAdd> {
     name = Events.GuildMemberAdd;
 
     async init (member: GuildMember): Promise<void> {
-        await sql<unknown[]>`
+        await sql`
             INSERT INTO kbInsights (
                 k_guild_id, k_joined
             ) VALUES (
@@ -63,7 +63,7 @@ export class kEvent extends Event<typeof Events.GuildMemberAdd> {
             channel = c;
         }
 
-        if (!isText(channel) || !hasPerms(channel, member.guild.me, basic))
+        if (!isText(channel) || !hasPerms(channel, member.guild.members.me, basic))
             return;
 
         const embed = Embed.json({

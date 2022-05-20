@@ -182,7 +182,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
             }));
         }
 
-        let err: Error | void;
         Stats.session++;
 
         try {
@@ -209,11 +208,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             return void await message.reply(param);
         } catch (e) {
-            err = e as Error;
-
-            if (processArgs.get('dev') === true) {
-                console.log(e); // eslint-disable-line no-console
-            }
+            logger.log(e);
 
             if (!(e instanceof Error)) {
                 return;
@@ -233,18 +228,14 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } finally {
             MessagesLRU.delete(message.id);
 
-            if (err) {
-                logger.error(err);
-            } else {
-                logger.log(
-                    `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
-                    {
-                        URL: message.url,
-                        guild: message.guild.id,
-                        input: `"${message.content}"`
-                    }
-                );
-            }
+            logger.log(
+                `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
+                {
+                    URL: message.url,
+                    guild: message.guild.id,
+                    input: `"${message.content}"`
+                }
+            );
         }
     }
 }

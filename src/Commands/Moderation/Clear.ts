@@ -40,10 +40,10 @@ export class kCommand extends Command {
 
         const channel = await getMentions(message, 'channels') ?? message.channel;
 
-        if (!isText(channel) || !hasPerms(channel, message.guild.me, [PermissionFlagsBits.ManageMessages])) {
+        if (!isText(channel) || !hasPerms(channel, message.guild.members.me, [PermissionFlagsBits.ManageMessages])) {
             return Embed.perms(
                 channel,
-                message.guild.me,
+                message.guild.members.me,
                 PermissionFlagsBits.ManageMessages
             );
         } else if (message.deletable) {

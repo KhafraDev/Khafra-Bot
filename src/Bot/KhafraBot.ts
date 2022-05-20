@@ -315,10 +315,12 @@ export class KhafraClient extends Client {
 
     init = once(async () => {
         const start = performance.now();
-        await this.loadEvents();
-        await this.loadCommands();
-        await this.loadInteractions();
-        await this.startTimers();
+        await Promise.all([
+            this.loadCommands(),
+            this.loadEvents(),
+            this.startTimers(),
+            this.loadInteractions()
+        ]);
         await this.login(env.TOKEN);
         logger.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`));
     });

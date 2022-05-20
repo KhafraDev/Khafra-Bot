@@ -1,6 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Command, type Arguments } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
+import { logger } from '#khaf/Logger';
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isDM } from '#khaf/utility/Discord.js';
@@ -98,9 +99,7 @@ export const DM = async (message: Message): Promise<void> => {
 
         return void await message.reply(param);
     } catch (e) {
-        if (processArgs.get('dev') === true) {
-            console.log(e); // eslint-disable-line no-console
-        }
+        logger.log(e);
 
         if (!(e instanceof Error)) {
             return;

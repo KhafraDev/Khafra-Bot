@@ -72,7 +72,7 @@ export class kSubCommand extends InteractionSubCommand {
                 content: `❌ ${channel} isn't a text or news channel! You can't have a giveaway here.`,
                 ephemeral: true
             }
-        } else if (!hasPerms(channel, interaction.guild.me, perms)) {
+        } else if (!hasPerms(channel, interaction.guild.members.me, perms)) {
             return {
                 content: `❌ I do not have enough permission to edit the giveaway in ${channel}!`,
                 ephemeral: true

@@ -21,7 +21,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clear',
             description: 'Bulk deletes messages from a channel.',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.ManageMessages]),
             dm_permission: false,
             options: [
@@ -52,10 +51,20 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        const defaultPerms = BigInt(this.data.default_member_permissions!);
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
             }
         }
@@ -68,8 +77,7 @@ export class kInteraction extends Interactions {
                 content: `❌ I can't bulk delete messages in ${channel}!`,
                 ephemeral: true
             }
-            // @ts-expect-error Types aren't updated
-        } else if (!hasPerms(channel, interaction.guild?.me, this.data.default_member_permissions)) {
+        } else if (!hasPerms(channel, interaction.guild.members.me, defaultPerms)) {
             return {
                 content: '❌ Re-invite the bot with the correct permissions to use this command!',
                 ephemeral: true

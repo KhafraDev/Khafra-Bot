@@ -88,7 +88,7 @@ export class kCommand extends Command {
             const denied = overwrites?.deny.has(threadPerms);
 
             if (!denied) {
-                if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.ManageChannels)) continue;
+                if (!hasPerms(channel, message.guild.members.me, PermissionFlagsBits.ManageChannels)) continue;
                 if (!hasPerms(channel, message.member, PermissionFlagsBits.ManageChannels)) continue;
 
                 pr.push(channel.permissionOverwrites.edit(

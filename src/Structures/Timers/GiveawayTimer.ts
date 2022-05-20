@@ -34,7 +34,7 @@ export class GiveawayTimer extends Timer {
                 guild.channels.cache.get(giveaway.channelid) ??
                 await client.channels.fetch(giveaway.channelid);
 
-            if (!hasPerms(channel, guild.me, PermissionFlagsBits.ReadMessageHistory)) return;
+            if (!hasPerms(channel, guild.members.me, PermissionFlagsBits.ReadMessageHistory)) return;
             if (!isText(channel)) return;
             if (!client.user) return;
 

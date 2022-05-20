@@ -1,7 +1,7 @@
 import { rest } from '#khaf/Bot';
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms, toString } from '#khaf/utility/Permissions.js';
+import { toString } from '#khaf/utility/Permissions.js';
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
 import type {
     APIInvite, RESTPostAPIApplicationCommandsJSONBody,
@@ -34,7 +34,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'activity',
             description: 'Play a game in VC!',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([
                 PermissionFlagsBits.CreateInstantInvite,
                 PermissionFlagsBits.UseEmbeddedActivities
@@ -62,21 +61,20 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        const defaultPerms = BigInt(this.data.default_member_permissions!);
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
                 ephemeral: true
             }
-        } else if (!interaction.inGuild()) {
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
             return {
-                content: '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!',
-                ephemeral: true
-            }
-            // @ts-expect-error Types aren't updated
-        } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.data.default_member_permissions!)) {
-            return {
-                content: '❌ I do not have perms to create an activity in this channel!',
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
             }
         }

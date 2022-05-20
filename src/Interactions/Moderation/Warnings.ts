@@ -13,7 +13,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'warns',
             description: 'Handle warnings in this guild.',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.KickMembers]),
             dm_permission: false,
             options: [

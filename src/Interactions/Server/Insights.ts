@@ -8,7 +8,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'insights',
             description: 'Guild insight settings.',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.ViewGuildInsights]),
             dm_permission: false,
             options: [

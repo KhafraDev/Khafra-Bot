@@ -4,9 +4,9 @@ import { logger } from '#khaf/Logger';
 import { once } from '#khaf/utility/Memoize.js';
 import process, { exit } from 'node:process';
 
-const cleanup = once(async (...args: unknown[]) => {
+const cleanup = once(async (...args: [unknown?, unknown?]) => {
     if (args.length !== 0) {
-        logger.log(args[0], args[1]);
+        logger.debug(...args);
     }
 
     await PostgresClient.end({ timeout: 5 });

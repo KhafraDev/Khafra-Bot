@@ -45,8 +45,8 @@ export class kCommand extends Command {
 
         if (!isText(channel)) {
             return Embed.error(`${channel} is not a text channel!`);
-        } else if (!hasPerms(channel, message.guild.me, basic)) {
-            return Embed.perms(channel, message.guild.me, basic);
+        } else if (!hasPerms(channel, message.guild.members.me, basic)) {
+            return Embed.perms(channel, message.guild.members.me, basic);
         }
 
         const rows = await sql<kGuild[]>`

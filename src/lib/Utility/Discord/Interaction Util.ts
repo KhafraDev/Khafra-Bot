@@ -99,7 +99,7 @@ export const postToModLog = async (
             settings.mod_log_channel
         );
 
-        if (!isTextBased(channel) || !hasPerms(channel, interaction.guild?.me, perms))
+        if (!isTextBased(channel) || !hasPerms(channel, interaction.guild?.members.me, perms))
             return;
 
         return void dontThrow(channel.send({ embeds }));

@@ -22,7 +22,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clone-channel',
             description: 'Clones a channel.',
-            // @ts-expect-error Types aren't updated
             // https://discord.com/developers/docs/resources/guild#create-guild-channel
             default_member_permissions: toString([PermissionFlagsBits.ManageChannels]),
             dm_permission: false,
@@ -52,13 +51,18 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        const defaultPerms = BigInt(this.data.default_member_permissions!);
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
                 ephemeral: true
             }
-        } else if (interaction.guildId === null) {
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
             return {
                 content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
@@ -92,14 +96,14 @@ export class kInteraction extends Interactions {
             default_auto_archive_duration: !isVoice ? channel.defaultAutoArchiveDuration : undefined
         };
 
-        const clonedChannel = await rest.post(
-            Routes.guildChannels(interaction.guildId),
+        await rest.post(
+            Routes.guildChannels(interaction.guild.id),
             { body }
         ) as RESTPostAPIGuildChannelResult;
 
         const embed = Embed.json({
             color: colors.ok,
-            description: `✅ Successfully cloned <#${clonedChannel.id}>` + (deleteAfterwards
+            description: `✅ Successfully cloned ${channel.name}` + (deleteAfterwards
                 ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
                 : '!')
         });

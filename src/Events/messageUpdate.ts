@@ -20,7 +20,7 @@ import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
-import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
+import { defaultSettings, disabled, _cooldownGuild, _cooldownUsers } from './Message.js';
 
 const config = createFileWatcher(
     {} as typeof import('../../config.json'),
@@ -129,7 +129,6 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
             }));
         }
 
-        let err: Error | void;
         Stats.session++;
 
         try {
@@ -156,11 +155,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
 
             return void await newMessage.reply(param);
         } catch (e) {
-            err = e as Error;
-
-            if (processArgs.get('dev') === true) {
-                console.log(e); // eslint-disable-line no-console
-            }
+            logger.log(e);
 
             if (!(e instanceof Error)) {
                 return;
@@ -180,18 +175,14 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         } finally {
             MessagesLRU.delete(newMessage.id);
 
-            if (err) {
-                logger.error(err);
-            } else {
-                logger.log(
-                    `${newMessage.author.tag} (${newMessage.author.id}) used the ${command.settings.name} command!`,
-                    {
-                        URL: newMessage.url,
-                        guild: newMessage.guild.id,
-                        input: `"${newMessage.content}"`
-                    }
-                );
-            }
+            logger.log(
+                `${newMessage.author.tag} (${newMessage.author.id}) used the ${command.settings.name} command!`,
+                {
+                    URL: newMessage.url,
+                    guild: newMessage.guild.id,
+                    input: `"${newMessage.content}"`
+                }
+            );
         }
     }
 }

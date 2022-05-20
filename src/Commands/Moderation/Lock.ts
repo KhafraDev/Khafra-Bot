@@ -40,9 +40,9 @@ export class kCommand extends Command {
 
         if (!isText(text)) {
             return Embed.error('This command only works in text & news channels.');
-        } else if (!hasPerms(text, message.guild.me, this.permissions)) {
-            if (message.guild.me) {
-                return Embed.perms(text, message.guild.me, this.permissions);
+        } else if (!hasPerms(text, message.guild.members.me, this.permissions)) {
+            if (message.guild.members.me) {
+                return Embed.perms(text, message.guild.members.me, this.permissions);
             } else {
                 return Embed.error('A caching issue prevented me from properly checking permissions!');
             }
@@ -67,7 +67,7 @@ export class kCommand extends Command {
         if (settings.mod_log_channel !== null) {
             const channel = message.guild.channels.cache.get(settings.mod_log_channel);
 
-            if (!isText(channel) || !hasPerms(channel, message.guild.me, perms))
+            if (!isText(channel) || !hasPerms(channel, message.guild.members.me, perms))
                 return;
 
             return void channel.send({

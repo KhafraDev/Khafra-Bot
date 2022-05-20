@@ -34,7 +34,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
     async init (interaction: Interaction): Promise<void> {
         if (interaction.isMessageComponent()) { // "react" roles
-            return void dontThrow(interactionReactRoleHandler(interaction, processArgs.get('dev') === true));
+            return void dontThrow(interactionReactRoleHandler(interaction));
         } else if (interaction.isAutocomplete()) {
             const autocomplete = interaction.options.getFocused(true);
             const handler = KhafraClient.Interactions.Autocomplete.get(
@@ -71,8 +71,6 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
             }));
         }
 
-        let err: Error | void;
-
         try {
             if (command.options.defer)
                 await interaction.deferReply();
@@ -98,23 +96,15 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
             return void await interaction.reply(param);
         } catch (e) {
-            err = e as Error;
-
-            if (processArgs.get('dev') === true) {
-                console.log(e); // eslint-disable-line no-console
-            }
+            logger.log(e);
         } finally {
-            if (err) {
-                logger.error(err);
-            } else {
-                logger.log(
-                    `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
-                    {
-                        time: interaction.createdAt,
-                        channel: interaction.channelId
-                    }
-                );
-            }
+            logger.log(
+                `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+                {
+                    time: interaction.createdAt,
+                    channel: interaction.channelId
+                }
+            );
         }
     }
 }

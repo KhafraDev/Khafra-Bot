@@ -17,7 +17,15 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         await interaction.deferReply();
 
-        const { body } = await request('https://aws.random.cat/meow');
+        const { body, statusCode } = await request('https://aws.random.cat/meow');
+
+        if (statusCode !== 200) {
+            return {
+                content: '🐱 Couldn\'t get a picture of a random cat!',
+                ephemeral: true
+            }
+        }
+
         const j = await body.json() as RandomCat;
 
         return {

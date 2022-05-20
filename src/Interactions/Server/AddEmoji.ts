@@ -1,8 +1,9 @@
 import { Interactions } from '#khaf/Interaction';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms, toString } from '#khaf/utility/Permissions.js';
+import { toString } from '#khaf/utility/Permissions.js';
 import { inlineCode } from '@discordjs/builders';
 import type {
+    APIRole,
     RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10';
 import {
@@ -16,7 +17,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'addemoji',
             description: 'Adds an emoji to the server!',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.ManageEmojisAndStickers]),
             dm_permission: false,
             options: [
@@ -69,21 +69,20 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        // @ts-expect-error Types aren't updated
-        if (interaction.memberPermissions && !interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        const defaultPerms = BigInt(this.data.default_member_permissions!);
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
                 content: '❌ You do not have permission to use this command!',
                 ephemeral: true
             }
-        } else if (!interaction.inCachedGuild()) {
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
             return {
-                content: '❌ Please re-invite the bot with default permissions to use this command.',
-                ephemeral: true
-            }
-            // @ts-expect-error Types aren't updated
-        } else if (!hasPerms(interaction.channel, interaction.guild.me, this.data.default_member_permissions!)) {
-            return {
-                content: '❌ I need permission to manage emojis to use this command.',
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
                 ephemeral: true
             }
         }
@@ -91,7 +90,7 @@ export class kInteraction extends Interactions {
         const attachment = interaction.options.getAttachment('emoji', true);
         const name = interaction.options.getString('name', true);
         const reason = interaction.options.getString('reason') ?? undefined;
-        const roles: Role[] = [];
+        const roles: (Role | APIRole)[] = [];
 
         for (let i = 1; i <= 5; i++) {
             const role = interaction.options.getRole(`role${i}`);
@@ -112,7 +111,7 @@ export class kInteraction extends Interactions {
         const [err, emoji] = await dontThrow(interaction.guild.emojis.create(
             attachment.proxyURL,
             name,
-            { reason, roles }
+            { reason, roles: roles.map(role => role.id) }
         ));
 
         if (err !== null) {

@@ -49,10 +49,10 @@ export class Interactions {
             return {
                 content: '❌ This option has not been implemented yet!'
             }
-            // @ts-expect-error Types aren't updated
-        } else if (this.data.default_member_permissions && interaction.memberPermissions) {
-            // @ts-expect-error Types aren't updated
-            if (!interaction.memberPermissions.has(this.data.default_member_permissions)) {
+        } else if (this.data.default_member_permissions) {
+            const defaultPerms = BigInt(this.data.default_member_permissions);
+
+            if (!interaction.memberPermissions?.has(defaultPerms)) {
                 return {
                     content: '❌ You do not have permission to use this command!'
                 }

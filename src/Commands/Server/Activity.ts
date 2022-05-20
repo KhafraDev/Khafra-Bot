@@ -55,8 +55,8 @@ export class kCommand extends Command {
             return Embed.error('Games can only be created in voice channels!');
         } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
             return Embed.error('No channel with that name was found!');
-        } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
-            return Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
+        } else if (!hasPerms(channel, message.guild.members.me, PermissionFlagsBits.CreateInstantInvite)) {
+            return Embed.perms(channel, message.guild.members.me, PermissionFlagsBits.CreateInstantInvite);
         }
 
         const m = await message.channel.send({

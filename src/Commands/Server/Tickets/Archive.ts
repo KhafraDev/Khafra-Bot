@@ -87,7 +87,7 @@ export class kCommand extends Command {
         if (isExplicitText(channel)) {
             await dontThrow((message.channel as ThreadChannel).setArchived(true, `requested by ${message.author.id}`));
         } else {
-            await dontThrow<DeletedChannelTypes>(message.channel.delete());
+            await dontThrow(message.channel.delete() as Promise<DeletedChannelTypes>);
         }
 
         return void dontThrow(message.author.send({ content: 'Ticket was archived/deleted.' }));

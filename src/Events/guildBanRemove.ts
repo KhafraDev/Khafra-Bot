@@ -31,7 +31,7 @@ export class kEvent extends Event<typeof Events.GuildBanRemove> {
 
         let staff: User | null = null;
 
-        if (guild.me?.permissions.has(auditLogPerms)) {
+        if (guild.members.me?.permissions.has(auditLogPerms)) {
             const [err, logs] = await dontThrow(guild.fetchAuditLogs({
                 type: AuditLogEvent.MemberBanRemove,
                 limit: 1
@@ -70,7 +70,7 @@ export class kEvent extends Event<typeof Events.GuildBanRemove> {
 
         if (!channel) {
             return;
-        } else if (!isText(channel) || !hasPerms(channel, guild.me, perms)) {
+        } else if (!isText(channel) || !hasPerms(channel, guild.members.me, perms)) {
             return;
         }
 

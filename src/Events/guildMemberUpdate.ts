@@ -58,12 +58,12 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
             channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {
-            const [err, chan] = await dontThrow(oldMember.guild.me!.client.channels.fetch(item.welcome_channel));
+            const [err, chan] = await dontThrow(oldMember.guild.members.me!.client.channels.fetch(item.welcome_channel));
             if (err !== null) return;
             channel = chan;
         }
 
-        if (!isText(channel) || !hasPerms(channel, oldMember.guild.me, basic))
+        if (!isText(channel) || !hasPerms(channel, oldMember.guild.members.me, basic))
             return;
 
         if (oldHas && !newHas) { // lost role

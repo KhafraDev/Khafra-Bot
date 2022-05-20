@@ -93,7 +93,7 @@ export class kCommand extends Command {
 
             // Insert into the table, if username or user_id is already in,
             // we will update the values. Useful if user unauthorized Khafra-Bot.
-            await sql<unknown[]>`
+            await sql`
                 INSERT INTO kbPocket (
                     user_id, access_token, request_token, username
                 ) VALUES (
@@ -112,7 +112,7 @@ export class kCommand extends Command {
             return void button.editReply({
                 embeds: [
                     Embed.ok(`
-                    You have authorized ${message.guild!.me}!
+                    You have authorized ${message.guild!.members.me}!
 
                     Try adding an article with ${inlineCode('pocketadd')} now. 👍
                     `)

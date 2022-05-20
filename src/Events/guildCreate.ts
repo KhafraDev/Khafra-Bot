@@ -13,7 +13,7 @@ export class kEvent extends Event<typeof Events.GuildCreate> {
             name: guild.name
         });
 
-        await sql<unknown[]>`
+        await sql`
             INSERT INTO kbGuild (
                 guild_id, max_warning_points
             ) VALUES (

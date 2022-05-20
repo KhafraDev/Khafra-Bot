@@ -151,7 +151,7 @@ export class kCommand extends Command {
                     return void dontThrow(m.edit({
                         content: 'Only text, news, and thread channels are allowed to be poll channels!'
                     }));
-                } else if (!hasPerms(channel, message.guild.me, perms)) {
+                } else if (!hasPerms(channel, message.guild.members.me, perms)) {
                     return void dontThrow(m.edit({
                         content: 'I don\'t have enough permissions to create a poll in this channel!'
                     }));

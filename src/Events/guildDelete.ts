@@ -8,12 +8,12 @@ export class kEvent extends Event<typeof Events.GuildDelete> {
     async init (guild: Guild): Promise<void> {
         if (guild.available === false) return;
 
-        await sql<unknown[]>`
+        await sql`
             DELETE FROM kbGuild
             WHERE guild_id = ${guild.id}::text;
         `;
 
-        await sql<unknown[]>`
+        await sql`
             DELETE FROM kbWarns
             WHERE k_guild_id = ${guild.id}::text;
         `;

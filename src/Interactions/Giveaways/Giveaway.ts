@@ -14,7 +14,6 @@ export class kInteraction extends Interactions {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'giveaway',
             description: 'Giveaway settings.',
-            // @ts-expect-error Types aren't updated
             default_member_permissions: toString([PermissionFlagsBits.ManageEvents]),
             dm_permission: false,
             options: [
