@@ -19,7 +19,7 @@ type location = {
     timezone: number
 }
 
-type locationObservation = {
+export type locationObservation = {
     daylight: string,
     description: string,
     skyInfo: string,
