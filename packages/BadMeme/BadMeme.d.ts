@@ -5,7 +5,7 @@ export interface IBadMemeCache {
     url: string | string[];
 }
 export declare const cache: Map<string, Set<IBadMemeCache>>;
-export declare const badmeme: (subreddit?: string, nsfw?: boolean, modifier?: typeof SortBy[keyof typeof SortBy], timeframe?: typeof Timeframe[keyof typeof Timeframe]) => Promise<IBadMemeCache | {
+export declare const badmeme: (subreddit?: string, nsfw?: boolean, modifier?: (typeof SortBy)[keyof typeof SortBy], timeframe?: (typeof Timeframe)[keyof typeof Timeframe]) => Promise<IBadMemeCache | {
     message: string;
     error: number;
     reason?: string;
