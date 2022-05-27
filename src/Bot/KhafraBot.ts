@@ -7,7 +7,6 @@ import { bright, green, magenta } from '#khaf/utility/Colors.js';
 import { assets, cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { once } from '#khaf/utility/Memoize.js';
-import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { REST, type RestEvents } from '@discordjs/rest';
 import { APIVersion, Routes, type APIApplicationCommand } from 'discord-api-types/v10';
 import { Client, type ClientEvents } from 'discord.js';
@@ -15,7 +14,7 @@ import { Buffer } from 'node:buffer';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
-import { argv, env, exit } from 'node:process';
+import { env, exit } from 'node:process';
 import { pathToFileURL } from 'node:url';
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>;
@@ -154,7 +153,6 @@ export class KhafraClient extends Client {
 
         // If we have to deal with slash commands :(
         if (loaded.length !== 0) {
-            const processArgs = new Minimalist(argv.slice(2).join(' '));
             const lastDeployedPath = assets('interaction_last_deployed.txt');
             const loadedCommands = loaded.map(command => command.data);
 
@@ -192,13 +190,6 @@ export class KhafraClient extends Client {
                 ) as APIApplicationCommand[];
 
                 setInteractionIds(overwritten);
-
-                if (processArgs.get('dev') === true) {
-                    await rest.put(
-                        Routes.applicationGuildCommands(config.botId, config.guildId),
-                        { body: loadedCommands }
-                    );
-                }
 
                 data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`));
             } else {
@@ -242,13 +233,6 @@ export class KhafraClient extends Client {
                         ) as APIApplicationCommand;
 
                         setInteractionIds([added]);
-
-                        if (processArgs.get('dev') === true) {
-                            await rest.post(
-                                Routes.applicationGuildCommands(config.botId, config.guildId),
-                                { body: current }
-                            );
-                        }
                     } else if (toBase64(current) !== deployedBase64) {
                         // If the base64 for the deployed command and the current
                         // command are different, the command must be updated.
