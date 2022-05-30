@@ -1,4 +1,3 @@
-import { consumeBody } from '#khaf/utility/FetchUtils.js';
 import { env } from 'node:process';
 import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
@@ -55,7 +54,6 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
     }
 
     if (statusCode !== 200) {
-        void consumeBody({ body });
         return cache.shift() ?? null;
     }
 

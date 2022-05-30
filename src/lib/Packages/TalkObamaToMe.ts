@@ -1,11 +1,10 @@
-import { consumeBody } from '#khaf/utility/FetchUtils.js';
 import type { URL } from 'node:url';
 import { request } from 'undici';
 
 export const talkObamaToMe = async (q: string): Promise<string> => {
     q = encodeURIComponent(q);
 
-    const { context: ctx, body } = await request('http://talkobamato.me/synthesize.py', {
+    const { context: ctx } = await request('http://talkobamato.me/synthesize.py', {
         method: 'POST',
         body: `input_text=${q}`,
         headers: {
@@ -17,9 +16,6 @@ export const talkObamaToMe = async (q: string): Promise<string> => {
     });
 
     const context = ctx as { history: URL[] };
-
-    void consumeBody({ body });
-
     const u = context.history[context.history.length - 1];
     const speechKey = u.searchParams.get('speech_key');
 

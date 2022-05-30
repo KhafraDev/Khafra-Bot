@@ -1,5 +1,4 @@
 import { request } from 'undici';
-import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 export type PasteFn = (text: string) => Promise<string | undefined>;
 
@@ -52,8 +51,6 @@ const hatebin = async (text: string): Promise<string | undefined> => {
     if (statusCode === 200) {
         return `https://hatebin.com/${(await body.text()).trim()}`;
     }
-
-    void consumeBody({ body });
 }
 
 /**
@@ -72,8 +69,6 @@ const sourcebin = async (text: string): Promise<string | undefined> => {
         const j = await body.json() as ISourcebin;
         return `https://sourceb.in/${j.key}`;
     }
-
-    void consumeBody({ body });
 }
 
 /**
@@ -90,8 +85,6 @@ const nomsy = async (text: string): Promise<string | undefined> => {
         const j = await body.json() as HasteServer;
         return `https://paste.nomsy.net/${j.key}`;
     }
-
-    void consumeBody({ body });
 }
 
 /**
@@ -112,8 +105,6 @@ const pastegg = async (text: string): Promise<string | undefined> => {
         const j = await body.json() as PasteGGError | PasteGGSuccess;
         if (j.status === 'success')
             return `https://paste.gg/anonymous/${j.result.id}`;
-    } else {
-        void consumeBody({ body });
     }
 }
 

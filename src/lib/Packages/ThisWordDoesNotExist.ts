@@ -1,5 +1,4 @@
 import { request } from 'undici';
-import { consumeBody } from '#khaf/utility/FetchUtils.js';
 
 interface NonexistentWord {
     word: {
@@ -20,8 +19,6 @@ export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> =>
     const { body, statusCode } = await request('https://www.thisworddoesnotexist.com/api/random_word.json');
 
     if (statusCode !== 200) {
-        void consumeBody({ body });
-
         return null;
     }
 

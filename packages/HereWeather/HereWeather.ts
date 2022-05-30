@@ -1,11 +1,7 @@
 import { env } from 'node:process';
 import { URLSearchParams } from 'node:url';
-import { request, type Dispatcher } from 'undici';
+import { request } from 'undici';
 import type { HereResult } from './types/HereWeather';
-
-const consumeBody = async (res: Dispatcher.ResponseData['body']): Promise<void> => {
-    for await (const _chunk of res) {}
-}
 
 export const weather = async (q: string): Promise<HereResult | null> => {
     const params = new URLSearchParams({
@@ -23,7 +19,6 @@ export const weather = async (q: string): Promise<HereResult | null> => {
     if (statusCode === 200) {
         return body.json() as Promise<HereResult>;
     } else {
-        void consumeBody(body);
         return null;
     }
 }
