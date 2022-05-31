@@ -46,7 +46,7 @@
     "baseUrl": "./",                       /* Base directory to resolve non-absolute module names. */
     "paths": {
       "#khaf/utility/*": ["./src/lib/Utility/*"],
-      "#khaf/utility/commands/*": ["./src/lib/Packages/*"],
+      "#khaf/utility/commands/*": ["./src/lib/common/*"],
       "#khaf/utility/Discord.js": ["./src/lib/types/Discord.js.js"],
       "#khaf/database/*": ["./src/Structures/Database/*"],
       "#khaf/migration/*": ["./src/lib/Migration/*"],
