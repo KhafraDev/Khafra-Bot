@@ -1,9 +1,10 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { templates } from '#khaf/utility/Constants/Path.js';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import { GifEncoder } from '@skyra/gifenc';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
+import type { Buffer } from 'node:buffer';
 import { readFileSync } from 'node:fs';
 import { buffer } from 'node:stream/consumers';
 import { request } from 'undici';
@@ -56,7 +57,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const { body } = await request(avatarURL);
-        const b = Buffer.from(await body.arrayBuffer());
+        const b = arrayBufferToBuffer(await body.arrayBuffer());
 
         const avatar = new Image();
         avatar.width = Dims.Width;

@@ -1,15 +1,20 @@
-export interface HereResult {
+export interface HereResultSuccess {
     observations?: {
-        location: location[] 
-    },
-    feedCreation?: Date,
-    metric?: boolean,
-    Type?: string,
-    Message?: string[]
+        location: Location[] 
+    }
+    feedCreation?: Date
+    metric?: boolean
 }
 
-type location = {
-    observation: locationObservation,
+export interface HereResultError {
+    Type: string
+    Message: string[]
+}
+
+export type HereResult = HereResultSuccess | HereResultError;
+
+type Location = {
+    observation: LocationObservation,
     country: string,
     state: string,
     city: string,
@@ -19,7 +24,7 @@ type location = {
     timezone: number
 }
 
-export type locationObservation = {
+export type LocationObservation = {
     daylight: string,
     description: string,
     skyInfo: string,

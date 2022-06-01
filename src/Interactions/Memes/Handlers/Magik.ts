@@ -37,7 +37,7 @@ export class kSubCommand extends InteractionSubCommand {
         return {
             files: [
                 {
-                    attachment: Buffer.from(buffer),
+                    attachment: Buffer.from(buffer, buffer.byteOffset, buffer.byteLength),
                     name: 'magik.png'
                 }
             ]

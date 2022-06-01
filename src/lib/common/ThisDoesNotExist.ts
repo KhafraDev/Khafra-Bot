@@ -1,6 +1,6 @@
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
 import type { ReplyMessageOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 const formatURL = new Map<DNE, string>([
@@ -21,7 +21,7 @@ export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions |
     if (!url) return null;
 
     const { body } = await request(url);
-    const buffer = Buffer.from(await body.arrayBuffer());
+    const buffer = arrayBufferToBuffer(await body.arrayBuffer());
 
     return {
         embeds: [

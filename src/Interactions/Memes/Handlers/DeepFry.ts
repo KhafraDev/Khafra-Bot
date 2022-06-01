@@ -1,9 +1,10 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
 import type { ImageURLOptions } from '@discordjs/rest';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
+import type { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SKRSContext2D => {
@@ -82,7 +83,7 @@ export class kSubCommand extends InteractionSubCommand {
         const { body } = await request(avatarURL);
 
         const image = new Image();
-        image.src = Buffer.from(await body.arrayBuffer());
+        image.src = arrayBufferToBuffer(await body.arrayBuffer());
 
         const canvas = createCanvas(image.width, image.height);
         const ctx = canvas.getContext('2d');

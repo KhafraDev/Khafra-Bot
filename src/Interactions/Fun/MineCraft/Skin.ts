@@ -1,10 +1,10 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
 import { bold } from '@discordjs/builders';
 import { getSkin, UUID } from '@khaf/minecraft';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 export class kSubCommand extends InteractionSubCommand {
@@ -33,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
         } else if (type === 'skin') {
             const skin = (await getSkin(uuid.id))[0];
             const { body } = await request(skin);
-            const b = Buffer.from(await body.arrayBuffer());
+            const b = arrayBufferToBuffer(await body.arrayBuffer());
 
             return {
                 embeds: [

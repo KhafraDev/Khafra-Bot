@@ -1,11 +1,12 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { Interactions } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { weather, type locationObservation } from '@khaf/hereweather';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
+import { weather, type LocationObservation } from '@khaf/hereweather';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
+import type { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 const imageColors = {
@@ -78,9 +79,9 @@ export class kInteraction extends Interactions {
                 content: '❌ An unexpected error occurred!',
                 ephemeral: true
             }
-        } else if (results.Type) {
+        } else if ('Type' in results) {
             return {
-                content: `❌ ${results.Type}`,
+                content: `❌ ${results.Type}: ${results.Message.join('; ')}`,
                 ephemeral: true
             }
         }
@@ -110,9 +111,9 @@ export class kInteraction extends Interactions {
         }
     }
 
-    async image (weather: locationObservation[number]): Promise<Buffer> {
+    async image (weather: LocationObservation[number]): Promise<Buffer> {
         const { body } = await request(weather.iconLink);
-        const buffer = Buffer.from(await body.arrayBuffer());
+        const buffer = arrayBufferToBuffer(await body.arrayBuffer());
 
         const image = new Image();
         image.width = image.height = 150;

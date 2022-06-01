@@ -1,10 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
 import { bold } from '@discordjs/builders';
 import { getCapes, UUID } from '@khaf/minecraft';
 import { createCanvas, Image } from '@napi-rs/canvas';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { Buffer } from 'node:buffer';
+import type { Buffer } from 'node:buffer';
 import { request } from 'undici';
 
 // Rinse - optifine and migrator cape
@@ -86,7 +87,7 @@ export class kSubCommand extends InteractionSubCommand {
                 continue; // so we don't get an invalid body (ie. user doesn't have optifine cape)
             }
 
-            buffers.push({ url, b: Buffer.from(await body.arrayBuffer()) });
+            buffers.push({ url, b: arrayBufferToBuffer(await body.arrayBuffer()) });
         }
 
         if (buffers.length === 0) {

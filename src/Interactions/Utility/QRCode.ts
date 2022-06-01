@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
 
     async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
-        const qrcode = Buffer.from(qrcodeImage(text));
+        const qrcode = Buffer.from(qrcodeImage(text), text.length);
 
         return {
             files: [{

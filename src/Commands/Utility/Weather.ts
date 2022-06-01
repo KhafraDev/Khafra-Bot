@@ -29,7 +29,7 @@ export class kCommand extends Command {
 
         if (results === null) {
             return '❌ An unexpected error occurred!';
-        } else if (results.Type) {
+        } else if ('Type' in results) {
             return `❌ ${results.Type}`;
         }
 
