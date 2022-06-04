@@ -4,9 +4,15 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { Json } from '#khaf/utility/Constants/Path.js';
 import { inlineCode } from '@discordjs/builders';
 import { createCanvas } from '@napi-rs/canvas';
-import { TextInputStyle, type APIActionRowComponent, type APIEmbed, type APIMessageActionRowComponent } from 'discord-api-types/v10';
+import {
+    TextInputStyle,
+    type APIActionRowComponent,
+    type APIEmbed,
+    type APIMessageActionRowComponent
+} from 'discord-api-types/v10';
 import {
     InteractionCollector,
+    type TextInputModalData,
     type ButtonInteraction,
     type ChatInputCommandInteraction,
     type InteractionReplyOptions,
@@ -188,7 +194,7 @@ export class kSubCommand extends InteractionSubCommand {
                     ]
                 });
             } else {
-                const answer = i.fields.getField(`textInput-${id}`).value.toLowerCase();
+                const answer = (i.fields.getField(`textInput-${id}`) as TextInputModalData).value.toLowerCase();
                 let content = '';
 
                 // force the idle time to refresh
