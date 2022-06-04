@@ -40,3 +40,9 @@ const unitRatio = (str = 'ms'): number => {
     str = str.toLowerCase();
     return conversions[str] || conversions[str.replace(/s$/, '')];
 }
+
+export const seconds = (s: number): number => s * 1000;
+export const minutes = (m: number): number => seconds(m) * 60;
+export const hours = (h: number): number => minutes(h) * 60;
+export const days = (d: number): number => hours(d) * 24;
+export const weeks = (w: number): number => days(w) * 7;
