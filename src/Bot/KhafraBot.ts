@@ -38,7 +38,7 @@ export const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!);
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map();
-    static Events: Map<keyof ClientEvents | keyof RestEvents, Event> = new Map();
+    static Events: Map<keyof ClientEvents | keyof RestEvents, Event[]> = new Map();
     static Interactions = {
         Commands: new Map<string, Interactions>(),
         Subcommands: new Map<string, InteractionSubCommand>(),
@@ -71,7 +71,7 @@ export class KhafraClient extends Client {
         return [...files];
     }
 
-    async loadCommands (): Promise<Map<string, Command>> {
+    async loadCommands (): Promise<typeof KhafraClient.Commands> {
         const commands = KhafraClient.walk('build/src/Commands', p => p.endsWith('.js'));
         const importPromise = commands.map(command => import(pathToFileURL(command).href) as DynamicImportCommand);
         const settled = await Promise.allSettled(importPromise);
@@ -92,7 +92,7 @@ export class KhafraClient extends Client {
         return KhafraClient.Commands;
     }
 
-    async loadEvents (): Promise<Map<keyof ClientEvents | keyof RestEvents, Event<keyof ClientEvents | keyof RestEvents>>> {
+    async loadEvents (): Promise<typeof KhafraClient.Events> {
         const events = KhafraClient.walk('build/src/Events', p => p.endsWith('.js'));
         const importPromise = events.map(event => import(pathToFileURL(event).href) as DynamicImportEvent);
         const settled = await Promise.allSettled(importPromise);
@@ -103,8 +103,9 @@ export class KhafraClient extends Client {
                 exit(1);
             } else {
                 const kEvent = new fileImport.value.kEvent();
+                const old = KhafraClient.Events.get(kEvent.name) ?? [];
 
-                KhafraClient.Events.set(kEvent.name, kEvent);
+                KhafraClient.Events.set(kEvent.name, [...old, kEvent]);
             }
         }
 
@@ -112,7 +113,7 @@ export class KhafraClient extends Client {
         return KhafraClient.Events;
     }
 
-    async loadInteractions (): Promise<Map<string, Interactions>> {
+    async loadInteractions (): Promise<typeof KhafraClient.Interactions.Commands> {
         const interactionPaths = KhafraClient.walk('build/src/Interactions', p => p.endsWith('.js'));
         const importPromise = interactionPaths.map(
             int => import(pathToFileURL(int).href) as DynamicImportAppCommand

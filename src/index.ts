@@ -13,11 +13,14 @@ import { type ClientEvents, Partials, Events } from 'discord.js';
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     name: T
 ): (...args: Parameters<Event['init']>) => void => {
-    let event: Event;
+    let events: Event[];
 
-    return (...args: Parameters<typeof event['init']>): void => {
-        event ??= KhafraClient.Events.get(name)!;
-        return void dontThrow(event.init(...args));
+    return (...args: Parameters<typeof events[number]['init']>): void => {
+        events ??= KhafraClient.Events.get(name)!;
+
+        for (const event of events) {
+            void dontThrow(event.init(...args));
+        }
     }
 }
 
