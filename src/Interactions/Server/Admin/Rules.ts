@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction';
 import { chunkSafe } from '#khaf/utility/Array.js';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { seconds } from '#khaf/utility/ms.js';
 import { toString } from '#khaf/utility/Permissions.js';
@@ -140,17 +140,17 @@ export class kInteraction extends Interactions {
         }
 
         const id = randomUUID();
-        await interaction.reply({
-            components: [
-                Components.actionRow([
-                    Buttons.approve('New Rule', `new-${id}`),
-                    Buttons.primary('Edit Rule', `edit-${id}`),
-                    Buttons.deny('Delete Rule', `delete-${id}`),
-                    Buttons.approve('Post', `post-${id}`),
-                    Buttons.secondary('Cancel', `cancel-${id}`)
-                ])
-            ]
-        });
+        const components = [
+            Components.actionRow([
+                Buttons.approve('New Rule', `new-${id}`),
+                Buttons.primary('Edit Rule', `edit-${id}`),
+                Buttons.deny('Delete Rule', `delete-${id}`),
+                Buttons.approve('Post', `post-${id}`),
+                Buttons.secondary('Cancel', `cancel-${id}`)
+            ])
+        ];
+
+        await interaction.reply({ components });
 
         const rules: string[] = [];
         const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
@@ -195,6 +195,7 @@ export class kInteraction extends Interactions {
 
                 if (action === 'new') {
                     if (rules.length === 99) {
+                        c.stop();
                         break;
                     }
 
@@ -229,6 +230,8 @@ export class kInteraction extends Interactions {
                 });
             }
         }
+
+        await interaction.editReply({ components: disableAll({ components }) });
 
         // Don't post the rules if the user doesn't explicitly choose to,
         // or there aren't any rules to post.
