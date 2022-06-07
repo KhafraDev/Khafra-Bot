@@ -3,7 +3,6 @@ import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { interactionReactRoleHandler } from '#khaf/utility/EventEvents/Interaction_ReactRoles.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
@@ -33,19 +32,6 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
     name = Events.InteractionCreate;
 
     async init (interaction: Interaction): Promise<void> {
-        if (interaction.isMessageComponent()) { // "react" roles
-            return void dontThrow(interactionReactRoleHandler(interaction));
-        } else if (interaction.isAutocomplete()) {
-            const autocomplete = interaction.options.getFocused(true);
-            const handler = KhafraClient.Interactions.Autocomplete.get(
-                `${interaction.commandName}-${autocomplete.name}`
-            );
-
-            if (handler) {
-                return handler.handle(interaction);
-            }
-        }
-
         if (
             !interaction.isChatInputCommand() &&
             !interaction.isContextMenuCommand()

@@ -60,12 +60,11 @@ export const hierarchy = (
     strict = true
 ): boolean => {
     if (!a || !b) return false;
+    if (a.guild.ownerId === a.id) return true;
 
-    const cond = strict
+    return strict
         ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
         : a.roles.highest.comparePositionTo(b.roles.highest) >= 0;
-
-    return a.guild.ownerId === a.id || cond;
 }
 
 const all = Object.entries(PermissionFlagsBits) as [
