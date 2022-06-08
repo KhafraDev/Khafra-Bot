@@ -1,7 +1,7 @@
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
-import type { APIEmbed, APIEmbedField } from 'discord-api-types/v10';
+import type { APIEmbed } from 'discord-api-types/v10';
 import type {
     AnyChannel,
     GuildMember,
@@ -92,58 +92,6 @@ export const padEmbedFields = (embed: APIEmbed): APIEmbed => {
 }
 
 export const EmbedUtil = {
-    addField (embed: APIEmbed, field: APIEmbedField): APIEmbed {
-        if (embed.fields === undefined) {
-            embed.fields = [];
-        }
-
-        embed.fields.push(field);
-        return embed;
-    },
-    addFields (embed: APIEmbed, ...fields: APIEmbedField[]): APIEmbed {
-        if (embed.fields === undefined) {
-            embed.fields = [];
-        }
-
-        embed.fields.push(...fields);
-        return embed;
-    },
-    setAuthor (embed: APIEmbed, author: APIEmbed['author']): APIEmbed {
-        embed.author = author;
-        return embed;
-    },
-    setColor (embed: APIEmbed, color: APIEmbed['color']): APIEmbed {
-        embed.color = color;
-        return embed;
-    },
-    setDescription (embed: APIEmbed, description: APIEmbed['description']): APIEmbed {
-        embed.description = description;
-        return embed;
-    },
-    setFooter (embed: APIEmbed, footer: APIEmbed['footer']): APIEmbed {
-        embed.footer = footer;
-        return embed;
-    },
-    setImage (embed: APIEmbed, image: APIEmbed['image']): APIEmbed {
-        embed.image = image;
-        return embed;
-    },
-    setThumbnail (embed: APIEmbed, thumbnail: APIEmbed['thumbnail']): APIEmbed {
-        embed.thumbnail = thumbnail;
-        return embed;
-    },
-    setTimestamp (embed: APIEmbed, timestamp: APIEmbed['timestamp']): APIEmbed {
-        embed.timestamp = timestamp;
-        return embed;
-    },
-    setTitle (embed: APIEmbed, title: APIEmbed['title']): APIEmbed {
-        embed.title = title;
-        return embed;
-    },
-    setURL (embed: APIEmbed, url: APIEmbed['url']): APIEmbed {
-        embed.url = url;
-        return embed;
-    },
     isAPIEmbed (embed: unknown): embed is APIEmbed {
         return (
             embed != null &&
