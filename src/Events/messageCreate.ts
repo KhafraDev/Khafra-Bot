@@ -8,19 +8,16 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import { logger } from '#khaf/Logger';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
+import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { DM } from '#khaf/utility/EventEvents/Message_DM.js';
-import { Imgur } from '#khaf/utility/EventEvents/Message_ImgurAlbum.js';
-import { Sanitize } from '#khaf/utility/EventEvents/Message_SanitizeCommand.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { Stats } from '#khaf/utility/Stats.js';
 import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
-import { ChannelType } from 'discord-api-types/v10';
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
 import { argv } from 'node:process';
@@ -52,7 +49,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
     async init (message: Message): Promise<void> {
         Stats.messages++;
 
-        if (message.channel.type === ChannelType.DM) return DM(message);
         if (!Sanitize(message)) return;
 
         const [mention, name = '', ...args] = message.content.split(/\s+/g);
@@ -97,32 +93,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         // @PseudoBot say hello world -> hello world
         const content = message.content.slice(mention.length + name.length + 2);
         const cli = new Minimalist(content);
-
-        if (content.includes('imgur.com/')) {
-            const imgur = await Imgur.album([name, ...args]);
-            if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length < 2) return;
-
-            let desc = `${imgur.u.length.toLocaleString()} Total Images\n`;
-            for (const image of imgur.u) {
-                const line = `${image}, `;
-                if (desc.length + line.length > 2048) break;
-
-                desc += line;
-            }
-
-            return void dontThrow(message.reply({
-                content:
-                    'You posted an Imgur album, which don\'t embed correctly! ' +
-                    'Here are all the images in the album:',
-                embeds: [
-                    Embed.json({
-                        color: colors.ok,
-                        description: desc.trim(),
-                        title: imgur.t
-                    })
-                ]
-            }));
-        }
 
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(message.author.id);

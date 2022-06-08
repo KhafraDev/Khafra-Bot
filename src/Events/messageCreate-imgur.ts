@@ -1,7 +1,9 @@
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
+import { Event } from '#khaf/Event';
+import { LRU } from '#khaf/LRU';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { hours } from '#khaf/utility/ms.js';
+import { Events, type Message } from 'discord.js';
 import { env } from 'node:process';
-import type { URL } from 'node:url';
 import { request, type Dispatcher } from 'undici';
 
 interface ImgurAlbum {
@@ -56,13 +58,6 @@ interface ImgurAlbum {
             in_gallery: boolean
             link: string
         }[]
-        ad_config: {
-            safeFlags: string[]
-            highRiskFlags: unknown[]
-            unsafeFlags: string[]
-            wallUnsafeFlags: unknown[]
-            showsAds: boolean
-        }
     }
     success: boolean
     status: 200
@@ -74,14 +69,14 @@ interface ImgurCache {
 }
 
 export class Imgur {
-    static cache = new Map<string, ImgurCache>();
+    static cache = new LRU<string, ImgurCache>({ maxSize: 250, maxAgeMs: hours(24) });
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
         'x-ratelimit-userremaining': -1,
         'x-ratelimit-userreset': -1
     }
 
-    static setRateLimits(headers: Dispatcher.ResponseData['headers']): void {
+    static setRateLimits (headers: Dispatcher.ResponseData['headers']): void {
         for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
             const k = key.toLowerCase() as keyof typeof Imgur.ratelimit;
             if (k in headers) {
@@ -90,71 +85,88 @@ export class Imgur {
         }
     }
 
-    static async album(args: string[]): Promise<ImgurCache | undefined> {
+    static async album (hash: string): Promise<ImgurCache | undefined> {
         if (env.IMGUR_CLIENT_ID === undefined) return;
 
         if (
             Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
             Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
-        ) return;
-
-        let album: URL | null = null;
-
-        for (const arg of args) {
-            if (arg.includes('imgur.com/a/') && URLFactory(arg) !== null) {
-                const url = URLFactory(arg)!;
-
-                if (
-                    url.host !== 'imgur.com' ||
-                    !url.pathname.startsWith('/a/') ||
-                    url.pathname.length < 8
-                ) {
-                    continue;
-                }
-
-                album = url;
-                break;
-            }
-        }
-
-        if (album === null) return;
-
-        const [,, hash] = album.pathname.split('/', 3);
-
-        if (Imgur.cache.has(hash)) {
+        ) {
+            return;
+        } else if (Imgur.cache.has(hash)) {
             return Imgur.cache.get(hash);
         }
 
-        if (typeof hash !== 'string') return;
-
-        const [err, r] = await dontThrow(request(`https://api.imgur.com/3/album/${hash}`, {
+        const { headers, body, statusCode } = await request(`https://api.imgur.com/3/album/${hash}`, {
             headers: {
                 'Authorization': `Client-ID ${env.IMGUR_CLIENT_ID}`
             }
-        }));
+        });
 
-        if (err !== null) return;
+        Imgur.setRateLimits(headers);
 
-        Imgur.setRateLimits(r.headers);
+        if (statusCode !== 200) {
+            return;
+        }
 
-        // on bad requests, the api will sometimes return html
-        // this is a precaution because the api will not always return json
-        const [jErr, j] = await dontThrow(r.body.json() as Promise<ImgurAlbum>);
-
-        if (jErr !== null) return;
-
+        const j = await body.json() as ImgurAlbum;
         const images = j.data.images.map(i => i.link);
         const cached = { u: images, t: j.data.title ?? 'Imgur Album' };
         Imgur.cache.set(hash, cached);
 
-        // clear out old cache results
-        if (Imgur.cache.size > 250) {
-            while (Imgur.cache.size > 250) {
-                const key = Imgur.cache.keys().next().value as string;
-                Imgur.cache.delete(key);
-            }
+        return cached;
+    }
+}
+
+const albumRegex = /https?:\/\/(www\.)?imgur.com\/a\/(?<hash>[A-z0-9]{1,})/;
+
+export class kEvent extends Event<typeof Events.MessageCreate> {
+    name = Events.MessageCreate;
+
+    async init (message: Message): Promise<void> {
+        if (
+            !message.content.includes('imgur.com/a/') &&
+            message.embeds.every(embed => !embed.url?.includes('imgur.com/a/'))
+        ) {
+            return;
         }
 
-        return cached;
+        const hashMatch = message.content.includes('imgur.com/a/')
+            ? message.content
+            : message.embeds.find(embed => embed.url?.includes('imgur.com/a/'))!.url!;
+
+        const hash = albumRegex.exec(hashMatch)?.groups as { hash: string } | undefined;
+
+        if (hash === undefined) {
+            return;
+        }
+
+        const imgur = await Imgur.album(hash.hash);
+
+        if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length < 2) {
+            // TODO: add better error messages for logs!
+            return;
+        }
+
+        let desc = `${imgur.u.length.toLocaleString()} Total Images\n`;
+        for (const image of imgur.u) {
+            const line = `${image}, `;
+            if (desc.length + line.length > 2048) break;
+
+            desc += line;
+        }
+
+        return void await message.reply({
+            content:
+                'You posted an Imgur album, which doesn\'t embed all of the images! ' +
+                'Here are all the images in the album:',
+            embeds: [
+                Embed.json({
+                    color: colors.ok,
+                    description: desc.trim(),
+                    title: imgur.t
+                })
+            ]
+        });
     }
 }

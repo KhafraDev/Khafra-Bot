@@ -10,8 +10,8 @@ import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isDM } from '#khaf/utility/Discord.js';
+import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Sanitize } from '#khaf/utility/EventEvents/Message_SanitizeCommand.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
@@ -20,7 +20,7 @@ import { plural, upperCase } from '#khaf/utility/String.js';
 import { inlineCode } from '@discordjs/builders';
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js';
 import { join } from 'node:path';
-import { defaultSettings, disabled, _cooldownGuild, _cooldownUsers } from './Message.js';
+import { defaultSettings, disabled, _cooldownGuild, _cooldownUsers } from './messageCreate.js';
 
 const config = createFileWatcher(
     {} as typeof import('../../config.json'),
