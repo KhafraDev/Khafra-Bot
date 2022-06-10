@@ -33,7 +33,5 @@ export class kEvent extends Event<typeof Events.ClientReady> {
                 logger.warn('Logged in! Could not send message to the bot owner.');
             }
         }
-
-        // void client.loadInteractions();
     }
 }

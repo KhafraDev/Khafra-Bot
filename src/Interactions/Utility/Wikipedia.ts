@@ -109,12 +109,9 @@ export class kInteraction extends Interactions {
         }
 
         // Prevent making an extra API call if the menu is already disabled
-        const componentList = m.components?.[0].components[0];
-        const raw = componentList !== undefined && 'toJSON' in componentList
-            ? componentList.toJSON()
-            : componentList;
+        const raw = m.components[0].components[0].toJSON();
 
-        if (raw !== undefined && raw.disabled !== true) {
+        if (raw.disabled !== true) {
             await interaction.editReply({
                 components: disableAll(m)
             });

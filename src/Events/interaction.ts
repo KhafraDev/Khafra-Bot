@@ -7,9 +7,9 @@ import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import {
-    type ChatInputCommandInteraction,
     Events,
-    type Interaction,
+    type AnyInteraction,
+    type ChatInputCommandInteraction,
     type InteractionReplyOptions,
     type MessageContextMenuCommandInteraction,
     type UserContextMenuCommandInteraction
@@ -31,7 +31,7 @@ const disabled = typeof processArgs.get('disabled') === 'string'
 export class kEvent extends Event<typeof Events.InteractionCreate> {
     name = Events.InteractionCreate;
 
-    async init (interaction: Interaction): Promise<void> {
+    async init (interaction: AnyInteraction): Promise<void> {
         if (
             !interaction.isChatInputCommand() &&
             !interaction.isContextMenuCommand()

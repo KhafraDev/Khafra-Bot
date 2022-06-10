@@ -157,7 +157,6 @@ export class kInteraction extends Interactions {
             idle: 300_000,
             filter: (i) =>
                 i.user.id === interaction.user.id &&
-                (i.isButton() || i.isModalSubmit()) &&
                 i.customId.endsWith(id)
         });
 

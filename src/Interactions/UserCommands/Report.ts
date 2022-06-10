@@ -52,9 +52,7 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const channelId = 'channelId' in interaction.targetMessage
-            ? interaction.targetMessage.channelId
-            : interaction.targetMessage.channel_id;
+        const channelId = interaction.targetMessage.channelId;
         const messageURL = `https://discord.com/channels/${interaction.guildId ?? '@me'}/${channelId}/${id}`;
 
         if (!channel) {
@@ -70,7 +68,7 @@ export class kUserCommand extends InteractionUserCommand {
         }
 
         const m = `<@${author.id}>'s ${hyperlink('message', hideLinkEmbed(messageURL))}`;
-        const a = Array.isArray(attachments) ? attachments : [...attachments.values()];
+        const a = attachments.size === 0 ? undefined : [...attachments.values()];
 
         const embed = Embed.json({
             color: colors.ok,
@@ -83,9 +81,9 @@ export class kUserCommand extends InteractionUserCommand {
         });
 
         const [err] = await dontThrow(channel.send({
-            content: a.length === 0
-                ? undefined
-                : a.map(att => 'proxyURL' in att ? att.proxyURL : att.proxy_url).join('\n'),
+            content: a !== undefined
+                ? a.map(att => att.proxyURL).join('\n')
+                : undefined,
             embeds: [embed]
         }));
 

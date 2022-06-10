@@ -4,14 +4,14 @@ import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { Events, type Interaction } from 'discord.js';
+import { InteractionType, type APIEmbed } from 'discord-api-types/v10';
+import { Events, type AnyInteraction } from 'discord.js';
 
 export class kEvent extends Event<typeof Events.InteractionCreate> {
     name = Events.InteractionCreate;
 
-    async init (interaction: Interaction): Promise<void> {
-        if (!interaction.isMessageComponent()) {
+    async init (interaction: AnyInteraction): Promise<void> {
+        if (interaction.type !== InteractionType.MessageComponent) {
             return;
         } else if (!interaction.inCachedGuild()) {
             // https://github.com/discordjs/discord.js/blob/8f6df90035e964d8779a6aab716c2f7f138975d5/src/structures/Interaction.js#L168

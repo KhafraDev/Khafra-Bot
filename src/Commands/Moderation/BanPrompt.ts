@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command';
+import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -7,7 +7,7 @@ import { getMentions } from '#khaf/utility/Mentions.js';
 import { parseStrToMs } from '#khaf/utility/ms.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { Range } from '#khaf/utility/Valid/Number.js';
-import type { APIEmbed} from 'discord-api-types/v10';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -57,9 +57,9 @@ export class kCommand extends Command {
 
         const [pressedError, button] = await dontThrow(msg.awaitMessageComponent({
             filter: (interaction) =>
-                interaction.isMessageComponent() &&
                 ['approve', 'deny'].includes(interaction.customId) &&
-                interaction.user.id === message.author.id,
+                interaction.user.id === message.author.id &&
+                interaction.message.id === msg.id,
             time: 20_000
         }));
 

@@ -57,9 +57,9 @@ export class kCommand extends Command {
 
         const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent({
             filter: (interaction) =>
-                interaction.isMessageComponent() &&
                 ['approve', 'deny'].includes(interaction.customId) &&
-                interaction.user.id === message.author.id,
+                interaction.user.id === message.author.id &&
+                interaction.message.id === msg.id,
             time: 120_000
         }));
 

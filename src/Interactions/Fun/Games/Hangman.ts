@@ -204,7 +204,6 @@ export class kSubCommand extends InteractionSubCommand {
             idle: 30_000,
             filter: (i) =>
                 i.user.id === interaction.user.id &&
-                (i.isButton() || i.isModalSubmit()) &&
                 i.customId.endsWith(id)
         });
 
