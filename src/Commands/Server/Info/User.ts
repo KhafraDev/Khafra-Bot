@@ -1,7 +1,7 @@
 import { client } from '#khaf/Client';
 import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -35,7 +35,7 @@ const formatPresence = (activities: Activity[] | undefined): string => {
                 push.push(`Playing ${italic(activity.name)}.`);
                 break;
             default:
-                logger.log(activity);
+                logger.info(activity, 'unknown activity');
         }
     }
 

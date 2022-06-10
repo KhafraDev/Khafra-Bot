@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Command } from '#khaf/Command';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { upperCase } from '#khaf/utility/String.js';
@@ -82,14 +82,16 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
             return void await interaction.reply(param);
         } catch (e) {
-            logger.log(e);
+            logger.error(e, 'interaction error');
         } finally {
-            logger.log(
-                `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`,
+            logger.info(
                 {
                     time: interaction.createdAt,
-                    channel: interaction.channelId
-                }
+                    channel: interaction.channelId,
+                    user: interaction.user,
+                    guild: interaction.guild
+                },
+                `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`
             );
         }
     }

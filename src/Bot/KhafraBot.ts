@@ -1,7 +1,7 @@
 import type { Command } from '#khaf/Command';
 import type { Event } from '#khaf/Event';
 import type { InteractionAutocomplete, Interactions, InteractionSubCommand, InteractionUserCommand } from '#khaf/Interaction';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/Logger.js';
 import type { Timer } from '#khaf/Timer';
 import { bright, green, magenta } from '#khaf/utility/Colors.js';
 import { assets, cwd } from '#khaf/utility/Constants/Path.js';

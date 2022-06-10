@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
@@ -26,6 +26,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
         const guild = interaction.guild;
         const role = guild.roles.cache.get(interaction.customId);
+        logger.info({ guild, role }, 'react role');
 
         if (!role) {
             return void await interaction.reply({
@@ -53,7 +54,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
             return void await interaction.reply(opts);
         } catch (e) {
-            logger.log('react role', e);
+            logger.error(e, 'react role error');
 
             return void await interaction.reply({
                 embeds: [

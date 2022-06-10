@@ -5,7 +5,7 @@ import type { Arguments } from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import type { kGuild } from '#khaf/types/KhafraBot.js';
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -155,7 +155,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
 
             return void await newMessage.reply(param);
         } catch (e) {
-            logger.log(e);
+            logger.error(e, 'message update error');
 
             if (!(e instanceof Error)) {
                 return;
@@ -175,14 +175,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         } finally {
             MessagesLRU.delete(newMessage.id);
 
-            logger.log(
-                `${newMessage.author.tag} (${newMessage.author.id}) used the ${command.settings.name} command!`,
-                {
-                    URL: newMessage.url,
-                    guild: newMessage.guild.id,
-                    input: `"${newMessage.content}"`
-                }
-            );
+            logger.info({ newMessage, oldMessage }, 'message update');
         }
     }
 }

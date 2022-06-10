@@ -1,4 +1,4 @@
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { isRedirect } from '#khaf/utility/FetchUtils.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -100,14 +100,13 @@ export class RSSReader<T> {
 
         const validXML = xml ? XMLValidator.validate(xml) : false;
         if (typeof xml !== 'string' || validXML !== true) {
-            if (validXML !== true && validXML !== false) {
-                const { line, msg, code } = validXML.err;
-                logger.warn(`${code}: Error on line ${line} "${msg}". ${this.url}`);
+            if (typeof validXML !== 'boolean') {
+                logger.warn(validXML.err, 'xml validation failed');
             }
-            logger.warn(`${this.url} has been disabled as invalid XML has been fetched.`);
+            logger.warn(`xml parser: ${this.url} has been disabled as invalid XML has been fetched.`);
             return clearInterval(this.#interval!);
         } else if (r !== undefined && isRedirect(r.statusCode)) {
-            logger.info(`${this.url} redirected you to ${r.headers['location']}`);
+            logger.info(r, `xml parser: ${this.url} redirected you to ${r.headers['location']}`);
         }
 
         // if the XML is valid, we can clear the old cache

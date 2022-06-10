@@ -2,7 +2,7 @@ import { KhafraClient } from '#khaf/Bot';
 import { Command, type Arguments } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
@@ -93,7 +93,11 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             return void await message.reply(param);
         } catch (e) {
-            logger.log(`Error in DMs; ${message.author.id}`, e);
+            logger.error({
+                error: e,
+                author: message.author,
+                guild: message.guild
+            }, 'DM error');
 
             if (!(e instanceof Error)) {
                 return;
@@ -109,12 +113,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 failIfNotExists: false
             });
         } finally {
-            logger.log(
-                `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command in DMs!`,
-                {
-                    input: `"${message.content}"`
-                }
-            );
+            logger.info(message, 'handled DM');
         }
     }
 }

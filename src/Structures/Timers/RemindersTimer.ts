@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client';
 import { sql } from '#khaf/database/Postgres.js';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Timer } from '#khaf/Timer';
 import type { kReminder } from '#khaf/types/KhafraBot.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
@@ -55,7 +55,9 @@ export class RemindersTimer extends Timer {
 
             await user.send({ embeds: [remind] });
         } catch (e) {
-            logger.error(e);
+            logger.error(e, 'reminders error');
+        } finally {
+            logger.info(reminder, 'reminder');
         }
     }
 }

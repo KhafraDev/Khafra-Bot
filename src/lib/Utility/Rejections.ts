@@ -1,6 +1,7 @@
 import { client as DiscordClient } from '#khaf/Client';
 import { sql as PostgresClient } from '#khaf/database/Postgres.js';
 import { logger } from '#khaf/Logger';
+import { logger as FileLogger } from '#khaf/structures/Logger/FileLogger.js';
 import { once } from '#khaf/utility/Memoize.js';
 import process, { exit } from 'node:process';
 
@@ -12,6 +13,7 @@ const cleanup = once(async (...args: [unknown?, unknown?]) => {
     await PostgresClient.end({ timeout: 5 });
     DiscordClient.destroy();
     logger.close();
+    FileLogger.stop();
 
     exit(1);
 })

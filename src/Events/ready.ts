@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/Logger.js';
 import { yellow } from '#khaf/utility/Colors.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';

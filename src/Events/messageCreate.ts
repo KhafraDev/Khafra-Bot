@@ -6,7 +6,7 @@ import { Command } from '#khaf/Command';
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js';
 import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js';
 import { cwd } from '#khaf/utility/Constants/Path.js';
@@ -178,7 +178,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             return void await message.reply(param);
         } catch (e) {
-            logger.log(e);
+            logger.error(e, 'message event error');
 
             if (!(e instanceof Error)) {
                 return;
@@ -198,14 +198,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } finally {
             MessagesLRU.delete(message.id);
 
-            logger.log(
-                `${message.author.tag} (${message.author.id}) used the ${command.settings.name} command!`,
-                {
-                    URL: message.url,
-                    guild: message.guild.id,
-                    input: `"${message.content}"`
-                }
-            );
+            logger.info(message, 'message command');
         }
     }
 }

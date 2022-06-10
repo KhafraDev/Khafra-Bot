@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client';
 import { sql } from '#khaf/database/Postgres.js';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Timer } from '#khaf/Timer';
 import type { Giveaway } from '#khaf/types/KhafraBot.js';
 import { isText } from '#khaf/utility/Discord.js';
@@ -104,7 +104,9 @@ export class GiveawayTimer extends Timer {
                 }
             }
         } catch (e) {
-            logger.error(e);
+            logger.error(e, 'giveaway error');
+        } finally {
+            logger.info(giveaway, 'giveaway finished')
         }
     }
 }

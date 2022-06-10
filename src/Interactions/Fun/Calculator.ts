@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction';
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { codeBlock } from '@discordjs/builders';
@@ -257,7 +257,7 @@ export class kInteraction extends Interactions {
                 try {
                     eq = runInContext(parsed, context) as number;
                 } catch (e) {
-                    logger.error('error in calculator', e);
+                    logger.error(e, 'calculator parsing error');
                 }
 
                 if (eq === 'Invalid input!') {

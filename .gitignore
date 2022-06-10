@@ -5,6 +5,7 @@ build
 assets/interaction_last_deployed.txt
 *.rdb
 assets/Fonts/*
+assets/log*.txt
 
 # Logs
 logs

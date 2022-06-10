@@ -1,4 +1,4 @@
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger/FileLogger.js';
 
 interface Options {
     logOnFail?: boolean
@@ -25,7 +25,7 @@ export async function dontThrow<T = unknown>(
         return [err, null];
     } finally {
         if (err && options.logOnFail) {
-            logger.warn('An error occurred but was caught.', err);
+            logger.error(err, 'error in dontThrow utility');
         }
     }
 }
