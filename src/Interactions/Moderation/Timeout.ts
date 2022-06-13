@@ -76,8 +76,10 @@ export class kInteraction extends Interactions {
         try {
             await interaction.guild.members.edit(
                 user,
-                { communicationDisabledUntil: Date.now() + ms },
-                interaction.options.getString('reason') ?? undefined
+                {
+                    communicationDisabledUntil: Date.now() + ms,
+                    reason: interaction.options.getString('reason') ?? undefined
+                }
             );
         } catch (e) {
             if ((e as DiscordAPIError).code === RESTJSONErrorCodes.MissingPermissions) {

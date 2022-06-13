@@ -56,11 +56,11 @@ export class kCommand extends Command {
             return Embed.error('Invalid link!');
         }
 
-        const [createError, e] = await dontThrow(message.guild.emojis.create(
-            link,
+        const [createError, e] = await dontThrow(message.guild.emojis.create({
+            reason: `${message.author.id} (${message.author.tag}) requested.`,
             name,
-            { reason: `${message.author.id} (${message.author.tag}) requested.` }
-        ));
+            attachment: link
+        }));
 
         if (createError !== null) {
             return Embed.error(`An unexpected error occurred: ${inlineCode(createError.message)}`);

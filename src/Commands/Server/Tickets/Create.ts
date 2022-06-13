@@ -87,7 +87,8 @@ export class kCommand extends Command {
             return Embed.ok(`Successfully created a ticket: ${thread}!`);
         } else {
             // create normal text channel with permissions for message.author
-            const [err, ticketChannel] = await dontThrow(message.guild.channels.create(name, {
+            const [err, ticketChannel] = await dontThrow(message.guild.channels.create({
+                name,
                 type: ChannelType.GuildText,
                 parent: channel,
                 permissionOverwrites: [

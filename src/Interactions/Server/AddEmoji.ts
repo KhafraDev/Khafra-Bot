@@ -108,11 +108,12 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const [err, emoji] = await dontThrow(interaction.guild.emojis.create(
-            attachment.proxyURL,
+        const [err, emoji] = await dontThrow(interaction.guild.emojis.create({
             name,
-            { reason, roles: roles.map(role => role.id) }
-        ));
+            reason,
+            attachment: attachment.proxyURL,
+            roles: roles.map(role => role.id)
+        }));
 
         if (err !== null) {
             return {

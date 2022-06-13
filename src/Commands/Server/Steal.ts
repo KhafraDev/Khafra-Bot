@@ -33,11 +33,11 @@ export class kCommand extends Command {
             return Embed.error('Invalid guild emoji provided!');
         }
 
-        const emoji = await message.guild.emojis.create(
-            `https://cdn.discordapp.com/emojis/${id}.png?v=1`,
+        const emoji = await message.guild.emojis.create({
+            reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).`,
             name,
-            { reason: `Khafra-Bot: requested by ${message.author.tag} (${message.author.id}).` }
-        );
+            attachment: `https://cdn.discordapp.com/emojis/${id}.png?v=1`
+        });
 
         return Embed.ok(`
         Created emoji ${emoji} with name ${name}.
