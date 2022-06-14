@@ -1,19 +1,55 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js';
 import { Interactions } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
+import { weather as assets } from '#khaf/utility/Constants/Path.js';
 import { weather, type LocationObservation } from '@khaf/hereweather';
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas';
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import type { Buffer } from 'node:buffer';
-import { request } from 'undici';
+import { readFile } from 'node:fs/promises';
+import { basename, extname } from 'node:path';
 
 const imageColors = {
     darkBlue: '#1c2a4f',
     navyBlue: '#29395c',
     horizontalDiv: '#5c6b85'
 } as const;
+
+const fileMetadata = {
+    1: { path: assets('sunny.png'), author: 'Azland Studio' },
+    2: { path: assets('cloudy-big-sun.png'), author: 'Hasanudin' },
+    3: { path: assets('sunny-very-cloudy.png'), author: 'joe pictos' },
+    4: { path: assets('sun-below-clouds.png'), author: 'Tara' },
+    5: { path: assets('rain.png'), author: 'Kimmi Studio' },
+    6: { path: assets('lightning-dark.png'), author: 'Andrejs Kirma' },
+    7: { path: assets('lightning.png'), author: 'Andrejs Kirma' },
+    8: { path: assets('clouds.png'), author: 'Aya Sofya' },
+    9: { path: assets('sunny-storm.png'), author: 'Vector Portal' },
+    10: { path: assets('sunny-storm.png'), author: 'Vector Portal' },
+    11: { path: assets('thunderstorm-cloudy.png'), author: 'Caesar Rizky Kurniawan' },
+    12: { path: assets('sun-below-clouds.png'), author: 'Tara' },
+    13: { path: assets('cloudy.png'), author: 'Pham Duy Phuong Hung' },
+    14: { path: assets('moon-cloud.png'), author: 'arif fajar yulianto' },
+    15: { path: assets('thunderstorm-cloudy-night.png'), author: 'Jessigue' },
+    16: { path: assets('moon.png'), author: '11Umbrella' },
+    17: { path: assets('cloud.png'), author: 'Aya Sofya' },
+    18: { path: assets('hail.png'), author: 'Philipp Koerner' },
+    19: { path: assets('hail-thunderstorm.png'), author: 'Delwar Hossain' },
+    20: { path: assets('snowing.png'), author: 'Tim Boelaars' },
+    21: { path: assets('moon-cloud.png'), author: 'arif fajar yulianto' },
+    22: { path: assets('night-rain.png'), author: 'Iconspace' },
+    23: { path: assets('moon-cloud.png'), author: 'arif fajar yulianto' },
+    24: { path: assets('moon-cloud.png'), author: 'arif fajar yulianto' },
+    25: { path: assets('frozen-cloud.png'), author: 'lastspark' },
+    26: { path: assets('rain-snow-cloud.png'), author: 'Andrejs Kirma' },
+    27: { path: assets('drizzling.png'), author: 'Dmitry Baranovskiy' },
+    28: { path: assets('storm-cloud.png'), author: 'Marco Livolsi' },
+    29: { path: assets('tornado.png'), author: 'DPIcons' },
+    30: { path: assets('umbrella-windy.png'), author: 'LUTFI GANI AL ACHMAD' },
+    31: { path: assets('umbrella-windy.png'), author: 'LUTFI GANI AL ACHMAD' },
+    32: { path: assets('umbrella-windy.png'), author: 'LUTFI GANI AL ACHMAD' }
+} as const
 
 const ctof = (celcius: string | number): number => Number((Number(celcius) * (9/5) + 32).toFixed(2));
 
@@ -47,6 +83,16 @@ const resizeText = (ctx: SKRSContext2D, text: string, maxWidth: number, fontSize
     } else {
         return `${fontSize}px`;
     }
+}
+
+const iconLinkToPath = (link: string): { path: string, author: string } => {
+    const id = basename(link, extname(link)) as `${number}`;
+
+    if (id in fileMetadata) {
+        return fileMetadata[Number(id) as keyof typeof fileMetadata];
+    }
+
+    return fileMetadata[1];
 }
 
 const monthF = new Intl.DateTimeFormat('en-US', { month: 'long' }).format;
@@ -112,8 +158,8 @@ export class kInteraction extends Interactions {
     }
 
     async image (weather: LocationObservation[number]): Promise<Buffer> {
-        const { body } = await request(weather.iconLink);
-        const buffer = arrayBufferToBuffer(await body.arrayBuffer());
+        const { author, path } = iconLinkToPath(weather.iconLink);
+        const buffer = await readFile(path);
 
         const image = new Image();
         image.width = image.height = 150;
@@ -130,7 +176,7 @@ export class kInteraction extends Interactions {
             ctx.fillRect(canvas.height * .05, (height += 12), canvas.width * .6, 2);
         }
 
-        // draw right side beackground
+        // draw right side background
         ctx.fillStyle = imageColors.darkBlue;
         ctx.fillRect(canvas.width * .66, 0, canvas.width * .34, canvas.height);
 
@@ -210,6 +256,19 @@ export class kInteraction extends Interactions {
 
         const feelsLike = `Feels Like: ${Math.round(ctof(weather.comfort))}°F`;
         ctx.fillText(feelsLike, leftOffset, (height += 17.5));
+
+        // credit
+        const credit = `Icon created by ${author} from Noun Project`;
+        ctx.font = '10px Arial';
+        const creditLines = ImageUtil.split(credit, canvas.width * .33, ctx);
+
+        for (const line of creditLines) {
+            ctx.fillText(
+                line,
+                canvas.width * .67,
+                (canvas.height - ((creditLines.length - creditLines.indexOf(line)) * 10))
+            );
+        }
 
         return canvas.toBuffer('image/png');
     }
