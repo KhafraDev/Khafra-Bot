@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'get',
-                    description: 'Stops a running giveaway.',
+                    description: 'Returns the warnings a member currently has.',
                     options: [
                         {
                             type: ApplicationCommandOptionType.User,

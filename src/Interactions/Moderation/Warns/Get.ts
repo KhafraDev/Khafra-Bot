@@ -12,9 +12,7 @@ interface Total {
     points: Warning['k_points'][]
 }
 
-type FromArray<T extends unknown[]> = T extends (infer U)[]
-    ? U
-    : never;
+type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never;
 
 type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>];
 
@@ -53,11 +51,12 @@ export class kSubCommand extends InteractionSubCommand {
             LIMIT 1;
         `;
 
-        if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length)
+        if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length) {
             return {
                 content: `✅ ${member} has no warning points!`,
                 ephemeral: true
             }
+        }
 
         const { dates, ids, points, total_points } = rows.shift()!;
         const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]]);
