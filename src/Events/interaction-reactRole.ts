@@ -14,12 +14,12 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
         if (interaction.type !== InteractionType.MessageComponent) {
             return;
         } else if (!interaction.inCachedGuild()) {
-            // https://github.com/discordjs/discord.js/blob/8f6df90035e964d8779a6aab716c2f7f138975d5/src/structures/Interaction.js#L168
+            // https://github.com/discordjs/discord.js/blob/8f6df90035e964d8779a6aab716c2f7f138975d5/src/structures/Interaction.js#L175
             // interaction.member and interaction.guild exist
             return;
         } else if (
             !validSnowflake(interaction.customId) ||
-            interaction.member.id !== client.user?.id
+            interaction.message.author.id !== client.user?.id
         ) {
             return;
         }
