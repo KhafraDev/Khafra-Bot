@@ -8,7 +8,7 @@ export class kEvent extends Event<typeof Events.GuildCreate> {
     name = Events.GuildCreate;
 
     async init (guild: Guild): Promise<void> {
-        logger.info(guild, 'Joined a new guild!');
+        logger.info({ guild }, 'Joined a new guild!');
 
         await sql`
             INSERT INTO kbGuild (

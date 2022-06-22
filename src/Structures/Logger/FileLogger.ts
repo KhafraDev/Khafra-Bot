@@ -6,11 +6,26 @@ class Logger {
     #pino: ReturnType<typeof pino>;
     #destination: ReturnType<typeof pino['destination']>;
     #path: string;
+    #redact = [
+        '*.members',
+        'guild.roles',
+        'guild.emojis',
+        'guild.features',
+        '*.guild.members',
+        '*.guild.roles',
+        '*.guild.emojis',
+        '*.guild.features'
+    ]
 
     constructor () {
         this.#path = assets(`log-${Date.now()}.txt`);
         this.#destination = pino.destination({ dest: this.#path, sync: false });
-        this.#pino = pino(this.#destination);
+        this.#pino = pino({
+            redact: {
+                paths: this.#redact,
+                remove: true
+            }
+        }, this.#destination)
     }
 
     public get path (): string {
@@ -20,7 +35,12 @@ class Logger {
     public rotate (): void {
         this.#path = assets(`log-${Date.now()}.txt`);
         this.#destination = pino.destination({ dest: this.#path, sync: false });
-        this.#pino = pino(this.#destination);
+        this.#pino = pino({
+            redact: {
+                paths: this.#redact,
+                remove: true
+            }
+        }, this.#destination)
     }
 
     public stop (): void {

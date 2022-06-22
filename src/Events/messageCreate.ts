@@ -198,7 +198,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } finally {
             MessagesLRU.delete(message.id);
 
-            logger.info(message, 'message command');
+            logger.info({ message }, 'message command');
         }
     }
 }

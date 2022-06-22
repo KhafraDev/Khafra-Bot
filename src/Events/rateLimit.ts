@@ -6,6 +6,6 @@ export class kEvent extends Event<'rateLimited'> {
     name = 'rateLimited' as const;
 
     async init (data: RateLimitData): Promise<void> {
-        logger.warn(data, 'ratelimit');
+        logger.warn({ rateLimitData: data }, 'ratelimit');
     }
 }

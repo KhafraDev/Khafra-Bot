@@ -95,7 +95,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } catch (e) {
             logger.error({
                 error: e,
-                author: message.author,
+                user: message.author,
                 guild: message.guild
             }, 'DM error');
 
@@ -113,7 +113,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 failIfNotExists: false
             });
         } finally {
-            logger.info(message, 'handled DM');
+            logger.info({ message }, 'handled DM');
         }
     }
 }

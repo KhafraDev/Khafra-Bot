@@ -106,7 +106,7 @@ export class GiveawayTimer extends Timer {
         } catch (e) {
             logger.error(e, 'giveaway error');
         } finally {
-            logger.info(giveaway, 'giveaway finished')
+            logger.info({ giveaway }, 'giveaway finished')
         }
     }
 }

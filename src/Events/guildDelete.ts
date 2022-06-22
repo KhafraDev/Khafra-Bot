@@ -19,6 +19,6 @@ export class kEvent extends Event<typeof Events.GuildDelete> {
             WHERE k_guild_id = ${guild.id}::text;
         `;
 
-        logger.info(guild, 'left guild');
+        logger.info({ guild }, 'left guild');
     }
 }

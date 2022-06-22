@@ -57,7 +57,7 @@ export class RemindersTimer extends Timer {
         } catch (e) {
             logger.error(e, 'reminders error');
         } finally {
-            logger.info(reminder, 'reminder');
+            logger.info({ reminder }, 'reminder');
         }
     }
 }
