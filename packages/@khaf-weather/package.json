@@ -1,9 +1,9 @@
 {
-  "name": "@khaf/hereweather",
-  "version": "1.0.0",
+  "name": "@khaf/weather",
+  "version": "2.0.0",
   "description": "Get the weather from Here.com!",
-  "main": "./HereWeather.js",
-  "types": "./types/HereWeather.d.ts",
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "type": "module",
   "repository": {
     "type": "git",
@@ -15,7 +15,6 @@
     "prepare": "tsc"
   },
   "keywords": [
-    "here",
     "weather",
     "khafra-bot"
   ],

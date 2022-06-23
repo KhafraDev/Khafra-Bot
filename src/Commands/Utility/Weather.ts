@@ -2,7 +2,7 @@ import type { Arguments} from '#khaf/Command';
 import { Command } from '#khaf/Command';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time } from '@discordjs/builders';
-import { weather } from '@khaf/hereweather';
+import { weather } from '@khaf/weather';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type { Message } from 'discord.js';
 
@@ -27,7 +27,7 @@ export class kCommand extends Command {
     async init (_message: Message, { content }: Arguments): Promise<string | APIEmbed> {
         const results = await weather(content);
 
-        if (results === null) {
+        if (!results) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
             return '❌ An unexpected error occurred!';
         } else if ('Type' in results) {
             return `❌ ${results.Type}`;

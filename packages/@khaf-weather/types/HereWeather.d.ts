@@ -66,5 +66,3 @@ export type LocationObservation = {
     elevation: number,
     utcTime: Date
 }[]
-
-export declare const weather: (q: string) => Promise<HereResult | null>;

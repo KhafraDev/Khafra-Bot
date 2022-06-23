@@ -1,7 +1,7 @@
 import { env } from 'node:process';
 import { URLSearchParams } from 'node:url';
 import { request } from 'undici';
-import type { HereResult } from './types/HereWeather';
+import type { HereResult } from '../types';
 
 export const weather = async (q: string): Promise<HereResult> => {
     const params = new URLSearchParams({
