@@ -210,7 +210,7 @@ export class kInteraction extends Interactions {
             idle: 30_000,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id &&
+                int.id === i.message.interaction?.id &&
                 i.customId.endsWith(id)
         });
 
