@@ -58,6 +58,20 @@ export class kInteraction extends Interactions {
                             required: true
                         }
                     ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'recipe',
+                    description: 'Get a crafting recipe for an item.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.String,
+                            name: 'item',
+                            description: 'The display name of the item',
+                            required: true,
+                            autocomplete: true
+                        }
+                    ]
                 }
             ]
         };
