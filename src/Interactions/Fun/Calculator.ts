@@ -5,7 +5,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { codeBlock } from '@discordjs/builders';
 import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 import { createContext, runInContext } from 'node:vm';
@@ -205,7 +205,7 @@ export class kInteraction extends Interactions {
             components: rows
         });
 
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             idle: 30_000,
             filter: (i) =>

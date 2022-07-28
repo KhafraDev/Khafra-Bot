@@ -5,12 +5,12 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { InteractionType, type APIEmbed } from 'discord-api-types/v10';
-import { Events, type AnyInteraction } from 'discord.js';
+import { Events, type Interaction } from 'discord.js';
 
 export class kEvent extends Event<typeof Events.InteractionCreate> {
-    name = Events.InteractionCreate;
+    name = Events.InteractionCreate as const;
 
-    async init (interaction: AnyInteraction): Promise<void> {
+    async init (interaction: Interaction): Promise<void> {
         if (interaction.type !== InteractionType.MessageComponent) {
             return;
         } else if (!interaction.inCachedGuild()) {

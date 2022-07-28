@@ -13,7 +13,7 @@ import type {
     TextChannel,
     ThreadChannel
 } from 'discord.js';
-import { GuildMember, GuildMemberRoleManager, Role, Util } from 'discord.js';
+import { GuildMember, GuildMemberRoleManager, Role, resolveColor } from 'discord.js';
 import { parse } from 'twemoji-parser';
 
 type Channel = TextChannel | NewsChannel | ThreadChannel;
@@ -165,7 +165,7 @@ export class kInteraction extends Interactions {
         const [err, message] = await dontThrow(channel.send({
             embeds: [
                 Embed.json({
-                    color: Util.resolveColor(role.hexColor),
+                    color: resolveColor(role.hexColor),
                     description: text
                 })
             ],

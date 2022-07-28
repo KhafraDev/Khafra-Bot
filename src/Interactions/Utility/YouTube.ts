@@ -3,13 +3,12 @@ import { YouTube, type YouTubeSearchResults } from '#khaf/utility/commands/YouTu
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, time } from '@discordjs/builders';
-import { randomUUID } from 'node:crypto';
-import type { APIEmbed} from 'discord-api-types/v10';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import {
-    InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions,
-    type MessageComponentInteraction
+    InteractionCollector, type ButtonInteraction, type ChatInputCommandInteraction, type InteractionReplyOptions
 } from 'discord.js';
+import { randomUUID } from 'node:crypto';
 
 function * format({ items }: YouTubeSearchResults): Generator<APIEmbed, void, unknown> {
     for (let i = 0; i < items.length; i++) {
@@ -77,7 +76,7 @@ export class kInteraction extends Interactions {
             ]
         });
 
-        const c = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const c = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: m,
             time: 120_000,

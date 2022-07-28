@@ -3,7 +3,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
 import { permResolvableToString } from '#khaf/utility/Permissions.js';
 import type { APIEmbed } from 'discord-api-types/v10';
 import type {
-    AnyChannel,
+    Channel,
     GuildMember,
     PermissionResolvable,
     Role
@@ -48,7 +48,7 @@ export const Embed = {
     },
 
     perms (
-        inChannel: AnyChannel,
+        inChannel: Channel,
         userOrRole: GuildMember | Role | null,
         permissions: PermissionResolvable
     ): APIEmbed {

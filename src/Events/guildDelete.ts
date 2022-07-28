@@ -4,7 +4,7 @@ import { logger } from '#khaf/structures/Logger/FileLogger.js';
 import { Events, type Guild } from 'discord.js';
 
 export class kEvent extends Event<typeof Events.GuildDelete> {
-    name = Events.GuildDelete;
+    name = Events.GuildDelete as const;
 
     async init (guild: Guild): Promise<void> {
         if (guild.available === false) return;

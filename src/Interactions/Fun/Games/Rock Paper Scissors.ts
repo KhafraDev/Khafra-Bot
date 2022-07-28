@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { randomUUID } from 'node:crypto';
 import { InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Keys = keyof typeof emojis;
@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
             components: [row]
         });
 
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: int,
             time: 15_000,
@@ -49,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
                 i.customId.endsWith(id)
         });
 
-        let c: MessageComponentInteraction | undefined;
+        let c: ButtonInteraction | undefined;
 
         for await (const [i] of collector) {
             c = i;

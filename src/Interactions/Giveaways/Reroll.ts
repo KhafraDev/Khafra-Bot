@@ -7,7 +7,10 @@ import { plural } from '#khaf/utility/String.js';
 import { URLFactory } from '#khaf/utility/Valid/URL.js';
 import { bold, hyperlink, inlineCode } from '@discordjs/builders';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { AnyChannel, ChatInputCommandInteraction, InteractionReplyOptions, User } from 'discord.js';
+import type { Channel, ChatInputCommandInteraction, InteractionReplyOptions, User } from 'discord.js';
+
+// TODO(@KhafraDev): do NOT delete the giveaway instantly, allowing time for a giveaway to be re-rolled
+// without this shitty code!
 
 const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
 const perms =
@@ -62,7 +65,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        let channel: AnyChannel | null = interaction.guild.channels.cache.get(channelId) ?? null;
+        let channel: Channel | null = interaction.guild.channels.cache.get(channelId) ?? null;
         if (!channel) {
             ([, channel] = await dontThrow(interaction.client.channels.fetch(channelId)));
         }

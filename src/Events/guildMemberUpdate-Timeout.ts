@@ -8,7 +8,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
 import { AuditLogEvent } from 'discord-api-types/v10';
-import { Events, PermissionFlagsBits, type AnyChannel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js';
+import { Events, PermissionFlagsBits, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
@@ -20,7 +20,7 @@ const basic =
 type LogChannel = Pick<kGuild, keyof PartialGuild>;
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
-    name = Events.GuildMemberUpdate;
+    name = Events.GuildMemberUpdate as const;
 
     async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
         const old = oldMember.communicationDisabledUntil;
@@ -53,7 +53,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
         const logChannel = item.mod_log_channel;
         const self = oldMember.guild.members.me ?? newMember.guild.members.me;
-        let channel: AnyChannel | null = null;
+        let channel: Channel | null = null;
         let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate> | undefined;
 
         if (logChannel === null) {

@@ -5,7 +5,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { bold, inlineCode } from '@discordjs/builders';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction, Snowflake } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
@@ -87,7 +87,7 @@ export class kSubCommand extends InteractionSubCommand {
             components: rows
         });
 
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: int,
             idle: 30_000,

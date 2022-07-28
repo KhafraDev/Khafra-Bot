@@ -25,7 +25,7 @@ const defaultSettings = {
 };
 
 export class kEvent extends Event<typeof Events.MessageCreate> {
-    name = Events.MessageCreate;
+    name = Events.MessageCreate as const;
 
     async init (message: Message): Promise<void> {
         if (message.channel.type !== ChannelType.DM) {

@@ -7,7 +7,7 @@ import { isText } from '#khaf/utility/Discord.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Events, type AnyChannel, type GuildMember } from 'discord.js';
+import { Events, type Channel, type GuildMember } from 'discord.js';
 
 const basic =
     PermissionFlagsBits.ViewChannel |
@@ -17,7 +17,7 @@ const basic =
 type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
-    name = Events.GuildMemberUpdate;
+    name = Events.GuildMemberUpdate as const;
 
     async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
@@ -54,7 +54,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
         if (item.welcome_channel === null) return;
 
-        let channel: AnyChannel | null = null;
+        let channel: Channel | null = null;
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
             channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
         } else {

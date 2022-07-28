@@ -10,6 +10,6 @@ type EventArguments<T> = T extends keyof ClientEvents
 export abstract class Event<
     T extends keyof ClientEvents | keyof RestEvents = keyof ClientEvents | keyof RestEvents
 > {
-    abstract name: T;
+    abstract name: `${T}`;
     abstract init(...args: EventArguments<T>): Promise<void>;
 }

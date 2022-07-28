@@ -5,7 +5,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Events, type Guild } from 'discord.js';
 
 export class kEvent extends Event<typeof Events.GuildCreate> {
-    name = Events.GuildCreate;
+    name = Events.GuildCreate as const;
 
     async init (guild: Guild): Promise<void> {
         logger.info({ guild }, 'Joined a new guild!');

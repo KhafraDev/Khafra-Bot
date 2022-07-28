@@ -1,11 +1,14 @@
 import { disableAll } from '#khaf/utility/Constants/Components.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import type { APIEmbed } from 'discord-api-types/v10';
-import type { InteractionCollector, Message} from 'discord.js';
-import { type MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, InteractionCollector, Message, SelectMenuInteraction} from 'discord.js';
+
+type PaginationInteractions
+    = SelectMenuInteraction
+    | ButtonInteraction
 
 export const Paginate = (
-    c: InteractionCollector<MessageComponentInteraction>,
+    c: InteractionCollector<PaginationInteractions>,
     m: Message,
     pageData: number,
     embeds: APIEmbed[] | ((page: number) => APIEmbed)

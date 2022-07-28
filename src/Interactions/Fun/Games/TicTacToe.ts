@@ -7,7 +7,7 @@ import {
     InteractionType,
     type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
 } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Board = ('X' | 'O' | null)[];
@@ -49,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
             components: makeRows(game.board, id)
         });
 
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: int,
             time: 120_000,

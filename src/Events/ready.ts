@@ -13,7 +13,7 @@ import { join } from 'node:path';
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
 
 export class kEvent extends Event<typeof Events.ClientReady> {
-    name = Events.ClientReady;
+    name = Events.ClientReady as const;
 
     async init (): Promise<void> {
         const s = `Logged in at ${new Date()}`;

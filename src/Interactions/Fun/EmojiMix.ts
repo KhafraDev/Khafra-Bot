@@ -6,7 +6,7 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { inlineCode } from '@discordjs/builders';
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 import { URL } from 'node:url';
@@ -127,7 +127,7 @@ export class kInteraction extends Interactions {
                 fetchReply: true
             });
 
-            const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+            const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
                 interactionType: InteractionType.MessageComponent,
                 message: i,
                 idle: 30_000,

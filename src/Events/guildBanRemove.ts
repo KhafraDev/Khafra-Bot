@@ -20,7 +20,7 @@ const perms =
     PermissionFlagsBits.EmbedLinks;
 
 export class kEvent extends Event<typeof Events.GuildBanRemove> {
-    name = Events.GuildBanRemove;
+    name = Events.GuildBanRemove as const;
 
     async init ({ guild, user, reason }: GuildBan): Promise<void> {
         // This event will always return "partial" unbans,

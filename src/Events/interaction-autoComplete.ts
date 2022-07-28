@@ -1,11 +1,11 @@
 import { KhafraClient } from '#khaf/Bot';
 import { Event } from '#khaf/Event';
-import { Events, InteractionType, type AnyInteraction } from 'discord.js';
+import { Events, InteractionType, type Interaction } from 'discord.js';
 
 export class kEvent extends Event<typeof Events.InteractionCreate> {
-    name = Events.InteractionCreate;
+    name = Events.InteractionCreate as const;
 
-    async init (interaction: AnyInteraction): Promise<void> {
+    async init (interaction: Interaction): Promise<void> {
         if (interaction.type !== InteractionType.ApplicationCommandAutocomplete) {
             return;
         }

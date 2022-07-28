@@ -28,7 +28,7 @@ const config = createFileWatcher(
 );
 
 export class kEvent extends Event<typeof Events.MessageUpdate> {
-    name = Events.MessageUpdate;
+    name = Events.MessageUpdate as const;
 
     async init (oldMessage: Message<true>, newMessage: Message<true>): Promise<void> {
         Stats.messages++;

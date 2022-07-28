@@ -10,7 +10,7 @@ import { inlineCode, time } from '@discordjs/builders';
 import { randomUUID } from 'node:crypto';
 import type { APIEmbed } from 'discord-api-types/v10';
 import { InteractionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, MessageComponentInteraction } from 'discord.js';
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 import { InteractionCollector } from 'discord.js';
 
 type Row = Exclude<kReminder, 'userId'>;
@@ -78,7 +78,7 @@ export class kSubCommand extends InteractionSubCommand {
             ]
         });
 
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: int,
             idle: 30_000,

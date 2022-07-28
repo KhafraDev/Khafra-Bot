@@ -68,7 +68,7 @@ interface ImgurCache {
     t: string
 }
 
-export class Imgur {
+class Imgur {
     static cache = new LRU<string, ImgurCache>({ maxSize: 250, maxAgeMs: hours(24) });
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
@@ -121,7 +121,7 @@ export class Imgur {
 const albumRegex = /https?:\/\/(www\.)?imgur.com\/a\/(?<hash>[A-z0-9]{1,})/;
 
 export class kEvent extends Event<typeof Events.MessageCreate> {
-    name = Events.MessageCreate;
+    name = Events.MessageCreate as const;
 
     async init (message: Message): Promise<void> {
         if (

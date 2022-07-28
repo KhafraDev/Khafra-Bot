@@ -8,7 +8,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js';
 import type { APIEmbed} from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type {
-    AnyChannel,
+    Channel,
     ChatInputCommandInteraction,
     MessageContextMenuCommandInteraction,
     Snowflake,
@@ -63,9 +63,9 @@ export const interactionGetGuildSettings = async (interaction: Interactions): Pr
 export const interactionFetchChannel = async (
     interaction: Interactions,
     id: Snowflake
-): Promise<AnyChannel | null> => {
+): Promise<Channel | null> => {
     const channelManager = interaction.guild?.channels;
-    let channel: AnyChannel;
+    let channel: Channel;
 
     if (channelManager?.cache.has(id)) {
         return channelManager.cache.get(id) ?? null;
