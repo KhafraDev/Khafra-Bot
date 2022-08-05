@@ -13,7 +13,7 @@ import {
 import type { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'addemoji',
             description: 'Adds an emoji to the server!',

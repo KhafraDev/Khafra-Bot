@@ -17,7 +17,7 @@ type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never;
 type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>];
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'warns',
             name: 'get'

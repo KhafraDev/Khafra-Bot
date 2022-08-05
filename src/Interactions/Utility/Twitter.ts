@@ -7,7 +7,7 @@ import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBo
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'twitter',
             description: 'Gets a list of media embedded in a tweet!',
@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const url = interaction.options.getString('tweet', true);
         const twitterURL = URLFactory(url);
 

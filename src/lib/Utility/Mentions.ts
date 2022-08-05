@@ -9,6 +9,7 @@ import {
     type Snowflake,
     type User
 } from 'discord.js';
+import * as util from '#khaf/utility/Discord/util.js';
 
 type MentionTypes = User | Channel | GuildMember | Role;
 
@@ -74,9 +75,9 @@ export async function getMentions(
 }
 
 export const validSnowflake = (id: unknown): id is Snowflake => {
-    if (typeof id !== 'string') return false;
-    if (id.length < 17 || id.length > 19 || !/^\d{17,19}$/.test(id))
-        return false;
+    if (typeof id !== 'string' || !util.isSnowflake(id)) {
+        return false
+    }
 
     const timestamp = SnowflakeUtil.timestampFrom(id);
 

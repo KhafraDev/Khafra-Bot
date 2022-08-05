@@ -30,7 +30,7 @@ const Activities = {
 } as const;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'activity',
             description: 'Play a game in VC!',

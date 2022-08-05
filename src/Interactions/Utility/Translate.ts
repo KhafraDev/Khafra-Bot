@@ -8,7 +8,7 @@ import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBo
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'translate',
             description: 'Use Google Translate to translate some text!',
@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const to = interaction.options.getString('to');
         const from = interaction.options.getString('from');
         const text = interaction.options.getString('text', true);

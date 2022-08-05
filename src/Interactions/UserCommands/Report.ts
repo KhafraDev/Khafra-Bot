@@ -1,7 +1,7 @@
 import { InteractionUserCommand } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isTextBased } from '#khaf/utility/Discord.js';
-import { interactionFetchChannel, interactionGetGuildSettings } from '#khaf/utility/Discord/Interaction Util.js';
+import * as util from '#khaf/utility/Discord/util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { Minimalist } from '#khaf/utility/Minimalist.js';
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders';
@@ -14,7 +14,7 @@ const args = new Minimalist(argv.slice(2).join(' '));
 const isDev = args.get('dev') === true;
 
 export class kUserCommand extends InteractionUserCommand {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'Report Message',
             type: ApplicationCommandType.Message
@@ -26,7 +26,7 @@ export class kUserCommand extends InteractionUserCommand {
     }
 
     async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const settings = await interactionGetGuildSettings(interaction);
+        const settings = await util.interactionGetGuildSettings(interaction);
 
         if (!settings?.staffChannel) {
             return {
@@ -35,7 +35,7 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const channel = await interactionFetchChannel(interaction, settings.staffChannel);
+        const channel = await util.interactionFetchChannel(interaction, settings.staffChannel);
         const { content, author, id, attachments } = interaction.targetMessage;
 
         if (isDev === false) {

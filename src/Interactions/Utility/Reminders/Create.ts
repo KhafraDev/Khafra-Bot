@@ -7,7 +7,7 @@ import { inlineCode, time as formatTime } from '@discordjs/builders';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'reminders',
             name: 'create'

@@ -5,7 +5,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'members',
             description: 'Show the number of members currently in this server!'

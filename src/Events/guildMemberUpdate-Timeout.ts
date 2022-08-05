@@ -7,8 +7,8 @@ import { isText } from '#khaf/utility/Discord.js';
 import { hasPerms } from '#khaf/utility/Permissions.js';
 import { ellipsis } from '#khaf/utility/String.js';
 import { bold, inlineCode, time } from '@discordjs/builders';
-import { AuditLogEvent } from 'discord-api-types/v10';
-import { Events, PermissionFlagsBits, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js';
+import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10';
+import { Events, PermissionFlagsBits, type AuditLogChange, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
@@ -53,8 +53,10 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
         const logChannel = item.mod_log_channel;
         const self = oldMember.guild.members.me ?? newMember.guild.members.me;
+
         let channel: Channel | null = null;
-        let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate> | undefined;
+        let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined;
+        let change!: AuditLogChange;
 
         if (logChannel === null) {
             return;
@@ -76,29 +78,57 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                     limit: 5
                 });
 
-                muted = logs.entries.find((entry) => entry.target?.id === oldMember.id);
-
-                if (muted) {
-                    break;
+                for (const entry of logs.entries.values()) {
+                    if (entry.target?.id === oldMember.id) {
+                        for (const c of entry.changes) {
+                            if (c.key === 'communication_disabled_until') {
+                                muted = entry
+                                change = c
+                                break
+                            }
+                        }
+                    }
                 }
 
                 await setTimeout(2_000);
             }
         }
 
+        if (muted === undefined) {
+            return
+        }
+
+        const wasUnmuted = change.old !== undefined && change.new === undefined;
+        const author: APIEmbedAuthor | undefined = muted.executor
+            ? {
+                name: `${muted.executor.tag} (${muted.executor.id})`,
+                icon_url: muted.executor.displayAvatarURL()
+            }
+            : undefined
+
+        let description = `${bold('User:')} ${inlineCode(oldMember.user.tag)} (${oldMember.user.id})`
+        description += `\n${bold('Action:')} ${wasUnmuted ? 'Unmute' : 'Mute'}`
+
+        if (muted.executor !== null) {
+            description += `\n${bold('Staff:')} ${muted.executor}`
+        }
+
+        if (!wasUnmuted && current !== null) {
+            description += `\n${bold('Until:')} ${time(current, 'F')}`
+        }
+
+        if (muted.reason) {
+            description += `\n${bold('Reason:')} ${inlineCode(ellipsis(muted.reason, 1500))}`
+        }
+
         await channel.send({
             embeds: [
                 Embed.json({
                     color: colors.ok,
-                    description: `
-                    ${bold('User:')} ${oldMember} (${oldMember.user.tag})
-                    ${bold('ID:')} ${oldMember.id}
-                    ${bold('Staff:')} ${muted?.executor ?? 'Unknown'}
-                    ${bold('Until:')} ${time(current!, 'F')}
-                    ${bold('Reason:')} ${inlineCode(ellipsis(muted?.reason ?? 'Unknown', 1500))}`,
-                    title: 'Member Muted'
+                    description,
+                    author
                 })
             ]
-        });
+        })
     }
 }

@@ -8,7 +8,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'spotify',
             description: 'Search for a song on Spotify!',
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         let search = interaction.options.getString('song');
         if (!search && interaction.member instanceof GuildMember) {
             const p = interaction.member.presence?.activities.find(

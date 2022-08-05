@@ -9,7 +9,7 @@ import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'tv',
             description: 'Gets information about a TV show!',
@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const tv = await searchTV(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)

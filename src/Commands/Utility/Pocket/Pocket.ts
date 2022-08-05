@@ -4,7 +4,7 @@ import { inlineCode } from '@discordjs/builders';
 import type { APIEmbed } from 'discord-api-types/v10';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Pocket: Connect your Pocket account to Khafra-Bot!'

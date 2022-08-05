@@ -11,7 +11,7 @@ import { InteractionCollector, type Message } from 'discord.js';
 import { randomUUID } from 'node:crypto';
 
 export class kCommand extends Command {
-    constructor() {
+    constructor () {
         super(
             [
                 'Search for an article on Wikipedia!',

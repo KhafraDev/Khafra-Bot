@@ -11,7 +11,7 @@ const ifNot = (label: string): (value: unknown) => string =>
     (value: unknown): string => inlineCode(`${value ?? label}`);
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'settings',
             description: 'Manage the bot\'s settings in your guild!',

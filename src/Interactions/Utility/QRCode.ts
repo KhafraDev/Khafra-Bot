@@ -6,7 +6,7 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import { Buffer } from 'node:buffer';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'qr',
             description: 'Gets the QR code for some text.',
@@ -23,7 +23,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const text = interaction.options.getString('input', true);
         const qrcode = Buffer.from(qrcodeImage(text), text.length);
 

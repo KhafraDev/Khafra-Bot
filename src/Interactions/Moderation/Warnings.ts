@@ -9,7 +9,7 @@ import {
 } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'warns',
             description: 'Handle warnings in this guild.',

@@ -25,24 +25,24 @@
     "#khaf/image/*": "./src/lib/Image/*"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.0.0",
-    "@discordjs/rest": "^1.0.0",
+    "@discordjs/builders": "^1.1.0",
+    "@discordjs/rest": "^1.0.1",
     "@imagemagick/magick-wasm": "^0.0.14",
     "@khaf/qrcode": "^0.0.8",
     "@napi-rs/canvas": "^0.1.25",
     "@skyra/gifenc": "^1.0.0",
-    "discord-api-types": "^0.36.2",
-    "discord.js": "^14.0.1",
+    "discord-api-types": "^0.36.3",
+    "discord.js": "^14.1.2",
     "entities": "^4.3.1",
     "fast-xml-parser": "^4.0.9",
-    "pino": "^8.1.0",
+    "pino": "^8.4.0",
     "postgres": "^3.2.4",
-    "sonic-boom": "^3.0.0",
+    "sonic-boom": "^3.2.0",
     "twemoji-parser": "^14.0.0",
-    "undici": "^5.7.0"
+    "undici": "^5.8.1"
   },
   "devDependencies": {
-    "@types/node": "^17.0.45",
+    "@types/node": "^18.6.4",
     "@types/twemoji-parser": "^13.1.1",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",

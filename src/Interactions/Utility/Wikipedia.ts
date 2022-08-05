@@ -10,7 +10,7 @@ import type { SelectMenuInteraction} from 'discord.js';
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'wikipedia',
             description: 'Retrieves the content of a Wikipedia article.',
@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const content = interaction.options.getString('article', true);
         const wiki = await search(content);
         const id = randomUUID();

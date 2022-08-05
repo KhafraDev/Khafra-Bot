@@ -91,7 +91,7 @@ const getTextField = (i: ModalSubmitInteraction, name: string): string =>
     (i.fields.getField(name) as TextInputModalData).value;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'rules',
             description: 'Create, modify, and post an official-looking set of rules!',

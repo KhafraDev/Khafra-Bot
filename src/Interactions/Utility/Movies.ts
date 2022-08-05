@@ -21,7 +21,7 @@ const formatMS = (ms: number): string => {
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'movie',
             description: 'Gets information about a movie!',

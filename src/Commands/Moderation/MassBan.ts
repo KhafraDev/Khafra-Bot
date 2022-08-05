@@ -1,9 +1,9 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
+import { Command, type Arguments } from '#khaf/Command';
 import { Embed } from '#khaf/utility/Constants/Embeds.js';
+import * as util from '#khaf/utility/Discord/util.js';
 import { validSnowflake } from '#khaf/utility/Mentions.js';
 import { inlineCode } from '@discordjs/builders';
-import type { APIEmbed} from 'discord-api-types/v10';
+import type { APIEmbed } from 'discord-api-types/v10';
 import { PermissionFlagsBits } from 'discord-api-types/v10';
 import type { GuildMember, Message, User } from 'discord.js';
 
@@ -27,7 +27,7 @@ export class kCommand extends Command {
     }
 
     async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
-        const ids = args.map(id => /^\d{17,19}$/.test(id)
+        const ids = args.map(id => util.isSnowflake(id)
             ? id
             : message.mentions.members?.get(id.replace(/[^\d]/g, ''))
         );

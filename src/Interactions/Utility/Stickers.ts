@@ -13,7 +13,7 @@ const stickers: Sticker[] = [];
 const mw = once(async () => client.fetchPremiumStickerPacks());
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'sticker',
             description: 'Uses a default sticker!',
@@ -36,7 +36,7 @@ export class kInteraction extends Interactions {
         super(sc, { ownerOnly: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         if (stickers.length === 0) {
             const res = await mw();
             if (res === null) {

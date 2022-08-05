@@ -18,7 +18,7 @@ const keys = (Object.keys(characters) as (keyof typeof characters)[])
     .map(k => characters[k]).flat(2);
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: '15ai',
             description: '15.ai: natural TTS.',

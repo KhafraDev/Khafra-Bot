@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
 import { isText, isThread } from '#khaf/utility/Discord.js';
-import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
+import * as util from '#khaf/utility/Discord/util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hasPerms, toString } from '#khaf/utility/Permissions.js';
 import { bold, time } from '@discordjs/builders';
@@ -107,7 +107,7 @@ export class kInteraction extends Interactions {
                 title: 'Channel Messages Cleared'
             });
 
-            return void postToModLog(interaction, [embed]);
+            return void util.postToModLog(interaction, [embed]);
         }
     }
 }

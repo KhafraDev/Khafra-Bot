@@ -16,7 +16,7 @@ const field = (name: string, value: number | string, formatter = f): APIEmbedFie
 });
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'crypto',
             description: 'Gets information about a cryptocurrency. Kill the environment!',
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
         super(sc);
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const currency = await CoinGecko.get(interaction.options.getString('search', true));
 
         if (currency === null) {

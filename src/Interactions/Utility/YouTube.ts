@@ -28,7 +28,7 @@ function * format({ items }: YouTubeSearchResults): Generator<APIEmbed, void, un
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'youtube',
             description: 'Gets YouTube videos matching your search.',
@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const query = interaction.options.getString('search', true);
         const results = await YouTube(query);
 

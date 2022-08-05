@@ -16,7 +16,7 @@ const config = createFileWatcher({} as typeof import('../../../config.json'), jo
 const emoji = client.emojis.cache.get(config.interactions.mdn);
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'mdn',
             description: 'Searches MDN and returns the top result!',
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const search = interaction.options.getString('input', true);
         const result = await fetchMDN(search);
 

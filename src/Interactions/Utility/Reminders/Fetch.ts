@@ -31,7 +31,7 @@ const chunkEmbeds = (rows: Row[]): APIEmbed[] => {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'reminders',
             name: 'fetch'

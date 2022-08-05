@@ -34,7 +34,7 @@ type InteractionData =
 export class Interactions {
     #id: APIApplicationCommand['id'] | undefined;
 
-    constructor(
+    constructor (
         public data: InteractionData,
         public options: InteractionOptions = {}
     ) {}

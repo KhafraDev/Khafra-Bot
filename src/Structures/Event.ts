@@ -11,5 +11,5 @@ export abstract class Event<
     T extends keyof ClientEvents | keyof RestEvents = keyof ClientEvents | keyof RestEvents
 > {
     abstract name: `${T}`;
-    abstract init(...args: EventArguments<T>): Promise<void>;
+    abstract init (...args: EventArguments<T>): Promise<void>;
 }

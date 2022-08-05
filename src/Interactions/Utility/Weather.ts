@@ -81,7 +81,7 @@ const iconFromDesc = (desc: string): Image => {
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'weather',
             description: 'Gets the weather of a provided location!',
@@ -98,7 +98,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const location = interaction.options.getString('location', true);
         const results = await wttrin(location);
         const buffer = await this.image(results);

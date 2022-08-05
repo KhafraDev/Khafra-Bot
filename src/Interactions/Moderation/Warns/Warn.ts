@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { Warning } from '#khaf/types/KhafraBot.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { interactionGetGuildSettings, postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
+import * as util from '#khaf/utility/Discord/util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { hierarchy } from '#khaf/utility/Permissions.js';
 import { plural } from '#khaf/utility/String.js';
@@ -18,7 +18,7 @@ interface WarnInsert {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'warns',
             name: 'warn'
@@ -99,7 +99,7 @@ export class kSubCommand extends InteractionSubCommand {
         const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
         const k_id = rows[0].insertedid;
 
-        const settings = await interactionGetGuildSettings(interaction);
+        const settings = await util.interactionGetGuildSettings(interaction);
 
         if (settings && settings.max_warning_points <= totalPoints) {
             const [kickError] = 'kick' in member
@@ -139,6 +139,6 @@ export class kSubCommand extends InteractionSubCommand {
             title: 'Member Warned'
         });
 
-        return void postToModLog(interaction, [embed], settings);
+        return void util.postToModLog(interaction, [embed], settings);
     }
 }

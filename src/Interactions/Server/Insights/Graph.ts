@@ -32,7 +32,7 @@ const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> =
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'insights',
             name: 'view'

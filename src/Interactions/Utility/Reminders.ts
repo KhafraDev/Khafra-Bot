@@ -3,7 +3,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ApplicationCommandOptionType } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reminders',
             description: 'Handle and modify your reminders!',

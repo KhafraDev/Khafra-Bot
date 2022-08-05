@@ -4,7 +4,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10';
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'insights',
             description: 'Guild insight settings.',

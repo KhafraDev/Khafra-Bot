@@ -82,7 +82,7 @@ declare class Pocket {
     request_token?: string;
     access_token?: string;
     username?: string;
-    constructor(user?: {
+    constructor (user?: {
         request_token: string;
         access_token: string;
         username: string;

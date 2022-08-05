@@ -11,7 +11,7 @@ interface Insights {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'insights',
             name: 'today'

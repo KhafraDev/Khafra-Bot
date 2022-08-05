@@ -63,7 +63,7 @@ export class RSSReader<T> {
      * @param loadFunction function to run after RSS feed has been fetched and parsed.
      * @param options RSS reader options
      */
-    constructor(loadFunction = noop, options: X2jOptionsOptional = {}) {
+    constructor (loadFunction = noop, options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction;
         this.#parser = new XMLParser(options);
         this.#options = options;
@@ -73,7 +73,7 @@ export class RSSReader<T> {
      * Very rarely, a network/server side error will occur. This function retries requests
      * up to 10 times before giving up.
      */
-    forceFetch = async (): Promise<Dispatcher.ResponseData | undefined> => {
+    async forceFetch (): Promise<Dispatcher.ResponseData | undefined> {
         for (let i = 0; i < 10; i++) {
             try {
                 const ac = new AbortController();
@@ -94,7 +94,7 @@ export class RSSReader<T> {
         }
     }
 
-    parse = async (): Promise<void> => {
+    async parse (): Promise<void> {
         const r = await this.forceFetch();
         const xml = await r?.body.text();
 
@@ -169,7 +169,7 @@ export class RSSReader<T> {
         return void this.afterSave();
     }
 
-    cache = async (url: string): Promise<NodeJS.Timer> => {
+    async cache (url: string): Promise<NodeJS.Timer> {
         if (this.#interval) return this.#interval;
         this.url = url;
 

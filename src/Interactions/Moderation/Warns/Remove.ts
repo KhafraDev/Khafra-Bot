@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js';
 import { InteractionSubCommand } from '#khaf/Interaction';
 import type { Warning } from '#khaf/types/KhafraBot.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
+import * as util from '#khaf/utility/Discord/util.js';
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
 import { plural } from '#khaf/utility/String.js';
 import { bold, inlineCode } from '@discordjs/builders';
@@ -17,7 +17,7 @@ interface WarningDel {
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'warns',
             name: 'remove'
@@ -70,6 +70,6 @@ export class kSubCommand extends InteractionSubCommand {
             title: 'Warning Removed'
         });
 
-        return void postToModLog(interaction, [embed]);
+        return void util.postToModLog(interaction, [embed]);
     }
 }

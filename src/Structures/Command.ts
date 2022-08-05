@@ -54,7 +54,7 @@ export abstract class Command implements ICommand {
         PermissionFlagsBits.EmbedLinks
     ];
 
-    constructor(
+    constructor (
         public readonly help: string[],
         public readonly settings: ICommand['settings']
     ) {

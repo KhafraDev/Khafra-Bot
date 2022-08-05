@@ -14,7 +14,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
      * Max age of an item in seconds
      * @param {number} maxAge
      */
-    constructor(maxAge: number) {
+    constructor (maxAge: number) {
         super();
         this.#maxAge = maxAge * 1_000;
         this.#createClearInterval();

@@ -23,8 +23,8 @@ export class kCommand extends Command {
         );
     }
 
-    async init(message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const presence = message.member!.presence?.activities.filter(activity =>
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
+        const presence = message.member?.presence?.activities.filter(activity =>
             activity.type === ActivityType.Listening && activity.name === 'Spotify'
         ).pop();
 

@@ -47,7 +47,7 @@ const isValidResponse = (json: unknown): json is [NominatimResponse] =>
     Array.isArray(json) && json.length === 1;
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'timezone',
             description: 'Gets the timezone of a location!',
@@ -69,7 +69,7 @@ export class kInteraction extends Interactions {
         super(sc, { defer: true });
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const location = interaction.options.getString('location', true);
         const hour12 = interaction.options.getBoolean('12hour') ?? true;
 

@@ -64,7 +64,7 @@ const config = createFileWatcher({} as typeof import('../../../config.json'), jo
 const emojis = new Map<UserFlagsString, string | undefined>();
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'info',
             description: 'Gets info about a user, guild member, channel, or role.',

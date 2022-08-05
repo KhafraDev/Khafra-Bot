@@ -22,7 +22,7 @@ interface StrawpollBody {
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'strawpoll',
             description: 'Create a poll on strawpoll.com!',

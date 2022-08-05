@@ -105,3 +105,18 @@ export const postToModLog = async (
         return void dontThrow(channel.send({ embeds }));
     }
 }
+
+export const isSnowflake = (id: string): boolean => {
+    if (id.length < 17 || id.length > 19) {
+        return false
+    }
+
+    for (let i = 0; i < id.length; i++) {
+        const char = id.charCodeAt(i)
+        if (char < 48 || char > 57) { // 0 - 9
+            return false
+        }
+    }
+
+    return true
+}
