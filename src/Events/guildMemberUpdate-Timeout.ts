@@ -90,7 +90,9 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                     }
                 }
 
-                await setTimeout(2_000);
+                if (i !== 4) {
+                    await setTimeout(2_000)
+                }
             }
         }
 
@@ -121,7 +123,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
             description += `\n${bold('Reason:')} ${inlineCode(ellipsis(muted.reason, 1500))}`
         }
 
-        await channel.send({
+        return void channel.send({
             embeds: [
                 Embed.json({
                     color: colors.ok,
@@ -129,6 +131,6 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                     author
                 })
             ]
-        })
+        }).catch(() => null)
     }
 }

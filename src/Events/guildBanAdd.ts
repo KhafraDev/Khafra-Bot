@@ -3,16 +3,22 @@ import { sql } from '#khaf/database/Postgres.js';
 import { Event } from '#khaf/Event';
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
+import * as DiscordUtil from '#khaf/utility/Discord.js';
 import { ellipsis } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
-import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10';
-import { Events, type GuildBan, type User } from 'discord.js';
+import { bold, inlineCode } from '@discordjs/builders';
+import { AuditLogEvent, PermissionFlagsBits, type APIEmbedAuthor } from 'discord-api-types/v10';
+import { Events, SnowflakeUtil, type GuildBan, type User } from 'discord.js';
+import { setTimeout } from 'node:timers/promises';
 
 type ModLogChannel = Pick<kGuild, keyof PartialGuild>;
 
+/**
+ * Audit logs entries aren't guaranteed to be added before/after
+ * the event has been received from the socket. If we receive it
+ * in +/- 10 seconds from the event, it is more likely to be the
+ * correct event.
+ */
+const threshold = 10_000
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
 const perms =
     PermissionFlagsBits.ViewChannel |
@@ -22,26 +28,39 @@ const perms =
 export class kEvent extends Event<typeof Events.GuildBanAdd> {
     name = Events.GuildBanAdd as const;
 
-    async init ({ guild, user, reason }: GuildBan): Promise<void> {
+    async init ({ guild, user }: GuildBan): Promise<void> {
         // This event will always return "partial" bans,
         // where the reason & executor are not included!
         // Plus, the reason, if fetched, can be null anyways!
         // So, it's far more useful to try fetching the audit
-        // logs which includes the unban executor AND reason!
+        // logs which includes the ban executor AND reason!
 
-        let staff: User | null = null;
+        const me = guild.members.me
+        const start = Date.now()
 
-        if (guild.members.me?.permissions.has(auditLogPerms)) {
-            const [err, logs] = await dontThrow(guild.fetchAuditLogs({
-                type: AuditLogEvent.MemberBanAdd,
-                limit: 1
-            }));
+        let staff: User | null = null
+        let reason: string | null = null
 
-            if (err === null) {
-                const entry = logs.entries.first();
+        if (me?.permissions.has(auditLogPerms)) {
+            for (let i = 0; i < 5; i++) {
+                const logs = await guild.fetchAuditLogs({
+                    type: AuditLogEvent.MemberBanAdd,
+                    limit: 5
+                });
 
-                if (entry?.executor) staff = entry.executor;
-                if (entry?.reason) reason = entry.reason;
+                for (const entry of logs.entries.values()) {
+                    const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
+
+                    if (diff < threshold) {
+                        staff = entry.executor
+                        reason = entry.reason
+                        break
+                    }
+                }
+
+                if (i !== 4) {
+                    await setTimeout(2_000)
+                }
             }
         }
 
@@ -58,35 +77,51 @@ export class kEvent extends Event<typeof Events.GuildBanAdd> {
                 LIMIT 1;
             `;
 
-            if (rows.length !== 0) {
-                cache.set(guild.id, rows[0]);
-                item = rows[0];
-            } else {
-                return;
+            if (rows.length === 0) {
+                return
             }
+
+            cache.set(guild.id, rows[0]);
+            item = rows[0];
         }
 
-        const channel = guild.channels.cache.get(item.mod_log_channel ?? '');
+        const channel = item.mod_log_channel ? guild.channels.cache.get(item.mod_log_channel) : undefined
 
-        if (!channel) {
-            return;
-        } else if (!isTextBased(channel) || !hasPerms(channel, guild.members.me, perms)) {
-            return;
+        if (
+            channel === undefined ||
+            me === null ||
+            !DiscordUtil.isTextBased(channel) ||
+            !channel.permissionsFor(me).has(perms)
+        ) {
+            return
         }
 
-        return void dontThrow(channel.send({
+        const author: APIEmbedAuthor | undefined = staff !== null
+            ? {
+                name: `${staff.tag} (${staff.id})`,
+                icon_url: staff.displayAvatarURL()
+            }
+            : undefined
+
+        let description = `${bold('User:')} ${inlineCode(user.tag)} (${user.id})`
+        description += `\n${bold('Action:')} Ban`
+
+        if (staff !== null) {
+            description += `\n${bold('Staff:')} ${staff}`
+        }
+
+        if (reason !== null) {
+            description += `\n${bold('Reason:')} ${inlineCode(ellipsis(reason, 1500))}`
+        }
+
+        return void channel.send({
             embeds: [
                 Embed.json({
                     color: colors.ok,
-                    description: `
-                    ${bold('User:')} ${user} (${user.tag})
-                    ${bold('ID:')} ${user.id}
-                    ${bold('Staff:')} ${staff ?? 'Unknown'}
-                    ${bold('Time:')} ${time(new Date())}
-                    ${bold('Reason:')} ${inlineCode(ellipsis(reason ?? 'Unknown', 1500))}`,
-                    title: 'Member Banned'
+                    description,
+                    author
                 })
             ]
-        }));
+        }).catch(() => null)
     }
 }
