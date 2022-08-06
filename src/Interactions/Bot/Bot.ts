@@ -1,24 +1,24 @@
-import { Interactions } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Stats } from '#khaf/utility/Stats.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { version as DJSVersion } from 'discord.js';
-import { join } from 'node:path';
-import { performance } from 'node:perf_hooks';
-import { memoryUsage, version } from 'node:process';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { Stats } from '#khaf/utility/Stats.js'
+import { bold, inlineCode } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { version as DJSVersion } from 'discord.js'
+import { join } from 'node:path'
+import { performance } from 'node:perf_hooks'
+import { memoryUsage, version } from 'node:process'
 
 const BotInfo = {
     ABOUT: 'about',
     PING: 'ping',
     STATS: 'stats'
-} as const;
+} as const
 
-const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'));
+const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'))
 
 const getUptime = (ms: number): string => {
     return Object.entries({
@@ -30,7 +30,7 @@ const getUptime = (ms: number): string => {
     })
         .filter(f => f[1] > 0)
         .map(t => `${t[1]}${t[0]}`)
-        .join(' ');
+        .join(' ')
 }
 
 export class kInteraction extends Interactions {
@@ -58,21 +58,21 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        const was = performance.now();
-        const subcommand = interaction.options.getSubcommand(true);
+        const was = performance.now()
+        const subcommand = interaction.options.getSubcommand(true)
 
         if (subcommand === 'info') {
-            const option = interaction.options.getString('option', true);
+            const option = interaction.options.getString('option', true)
 
             if (option === BotInfo.ABOUT) {
-                const memoryMB = memoryUsage().heapUsed / 2 ** 20; // same as 1024 * 1024
-                const uptime = getUptime(interaction.client.uptime ?? 0);
+                const memoryMB = memoryUsage().heapUsed / 2 ** 20 // same as 1024 * 1024
+                const uptime = getUptime(interaction.client.uptime ?? 0)
 
                 const embed = Embed.json({
                     color: colors.ok,
@@ -86,7 +86,7 @@ export class kInteraction extends Interactions {
                         { name: bold('Node.JS:'), value: version, inline: true },
                         { name: bold('Uptime:'), value: `⏰ ${inlineCode(uptime)}` }
                     ]
-                });
+                })
 
                 return {
                     embeds: [embed]
@@ -95,31 +95,31 @@ export class kInteraction extends Interactions {
                 await interaction.reply({
                     embeds: [Embed.ok('Pinging...!')],
                     ephemeral: true
-                });
+                })
 
-                const now = performance.now();
+                const now = performance.now()
                 const embed = Embed.ok(`
                 Pong! 🏓
 
                 Bot: ${(now - was).toFixed(2)} ms
                 Heartbeat: ${interaction.client.ws.ping} ms
-                `);
+                `)
 
                 await interaction.followUp({
                     embeds: [embed],
                     ephemeral: true
-                });
+                })
             } else if (option === BotInfo.STATS) {
-                const guilds = interaction.client.guilds.cache;
+                const guilds = interaction.client.guilds.cache
                 const {
                     globalCommandsUsed,
                     globalMessages
-                } = Stats.stats;
+                } = Stats.stats
 
                 const totalMembers = guilds.map(g => g.memberCount)
                     .reduce((a, b) => a + b, 0)
-                    .toLocaleString();
-                const totalGuilds = guilds.size.toLocaleString();
+                    .toLocaleString()
+                const totalGuilds = guilds.size.toLocaleString()
 
                 const embed = Embed.json({
                     color: colors.ok,
@@ -132,7 +132,7 @@ export class kInteraction extends Interactions {
                         { name: bold('Total Commands:'), value: globalCommandsUsed.toLocaleString(), inline: true },
                         { name: '\u200b', value: '\u200b', inline: true }
                     ]
-                });
+                })
 
                 return {
                     embeds: [embed]

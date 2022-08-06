@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import {
     ActivityType, ApplicationCommandOptionType, InteractionType, type APIEmbed, type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import { GuildMember, InteractionCollector, type ButtonInteraction, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js';
-import { randomUUID } from 'node:crypto';
-import { request } from 'undici';
+} from 'discord-api-types/v10'
+import { GuildMember, InteractionCollector, type ButtonInteraction, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { randomUUID } from 'node:crypto'
+import { request } from 'undici'
 
 interface SomeRandomApiLyrics {
     title: string
@@ -18,13 +18,13 @@ interface SomeRandomApiLyrics {
 }
 
 const paginateText = (text: string, max: number): string[] => {
-    const pages: string[] = [];
+    const pages: string[] = []
 
     for (let i = 0; i < text.length; i += max) {
-        pages.push(text.slice(i, i + max));
+        pages.push(text.slice(i, i + max))
     }
 
-    return pages;
+    return pages
 }
 
 export class kInteraction extends Interactions {
@@ -39,13 +39,13 @@ export class kInteraction extends Interactions {
                     description: 'The name of the song to get the lyrics for. Put the band\'s name for better results!'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        let search = interaction.options.getString('song');
+        let search = interaction.options.getString('song')
 
         if (typeof search !== 'string') {
             if (interaction.member === null || !(interaction.member instanceof GuildMember)) {
@@ -62,7 +62,7 @@ export class kInteraction extends Interactions {
 
             const listening = interaction.member.presence.activities.find(
                 (activity) => activity.type === ActivityType.Listening && activity.name === 'Spotify'
-            );
+            )
 
             if (listening === undefined) {
                 return {
@@ -71,7 +71,7 @@ export class kInteraction extends Interactions {
                 }
             }
 
-            search = `${listening.details} - ${listening.state}`; // band - song name
+            search = `${listening.details} - ${listening.state}` // band - song name
         }
 
         if (search.trim().length === 0) {
@@ -81,12 +81,12 @@ export class kInteraction extends Interactions {
             }
         }
 
-        await interaction.deferReply();
+        await interaction.deferReply()
 
         // TODO: pull lyrics from somewhere else.
         const { body, statusCode } = await request(
             `https://some-random-api.ml/lyrics?title=${encodeURIComponent(search)}`
-        );
+        )
 
         if (statusCode !== 200) {
             return {
@@ -95,7 +95,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const lyrics = await body.json().catch(() => null) as SomeRandomApiLyrics | null;
+        const lyrics = await body.json().catch(() => null) as SomeRandomApiLyrics | null
 
         if (lyrics === null) {
             return {
@@ -111,7 +111,7 @@ export class kInteraction extends Interactions {
             thumbnail: {
                 url: lyrics.thumbnail.genius
             }
-        });
+        })
 
         if (lyrics.lyrics.length <= 2048) {
             return {
@@ -119,13 +119,13 @@ export class kInteraction extends Interactions {
             }
         }
 
-        let currentPage = 0;
-        const id = randomUUID();
+        let currentPage = 0
+        const id = randomUUID()
         const pages = paginateText(lyrics.lyrics, 2048).map((page) => {
-            const embed = basicEmbed();
-            embed.description = page;
-            return embed;
-        });
+            const embed = basicEmbed()
+            embed.description = page
+            return embed
+        })
 
         const int = await interaction.editReply({
             embeds: [pages[currentPage]],
@@ -136,7 +136,7 @@ export class kInteraction extends Interactions {
                     Buttons.deny('Stop', `stop-${id}`)
                 ])
             ]
-        });
+        })
 
         const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -145,24 +145,24 @@ export class kInteraction extends Interactions {
                 interaction.user.id === i.user.id &&
                 int.interaction?.id === i.message.interaction?.id &&
                 i.customId.endsWith(id)
-        });
+        })
 
         for await (const [collected] of collector) {
-            const [action] = collected.customId.split('-');
+            const [action] = collected.customId.split('-')
 
-            if (action === 'stop') break;
+            if (action === 'stop') break
 
-            action === 'next' ? currentPage++ : currentPage--;
-            if (currentPage < 0) currentPage = pages.length - 1;
-            if (currentPage >= pages.length) currentPage = 0;
+            action === 'next' ? currentPage++ : currentPage--
+            if (currentPage < 0) currentPage = pages.length - 1
+            if (currentPage >= pages.length) currentPage = 0
 
             await collected.update({
                 embeds: [pages[currentPage]],
                 components: int.components
-            });
+            })
         }
 
-        const last = collector.collected.last();
+        const last = collector.collected.last()
 
         if (
             collector.collected.size !== 0 &&
@@ -170,11 +170,11 @@ export class kInteraction extends Interactions {
         ) {
             return void await last.update({
                 components: disableAll(int)
-            });
+            })
         }
 
         return void await interaction.editReply({
             components: disableAll(int)
-        });
+        })
     }
 }

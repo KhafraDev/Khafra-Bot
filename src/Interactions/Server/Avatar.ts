@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { ImageExtension, ImageSize } from '@discordjs/rest';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { ImageExtension, ImageSize } from '@discordjs/rest'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
+const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
+const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif']
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -33,20 +33,20 @@ export class kInteraction extends Interactions {
                     choices: formats.map(f => ({ name: f, value: f }))
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const user = interaction.options.getUser('user', true);
-        const size = interaction.options.getString('size') ?? '256';
+        const user = interaction.options.getUser('user', true)
+        const size = interaction.options.getString('size') ?? '256'
         const format = interaction.options.getString('format') ?? 'webp'
 
         const avatar = user.displayAvatarURL({
             size: Number(size) as ImageSize,
             extension: format as ImageExtension
-        });
+        })
 
         return {
             embeds: [

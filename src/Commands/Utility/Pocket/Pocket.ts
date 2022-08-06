@@ -1,7 +1,7 @@
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
 
 export class kCommand extends Command {
     constructor () {
@@ -14,7 +14,7 @@ export class kCommand extends Command {
                 folder: 'Pocket',
                 args: [0]
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
@@ -28,6 +28,6 @@ export class kCommand extends Command {
             ${inlineCode('pocketget')} - List your favorited articles.
             ${inlineCode('pocketadd [article] [optional title]')}`,
             author: { name: 'GetPocket', url: 'https://app.getpocket.com/' }
-        });
+        })
     }
 }

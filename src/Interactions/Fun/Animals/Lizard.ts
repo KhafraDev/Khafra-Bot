@@ -1,6 +1,6 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
 interface NekosLifeLizard {
     url: string
@@ -11,13 +11,13 @@ export class kSubCommand extends InteractionSubCommand {
         super({
             references: 'animal',
             name: 'lizard'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        await interaction.deferReply();
+        await interaction.deferReply()
 
-        const { body, statusCode } = await request('https://nekos.life/api/v2/img/lizard');
+        const { body, statusCode } = await request('https://nekos.life/api/v2/img/lizard')
 
         if (statusCode !== 200) {
             return {
@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const j = await body.json() as NekosLifeLizard;
+        const j = await body.json() as NekosLifeLizard
 
         return {
             content: j.url

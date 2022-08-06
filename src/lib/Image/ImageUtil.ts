@@ -1,6 +1,6 @@
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import type { Image, SKRSContext2D } from '@napi-rs/canvas';
-import { extname } from 'node:path';
+import { URLFactory } from '#khaf/utility/Valid/URL.js'
+import type { Image, SKRSContext2D } from '@napi-rs/canvas'
+import { extname } from 'node:path'
 
 export class ImageUtil {
     /**
@@ -11,12 +11,12 @@ export class ImageUtil {
         maxWidth: number,
         ctx: SKRSContext2D
     ): string[] {
-        const lines: string[] = [];
+        const lines: string[] = []
 
-        let i = 0;
-        let j = 0;
-        let result = '';
-        let width = 0;
+        let i = 0
+        let j = 0
+        let result = ''
+        let width = 0
 
         // stolen from https://stackoverflow.com/a/16221307/15299271
         while (text.length) {
@@ -26,7 +26,7 @@ export class ImageUtil {
                 i--
             ) {}
 
-            result = text.substring(0, i);
+            result = text.substring(0, i)
 
             if (i !== text.length) {
                 for (
@@ -36,12 +36,12 @@ export class ImageUtil {
                 ) {}
             }
 
-            lines.push(result.substring(0, j || result.length));
-            width = Math.max(width, ctx.measureText(lines.at(-1)!).width);
-            text = text.substring(lines.at(-1)!.length, text.length);
+            lines.push(result.substring(0, j || result.length))
+            width = Math.max(width, ctx.measureText(lines.at(-1)!).width)
+            text = text.substring(lines.at(-1)!.length, text.length)
         }
 
-        return lines;
+        return lines
     }
 
     /**
@@ -52,14 +52,14 @@ export class ImageUtil {
         maxWidth: number,
         ctx: SKRSContext2D
     ): string {
-        const split = [...text];
-        let newText = '';
+        const split = [...text]
+        let newText = ''
 
         while (ctx.measureText(newText + split[0]).width < maxWidth && split.length !== 0) {
-            newText += split.shift();
+            newText += split.shift()
         }
 
-        return newText;
+        return newText
     }
 
     /**
@@ -67,18 +67,18 @@ export class ImageUtil {
      * `png`, `jp(e)g`, `avif`, `webp`.
      */
     static isImage (url: string): boolean {
-        const u = URLFactory(url);
+        const u = URLFactory(url)
 
-        const extension = extname(u ? u.toString() : url);
+        const extension = extname(u ? u.toString() : url)
         const imageExts = [
             '.png',
             '.jpg',
             '.jpeg',
             '.avif',
             '.webp'
-        ];
+        ]
 
-        return imageExts.includes(extension);
+        return imageExts.includes(extension)
     }
 
     static centerImage (
@@ -95,6 +95,6 @@ export class ImageUtil {
             y - height / 2,
             width,
             height
-        );
+        )
     }
 }

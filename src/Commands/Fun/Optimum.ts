@@ -1,7 +1,7 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { italic } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { italic } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
 
 export class kCommand extends Command {
     constructor () {
@@ -16,7 +16,7 @@ export class kCommand extends Command {
                 args: [0, 0],
                 ratelimit: 3
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
@@ -32,6 +32,6 @@ export class kCommand extends Command {
             [EMPLOYEE REVIEWS](https://www.indeed.com/cmp/Optimum-Cablevision/reviews) - 3.2 ⭐
             [SiteJabber](https://www.sitejabber.com/reviews/optimum.com) - 1 ⭐
             [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐`
-        });
+        })
     }
 }

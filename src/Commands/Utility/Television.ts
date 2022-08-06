@@ -1,11 +1,11 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { searchTV } from '#khaf/utility/commands/TMDB';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isDM, isText } from '#khaf/utility/Discord.js';
-import { bold, time } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { searchTV } from '#khaf/utility/commands/TMDB'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { bold, time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -16,17 +16,17 @@ export class kCommand extends Command {
             folder: 'Utility',
             args: [0],
             aliases: ['tele', 'television']
-        });
+        })
     }
 
     async init (message: Message, { content }: Arguments): Promise<APIEmbed | string> {
         const tv = await searchTV(
             content,
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
-        );
+        )
 
         if (!tv)
-            return '❌ No TV show with that name was found!';
+            return '❌ No TV show with that name was found!'
 
         const embed = Embed.json({
             color: colors.ok,
@@ -45,18 +45,18 @@ export class kCommand extends Command {
                 { name: bold('TMDB:'), value: `[TMDB](https://www.themoviedb.org/tv/${tv.id})`, inline: true }
             ],
             footer: { text: 'Data provided by https://www.themoviedb.org/' }
-        });
+        })
 
         if (tv.homepage) {
-            embed.url = tv.homepage;
+            embed.url = tv.homepage
         }
 
         if (tv.poster_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.poster_path}` }
         } else if (tv.backdrop_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${tv.backdrop_path}` }
         }
 
-        return embed;
+        return embed
     }
 }

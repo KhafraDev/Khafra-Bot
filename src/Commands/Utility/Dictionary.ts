@@ -1,9 +1,9 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { owlbotio } from '#khaf/utility/commands/OwlBotIO'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -18,14 +18,14 @@ export class kCommand extends Command {
                 args: [1],
                 aliases: ['definition', 'dict', 'dictionary']
             }
-        );
+        )
     }
 
     async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const word = await owlbotio(args.join(' '));
+        const word = await owlbotio(args.join(' '))
 
         if (word?.definitions == null) {
-            return Embed.error('No definition found!');
+            return Embed.error('No definition found!')
         }
 
         return Embed.ok(`
@@ -35,6 +35,6 @@ export class kCommand extends Command {
         .join('\n')
         .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
 }
-        `);
+        `)
     }
 }

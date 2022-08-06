@@ -1,18 +1,18 @@
-import type { Arguments } from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { parseStrToMs } from '#khaf/utility/ms.js';
-import { plural } from '#khaf/utility/String.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { parseStrToMs } from '#khaf/utility/ms.js'
+import { plural } from '#khaf/utility/String.js'
+import { Range } from '#khaf/utility/Valid/Number.js'
+import { bold } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const inRange = Range({ min: 0, max: 7, inclusive: true });
+const inRange = Range({ min: 0, max: 7, inclusive: true })
 
 export class kCommand extends Command {
     constructor () {
@@ -32,24 +32,24 @@ export class kCommand extends Command {
                 guildOnly: true,
                 permissions: [PermissionFlagsBits.BanMembers]
             }
-        );
+        )
     }
 
     async init (message: Message<true>, { args, content }: Arguments): Promise<undefined | APIEmbed> {
-        const user = await getMentions(message, 'users', content);
+        const user = await getMentions(message, 'users', content)
         if (!user) {
-            return Embed.error('No user mentioned and/or an invalid ❄️ was used!');
+            return Embed.error('No user mentioned and/or an invalid ❄️ was used!')
         }
 
         const clear = typeof args[1] === 'string'
             ? Math.ceil(parseStrToMs(args[1])! / 86400000)
-            : 7;
-        const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ');
+            : 7
+        const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ')
 
         const row = Components.actionRow([
             Buttons.approve('Yes'),
             Buttons.deny('No')
-        ]);
+        ])
 
         const msg = await message.reply({
             embeds: [Embed.ok(`
@@ -58,7 +58,7 @@ export class kCommand extends Command {
             This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
             `)],
             components: [row]
-        });
+        })
 
         const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({
             filter: (interaction) =>
@@ -66,39 +66,39 @@ export class kCommand extends Command {
                 interaction.user.id === message.author.id &&
                 interaction.message.id === msg.id,
             time: 20_000
-        }));
+        }))
 
         if (buttonError !== null) {
             return void msg.edit({
                 embeds: [Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
                 components: []
-            });
+            })
         }
 
         if (button.customId === 'deny')
             return void button.update({
                 embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
                 components: []
-            });
+            })
 
-        await button.deferUpdate();
+        await button.deferUpdate()
 
         try {
             await message.guild.members.ban(user, {
                 deleteMessageDays: inRange(clear) ? clear : 7,
                 reason
-            });
-            await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`);
+            })
+            await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`)
         } catch {
             return void button.editReply({
                 embeds: [Embed.error(`${user} isn't bannable!`)],
                 components: []
-            });
+            })
         }
 
         return void button.editReply({
             embeds: [Embed.ok(`${user} has been soft-banned from the guild!`)],
             components: disableAll(msg)
-        });
+        })
     }
 }

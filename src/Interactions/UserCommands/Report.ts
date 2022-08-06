@@ -1,32 +1,32 @@
-import { InteractionUserCommand } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isTextBased } from '#khaf/utility/Discord.js';
-import * as util from '#khaf/utility/Discord/util.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Minimalist } from '#khaf/utility/Minimalist.js';
-import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandType } from 'discord-api-types/v10';
-import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js';
-import { argv } from 'node:process';
+import { InteractionUserCommand } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
+import * as util from '#khaf/utility/Discord/util.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { Minimalist } from '#khaf/utility/Minimalist.js'
+import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandType } from 'discord-api-types/v10'
+import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
+import { argv } from 'node:process'
 
-const args = new Minimalist(argv.slice(2).join(' '));
-const isDev = args.get('dev') === true;
+const args = new Minimalist(argv.slice(2).join(' '))
+const isDev = args.get('dev') === true
 
 export class kUserCommand extends InteractionUserCommand {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'Report Message',
             type: ApplicationCommandType.Message
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 
     async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const settings = await util.interactionGetGuildSettings(interaction);
+        const settings = await util.interactionGetGuildSettings(interaction)
 
         if (!settings?.staffChannel) {
             return {
@@ -35,8 +35,8 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const channel = await util.interactionFetchChannel(interaction, settings.staffChannel);
-        const { content, author, id, attachments } = interaction.targetMessage;
+        const channel = await util.interactionFetchChannel(interaction, settings.staffChannel)
+        const { content, author, id, attachments } = interaction.targetMessage
 
         if (isDev === false) {
             if (author.id === interaction.user.id) {
@@ -52,8 +52,8 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const channelId = interaction.targetMessage.channelId;
-        const messageURL = `https://discord.com/channels/${interaction.guildId ?? '@me'}/${channelId}/${id}`;
+        const channelId = interaction.targetMessage.channelId
+        const messageURL = `https://discord.com/channels/${interaction.guildId ?? '@me'}/${channelId}/${id}`
 
         if (!channel) {
             return {
@@ -67,8 +67,8 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const m = `<@${author.id}>'s ${hyperlink('message', hideLinkEmbed(messageURL))}`;
-        const a = attachments.size === 0 ? undefined : [...attachments.values()];
+        const m = `<@${author.id}>'s ${hyperlink('message', hideLinkEmbed(messageURL))}`
+        const a = attachments.size === 0 ? undefined : [...attachments.values()]
 
         const embed = Embed.json({
             color: colors.ok,
@@ -78,14 +78,14 @@ export class kUserCommand extends InteractionUserCommand {
             ${interaction.user} reported ${m}:
     
             ${content.length !== 0 ? codeBlock(content) : ''}`
-        });
+        })
 
         const [err] = await dontThrow(channel.send({
             content: a !== undefined
                 ? a.map(att => att.proxyURL).join('\n')
                 : undefined,
             embeds: [embed]
-        }));
+        }))
 
         if (err !== null) {
             return {
@@ -100,11 +100,11 @@ export class kUserCommand extends InteractionUserCommand {
         // doesn't want to allow ephemeral context menu replies.
         await dontThrow(interaction.editReply({
             content: '✅ Reported the message to staff!'
-        }));
-        await dontThrow(interaction.deleteReply());
+        }))
+        await dontThrow(interaction.deleteReply())
         await dontThrow(interaction.followUp({
             content: `Reported ${m}!`,
             ephemeral: true
-        }));
+        }))
     }
 }

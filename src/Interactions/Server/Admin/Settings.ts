@@ -1,14 +1,14 @@
-import { Interactions } from '#khaf/Interaction';
-import { toString } from '#khaf/utility/Permissions.js';
-import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { sql } from '#khaf/database/Postgres.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import type { kGuild } from '#khaf/types/KhafraBot';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { sql } from '#khaf/database/Postgres.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, inlineCode } from '@discordjs/builders'
+import type { kGuild } from '#khaf/types/KhafraBot'
 
 const ifNot = (label: string): (value: unknown) => string =>
-    (value: unknown): string => inlineCode(`${value ?? label}`);
+    (value: unknown): string => inlineCode(`${value ?? label}`)
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -55,9 +55,9 @@ export class kInteraction extends Interactions {
                 // TODO: once tickets are added as interactions, add an option to change
                 // ticket channel.
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
@@ -75,18 +75,18 @@ export class kInteraction extends Interactions {
             'mod_log_channel': interaction.options.getChannel('mod-logs-channel')?.id,
             'welcome_channel': interaction.options.getChannel('welcome-channel')?.id,
             'staffChannel': interaction.options.getChannel('staff-channel')?.id
-        };
+        }
 
-        const keys = Object.keys(settings).filter(k => settings[k] != null);
+        const keys = Object.keys(settings).filter(k => settings[k] != null)
 
         if (keys.length === 0) {
             const [guild] = await sql<kGuild[]>`
                 SELECT * FROM kbGuild
                 WHERE guild_id = ${interaction.guildId}::text
                 LIMIT 1;
-            `;
+            `
 
-            const unset = ifNot('N/A (unset)');
+            const unset = ifNot('N/A (unset)')
 
             return {
                 embeds: [
@@ -110,7 +110,7 @@ export class kInteraction extends Interactions {
             UPDATE kbGuild SET
             ${sql(settings, ...keys)}
             WHERE guild_id = ${interaction.guildId}::text;
-        `;
+        `
 
         return {
             embeds: [

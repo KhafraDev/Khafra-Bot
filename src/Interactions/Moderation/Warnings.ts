@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { toString } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
 import type {
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     PermissionFlagsBits
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -69,10 +69,10 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 }

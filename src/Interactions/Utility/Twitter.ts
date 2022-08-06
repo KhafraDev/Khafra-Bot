@@ -1,10 +1,10 @@
-import { Interactions } from '#khaf/Interaction';
-import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { URLFactory } from '#khaf/utility/Valid/URL.js'
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -19,14 +19,14 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const url = interaction.options.getString('tweet', true);
-        const twitterURL = URLFactory(url);
+        const url = interaction.options.getString('tweet', true)
+        const twitterURL = URLFactory(url)
 
         if (!twitterURL || twitterURL.hostname !== 'twitter.com' || !twitterURL.pathname) {
             return {
@@ -44,8 +44,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const id = /\/(\d+)$/.exec(twitterURL.pathname)![1];
-        const media = await getTwitterMediaURL(id);
+        const id = /\/(\d+)$/.exec(twitterURL.pathname)![1]
+        const media = await getTwitterMediaURL(id)
 
         if (!media) {
             return {

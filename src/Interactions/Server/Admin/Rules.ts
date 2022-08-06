@@ -1,11 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { chunkSafe } from '#khaf/utility/Array.js';
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { seconds } from '#khaf/utility/ms.js';
-import { toString } from '#khaf/utility/Permissions.js';
-import { ellipsis, upperCase } from '#khaf/utility/String.js';
-import { inlineCode } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { chunkSafe } from '#khaf/utility/Array.js'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { seconds } from '#khaf/utility/ms.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { ellipsis, upperCase } from '#khaf/utility/String.js'
+import { inlineCode } from '@discordjs/builders'
 import {
     ApplicationCommandOptionType,
     ChannelType,
@@ -14,7 +14,7 @@ import {
     type APIActionRowComponent,
     type APITextInputComponent,
     type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     InteractionCollector,
     type TextInputModalData,
@@ -24,18 +24,18 @@ import {
     type ModalSubmitInteraction,
     type NewsChannel,
     type TextChannel
-} from 'discord.js';
-import { randomUUID } from 'node:crypto';
-import { setTimeout } from 'node:timers/promises';
+} from 'discord.js'
+import { randomUUID } from 'node:crypto'
+import { setTimeout } from 'node:timers/promises'
 
 const basic = [
     PermissionFlagsBits.SendMessages,
     PermissionFlagsBits.EmbedLinks,
     PermissionFlagsBits.ViewChannel
-];
+]
 
 const addInput = (action: string, id: string): APIActionRowComponent<APITextInputComponent>[] => {
-    const inputs: APIActionRowComponent<APITextInputComponent>[] = [];
+    const inputs: APIActionRowComponent<APITextInputComponent>[] = []
 
     if (action === 'new') {
         inputs.push(
@@ -47,7 +47,7 @@ const addInput = (action: string, id: string): APIActionRowComponent<APITextInpu
                     required: true
                 })
             ])
-        );
+        )
     } else if (action === 'edit') {
         inputs.push(
             Components.actionRow([
@@ -67,7 +67,7 @@ const addInput = (action: string, id: string): APIActionRowComponent<APITextInpu
                     required: true
                 })
             ])
-        );
+        )
     } else {
         inputs.push(
             Components.actionRow([
@@ -81,14 +81,14 @@ const addInput = (action: string, id: string): APIActionRowComponent<APITextInpu
                     placeholder: 'The number of the rule to remove.'
                 })
             ])
-        );
+        )
     }
 
-    return inputs;
+    return inputs
 }
 
 const getTextField = (i: ModalSubmitInteraction, name: string): string =>
-    (i.fields.getField(name) as TextInputModalData).value;
+    (i.fields.getField(name) as TextInputModalData).value
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -109,14 +109,14 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
-        const channel = interaction.options.getChannel('channel', true) as NewsChannel | TextChannel;
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
+        const channel = interaction.options.getChannel('channel', true) as NewsChannel | TextChannel
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -139,7 +139,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const id = randomUUID();
+        const id = randomUUID()
         const components = [
             Components.actionRow([
                 Buttons.approve('New Rule', `new-${id}`),
@@ -148,60 +148,60 @@ export class kInteraction extends Interactions {
                 Buttons.approve('Post', `post-${id}`),
                 Buttons.secondary('Cancel', `cancel-${id}`)
             ])
-        ];
+        ]
 
-        await interaction.reply({ components });
+        await interaction.reply({ components })
 
-        const rules: string[] = [];
+        const rules: string[] = []
         const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
             idle: 300_000,
             filter: (i) =>
                 i.user.id === interaction.user.id &&
                 i.customId.endsWith(id)
-        });
+        })
 
         for await (const [i] of c) {
-            const [action] = i.customId.split('-', 1);
+            const [action] = i.customId.split('-', 1)
 
             if (i.isButton()) {
                 if (action === 'cancel') {
-                    c.stop('cancel');
+                    c.stop('cancel')
 
                     await i.reply({
                         content: 'OK, maybe next time! ❤️',
                         ephemeral: true
-                    });
+                    })
 
-                    break;
+                    break
                 } else if (action === 'post') {
-                    c.stop();
+                    c.stop()
 
                     await i.reply({
                         content: `Posting ${rules.length} rules!`,
                         ephemeral: true
-                    });
+                    })
 
-                    break;
+                    break
                 }
 
                 await i.showModal({
                     title: 'Rules',
                     custom_id: `${action}-${id}`,
                     components: addInput(action, id)
-                });
+                })
             } else {
-                const embed = Embed.json({ color: colors.ok });
+                const embed = Embed.json({ color: colors.ok })
 
                 if (action === 'new') {
                     if (rules.length === 99) {
-                        c.stop();
-                        break;
+                        c.stop()
+                        break
                     }
 
-                    rules.push(getTextField(i, `textInput-${id}`));
-                    embed.title = `Added rule #${rules.length}!`;
+                    rules.push(getTextField(i, `textInput-${id}`))
+                    embed.title = `Added rule #${rules.length}!`
                 } else if (action === 'edit' || action === 'delete') {
-                    const ruleNumber = Number(getTextField(i, `ruleInput-${id}`));
+                    const ruleNumber = Number(getTextField(i, `ruleInput-${id}`))
 
                     if (
                         Number.isNaN(ruleNumber) ||
@@ -209,33 +209,33 @@ export class kInteraction extends Interactions {
                         ruleNumber > rules.length ||
                         ruleNumber <= 0
                     ) {
-                        embed.title = `Invalid rule #${ruleNumber} - max is #${rules.length}.`;
+                        embed.title = `Invalid rule #${ruleNumber} - max is #${rules.length}.`
                     } else if (action === 'edit') {
-                        rules.splice(ruleNumber - 1, 1, getTextField(i, `textInput-${id}`));
-                        embed.title = `Edit rule #${ruleNumber}!`;
+                        rules.splice(ruleNumber - 1, 1, getTextField(i, `textInput-${id}`))
+                        embed.title = `Edit rule #${ruleNumber}!`
                     } else {
-                        rules.splice(ruleNumber - 1, 1);
-                        embed.title = `Removed rule #${ruleNumber}!`;
+                        rules.splice(ruleNumber - 1, 1)
+                        embed.title = `Removed rule #${ruleNumber}!`
                     }
                 }
 
                 embed.description = rules.map(
                     (rule, idx) => `#${idx + 1}: ${inlineCode(ellipsis(rule, 2048 / rules.length - 5))}`
-                ).join('\n');
+                ).join('\n')
 
                 await i.reply({
                     embeds: [embed],
                     ephemeral: true
-                });
+                })
             }
         }
 
-        await interaction.editReply({ components: disableAll({ components }) });
+        await interaction.editReply({ components: disableAll({ components }) })
 
         // Don't post the rules if the user doesn't explicitly choose to,
         // or there aren't any rules to post.
         if (c.endReason === 'idle' || c.endReason === 'cancel' || rules.length === 0) {
-            return;
+            return
         }
 
         const embeds = chunkSafe(
@@ -247,12 +247,12 @@ export class kInteraction extends Interactions {
                 })
             ),
             10
-        );
+        )
 
         for (const chunk of embeds) {
-            await channel.send({ embeds: chunk });
+            await channel.send({ embeds: chunk })
 
-            await setTimeout(seconds(5));
+            await setTimeout(seconds(5))
         }
     }
 }

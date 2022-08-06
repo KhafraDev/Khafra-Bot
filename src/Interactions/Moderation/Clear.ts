@@ -1,20 +1,20 @@
-import { Interactions } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText, isThread } from '#khaf/utility/Discord.js';
-import * as util from '#khaf/utility/Discord/util.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms, toString } from '#khaf/utility/Permissions.js';
-import { bold, time } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText, isThread } from '#khaf/utility/Discord.js'
+import * as util from '#khaf/utility/Discord/util.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { hasPerms, toString } from '#khaf/utility/Permissions.js'
+import { bold, time } from '@discordjs/builders'
 import type {
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     ChannelType,
     PermissionFlagsBits
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { setTimeout } from 'node:timers/promises';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { setTimeout } from 'node:timers/promises'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -45,13 +45,13 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -69,8 +69,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const amount = interaction.options.getInteger('messages', true);
-        const channel = interaction.options.getChannel('channel') ?? interaction.channel;
+        const amount = interaction.options.getInteger('messages', true)
+        const channel = interaction.options.getChannel('channel') ?? interaction.channel
 
         if (!isText(channel) && !isThread(channel)) {
             return {
@@ -86,15 +86,15 @@ export class kInteraction extends Interactions {
 
         await interaction.reply({
             content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`
-        });
-        await setTimeout(5_000);
-        await interaction.deleteReply();
-        await dontThrow(channel.bulkDelete(amount));
+        })
+        await setTimeout(5_000)
+        await interaction.deleteReply()
+        await dontThrow(channel.bulkDelete(amount))
 
         // If the channel is private, we shouldn't broadcast
         // information about it.
 
-        const everyone = channel.guild.roles.everyone.id;
+        const everyone = channel.guild.roles.everyone.id
 
         if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
             const embed = Embed.json({
@@ -105,9 +105,9 @@ export class kInteraction extends Interactions {
                 ${bold('Staff:')} ${interaction.user}
                 ${bold('Time:')} ${time(new Date())}`,
                 title: 'Channel Messages Cleared'
-            });
+            })
 
-            return void util.postToModLog(interaction, [embed]);
+            return void util.postToModLog(interaction, [embed])
         }
     }
 }

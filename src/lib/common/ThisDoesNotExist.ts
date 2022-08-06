@@ -1,14 +1,14 @@
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
-import type { ReplyMessageOptions } from 'discord.js';
-import { request } from 'undici';
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import type { ReplyMessageOptions } from 'discord.js'
+import { request } from 'undici'
 
 const formatURL = new Map<DNE, string>([
     ['artwork', 'https://thisartworkdoesnotexist.com/'],
     ['cat',     'https://thiscatdoesnotexist.com/'],
     ['horse',   'https://thishorsedoesnotexist.com/'],
     ['person',  'https://thispersondoesnotexist.com/image']
-]);
+])
 
 export type DNE =
     | 'artwork'
@@ -17,11 +17,11 @@ export type DNE =
     | 'person'
 
 export const thisDoesNotExist = async (type: DNE): Promise<ReplyMessageOptions | null> => {
-    const url = formatURL.get(type);
-    if (!url) return null;
+    const url = formatURL.get(type)
+    if (!url) return null
 
-    const { body } = await request(url);
-    const buffer = arrayBufferToBuffer(await body.arrayBuffer());
+    const { body } = await request(url)
+    const buffer = arrayBufferToBuffer(await body.arrayBuffer())
 
     return {
         embeds: [

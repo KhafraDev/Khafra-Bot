@@ -1,33 +1,33 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { type Giveaway } from '#khaf/types/KhafraBot.js';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { parseStrToMs } from '#khaf/utility/ms.js';
-import { plural } from '#khaf/utility/String.js';
-import { stripIndents } from '#khaf/utility/Template.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { type Giveaway } from '#khaf/types/KhafraBot.js'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { parseStrToMs } from '#khaf/utility/ms.js'
+import { plural } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { Range } from '#khaf/utility/Valid/Number.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js'
 
-type GiveawayId = Pick<Giveaway, 'id'>;
+type GiveawayId = Pick<Giveaway, 'id'>
 
-const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true });
+const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true })
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'giveaway',
             name: 'create'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel;
-        const prize = interaction.options.getString('prize', true);
-        const ends = parseStrToMs(interaction.options.getString('ends', true));
-        const winners = interaction.options.getInteger('winners') ?? 1;
+        const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel
+        const prize = interaction.options.getString('prize', true)
+        const ends = parseStrToMs(interaction.options.getString('ends', true))
+        const winners = interaction.options.getInteger('winners') ?? 1
 
         if (!timeRange(ends)) {
             return {
@@ -36,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const endsDate = new Date(Date.now() + ends);
+        const endsDate = new Date(Date.now() + ends)
         const embed = Embed.json({
             color: colors.ok,
             title: 'A giveaway is starting!',
@@ -46,11 +46,11 @@ export class kSubCommand extends InteractionSubCommand {
             ${bold('React with 🎉 to enter!')}`,
             timestamp: endsDate.toISOString(),
             footer: { text: `${winners} winner${plural(winners)}` }
-        });
+        })
 
         const [sentError, sent] = await dontThrow(channel.send({
             embeds: [embed]
-        }));
+        }))
 
         if (sentError !== null) {
             return {
@@ -58,7 +58,7 @@ export class kSubCommand extends InteractionSubCommand {
                 ephemeral: true
             }
         } else {
-            void dontThrow(sent.react('🎉'));
+            void dontThrow(sent.react('🎉'))
         }
 
         const rows = await sql<GiveawayId[]>`
@@ -80,7 +80,7 @@ export class kSubCommand extends InteractionSubCommand {
                 ${winners}::smallint
             ) ON CONFLICT DO NOTHING
             RETURNING id;
-        `;
+        `
 
         return {
             content: stripIndents`

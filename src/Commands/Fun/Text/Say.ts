@@ -1,8 +1,8 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -18,7 +18,7 @@ export class kCommand extends Command {
                 args: [1],
                 ratelimit: 3
             }
-        );
+        )
     }
 
     async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
@@ -29,6 +29,6 @@ export class kCommand extends Command {
                 icon_url: message.author.displayAvatarURL()
             },
             description: args.join(' ')
-        });
+        })
     }
 }

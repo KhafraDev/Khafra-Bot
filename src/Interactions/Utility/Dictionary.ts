@@ -1,11 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { owlbotio } from '#khaf/utility/commands/OwlBotIO';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { stripIndents } from '#khaf/utility/Template.js';
-import { bold, italic } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { owlbotio } from '#khaf/utility/commands/OwlBotIO'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { bold, italic } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -20,14 +20,14 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const phrase = interaction.options.getString('word', true);
-        const word = await owlbotio(phrase);
+        const phrase = interaction.options.getString('word', true)
+        const word = await owlbotio(phrase)
 
         if (word?.definitions === undefined) {
             return {

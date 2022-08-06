@@ -1,5 +1,5 @@
-import { Interactions } from '#khaf/Interaction';
-import { toString } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
 import {
     ApplicationCommandOptionType,
     ChannelType,
@@ -7,8 +7,8 @@ import {
     type APIThreadChannel,
     type RESTPatchAPIChannelJSONBody,
     type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import { inlineCode, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js';
+} from 'discord-api-types/v10'
+import { inlineCode, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -29,13 +29,13 @@ export class kInteraction extends Interactions {
                     description: 'An optional reason to show in audit logs.'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {

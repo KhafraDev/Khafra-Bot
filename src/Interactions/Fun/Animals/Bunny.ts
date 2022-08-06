@@ -1,6 +1,6 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
 interface BunniesIO {
     thisServed: number
@@ -18,13 +18,13 @@ export class kSubCommand extends InteractionSubCommand {
         super({
             references: 'animal',
             name: 'bunny'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        await interaction.deferReply();
+        await interaction.deferReply()
 
-        const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif');
+        const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif')
 
         if (statusCode !== 200) {
             return {
@@ -33,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const j = await body.json() as BunniesIO;
+        const j = await body.json() as BunniesIO
 
         return {
             content: j.media.gif

@@ -1,11 +1,11 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isDM, isText } from '#khaf/utility/Discord.js';
-import { time } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { searchMovie } from '#khaf/utility/commands/TMDB'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 const formatMS = (ms: number): string => Object.entries({
     d: Math.floor(ms / 86400000),
@@ -15,7 +15,7 @@ const formatMS = (ms: number): string => Object.entries({
 })
     .filter(f => f[1] > 0)
     .map(t => `${t[1]}${t[0]}`)
-    .join(' ');
+    .join(' ')
 
 export class kCommand extends Command {
     constructor () {
@@ -26,17 +26,17 @@ export class kCommand extends Command {
             folder: 'Utility',
             args: [0],
             aliases: ['movie', 'tmdb']
-        });
+        })
     }
 
     async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
         const movies = await searchMovie(
             args.join(' '),
             isDM(message.channel) || (isText(message.channel) && message.channel.nsfw)
-        );
+        )
 
         if (!movies)
-            return Embed.error('No movies found!');
+            return Embed.error('No movies found!')
 
         const embed = Embed.json({
             color: colors.ok,
@@ -55,22 +55,22 @@ export class kCommand extends Command {
             ],
             footer: { text: 'Data provided by https://www.themoviedb.org/' },
             url: movies.homepage ? movies.homepage : undefined
-        });
+        })
 
         if (movies.imdb_id) {
             embed.fields?.push({
                 name: '**IMDB:**',
                 value: `[IMDB](https://www.imdb.com/title/${movies.imdb_id}/)`,
                 inline: true
-            });
+            })
         }
 
         if (movies.poster_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` }
         } else if (movies.backdrop_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` }
         }
 
-        return embed;
+        return embed
     }
 }

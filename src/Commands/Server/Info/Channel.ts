@@ -1,13 +1,13 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js';
-import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, codeBlock, time } from '@discordjs/builders';
-import type { APIEmbed} from 'discord-api-types/v10';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js'
+import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { bold, codeBlock, time } from '@discordjs/builders'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -24,17 +24,17 @@ export class kCommand extends Command {
                 args: [0, 1],
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         const channel =
             await getMentions(message, 'channels') ??
             message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
-            message.channel;
+            message.channel
 
         if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return Embed.error('No channel with that name was found!');
+            return Embed.error('No channel with that name was found!')
         }
 
         const embed = Embed.json({
@@ -48,23 +48,23 @@ export class kCommand extends Command {
                     inline: true
                 }
             ]
-        });
+        })
 
         if (isText(channel)) {
-            embed.description =  `${channel}\n${channel.topic ? codeBlock(`${channel.topic}`) : ''}`;
+            embed.description =  `${channel}\n${channel.topic ? codeBlock(`${channel.topic}`) : ''}`
             embed.fields?.push(
                 { name: bold('Name:'), value: channel.name, inline: true },
                 { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
                 { name: bold('NSFW:'), value: channel.nsfw ? 'Yes' : 'No', inline: true },
                 { name: bold('Position:'), value: `${channel.position}`, inline: true }
-            );
+            )
 
             if (isExplicitText(channel)) {
                 embed.fields?.push({
                     name: bold('Rate-Limit:'),
                     value: channel.rateLimitPerUser + ' seconds',
                     inline: true
-                });
+                })
             }
         } else if (isVoice(channel)) {
             embed.fields?.push(
@@ -76,9 +76,9 @@ export class kCommand extends Command {
                     inline: true
                 },
                 { name: bold('Region:'), value: channel.rtcRegion ?? 'Auto', inline: true }
-            );
+            )
         }
 
-        return padEmbedFields(embed);
+        return padEmbedFields(embed)
     }
 }

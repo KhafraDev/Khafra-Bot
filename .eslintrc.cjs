@@ -46,6 +46,7 @@ module.exports = {
 		'no-restricted-imports': [2, ...builtinModules.map((m) => ({ name: m, message: `Import node:${m} instead` }))],
 		'no-trailing-spaces': 'error',
 		'no-whitespace-before-property': 'error',
+		'@typescript-eslint/semi': ['error', 'never'],
 
 		'no-empty': 'off',
 		'no-mixed-spaces-and-tabs': 'off',

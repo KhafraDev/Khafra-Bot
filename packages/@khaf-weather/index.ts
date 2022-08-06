@@ -1,2 +1,2 @@
-export * from './src/HereWeather.js';
-export * from './src/WttrIn.js';
+export * from './src/HereWeather.js'
+export * from './src/WttrIn.js'

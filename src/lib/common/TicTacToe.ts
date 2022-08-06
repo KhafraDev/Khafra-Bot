@@ -1,21 +1,21 @@
-type Turn = 'X' | 'O' | null;
+type Turn = 'X' | 'O' | null
 
 export class TicTacToe {
-    public board: Turn[] = Array(9).fill(null) as Turn[];
-    public turn: Turn = 'X';
+    public board: Turn[] = Array(9).fill(null) as Turn[]
+    public turn: Turn = 'X'
 
     /** Go at a given position (0-8) */
     public go(at: number): true | Turn {
         if (this.winner())
-            return this.turn;
+            return this.turn
 
-        this.board[at] = this.turn;
+        this.board[at] = this.turn
 
         if (this.winner())
-            return this.turn;
+            return this.turn
 
-        this.setTurn();
-        return true;
+        this.setTurn()
+        return true
     }
 
     /** Use totally legit AI (copyright 2021, @KhafraDev) to go */
@@ -32,7 +32,7 @@ export class TicTacToe {
             // diagonal
             [0, 4, 8], [4, 8, 0], [0, 8, 4],
             [2, 4, 6], [4, 6, 2], [2, 6, 4]
-        ];
+        ]
 
         for (const [a, b, c] of lines) {
             if (
@@ -41,26 +41,26 @@ export class TicTacToe {
                 (this.board[a] === 'O' && this.board[b] === 'O')) &&
                 this.board[c] === null // otherwise, just go somewhere empty
             )  {
-                return this.go(c);
+                return this.go(c)
             }
         }
 
         while (!this.isFull()) {
-            const random = Math.floor(Math.random() * 9); // [0, 8]
+            const random = Math.floor(Math.random() * 9) // [0, 8]
             if (this.board[random] === null) { // is an empty space
-                return this.go(random); // go at empty space
+                return this.go(random) // go at empty space
             }
         }
     }
 
     /** Utility method to change turns */
     public setTurn(): 'X' | 'O' {
-        return this.turn = this.turn === 'X' ? 'O' : 'X';
+        return this.turn = this.turn === 'X' ? 'O' : 'X'
     }
 
     /** Detect if the board is full */
     public isFull(): boolean {
-        return this.board.every(b => b !== null);
+        return this.board.every(b => b !== null)
     }
 
     public winner(): boolean {
@@ -74,7 +74,7 @@ export class TicTacToe {
             [2, 5, 8],
             [0, 4, 8],
             [2, 4, 6]
-        ];
+        ]
 
         for (const [a, b, c] of lines) {
             if (
@@ -82,10 +82,10 @@ export class TicTacToe {
                 this.board[a] === this.board[b] &&
                 this.board[a] === this.board[c]
             ) {
-                return true;
+                return true
             }
         }
 
-        return false;
+        return false
     }
 }

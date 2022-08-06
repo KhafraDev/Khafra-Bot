@@ -1,16 +1,16 @@
-import { rest } from '#khaf/Bot';
-import { Interactions } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import * as util from '#khaf/utility/Discord/util.js';
-import { toString } from '#khaf/utility/Permissions.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
+import { rest } from '#khaf/Bot'
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import * as util from '#khaf/utility/Discord/util.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
 import {
     ApplicationCommandOptionType,
     ChannelType,
     PermissionFlagsBits, Routes, type RESTPostAPIApplicationCommandsJSONBody, type RESTPostAPIGuildChannelJSONBody,
     type RESTPostAPIGuildChannelResult
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel, VoiceChannel } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel, VoiceChannel } from 'discord.js'
 
 type CloneableChannel =
     | TextChannel
@@ -43,15 +43,15 @@ export class kInteraction extends Interactions {
                     description: 'Whether the channel being cloned should be deleted afterwards (defaults to false).'
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -69,11 +69,11 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const channel = interaction.options.getChannel('channel', true) as CloneableChannel;
-        const deleteAfterwards = interaction.options.getBoolean('delete-old-channel') ?? false;
+        const channel = interaction.options.getChannel('channel', true) as CloneableChannel
+        const deleteAfterwards = interaction.options.getBoolean('delete-old-channel') ?? false
 
-        const isVoice = channel.type === ChannelType.GuildVoice;
-        const isNews = channel.type === ChannelType.GuildNews;
+        const isVoice = channel.type === ChannelType.GuildVoice
+        const isNews = channel.type === ChannelType.GuildNews
 
         const body: RESTPostAPIGuildChannelJSONBody = {
             name: channel.name,
@@ -94,33 +94,33 @@ export class kInteraction extends Interactions {
             parent_id: channel.parentId,
             nsfw: !isVoice ? channel.nsfw : undefined,
             default_auto_archive_duration: !isVoice ? channel.defaultAutoArchiveDuration : undefined
-        };
+        }
 
         await rest.post(
             Routes.guildChannels(interaction.guild.id),
             { body }
-        ) as RESTPostAPIGuildChannelResult;
+        ) as RESTPostAPIGuildChannelResult
 
         const embed = Embed.json({
             color: colors.ok,
             description: `✅ Successfully cloned ${channel.name}` + (deleteAfterwards
                 ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
                 : '!')
-        });
+        })
 
         // The channel being deleted could be the current channel, which would cause
         // an error if we tried to response to the interaction. Therefore, send the
         // reply *before* deleting the channel.
-        await interaction.editReply({ embeds: [embed] });
+        await interaction.editReply({ embeds: [embed] })
 
         if (deleteAfterwards) {
             // https://discord.com/developers/docs/resources/channel#deleteclose-channel
-            await rest.delete(Routes.channel(channel.id));
+            await rest.delete(Routes.channel(channel.id))
         }
 
         // If the channel is private, we shouldn't broadcast
         // information about it.
-        const everyone = channel.guild.roles.everyone.id;
+        const everyone = channel.guild.roles.everyone.id
 
         if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
             const embed = Embed.json({
@@ -130,9 +130,9 @@ export class kInteraction extends Interactions {
                 ${bold('Staff:')} ${interaction.user}
                 ${bold('Time:')} ${time(new Date())}`,
                 title: 'Channel Cloned'
-            });
+            })
 
-            return void util.postToModLog(interaction, [embed]);
+            return void util.postToModLog(interaction, [embed])
         }
     }
 }

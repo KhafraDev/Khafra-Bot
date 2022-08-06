@@ -10,12 +10,12 @@ export class AsyncQueue extends Array<DeferredPromise> {
      */
     public createDeferredPromise (): DeferredPromise {
         let resolve: DeferredPromise['resolve'] | undefined,
-            reject: DeferredPromise['reject'] | undefined;
+            reject: DeferredPromise['reject'] | undefined
 
         const promise = new Promise<void>((res, rej) => {
-            resolve = res;
-            reject = rej;
-        });
+            resolve = res
+            reject = rej
+        })
 
         return {
             resolve: resolve!,
@@ -25,19 +25,19 @@ export class AsyncQueue extends Array<DeferredPromise> {
     }
 
     public wait (): Promise<void> {
-        const next = this.length !== 0 ? this.at(-1)!.promise : Promise.resolve();
+        const next = this.length !== 0 ? this.at(-1)!.promise : Promise.resolve()
 
-        this.push(this.createDeferredPromise());
+        this.push(this.createDeferredPromise())
 
-        return next;
+        return next
     }
 
     public dequeue (): void {
-        if (this.length === 0) return undefined;
+        if (this.length === 0) return undefined
 
-        const promise = this.shift()!;
-        void promise.resolve();
+        const promise = this.shift()!
+        void promise.resolve()
 
-        return undefined;
+        return undefined
     }
 }

@@ -1,11 +1,11 @@
-import { assets } from '#khaf/utility/Constants/Path.js';
-import { rmSync } from 'node:fs';
-import pino from 'pino';
+import { assets } from '#khaf/utility/Constants/Path.js'
+import { rmSync } from 'node:fs'
+import pino from 'pino'
 
 class Logger {
-    #pino: ReturnType<typeof pino>;
-    #destination: ReturnType<typeof pino['destination']>;
-    #path: string;
+    #pino: ReturnType<typeof pino>
+    #destination: ReturnType<typeof pino['destination']>
+    #path: string
     #redact = [
         '*.members',
         'guild.roles',
@@ -18,8 +18,8 @@ class Logger {
     ]
 
     constructor () {
-        this.#path = assets(`log-${Date.now()}.txt`);
-        this.#destination = pino.destination({ dest: this.#path, sync: false });
+        this.#path = assets(`log-${Date.now()}.txt`)
+        this.#destination = pino.destination({ dest: this.#path, sync: false })
         this.#pino = pino({
             redact: {
                 paths: this.#redact,
@@ -29,12 +29,12 @@ class Logger {
     }
 
     public get path (): string {
-        return this.#path;
+        return this.#path
     }
 
     public rotate (): void {
-        this.#path = assets(`log-${Date.now()}.txt`);
-        this.#destination = pino.destination({ dest: this.#path, sync: false });
+        this.#path = assets(`log-${Date.now()}.txt`)
+        this.#destination = pino.destination({ dest: this.#path, sync: false })
         this.#pino = pino({
             redact: {
                 paths: this.#redact,
@@ -44,39 +44,39 @@ class Logger {
     }
 
     public stop (): void {
-        this.#destination.end();
-        this.#pino = null!;
-        this.#destination = null!;
-        rmSync(this.#path);
+        this.#destination.end()
+        this.#pino = null!
+        this.#destination = null!
+        rmSync(this.#path)
     }
 
     warn <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.warn(...args as [unknown]);
+        this.#pino.warn(...args as [unknown])
     }
 
     error <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.error(...args as [unknown]);
+        this.#pino.error(...args as [unknown])
     }
 
     info <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.info(...args as [unknown]);
+        this.#pino.info(...args as [unknown])
     }
 
     debug <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.debug(...args as [unknown]);
+        this.#pino.debug(...args as [unknown])
     }
 
     fatal <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.fatal(...args as [unknown]);
+        this.#pino.fatal(...args as [unknown])
     }
 
     silent <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.silent(...args as [unknown]);
+        this.#pino.silent(...args as [unknown])
     }
 
     trace <T, U>(...args: [T, ...U[]]): void {
-        this.#pino.trace(...args as [unknown]);
+        this.#pino.trace(...args as [unknown])
     }
 }
 
-export const logger = new Logger();
+export const logger = new Logger()

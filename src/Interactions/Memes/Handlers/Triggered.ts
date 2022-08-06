@@ -1,42 +1,42 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { templates } from '#khaf/utility/Constants/Path.js';
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js';
-import { createCanvas, Image } from '@napi-rs/canvas';
-import { GifEncoder } from '@skyra/gifenc';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import type { Buffer } from 'node:buffer';
-import { readFileSync } from 'node:fs';
-import { buffer } from 'node:stream/consumers';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { templates } from '#khaf/utility/Constants/Path.js'
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { createCanvas, Image } from '@napi-rs/canvas'
+import { GifEncoder } from '@skyra/gifenc'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import type { Buffer } from 'node:buffer'
+import { readFileSync } from 'node:fs'
+import { buffer } from 'node:stream/consumers'
+import { request } from 'undici'
 
 const Dims = {
     Width: 256,
     Height: 256,
     Template: 40
-} as const;
+} as const
 
-let image: Image | undefined;
+let image: Image | undefined
 const coords =  [
     [0, 0],
     [-5, -5],
     [-10, -5],
     [-20, -15],
     [-15, 0]
-] as const;
+] as const
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'memes',
             name: 'triggered'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const user = interaction.options.getUser('person', true);
-        const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 });
+        const user = interaction.options.getUser('person', true)
+        const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 })
 
-        const buffer = await this.image(avatarURL);
+        const buffer = await this.image(avatarURL)
 
         return {
             files: [
@@ -50,51 +50,51 @@ export class kSubCommand extends InteractionSubCommand {
 
     async image (avatarURL: string): Promise<Buffer> {
         if (!image) {
-            image = new Image();
-            image.width = Dims.Width;
-            image.height = Dims.Template;
-            image.src = readFileSync(templates('triggered.png'));
+            image = new Image()
+            image.width = Dims.Width
+            image.height = Dims.Template
+            image.src = readFileSync(templates('triggered.png'))
         }
 
-        const { body } = await request(avatarURL);
-        const b = arrayBufferToBuffer(await body.arrayBuffer());
+        const { body } = await request(avatarURL)
+        const b = arrayBufferToBuffer(await body.arrayBuffer())
 
-        const avatar = new Image();
-        avatar.width = Dims.Width;
-        avatar.height = Dims.Height;
-        avatar.src = b;
+        const avatar = new Image()
+        avatar.width = Dims.Width
+        avatar.height = Dims.Height
+        avatar.src = b
 
         const encoder = new GifEncoder(Dims.Width, Dims.Height + Dims.Template)
             .setRepeat(0)
             .setDelay(50)
-            .setQuality(100);
+            .setQuality(100)
 
-        const stream = encoder.createReadStream();
-        encoder.start();
+        const stream = encoder.createReadStream()
+        encoder.start()
 
-        const canvas = createCanvas(Dims.Width, Dims.Height + Dims.Template);
-        const ctx = canvas.getContext('2d');
+        const canvas = createCanvas(Dims.Width, Dims.Height + Dims.Template)
+        const ctx = canvas.getContext('2d')
 
         for (const [x, y] of coords) {
             // We need to draw the image larger than it actually is,
             // and larger than the template, to prevent parts of the gif
             // from being empty.
-            ctx.drawImage(avatar, x, y, 300, 300);
+            ctx.drawImage(avatar, x, y, 300, 300)
             ctx.drawImage(
                 image,
                 0,
                 Dims.Width,
                 Dims.Height,
                 Dims.Template
-            );
-            ctx.fillStyle = 'rgba(255, 100, 0, 0.35)';
-            ctx.fillRect(0, 0, Dims.Width, Dims.Height);
-            const bytes = ctx.getImageData(0, 0, Dims.Width, Dims.Height + Dims.Template).data;
-            encoder.addFrame(bytes);
+            )
+            ctx.fillStyle = 'rgba(255, 100, 0, 0.35)'
+            ctx.fillRect(0, 0, Dims.Width, Dims.Height)
+            const bytes = ctx.getImageData(0, 0, Dims.Width, Dims.Height + Dims.Template).data
+            encoder.addFrame(bytes)
         }
 
-        encoder.finish();
+        encoder.finish()
 
-        return await buffer(stream);
+        return await buffer(stream)
     }
 }

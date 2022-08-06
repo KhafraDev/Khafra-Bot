@@ -1,6 +1,6 @@
-import { request } from 'undici';
+import { request } from 'undici'
 
-export type PasteFn = (text: string) => Promise<string | undefined>;
+export type PasteFn = (text: string) => Promise<string | undefined>
 
 export interface HasteServer {
     key: string
@@ -46,10 +46,10 @@ const hatebin = async (text: string): Promise<string | undefined> => {
         method: 'POST',
         body: `text=${encodeURIComponent(text)}`,
         headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-    });
+    })
 
     if (statusCode === 200) {
-        return `https://hatebin.com/${(await body.text()).trim()}`;
+        return `https://hatebin.com/${(await body.text()).trim()}`
     }
 }
 
@@ -63,11 +63,11 @@ const sourcebin = async (text: string): Promise<string | undefined> => {
             files: [{ content: text }]
         }),
         headers: { 'Content-Type': 'application/json;charset=utf-8' }
-    });
+    })
 
     if (statusCode === 200) {
-        const j = await body.json() as ISourcebin;
-        return `https://sourceb.in/${j.key}`;
+        const j = await body.json() as ISourcebin
+        return `https://sourceb.in/${j.key}`
     }
 }
 
@@ -79,11 +79,11 @@ const nomsy = async (text: string): Promise<string | undefined> => {
         method: 'POST',
         body: text,
         headers: { 'Content-Type': 'application/json; charset=utf-8' }
-    });
+    })
 
     if (statusCode === 200) {
-        const j = await body.json() as HasteServer;
-        return `https://paste.nomsy.net/${j.key}`;
+        const j = await body.json() as HasteServer
+        return `https://paste.nomsy.net/${j.key}`
     }
 }
 
@@ -99,12 +99,12 @@ const pastegg = async (text: string): Promise<string | undefined> => {
             files: [{ content: { format: 'text', value: text } }]
         }),
         headers: { 'Content-Type': 'application/json' }
-    });
+    })
 
     if (statusCode === 200) {
-        const j = await body.json() as PasteGGError | PasteGGSuccess;
+        const j = await body.json() as PasteGGError | PasteGGSuccess
         if (j.status === 'success')
-            return `https://paste.gg/anonymous/${j.result.id}`;
+            return `https://paste.gg/anonymous/${j.result.id}`
     }
 }
 
@@ -117,4 +117,4 @@ export const pasteAliases = new Map<string, PasteFn>([
     ['nomsy', nomsy],
     ['paste', pastegg],
     ['pastegg', pastegg]
-]);
+])

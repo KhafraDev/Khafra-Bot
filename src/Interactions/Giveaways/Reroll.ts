@@ -1,22 +1,22 @@
-import { KhafraClient } from '#khaf/Bot';
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import type { Giveaway } from '#khaf/types/KhafraBot';
-import * as DiscordUtil from '#khaf/utility/Discord.js';
-import { plural } from '#khaf/utility/String.js';
-import { stripIndents } from '#khaf/utility/Template.js';
-import { inlineCode, time } from '@discordjs/builders';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { KhafraClient } from '#khaf/Bot'
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { Giveaway } from '#khaf/types/KhafraBot'
+import * as DiscordUtil from '#khaf/utility/Discord.js'
+import { plural } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { inlineCode, time } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'giveaway',
             name: 'reroll'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

@@ -1,4 +1,4 @@
-import { LRU } from '#khaf/LRU';
-import type { Snowflake, Message } from 'discord.js';
+import { LRU } from '#khaf/LRU'
+import type { Snowflake, Message } from 'discord.js'
 
-export const MessagesLRU = new LRU<Snowflake, Message>();
+export const MessagesLRU = new LRU<Snowflake, Message>()

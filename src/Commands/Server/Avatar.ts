@@ -1,12 +1,12 @@
-import { Command, type Arguments } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { Command, type Arguments } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
+const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
+const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif']
 
 export class kCommand extends Command {
     constructor () {
@@ -26,30 +26,30 @@ export class kCommand extends Command {
                 aliases: ['av', 'a'],
                 ratelimit: 3
             }
-        );
+        )
     }
 
     async init (message: Message, { cli, content }: Arguments): Promise<APIEmbed> {
-        const user = await getMentions(message, 'users', content) ?? message.author;
+        const user = await getMentions(message, 'users', content) ?? message.author
 
         const opts: ImageURLOptions = {
             size: 512,
             extension: 'png',
             forceStatic: false
-        };
+        }
 
         if (cli.size !== 0) {
             if (cli.has('size') || cli.has('s')) {
-                const value = Number(cli.get('size') || cli.get('s')) as ImageSize;
+                const value = Number(cli.get('size') || cli.get('s')) as ImageSize
                 if (avatarSizes.includes(value)) {
-                    opts.size = value;
+                    opts.size = value
                 }
             }
 
             if (cli.has('format') || cli.has('f')) {
-                const value = cli.get('format') || cli.get('f');
+                const value = cli.get('format') || cli.get('f')
                 if (typeof value === 'string' && avatarFormats.includes(value as ImageExtension)) {
-                    opts.extension = value as ImageExtension;
+                    opts.extension = value as ImageExtension
                 }
             }
         }
@@ -58,6 +58,6 @@ export class kCommand extends Command {
             color: colors.ok,
             description: `${user}'s avatar`,
             image: { url: user.displayAvatarURL(opts) }
-        });
+        })
     }
 }

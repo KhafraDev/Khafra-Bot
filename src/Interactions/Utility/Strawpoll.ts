@@ -1,9 +1,9 @@
-import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIApplicationCommandOption, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { request } from 'undici';
+import { Interactions } from '#khaf/Interaction'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIApplicationCommandOption, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
 interface StrawpollBody {
     poll: Partial<{
@@ -97,19 +97,19 @@ export class kInteraction extends Interactions {
                     description: `Optional choice #${i + 3} to add to the poll.`
                 }))
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const answers: string[] = [];
+        const answers: string[] = []
 
         for (let i = 1; i <= 16; i++) {
-            const option = interaction.options.getString(`choice-${i}`, i <= 2);
+            const option = interaction.options.getString(`choice-${i}`, i <= 2)
 
             if (option) {
-                answers.push(option);
+                answers.push(option)
             }
         }
 
@@ -124,14 +124,14 @@ export class kInteraction extends Interactions {
             only_reg: interaction.options.getBoolean('only-registered') ?? false,
             vpn: interaction.options.getBoolean('vpn') ?? false,
             captcha: interaction.options.getBoolean('captcha') ?? true
-        };
+        }
 
         const { body } = await request('https://strawpoll.com/api/poll', {
             method: 'POST',
             body: JSON.stringify({ poll } as StrawpollBody)
-        });
+        })
 
-        const j = await body.json() as { admin_key: string, content_id: string, success: 1 | 0 };
+        const j = await body.json() as { admin_key: string, content_id: string, success: 1 | 0 }
 
         return {
             embeds: [

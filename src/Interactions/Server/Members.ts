@@ -1,25 +1,25 @@
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { bold } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'members',
             description: 'Show the number of members currently in this server!'
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        let guild!: Guild | null;
+        let guild!: Guild | null
 
         if (!interaction.guild) {
             if (interaction.guildId) {
-                ([, guild] = await dontThrow(interaction.client.guilds.fetch(interaction.guildId)));
+                ([, guild] = await dontThrow(interaction.client.guilds.fetch(interaction.guildId)))
             }
 
             if (guild === null) {
@@ -29,7 +29,7 @@ export class kInteraction extends Interactions {
                 }
             }
         } else {
-            guild = interaction.guild;
+            guild = interaction.guild
         }
 
         return {

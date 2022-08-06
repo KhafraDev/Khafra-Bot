@@ -1,11 +1,11 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const MAX_DIFF = 2 ** 48 - 1;
+const MAX_DIFF = 2 ** 48 - 1
 
 export class kCommand extends Command {
     constructor () {
@@ -21,13 +21,13 @@ export class kCommand extends Command {
                 args: [1, 2],
                 ratelimit: 5
             }
-        );
+        )
     }
 
     async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args];
-        const max = +maxStr + 1;
-        const min = +minStr;
+        const [minStr, maxStr] = args.length === 2 ? args : ['0', ...args]
+        const max = +maxStr + 1
+        const min = +minStr
 
         if (
             max - min > MAX_DIFF ||        // difference set by function; difference can't be greater than this
@@ -39,11 +39,11 @@ export class kCommand extends Command {
             return Embed.error(
                 `Invalid number(s) provided! Numbers ${inlineCode('cannot equal')} one another ` +
                 `and the difference between the two ${inlineCode('cannot be greater')} than 2^48-1!`
-            );
+            )
         }
 
-        const num = Math.floor(Math.random() * (max - min) + min);
+        const num = Math.floor(Math.random() * (max - min) + min)
 
-        return Embed.ok(`Your number is ${inlineCode(`${num}`)}!`);
+        return Embed.ok(`Your number is ${inlineCode(`${num}`)}!`)
     }
 }

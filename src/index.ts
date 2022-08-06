@@ -1,25 +1,25 @@
-import '#khaf/utility/load.env.js';
-import '#khaf/utility/Rejections.js';
-import '#khaf/utility/__proto__.js';
-import '#khaf/image/ImageFonts.js';
+import '#khaf/utility/load.env.js'
+import '#khaf/utility/Rejections.js'
+import '#khaf/utility/__proto__.js'
+import '#khaf/image/ImageFonts.js'
 
-import { KhafraClient } from '#khaf/Bot';
-import type { Event } from '#khaf/Event';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { RESTEvents, type RestEvents } from '@discordjs/rest';
-import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10';
-import { type ClientEvents, Partials, Events } from 'discord.js';
+import { KhafraClient } from '#khaf/Bot'
+import type { Event } from '#khaf/Event'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { RESTEvents, type RestEvents } from '@discordjs/rest'
+import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
+import { type ClientEvents, Partials, Events } from 'discord.js'
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     name: T
 ): (...args: Parameters<Event['init']>) => void => {
-    let events: Event[];
+    let events: Event[]
 
     return (...args: Parameters<typeof events[number]['init']>): void => {
-        events ??= KhafraClient.Events.get(name)!;
+        events ??= KhafraClient.Events.get(name)!
 
         for (const event of events) {
-            void dontThrow(event.init(...args));
+            void dontThrow(event.init(...args))
         }
     }
 }
@@ -53,8 +53,8 @@ export const client = new KhafraClient({
     .on(Events.InteractionCreate,   emitted(Events.InteractionCreate))
     .on(Events.GuildMemberAdd,      emitted(Events.GuildMemberAdd))
     .on(Events.GuildMemberRemove,   emitted(Events.GuildMemberRemove))
-    .on(Events.GuildMemberUpdate,   emitted(Events.GuildMemberUpdate));
+    .on(Events.GuildMemberUpdate,   emitted(Events.GuildMemberUpdate))
 
-client.rest.on(RESTEvents.RateLimited, emitted(RESTEvents.RateLimited));
+client.rest.on(RESTEvents.RateLimited, emitted(RESTEvents.RateLimited))
 
-void client.init();
+void client.init()

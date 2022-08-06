@@ -1,19 +1,19 @@
-import { client } from '#khaf/Client';
-import { Interactions } from '#khaf/Interaction';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { stripIndents } from '#khaf/utility/Template.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
-import { fetchMDN } from '@khaf/mdn';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { join } from 'node:path';
+import { client } from '#khaf/Client'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
+import { fetchMDN } from '@khaf/mdn'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { join } from 'node:path'
 
-const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'))
 
-const emoji = client.emojis.cache.get(config.interactions.mdn);
+const emoji = client.emojis.cache.get(config.interactions.mdn)
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -28,17 +28,17 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const search = interaction.options.getString('input', true);
-        const result = await fetchMDN(search);
+        const search = interaction.options.getString('input', true)
+        const result = await fetchMDN(search)
 
         if ('errors' in result) {
-            const keys = Object.keys(result.errors);
+            const keys = Object.keys(result.errors)
             return {
                 content: `${emoji} ${keys.map(k => result.errors[k].map(e => e.message).join('\n')).join('\n')}`
             }
@@ -51,8 +51,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const document = result.documents[0]!;
-        const link = `https://developer.mozilla.org/${document.locale}/docs/${document.slug}`;
+        const document = result.documents[0]!
+        const link = `https://developer.mozilla.org/${document.locale}/docs/${document.slug}`
 
         return {
             content: stripIndents`    

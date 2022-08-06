@@ -1,14 +1,14 @@
-import { Command, type Arguments } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ellipsis, plural } from '#khaf/utility/String.js';
-import { hideLinkEmbed, inlineCode } from '@discordjs/builders';
-import { getArticleById, search } from '@khaf/wikipedia';
-import { InteractionType } from 'discord-api-types/v10';
-import type { ReplyMessageOptions, SelectMenuInteraction } from 'discord.js';
-import { InteractionCollector, type Message } from 'discord.js';
-import { randomUUID } from 'node:crypto';
+import { Command, type Arguments } from '#khaf/Command'
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { ellipsis, plural } from '#khaf/utility/String.js'
+import { hideLinkEmbed, inlineCode } from '@discordjs/builders'
+import { getArticleById, search } from '@khaf/wikipedia'
+import { InteractionType } from 'discord-api-types/v10'
+import type { ReplyMessageOptions, SelectMenuInteraction } from 'discord.js'
+import { InteractionCollector, type Message } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 export class kCommand extends Command {
     constructor () {
@@ -26,11 +26,11 @@ export class kCommand extends Command {
                 guildOnly: true,
                 ratelimit: 10
             }
-        );
+        )
     }
 
     async init (message: Message, { content }: Arguments): Promise<ReplyMessageOptions | undefined> {
-        const [err, wiki] = await dontThrow(search(content));
+        const [err, wiki] = await dontThrow(search(content))
 
         if (err !== null) {
             return {
@@ -42,7 +42,7 @@ export class kCommand extends Command {
             }
         }
 
-        const id = randomUUID();
+        const id = randomUUID()
         const m = await message.channel.send({
             content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
             embeds: [
@@ -61,7 +61,7 @@ export class kCommand extends Command {
                     })
                 ])
             ]
-        });
+        })
 
         const c = new InteractionCollector<SelectMenuInteraction>(message.client, {
             interactionType: InteractionType.MessageComponent,
@@ -73,27 +73,27 @@ export class kCommand extends Command {
                 i.user.id === message.author.id &&
                 i.message.id === m.id &&
                 i.customId === `wikipedia-${id}`
-        });
+        })
 
         c.on('collect', async (i) => {
-            await dontThrow(i.deferUpdate());
+            await dontThrow(i.deferUpdate())
 
-            const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!;
-            const [err, summaryRes] = await dontThrow(getArticleById(article.id));
+            const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!
+            const [err, summaryRes] = await dontThrow(getArticleById(article.id))
 
             if (err) {
                 return void dontThrow(i.editReply({
                     content: `❌ An error occurred getting this article's summary: ${inlineCode(err.message)}`,
                     components: disableAll(m)
-                }));
+                }))
             }
 
-            const summary = summaryRes.query?.pages[`${article.id}`];
+            const summary = summaryRes.query?.pages[`${article.id}`]
             if (typeof summary === 'undefined') {
                 return void dontThrow(i.editReply({
                     content: '❌ Invalid response from Wikipedia!',
                     components: disableAll(m)
-                }));
+                }))
             }
 
             const embed = Embed.json({
@@ -101,28 +101,28 @@ export class kCommand extends Command {
                 description: ellipsis(summary.extract, 2048),
                 title: summary.title,
                 url: `https://en.wikipedia.org/wiki/${article.key}`
-            });
+            })
 
             if (article.thumbnail) {
                 const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
-                    : `https:${article.thumbnail.url}`;
+                    : `https:${article.thumbnail.url}`
 
-                embed.thumbnail = { url: image };
+                embed.thumbnail = { url: image }
             }
 
             return void dontThrow(i.editReply({
                 content: hideLinkEmbed(`https://en.wikipedia.org/wiki/${article.key}`),
                 embeds: [embed]
-            }));
-        });
+            }))
+        })
 
         c.once('end', () => {
             if (m.components[0].components[0].disabled === false) {
                 void dontThrow(m.edit({
                     components: disableAll(m)
-                }));
+                }))
             }
-        });
+        })
     }
 }

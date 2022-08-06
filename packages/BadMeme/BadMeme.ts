@@ -1,19 +1,19 @@
-import { decodeXML } from 'entities';
-import { setInterval } from 'node:timers';
-import { URLSearchParams } from 'node:url';
-import { request } from 'undici';
-import type { Reddit } from './types/BadMeme.d';
+import { decodeXML } from 'entities'
+import { setInterval } from 'node:timers'
+import { URLSearchParams } from 'node:url'
+import { request } from 'undici'
+import type { Reddit } from './types/BadMeme.d'
 
-export type { Reddit };
+export type { Reddit }
 
 export interface IBadMemeCache {
     nsfw: boolean
     url: string | string[]
 }
 
-export const cache = new Map<string, Set<IBadMemeCache>>();
-const lastUsed = new Map<string, number>();
-const after = new Map<string, string>();
+export const cache = new Map<string, Set<IBadMemeCache>>()
+const lastUsed = new Map<string, number>()
+const after = new Map<string, string>()
 
 const getItemRespectNSFW = (
     subreddit: string,
@@ -21,19 +21,19 @@ const getItemRespectNSFW = (
     cachedItems = cache.get(subreddit)
 ): IBadMemeCache | null => {
     if (!cachedItems || cachedItems.size === 0) {
-        return null;
+        return null
     }
 
-    const item = [...cachedItems].find(p => allowNSFW || !p.nsfw);
+    const item = [...cachedItems].find(p => allowNSFW || !p.nsfw)
     if (item) {
-        cachedItems.delete(item);
+        cachedItems.delete(item)
         cachedItems.size === 0
             ? cache.delete(subreddit)
-            : cache.set(subreddit, cachedItems);
+            : cache.set(subreddit, cachedItems)
     }
 
-    lastUsed.set(subreddit, Date.now());
-    return item || null;
+    lastUsed.set(subreddit, Date.now())
+    return item || null
 }
 
 export const badmeme = async (
@@ -46,24 +46,24 @@ export const badmeme = async (
     { message: string, error: number, reason?: string } |
     null
 > => {
-    subreddit = subreddit.toLowerCase();
+    subreddit = subreddit.toLowerCase()
 
     if (cache.has(subreddit)) {
-        return getItemRespectNSFW(subreddit, nsfw);
+        return getItemRespectNSFW(subreddit, nsfw)
     }
 
-    const o = new URLSearchParams({ limit: '20' });
+    const o = new URLSearchParams({ limit: '20' })
 
     if (after.has(subreddit)) {
-        o.set('after', after.get(subreddit)!);
+        o.set('after', after.get(subreddit)!)
     }
 
     if (modifier === SortBy.TOP) {
-        o.set('t', timeframe);
+        o.set('t', timeframe)
     }
 
     // https://www.reddit.com/dev/api#GET_new
-    const { body, statusCode } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`);
+    const { body, statusCode } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`)
 
     // When a subreddit doesn't exist, reddit automatically redirects to a search API URL.
     if (statusCode !== 200) {
@@ -73,50 +73,50 @@ export const badmeme = async (
         }
     }
 
-    const j = await body.json() as Reddit;
+    const j = await body.json() as Reddit
 
     if ('error' in j) {
         return j as {
             message: string
             error: number
             reason: string
-        };
+        }
     } else if (!j.data || j.data.children.length === 0) {
-        return null;
+        return null
     }
 
-    const urls: IBadMemeCache[] = [];
+    const urls: IBadMemeCache[] = []
 
     for (const { data } of j.data.children) {
         if (data.is_self || 'crosspost_parent' in data) { // text posts
-            continue;
+            continue
         }
 
         if (data.is_gallery && data.media_metadata) {
-            const images: string[] = [];
+            const images: string[] = []
 
             for (const entry of Object.values(data.media_metadata)) {
                 if (entry.status !== 'valid') {
-                    continue;
+                    continue
                 }
 
-                const url = 'u' in entry.s ? entry.s.u : entry.s.mp4;
-                images.push(decodeXML(url));
+                const url = 'u' in entry.s ? entry.s.u : entry.s.mp4
+                images.push(decodeXML(url))
             }
 
-            urls.push({ nsfw: data.over_18, url: images });
-            continue;
+            urls.push({ nsfw: data.over_18, url: images })
+            continue
         }
 
-        urls.push({ nsfw: data.over_18, url: data.url });
+        urls.push({ nsfw: data.over_18, url: data.url })
     }
 
-    const last = j.data.children.at(-1)!.data.name;
-    const cachedSet = new Set(urls);
-    after.set(subreddit, last);
-    cache.set(subreddit, cachedSet);
+    const last = j.data.children.at(-1)!.data.name
+    const cachedSet = new Set(urls)
+    after.set(subreddit, last)
+    cache.set(subreddit, cachedSet)
 
-    return getItemRespectNSFW(subreddit, nsfw, cachedSet);
+    return getItemRespectNSFW(subreddit, nsfw, cachedSet)
 }
 
 // https://www.jcchouinard.com/documentation-on-reddit-apis-json/
@@ -129,7 +129,7 @@ export const SortBy = {
     RANDOM: 'random',
     RISING: 'rising',
     TOP: 'top'
-} as const;
+} as const
 
 export const Timeframe = {
     HOUR: 'hour',
@@ -138,15 +138,15 @@ export const Timeframe = {
     MONTH: 'month',
     YEAR: 'year',
     ALL: 'all'
-} as const;
+} as const
 
 setInterval(() => {
-    const now = Date.now();
+    const now = Date.now()
     lastUsed.forEach((time, subreddit) => {
         if (now - time >= 60 * 1000 * 10) { // 10 mins
-            lastUsed.delete(subreddit);
-            cache.delete(subreddit);
-            after.delete(subreddit);
+            lastUsed.delete(subreddit)
+            cache.delete(subreddit)
+            after.delete(subreddit)
         }
-    });
-}, 60 * 1000 * 10).unref();
+    })
+}, 60 * 1000 * 10).unref()

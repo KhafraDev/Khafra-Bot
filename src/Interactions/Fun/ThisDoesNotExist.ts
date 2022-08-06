@@ -1,14 +1,14 @@
-import { Interactions } from '#khaf/Interaction';
-import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
-import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist';
-import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
-import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson'
+import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -33,13 +33,13 @@ export class kInteraction extends Interactions {
             ]
         }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const type = interaction.options.getString('type', true);
+        const type = interaction.options.getString('type', true)
         if (type === 'tdne_fuhomer') {
-            const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
+            const [err, homer] = await dontThrow(thisSimpsonDoesNotExist())
 
             if (err !== null) {
                 return {
@@ -57,7 +57,7 @@ export class kInteraction extends Interactions {
                 ]
             }
         } else if (type === 'tdne_word') {
-            const [err, word] = await dontThrow(thisWordDoesNotExist());
+            const [err, word] = await dontThrow(thisWordDoesNotExist())
 
             if (err !== null || word === null) {
                 return {
@@ -73,11 +73,11 @@ export class kInteraction extends Interactions {
             ${word.word.example ? `${italic(underscore(word.word.example))}` : ''}
 
             ${hyperlink('View Online', word.permalink_url)}
-            `);
+            `)
 
             return { embeds: [embed] }
         } else {
-            const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE));
+            const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE))
 
             if (err !== null || image === null) {
                 return {
@@ -86,7 +86,7 @@ export class kInteraction extends Interactions {
                 }
             }
 
-            return image as InteractionReplyOptions;
+            return image as InteractionReplyOptions
         }
     }
 }

@@ -1,6 +1,6 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIEmbed } from 'discord-api-types/v10';
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
 
 export class kCommand extends Command {
     constructor () {
@@ -10,7 +10,7 @@ export class kCommand extends Command {
             args: [0, 0],
             ratelimit: 3,
             aliases: ['link']
-        });
+        })
     }
 
     async init (): Promise<APIEmbed> {
@@ -19,6 +19,6 @@ export class kCommand extends Command {
         [Synergism Discord](https://discord.gg/synergism)
 
         Want to help the bot? [Donate to Platonic](https://patreon.com/synergism). :)
-        `);
+        `)
     }
 }

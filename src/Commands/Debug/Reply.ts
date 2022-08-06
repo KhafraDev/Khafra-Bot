@@ -1,7 +1,7 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -15,10 +15,10 @@ export class kCommand extends Command {
                 args: [0, 0],
                 ratelimit: 3
             }
-        );
+        )
     }
 
     async init (message: Message): Promise<APIEmbed> {
-        return Embed.ok(`Hello, ${message.author}!`);
+        return Embed.ok(`Hello, ${message.author}!`)
     }
 }

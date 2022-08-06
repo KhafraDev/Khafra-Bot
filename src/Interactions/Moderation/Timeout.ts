@@ -1,13 +1,13 @@
-import { Interactions } from '#khaf/Interaction';
-import { days, hours, minutes, weeks } from '#khaf/utility/ms.js';
-import { toString } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction'
+import { days, hours, minutes, weeks } from '#khaf/utility/ms.js'
+import { toString } from '#khaf/utility/Permissions.js'
 import {
     ApplicationCommandOptionType,
     PermissionFlagsBits,
     RESTJSONErrorCodes,
     type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -46,13 +46,13 @@ export class kInteraction extends Interactions {
                     description: 'The reason for timing out this member (displays in mod log).'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -70,8 +70,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const ms = interaction.options.getInteger('duration', true);
-        const user = interaction.options.getUser('user', true);
+        const ms = interaction.options.getInteger('duration', true)
+        const user = interaction.options.getUser('user', true)
 
         try {
             await interaction.guild.members.edit(
@@ -80,7 +80,7 @@ export class kInteraction extends Interactions {
                     communicationDisabledUntil: Date.now() + ms,
                     reason: interaction.options.getString('reason') ?? undefined
                 }
-            );
+            )
         } catch (e) {
             if ((e as DiscordAPIError).code === RESTJSONErrorCodes.MissingPermissions) {
                 return {

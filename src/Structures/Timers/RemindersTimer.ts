@@ -1,14 +1,14 @@
-import { client } from '#khaf/Client';
-import { sql } from '#khaf/database/Postgres.js';
-import { logger } from '#khaf/structures/Logger/FileLogger.js';
-import { Timer } from '#khaf/Timer';
-import type { kReminder } from '#khaf/types/KhafraBot.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { time } from '@discordjs/builders';
+import { client } from '#khaf/Client'
+import { sql } from '#khaf/database/Postgres.js'
+import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { Timer } from '#khaf/Timer'
+import type { kReminder } from '#khaf/types/KhafraBot.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { time } from '@discordjs/builders'
 
 export class RemindersTimer extends Timer {
     constructor () {
-        super({ interval: 30 * 1000 });
+        super({ interval: 30 * 1000 })
     }
 
     async setInterval (): Promise<void> {
@@ -34,30 +34,30 @@ export class RemindersTimer extends Timer {
                 UNION ALL
             
                 SELECT * FROM updated;
-            `;
+            `
 
             for (const row of rows) {
-                void this.action(row);
+                void this.action(row)
             }
         }
     }
 
     async action (reminder: kReminder): Promise<void> {
         try {
-            const user = await client.users.fetch(reminder.userId);
+            const user = await client.users.fetch(reminder.userId)
 
-            const willRemind = reminder.once ? '' : `\n\nWill repeat at ${time(reminder.time)}!`;
+            const willRemind = reminder.once ? '' : `\n\nWill repeat at ${time(reminder.time)}!`
             const remind = Embed.json({
                 color: colors.ok,
                 description: `${reminder.message}${willRemind}`,
                 author: { name: user.tag, icon_url: user.displayAvatarURL() }
-            });
+            })
 
-            await user.send({ embeds: [remind] });
+            await user.send({ embeds: [remind] })
         } catch (e) {
-            logger.error(e, 'reminders error');
+            logger.error(e, 'reminders error')
         } finally {
-            logger.info({ reminder }, 'reminder');
+            logger.info({ reminder }, 'reminder')
         }
     }
 }

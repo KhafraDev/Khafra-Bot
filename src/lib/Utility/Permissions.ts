@@ -1,34 +1,34 @@
-import { isText, isThread, isVoice } from '#khaf/utility/Discord.js';
-import { inlineCode } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildMember, type PermissionResolvable, type RecursiveReadonlyArray, Role } from 'discord.js';
+import { isText, isThread, isVoice } from '#khaf/utility/Discord.js'
+import { inlineCode } from '@discordjs/builders'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { GuildMember, type PermissionResolvable, type RecursiveReadonlyArray, Role } from 'discord.js'
 
 const isRecursiveReadonlyArray = <T>(item: unknown):
-    item is RecursiveReadonlyArray<T> => Array.isArray(item);
+    item is RecursiveReadonlyArray<T> => Array.isArray(item)
 
 export const resolvePerms = (perms: PermissionResolvable): bigint => {
-    let bitfield: bigint | undefined;
+    let bitfield: bigint | undefined
     if (typeof perms === 'string') {
-        bitfield = BigInt(perms);
+        bitfield = BigInt(perms)
     } else if (typeof perms === 'bigint') {
-        bitfield = perms;
+        bitfield = perms
     } else if ('bitfield' in perms) {
-        bitfield = perms.bitfield;
+        bitfield = perms.bitfield
     } else if (isRecursiveReadonlyArray(perms)) {
         for (const item of perms.flat(10) as (`${bigint}` | bigint | keyof typeof PermissionFlagsBits)[]) {
             if (typeof item === 'bigint') {
-                bitfield! |= item;
+                bitfield! |= item
             } else if (typeof item === 'string') {
                 if (isNaN(Number(item))) {
-                    bitfield! |= PermissionFlagsBits[item as keyof typeof PermissionFlagsBits];
+                    bitfield! |= PermissionFlagsBits[item as keyof typeof PermissionFlagsBits]
                 } else {
-                    bitfield! |= BigInt(item);
+                    bitfield! |= BigInt(item)
                 }
             }
         }
     }
 
-    return bitfield!;
+    return bitfield!
 }
 
 /**
@@ -40,13 +40,13 @@ export const hasPerms = (
     perms: PermissionResolvable
 ): boolean => {
     if (typeof channel === 'undefined' || channel === null)
-        return false;
+        return false
     if (!isText(channel) && !isVoice(channel) && !isThread(channel))
-        return true;
+        return true
     if (!(memberOrRole instanceof GuildMember) && !(memberOrRole instanceof Role))
-        return false;
+        return false
 
-    return channel.permissionsFor(memberOrRole).has(perms);
+    return channel.permissionsFor(memberOrRole).has(perms)
 }
 
 /**
@@ -59,37 +59,37 @@ export const hierarchy = (
     b: GuildMember | null,
     strict = true
 ): boolean => {
-    if (!a || !b) return false;
-    if (a.guild.ownerId === a.id) return true;
+    if (!a || !b) return false
+    if (a.guild.ownerId === a.id) return true
 
     return strict
         ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
-        : a.roles.highest.comparePositionTo(b.roles.highest) >= 0;
+        : a.roles.highest.comparePositionTo(b.roles.highest) >= 0
 }
 
 const all = Object.entries(PermissionFlagsBits) as [
     keyof typeof PermissionFlagsBits, bigint
-][];
+][]
 
 export const permResolvableToString = (perms: PermissionResolvable): string[] => {
-    const bitfield = resolvePerms(perms);
-    const has: string[] = [];
+    const bitfield = resolvePerms(perms)
+    const has: string[] = []
 
     for (const [name, bit] of all) {
         if ((bit & bitfield) === bit) {
             if (name === 'Administrator') {
-                return [inlineCode(name)];
+                return [inlineCode(name)]
             }
 
-            has.push(inlineCode(name));
+            has.push(inlineCode(name))
         }
     }
 
-    return has;
+    return has
 }
 
 export const toString = (perms: bigint[]): string => {
     return perms.reduce(
         (a, b) => a | b, 0n
-    ).toString();
+    ).toString()
 }

@@ -1,7 +1,7 @@
-import { Interactions } from '#khaf/Interaction';
-import { toString } from '#khaf/utility/Permissions.js';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -22,10 +22,10 @@ export class kInteraction extends Interactions {
                     description: 'View the current insights for the day.'
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 }

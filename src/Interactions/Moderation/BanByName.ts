@@ -1,16 +1,16 @@
-import { Interactions } from '#khaf/Interaction';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { toString } from '#khaf/utility/Permissions.js';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { toString } from '#khaf/utility/Permissions.js'
 import type {
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     PermissionFlagsBits
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const perms = PermissionFlagsBits.Administrator;
+const perms = PermissionFlagsBits.Administrator
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -27,9 +27,9 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
@@ -56,19 +56,19 @@ export class kInteraction extends Interactions {
             }
         }
 
-        await interaction.deferReply();
+        await interaction.deferReply()
 
-        let banned = '';
+        let banned = ''
         const username = interaction.options.getString('username', true)
         const members = await interaction.guild.members.fetch({
             query: username,
             limit: 250
-        });
+        })
 
         for (const member of members.values()) {
             if (member.bannable) {
-                await member.ban();
-                banned += `${member} (${member.user.tag})\n`;
+                await member.ban()
+                banned += `${member} (${member.user.tag})\n`
             }
         }
 

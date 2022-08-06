@@ -1,19 +1,19 @@
-import type { Arguments } from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, time } from '@discordjs/builders';
-import type { APIEmbed, APIEmbedField } from 'discord-api-types/v10';
-import type { Message, ReplyMessageOptions } from 'discord.js';
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, time } from '@discordjs/builders'
+import type { APIEmbed, APIEmbedField } from 'discord-api-types/v10'
+import type { Message, ReplyMessageOptions } from 'discord.js'
 
-const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
-const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format;
+const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format
+const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format
 
 const field = (name: string, value: number | string, formatter = f): APIEmbedField => ({
     name: bold(name),
     value: typeof value === 'string' ? value : formatter(value),
     inline: true
-});
+})
 
 export class kCommand extends Command {
     constructor () {
@@ -28,11 +28,11 @@ export class kCommand extends Command {
                 args: [1], // some symbols are multi-worded
                 aliases: ['cc']
             }
-        );
+        )
     }
 
     async init (_message: Message, { content }: Arguments): Promise<ReplyMessageOptions | APIEmbed> {
-        const currency = await CoinGecko.get(content);
+        const currency = await CoinGecko.get(content)
 
         if (currency === null) {
             return {
@@ -67,7 +67,7 @@ export class kCommand extends Command {
                 ),
                 field('All Time Low Date:', time(new Date(currency.market_data.atl_date.usd)))
             ]
-        });
+        })
 
         return {
             embeds: [embed]

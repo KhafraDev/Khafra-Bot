@@ -1,8 +1,8 @@
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, time } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, hyperlink, inlineCode, italic, time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -17,11 +17,11 @@ export class kCommand extends Command {
                 args: [0, 0],
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message<true>): Promise<APIEmbed> {
-        const locale = message.guild.preferredLocale;
+        const locale = message.guild.preferredLocale
 
         return Embed.json({
             color: colors.ok,
@@ -48,6 +48,6 @@ export class kCommand extends Command {
                 { name: bold('Verification:'), value: `Level ${message.guild.verificationLevel}`, inline: true },
                 { name: bold('Created:'), value: time(message.guild.createdAt), inline: false }
             ]
-        });
+        })
     }
 }

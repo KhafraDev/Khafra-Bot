@@ -1,12 +1,12 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, time } from '@discordjs/builders';
-import { weather } from '@khaf/weather';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, time } from '@discordjs/builders'
+import { weather } from '@khaf/weather'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2);
+const ctof = (celcius: string | number): string => (+celcius * (9/5) + 32).toFixed(2)
 
 export class kCommand extends Command {
     constructor () {
@@ -21,21 +21,21 @@ export class kCommand extends Command {
                 folder: 'Utility',
                 args: [1]
             }
-        );
+        )
     }
 
     async init (_message: Message, { content }: Arguments): Promise<string | APIEmbed> {
-        const results = await weather(content);
+        const results = await weather(content)
 
         if (!results) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
-            return '❌ An unexpected error occurred!';
+            return '❌ An unexpected error occurred!'
         } else if ('Type' in results) {
-            return `❌ ${results.Type}`;
+            return `❌ ${results.Type}`
         }
 
-        const first = results.observations?.location[0].observation[0];
+        const first = results.observations?.location[0].observation[0]
         if (first === undefined) {
-            return '❌ No location found!';
+            return '❌ No location found!'
         }
 
         return Embed.json({
@@ -52,6 +52,6 @@ export class kCommand extends Command {
                 { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
             ],
             footer: { text: '© 2020 HERE' }
-        });
+        })
     }
 }

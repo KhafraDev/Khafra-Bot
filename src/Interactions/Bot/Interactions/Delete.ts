@@ -1,30 +1,30 @@
-import { KhafraClient, rest } from '#khaf/Bot';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { inlineCode } from '@discordjs/builders';
-import type { APIApplicationCommand } from 'discord-api-types/v10';
-import { Routes } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { join } from 'node:path';
+import { KhafraClient, rest } from '#khaf/Bot'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIApplicationCommand } from 'discord-api-types/v10'
+import { Routes } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { join } from 'node:path'
 
 const config = createFileWatcher(
 	{} as typeof import('../../../../config.json'),
 	join(cwd, 'config.json')
-);
+)
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'interaction',
             name: 'delete'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const commandName = interaction.options.getString('command-name', true);
-        const command = KhafraClient.Interactions.Commands.get(commandName.toLowerCase());
-        const globally = interaction.options.getBoolean('globally');
+        const commandName = interaction.options.getString('command-name', true)
+        const command = KhafraClient.Interactions.Commands.get(commandName.toLowerCase())
+        const globally = interaction.options.getBoolean('globally')
 
         if (!command) {
             return {
@@ -41,8 +41,8 @@ export class kSubCommand extends InteractionSubCommand {
         if (globally !== true) {
             const commands = await rest.get(
                 Routes.applicationGuildCommands(config.botId, config.guildId)
-            ) as APIApplicationCommand[];
-            const commandId = commands.find(c => c.name === command.data.name);
+            ) as APIApplicationCommand[]
+            const commandId = commands.find(c => c.name === command.data.name)
 
             if (!commandId) {
                 return {
@@ -54,13 +54,13 @@ export class kSubCommand extends InteractionSubCommand {
             // https://discord.com/developers/docs/interactions/application-commands#delete-guild-application-command
             await rest.delete(
                 Routes.applicationGuildCommand(config.botId, config.guildId, commandId.id)
-            );
+            )
         } else {
             const commands = await rest.get(
                 Routes.applicationCommands(config.botId)
-            ) as APIApplicationCommand[];
+            ) as APIApplicationCommand[]
 
-            const commandId = commands.find(c => c.name === command.data.name);
+            const commandId = commands.find(c => c.name === command.data.name)
 
             if (!commandId) {
                 return {
@@ -72,7 +72,7 @@ export class kSubCommand extends InteractionSubCommand {
             // https://discord.com/developers/docs/interactions/application-commands#delete-global-application-command
             await rest.delete(
                 Routes.applicationCommand(config.botId, commandId.id)
-            );
+            )
         }
 
         return {

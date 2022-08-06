@@ -1,13 +1,13 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
-import { parse, toCodePoints } from 'twemoji-parser';
-import { parseEmojiList } from '#khaf/utility/Emoji.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
+import { parse, toCodePoints } from 'twemoji-parser'
+import { parseEmojiList } from '#khaf/utility/Emoji.js'
 
-const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
+const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
 
 export class kCommand extends Command {
     constructor () {
@@ -23,14 +23,14 @@ export class kCommand extends Command {
                 args: [1],
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (_message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         if (guildEmojiRegex.test(content)) {
-            const match = guildEmojiRegex.exec(content)!;
-            const { id, name, animated } = match.groups as Record<string, string>;
-            const url = `https://cdn.discordapp.com/emojis/${id}.webp`;
+            const match = guildEmojiRegex.exec(content)!
+            const { id, name, animated } = match.groups as Record<string, string>
+            const url = `https://cdn.discordapp.com/emojis/${id}.webp`
 
             return Embed.json({
                 color: colors.ok,
@@ -42,25 +42,25 @@ export class kCommand extends Command {
                     { name: bold('Name:'), value: name, inline: true },
                     { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true }
                 ]
-            });
+            })
         }
 
-        const cache = await parseEmojiList();
-        const unicodeEmoji = parse(content, { assetType: 'png' });
+        const cache = await parseEmojiList()
+        const unicodeEmoji = parse(content, { assetType: 'png' })
 
         if (cache === null) {
-            return Embed.error('❌ Emojis are currently being cached, please wait a minute!');
+            return Embed.error('❌ Emojis are currently being cached, please wait a minute!')
         }
 
         if (unicodeEmoji.length !== 0) {
-            const codePoints = toCodePoints(unicodeEmoji[0].text);
-            const key = codePoints.join(' ').toUpperCase();
+            const codePoints = toCodePoints(unicodeEmoji[0].text)
+            const key = codePoints.join(' ').toUpperCase()
 
             if (!cache.has(key)) {
-                return Embed.error('❌ This emoji is invalid or unsupported!');
+                return Embed.error('❌ This emoji is invalid or unsupported!')
             }
 
-            const emoji = cache.get(key)!;
+            const emoji = cache.get(key)!
 
             return Embed.json({
                 color: colors.ok,
@@ -71,13 +71,13 @@ export class kCommand extends Command {
                     { name: bold('Category:'), value: emoji.group, inline: true },
                     { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
                 ]
-            });
+            })
         }
 
-        const name = [...cache.values()].find(n => n.comment.endsWith(content));
+        const name = [...cache.values()].find(n => n.comment.endsWith(content))
 
         if (name) {
-            const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0];
+            const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0]
 
             return Embed.json({
                 color: colors.ok,
@@ -88,9 +88,9 @@ export class kCommand extends Command {
                     { name: bold('Category:'), value: name.group, inline: true },
                     { name: bold('Unicode:'), value: name.codePoints, inline: true }
                 ]
-            });
+            })
         }
 
-        return Embed.error('❌ No emojis were found in your message!');
+        return Embed.error('❌ No emojis were found in your message!')
     }
 }

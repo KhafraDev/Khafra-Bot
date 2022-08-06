@@ -1,11 +1,11 @@
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { MessageType, PermissionFlagsBits } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { MessageType, PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 const basic =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks;
+    PermissionFlagsBits.EmbedLinks
 
 /**
  * Check message for required criteria.
@@ -22,8 +22,8 @@ export const Sanitize = (message: Message): message is Message<true> => {
         message.content.length === 0 ||
         !message.guild
     ) {
-        return false;
+        return false
     }
 
-    return hasPerms(message.channel, message.guild.members.me, basic);
+    return hasPerms(message.channel, message.guild.members.me, basic)
 }

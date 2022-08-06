@@ -1,6 +1,6 @@
-import { json } from 'node:stream/consumers';
-import { clearTimeout, setTimeout } from 'node:timers';
-import { request } from 'undici';
+import { json } from 'node:stream/consumers'
+import { clearTimeout, setTimeout } from 'node:timers'
+import { request } from 'undici'
 
 interface Batch {
     batch: number[]
@@ -18,8 +18,8 @@ export class FifteenDotAI {
         content: string,
         emotion: string
     ): Promise<Batch | null> {
-        const ac = new AbortController();
-        const timeout = setTimeout(() => ac.abort(), 60_000);
+        const ac = new AbortController()
+        const timeout = setTimeout(() => ac.abort(), 60_000)
 
         const {
             body,
@@ -39,14 +39,14 @@ export class FifteenDotAI {
             }),
             headersTimeout: 1000 * 60 * 2,
             signal: ac.signal
-        });
+        })
 
-        clearTimeout(timeout);
+        clearTimeout(timeout)
 
         if (statusCode === 200) {
-            return await json(body) as Batch;
+            return await json(body) as Batch
         }
 
-        return null;
+        return null
     }
 }

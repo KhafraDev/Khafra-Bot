@@ -1,15 +1,15 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import type { Warning } from '#khaf/types/KhafraBot.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import * as util from '#khaf/utility/Discord/util.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hierarchy } from '#khaf/utility/Permissions.js';
-import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { GuildMember } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { Warning } from '#khaf/types/KhafraBot.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import * as util from '#khaf/utility/Discord/util.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { hierarchy } from '#khaf/utility/Permissions.js'
+import { plural } from '#khaf/utility/String.js'
+import { bold, inlineCode } from '@discordjs/builders'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { GuildMember } from 'discord.js'
 
 interface WarnInsert {
     insertedid: Warning['id']
@@ -22,7 +22,7 @@ export class kSubCommand extends InteractionSubCommand {
         super({
             references: 'warns',
             name: 'warn'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
@@ -33,11 +33,11 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const points = interaction.options.getInteger('points', true);
-        const reason = interaction.options.getString('reason');
+        const points = interaction.options.getInteger('points', true)
+        const reason = interaction.options.getString('reason')
         const member =
             interaction.options.getMember('member') ??
-            interaction.options.getUser('member', true);
+            interaction.options.getUser('member', true)
 
         if (member instanceof GuildMember) {
             if (
@@ -86,7 +86,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             SELECT k_ts, warns.id AS warnsId, warns.k_points as warnPoints FROM warns
             ORDER BY k_ts DESC;
-        `;
+        `
 
         // something really bad has gone wrong...
         if (rows.length === 0) {
@@ -96,15 +96,15 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0);
-        const k_id = rows[0].insertedid;
+        const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0)
+        const k_id = rows[0].insertedid
 
-        const settings = await util.interactionGetGuildSettings(interaction);
+        const settings = await util.interactionGetGuildSettings(interaction)
 
         if (settings && settings.max_warning_points <= totalPoints) {
             const [kickError] = 'kick' in member
                 ? await dontThrow(member.kick(reason || undefined))
-                : [''];
+                : ['']
 
             if (kickError !== null) {
                 return {
@@ -117,16 +117,16 @@ export class kSubCommand extends InteractionSubCommand {
                 content:
                     `${member} was automatically kicked from the server for having ` +
                     `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
-            });
+            })
         } else {
             await interaction.editReply({
                 content:
                     `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` +
                     ` Member has ${totalPoints.toLocaleString()} points total.`
-            });
+            })
         }
 
-        const kicked = settings && settings.max_warning_points <= totalPoints ? 'Yes' : 'No';
+        const kicked = settings && settings.max_warning_points <= totalPoints ? 'Yes' : 'No'
         const embed = Embed.json({
             color: colors.ok,
             description: `
@@ -137,8 +137,8 @@ export class kSubCommand extends InteractionSubCommand {
             ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
             ${bold('ID:')} ${inlineCode(k_id)}`,
             title: 'Member Warned'
-        });
+        })
 
-        return void util.postToModLog(interaction, [embed], settings);
+        return void util.postToModLog(interaction, [embed], settings)
     }
 }

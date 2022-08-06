@@ -1,16 +1,16 @@
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { decodeXML } from 'entities';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { once } from '#khaf/utility/Memoize.js'
+import { RSSReader } from '#khaf/utility/RSS.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { decodeXML } from 'entities'
 
 const settings = {
     rss: 'https://www.mirror.co.uk/news/world-news/?service=rss',
     main: 'https://www.mirror.co.uk',
     command: ['mirror'],
     author: { name: 'Mirror', iconURL: 'https://i.imgur.com/wuINM4z.png' }
-} as const;
+} as const
 
 interface IMirrorCo {
     title: string
@@ -25,8 +25,8 @@ interface IMirrorCo {
     'media:keywords': string
 }
 
-const rss = new RSSReader<IMirrorCo>();
-const cache = once(async () => rss.cache(settings.rss));
+const rss = new RSSReader<IMirrorCo>()
+const cache = once(async () => rss.cache(settings.rss))
 
 export class kCommand extends Command {
     constructor () {
@@ -40,21 +40,21 @@ export class kCommand extends Command {
                 args: [0, 0],
                 aliases: settings.command.slice(1)
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
-        const state = await cache();
+        const state = await cache()
 
         if (state === null) {
-            return Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!')
         }
 
         if (rss.results.size === 0) {
-            return Embed.error('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!')
         }
 
-        const posts = [...rss.results.values()];
+        const posts = [...rss.results.values()]
         return Embed.json({
             color: colors.ok,
             description: posts
@@ -62,6 +62,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048),
             author: settings.author
-        });
+        })
     }
 }

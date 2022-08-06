@@ -1,8 +1,8 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { request } from 'undici';
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { request } from 'undici'
 
 interface IMCOnline {
     online: true
@@ -59,10 +59,10 @@ interface IMCOffline {
 }
 
 const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
-    const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com');
-    const j = await body.json() as IMCOnline | IMCOffline;
+    const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com')
+    const j = await body.json() as IMCOnline | IMCOffline
 
-    return { playersOnline: j.online ? j.players.online : 0 };
+    return { playersOnline: j.online ? j.players.online : 0 }
 }
 
 const cache = {
@@ -82,25 +82,25 @@ export class kCommand extends Command {
                 aliases: ['meep'],
                 args: [0, 0]
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
         if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
             const sentence = cache.players === 1
                 ? 'is ``1`` player'
-                : `are ${inlineCode(`${cache.players}`)} players`;
-            return Embed.ok(`There ${sentence} on Meepcraft right now!`);
+                : `are ${inlineCode(`${cache.players}`)} players`
+            return Embed.ok(`There ${sentence} on Meepcraft right now!`)
         }
 
-        const players = await fetchMeepOnline();
+        const players = await fetchMeepOnline()
 
-        cache.time = Date.now();
-        cache.players = players.playersOnline;
+        cache.time = Date.now()
+        cache.players = players.playersOnline
 
         const sentence = cache.players === 1
             ? 'is ``1`` player'
-            : `are ${inlineCode(`${cache.players}`)} players`;
-        return Embed.ok(`There ${sentence} on Meepcraft right now!`);
+            : `are ${inlineCode(`${cache.players}`)} players`
+        return Embed.ok(`There ${sentence} on Meepcraft right now!`)
     }
 }

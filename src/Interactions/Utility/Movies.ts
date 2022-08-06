@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isDM, isText } from '#khaf/utility/Discord.js';
-import { bold, hyperlink, time } from '@discordjs/builders';
-import type { APIActionRowComponent, APIMessageActionRowComponent, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { searchMovie } from '#khaf/utility/commands/TMDB'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { bold, hyperlink, time } from '@discordjs/builders'
+import type { APIActionRowComponent, APIMessageActionRowComponent, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const formatMS = (ms: number): string => {
     return Object.entries({
@@ -17,7 +17,7 @@ const formatMS = (ms: number): string => {
     })
         .filter(f => f[1] > 0)
         .map(t => `${t[1]}${t[0]}`)
-        .join(' ');
+        .join(' ')
 }
 
 export class kInteraction extends Interactions {
@@ -33,16 +33,16 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const movies = await searchMovie(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
-        );
+        )
 
         if (!movies) {
             return {
@@ -51,7 +51,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [];
+        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = []
         const embed = Embed.json({
             color: colors.ok,
             title: movies.original_title ?? movies.title,
@@ -76,27 +76,27 @@ export class kInteraction extends Interactions {
                 }
             ],
             footer: { text: 'Data provided by https://www.themoviedb.org/' }
-        });
+        })
 
         if (movies.homepage) {
-            embed.url = movies.homepage;
+            embed.url = movies.homepage
         }
 
         if (movies.imdb_id) {
-            const link = `https://www.imdb.com/title/${movies.imdb_id}/`;
-            embed.fields?.push({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
+            const link = `https://www.imdb.com/title/${movies.imdb_id}/`
+            embed.fields?.push({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true })
 
             components.push(
                 Components.actionRow([
                     Buttons.link('Go to IMDB', link)
                 ])
-            );
+            )
         }
 
         if (movies.poster_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` }
         } else if (movies.backdrop_path) {
-            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` };
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` }
         }
 
         return {

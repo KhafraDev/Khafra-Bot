@@ -1,6 +1,6 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
 interface RandomDUK {
     message: string
@@ -12,13 +12,13 @@ export class kSubCommand extends InteractionSubCommand {
         super({
             references: 'animal',
             name: 'duck'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        await interaction.deferReply();
+        await interaction.deferReply()
 
-        const { body, statusCode } = await request('https://random-d.uk/api/v1/random');
+        const { body, statusCode } = await request('https://random-d.uk/api/v1/random')
 
         if (statusCode !== 200) {
             return {
@@ -27,7 +27,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const j = await body.json() as RandomDUK;
+        const j = await body.json() as RandomDUK
 
         return {
             content: j.url

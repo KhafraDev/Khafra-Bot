@@ -1,5 +1,5 @@
-import { env } from 'node:process';
-import { request } from 'undici';
+import { env } from 'node:process'
+import { request } from 'undici'
 
 interface IOwlBotWord {
     definitions: {
@@ -13,19 +13,19 @@ interface IOwlBotWord {
     pronunciation: string | null
 }
 
-const url = 'https://owlbot.info/api/v4/dictionary/';
+const url = 'https://owlbot.info/api/v4/dictionary/'
 
 export const owlbotio = async (word: string): Promise<IOwlBotWord | null> => {
-    word = encodeURIComponent(word.toLowerCase());
+    word = encodeURIComponent(word.toLowerCase())
     if (!env.OWLBOTIO) {
-        return null;
+        return null
     }
 
     const { body } = await request(`${url}${word}`, {
         headers: {
             Authorization: `Token ${env.OWLBOTIO}`
         }
-    });
+    })
 
-    return body.json() as Promise<IOwlBotWord>;
+    return body.json() as Promise<IOwlBotWord>
 }

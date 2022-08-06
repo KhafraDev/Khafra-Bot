@@ -1,23 +1,23 @@
-import { Interactions } from '#khaf/Interaction';
-import { inlineCode } from '@discordjs/builders';
-import { NASAGetRandom } from '#khaf/utility/commands/NASA';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { inlineCode } from '@discordjs/builders'
+import { NASAGetRandom } from '#khaf/utility/commands/NASA'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'nasa',
             description: 'Gets a random image of space from NASA!'
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (): Promise<InteractionReplyOptions> {
-        const [err, result] = await dontThrow(NASAGetRandom());
+        const [err, result] = await dontThrow(NASAGetRandom())
 
         if (err !== null) {
             return {
@@ -36,10 +36,10 @@ export class kInteraction extends Interactions {
             title: result.title,
             url: result.link,
             image: { url: result.link }
-        });
+        })
 
         if (typeof result.copyright === 'string') {
-            embed.footer = { text: `© ${result.copyright}` };
+            embed.footer = { text: `© ${result.copyright}` }
         }
 
         return {

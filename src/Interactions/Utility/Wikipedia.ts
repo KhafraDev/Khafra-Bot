@@ -1,13 +1,13 @@
-import { Interactions } from '#khaf/Interaction';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { ellipsis, plural } from '#khaf/utility/String.js';
-import { hideLinkEmbed } from '@discordjs/builders';
-import { getArticleById, search } from '@khaf/wikipedia';
-import { randomUUID } from 'node:crypto';
-import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { SelectMenuInteraction} from 'discord.js';
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { ellipsis, plural } from '#khaf/utility/String.js'
+import { hideLinkEmbed } from '@discordjs/builders'
+import { getArticleById, search } from '@khaf/wikipedia'
+import { randomUUID } from 'node:crypto'
+import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { SelectMenuInteraction} from 'discord.js'
+import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -22,15 +22,15 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        const content = interaction.options.getString('article', true);
-        const wiki = await search(content);
-        const id = randomUUID();
+        const content = interaction.options.getString('article', true)
+        const wiki = await search(content)
+        const id = randomUUID()
 
         if (wiki.pages.length === 0) {
             return {
@@ -57,7 +57,7 @@ export class kInteraction extends Interactions {
                     })
                 ])
             ]
-        });
+        })
 
         const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
@@ -69,22 +69,22 @@ export class kInteraction extends Interactions {
                 i.user.id === interaction.user.id &&
                 i.message.id === m.id &&
                 i.customId.endsWith(id)
-        });
+        })
 
         for await (const [i] of c) {
-            await i.deferUpdate();
+            await i.deferUpdate()
 
-            const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!;
-            const summaryRes = await getArticleById(article.id);
-            const summary = summaryRes.query?.pages[`${article.id}`];
+            const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!
+            const summaryRes = await getArticleById(article.id)
+            const summary = summaryRes.query?.pages[`${article.id}`]
 
             if (summary === undefined) {
                 await i.editReply({
                     content: '❌ Invalid response from Wikipedia!',
                     components: disableAll(m)
-                });
+                })
 
-                continue;
+                continue
             }
 
             const embed = Embed.json({
@@ -92,29 +92,29 @@ export class kInteraction extends Interactions {
                 description: ellipsis(summary.extract, 2048),
                 title: summary.title,
                 url: `https://en.wikipedia.org/wiki/${article.key}`
-            });
+            })
 
             if (article.thumbnail) {
                 const image = article.thumbnail.url.startsWith('http')
                     ? article.thumbnail.url
-                    : `https:${article.thumbnail.url}`;
+                    : `https:${article.thumbnail.url}`
 
-                embed.thumbnail = { url: image };
+                embed.thumbnail = { url: image }
             }
 
             await i.editReply({
                 content: hideLinkEmbed(`https://en.wikipedia.org/wiki/${article.key}`),
                 embeds: [embed]
-            });
+            })
         }
 
         // Prevent making an extra API call if the menu is already disabled
-        const raw = m.components[0].components[0].toJSON();
+        const raw = m.components[0].components[0].toJSON()
 
         if (raw.disabled !== true) {
             await interaction.editReply({
                 components: disableAll(m)
-            });
+            })
         }
     }
 }

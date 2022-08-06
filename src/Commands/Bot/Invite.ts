@@ -1,10 +1,10 @@
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold } from '@discordjs/builders';
-import { OAuth2Scopes, PermissionFlagsBits, type APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold } from '@discordjs/builders'
+import { OAuth2Scopes, PermissionFlagsBits, type APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands];
+const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]
 const permissions = [
     PermissionFlagsBits.AddReactions,
     PermissionFlagsBits.AttachFiles,
@@ -20,7 +20,7 @@ const permissions = [
     PermissionFlagsBits.ModerateMembers,
     PermissionFlagsBits.ReadMessageHistory,
     PermissionFlagsBits.SendMessages
-];
+]
 
 export class kCommand extends Command {
     constructor () {
@@ -32,12 +32,12 @@ export class kCommand extends Command {
             args: [0, 0],
             ratelimit: 3,
             aliases: ['botinvite']
-        });
+        })
     }
 
     async init (message: Message): Promise<APIEmbed> {
-        const everything = message.client.generateInvite({ scopes, permissions });
-        const slashCommands = message.client.generateInvite({ scopes, permissions: 0n });
+        const everything = message.client.generateInvite({ scopes, permissions })
+        const slashCommands = message.client.generateInvite({ scopes, permissions: 0n })
 
         return Embed.json({
             color: colors.ok,
@@ -45,6 +45,6 @@ export class kCommand extends Command {
                 { name: bold('Everything:'), value: everything },
                 { name: bold('Enable slash commands and buttons:'), value: slashCommands }
             ]
-        });
+        })
     }
 }

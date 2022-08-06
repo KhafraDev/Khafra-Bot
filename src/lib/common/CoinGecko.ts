@@ -1,6 +1,6 @@
-import { once } from '#khaf/utility/Memoize.js';
-import { Client } from 'undici';
-import { URLSearchParams } from 'node:url';
+import { once } from '#khaf/utility/Memoize.js'
+import { Client } from 'undici'
+import { URLSearchParams } from 'node:url'
 
 type CoingeckoDict<T = string> = Record<string, T>
 
@@ -50,49 +50,49 @@ interface Crypto {
     last_updated: string
 }
 
-const client = new Client('https://api.coingecko.com');
+const client = new Client('https://api.coingecko.com')
 const options = new URLSearchParams({
     tickers: 'false',
     community_data: 'false',
     developer_data: 'false'
-}).toString();
+}).toString()
 
 export class CoinGecko {
     static list = once(async () => {
         const { body } = await client.request({
             path: '/api/v3/coins/list?include_platform=false',
             method: 'GET'
-        });
+        })
 
-        return await body.json() as { id: string, name: string, symbol: string }[];
-    });
+        return await body.json() as { id: string, name: string, symbol: string }[]
+    })
 
     static async get (query: string): Promise<Crypto | null> {
-        const list = await CoinGecko.list() ?? [];
+        const list = await CoinGecko.list() ?? []
 
-        let cryptoId = '';
-        const q = query.toLowerCase();
+        let cryptoId = ''
+        const q = query.toLowerCase()
 
         for (const { id, name, symbol } of list) {
             if (id === q || symbol === q || name.toLowerCase() === q) {
-                cryptoId = id;
+                cryptoId = id
                 break
             }
         }
 
         if (cryptoId === '') {
-            return null;
+            return null
         }
 
         const { body, statusCode } = await client.request({
             path: `/api/v3/coins/${cryptoId}?${options}`,
             method: 'GET'
-        });
+        })
 
         if (statusCode !== 200) {
-            return null;
+            return null
         }
 
-        return body.json() as Promise<Crypto>;
+        return body.json() as Promise<Crypto>
     }
 }

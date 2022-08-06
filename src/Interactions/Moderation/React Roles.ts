@@ -1,22 +1,22 @@
-import { Interactions } from '#khaf/Interaction';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms, toString } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { hasPerms, toString } from '#khaf/utility/Permissions.js'
+import { inlineCode } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type {
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     NewsChannel,
     TextChannel,
     ThreadChannel
-} from 'discord.js';
-import { GuildMember, GuildMemberRoleManager, Role, resolveColor } from 'discord.js';
-import { parse } from 'twemoji-parser';
+} from 'discord.js'
+import { GuildMember, GuildMemberRoleManager, Role, resolveColor } from 'discord.js'
+import { parse } from 'twemoji-parser'
 
-type Channel = TextChannel | NewsChannel | ThreadChannel;
+type Channel = TextChannel | NewsChannel | ThreadChannel
 
 interface GuildMatchGroups {
     animated: undefined | 'a'
@@ -24,8 +24,8 @@ interface GuildMatchGroups {
     id: Snowflake
 }
 
-const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/;
-const perms = PermissionFlagsBits.SendMessages;
+const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
+const perms = PermissionFlagsBits.SendMessages
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -66,13 +66,13 @@ export class kInteraction extends Interactions {
                 }
                 // once repeating choices are added, allow multiple roles!!!
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -90,14 +90,14 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const channel = interaction.options.getChannel('channel', true) as Channel;
-        const role = interaction.options.getRole('role', true);
-        const icon = interaction.options.getString('icon');
+        const channel = interaction.options.getChannel('channel', true) as Channel
+        const role = interaction.options.getRole('role', true)
+        const icon = interaction.options.getString('icon')
         const text =
             interaction.options.getString('message') ??
             `Press the button below to get the ${role} role!
             
-            Clicking the button again will take the role away!`;
+            Clicking the button again will take the role away!`
 
         if (!hasPerms(channel, interaction.guild.members.me, perms)) {
             return {
@@ -143,21 +143,21 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const component = Buttons.approve(`Get ${role.name}`.slice(0, 80), role.id);
+        const component = Buttons.approve(`Get ${role.name}`.slice(0, 80), role.id)
 
         if (icon) {
             if (guildEmojiRegex.test(icon)) {
-                const match = guildEmojiRegex.exec(icon) as RegExpExecArray & { groups: GuildMatchGroups };
+                const match = guildEmojiRegex.exec(icon) as RegExpExecArray & { groups: GuildMatchGroups }
                 component.emoji = {
                     animated: match.groups.animated ? true : undefined,
                     id: match.groups.id,
                     name: match.groups.name
-                };
+                }
             } else {
-                const parsed = parse(icon);
+                const parsed = parse(icon)
 
                 if (parsed.length !== 0) {
-                    component.emoji = { name: parsed[0].text };
+                    component.emoji = { name: parsed[0].text }
                 }
             }
         }
@@ -172,7 +172,7 @@ export class kInteraction extends Interactions {
             components: [
                 Components.actionRow([component])
             ]
-        }));
+        }))
 
         if (err !== null) {
             return {

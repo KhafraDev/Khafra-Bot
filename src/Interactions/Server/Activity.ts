@@ -1,17 +1,17 @@
-import { rest } from '#khaf/Bot';
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { toString } from '#khaf/utility/Permissions.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { rest } from '#khaf/Bot'
+import { Interactions } from '#khaf/Interaction'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
     APIInvite, RESTPostAPIApplicationCommandsJSONBody,
     RESTPostAPIChannelInviteJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType, ChannelType,
     InviteTargetType, PermissionFlagsBits, Routes
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js'
 
 const Activities = {
     'Poker': '755827207812677713',
@@ -27,7 +27,7 @@ const Activities = {
     'Checkers': '832013003968348200',
     // 'Sketchy Artist': '879864070101172255',
     'Putt Party': '832012854282158180'
-} as const;
+} as const
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -55,13 +55,13 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -79,8 +79,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const activityId = interaction.options.getString('game', true);
-        const channel = interaction.options.getChannel('channel', true) as VoiceChannel;
+        const activityId = interaction.options.getString('game', true)
+        const channel = interaction.options.getChannel('channel', true) as VoiceChannel
 
         const [fetchError, invite] = await dontThrow(rest.post(
             Routes.channelInvites(channel.id),
@@ -92,7 +92,7 @@ export class kInteraction extends Interactions {
                     target_application_id: activityId
                 } as RESTPostAPIChannelInviteJSONBody
             }
-        ) as Promise<APIInvite>);
+        ) as Promise<APIInvite>)
 
         if (fetchError !== null) {
             return {
@@ -101,7 +101,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
+        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`))
         return {
             content: `${hl} to open ${invite.target_application!.name} in ${channel}!`
         }

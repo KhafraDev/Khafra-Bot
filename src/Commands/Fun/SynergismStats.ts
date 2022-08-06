@@ -1,10 +1,10 @@
-import { Command } from '#khaf/Command';
-import { Kongregate } from '#khaf/utility/commands/SynergismStats';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, inlineCode } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { request } from 'undici';
+import { Command } from '#khaf/Command'
+import { Kongregate } from '#khaf/utility/commands/SynergismStats'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { bold, inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { request } from 'undici'
 
 export class kCommand extends Command {
     constructor () {
@@ -18,21 +18,21 @@ export class kCommand extends Command {
                 args: [0, 0],
                 aliases: ['synergismstat']
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
-        const stats = await Kongregate();
-        const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'));
+        const stats = await Kongregate()
+        const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'))
 
         if (stats === null) {
-            return Embed.error('Failed to fetch the stats!');
+            return Embed.error('Failed to fetch the stats!')
         } else if (err !== null) {
-            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`)
         }
 
-        const quarks = await quarkBonus.body.json() as { bonus: number };
-        const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g);
+        const quarks = await quarkBonus.body.json() as { bonus: number }
+        const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g)
 
         return Embed.json({
             color: colors.ok,
@@ -42,6 +42,6 @@ export class kCommand extends Command {
             ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
             Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings!`,
             fields: [{ name: bold('Quark Bonus:'), value: `${quarks.bonus}%`, inline: true }]
-        });
+        })
     }
 }

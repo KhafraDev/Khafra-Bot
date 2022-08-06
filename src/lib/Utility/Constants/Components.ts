@@ -8,8 +8,8 @@ import {
     type APISelectMenuComponent,
     type APITextInputComponent,
     type APIActionRowComponentTypes
-} from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export const Components = {
     actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(components: T[] = []): APIActionRowComponent<T> {
@@ -37,7 +37,7 @@ export const Components = {
     }
 }
 
-type ButtonOptions = Pick<APIButtonComponent, 'emoji' | 'disabled'>;
+type ButtonOptions = Pick<APIButtonComponent, 'emoji' | 'disabled'>
 
 export const Buttons = {
     approve (label = 'approve', id = 'approve', options: ButtonOptions = {}): APIButtonComponent {
@@ -93,26 +93,26 @@ type ToggleableComponent =
     | { components: APIActionRowComponent<APIButtonComponent>[] }
 
 const toggleComponents = (item: ToggleableComponent, disabled: boolean): APIActionRowComponent<APIMessageActionRowComponent>[] => {
-    if (!item.components) return [];
+    if (!item.components) return []
 
-    const rows: APIActionRowComponent<APIMessageActionRowComponent>[] = [];
+    const rows: APIActionRowComponent<APIMessageActionRowComponent>[] = []
 
     for (const { components } of item.components) {
-        const newRow = Components.actionRow();
+        const newRow = Components.actionRow()
         for (const button of components) {
-            const rawButton = 'toJSON' in button ? button.toJSON() : button;
-            rawButton.disabled = disabled;
+            const rawButton = 'toJSON' in button ? button.toJSON() : button
+            rawButton.disabled = disabled
 
-            newRow.components.push(rawButton);
+            newRow.components.push(rawButton)
         }
 
-        rows.push(newRow);
+        rows.push(newRow)
     }
 
-    return rows;
+    return rows
 }
 
 export const disableAll = (item: ToggleableComponent):
-    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, true);
+    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, true)
 export const enableAll = (item: ToggleableComponent):
-    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, false);
+    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, false)

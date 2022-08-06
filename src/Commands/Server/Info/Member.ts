@@ -1,34 +1,34 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { logger } from '#khaf/structures/Logger/FileLogger.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time } from '@discordjs/builders';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { ActivityType } from 'discord-api-types/v10';
-import type { Activity, Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { ActivityType } from 'discord-api-types/v10'
+import type { Activity, Message } from 'discord.js'
 
 const formatPresence = (activities: Activity[] | undefined): string => {
-    if (!Array.isArray(activities)) return '';
+    if (!Array.isArray(activities)) return ''
 
-    const push: string[] = [];
+    const push: string[] = []
     for (const activity of activities) {
         switch (activity.type) {
             case ActivityType.Custom:
-                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`);
-                break;
+                push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`)
+                break
             case ActivityType.Listening:
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
-                break;
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`)
+                break
             case ActivityType.Playing:
-                push.push(`Playing ${italic(activity.name)}.`);
-                break;
+                push.push(`Playing ${italic(activity.name)}.`)
+                break
             default:
-                logger.info(activity, 'unknown activity');
+                logger.info(activity, 'unknown activity')
         }
     }
 
-    return push.join('\n');
+    return push.join('\n')
 }
 
 export class kCommand extends Command {
@@ -45,14 +45,14 @@ export class kCommand extends Command {
                 args: [0, 1],
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
-        const member = await getMentions(message, 'members', content) ?? message.member;
+        const member = await getMentions(message, 'members', content) ?? message.member
 
         if (!member) {
-            return Embed.error('No guild member mentioned.');
+            return Embed.error('No guild member mentioned.')
         }
 
         // max role length = 84 characters
@@ -75,6 +75,6 @@ export class kCommand extends Command {
                 }
             ],
             footer: { text: 'For general user info use the user command!' }
-        });
+        })
     }
 }

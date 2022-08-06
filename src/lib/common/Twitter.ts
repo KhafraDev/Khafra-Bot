@@ -3,11 +3,11 @@
  * look at how Twitter does it, and then do the EXACT OPPOSITE.
  */
 
-import { Buffer } from 'node:buffer';
-import { env } from 'node:process';
-import { request } from 'undici';
+import { Buffer } from 'node:buffer'
+import { env } from 'node:process'
+import { request } from 'undici'
 
-type Indices = [number, number];
+type Indices = [number, number]
 interface Media {
     id: number
     id_str: string
@@ -118,10 +118,10 @@ interface ITweet {
     lang: string
 }
 
-let token: string | null = null;
+let token: string | null = null
 
 const getTwitterOAUTH = async (): Promise<string> => {
-    const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64');
+    const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64')
     const { body } = await request('https://api.twitter.com/oauth2/token', {
         method: 'POST',
         body: 'grant_type=client_credentials',
@@ -129,35 +129,35 @@ const getTwitterOAUTH = async (): Promise<string> => {
             Authorization: `Basic ${creds}`,
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         }
-    });
-    const j = await body.json() as OAuth;
-    return `${j.token_type} ${j.access_token}`;
+    })
+    const j = await body.json() as OAuth
+    return `${j.token_type} ${j.access_token}`
 }
 
 export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
-    token ??= await getTwitterOAUTH();
+    token ??= await getTwitterOAUTH()
 
     const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
         headers: {
             Authorization: token
         }
-    });
+    })
 
-    const j = await body.json() as ITweet;
+    const j = await body.json() as ITweet
 
-    const media = j.extended_entities?.media;
+    const media = j.extended_entities?.media
     if (!media || media.length === 0)
-        return;
+        return
 
     if (media[0]!.type === 'video' || media[0]!.type === 'animated_gif') {
-        const medias = media[0]!.video_info.variants;
+        const medias = media[0]!.video_info.variants
         return medias
             .filter(u => u.content_type !== 'application/x-mpegURL')
             .map(m => m.url)
-            .join('\n');
+            .join('\n')
     }
 
     return media
         .map(m => m.media_url_https)
-        .join('\n');
+        .join('\n')
 }

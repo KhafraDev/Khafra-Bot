@@ -1,16 +1,16 @@
-import { Command } from '#khaf/Command';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import { decodeXML } from 'entities';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { once } from '#khaf/utility/Memoize.js'
+import { RSSReader } from '#khaf/utility/RSS.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { decodeXML } from 'entities'
 
 const settings = {
     rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US',
     main: 'https://reuters.com',
     command: ['reuters'],
     author: { name: 'Reuters', iconURL: 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048' }
-} as const;
+} as const
 
 interface IReuters {
     title: string
@@ -21,9 +21,9 @@ interface IReuters {
     source: string
 }
 
-const rss = new RSSReader<IReuters>();
+const rss = new RSSReader<IReuters>()
 // https://codarium.substack.com/p/returning-the-killed-rss-of-reuters
-const cache = once(async () => rss.cache(settings.rss));
+const cache = once(async () => rss.cache(settings.rss))
 
 export class kCommand extends Command {
     constructor () {
@@ -37,21 +37,21 @@ export class kCommand extends Command {
                 args: [0, 0],
                 aliases: settings.command.slice(1)
             }
-        );
+        )
     }
 
     async init (): Promise<APIEmbed> {
-        const state = await cache();
+        const state = await cache()
 
         if (state === null) {
-            return Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!')
         }
 
         if (rss.results.size === 0) {
-            return Embed.error('An unexpected error occurred!');
+            return Embed.error('An unexpected error occurred!')
         }
 
-        const posts = [...rss.results.values()];
+        const posts = [...rss.results.values()]
         return Embed.json({
             color: colors.ok,
             description: posts
@@ -59,6 +59,6 @@ export class kCommand extends Command {
                 .join('\n')
                 .slice(0, 2048),
             author: settings.author
-        });
+        })
     }
 }

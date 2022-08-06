@@ -1,11 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { Buttons, Components } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, time } from '@discordjs/builders';
-import { npm } from '@khaf/npm';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, hyperlink, inlineCode, time } from '@discordjs/builders'
+import { npm } from '@khaf/npm'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -25,15 +25,15 @@ export class kInteraction extends Interactions {
                     description: 'Package version to get, defaults to the latest.'
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const name = interaction.options.getString('name', true);
-        const version = interaction.options.getString('version') ?? 'latest';
-        const p = await npm(name);
+        const name = interaction.options.getString('name', true)
+        const version = interaction.options.getString('version') ?? 'latest'
+        const p = await npm(name)
 
         if ('code' in p) {
             return {
@@ -47,14 +47,14 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const ver = version.startsWith('v') ? version.slice(1) : version;
+        const ver = version.startsWith('v') ? version.slice(1) : version
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']];
-        const link = `https://npmjs.com/package/${dist.name}`;
+        const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']]
+        const link = `https://npmjs.com/package/${dist.name}`
         const maintainers = dist.maintainers
             .slice(0, 10)
             .map(u => u.name)
-            .join(', ');
+            .join(', ')
 
         const embed = Embed.json({
             color: colors.ok,
@@ -80,7 +80,7 @@ export class kInteraction extends Interactions {
                 { name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true },
                 { name: bold('Maintainers:'), value: maintainers }
             ]
-        });
+        })
 
         return {
             embeds: [embed],

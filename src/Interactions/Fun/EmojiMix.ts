@@ -1,28 +1,28 @@
-import { Interactions } from '#khaf/Interaction';
-import { chunkSafe } from '#khaf/utility/Array.js';
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10';
-import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { InteractionCollector } from 'discord.js';
-import { randomUUID } from 'node:crypto';
-import { URL } from 'node:url';
-import { parse } from 'twemoji-parser';
-import { request } from 'undici';
+import { Interactions } from '#khaf/Interaction'
+import { chunkSafe } from '#khaf/utility/Array.js'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { inlineCode } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionCollector } from 'discord.js'
+import { randomUUID } from 'node:crypto'
+import { URL } from 'node:url'
+import { parse } from 'twemoji-parser'
+import { request } from 'undici'
 
 const Subcommands = {
     LIST: 'list',
     MIX: 'mix'
-} as const;
+} as const
 
 const SubcommandOptions = {
     LIST: 'list',
     FIRST: 'first',
     SECOND: 'second'
-} as const;
+} as const
 
 interface EmojiKitchen {
     locale: string
@@ -50,8 +50,8 @@ interface EmojiKitchen {
     next: string
 }
 
-const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/main/emojis.txt';
-const list: string[] = [];
+const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/main/emojis.txt'
+const list: string[] = []
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -84,17 +84,17 @@ export class kInteraction extends Interactions {
                     description: 'List the emojis currently supported'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const subcommand = interaction.options.getSubcommand(true);
+        const subcommand = interaction.options.getSubcommand(true)
 
         if (subcommand === Subcommands.LIST) {
             if (list.length === 0) {
-                const [err, res] = await dontThrow(request(supportedListURL));
+                const [err, res] = await dontThrow(request(supportedListURL))
 
                 if (err !== null) {
                     return {
@@ -103,17 +103,17 @@ export class kInteraction extends Interactions {
                     }
                 }
 
-                const listJoined = await res.body.text();
-                const emojis = parse(listJoined);
+                const listJoined = await res.body.text()
+                const emojis = parse(listJoined)
 
-                list.push(...emojis.map(e => e.text));
+                list.push(...emojis.map(e => e.text))
             }
 
-            let page = 0;
-            const uuid = randomUUID();
+            let page = 0
+            const uuid = randomUUID()
             const pages = chunkSafe(list, 195).map(
                 items => Embed.ok(items.join(' '))
-            );
+            )
 
             const i = await interaction.reply({
                 embeds: [pages[page]],
@@ -125,7 +125,7 @@ export class kInteraction extends Interactions {
                     ])
                 ],
                 fetchReply: true
-            });
+            })
 
             const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
                 interactionType: InteractionType.MessageComponent,
@@ -136,22 +136,22 @@ export class kInteraction extends Interactions {
                     i.customId === `${uuid}-next` ||
                     i.customId === `${uuid}-prev` ||
                     i.customId === `${uuid}-trash`
-            });
+            })
 
             for await (const [collected] of collector) {
-                if (collected.customId.endsWith('-trash')) break;
+                if (collected.customId.endsWith('-trash')) break
 
-                collected.customId.endsWith('next') ? page++ : page--;
-                if (page < 0) page = pages.length - 1;
-                if (page >= pages.length) page = 0;
+                collected.customId.endsWith('next') ? page++ : page--
+                if (page < 0) page = pages.length - 1
+                if (page >= pages.length) page = 0
 
                 await collected.update({
                     embeds: [pages[page]],
                     components: i.components
-                });
+                })
             }
 
-            const last = collector.collected.last();
+            const last = collector.collected.last()
 
             if (
                 collector.collected.size !== 0 &&
@@ -159,20 +159,20 @@ export class kInteraction extends Interactions {
             ) {
                 return void await last.update({
                     components: disableAll(i)
-                });
+                })
             } else {
                 return void await interaction.editReply({
                     components: disableAll(i)
-                });
+                })
             }
         }
 
-        const emojiOne = interaction.options.getString(SubcommandOptions.FIRST, true);
-        const emojiTwo = interaction.options.getString(SubcommandOptions.SECOND, true);
+        const emojiOne = interaction.options.getString(SubcommandOptions.FIRST, true)
+        const emojiTwo = interaction.options.getString(SubcommandOptions.SECOND, true)
 
-        const query = `${emojiOne}_${emojiTwo}`;
-        const oneParsed = parse(emojiOne);
-        const twoParsed = parse(emojiTwo);
+        const query = `${emojiOne}_${emojiTwo}`
+        const oneParsed = parse(emojiOne)
+        const twoParsed = parse(emojiTwo)
 
         if (oneParsed.map(p => p.text).join('') !== emojiOne) {
             return {
@@ -187,18 +187,18 @@ export class kInteraction extends Interactions {
         }
 
         // https://github.com/UCYT5040/Google-Sticker-Mashup-Research
-        const api = new URL('https://tenor.googleapis.com/v2/featured');
-        api.searchParams.append('key', 'AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ');
-        api.searchParams.append('client_key', 'gboard');
-        api.searchParams.append('contentfilter', 'high');
-        api.searchParams.append('media_filter', 'png_transparent');
-        api.searchParams.append('component', 'proactive');
-        api.searchParams.append('collection', 'emoji_kitchen_v5');
-        api.searchParams.append('locale', 'en_US');
-        api.searchParams.append('country', 'US');
-        api.searchParams.append('q', query);
+        const api = new URL('https://tenor.googleapis.com/v2/featured')
+        api.searchParams.append('key', 'AIzaSyAyimkuYQYF_FXVALexPuGQctUWRURdCYQ')
+        api.searchParams.append('client_key', 'gboard')
+        api.searchParams.append('contentfilter', 'high')
+        api.searchParams.append('media_filter', 'png_transparent')
+        api.searchParams.append('component', 'proactive')
+        api.searchParams.append('collection', 'emoji_kitchen_v5')
+        api.searchParams.append('locale', 'en_US')
+        api.searchParams.append('country', 'US')
+        api.searchParams.append('q', query)
 
-        const [err, res] = await dontThrow(request(api));
+        const [err, res] = await dontThrow(request(api))
 
         if (err !== null) {
             return {
@@ -207,7 +207,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const j = await res.body.json() as EmojiKitchen;
+        const j = await res.body.json() as EmojiKitchen
 
         if (j.results.length === 0) {
             return {
@@ -220,7 +220,7 @@ export class kInteraction extends Interactions {
             color: colors.ok,
             title: `${emojiOne} + ${emojiTwo} =`,
             image: { url: j.results[0].url }
-        });
+        })
 
         return {
             embeds: [embed]

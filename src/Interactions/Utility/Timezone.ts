@@ -1,14 +1,14 @@
-import { Interactions } from '#khaf/Interaction';
-import { AsyncQueue } from '#khaf/structures/AsyncQueue.js';
-import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { env } from 'node:process';
-import { setTimeout } from 'node:timers/promises';
-import { URLSearchParams } from 'node:url';
-import { request, type Dispatcher } from 'undici';
+import { Interactions } from '#khaf/Interaction'
+import { AsyncQueue } from '#khaf/structures/AsyncQueue.js'
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { env } from 'node:process'
+import { setTimeout } from 'node:timers/promises'
+import { URLSearchParams } from 'node:url'
+import { request, type Dispatcher } from 'undici'
 
-const queue = new AsyncQueue();
-const queue2 = new AsyncQueue();
+const queue = new AsyncQueue()
+const queue2 = new AsyncQueue()
 
 interface NominatimResponse {
     place_id: number
@@ -44,7 +44,7 @@ interface TimezoneDBResponse {
 }
 
 const isValidResponse = (json: unknown): json is [NominatimResponse] =>
-    Array.isArray(json) && json.length === 1;
+    Array.isArray(json) && json.length === 1
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -64,22 +64,22 @@ export class kInteraction extends Interactions {
                     description: 'Choose 12 or 24 hour time, defaults to 12 hours.'
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const location = interaction.options.getString('location', true);
-        const hour12 = interaction.options.getBoolean('12hour') ?? true;
+        const location = interaction.options.getString('location', true)
+        const hour12 = interaction.options.getBoolean('12hour') ?? true
 
-        await queue.wait();
+        await queue.wait()
 
-        let resNom: Dispatcher.ResponseData | undefined;
-        const queryNom = new URLSearchParams();
-        queryNom.set('format', 'jsonv2');
-        queryNom.set('limit', '1');
-        queryNom.set('q', location);
+        let resNom: Dispatcher.ResponseData | undefined
+        const queryNom = new URLSearchParams()
+        queryNom.set('format', 'jsonv2')
+        queryNom.set('limit', '1')
+        queryNom.set('q', location)
 
         try {
             resNom = await request(
@@ -91,16 +91,16 @@ export class kInteraction extends Interactions {
                         'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)'
                     }
                 }
-            );
+            )
         } finally {
             // No heavy uses (an absolute maximum of 1 request per second).
             void setTimeout(1000).then(
                 () => queue.dequeue()
-            );
+            )
         }
 
-        const jNom = await resNom.body.json() as [NominatimResponse];
-        await queue2.wait();
+        const jNom = await resNom.body.json() as [NominatimResponse]
+        await queue2.wait()
 
         if (!isValidResponse(jNom)) {
             return {
@@ -109,23 +109,23 @@ export class kInteraction extends Interactions {
             }
         }
 
-        let resTDB: Dispatcher.ResponseData | undefined;
-        const queryTDB = new URLSearchParams();
-        queryTDB.set('key', env.TIMEZONEDB!);
-        queryTDB.set('format', 'json');
-        queryTDB.set('by', 'position');
-        queryTDB.set('lat', jNom[0].lat);
-        queryTDB.set('lng', jNom[0].lon);
+        let resTDB: Dispatcher.ResponseData | undefined
+        const queryTDB = new URLSearchParams()
+        queryTDB.set('key', env.TIMEZONEDB!)
+        queryTDB.set('format', 'json')
+        queryTDB.set('by', 'position')
+        queryTDB.set('lat', jNom[0].lat)
+        queryTDB.set('lng', jNom[0].lon)
 
         try {
-            resTDB = await request(`https://api.timezonedb.com/v2.1/get-time-zone?${queryTDB}`);
+            resTDB = await request(`https://api.timezonedb.com/v2.1/get-time-zone?${queryTDB}`)
         } finally {
             void setTimeout(1000).then(
                 () => queue2.dequeue()
-            );
+            )
         }
 
-        const jTDB = await resTDB.body.json() as TimezoneDBResponse;
+        const jTDB = await resTDB.body.json() as TimezoneDBResponse
 
         return {
             content: new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(

@@ -1,8 +1,8 @@
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import type { APIEmbed } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 const superscript: Record<string, string> = {
     '0': '⁰', '1': '¹', '2': '²',
@@ -18,7 +18,7 @@ const superscript: Record<string, string> = {
     't': 'ᵗ', 'u': 'ᵘ', 'v': 'ᵛ',
     'w': 'ʷ', 'x': 'ˣ', 'y': 'ʸ',
     'z': 'ᶻ'
-};
+}
 
 export class kCommand extends Command {
     constructor () {
@@ -33,14 +33,14 @@ export class kCommand extends Command {
                 args: [1],
                 ratelimit: 3
             }
-        );
+        )
     }
 
     async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
         const split = [...content]
             .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
-            .join('');
+            .join('')
 
-        return Embed.ok(split);
+        return Embed.ok(split)
     }
 }

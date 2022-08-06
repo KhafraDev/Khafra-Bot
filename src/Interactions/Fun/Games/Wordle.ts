@@ -1,15 +1,15 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { Json } from '#khaf/utility/Constants/Path.js';
-import { inlineCode } from '@discordjs/builders';
-import { createCanvas } from '@napi-rs/canvas';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { Json } from '#khaf/utility/Constants/Path.js'
+import { inlineCode } from '@discordjs/builders'
+import { createCanvas } from '@napi-rs/canvas'
 import {
     TextInputStyle,
     type APIActionRowComponent,
     type APIEmbed,
     type APIMessageActionRowComponent
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     InteractionCollector,
     type TextInputModalData,
@@ -18,32 +18,32 @@ import {
     type InteractionReplyOptions,
     type ModalSubmitInteraction,
     type WebhookEditMessageOptions
-} from 'discord.js';
-import type { Buffer } from 'node:buffer';
-import { randomUUID } from 'node:crypto';
-import { readFileSync } from 'node:fs';
+} from 'discord.js'
+import type { Buffer } from 'node:buffer'
+import { randomUUID } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 
 const Dims = {
     Width: 330,
     Box: 62,
     GuessWidth: 29
-} as const;
+} as const
 
 // https://reichel.dev/blog/reverse-engineering-wordle.html#looking-at-the-source
 // This article did help, however none of the code
 // provided in the article was used (nor did it work).
 
-const games = new Set<string>();
+const games = new Set<string>()
 /* Words that cannot be chosen, but are valid guesses */
-const guessWords: string[] = [];
+const guessWords: string[] = []
 /* Words that can be chosen */
-const WordList: string[] = [];
-const WordleEpoch = new Date(2021, 5, 19, 0, 0, 0, 0).getTime();
+const WordList: string[] = []
+const WordleEpoch = new Date(2021, 5, 19, 0, 0, 0, 0).getTime()
 
 const wordleChoose = (): string => {
-    const t = new Date().setHours(0, 0, 0, 0) - WordleEpoch;
+    const t = new Date().setHours(0, 0, 0, 0) - WordleEpoch
 
-    return WordList[Math.round(t / 864e5) % WordList.length];
+    return WordList[Math.round(t / 864e5) % WordList.length]
 }
 
 const wordleGetShareComponent = (
@@ -52,36 +52,36 @@ const wordleGetShareComponent = (
     highContrast: boolean
 ): APIActionRowComponent<APIMessageActionRowComponent> => {
     // const dayOffset = Math.floor((Date.now() - WordleEpoch) / 86_400_000);
-    let board = `Wordle ${guesses.length}/6\n\n`;
+    let board = `Wordle ${guesses.length}/6\n\n`
 
     for (let guessIdx = 0; guessIdx < guesses.length; guessIdx++) {
-        const guess = guesses[guessIdx];
-        let line = '';
+        const guess = guesses[guessIdx]
+        let line = ''
 
         for (let letters = 0; letters < 5; letters++) {
             if (word[letters] === guess[letters]) {
-                line += highContrast ? '🟧 ' : '🟩 ';
+                line += highContrast ? '🟧 ' : '🟩 '
             } else if (word.includes(guess[letters])) {
-                line += highContrast ? '🟦 ' : '🟨 ';
+                line += highContrast ? '🟦 ' : '🟨 '
             } else {
-                line += '⬛ ';
+                line += '⬛ '
             }
         }
 
-        board += `${line.trimEnd()}\n`;
+        board += `${line.trimEnd()}\n`
     }
 
-    board += '\nBy @KhafraDev!';
+    board += '\nBy @KhafraDev!'
 
     const link = Buttons.link(
         'Share on Twitter',
         `https://twitter.com/compose/tweet?text=${encodeURIComponent(board)}`
-    );
+    )
 
     return Components.actionRow([
         ...c[0].components,
         link
-    ]);
+    ])
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -89,7 +89,7 @@ export class kSubCommand extends InteractionSubCommand {
         super({
             references: 'games',
             name: 'wordle'
-        });
+        })
     }
 
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
@@ -100,25 +100,25 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const highContrast = interaction.options.getBoolean('official-word') ?? false;
-        const useOfficialWord = interaction.options.getBoolean('official-word') ?? false;
+        const highContrast = interaction.options.getBoolean('official-word') ?? false
+        const useOfficialWord = interaction.options.getBoolean('official-word') ?? false
 
         if (guessWords.length === 0) {
-            const wordleGuesses = readFileSync(Json('Wordle-Guesses.json'), 'utf-8');
-            guessWords.push(...JSON.parse(wordleGuesses) as string[]);
+            const wordleGuesses = readFileSync(Json('Wordle-Guesses.json'), 'utf-8')
+            guessWords.push(...JSON.parse(wordleGuesses) as string[])
         }
 
         if (WordList.length === 0) {
-            const wordleWords = readFileSync(Json('Wordle-Answers.json'), 'utf-8');
-            WordList.push(...JSON.parse(wordleWords) as string[]);
+            const wordleWords = readFileSync(Json('Wordle-Answers.json'), 'utf-8')
+            WordList.push(...JSON.parse(wordleWords) as string[])
         }
 
         const word = useOfficialWord
             ? wordleChoose()
-            : WordList[Math.floor(Math.random() * WordList.length)];
+            : WordList[Math.floor(Math.random() * WordList.length)]
 
         const attachGame = async (content: string | undefined): Promise<WebhookEditMessageOptions> => {
-            const buffer = await this.image(game.interaction, game.guesses, game.word);
+            const buffer = await this.image(game.interaction, game.guesses, game.word)
 
             return {
                 embeds: [
@@ -135,12 +135,12 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const id = randomUUID();
+        const id = randomUUID()
         const game = {
             interaction,
             guesses: [] as string[],
             word: word
-        } as const;
+        } as const
 
         const reply = await interaction.editReply({
             ...await attachGame(undefined),
@@ -150,14 +150,14 @@ export class kSubCommand extends InteractionSubCommand {
                     Buttons.deny('Quit', `quit-${id}`)
                 ])
             ]
-        });
+        })
 
         const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
             idle: 300_000,
             filter: (i) =>
                 i.user.id === interaction.user.id &&
                 i.customId.endsWith(id)
-        });
+        })
 
         for await (const [i] of c) {
             // If we receive a button interaction, there can be one of two choices:
@@ -166,14 +166,14 @@ export class kSubCommand extends InteractionSubCommand {
             // Otherwise, we received a modal submit interaction.
             if (i.isButton()) {
                 if (i.customId === `quit-${id}`) {
-                    c.stop('user quit');
+                    c.stop('user quit')
 
                     await i.reply({
                         content: 'OK, play again soon! ❤️',
                         ephemeral: true
-                    });
+                    })
 
-                    break;
+                    break
                 }
 
                 await i.showModal({
@@ -191,16 +191,16 @@ export class kSubCommand extends InteractionSubCommand {
                             })
                         ])
                     ]
-                });
+                })
             } else {
-                const answer = (i.fields.getField(`textInput-${id}`) as TextInputModalData).value.toLowerCase();
-                let content = '';
+                const answer = (i.fields.getField(`textInput-${id}`) as TextInputModalData).value.toLowerCase()
+                let content = ''
 
                 // force the idle time to refresh
                 if (guessWords.includes(answer) || WordList.includes(answer)) {
-                    game.guesses.push(answer.toLowerCase());
+                    game.guesses.push(answer.toLowerCase())
                 } else {
-                    content = 'That word isn\'t in my list, try another word!';
+                    content = 'That word isn\'t in my list, try another word!'
                 }
 
                 // This makes a new message, so we need to manually edit the game's message.
@@ -208,36 +208,36 @@ export class kSubCommand extends InteractionSubCommand {
                 await i.reply({
                     content: `Checking your answer ${inlineCode(answer)}`,
                     ephemeral: true
-                });
+                })
 
-                const editOptions = await attachGame(content);
+                const editOptions = await attachGame(content)
                 await interaction.editReply({
                     embeds: editOptions.embeds,
                     content: editOptions.content,
                     files: editOptions.files
-                });
+                })
 
                 if (game.guesses.includes(game.word) || game.guesses.length === 6) {
-                    c.stop();
-                    break;
+                    c.stop()
+                    break
                 }
             }
         }
 
         // The game ended
         if (c.endReason !== 'user quit') {
-            const options = await attachGame('');
-            const embed = (options.embeds as APIEmbed[])[0];
+            const options = await attachGame('')
+            const embed = (options.embeds as APIEmbed[])[0]
 
-            embed.title = game.word.split('').join(' ');
-            games.delete(interaction.user.id);
+            embed.title = game.word.split('').join(' ')
+            games.delete(interaction.user.id)
 
             if (game.guesses.includes(game.word)) {
-                embed.description = 'You win!';
+                embed.description = 'You win!'
             } else if (game.guesses.length === 6) {
-                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`;
+                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`
             } else {
-                embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`;
+                embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`
             }
 
             await interaction.editReply({
@@ -245,11 +245,11 @@ export class kSubCommand extends InteractionSubCommand {
                 content: options.content,
                 components: [wordleGetShareComponent(disableAll(reply), game, highContrast)],
                 files: options.files
-            });
+            })
         } else {
             await interaction.editReply({
                 components: [wordleGetShareComponent(disableAll(reply), game, highContrast)]
-            });
+            })
         }
     }
 
@@ -258,36 +258,36 @@ export class kSubCommand extends InteractionSubCommand {
         guesses: string[],
         word: string
     ): Promise<Buffer> {
-        const highContrast = interaction.options.getBoolean('highcontrast') ?? false;
+        const highContrast = interaction.options.getBoolean('highcontrast') ?? false
 
-        const canvas = createCanvas(Dims.Width + 60 + 5, Dims.Box * 6 + 6 * 4);
-        const ctx = canvas.getContext('2d');
+        const canvas = createCanvas(Dims.Width + 60 + 5, Dims.Box * 6 + 6 * 4)
+        const ctx = canvas.getContext('2d')
 
-        const lettersCorrect = new Set<Uppercase<string>>();
-        const lettersGuessed = new Set<Uppercase<string>>();
+        const lettersCorrect = new Set<Uppercase<string>>()
+        const lettersGuessed = new Set<Uppercase<string>>()
 
-        ctx.font = '32px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.font = '32px Arial'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
 
         for (let guessIdx = 0; guessIdx < 6; guessIdx++) {
-            const guess = guesses[guessIdx];
+            const guess = guesses[guessIdx]
             for (let letters = 0; letters < 5; letters++) {
-                const letter = guess ? guess[letters] : ' ';
+                const letter = guess ? guess[letters] : ' '
 
                 if (word[letters] === letter) { // correct guess
                     ctx.fillStyle = highContrast
                         ? '#f5793a'
-                        : '#538d4e';
-                    lettersCorrect.add(letter.toUpperCase());
+                        : '#538d4e'
+                    lettersCorrect.add(letter.toUpperCase())
                 } else if (word.includes(letter)) { // incorrect spot but in word
                     ctx.fillStyle = highContrast
                         ? '#85c0f9'
-                        : '#b59f3b';
-                    lettersCorrect.add(letter.toUpperCase());
+                        : '#b59f3b'
+                    lettersCorrect.add(letter.toUpperCase())
                 } else {
-                    ctx.fillStyle = '#3a3a3c';
-                    lettersGuessed.add(letter.toUpperCase());
+                    ctx.fillStyle = '#3a3a3c'
+                    lettersGuessed.add(letter.toUpperCase())
                 }
 
                 ctx.fillRect(
@@ -295,30 +295,30 @@ export class kSubCommand extends InteractionSubCommand {
                     guessIdx * Dims.Box + guessIdx * 5,
                     Dims.Box,
                     Dims.Box
-                );
+                )
 
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = '#ffffff'
                 ctx.fillText(
                     letter.toUpperCase(),
                     letters * Dims.Box + letters * 5 + (Dims.Box / 2),
                     guessIdx * Dims.Box + guessIdx * 5 + (Dims.Box / 2)
-                );
+                )
             }
         }
 
-        ctx.font = '16px Arial';
+        ctx.font = '16px Arial'
 
         for (let i = 0; i < 26; i++) {
-            const char = String.fromCharCode(65 + i); // 65 = A
-            const xOffset = i >= 13 ? Dims.GuessWidth + 1 : 0;
-            const yOffset = i >= 13 ? i - 13 : i;
+            const char = String.fromCharCode(65 + i) // 65 = A
+            const xOffset = i >= 13 ? Dims.GuessWidth + 1 : 0
+            const yOffset = i >= 13 ? i - 13 : i
 
             if (lettersCorrect.has(char)) {
-                ctx.fillStyle = '#538d4e';
+                ctx.fillStyle = '#538d4e'
             } else if (lettersGuessed.has(char)) {
-                ctx.fillStyle = '#3a3a3c';
+                ctx.fillStyle = '#3a3a3c'
             } else {
-                ctx.fillStyle = '#818384';
+                ctx.fillStyle = '#818384'
             }
 
             ctx.fillRect(
@@ -326,16 +326,16 @@ export class kSubCommand extends InteractionSubCommand {
                 30 * yOffset + 4,
                 Dims.GuessWidth,
                 Dims.GuessWidth
-            );
+            )
 
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = '#ffffff'
             ctx.fillText(
                 char,
                 Dims.Width + xOffset + 5 + (Dims.GuessWidth / 2),
                 30 * yOffset + 4 + (Dims.GuessWidth / 2)
-            );
+            )
         }
 
-        return canvas.toBuffer('image/png');
+        return canvas.toBuffer('image/png')
     }
 }

@@ -1,10 +1,10 @@
-import { Event } from '#khaf/Event';
-import { LRU } from '#khaf/LRU';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { hours } from '#khaf/utility/ms.js';
-import { Events, type Message } from 'discord.js';
-import { env } from 'node:process';
-import { request, type Dispatcher } from 'undici';
+import { Event } from '#khaf/Event'
+import { LRU } from '#khaf/LRU'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { hours } from '#khaf/utility/ms.js'
+import { Events, type Message } from 'discord.js'
+import { env } from 'node:process'
+import { request, type Dispatcher } from 'undici'
 
 interface ImgurAlbum {
     data: {
@@ -69,7 +69,7 @@ interface ImgurCache {
 }
 
 class Imgur {
-    static cache = new LRU<string, ImgurCache>({ maxSize: 250, maxAgeMs: hours(24) });
+    static cache = new LRU<string, ImgurCache>({ maxSize: 250, maxAgeMs: hours(24) })
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
         'x-ratelimit-userremaining': -1,
@@ -78,82 +78,82 @@ class Imgur {
 
     static setRateLimits (headers: Dispatcher.ResponseData['headers']): void {
         for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
-            const k = key.toLowerCase() as keyof typeof Imgur.ratelimit;
+            const k = key.toLowerCase() as keyof typeof Imgur.ratelimit
             if (k in headers) {
-                Imgur.ratelimit[k] = Number(headers[k]);
+                Imgur.ratelimit[k] = Number(headers[k])
             }
         }
     }
 
     static async album (hash: string): Promise<ImgurCache | undefined> {
-        if (env.IMGUR_CLIENT_ID === undefined) return;
+        if (env.IMGUR_CLIENT_ID === undefined) return
 
         if (
             Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
             Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
         ) {
-            return;
+            return
         } else if (Imgur.cache.has(hash)) {
-            return Imgur.cache.get(hash);
+            return Imgur.cache.get(hash)
         }
 
         const { headers, body, statusCode } = await request(`https://api.imgur.com/3/album/${hash}`, {
             headers: {
                 'Authorization': `Client-ID ${env.IMGUR_CLIENT_ID}`
             }
-        });
+        })
 
-        Imgur.setRateLimits(headers);
+        Imgur.setRateLimits(headers)
 
         if (statusCode !== 200) {
-            return;
+            return
         }
 
-        const j = await body.json() as ImgurAlbum;
-        const images = j.data.images.map(i => i.link);
-        const cached = { u: images, t: j.data.title ?? 'Imgur Album' };
-        Imgur.cache.set(hash, cached);
+        const j = await body.json() as ImgurAlbum
+        const images = j.data.images.map(i => i.link)
+        const cached = { u: images, t: j.data.title ?? 'Imgur Album' }
+        Imgur.cache.set(hash, cached)
 
-        return cached;
+        return cached
     }
 }
 
-const albumRegex = /https?:\/\/(www\.)?imgur.com\/a\/(?<hash>[A-z0-9]{1,})/;
+const albumRegex = /https?:\/\/(www\.)?imgur.com\/a\/(?<hash>[A-z0-9]{1,})/
 
 export class kEvent extends Event<typeof Events.MessageCreate> {
-    name = Events.MessageCreate as const;
+    name = Events.MessageCreate as const
 
     async init (message: Message): Promise<void> {
         if (
             !message.content.includes('imgur.com/a/') &&
             message.embeds.every(embed => !embed.url?.includes('imgur.com/a/'))
         ) {
-            return;
+            return
         }
 
         const hashMatch = message.content.includes('imgur.com/a/')
             ? message.content
-            : message.embeds.find(embed => embed.url?.includes('imgur.com/a/'))!.url!;
+            : message.embeds.find(embed => embed.url?.includes('imgur.com/a/'))!.url!
 
-        const hash = albumRegex.exec(hashMatch)?.groups as { hash: string } | undefined;
+        const hash = albumRegex.exec(hashMatch)?.groups as { hash: string } | undefined
 
         if (hash === undefined) {
-            return;
+            return
         }
 
-        const imgur = await Imgur.album(hash.hash);
+        const imgur = await Imgur.album(hash.hash)
 
         if (imgur === undefined || !Array.isArray(imgur.u) || imgur.u.length < 2) {
             // TODO: add better error messages for logs!
-            return;
+            return
         }
 
-        let desc = `${imgur.u.length.toLocaleString()} Total Images\n`;
+        let desc = `${imgur.u.length.toLocaleString()} Total Images\n`
         for (const image of imgur.u) {
-            const line = `${image}, `;
-            if (desc.length + line.length > 2048) break;
+            const line = `${image}, `
+            if (desc.length + line.length > 2048) break
 
-            desc += line;
+            desc += line
         }
 
         return void await message.reply({
@@ -167,6 +167,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                     title: imgur.t
                 })
             ]
-        });
+        })
     }
 }

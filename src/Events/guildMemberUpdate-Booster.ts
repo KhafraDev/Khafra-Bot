@@ -1,38 +1,38 @@
-import { cache } from '#khaf/cache/Settings.js';
-import { sql } from '#khaf/database/Postgres.js';
-import { Event } from '#khaf/Event';
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Events, type Channel, type GuildMember } from 'discord.js';
+import { cache } from '#khaf/cache/Settings.js'
+import { sql } from '#khaf/database/Postgres.js'
+import { Event } from '#khaf/Event'
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText } from '#khaf/utility/Discord.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { Events, type Channel, type GuildMember } from 'discord.js'
 
 const basic =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks;
+    PermissionFlagsBits.EmbedLinks
 
-type WelcomeChannel = Pick<kGuild, keyof PartialGuild>;
+type WelcomeChannel = Pick<kGuild, keyof PartialGuild>
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
-    name = Events.GuildMemberUpdate as const;
+    name = Events.GuildMemberUpdate as const
 
     async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
         // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
-        const premiumRole = oldMember.roles.premiumSubscriberRole;
-        if (!premiumRole) return;
+        const premiumRole = oldMember.roles.premiumSubscriberRole
+        if (!premiumRole) return
 
-        const oldHas = oldMember.roles.cache.has(premiumRole.id);
-        const newHas = newMember.roles.cache.has(premiumRole.id);
+        const oldHas = oldMember.roles.cache.has(premiumRole.id)
+        const newHas = newMember.roles.cache.has(premiumRole.id)
 
         // both either have or don't have the role
         if (oldHas === newHas)
-            return;
+            return
 
-        const row = cache.get(oldMember.guild.id);
-        let item: WelcomeChannel | null = row ?? null;
+        const row = cache.get(oldMember.guild.id)
+        let item: WelcomeChannel | null = row ?? null
 
         if (!item) {
             const rows = await sql<kGuild[]>`
@@ -42,29 +42,29 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                 FROM kbGuild
                 WHERE guild_id = ${oldMember.guild.id}::text
                 LIMIT 1;
-            `;
+            `
 
             if (rows.length !== 0) {
-                cache.set(oldMember.guild.id, rows[0]);
-                item = rows[0];
+                cache.set(oldMember.guild.id, rows[0])
+                item = rows[0]
             } else {
-                return;
+                return
             }
         }
 
-        if (item.welcome_channel === null) return;
+        if (item.welcome_channel === null) return
 
-        let channel: Channel | null = null;
+        let channel: Channel | null = null
         if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
-            channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null;
+            channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null
         } else {
-            const [err, chan] = await dontThrow(oldMember.guild.members.me!.client.channels.fetch(item.welcome_channel));
-            if (err !== null) return;
-            channel = chan;
+            const [err, chan] = await dontThrow(oldMember.guild.members.me!.client.channels.fetch(item.welcome_channel))
+            if (err !== null) return
+            channel = chan
         }
 
         if (!isText(channel) || !hasPerms(channel, oldMember.guild.members.me, basic))
-            return;
+            return
 
         if (oldHas && !newHas) { // lost role
             const embed = Embed.json({
@@ -74,9 +74,9 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                     name: newMember.user.username,
                     icon_url: newMember.user.displayAvatarURL()
                 }
-            });
+            })
 
-            return void dontThrow(channel.send({ embeds: [embed] }));
+            return void dontThrow(channel.send({ embeds: [embed] }))
         } else { // gained role
             const embed = Embed.json({
                 color: colors.boost,
@@ -85,9 +85,9 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                     name: newMember.user.username,
                     icon_url: newMember.user.displayAvatarURL()
                 }
-            });
+            })
 
-            return void dontThrow(channel.send({ embeds: [embed] }));
+            return void dontThrow(channel.send({ embeds: [embed] }))
         }
     }
 }

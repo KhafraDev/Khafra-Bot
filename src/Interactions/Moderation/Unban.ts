@@ -1,15 +1,15 @@
-import { Interactions } from '#khaf/Interaction';
-import * as util from '#khaf/utility/Discord/util.js';
-import { toString } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import * as util from '#khaf/utility/Discord/util.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { inlineCode } from '@discordjs/builders'
 import {
     ApplicationCommandOptionType,
     PermissionFlagsBits,
     RESTJSONErrorCodes, type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
 
-const perms = PermissionFlagsBits.BanMembers;
+const perms = PermissionFlagsBits.BanMembers
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -26,9 +26,9 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
@@ -48,7 +48,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const id = interaction.options.getString('id', true);
+        const id = interaction.options.getString('id', true)
 
         if (!util.isSnowflake(id)) {
             return {
@@ -58,9 +58,9 @@ export class kInteraction extends Interactions {
         }
 
         try {
-            await interaction.guild.bans.fetch(id);
+            await interaction.guild.bans.fetch(id)
         } catch (e) {
-            const err = e as DiscordAPIError;
+            const err = e as DiscordAPIError
 
             if (err.code === RESTJSONErrorCodes.UnknownBan) {
                 return {
@@ -78,7 +78,7 @@ export class kInteraction extends Interactions {
         const unban = await interaction.guild.bans.remove(
             id,
             `Unban requested by ${interaction.user.id} (${interaction.user.tag}).`
-        ).catch(() => null);
+        ).catch(() => null)
 
         if (unban === null) {
             return {

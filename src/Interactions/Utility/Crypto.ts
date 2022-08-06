@@ -1,19 +1,19 @@
-import { Interactions } from '#khaf/Interaction';
-import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, time } from '@discordjs/builders';
-import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ApplicationCommandOptionType } from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, time } from '@discordjs/builders'
+import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
-const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format;
+const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format
+const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format
 
 const field = (name: string, value: number | string, formatter = f): APIEmbedField => ({
     name: bold(name),
     value: typeof value === 'string' ? value : formatter(value),
     inline: true
-});
+})
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -28,13 +28,13 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const currency = await CoinGecko.get(interaction.options.getString('search', true));
+        const currency = await CoinGecko.get(interaction.options.getString('search', true))
 
         if (currency === null) {
             return {
@@ -70,7 +70,7 @@ export class kInteraction extends Interactions {
                 ),
                 field('All Time Low Date:', time(new Date(currency.market_data.atl_date.usd)))
             ]
-        });
+        })
 
         return {
             embeds: [embed]

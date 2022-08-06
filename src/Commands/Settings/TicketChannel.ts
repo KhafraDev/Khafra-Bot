@@ -1,15 +1,15 @@
-import { cache } from '#khaf/cache/Settings.js';
-import type { Arguments} from '#khaf/Command';
-import { Command } from '#khaf/Command';
-import { sql } from '#khaf/database/Postgres.js';
-import type { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isCategory, isExplicitText } from '#khaf/utility/Discord.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import type { APIEmbed} from 'discord-api-types/v10';
-import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10';
-import type { Message } from 'discord.js';
+import { cache } from '#khaf/cache/Settings.js'
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.js'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isCategory, isExplicitText } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -28,7 +28,7 @@ export class kCommand extends Command {
                 ratelimit: 10,
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<APIEmbed> {
@@ -37,20 +37,20 @@ export class kCommand extends Command {
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
-            );
+            )
         }
 
         /** guild can use private threads */
         const privateThreads =
             message.guild.premiumTier !== GuildPremiumTier.None &&
-            message.guild.premiumTier !== GuildPremiumTier.Tier1;
+            message.guild.premiumTier !== GuildPremiumTier.Tier1
 
-        const ticketChannel = await getMentions(message, 'channels');
+        const ticketChannel = await getMentions(message, 'channels')
 
         if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
-            return Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`);
+            return Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`)
         } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return Embed.error('This guild cannot use private threads, please use a category channel instead!');
+            return Embed.error('This guild cannot use private threads, please use a category channel instead!')
         }
 
         const rows = await sql<kGuild[]>`
@@ -58,10 +58,10 @@ export class kCommand extends Command {
             SET ticketChannel = ${ticketChannel.id}::text
             WHERE guild_id = ${message.guildId}::text
             RETURNING *;
-        `;
+        `
 
-        cache.set(message.guild.id, rows[0]);
+        cache.set(message.guild.id, rows[0])
 
-        return Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`);
+        return Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`)
     }
 }

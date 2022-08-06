@@ -1,37 +1,37 @@
-import { cache } from '#khaf/cache/Settings.js';
-import { sql } from '#khaf/database/Postgres.js';
-import { Event } from '#khaf/Event';
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot';
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ellipsis } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
-import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10';
-import { Events, PermissionFlagsBits, type AuditLogChange, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js';
-import { setTimeout } from 'node:timers/promises';
+import { cache } from '#khaf/cache/Settings.js'
+import { sql } from '#khaf/database/Postgres.js'
+import { Event } from '#khaf/Event'
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText } from '#khaf/utility/Discord.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { ellipsis } from '#khaf/utility/String.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
+import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
+import { Events, PermissionFlagsBits, type AuditLogChange, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js'
+import { setTimeout } from 'node:timers/promises'
 
-const auditLogPerms = PermissionFlagsBits.ViewAuditLog;
+const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const basic =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks;
+    PermissionFlagsBits.EmbedLinks
 
-type LogChannel = Pick<kGuild, keyof PartialGuild>;
+type LogChannel = Pick<kGuild, keyof PartialGuild>
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
-    name = Events.GuildMemberUpdate as const;
+    name = Events.GuildMemberUpdate as const
 
     async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
-        const old = oldMember.communicationDisabledUntil;
-        const current = newMember.communicationDisabledUntil;
+        const old = oldMember.communicationDisabledUntil
+        const current = newMember.communicationDisabledUntil
 
         if (old === current || old?.getTime() === current?.getTime()) {
-            return;
+            return
         }
 
-        const row = cache.get(oldMember.guild.id);
-        let item: LogChannel | null = row ?? null;
+        const row = cache.get(oldMember.guild.id)
+        let item: LogChannel | null = row ?? null
 
         if (!item) {
             const rows = await sql<kGuild[]>`
@@ -41,34 +41,34 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                 FROM kbGuild
                 WHERE guild_id = ${oldMember.guild.id}::text
                 LIMIT 1;
-            `;
+            `
 
             if (rows.length !== 0) {
-                cache.set(oldMember.guild.id, rows[0]);
-                item = rows[0];
+                cache.set(oldMember.guild.id, rows[0])
+                item = rows[0]
             } else {
-                return;
+                return
             }
         }
 
-        const logChannel = item.mod_log_channel;
-        const self = oldMember.guild.members.me ?? newMember.guild.members.me;
+        const logChannel = item.mod_log_channel
+        const self = oldMember.guild.members.me ?? newMember.guild.members.me
 
-        let channel: Channel | null = null;
-        let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined;
-        let change!: AuditLogChange;
+        let channel: Channel | null = null
+        let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined
+        let change!: AuditLogChange
 
         if (logChannel === null) {
-            return;
+            return
         } else if (oldMember.guild.channels.cache.has(logChannel)) {
-            channel = oldMember.guild.channels.cache.get(logChannel) ?? null;
+            channel = oldMember.guild.channels.cache.get(logChannel) ?? null
         } else if (self) {
-            const chan = await self.client.channels.fetch(logChannel);
-            channel = chan;
+            const chan = await self.client.channels.fetch(logChannel)
+            channel = chan
         }
 
         if (self === null || !isText(channel) || !hasPerms(channel, self, basic)) {
-            return;
+            return
         }
 
         if (self.permissions.has(auditLogPerms)) {
@@ -76,7 +76,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                 const logs = await oldMember.guild.fetchAuditLogs({
                     type: AuditLogEvent.MemberUpdate,
                     limit: 5
-                });
+                })
 
                 for (const entry of logs.entries.values()) {
                     if (entry.target?.id === oldMember.id) {
@@ -100,7 +100,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
             return
         }
 
-        const wasUnmuted = change.old !== undefined && change.new === undefined;
+        const wasUnmuted = change.old !== undefined && change.new === undefined
         const author: APIEmbedAuthor | undefined = muted.executor
             ? {
                 name: `${muted.executor.tag} (${muted.executor.id})`,

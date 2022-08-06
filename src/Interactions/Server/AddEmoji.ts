@@ -1,16 +1,16 @@
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { toString } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { inlineCode } from '@discordjs/builders'
 import type {
     APIRole,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     PermissionFlagsBits
-} from 'discord-api-types/v10';
-import type { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js';
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -63,13 +63,13 @@ export class kInteraction extends Interactions {
                     description: 'Limit the emoji to this role.'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const defaultPerms = BigInt(this.data.default_member_permissions!);
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
         if (!interaction.memberPermissions?.has(defaultPerms)) {
             return {
@@ -87,21 +87,21 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const attachment = interaction.options.getAttachment('emoji', true);
-        const name = interaction.options.getString('name', true);
-        const reason = interaction.options.getString('reason') ?? undefined;
-        const roles: (Role | APIRole)[] = [];
+        const attachment = interaction.options.getAttachment('emoji', true)
+        const name = interaction.options.getString('name', true)
+        const reason = interaction.options.getString('reason') ?? undefined
+        const roles: (Role | APIRole)[] = []
 
         for (let i = 1; i <= 5; i++) {
-            const role = interaction.options.getRole(`role${i}`);
+            const role = interaction.options.getRole(`role${i}`)
 
             if (role) {
-                roles.push(role);
+                roles.push(role)
             }
         }
 
         if (attachment.size > 256_000) {
-            const kb = (attachment.size / 1000).toLocaleString(interaction.locale);
+            const kb = (attachment.size / 1000).toLocaleString(interaction.locale)
             return {
                 content: `❌ Emoji must be under 256 KB in size (got ${inlineCode(kb)} kb).`,
                 ephemeral: true
@@ -113,7 +113,7 @@ export class kInteraction extends Interactions {
             reason,
             attachment: attachment.proxyURL,
             roles: roles.map(role => role.id)
-        }));
+        }))
 
         if (err !== null) {
             return {
