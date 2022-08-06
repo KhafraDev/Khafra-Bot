@@ -72,8 +72,8 @@ export class kInteraction extends Interactions {
                     options: [
                         {
                             type: ApplicationCommandOptionType.String,
-                            name: 'url',
-                            description: 'The link to the giveaway message.',
+                            name: 'giveaway',
+                            description: 'The id of the giveaway, or part of the giveaway\'s prize description.',
                             required: true
                         }
                     ]

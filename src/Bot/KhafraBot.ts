@@ -45,6 +45,7 @@ export class KhafraClient extends Client {
         Autocomplete: new Map<string, InteractionAutocomplete>(),
         Context: new Map<string, InteractionUserCommand>()
     } as const;
+    static Timers = new Map<string, Timer>()
 
     /**
      * Walk up a directory tree and return the path for every file in the directory and sub-directories.
@@ -289,6 +290,7 @@ export class KhafraClient extends Client {
 
                 loadedTimers++;
                 void timer.setInterval();
+                KhafraClient.Timers.set(key, timer)
             } else {
                 logger.error(imported.reason);
                 exit(1);

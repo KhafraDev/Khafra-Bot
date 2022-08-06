@@ -15,10 +15,18 @@ export class GiveawayTimer extends Timer {
 
     async setInterval (): Promise<void> {
         for await (const _ of this.yieldEvery(this.options.interval)) {
+            // Delete all ended giveaways that are older than a week old.
+            // This gives users a week to re-roll.
+            await sql`
+                DELETE FROM kbGiveaways
+                WHERE kbGiveaways.endDate <= now() - '7 days'::interval
+            `
+
+            // Select all giveaways between (-7 days, now). At this point,
+            // all older giveaways have been deleted.
             const rows = await sql<Giveaway[]>`
-				DELETE FROM kbGiveaways 
-				WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP
-				RETURNING *;
+				SELECT * FROM kbGiveaways 
+				WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP;
 			`;
 
             for (const row of rows) {
