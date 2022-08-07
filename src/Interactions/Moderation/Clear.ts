@@ -3,7 +3,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText, isThread } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/Discord/util.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms, toString } from '#khaf/utility/Permissions.js'
+import { toString } from '#khaf/utility/Permissions.js'
 import { bold, time } from '@discordjs/builders'
 import type {
     RESTPostAPIApplicationCommandsJSONBody
@@ -77,7 +77,7 @@ export class kInteraction extends Interactions {
                 content: `❌ I can't bulk delete messages in ${channel}!`,
                 ephemeral: true
             }
-        } else if (!hasPerms(channel, interaction.guild.members.me, defaultPerms)) {
+        } else if (!channel.permissionsFor(interaction.guild.members.me).has(defaultPerms)) {
             return {
                 content: '❌ Re-invite the bot with the correct permissions to use this command!',
                 ephemeral: true

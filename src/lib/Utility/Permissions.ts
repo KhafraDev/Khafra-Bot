@@ -39,7 +39,7 @@ export const hasPerms = (
     memberOrRole: unknown,
     perms: PermissionResolvable
 ): boolean => {
-    if (typeof channel === 'undefined' || channel === null)
+    if (channel === undefined || channel === null)
         return false
     if (!isText(channel) && !isVoice(channel) && !isThread(channel))
         return true

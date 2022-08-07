@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms, toString } from '#khaf/utility/Permissions.js'
+import { toString } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
@@ -10,13 +10,12 @@ import type {
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     NewsChannel,
-    TextChannel,
-    ThreadChannel
+    TextChannel
 } from 'discord.js'
-import { GuildMember, GuildMemberRoleManager, Role, resolveColor } from 'discord.js'
+import { GuildMember, GuildMemberRoleManager, resolveColor, Role } from 'discord.js'
 import { parse } from 'twemoji-parser'
 
-type Channel = TextChannel | NewsChannel | ThreadChannel
+type Channel = TextChannel | NewsChannel
 
 interface GuildMatchGroups {
     animated: undefined | 'a'
@@ -43,9 +42,7 @@ export class kInteraction extends Interactions {
                     channel_types: [
                         ChannelType.GuildText,
                         ChannelType.GuildNews,
-                        ChannelType.GuildNewsThread,
-                        ChannelType.GuildPublicThread,
-                        ChannelType.GuildPrivateThread
+                        ChannelType.GuildNewsThread
                     ]
                 },
                 {
@@ -81,6 +78,7 @@ export class kInteraction extends Interactions {
             }
         } else if (
             interaction.guild === null ||
+            interaction.member === null ||
             !interaction.guild.members.me ||
             !interaction.guild.members.me.permissions.has(defaultPerms)
         ) {
@@ -99,12 +97,18 @@ export class kInteraction extends Interactions {
             
             Clicking the button again will take the role away!`
 
-        if (!hasPerms(channel, interaction.guild.members.me, perms)) {
+        const memberPermissions = typeof interaction.member.permissions === 'string'
+            ? BigInt(interaction.member.permissions)
+            : interaction.member.permissions.bitfield
+
+        if (!channel.permissionsFor(interaction.guild.members.me).has(perms)) {
             return {
                 content: '❌ I do not have permission to post a message in this channel!',
                 ephemeral: true
             }
-        } else if (!hasPerms(channel, interaction.member, perms)) {
+        } else if ((perms & memberPermissions) !== perms) {
+            // Permissions are "... permissions of the member in the channel". So we check
+            // if the member has the SEND_MESSAGE permission.
             return {
                 content: '❌ You do not have permission to post a message in this channel!',
                 ephemeral: true

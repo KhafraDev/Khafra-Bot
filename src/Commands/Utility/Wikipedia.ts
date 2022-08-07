@@ -89,7 +89,7 @@ export class kCommand extends Command {
             }
 
             const summary = summaryRes.query?.pages[`${article.id}`]
-            if (typeof summary === 'undefined') {
+            if (summary === undefined) {
                 return void dontThrow(i.editReply({
                     content: '❌ Invalid response from Wikipedia!',
                     components: disableAll(m)

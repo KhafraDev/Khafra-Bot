@@ -82,6 +82,7 @@ export class kInteraction extends Interactions {
                         ? member.permissions.bitfield
                         : BigInt(member.permissions)
 
+                    // If the member listed has permission to ban, disallow banning them.
                     if ((perms & memberPerms) === perms) {
                         return {
                             content: `❌ I cannot ban ${member}!`,
