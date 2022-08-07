@@ -14,7 +14,6 @@ import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Minimalist } from '#khaf/utility/Minimalist.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
@@ -121,7 +120,10 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
             return void dontThrow(newMessage.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] }))
         } else if (!_cooldownGuild(newMessage.guild.id)) {
             return void dontThrow(newMessage.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] }))
-        } else if (!hasPerms(newMessage.channel, newMessage.member, command.permissions)) {
+        } else if (
+            newMessage.member === null ||
+            !newMessage.channel.permissionsFor(newMessage.member).has(command.permissions)
+        ) {
             return void dontThrow(newMessage.reply({
                 embeds: [
                     Embed.perms(newMessage.channel, newMessage.member, command.permissions)

@@ -3,12 +3,11 @@ import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { isText } from '#khaf/utility/Discord.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
-import { Events, PermissionFlagsBits, type AuditLogChange, type Channel, type GuildAuditLogsEntry, type GuildMember } from 'discord.js'
+import { Events, PermissionFlagsBits, type AuditLogChange, type GuildAuditLogsEntry, type GuildMember } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog
@@ -52,26 +51,27 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
         }
 
         const logChannel = item.mod_log_channel
-        const self = oldMember.guild.members.me ?? newMember.guild.members.me
+        const me = oldMember.guild.members.me
 
-        let channel: Channel | null = null
         let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined
         let change!: AuditLogChange
 
         if (logChannel === null) {
             return
-        } else if (oldMember.guild.channels.cache.has(logChannel)) {
-            channel = oldMember.guild.channels.cache.get(logChannel) ?? null
-        } else if (self) {
-            const chan = await self.client.channels.fetch(logChannel)
-            channel = chan
         }
 
-        if (self === null || !isText(channel) || !hasPerms(channel, self, basic)) {
+        const channel = await oldMember.guild.channels.fetch(logChannel)
+
+        if (
+            channel === null ||
+            me === null ||
+            !isTextBased(channel) ||
+            !channel.permissionsFor(me).has(basic)
+        ) {
             return
         }
 
-        if (self.permissions.has(auditLogPerms)) {
+        if (me.permissions.has(auditLogPerms)) {
             for (let i = 0; i < 5; i++) {
                 const logs = await oldMember.guild.fetchAuditLogs({
                     type: AuditLogEvent.MemberUpdate,

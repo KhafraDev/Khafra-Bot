@@ -3,12 +3,11 @@ import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { isText } from '#khaf/utility/Discord.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { Events, type Channel, type GuildMember } from 'discord.js'
+import { Events, type GuildMember } from 'discord.js'
 
 const basic =
     PermissionFlagsBits.ViewChannel |
@@ -52,19 +51,21 @@ export class kEvent extends Event<typeof Events.GuildMemberAdd> {
             }
         }
 
-        if (item.welcome_channel === null) return
-
-        let channel: Channel | null = null
-        if (member.guild.channels.cache.has(item.welcome_channel)) {
-            channel = member.guild.channels.cache.get(item.welcome_channel) ?? null
-        } else {
-            const [err, c] = await dontThrow(member.guild.client.channels.fetch(item.welcome_channel))
-            if (err !== null) return
-            channel = c
+        if (item.welcome_channel === null) {
+            return
         }
 
-        if (!isText(channel) || !hasPerms(channel, member.guild.members.me, basic))
+        const channel = await member.guild.channels.fetch(item.welcome_channel)
+        const me = member.guild.members.me
+
+        if (
+            channel === null ||
+            me === null ||
+            !isTextBased(channel) ||
+            !channel.permissionsFor(me).has(basic)
+        ) {
             return
+        }
 
         const embed = Embed.json({
             color: colors.ok,

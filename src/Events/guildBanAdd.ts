@@ -85,10 +85,14 @@ export class kEvent extends Event<typeof Events.GuildBanAdd> {
             item = rows[0]
         }
 
-        const channel = item.mod_log_channel ? guild.channels.cache.get(item.mod_log_channel) : undefined
+        if (item.mod_log_channel === null) {
+            return
+        }
+
+        const channel = await guild.channels.fetch(item.mod_log_channel)
 
         if (
-            channel === undefined ||
+            channel === null ||
             me === null ||
             !DiscordUtil.isTextBased(channel) ||
             !channel.permissionsFor(me).has(perms)

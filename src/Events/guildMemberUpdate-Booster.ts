@@ -3,11 +3,10 @@ import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { isText } from '#khaf/utility/Discord.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { Events, type Channel, type GuildMember } from 'discord.js'
+import { Events, type GuildMember } from 'discord.js'
 
 const basic =
     PermissionFlagsBits.ViewChannel |
@@ -28,8 +27,9 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
         const newHas = newMember.roles.cache.has(premiumRole.id)
 
         // both either have or don't have the role
-        if (oldHas === newHas)
+        if (oldHas === newHas) {
             return
+        }
 
         const row = cache.get(oldMember.guild.id)
         let item: WelcomeChannel | null = row ?? null
@@ -52,19 +52,21 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
             }
         }
 
-        if (item.welcome_channel === null) return
-
-        let channel: Channel | null = null
-        if (oldMember.guild.channels.cache.has(item.welcome_channel)) {
-            channel = oldMember.guild.channels.cache.get(item.welcome_channel) ?? null
-        } else {
-            const [err, chan] = await dontThrow(oldMember.guild.members.me!.client.channels.fetch(item.welcome_channel))
-            if (err !== null) return
-            channel = chan
+        if (item.welcome_channel === null) {
+            return
         }
 
-        if (!isText(channel) || !hasPerms(channel, oldMember.guild.members.me, basic))
+        const channel = await oldMember.guild.channels.fetch(item.welcome_channel)
+        const me = oldMember.guild.members.me
+
+        if (
+            channel === null ||
+            me === null ||
+            !isTextBased(channel) ||
+            !channel.permissionsFor(me).has(basic)
+        ) {
             return
+        }
 
         if (oldHas && !newHas) { // lost role
             const embed = Embed.json({

@@ -1,35 +1,7 @@
 import { isText, isThread, isVoice } from '#khaf/utility/Discord.js'
 import { inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { GuildMember, type PermissionResolvable, type RecursiveReadonlyArray, Role } from 'discord.js'
-
-const isRecursiveReadonlyArray = <T>(item: unknown):
-    item is RecursiveReadonlyArray<T> => Array.isArray(item)
-
-export const resolvePerms = (perms: PermissionResolvable): bigint => {
-    let bitfield: bigint | undefined
-    if (typeof perms === 'string') {
-        bitfield = BigInt(perms)
-    } else if (typeof perms === 'bigint') {
-        bitfield = perms
-    } else if ('bitfield' in perms) {
-        bitfield = perms.bitfield
-    } else if (isRecursiveReadonlyArray(perms)) {
-        for (const item of perms.flat(10) as (`${bigint}` | bigint | keyof typeof PermissionFlagsBits)[]) {
-            if (typeof item === 'bigint') {
-                bitfield! |= item
-            } else if (typeof item === 'string') {
-                if (isNaN(Number(item))) {
-                    bitfield! |= PermissionFlagsBits[item as keyof typeof PermissionFlagsBits]
-                } else {
-                    bitfield! |= BigInt(item)
-                }
-            }
-        }
-    }
-
-    return bitfield!
-}
+import { GuildMember, PermissionsBitField, Role, type PermissionResolvable } from 'discord.js'
 
 /**
  * Check if a user or role has permissions in a channel.
@@ -72,7 +44,7 @@ const all = Object.entries(PermissionFlagsBits) as [
 ][]
 
 export const permResolvableToString = (perms: PermissionResolvable): string[] => {
-    const bitfield = resolvePerms(perms)
+    const bitfield = PermissionsBitField.resolve(perms)
     const has: string[] = []
 
     for (const [name, bit] of all) {
