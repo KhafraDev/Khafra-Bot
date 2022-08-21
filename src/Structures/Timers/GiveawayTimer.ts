@@ -26,11 +26,24 @@ export class GiveawayTimer extends Timer {
             // all older giveaways have been deleted.
             const rows = await sql<Giveaway[]>`
 				SELECT * FROM kbGiveaways 
-				WHERE kbGiveaways.endDate < CURRENT_TIMESTAMP;
+				WHERE
+                    kbGiveaways.endDate < CURRENT_TIMESTAMP AND
+                    kbGiveaways."didEnd" = FALSE;
 			`
 
-            for (const row of rows) {
-                void this.action(row)
+            if (rows.length !== 0) {
+                const ids: string[] = []
+
+                for (const row of rows) {
+                    void this.action(row)
+                    ids.push(row.id)
+                }
+
+                await sql`
+                    UPDATE kbGiveaways SET
+                        "didEnd" = true
+                    WHERE id IN ${sql(ids)}
+                `
             }
         }
     }
@@ -38,9 +51,7 @@ export class GiveawayTimer extends Timer {
     async action (giveaway: Giveaway): Promise<void> {
         try {
             const guild = await client.guilds.fetch(giveaway.guildid)
-            const channel =
-                guild.channels.cache.get(giveaway.channelid) ??
-                await client.channels.fetch(giveaway.channelid)
+            const channel = await guild.channels.fetch(giveaway.channelid)
 
             if (!hasPerms(channel, guild.members.me, PermissionFlagsBits.ReadMessageHistory)) return
             if (!isText(channel)) return
