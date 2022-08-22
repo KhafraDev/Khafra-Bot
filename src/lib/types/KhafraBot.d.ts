@@ -29,6 +29,7 @@ export interface Giveaway {
     enddate: Date
     prize: string
     winners: number
+    didEnd: boolean
 }
 
 export type PartialGuild = Pick<kGuild, 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;

@@ -72,9 +72,44 @@ export class kInteraction extends Interactions {
                     options: [
                         {
                             type: ApplicationCommandOptionType.String,
-                            name: 'giveaway',
-                            description: 'The id of the giveaway, or part of the giveaway\'s prize description.',
+                            name: 'giveaway-id-or-prize',
+                            description: 'The id of the giveaway, or a piece of the prize.',
                             required: true
+                        }
+                    ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'end',
+                    description: 'Immediately ends a giveaway.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.String,
+                            name: 'giveaway-id-or-prize',
+                            description: 'The id of the giveaway, or a piece of the prize.',
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'view',
+                    description: 'View all, ended, or active giveaways.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'all',
+                            description: 'View all your giveaways.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'active',
+                            description: 'View all of your ongoing giveaways.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'ended',
+                            description: 'View all of your giveaways that have already ended.'
                         }
                     ]
                 }
