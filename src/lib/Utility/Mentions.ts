@@ -1,4 +1,3 @@
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import {
     SnowflakeUtil,
     type Channel,
@@ -39,8 +38,6 @@ export async function getMentions(
     const content = typeof text === 'string' ? text : messageContent
 
     for (const [, type, id] of content.matchAll(mentionMatcher)) {
-        let pr: Promise<MentionTypes | null> | MentionTypes | null = null
-
         if (type) {
             // not a channel mention
             if (type === '#' && fetchType !== 'channels') continue
@@ -50,25 +47,10 @@ export async function getMentions(
             if (type === '@&' && fetchType !== 'roles') continue
         }
 
-        if (fetchType === 'channels') {
-            pr = mentions.channels.get(id) ?? guild.channels.cache.get(id) ?? null
-        } else if (fetchType === 'members') {
-            pr = mentions.members?.get(id) ?? guild.members.cache.get(id) ?? null
-        } else if (fetchType === 'roles') {
-            pr = mentions.roles.get(id) ?? guild.roles.cache.get(id) ?? null
-        } else {
-            pr = client.users.cache.get(id) ?? null
-        }
+        const mention = mentions[fetchType]
+        const guildCache = fetchType === 'users' ? client.users : guild[fetchType]
 
-        pr ??= fetchType === 'users'
-            ? client.users.fetch(id)
-            : guild[fetchType].fetch(id)
-
-        const result = pr instanceof Promise
-            ? await dontThrow(pr)
-            : [null, pr]
-
-        return result[1] ?? null
+        return mention?.get(id) ?? await guildCache.fetch(id).catch(() => null)
     }
 
     return null
