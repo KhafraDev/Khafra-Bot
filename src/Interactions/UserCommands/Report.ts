@@ -35,7 +35,9 @@ export class kUserCommand extends InteractionUserCommand {
             }
         }
 
-        const channel = await util.interactionFetchChannel(interaction, settings.staffChannel)
+        const channel = await (interaction.guild ?? interaction.client).channels
+            .fetch(settings.staffChannel)
+            .catch(() => null)
         const { content, author, id, attachments } = interaction.targetMessage
 
         if (isDev === false) {

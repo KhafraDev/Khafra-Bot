@@ -1,17 +1,13 @@
 import { cache } from '#khaf/cache/Settings.js'
-import { client as Client } from '#khaf/Client'
 import { sql } from '#khaf/database/Postgres.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { isTextBased } from '#khaf/utility/Discord.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type {
-    Channel,
     ChatInputCommandInteraction,
     MessageContextMenuCommandInteraction,
-    Snowflake,
     UserContextMenuCommandInteraction
 } from 'discord.js'
 
@@ -56,36 +52,6 @@ export const interactionGetGuildSettings = async (interaction: Interactions): Pr
     return settings
 }
 
-/**
- * Fetches a channel with the id provided or null if
- * it cannot be fetched.
- */
-export const interactionFetchChannel = async (
-    interaction: Interactions,
-    id: Snowflake
-): Promise<Channel | null> => {
-    const channelManager = interaction.guild?.channels
-    let channel: Channel
-
-    if (channelManager?.cache.has(id)) {
-        return channelManager.cache.get(id) ?? null
-    } else {
-        const promise = interaction.guild
-            ? channelManager!.fetch(id)
-            : Client.channels.fetch(id)
-
-        const [fetchErr, fetched] = await dontThrow(promise)
-
-        if (fetchErr !== null || fetched === null) {
-            return null
-        }
-
-        channel = fetched
-    }
-
-    return channel
-}
-
 export const postToModLog = async (
     interaction: ChatInputCommandInteraction,
     embeds: APIEmbed[],
@@ -94,13 +60,18 @@ export const postToModLog = async (
     const settings = guildSettings ?? await interactionGetGuildSettings(interaction)
 
     if (settings?.mod_log_channel) {
-        const channel = await interactionFetchChannel(
-            interaction,
-            settings.mod_log_channel
-        )
+        const self = interaction.guild?.members.me
+        const channel = await (interaction.guild ?? interaction.client).channels
+            .fetch(settings.mod_log_channel)
+            .catch(() => null)
 
-        if (!isTextBased(channel) || !hasPerms(channel, interaction.guild?.members.me, perms))
+        if (channel === null || self === null || self === undefined) {
             return
+        } else if (!isGuildTextBased(channel)) {
+            return
+        } else if (!channel.permissionsFor(self).has(perms)) {
+            return
+        }
 
         return void dontThrow(channel.send({ embeds }))
     }
