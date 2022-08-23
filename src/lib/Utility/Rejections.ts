@@ -29,3 +29,9 @@ for (const event of [
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     process.once(event, cleanup)
 }
+
+export const logError = (err: Error): Error => {
+    Error.captureStackTrace(err, logError)
+    logger.error(err)
+    return err
+}

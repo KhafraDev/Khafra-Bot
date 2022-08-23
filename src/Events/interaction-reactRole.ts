@@ -1,4 +1,3 @@
-import { client } from '#khaf/Client'
 import { Event } from '#khaf/Event'
 import { logger } from '#khaf/structures/Logger/FileLogger.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
@@ -19,7 +18,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
             return
         } else if (
             !validSnowflake(interaction.customId) ||
-            interaction.message.author.id !== client.user?.id
+            interaction.message.author.id !== interaction.client.user?.id
         ) {
             return
         }

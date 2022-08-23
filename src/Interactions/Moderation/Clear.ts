@@ -2,7 +2,6 @@ import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText, isThread } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/Discord/util.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import { bold, time } from '@discordjs/builders'
 import type {
@@ -85,11 +84,12 @@ export class kInteraction extends Interactions {
         }
 
         await interaction.reply({
-            content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`
+            content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`,
+            ephemeral: true
         })
         await setTimeout(5_000)
         await interaction.deleteReply()
-        await dontThrow(channel.bulkDelete(amount))
+        await channel.bulkDelete(amount)
 
         // If the channel is private, we shouldn't broadcast
         // information about it.

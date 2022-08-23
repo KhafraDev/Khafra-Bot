@@ -102,6 +102,7 @@ export class kSubCommand extends InteractionSubCommand {
         const settings = await util.interactionGetGuildSettings(interaction)
 
         if (settings && settings.max_warning_points <= totalPoints) {
+            // TODO: wtf is this!!!?!?!?!?
             const [kickError] = 'kick' in member
                 ? await dontThrow(member.kick(reason || undefined))
                 : ['']

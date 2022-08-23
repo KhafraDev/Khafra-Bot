@@ -5,7 +5,6 @@ import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
@@ -91,6 +90,6 @@ export class kEvent extends Event<typeof Events.GuildMemberRemove> {
             footer: { text: 'User left' }
         })
 
-        return void dontThrow(channel.send({ embeds: [embed] }))
+        await channel.send({ embeds: [embed] })
     }
 }

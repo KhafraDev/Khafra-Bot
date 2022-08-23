@@ -82,6 +82,8 @@ export class kUserCommand extends InteractionUserCommand {
             ${content.length !== 0 ? codeBlock(content) : ''}`
         })
 
+        // TODO: do proper permission checks to ensure
+        // we can actually post to the channel!
         const [err] = await dontThrow(channel.send({
             content: a !== undefined
                 ? a.map(att => att.proxyURL).join('\n')
@@ -100,13 +102,13 @@ export class kUserCommand extends InteractionUserCommand {
         // normal reply, delete it, and then follow up to the interaction
         // with an ephemeral message. This sucks, but Discord explicitly
         // doesn't want to allow ephemeral context menu replies.
-        await dontThrow(interaction.editReply({
+        await interaction.editReply({
             content: '✅ Reported the message to staff!'
-        }))
-        await dontThrow(interaction.deleteReply())
-        await dontThrow(interaction.followUp({
+        })
+        await interaction.deleteReply()
+        await interaction.followUp({
             content: `Reported ${m}!`,
             ephemeral: true
-        }))
+        })
     }
 }

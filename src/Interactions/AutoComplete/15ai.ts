@@ -1,6 +1,5 @@
 import { InteractionAutocomplete } from '#khaf/Interaction'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import type { APIApplicationCommandOptionChoice } from 'discord-api-types/v10'
 import type { AutocompleteInteraction } from 'discord.js'
@@ -48,6 +47,6 @@ export class kAutocomplete extends InteractionAutocomplete {
             sortedKeys.push({ name: 'No options available', value: 'invalid' })
         }
 
-        return void dontThrow(interaction.respond(sortedKeys))
+        return void interaction.respond(sortedKeys)
     }
 }

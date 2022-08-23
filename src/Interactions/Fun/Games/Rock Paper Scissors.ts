@@ -1,7 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { randomUUID } from 'node:crypto'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -56,12 +55,12 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         if (c === undefined) {
-            return void dontThrow(interaction.editReply({
+            return void interaction.editReply({
                 embeds: [
                     Embed.error('❌ Game was canceled! Play again another time.')
                 ],
                 components: disableAll(int)
-            }))
+            })
         }
 
         const botChoice = Object.keys(emojis)[Math.floor(Math.random() * 3)] as Keys
@@ -78,9 +77,9 @@ export class kSubCommand extends InteractionSubCommand {
             embed = Embed.ok(`You win with ${emojis[userChoice]}, I chose ${emojis[botChoice]}!`)
         }
 
-        return void dontThrow(c.update({
+        return void c.update({
             embeds: [embed],
             components: disableAll(int)
-        }))
+        })
     }
 }

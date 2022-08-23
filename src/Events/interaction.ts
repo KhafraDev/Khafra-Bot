@@ -2,7 +2,6 @@ import { KhafraClient } from '#khaf/Bot'
 import { Command } from '#khaf/Command'
 import { Event } from '#khaf/Event'
 import { logger } from '#khaf/structures/Logger/FileLogger.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
@@ -44,17 +43,17 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
             : KhafraClient.Interactions.Commands.get(interaction.commandName)
 
         if (!command) {
-            return void dontThrow(interaction.reply({
+            return void interaction.reply({
                 content: '❌ This command is no longer available, try to refresh your client!'
-            }))
+            })
         } else if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
-            return void dontThrow(interaction.reply({
+            return void interaction.reply({
                 content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
-            }))
+            })
         } else if (disabled.includes(interaction.commandName)) {
-            return void dontThrow(interaction.reply({
+            return void interaction.reply({
                 content: `${inlineCode(interaction.commandName)} is temporarily disabled!`
-            }))
+            })
         }
 
         try {

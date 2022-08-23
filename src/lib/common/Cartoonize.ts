@@ -1,4 +1,4 @@
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { URLFactory } from '#khaf/utility/Valid/URL.js'
 import type { Attachment } from 'discord.js'
 import { decodeXML } from 'entities'
@@ -17,8 +17,14 @@ export class Cartoonize {
         const u = URLFactory(url)
         if (u === null) return null
 
-        const [err, res] = await dontThrow(request(u))
-        if (err === null) return res.body.blob()
+        const res = await request(u).catch((err: Error) => {
+            logError(err)
+            return null
+        })
+
+        if (res !== null) {
+            return res.body.blob()
+        }
 
         return null
     }

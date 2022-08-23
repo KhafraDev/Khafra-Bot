@@ -5,10 +5,10 @@ import '#khaf/image/ImageFonts.js'
 
 import { KhafraClient } from '#khaf/Bot'
 import type { Event } from '#khaf/Event'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { RESTEvents, type RestEvents } from '@discordjs/rest'
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
 import { type ClientEvents, Partials, Events } from 'discord.js'
+import { logError } from '#khaf/utility/Rejections.js'
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     name: T
@@ -19,7 +19,7 @@ const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
         events ??= KhafraClient.Events.get(name)!
 
         for (const event of events) {
-            void dontThrow(event.init(...args))
+            event.init(...args).catch(logError)
         }
     }
 }

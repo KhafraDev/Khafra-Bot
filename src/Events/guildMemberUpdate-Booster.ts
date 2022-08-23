@@ -4,7 +4,6 @@ import { Event } from '#khaf/Event'
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type GuildMember } from 'discord.js'
 
@@ -78,7 +77,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                 }
             })
 
-            return void dontThrow(channel.send({ embeds: [embed] }))
+            await channel.send({ embeds: [embed] })
         } else { // gained role
             const embed = Embed.json({
                 color: colors.boost,
@@ -89,7 +88,7 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
                 }
             })
 
-            return void dontThrow(channel.send({ embeds: [embed] }))
+            await channel.send({ embeds: [embed] })
         }
     }
 }

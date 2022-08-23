@@ -25,6 +25,7 @@ export async function dontThrow<T = unknown>(
         return [err, null]
     } finally {
         if (err && options.logOnFail) {
+            Error.captureStackTrace(err, dontThrow)
             logger.error(err, 'error in dontThrow utility')
         }
     }

@@ -1,5 +1,4 @@
 import { Interactions } from '#khaf/Interaction'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { bold } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js'
@@ -19,7 +18,8 @@ export class kInteraction extends Interactions {
 
         if (!interaction.guild) {
             if (interaction.guildId) {
-                ([, guild] = await dontThrow(interaction.client.guilds.fetch(interaction.guildId)))
+                guild = await interaction.client.guilds.fetch(interaction.guildId)
+                    .catch(() => null)
             }
 
             if (guild === null) {

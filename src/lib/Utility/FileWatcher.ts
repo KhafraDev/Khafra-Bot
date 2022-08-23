@@ -1,16 +1,13 @@
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { readFileSync, watch } from 'node:fs'
-import { readFile, stat } from 'node:fs/promises'
+import { readFile, access } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
 
 type Watcher = Record<string, unknown> | unknown[]
 
 const watchers = new Map<string, Watcher>()
 
-const exists = async (file: string): Promise<boolean> => {
-    const [err] = await dontThrow(stat(file), { logOnFail: false })
-    return err === null
-}
+const exists = async (file: string): Promise<boolean> =>
+    access(file).then(() => true, () => false)
 
 export const createFileWatcher = <F extends Watcher>(storage: F, path: string): F => {
     if (watchers.has(path)) {

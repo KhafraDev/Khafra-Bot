@@ -3,7 +3,6 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Warning } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as util from '#khaf/utility/Discord/util.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { plural } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -56,9 +55,9 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        await dontThrow(interaction.editReply({
+        await interaction.editReply({
             content: `Warning ${inlineCode(deleted[0].id)} has been removed!`
-        }))
+        })
 
         const embed = Embed.json({
             color: colors.ok,

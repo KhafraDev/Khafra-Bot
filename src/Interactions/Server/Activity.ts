@@ -1,7 +1,7 @@
 import { rest } from '#khaf/Bot'
 import { Interactions } from '#khaf/Interaction'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { toString } from '#khaf/utility/Permissions.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
     APIInvite, RESTPostAPIApplicationCommandsJSONBody,
@@ -82,7 +82,7 @@ export class kInteraction extends Interactions {
         const activityId = interaction.options.getString('game', true)
         const channel = interaction.options.getChannel('channel', true) as VoiceChannel
 
-        const [fetchError, invite] = await dontThrow(rest.post(
+        const invite = await rest.post(
             Routes.channelInvites(channel.id),
             {
                 headers: { 'Content-Type': 'application/json' },
@@ -92,11 +92,11 @@ export class kInteraction extends Interactions {
                     target_application_id: activityId
                 } as RESTPostAPIChannelInviteJSONBody
             }
-        ) as Promise<APIInvite>)
+        ).catch(logError) as APIInvite | ReturnType<typeof logError>
 
-        if (fetchError !== null) {
+        if (invite instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(fetchError.message)}`,
+                content: `❌ An unexpected error occurred: ${inlineCode(invite.message)}`,
                 ephemeral: true
             }
         }

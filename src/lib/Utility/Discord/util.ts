@@ -2,7 +2,6 @@ import { cache } from '#khaf/cache/Settings.js'
 import { sql } from '#khaf/database/Postgres.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type {
@@ -73,7 +72,7 @@ export const postToModLog = async (
             return
         }
 
-        return void dontThrow(channel.send({ embeds }))
+        return void channel.send({ embeds })
     }
 }
 

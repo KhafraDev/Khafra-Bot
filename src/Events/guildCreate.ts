@@ -1,7 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import { logger } from '#khaf/structures/Logger/FileLogger.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { Events, type Guild } from 'discord.js'
 
 export class kEvent extends Event<typeof Events.GuildCreate> {
@@ -18,6 +17,6 @@ export class kEvent extends Event<typeof Events.GuildCreate> {
             ) ON CONFLICT DO NOTHING;
         `
 
-        await dontThrow(guild.roles.fetch())
+        await guild.roles.fetch()
     }
 }

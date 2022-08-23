@@ -11,7 +11,6 @@ import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { Stats } from '#khaf/utility/Stats.js'
@@ -103,55 +102,55 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
             const rateLimitSeconds = command.rateLimit.rateLimitSeconds
             const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000)
 
-            return void dontThrow(message.reply({
+            return void message.reply({
                 content:
                     `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
                     `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
-            }))
+            })
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
-            return void dontThrow(message.reply({
+            return void message.reply({
                 content: `${inlineCode(name)} is temporarily disabled!`
-            }))
+            })
         } else {
             command.rateLimit.rateLimitUser(message.author.id)
         }
 
         if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
-            return void dontThrow(message.reply({
+            return void message.reply({
                 embeds: [
                     Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ]
-            }))
+            })
         }
 
         const [min, max = Infinity] = command.settings.args
         if (min > args.length || args.length > max) {
-            return void dontThrow(message.reply({
+            return void message.reply({
                 embeds: [
                     Embed.error(`
                     Incorrect number of arguments provided.
-                    
+
                     The command requires ${min} minimum arguments and ${max} max.
                     Example(s):
                     ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
                     `)
                 ]
-            }))
+            })
         }
 
         if (!_cooldownUsers(message.author.id)) {
-            return void dontThrow(message.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] }))
+            return void message.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] })
         } else if (!_cooldownGuild(message.guild.id)) {
-            return void dontThrow(message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] }))
+            return void message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
         } else if (
             message.member === null ||
             !message.channel.permissionsFor(message.member).has(command.permissions)
         ) {
-            return void dontThrow(message.reply({
+            return void message.reply({
                 embeds: [
                     Embed.perms(message.channel, message.member, command.permissions)
                 ]
-            }))
+            })
         }
 
         Stats.session++
@@ -193,10 +192,10 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             const error = 'An unexpected error has occurred!'
 
-            return void dontThrow(message.reply({
+            return void message.reply({
                 embeds: [Embed.error(error)],
                 failIfNotExists: false
-            }))
+            })
         } finally {
             MessagesLRU.delete(message.id)
 

@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { toString } from '#khaf/utility/Permissions.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
@@ -166,7 +166,7 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const [err, message] = await dontThrow(channel.send({
+        const message = await channel.send({
             embeds: [
                 Embed.json({
                     color: resolveColor(role.hexColor),
@@ -176,11 +176,11 @@ export class kInteraction extends Interactions {
             components: [
                 Components.actionRow([component])
             ]
-        }))
+        }).catch(logError)
 
-        if (err !== null) {
+        if (message instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                content: `❌ An unexpected error occurred: ${inlineCode(message.message)}`,
                 ephemeral: true
             }
         }

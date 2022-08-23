@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
@@ -94,11 +94,11 @@ export class kInteraction extends Interactions {
 
         if (subcommand === Subcommands.LIST) {
             if (list.length === 0) {
-                const [err, res] = await dontThrow(request(supportedListURL))
+                const res = await request(supportedListURL).catch(logError)
 
-                if (err !== null) {
+                if (res instanceof Error) {
                     return {
-                        content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                        content: `❌ An unexpected error occurred: ${inlineCode(res.message)}`,
                         ephemeral: true
                     }
                 }
@@ -198,11 +198,11 @@ export class kInteraction extends Interactions {
         api.searchParams.append('country', 'US')
         api.searchParams.append('q', query)
 
-        const [err, res] = await dontThrow(request(api))
+        const res = await request(api).catch(logError)
 
-        if (err !== null) {
+        if (res instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                content: `❌ An unexpected error occurred: ${inlineCode(res.message)}`,
                 ephemeral: true
             }
         }

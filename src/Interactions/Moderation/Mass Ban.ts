@@ -1,5 +1,4 @@
 import { Interactions } from '#khaf/Interaction'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import type {
     APIApplicationCommandOption,
@@ -95,9 +94,9 @@ export class kInteraction extends Interactions {
             }
         }
 
-        await dontThrow(interaction.editReply({
+        await interaction.editReply({
             content: '✅ Starting to ban these members... if you provided multiple, it may take a minute!'
-        }))
+        })
 
         let description = ''
         for (const [id, user] of users.entries()) {
@@ -113,8 +112,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        return void dontThrow(interaction.followUp({
+        return void interaction.followUp({
             content: description
-        }))
+        })
     }
 }

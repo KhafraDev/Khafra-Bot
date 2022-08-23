@@ -2,8 +2,8 @@ import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { hyperlink, inlineCode } from '@discordjs/builders'
 import { FifteenDotAI } from '@khaf/15.ai'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
@@ -59,15 +59,15 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const [err, voice] = await dontThrow(FifteenDotAI.getWav(
+        const voice = await FifteenDotAI.getWav(
             obj.name,
             text,
             obj.emotions[0]
-        ))
+        ).catch(logError)
 
-        if (err !== null) {
+        if (voice instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                content: `❌ An unexpected error occurred: ${inlineCode(voice.message)}`,
                 ephemeral: true
             }
         } else if (voice === null) {

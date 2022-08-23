@@ -4,7 +4,6 @@ import { logger } from '#khaf/structures/Logger/Logger.js'
 import { yellow } from '#khaf/utility/Colors.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
 import { Events } from 'discord.js'
@@ -25,11 +24,11 @@ export class kEvent extends Event<typeof Events.ClientReady> {
             }
 
             const user = await client.users.fetch(config.botOwner)
-            const [err] = await dontThrow(user.send({
+            const sentMessage = await user.send({
                 embeds: [Embed.ok(s)]
-            }))
+            }).then(() => true, () => false)
 
-            if (err !== null) {
+            if (sentMessage === false) {
                 logger.warn('Logged in! Could not send message to the bot owner.')
             }
         }

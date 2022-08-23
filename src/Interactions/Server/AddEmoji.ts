@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { toString } from '#khaf/utility/Permissions.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type {
     APIRole,
@@ -108,16 +108,16 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const [err, emoji] = await dontThrow(interaction.guild.emojis.create({
+        const emoji = await interaction.guild.emojis.create({
             name,
             reason,
             attachment: attachment.proxyURL,
             roles: roles.map(role => role.id)
-        }))
+        }).catch(logError)
 
-        if (err !== null) {
+        if (emoji instanceof Error) {
             return {
-                content: `❌ An unexpected error has occurred: ${inlineCode(err.message)}`,
+                content: `❌ An unexpected error has occurred: ${inlineCode(emoji.message)}`,
                 ephemeral: true
             }
         }

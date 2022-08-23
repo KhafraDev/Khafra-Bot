@@ -1,5 +1,5 @@
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { once } from '#khaf/utility/Memoize.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { setInterval } from 'node:timers'
 import { request } from 'undici'
 
@@ -44,6 +44,8 @@ const fetchEntries = async (): Promise<Story[]> => {
 }
 
 export const fetchHN = once(async () => {
-    await dontThrow(fetchEntries())
-    return setInterval(() => void dontThrow(fetchEntries()), 60 * 1000 * 10).unref()
+    await fetchEntries().catch(logError)
+    return setInterval(() => {
+        fetchEntries().catch(logError)
+    }, 60 * 1000 * 10).unref()
 })

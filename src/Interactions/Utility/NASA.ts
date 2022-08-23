@@ -1,10 +1,10 @@
 import { Interactions } from '#khaf/Interaction'
 import { inlineCode } from '@discordjs/builders'
 import { NASAGetRandom } from '#khaf/utility/commands/NASA'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions } from 'discord.js'
+import { logError } from '#khaf/utility/Rejections.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -17,11 +17,11 @@ export class kInteraction extends Interactions {
     }
 
     async init (): Promise<InteractionReplyOptions> {
-        const [err, result] = await dontThrow(NASAGetRandom())
+        const result = await NASAGetRandom().catch(logError)
 
-        if (err !== null) {
+        if (result instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                content: `❌ An unexpected error occurred: ${inlineCode(result.message)}`,
                 ephemeral: true
             }
         } else if (result === null) {

@@ -3,8 +3,8 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { type Giveaway } from '#khaf/types/KhafraBot.js'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
@@ -48,17 +48,19 @@ export class kSubCommand extends InteractionSubCommand {
             footer: { text: `${winners} winner${plural(winners)}` }
         })
 
-        const [sentError, sent] = await dontThrow(channel.send({
+        // TODO: check permissions on channel to ensure
+        // no error will be thrown.
+        const sent = await channel.send({
             embeds: [embed]
-        }))
+        }).catch(logError)
 
-        if (sentError !== null) {
+        if (sent instanceof Error) {
             return {
-                content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sentError.message)}`,
+                content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sent.message)}`,
                 ephemeral: true
             }
         } else {
-            void dontThrow(sent.react('🎉'))
+            void sent.react('🎉').catch(logError)
         }
 
         const rows = await sql<GiveawayId[]>`
