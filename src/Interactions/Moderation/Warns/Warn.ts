@@ -3,7 +3,6 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Warning } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as util from '#khaf/utility/Discord/util.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
 import { plural } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
@@ -34,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const points = interaction.options.getInteger('points', true)
-        const reason = interaction.options.getString('reason')
+        const reason = interaction.options.getString('reason') ?? undefined
         const member =
             interaction.options.getMember('member') ??
             interaction.options.getUser('member', true)
@@ -102,12 +101,23 @@ export class kSubCommand extends InteractionSubCommand {
         const settings = await util.interactionGetGuildSettings(interaction)
 
         if (settings && settings.max_warning_points <= totalPoints) {
-            // TODO: wtf is this!!!?!?!?!?
-            const [kickError] = 'kick' in member
-                ? await dontThrow(member.kick(reason || undefined))
-                : ['']
+            let kicked: boolean
 
-            if (kickError !== null) {
+            if (member instanceof GuildMember) {
+                if (!member.kickable) {
+                    return {
+                        content: '✅ Member was warned but I don\'t have permission to kick them.'
+                    }
+                }
+
+                kicked = await member.kick(reason).then(() => true, () => false)
+            } else {
+                kicked = await interaction.guild.members.kick(member)
+                    .then(() => true, () => false)
+            }
+
+
+            if (!kicked) {
                 return {
                     content: `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`,
                     ephemeral: true

@@ -1,17 +1,21 @@
 import { InteractionUserCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { isTextBased } from '#khaf/utility/Discord.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/Discord/util.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandType } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
 import { argv } from 'node:process'
 
 const args = new Minimalist(argv.slice(2).join(' '))
 const isDev = args.get('dev') === true
+
+const perms =
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.EmbedLinks
 
 export class kUserCommand extends InteractionUserCommand {
     constructor () {
@@ -62,9 +66,18 @@ export class kUserCommand extends InteractionUserCommand {
                 content: '❌ No staff channel could be found, was it deleted or were my perms taken away?',
                 ephemeral: true
             }
-        } else if (!isTextBased(channel)) {
+        } else if (!isGuildTextBased(channel)) {
             return {
                 content: '❌ I can only send messages in text based channels, sorry!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            interaction.guild.members.me === null ||
+            !channel.permissionsFor(interaction.guild.members.me).has(perms)
+        ) {
+            return {
+                content: '❌ I cannot send the message to staff, please contact an admin to correct this!',
                 ephemeral: true
             }
         }
@@ -82,21 +95,12 @@ export class kUserCommand extends InteractionUserCommand {
             ${content.length !== 0 ? codeBlock(content) : ''}`
         })
 
-        // TODO: do proper permission checks to ensure
-        // we can actually post to the channel!
-        const [err] = await dontThrow(channel.send({
+        await channel.send({
             content: a !== undefined
                 ? a.map(att => att.proxyURL).join('\n')
                 : undefined,
             embeds: [embed]
-        }))
-
-        if (err !== null) {
-            return {
-                content: '❌ I could not report this message to the staff channel.',
-                ephemeral: true
-            }
-        }
+        })
 
         // Context menu replies cannot be ephemeral, but you can send a
         // normal reply, delete it, and then follow up to the interaction

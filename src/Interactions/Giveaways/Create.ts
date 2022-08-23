@@ -9,11 +9,17 @@ import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
 const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true })
+
+const perms =
+    PermissionFlagsBits.SendMessages |
+    PermissionFlagsBits.ViewChannel |
+    PermissionFlagsBits.EmbedLinks
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -34,6 +40,20 @@ export class kSubCommand extends InteractionSubCommand {
                 content: '❌ A giveaway must last longer than a minute, and less than a month!',
                 ephemeral: true
             }
+        } else if (!interaction.memberPermissions?.has(perms)) {
+            return {
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            interaction.guild.members.me === null ||
+            !channel.permissionsFor(interaction.guild.members.me).has(perms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+                ephemeral: true
+            }
         }
 
         const endsDate = new Date(Date.now() + ends)
@@ -48,11 +68,9 @@ export class kSubCommand extends InteractionSubCommand {
             footer: { text: `${winners} winner${plural(winners)}` }
         })
 
-        // TODO: check permissions on channel to ensure
-        // no error will be thrown.
         const sent = await channel.send({
             embeds: [embed]
-        }).catch(logError)
+        })
 
         if (sent instanceof Error) {
             return {
@@ -60,7 +78,7 @@ export class kSubCommand extends InteractionSubCommand {
                 ephemeral: true
             }
         } else {
-            void sent.react('🎉').catch(logError)
+            await sent.react('🎉').catch(logError)
         }
 
         const rows = await sql<GiveawayId[]>`
