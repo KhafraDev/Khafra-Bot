@@ -1,7 +1,5 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { inlineCode } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { URLSearchParams } from 'node:url'
@@ -13,29 +11,27 @@ interface Insights {
     k_joined: number
 }
 
-const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> => {
+const Chart = async (o: Record<string, string | number>): Promise<ArrayBuffer> => {
     const query = new URLSearchParams()
 
     for (const [key, value] of Object.entries(o)) {
         query.set(key, `${value}`)
     }
 
-    return async (): Promise<ArrayBuffer> => {
-        const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
-            headers: {
-                'User-Agent': 'PseudoBot'
-            }
-        })
+    const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
+        headers: {
+            'User-Agent': 'PseudoBot'
+        }
+    })
 
-        return body.arrayBuffer()
-    }
+    return body.arrayBuffer()
 }
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'insights',
-            name: 'view'
+            name: 'graph'
         })
     }
 
@@ -86,6 +82,7 @@ export class kSubCommand extends InteractionSubCommand {
             Leaves: [] as string[]
         })
 
+        // https://www.chartjs.org/docs/2.8.0/
         const data = JSON.stringify({
             type: 'line',
             data: {
@@ -104,21 +101,55 @@ export class kSubCommand extends InteractionSubCommand {
                         data: Leaves
                     }
                 ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Members',
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        },
+                        offset: true,
+                        ticks: {
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 30
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date',
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        },
+                        offset: true,
+                        ticks: {
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        }
+                    }]
+                },
+                legend: {
+                    labels: {
+                        fontColor: 'rgb(255, 255, 255)',
+                        fontSize: 30
+                    }
+                }
             }
         })
 
-        const chart = Chart({
+        const chart = await Chart({
             chart: data,
-            width: 500,
-            height: 300,
-            backgroundColor: 'black'
-        })
+            width: 1920,
+            height: 1080,
+            backgroundColor: 'rgb(54, 57, 63)'
+        }).catch(() => null)
 
-        const [err, blob] = await dontThrow(chart())
-
-        if (err !== null) {
+        if (chart === null) {
             return {
-                content: `❌ An unexpected error occurred: ${inlineCode(err.message)}`,
+                content: '❌ An unexpected error occurred.',
                 ephemeral: true
             }
         }
@@ -126,7 +157,7 @@ export class kSubCommand extends InteractionSubCommand {
         return {
             files: [
                 {
-                    attachment: Buffer.from(blob),
+                    attachment: Buffer.from(chart),
                     name: 'chart.png'
                 }
             ]

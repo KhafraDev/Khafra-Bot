@@ -20,6 +20,11 @@ export class kInteraction extends Interactions {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'today',
                     description: 'View the current insights for the day.'
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'graph',
+                    description: 'View a graph of the insights.'
                 }
             ]
         }
