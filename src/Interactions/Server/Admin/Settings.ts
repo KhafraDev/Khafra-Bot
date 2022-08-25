@@ -61,7 +61,7 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        if (interaction.guildId === null) {
+        if (interaction.guild === null) {
             return {
                 content: '❌ The bot is not in the guild, re-invite with the proper perms to change these settings!',
                 ephemeral: true
@@ -82,7 +82,7 @@ export class kInteraction extends Interactions {
         if (keys.length === 0) {
             const [guild] = await sql<kGuild[]>`
                 SELECT * FROM kbGuild
-                WHERE guild_id = ${interaction.guildId}::text
+                WHERE guild_id = ${interaction.guild.id}::text
                 LIMIT 1;
             `
 
@@ -92,7 +92,7 @@ export class kInteraction extends Interactions {
                 embeds: [
                     Embed.json({
                         color: colors.ok,
-                        title: `✅ ${interaction.guild!.name} Settings`,
+                        title: `✅ ${interaction.guild.name} Settings`,
                         description: `
                         ${bold('Warning Points Limit:')} ${unset(guild.max_warning_points)}
                         ${bold('Mod Logs:')} ${unset(guild.mod_log_channel)}

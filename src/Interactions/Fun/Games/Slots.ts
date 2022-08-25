@@ -78,7 +78,7 @@ export class kSubCommand extends InteractionSubCommand {
             for (let j = 0; j < board[i].length; j++) {
                 if (board[i][j].includes('BAR')) {
                     ctx.font = '120px Arial'
-                    const BAR = board[i][j].match(/(BAR)/g)!.length
+                    const BAR = board[i][j].length / 3
                     const x = canvas.width / 1.5 + (j * 120) + (j * 40)
                     const y = i * 155 + 150
 

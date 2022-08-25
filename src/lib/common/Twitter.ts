@@ -149,8 +149,8 @@ export const getTwitterMediaURL = async (id: string): Promise<string | undefined
     if (!media || media.length === 0)
         return
 
-    if (media[0]!.type === 'video' || media[0]!.type === 'animated_gif') {
-        const medias = media[0]!.video_info.variants
+    if (media[0].type === 'video' || media[0].type === 'animated_gif') {
+        const medias = media[0].video_info.variants
         return medias
             .filter(u => u.content_type !== 'application/x-mpegURL')
             .map(m => m.url)
