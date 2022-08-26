@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot'
 import { Command } from '#khaf/Command'
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
@@ -83,15 +83,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
         } catch (e) {
             logger.error(e, 'interaction error')
         } finally {
-            logger.info(
-                {
-                    time: interaction.createdAt,
-                    channel: interaction.channelId,
-                    user: interaction.user,
-                    guild: interaction.guild
-                },
-                `${interaction.user.tag} (${interaction.user.id}) used the ${command.data.name} interaction!`
-            )
+            loggerUtility.logInteraction(interaction, command.data.name)
         }
     }
 }

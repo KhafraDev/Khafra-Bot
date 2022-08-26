@@ -1,6 +1,6 @@
 import type { Arguments} from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { bold, inlineCode, italic, time } from '@discordjs/builders'
@@ -24,7 +24,7 @@ const formatPresence = (activities: Activity[] | undefined): string => {
                 push.push(`Playing ${italic(activity.name)}.`)
                 break
             default:
-                logger.info(activity, 'unknown activity')
+                logger.warn(activity, 'unknown activity')
         }
     }
 

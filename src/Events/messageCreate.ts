@@ -6,7 +6,7 @@ import { Command } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
@@ -199,7 +199,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } finally {
             MessagesLRU.delete(message.id)
 
-            logger.info({ message }, 'message command')
+            logger.info(loggerUtility.formatters.message(message), 'message command')
         }
     }
 }

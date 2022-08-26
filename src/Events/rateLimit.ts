@@ -1,5 +1,5 @@
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import type { RateLimitData } from '@discordjs/rest'
 
 export class kEvent extends Event<'rateLimited'> {

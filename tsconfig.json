@@ -56,7 +56,7 @@
       "#khaf/Interaction": ["./src/Structures/Interaction.js"],
       "#khaf/Event": ["./src/Structures/Event.js"],
       "#khaf/types/*": ["./src/lib/types/*"],
-      "#khaf/Logger": ["./src/Structures/Logger/Logger.js"],
+      "#khaf/Logger": ["./src/Structures/Logger.js"],
       "#khaf/Bot": ["./src/Bot/KhafraBot.js"],
       "#khaf/Client": ["./src/index.js"],
       "#khaf/LRU": ["./src/Structures/LRU.js"],

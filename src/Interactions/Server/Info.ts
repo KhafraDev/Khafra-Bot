@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client'
 import { Interactions } from '#khaf/Interaction'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { parseEmojiList } from '#khaf/utility/Emoji.js'
@@ -42,7 +42,7 @@ const formatPresence = (activities: Activity[] | undefined): string => {
                 break
             }
             default:
-                logger.info(activity, 'unknown activity')
+                logger.warn(activity, 'unknown activity')
         }
     }
 

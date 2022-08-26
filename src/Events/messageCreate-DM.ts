@@ -2,7 +2,7 @@ import { KhafraClient } from '#khaf/Bot'
 import { Command, type Arguments } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
@@ -95,8 +95,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         } catch (e) {
             logger.error({
                 error: e,
-                user: message.author,
-                guild: message.guild
+                ...loggerUtility.formatters.message(message)
             }, 'DM error')
 
             if (!(e instanceof Error)) {

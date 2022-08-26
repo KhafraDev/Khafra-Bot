@@ -1,19 +1,17 @@
 import { client as DiscordClient } from '#khaf/Client'
 import { sql as PostgresClient } from '#khaf/database/Postgres.js'
-import { logger } from '#khaf/Logger'
-import { logger as FileLogger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { once } from '#khaf/utility/Memoize.js'
 import process, { exit } from 'node:process'
 
 const cleanup = once(async (...args: [unknown?, unknown?]) => {
     if (args.length !== 0) {
-        logger.debug(...args)
+        logger.debug(...args as [unknown, string])
     }
 
     await PostgresClient.end({ timeout: 5 })
     DiscordClient.destroy()
-    logger.close()
-    FileLogger.stop()
+    logger.flush()
 
     exit(1)
 })

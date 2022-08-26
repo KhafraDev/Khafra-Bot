@@ -1,6 +1,6 @@
 import { client } from '#khaf/Client'
 import { sql } from '#khaf/database/Postgres.js'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { Timer } from '#khaf/Timer'
 import type { kReminder } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'

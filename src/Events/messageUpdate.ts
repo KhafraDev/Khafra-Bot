@@ -5,7 +5,7 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
@@ -180,7 +180,10 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         } finally {
             MessagesLRU.delete(newMessage.id)
 
-            logger.info({ newMessage, oldMessage }, 'message update')
+            logger.info({
+                oldMessage: loggerUtility.formatters.message(oldMessage),
+                newMessageId: newMessage.id
+            })
         }
     }
 }

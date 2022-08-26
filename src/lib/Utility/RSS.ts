@@ -1,4 +1,4 @@
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isRedirect } from '#khaf/utility/FetchUtils.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'

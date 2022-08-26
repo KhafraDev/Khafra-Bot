@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { codeBlock } from '@discordjs/builders'

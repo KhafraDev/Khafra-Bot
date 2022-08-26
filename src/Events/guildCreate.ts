@@ -1,13 +1,13 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
-import { logger } from '#khaf/structures/Logger/FileLogger.js'
+import { loggerUtility } from '#khaf/structures/Logger.js'
 import { Events, type Guild } from 'discord.js'
 
 export class kEvent extends Event<typeof Events.GuildCreate> {
     name = Events.GuildCreate as const
 
     async init (guild: Guild): Promise<void> {
-        logger.info({ guild }, 'Joined a new guild!')
+        loggerUtility.logGuild(guild, 'Joined a new guild!')
 
         await sql`
             INSERT INTO kbGuild (

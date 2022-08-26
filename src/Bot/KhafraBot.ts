@@ -1,9 +1,8 @@
 import type { Command } from '#khaf/Command'
 import type { Event } from '#khaf/Event'
 import type { InteractionAutocomplete, Interactions, InteractionSubCommand, InteractionUserCommand } from '#khaf/Interaction'
-import { logger } from '#khaf/structures/Logger/Logger.js'
+import { logger } from '#khaf/structures/Logger.js'
 import type { Timer } from '#khaf/Timer'
-import { bright, green, magenta } from '#khaf/utility/Colors.js'
 import { assets, cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { once } from '#khaf/utility/Memoize.js'
@@ -89,7 +88,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        logger.log(green(`Loaded ${bright(commands.length)} commands!`))
+        logger.info(`Loaded ${commands.length} commands!`)
         return KhafraClient.Commands
     }
 
@@ -110,7 +109,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        logger.log(green(`Loaded ${bright(KhafraClient.Events.size)} events!`))
+        logger.info(`Loaded ${KhafraClient.Events.size} events!`)
         return KhafraClient.Events
     }
 
@@ -263,11 +262,11 @@ export class KhafraClient extends Client {
         }
 
         const loadedMessage =
-            `Loaded ${bright(loaded.length)} interactions, ` +
-            `${bright(loadedSubCommands)} sub commands, ` +
-            `and ${bright(loadedUserCommands)} user commands!`
+            `Loaded ${loaded.length} interactions, ` +
+            `${loadedSubCommands} sub commands, ` +
+            `and ${loadedUserCommands} user commands!`
 
-        logger.log(green(loadedMessage))
+        logger.info(loadedMessage)
         return KhafraClient.Interactions.Commands
     }
 
@@ -297,7 +296,7 @@ export class KhafraClient extends Client {
             }
         }
 
-        logger.log(green(`Loaded ${bright(loadedTimers)}/${bright(settled.length)} timers!`))
+        logger.info(`Loaded ${loadedTimers}/${settled.length} timers!`)
     }
 
     init = once(async () => {
@@ -309,6 +308,6 @@ export class KhafraClient extends Client {
             this.loadInteractions()
         ])
         await this.login(env.TOKEN)
-        logger.log(magenta(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`))
+        logger.info(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`)
     })
 }
