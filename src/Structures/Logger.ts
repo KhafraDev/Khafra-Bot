@@ -1,7 +1,9 @@
 import pino from 'pino'
 import type { Guild, Interaction, Message, Role, User } from 'discord.js'
 
-export const logger = pino()
+export const logger = pino({
+    base: null
+})
 
 export const loggerUtility = {
     formatters: {
