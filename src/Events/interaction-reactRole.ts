@@ -27,7 +27,10 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
         const role = guild.roles.cache.get(interaction.customId)
 
         if (role !== undefined) {
-            loggerUtility.logRole(role, 'react role', loggerUtility.formatters.guild(guild))
+            loggerUtility.logRole(role, 'react role', {
+                ...loggerUtility.formatters.guild(guild),
+                ...loggerUtility.formatters.user(interaction.user)
+            })
         }
 
         if (!role) {
