@@ -6,24 +6,44 @@ import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isDM } from '#khaf/utility/Discord.js'
 import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
 import { join } from 'node:path'
-import { defaultSettings, disabled, _cooldownGuild, _cooldownUsers } from './messageCreate.js'
+import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
+import { _cooldownGuild, _cooldownUsers } from './messageCreate.js'
 
 const config = createFileWatcher(
     {} as typeof import('../../config.json'),
     join(cwd, 'config.json')
 )
+
+const defaultSettings: PartialGuild = {
+    max_warning_points: 20,
+    mod_log_channel: null,
+    welcome_channel: null
+}
+
+const { values: processArgs } = parseArgs({
+    args: argv.slice(2),
+    strict: false,
+    options: {
+        disabled: {
+            type: 'string'
+        }
+    }
+})
+const disabled = typeof processArgs['disabled'] === 'string'
+    ? processArgs['disabled'].split(',').map(c => c.toLowerCase())
+    : []
 
 export class kEvent extends Event<typeof Events.MessageUpdate> {
     name = Events.MessageUpdate as const
@@ -71,7 +91,6 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
 
         // !say hello world -> hello world
         const content = newMessage.content.slice(mention.length + name.length + 2)
-        const cli = new Minimalist(content)
 
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(newMessage.author.id)
@@ -137,7 +156,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         Stats.session++
 
         try {
-            const options: Arguments = { args, commandName: name.toLowerCase(), content, cli }
+            const options: Arguments = { args, commandName: name.toLowerCase(), content }
             const returnValue = await command.init(newMessage, options, guild)
             if (!returnValue || returnValue instanceof Message)
                 return

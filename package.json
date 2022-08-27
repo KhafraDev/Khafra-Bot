@@ -41,7 +41,7 @@
     "undici": "^5.8.1"
   },
   "devDependencies": {
-    "@types/node": "^18.6.4",
+    "@types/node": "^18.7.13",
     "@types/twemoji-parser": "^13.1.1",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",

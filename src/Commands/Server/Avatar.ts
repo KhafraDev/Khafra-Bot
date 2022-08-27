@@ -4,6 +4,7 @@ import { getMentions } from '#khaf/utility/Mentions.js'
 import type { ImageExtension, ImageSize, ImageURLOptions } from '@discordjs/rest'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { parseArgs } from 'node:util'
 
 const avatarSizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
 const avatarFormats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif']
@@ -29,8 +30,21 @@ export class kCommand extends Command {
         )
     }
 
-    async init (message: Message, { cli, content }: Arguments): Promise<APIEmbed> {
+    async init (message: Message, { content, args }: Arguments): Promise<APIEmbed> {
         const user = await getMentions(message, 'users', content) ?? message.author
+        const { values: cli } = parseArgs({
+            args,
+            options: {
+                size: {
+                    type: 'string',
+                    short: 's'
+                },
+                format: {
+                    type: 'string',
+                    short: 'f'
+                }
+            }
+        })
 
         const opts: ImageURLOptions = {
             size: 512,
@@ -38,19 +52,17 @@ export class kCommand extends Command {
             forceStatic: false
         }
 
-        if (cli.size !== 0) {
-            if (cli.has('size') || cli.has('s')) {
-                const value = Number(cli.get('size') || cli.get('s')) as ImageSize
-                if (avatarSizes.includes(value)) {
-                    opts.size = value
-                }
+        if (cli['size'] !== undefined) {
+            const value = Number(cli['size']) as ImageSize
+            if (avatarSizes.includes(value)) {
+                opts.size = value
             }
+        }
 
-            if (cli.has('format') || cli.has('f')) {
-                const value = cli.get('format') || cli.get('f')
-                if (typeof value === 'string' && avatarFormats.includes(value as ImageExtension)) {
-                    opts.extension = value as ImageExtension
-                }
+        if (cli['format'] !== undefined) {
+            const value = cli['format'] as ImageExtension
+            if (typeof value === 'string' && avatarFormats.includes(value)) {
+                opts.extension = value
             }
         }
 

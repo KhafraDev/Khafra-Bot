@@ -2,7 +2,6 @@ import { KhafraClient } from '#khaf/Bot'
 import { Command } from '#khaf/Command'
 import { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import {
@@ -14,17 +13,24 @@ import {
     type UserContextMenuCommandInteraction
 } from 'discord.js'
 import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
 
 type Interactions =
     ChatInputCommandInteraction &
     MessageContextMenuCommandInteraction &
     UserContextMenuCommandInteraction
 
-const processArgs = new Minimalist(argv.slice(2).join(' '))
-const disabled = typeof processArgs.get('disabled') === 'string'
-    ? (processArgs.get('disabled') as string)
-        .split(',')
-        .map(c => c.toLowerCase())
+const { values: processArgs } = parseArgs({
+    args: argv.slice(2),
+    strict: false,
+    options: {
+        disabled: {
+            type: 'string'
+        }
+    }
+})
+const disabled = typeof processArgs['disabled'] === 'string'
+    ? processArgs['disabled'].split(',').map(c => c.toLowerCase())
     : []
 
 export class kEvent extends Event<typeof Events.InteractionCreate> {

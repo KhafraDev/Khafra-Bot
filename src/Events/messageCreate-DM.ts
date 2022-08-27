@@ -6,7 +6,6 @@ import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { ChannelType } from 'discord-api-types/v10'
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
@@ -42,7 +41,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
         // !say hello world -> hello world
         const content = message.content.slice(mention.length + name.length + 2)
-        const cli = new Minimalist(content)
         const command = KhafraClient.Commands.get(name.toLowerCase())!
 
         if (!cooldownUsers(message.author.id)) { // user is rate limited
@@ -65,7 +63,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
             })
         }
 
-        const options: Arguments = { args, commandName: name.toLowerCase(), content, cli }
+        const options: Arguments = { args, commandName: name.toLowerCase(), content }
         Stats.session++
 
         try {

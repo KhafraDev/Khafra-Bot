@@ -3,7 +3,6 @@ import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
@@ -11,10 +10,9 @@ import { inlineCode } from '@discordjs/builders'
 import type { APIEmbed} from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
 
 const inRange = Range({ min: 0, max: 7, inclusive: true })
-const processArgs = new Minimalist(argv.slice(2).join(' '))
 
 export class kCommand extends Command {
     constructor () {
@@ -39,7 +37,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init (message: Message<true>, { args, cli, content }: Arguments): Promise<APIEmbed> {
+    async init (message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
         // the user might not be in the guild, but we still need to ban them
         // so we fetch their user object rather than a possibly non-existent member
         const user = await getMentions(message, 'users', content)
@@ -51,11 +49,31 @@ export class kCommand extends Command {
             return Embed.error('No user id or user mentioned, no one was banned.')
         }
 
+        const { values: cli } = parseArgs({
+            args,
+            allowPositionals: true,
+            options: {
+                days: {
+                    type: 'string'
+                },
+                time: {
+                    type: 'string'
+                },
+                reason: {
+                    type: 'string',
+                    short: 'r'
+                },
+                dry: {
+                    type: 'boolean'
+                }
+            }
+        })
+
         // days of messages to clear
         let clear = 7, usedMs = false
 
-        if (cli.has('days') || cli.has('time')) {
-            const time = Number(cli.get('days') || cli.get('time'))
+        if (cli['days'] !== undefined || cli['time'] !== undefined) {
+            const time = Number(cli['days'] ?? cli['time'])
 
             if (inRange(time)) {
                 clear = time
@@ -72,12 +90,8 @@ export class kCommand extends Command {
 
         let reason = `Requested by ${message.author.tag} (${message.author.id}).`
 
-        if (cli.has('reason') || cli.has('r')) {
-            const str = cli.get('reason') || cli.get('r')
-
-            if (typeof str === 'string') {
-                reason = str
-            }
+        if (cli['reason'] !== undefined) {
+            reason = cli['reason']
         } else if (usedMs) {
             // ban @user 3d reason here -> reason here
             // ban @user reason here -> reason here
@@ -97,7 +111,7 @@ export class kCommand extends Command {
             }
         }
 
-        if (!processArgs.get('dev')) {
+        if (cli['dry'] !== true) {
             const [err] = await dontThrow(message.guild.members.ban(user, {
                 deleteMessageDays: clear,
                 reason: reason

@@ -2,15 +2,22 @@ import { InteractionUserCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/Discord/util.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import { PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandType } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
 import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
 
-const args = new Minimalist(argv.slice(2).join(' '))
-const isDev = args.get('dev') === true
+const { values: args } = parseArgs({
+    args: argv.slice(2),
+    options: {
+        dev: {
+            type: 'boolean'
+        }
+    }
+})
+const isDev = args['dev'] === true
 
 const perms =
     PermissionFlagsBits.SendMessages |

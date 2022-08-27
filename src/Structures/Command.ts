@@ -2,7 +2,6 @@ import { Cooldown } from '#khaf/cooldown/CommandCooldown.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import type { Minimalist } from '#khaf/utility/Minimalist.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message, PermissionResolvable, Snowflake } from 'discord.js'
 import { join } from 'node:path'
@@ -16,8 +15,6 @@ export interface Arguments {
     readonly commandName: string
     /** Text unformatted, removes mention+command with leading whitespace. */
     readonly content: string
-    /** Any cli arguments provided by the user */
-    readonly cli: Minimalist
 }
 
 interface ICommand {

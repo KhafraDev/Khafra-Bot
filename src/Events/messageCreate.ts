@@ -12,20 +12,20 @@ import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { Minimalist } from '#khaf/utility/Minimalist.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
 import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
 import { join } from 'node:path'
 import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
 
 export const config = createFileWatcher(
     {} as typeof import('../../config.json'),
     join(cwd, 'config.json')
 )
 
-export const defaultSettings: PartialGuild = {
+const defaultSettings: PartialGuild = {
     max_warning_points: 20,
     mod_log_channel: null,
     welcome_channel: null
@@ -34,11 +34,17 @@ export const defaultSettings: PartialGuild = {
 export const _cooldownGuild = cooldown(30, 60000)
 export const _cooldownUsers = cooldown(10, 60000)
 
-export const processArgs = new Minimalist(argv.slice(2).join(' '))
-export const disabled = typeof processArgs.get('disabled') === 'string'
-    ? (processArgs.get('disabled') as string)
-        .split(',')
-        .map(c => c.toLowerCase())
+const { values: processArgs } = parseArgs({
+    args: argv.slice(2),
+    strict: false,
+    options: {
+        disabled: {
+            type: 'string'
+        }
+    }
+})
+const disabled = typeof processArgs['disabled'] === 'string'
+    ? processArgs['disabled'].split(',').map(c => c.toLowerCase())
     : []
 
 export class kEvent extends Event<typeof Events.MessageCreate> {
@@ -90,7 +96,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
         // @PseudoBot say hello world -> hello world
         const content = message.content.slice(mention.length + name.length + 2)
-        const cli = new Minimalist(content)
 
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(message.author.id)
@@ -156,7 +161,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         Stats.session++
 
         try {
-            const options: Arguments = { args, commandName: name.toLowerCase(), content, cli }
+            const options: Arguments = { args, commandName: name.toLowerCase(), content }
             const returnValue = await command.init(message, options, guild)
             if (!returnValue || returnValue instanceof Message)
                 return
