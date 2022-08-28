@@ -74,17 +74,22 @@ export class kInteraction extends Interactions {
             archived: true
         }
 
+        await interaction.reply({
+            content: `✅ Thread ${inlineCode(thread.name)} (${thread.id}) will be locked.`
+        })
+
         const response = await interaction.client.rest.patch(
             Routes.channel(thread.id),
             {
                 body,
                 headers: { 'X-Audit-Log-Reason': reason }
             }
-        ) as APIThreadChannel
+        ).catch(() => null) as APIThreadChannel | null
 
-        return {
-            content: `✅ Thread ${inlineCode(response.name!)} (${response.id}) was locked.`,
-            ephemeral: true
+        if (response === null) {
+            await interaction.editReply({
+                content: '❌ I was unable to lock the thread.'
+            })
         }
     }
 }
