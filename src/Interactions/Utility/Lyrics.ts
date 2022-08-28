@@ -1,21 +1,39 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import {
-    ActivityType, ApplicationCommandOptionType, InteractionType, type APIEmbed, type RESTPostAPIApplicationCommandsJSONBody
+import { s } from '@sapphire/shapeshift'
+import type {
+    APIEmbed
 } from 'discord-api-types/v10'
-import { GuildMember, InteractionCollector, type ButtonInteraction, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import {
+    ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
+import type { ButtonInteraction } from 'discord.js'
+import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { XMLParser } from 'fast-xml-parser'
 import { randomUUID } from 'node:crypto'
+import { URL } from 'node:url'
 import { request } from 'undici'
 
-interface SomeRandomApiLyrics {
-    title: string
-    author: string
-    lyrics: string
-    thumbnail: Record<'genius', string>
-    links: Record<'genius', string>
-    disclaimer: string
-}
+const base = 'http://api.chartlyrics.com/'
+
+const getLyricsURL = (artist: string, title: string): URL =>
+    new URL(`/apiv1.asmx/SearchLyricDirect?artist=${artist}&song=${title}`, base)
+
+const schema = s.object({
+    GetLyricResult: s.object({
+        TrackId: s.number,
+        LyricChecksum: s.string,
+        LyricId: s.number,
+        LyricSong: s.string,
+        LyricArtist: s.string,
+        LyricUrl: s.string,
+        LyricCovertArtUrl: s.string,
+        LyricRank: s.number,
+        LyricCorrectUrl: s.string,
+        Lyric: s.string
+    })
+})
 
 const paginateText = (text: string, max: number): string[] => {
     const pages: string[] = []
@@ -35,93 +53,81 @@ export class kInteraction extends Interactions {
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
+                    name: 'artist',
+                    description: 'Band or singer\'s name.',
+                    required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.String,
                     name: 'song',
-                    description: 'The name of the song to get the lyrics for. Put the band\'s name for better results!'
+                    description: 'The name of the song.',
+                    required: true
                 }
             ]
         }
 
-        super(sc)
+        super(sc, {
+            defer: true
+        })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        let search = interaction.options.getString('song')
+        const artist = interaction.options.getString('artist', true)
+        const song = interaction.options.getString('song', true)
 
-        if (typeof search !== 'string') {
-            if (interaction.member === null || !(interaction.member instanceof GuildMember)) {
-                return {
-                    content: '❌ Can\'t read your presence. Search for the song instead!',
-                    ephemeral: true
-                }
-            } else if (interaction.member.presence === null) {
-                return {
-                    content: '❌ You aren\'t listening to a song. Search for the song instead!',
-                    ephemeral: true
-                }
-            }
+        const {
+            body: lyricBody,
+            statusCode: lyricStatus
+        } = await request(getLyricsURL(artist, song))
 
-            const listening = interaction.member.presence.activities.find(
-                (activity) => activity.type === ActivityType.Listening && activity.name === 'Spotify'
-            )
-
-            if (listening === undefined) {
-                return {
-                    content: '❌ You aren\'t listening to a song. Search for the song instead!',
-                    ephemeral: true
-                }
-            }
-
-            search = `${listening.details} - ${listening.state}` // band - song name
-        }
-
-        if (search.trim().length === 0) {
+        if (lyricStatus !== 200) {
             return {
-                content: '❌ Must provide a song name.',
-                ephemeral: true
+                content: '❌ An error occurred getting these lyrics.'
             }
         }
 
-        await interaction.deferReply()
+        const lyricXML: unknown = new XMLParser().parse(await lyricBody.text())
+        const result = schema.run(lyricXML)
 
-        // TODO: pull lyrics from somewhere else.
-        const { body, statusCode } = await request(
-            `https://some-random-api.ml/lyrics?title=${encodeURIComponent(search)}`
-        )
-
-        if (statusCode !== 200) {
+        if (!result.isOk()) {
             return {
-                content: '❌ Lyrics for that song could not be found.',
-                ephemeral: true
+                content: '❌ Invalid response received from server, sorry.'
             }
         }
 
-        const lyrics = await body.json().catch(() => null) as SomeRandomApiLyrics | null
-
-        if (lyrics === null) {
-            return {
-                content: '❌ An error occurred reading the lyrics.',
-                ephemeral: true
-            }
-        }
+        const {
+            Lyric,
+            LyricUrl,
+            LyricCovertArtUrl,
+            LyricCorrectUrl, // url to correct lyrics
+            LyricArtist,
+            LyricSong
+        } = result.value.GetLyricResult
 
         const basicEmbed = (): APIEmbed => Embed.json({
             color: colors.ok,
-            title: `${lyrics.author} - ${lyrics.title}`,
-            description: lyrics.lyrics,
+            title: `${LyricArtist} - ${LyricSong}`,
+            description: Lyric,
+            url: LyricUrl,
             thumbnail: {
-                url: lyrics.thumbnail.genius
+                url: LyricCovertArtUrl
             }
         })
 
-        if (lyrics.lyrics.length <= 2048) {
+        if (Lyric.length <= 2048) {
             return {
-                embeds: [basicEmbed()]
+                embeds: [basicEmbed()],
+                components: [
+                    Components.actionRow([
+                        Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
+                    ])
+                ]
             }
         }
 
         let currentPage = 0
         const id = randomUUID()
-        const pages = paginateText(lyrics.lyrics, 2048).map((page) => {
+        const pages = paginateText(Lyric, 2048).map((page) => {
             const embed = basicEmbed()
             embed.description = page
             return embed
@@ -133,7 +139,8 @@ export class kInteraction extends Interactions {
                 Components.actionRow([
                     Buttons.approve('Next', `next-${id}`),
                     Buttons.secondary('Previous', `back-${id}`),
-                    Buttons.deny('Stop', `stop-${id}`)
+                    Buttons.deny('Stop', `stop-${id}`),
+                    Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
                 ])
             ]
         })
