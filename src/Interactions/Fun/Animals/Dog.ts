@@ -1,11 +1,12 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
+import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
 
-interface DogCEO {
-    message: string
-    status: string // "success" | "error"?
-}
+const schema = s.object({
+    message: s.string,
+    status: s.string // success | error
+})
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -27,7 +28,14 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const j = await body.json() as DogCEO
+        const j: unknown = await body.json()
+
+        if (!schema.is(j)) {
+            return {
+                content: '🐶 Couldn\'t get a picture of a random dog!',
+                ephemeral: true
+            }
+        }
 
         return {
             content: j.message

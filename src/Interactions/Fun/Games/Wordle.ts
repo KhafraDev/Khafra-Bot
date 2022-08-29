@@ -263,8 +263,8 @@ export class kSubCommand extends InteractionSubCommand {
         const canvas = createCanvas(Dims.Width + 60 + 5, Dims.Box * 6 + 6 * 4)
         const ctx = canvas.getContext('2d')
 
-        const lettersCorrect = new Set<Uppercase<string>>()
-        const lettersGuessed = new Set<Uppercase<string>>()
+        const lettersCorrect = new Set<string>()
+        const lettersGuessed = new Set<string>()
 
         ctx.font = '32px Arial'
         ctx.textAlign = 'center'

@@ -87,9 +87,8 @@ export class kInteraction extends Interactions {
         }
 
         const lyricXML: unknown = new XMLParser().parse(await lyricBody.text())
-        const result = schema.run(lyricXML)
 
-        if (!result.isOk()) {
+        if (!schema.is(lyricXML)) {
             return {
                 content: '❌ Invalid response received from server, sorry.'
             }
@@ -102,7 +101,7 @@ export class kInteraction extends Interactions {
             LyricCorrectUrl, // url to correct lyrics
             LyricArtist,
             LyricSong
-        } = result.value.GetLyricResult
+        } = lyricXML.GetLyricResult
 
         const basicEmbed = (): APIEmbed => Embed.json({
             color: colors.ok,

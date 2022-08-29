@@ -30,7 +30,7 @@
     "@imagemagick/magick-wasm": "^0.0.14",
     "@khaf/qrcode": "^0.0.8",
     "@napi-rs/canvas": "^0.1.29",
-    "@sapphire/shapeshift": "^3.5.1",
+    "@sapphire/shapeshift": "^3.6.0",
     "@skyra/gifenc": "^1.0.0",
     "discord-api-types": "^0.37.5",
     "discord.js": "^14.3.0",
@@ -44,11 +44,11 @@
   "devDependencies": {
     "@types/node": "^18.7.13",
     "@types/twemoji-parser": "^13.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.5",
-    "@typescript-eslint/parser": "^5.30.5",
-    "eslint": "^8.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
+    "eslint": "^8.23.0",
     "husky": "^8.0.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.2"
   },
   "scripts": {
     "dev:check": "npx -p typescript tsc",

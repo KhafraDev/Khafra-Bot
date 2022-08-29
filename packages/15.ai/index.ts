@@ -1,16 +1,18 @@
-import { json } from 'node:stream/consumers'
 import { clearTimeout, setTimeout } from 'node:timers'
 import { request } from 'undici'
+import { s, type InferType } from '@sapphire/shapeshift'
 
-interface Batch {
-    batch: number[]
-    wavNames: string[]
-    scores: number[]
-    torchmoji: (string | number)[]
-    text_parsed: string[]
-    tokenized: string[]
-    dict_exists: string[][]
-}
+const schema = s.object({
+    batch: s.array(s.number),
+    wavNames: s.array(s.string),
+    scores: s.array(s.number),
+    torchmoji: s.union(s.array(s.number), s.array(s.string)),
+    text_parsed: s.array(s.string),
+    tokenized: s.array(s.string),
+    dict_exists: s.array(s.array(s.string))
+})
+
+type Batch = InferType<typeof schema>
 
 export class FifteenDotAI {
     static async getWav(
@@ -44,7 +46,11 @@ export class FifteenDotAI {
         clearTimeout(timeout)
 
         if (statusCode === 200) {
-            return await json(body) as Batch
+            const json: unknown = await body.json().catch(() => null)
+
+            if (json !== null && schema.is(json)) {
+                return json
+            }
         }
 
         return null

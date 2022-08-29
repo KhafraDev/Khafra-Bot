@@ -1,10 +1,9 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
+import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
 
-interface NekosLifeLizard {
-    url: string
-}
+const schema = s.object({ url: s.string })
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -26,7 +25,14 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const j = await body.json() as NekosLifeLizard
+        const j: unknown = await body.json()
+
+        if (!schema.is(j)) {
+            return {
+                content: '🦎 Couldn\'t get a picture of a random lizard!',
+                ephemeral: true
+            }
+        }
 
         return {
             content: j.url

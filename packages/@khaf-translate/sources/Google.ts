@@ -6,8 +6,11 @@
 
 import { URL, URLSearchParams } from 'node:url'
 import { request } from 'undici'
+import { s } from '@sapphire/shapeshift'
 
 interface Opts { to?: string, from?: string }
+
+const schema = s.array(s.array(s.array(s.unknown)))
 
 export const langs = [
     'auto', 'af', 'sq', 'am', 'ar',
@@ -73,8 +76,9 @@ export const translate = async (
     // setting real types for this is a waste of time
     const j = await body.json() as unknown[][][]
 
-    if (!Array.isArray(j) || !Array.isArray(j[0]))
+    if (!schema.is(j)) {
         return 'Invalid response received!'
+    }
 
     return j[0].map(tr => tr.shift()).join('')
 }

@@ -1,4 +1,5 @@
 import { FormData, request } from 'undici'
+import { s, type InferType } from '@sapphire/shapeshift'
 
 interface Options {
     to: string
@@ -6,14 +7,12 @@ interface Options {
     query: string
 }
 
-interface APITranslatedResponse {
-    translatedText: string
-}
+const languageSchema = s.array(s.object({
+    code: s.string,
+    name: s.string
+}))
 
-type APILanguageResponse = {
-    code: string
-    name: string
-}[]
+const translatedSchema = s.object({ translatedText: s.string })
 
 export const langs: string[] = []
 
@@ -21,13 +20,17 @@ export const getLanguages = async (): Promise<string[]> => {
     if (langs.length !== 0) return langs
 
     const { body } = await request('https://libretranslate.com/languages')
-    const j = await body.json() as APILanguageResponse
+    const j: unknown = await body.json()
+
+    if (!languageSchema.is(j)) {
+        return []
+    }
 
     langs.push(...j.map(l => l.code))
     return langs
 }
 
-export const translate = async (options: Options): Promise<APITranslatedResponse | null> => {
+export const translate = async (options: Options): Promise<InferType<typeof translatedSchema> | null> => {
     const form = new FormData()
     form.set('q', options.query)
     form.set('source', options.from)
@@ -45,7 +48,15 @@ export const translate = async (options: Options): Promise<APITranslatedResponse
         }
     })
 
-    return statusCode === 200
-        ? await body.json() as APITranslatedResponse
-        : null
+    if (statusCode !== 200) {
+        return null
+    }
+
+    const json: unknown = await body.json()
+
+    if (!translatedSchema.is(json)) {
+        return null
+    }
+
+    return json
 }
