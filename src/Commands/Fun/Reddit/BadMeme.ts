@@ -74,7 +74,7 @@ export class kCommand extends Command {
         const m = await message.channel.send({
             content: res.url[page],
             components: [row]
-        })
+        }) as Message<true>
 
         const collector = m.createMessageComponentCollector({
             filter: (interaction) =>
@@ -102,7 +102,7 @@ export class kCommand extends Command {
                 return void dontThrow(c.last()!.update({ components: disableAll(m) }))
             }
 
-            return void dontThrow(m.edit({ components: disableAll(m) }))
+            return void dontThrow<Message<boolean>>(m.edit({ components: disableAll(m) }))
         })
     }
 }

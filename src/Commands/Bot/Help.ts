@@ -83,7 +83,7 @@ export class kCommand extends Command {
                 `)
             ],
             components: [categoryComponent]
-        })
+        }) as Message<true>
 
         let pages: APIEmbed[] = [],
             page = 0
@@ -160,7 +160,7 @@ export class kCommand extends Command {
                 }
             }
 
-            return void dontThrow(m.edit({
+            return void dontThrow<Message<boolean>>(m.edit({
                 components: disableAll(m)
             }))
         })

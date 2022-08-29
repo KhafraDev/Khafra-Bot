@@ -119,7 +119,7 @@ export class kCommand extends Command {
 
         c.once('end', () => {
             if (m.components[0].components[0].disabled === false) {
-                void dontThrow(m.edit({
+                void dontThrow<Message<boolean>>(m.edit({
                     components: disableAll(m)
                 }))
             }

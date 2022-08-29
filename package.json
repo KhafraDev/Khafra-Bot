@@ -25,21 +25,21 @@
     "#khaf/image/*": "./src/lib/Image/*"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.1.0",
-    "@discordjs/rest": "^1.0.1",
+    "@discordjs/builders": "^1.2.0",
+    "@discordjs/rest": "^1.1.0",
     "@imagemagick/magick-wasm": "^0.0.14",
     "@khaf/qrcode": "^0.0.8",
-    "@napi-rs/canvas": "^0.1.25",
+    "@napi-rs/canvas": "^0.1.29",
     "@sapphire/shapeshift": "^3.5.1",
     "@skyra/gifenc": "^1.0.0",
-    "discord-api-types": "^0.36.3",
-    "discord.js": "^14.1.2",
+    "discord-api-types": "^0.37.5",
+    "discord.js": "^14.3.0",
     "entities": "^4.3.1",
     "fast-xml-parser": "^4.0.9",
-    "pino": "^8.4.0",
+    "pino": "^8.4.2",
     "postgres": "^3.2.4",
     "twemoji-parser": "^14.0.0",
-    "undici": "^5.8.1"
+    "undici": "^5.10.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.13",
@@ -56,7 +56,7 @@
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --enable-source-maps build/src/index --dev",
-    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --enable-source-maps build/src/index --prod",
+    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --enable-source-maps build/src/index",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install"

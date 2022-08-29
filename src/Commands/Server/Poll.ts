@@ -124,7 +124,7 @@ export class kCommand extends Command {
                     description
                 })
 
-                const [err, pollMessage] = await dontThrow(settings.channel.send({
+                const [err, pollMessage] = await dontThrow<Message<boolean>>(settings.channel.send({
                     embeds: [embed]
                 }))
 
