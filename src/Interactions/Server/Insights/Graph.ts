@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { Buffer } from 'node:buffer'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
 
@@ -157,7 +157,7 @@ export class kSubCommand extends InteractionSubCommand {
         return {
             files: [
                 {
-                    attachment: Buffer.from(chart),
+                    attachment: arrayBufferToBuffer(chart),
                     name: 'chart.png'
                 }
             ]

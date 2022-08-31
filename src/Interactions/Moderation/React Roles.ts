@@ -1,21 +1,15 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
-import type {
-    ChatInputCommandInteraction,
-    InteractionReplyOptions,
-    NewsChannel,
-    TextChannel
-} from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { GuildMember, GuildMemberRoleManager, resolveColor, Role } from 'discord.js'
 import { parse } from 'twemoji-parser'
-
-type Channel = TextChannel | NewsChannel
 
 interface GuildMatchGroups {
     animated: undefined | 'a'
@@ -29,7 +23,7 @@ const perms = PermissionFlagsBits.SendMessages
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'reactrole',
+            name: 'react-role',
             description: 'Add a button that gives members a specified role when clicked on!',
             default_member_permissions: toString([PermissionFlagsBits.ManageRoles]),
             dm_permission: false,
@@ -42,7 +36,10 @@ export class kInteraction extends Interactions {
                     channel_types: [
                         ChannelType.GuildText,
                         ChannelType.GuildNews,
-                        ChannelType.GuildNewsThread
+                        ChannelType.GuildNewsThread,
+                        ChannelType.GuildPublicThread,
+                        ChannelType.GuildPrivateThread,
+                        ChannelType.GuildVoice
                     ]
                 },
                 {
@@ -50,6 +47,16 @@ export class kInteraction extends Interactions {
                     name: 'role',
                     description: 'The role to apply when clicking on the button.',
                     required: true
+                },
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: 'only-add',
+                    description: 'Only allow a person to give themselves the role.'
+                },
+                {
+                    type: ApplicationCommandOptionType.Boolean,
+                    name: 'only-remove',
+                    description: 'Only allow a person to remove the role.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
@@ -88,20 +95,38 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const channel = interaction.options.getChannel('channel', true) as Channel
+        const channel = interaction.options.getChannel('channel', true)
         const role = interaction.options.getRole('role', true)
+        const onlyAdd = interaction.options.getBoolean('only-add') ?? false
+        const onlyRemove = interaction.options.getBoolean('only-remove') ?? false
         const icon = interaction.options.getString('icon')
-        const text =
-            interaction.options.getString('message') ??
-            `Press the button below to get the ${role} role!
-            
-            Clicking the button again will take the role away!`
+
+        const action = onlyAdd ? 'add' : onlyRemove ? 'remove' : 'default'
+
+        let text = interaction.options.getString('message')
+
+        if (text === null) {
+            if (action === 'add') {
+                text = `Press the button below to give yourself the ${role} role.`
+            } else if (action === 'remove') {
+                text = `Press the button below to remove ${role} from yourself.`
+            } else {
+                text = `Press the button below to get the ${role} role!
+                        
+                        Clicking the button again will take the role away!`
+            }
+        }
 
         const memberPermissions = typeof interaction.member.permissions === 'string'
             ? BigInt(interaction.member.permissions)
             : interaction.member.permissions.bitfield
 
-        if (!channel.permissionsFor(interaction.guild.members.me).has(perms)) {
+        if (!isGuildTextBased(channel)) {
+            return {
+                content: '❌ Invalid channel.',
+                ephemeral: true
+            }
+        } else if (!channel.permissionsFor(interaction.guild.members.me).has(perms)) {
             return {
                 content: '❌ I do not have permission to post a message in this channel!',
                 ephemeral: true
@@ -147,7 +172,8 @@ export class kInteraction extends Interactions {
             }
         }
 
-        const component = Buttons.approve(`Get ${role.name}`.slice(0, 80), role.id)
+        const label = `${action === 'remove' ? 'Remove' : 'Get'} ${role.name.slice(0, 80)}`
+        const component = Buttons.approve(label, `react-role,${action},${role.id}`)
 
         if (icon) {
             if (guildEmojiRegex.test(icon)) {
