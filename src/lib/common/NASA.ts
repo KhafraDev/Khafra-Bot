@@ -1,17 +1,18 @@
 import { env } from 'node:process'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
+import { s } from '@sapphire/shapeshift'
 
-interface IAPOD {
-    copyright?: string
-    date: string
-    explanation: string
-    hdurl?: string
-    media_type: string
-    service_version: string
-    title: string
-    url: string
-}
+const schema = s.object({
+    copyright: s.string.optional,
+    date: s.string,
+    explanation: s.string,
+    hdurl: s.string.optional,
+    media_type: s.string,
+    service_version: s.string,
+    title: s.string,
+    url: s.string
+}).ignore.array
 
 interface NASACache {
     copyright: string | undefined
@@ -57,7 +58,11 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
         return cache.shift() ?? null
     }
 
-    const j = await body.json() as IAPOD[]
+    const j: unknown = await body.json()
+
+    if (!schema.is(j)) {
+        return null
+    }
 
     for (const { copyright, hdurl, url, title } of j) {
         cache.push({ copyright, link: hdurl ?? url, title })

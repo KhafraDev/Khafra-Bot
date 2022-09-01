@@ -1,8 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
+import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
 
 const shibes: string[] = []
+
+const schema = s.string.array
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -25,7 +28,17 @@ export class kSubCommand extends InteractionSubCommand {
                 }
             }
 
-            const j = await body.json() as string[]
+            const j: unknown = await body.json()
+
+            if (!schema.is(j)) {
+                return {
+                    content: `
+                    Whoops, an error occurred. Here's a shibe in the meantime.
+                    https://i.redd.it/jteq294ddwg11.jpg
+                    `,
+                    ephemeral: true
+                }
+            }
 
             shibes.push(...j)
         }

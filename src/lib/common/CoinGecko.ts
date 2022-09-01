@@ -1,54 +1,54 @@
 import { once } from '#khaf/utility/Memoize.js'
-import { Client } from 'undici'
+import { s, type InferType } from '@sapphire/shapeshift'
 import { URLSearchParams } from 'node:url'
+import { Client } from 'undici'
 
-type CoingeckoDict<T = string> = Record<string, T>
-
-interface Crypto {
-    id: string
-    symbol: string
-    name: string
-    asset_platform_id: unknown
-    platforms: CoingeckoDict
-    block_time_in_minutes: number
-    hashing_algorithm: string
-    categories: string[]
-    public_notice: unknown
-    additional_notices: unknown
-    localization: CoingeckoDict
-    description: CoingeckoDict
-    links: CoingeckoDict<string | string[] | CoingeckoDict>
-    image: CoingeckoDict
-    country_origin: string
-    genesis_date: string
-    sentiment_votes_up_percentage: number
-    sentiment_votes_down_percentage: number
-    market_cap_rank: number
-    coingecko_rank: number
-    coingecko_score: number
-    developer_score: number
-    community_score: number
-    liquidity_score: number
-    public_interest_score: number
-    market_data: CoingeckoDict<CoingeckoDict | null> & {
-        current_price: CoingeckoDict<number>
-        high_24h: CoingeckoDict<number>
-        low_24h: CoingeckoDict<number>
-        market_cap: CoingeckoDict<number>
-        total_volume: CoingeckoDict<number>
-        circulating_supply: number
-        ath: CoingeckoDict<number>
-        ath_change_percentage: CoingeckoDict<number>
-        ath_date: CoingeckoDict<string>
-        atl: CoingeckoDict<number>
-        atl_change_percentage: CoingeckoDict<number>
-        atl_date: CoingeckoDict<string>
-        price_change_percentage_24h: number
-    }
-    public_interest_stats: CoingeckoDict<number | null>
-    status_updates: unknown[]
-    last_updated: string
-}
+const schema = s.object({
+    id: s.string,
+    symbol: s.string,
+    name: s.string,
+    asset_platform_id: s.unknown,
+    platforms: s.record(s.string),
+    block_time_in_minutes: s.number,
+    hashing_algorithm: s.string,
+    categories: s.string.array,
+    public_notice: s.unknown,
+    additional_notices: s.unknown,
+    localization: s.record(s.string),
+    description: s.record(s.string),
+    links: s.unknown,
+    image: s.record(s.string),
+    country_origin: s.string,
+    genesis_date: s.string,
+    sentiment_votes_up_percentage: s.number,
+    sentiment_votes_down_percentage: s.number,
+    market_cap_rank: s.number,
+    coingecko_rank: s.number,
+    coingecko_score: s.number,
+    developer_score: s.number,
+    community_score: s.number,
+    liquidity_score: s.number,
+    public_interest_score: s.number,
+    // market_data:
+    market_data: s.object({
+        current_price: s.record(s.number),
+        high_24h: s.record(s.number),
+        low_24h: s.record(s.number),
+        market_cap: s.record(s.number),
+        total_volume: s.record(s.number),
+        circulating_supply: s.number,
+        ath: s.record(s.number),
+        ath_change_percentage: s.record(s.number),
+        ath_date: s.record(s.string),
+        atl: s.record(s.number),
+        atl_change_percentage: s.record(s.number),
+        atl_date: s.record(s.string),
+        price_change_percentage_24h: s.number
+    }),
+    public_interest_stats: s.record(s.number.or(s.null)),
+    status_updates: s.unknown.array,
+    last_updated: s.string
+}).ignore
 
 const client = new Client('https://api.coingecko.com')
 const options = new URLSearchParams({
@@ -64,10 +64,22 @@ export class CoinGecko {
             method: 'GET'
         })
 
-        return await body.json() as { id: string, name: string, symbol: string }[]
+        const schema = s.object({
+            id: s.string,
+            name: s.string,
+            symbol: s.string
+        }).array
+
+        const list: unknown = await body.json()
+
+        if (!schema.is(list)) {
+            return []
+        }
+
+        return list
     })
 
-    static async get (query: string): Promise<Crypto | null> {
+    static async get (query: string): Promise<InferType<typeof schema> | null> {
         const list = await CoinGecko.list() ?? []
 
         let cryptoId = ''
@@ -93,6 +105,12 @@ export class CoinGecko {
             return null
         }
 
-        return body.json() as Promise<Crypto>
+        const crypto: unknown = await body.json()
+
+        if (!schema.is(crypto)) {
+            return null
+        }
+
+        return crypto
     }
 }

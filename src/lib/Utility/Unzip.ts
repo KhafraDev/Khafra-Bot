@@ -42,7 +42,7 @@ class EntryHeader {
     compressedSize = 0
     size = 0
     offset = 0
-    dataHeader = {} as Record<string, number>
+    dataHeader: Record<string, number> = {}
 
     get realDataOffset (): number {
         return this.offset + 30 + this.dataHeader['fnameLen'] + this.dataHeader['extraLen']

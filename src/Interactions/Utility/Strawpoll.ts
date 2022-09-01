@@ -1,5 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { s } from '@sapphire/shapeshift'
 import type { APIApplicationCommandOption, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -20,6 +21,12 @@ interface StrawpollBody {
         captcha: boolean
     }>
 }
+
+const schema = s.object({
+    admin_key: s.string,
+    content_id: s.string,
+    success: s.number.greaterThanOrEqual(0).lessThanOrEqual(1)
+})
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -131,7 +138,14 @@ export class kInteraction extends Interactions {
             body: JSON.stringify({ poll } as StrawpollBody)
         })
 
-        const j = await body.json() as { admin_key: string, content_id: string, success: 1 | 0 }
+        const j: unknown = await body.json()
+
+        if (!schema.is(j) || j.success === 0) {
+            return {
+                content: 'Failed to create the poll. This is not an issue with the bot.',
+                ephemeral: true
+            }
+        }
 
         return {
             embeds: [

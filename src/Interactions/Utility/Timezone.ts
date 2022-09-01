@@ -6,45 +6,43 @@ import { env } from 'node:process'
 import { setTimeout } from 'node:timers/promises'
 import { URLSearchParams } from 'node:url'
 import { request, type Dispatcher } from 'undici'
+import { s } from '@sapphire/shapeshift'
 
 const queue = new AsyncQueue()
 const queue2 = new AsyncQueue()
 
-interface NominatimResponse {
-    place_id: number
-    licence: string
-    osm_type: string
-    osm_id: string
-    boundingbox: number[]
-    lat: string
-    lon: string
-    display_name: string
-    place_rank: number
-    category: string
-    type: string
-    importance: number
-}
+const nominatimSchema = s.object({
+    place_id: s.number,
+    license: s.string,
+    osm_type: s.string,
+    osm_id: s.string,
+    boundingbox: s.number.array,
+    lat: s.string,
+    lon: s.string,
+    display_name: s.string,
+    place_rank: s.number,
+    category: s.string,
+    type: s.string,
+    importance: s.number
+}).array.lengthEqual(1)
 
-interface TimezoneDBResponse {
-    status: string
-    messag: string
-    countryCode: string
-    countryName: string
-    regionName: string
-    cityName: string
-    zoneName: string
-    abbreviation: string
-    gmtOffset: number
-    dst: `${number}`
-    zoneStart: number
-    zoneEnd: number
-    nextAbbreviation: string
-    timestamp: number
-    formatted: string
-}
-
-const isValidResponse = (json: unknown): json is [NominatimResponse] =>
-    Array.isArray(json) && json.length === 1
+const timezoneSchema = s.object({
+    status: s.string,
+    message: s.string,
+    countryCode: s.string,
+    countryName: s.string,
+    regionName: s.string,
+    cityName: s.string,
+    zoneName: s.string,
+    abbreviation: s.string,
+    gmtOffset: s.number,
+    dst: s.string,
+    zoneStar: s.number,
+    zoneEnd: s.number,
+    nextAbbreviation: s.string,
+    timestamp: s.number,
+    formatted: s.string
+})
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -99,10 +97,10 @@ export class kInteraction extends Interactions {
             )
         }
 
-        const jNom = await resNom.body.json() as [NominatimResponse]
+        const jNom: unknown = await resNom.body.json()
         await queue2.wait()
 
-        if (!isValidResponse(jNom)) {
+        if (!nominatimSchema.is(jNom)) {
             return {
                 content: '❌ The location provided could not be found!',
                 ephemeral: true
@@ -125,7 +123,14 @@ export class kInteraction extends Interactions {
             )
         }
 
-        const jTDB = await resTDB.body.json() as TimezoneDBResponse
+        const jTDB: unknown = await resTDB.body.json()
+
+        if (!timezoneSchema.is(jTDB)) {
+            return {
+                content: '❌ Timezone couldn\'t be found, sorry.',
+                ephemeral: true
+            }
+        }
 
         return {
             content: new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(
