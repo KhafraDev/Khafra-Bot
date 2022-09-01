@@ -72,7 +72,7 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Mentionable,
                     name: 'type',
-                    description: 'Type of Discord object to get information for.'
+                    description: 'Role, member, or user to get information about.'
                 },
                 {
                     type: ApplicationCommandOptionType.String,
