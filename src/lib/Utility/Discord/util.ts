@@ -1,4 +1,3 @@
-import { cache } from '#khaf/cache/Settings.js'
 import { sql } from '#khaf/database/Postgres.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
@@ -27,26 +26,12 @@ const perms =
 export const interactionGetGuildSettings = async (interaction: Interactions): Promise<kGuild | null> => {
     if (!interaction.inGuild()) return null
 
-    let settings: kGuild
-    const row = cache.get(interaction.guildId)
-
-    if (row) {
-        settings = row
-    } else {
-        const rows = await sql<kGuild[]>`
-            SELECT * 
-            FROM kbGuild
-            WHERE guild_id = ${interaction.guildId}::text
-            LIMIT 1;
-        `
-
-        if (rows.length !== 0) {
-            cache.set(interaction.guildId, rows[0])
-            settings = rows[0]
-        } else {
-            return null
-        }
-    }
+    const [settings = null] = await sql<[kGuild?]>`
+        SELECT * 
+        FROM kbGuild
+        WHERE guild_id = ${interaction.guildId}::text
+        LIMIT 1;
+    `
 
     return settings
 }

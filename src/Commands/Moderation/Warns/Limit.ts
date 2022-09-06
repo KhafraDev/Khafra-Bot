@@ -1,8 +1,6 @@
-import { cache } from '#khaf/cache/Settings.js'
 import type { Arguments} from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { hasPerms } from '#khaf/utility/Permissions.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
@@ -44,14 +42,11 @@ export class kCommand extends Command {
         else if (!inRange(newAmount))
             return Embed.error('An invalid number of points was provided, try with a positive whole number instead!')
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild
             SET max_warning_points = ${newAmount}::smallint
-            WHERE guild_id = ${message.guildId}::text
-            RETURNING *;
+            WHERE guild_id = ${message.guildId}::text;
         `
-
-        cache.set(message.guild.id, rows[0])
 
         return Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`)
     }

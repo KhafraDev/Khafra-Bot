@@ -32,7 +32,7 @@ export class kSubCommand extends InteractionSubCommand {
             ? sql`kbGiveaways.id = ${idOrText}::uuid`
             : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
 
-        const giveaways = await sql<Giveaway[]>`
+        const [giveaway] = await sql<[Giveaway?]>`
             SELECT * FROM kbGiveaways
             WHERE
                 ${where} AND
@@ -42,14 +42,14 @@ export class kSubCommand extends InteractionSubCommand {
             LIMIT 1;
         `
 
-        if (giveaways.length === 0) {
+        if (!giveaway) {
             return {
                 content: '❌ No giveaways were found, is it older than a week?',
                 ephemeral: true
             }
         }
 
-        const [{ channelid, winners, enddate, id }] = giveaways
+        const { channelid, winners, enddate, id } = giveaway
         const channel = await interaction.guild.channels.fetch(channelid)
 
         if (
@@ -64,7 +64,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         // Edit the old message & handles all the logic.
         const timer = KhafraClient.Timers.get('GiveawayTimer')!
-        await timer.action(giveaways[0])
+        await timer.action(giveaway)
 
         return {
             content: stripIndents`

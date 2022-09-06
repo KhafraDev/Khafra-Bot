@@ -1,7 +1,6 @@
-import { cache } from '#khaf/cache/Settings.js'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
 import { ellipsis } from '#khaf/utility/String.js'
@@ -10,7 +9,7 @@ import { AuditLogEvent, PermissionFlagsBits, type APIEmbedAuthor } from 'discord
 import { Events, SnowflakeUtil, type GuildBan, type User } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
-type ModLogChannel = Pick<kGuild, keyof PartialGuild>
+type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
 
 /**
  * Audit logs entries aren't guaranteed to be added before/after
@@ -64,28 +63,14 @@ export class kEvent extends Event<typeof Events.GuildBanRemove> {
             }
         }
 
-        const row = cache.get(guild.id)
-        let item: ModLogChannel | null = row ?? null
+        const [item] = await sql<[kGuildModChannel?]>`
+            SELECT mod_log_channel
+            FROM kbGuild
+            WHERE guild_id = ${guild.id}::text
+            LIMIT 1;
+        `
 
-        if (!item) {
-            const rows = await sql<kGuild[]>`
-                SELECT 
-                    mod_log_channel, max_warning_points,
-                    welcome_channel, ticketChannel, "staffChannel"
-                FROM kbGuild
-                WHERE guild_id = ${guild.id}::text
-                LIMIT 1;
-            `
-
-            if (rows.length === 0) {
-                return
-            }
-
-            cache.set(guild.id, rows[0])
-            item = rows[0]
-        }
-
-        if (item.mod_log_channel === null) {
+        if (!item?.mod_log_channel) {
             return
         }
 

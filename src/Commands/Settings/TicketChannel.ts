@@ -1,8 +1,5 @@
-import { cache } from '#khaf/cache/Settings.js'
-import type { Arguments} from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
@@ -31,7 +28,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<APIEmbed> {
+    async init (message: Message<true>): Promise<APIEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return Embed.perms(
                 message.channel,
@@ -53,15 +50,12 @@ export class kCommand extends Command {
             return Embed.error('This guild cannot use private threads, please use a category channel instead!')
         }
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild
             SET ticketChannel = ${ticketChannel.id}::text
-            WHERE guild_id = ${message.guildId}::text
-            RETURNING *;
+            WHERE guild_id = ${message.guildId}::text;
         `
 
-        cache.set(message.guild.id, rows[0])
-
-        return Embed.ok(`Changed the default ticket channel to ${ticketChannel} (was: ${settings.ticketchannel ?? 'N/A'})!`)
+        return Embed.ok(`Changed the default ticket channel to ${ticketChannel}!`)
     }
 }

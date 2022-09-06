@@ -1,7 +1,6 @@
-import { cache } from '#khaf/cache/Settings.js'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot'
+import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
 import { ellipsis } from '#khaf/utility/String.js'
@@ -10,13 +9,13 @@ import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
 import { Events, PermissionFlagsBits, type AuditLogChange, type GuildAuditLogsEntry, type GuildMember } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
+type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
+
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const basic =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
     PermissionFlagsBits.EmbedLinks
-
-type LogChannel = Pick<kGuild, keyof PartialGuild>
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
     name = Events.GuildMemberUpdate as const
@@ -29,25 +28,17 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
             return
         }
 
-        const row = cache.get(oldMember.guild.id)
-        let item: LogChannel | null = row ?? null
+        const [item] = await sql<[kGuildModChannel?]>`
+            SELECT
+                mod_log_channel, max_warning_points,
+                welcome_channel, ticketChannel, "staffChannel"
+            FROM kbGuild
+            WHERE guild_id = ${oldMember.guild.id}::text
+            LIMIT 1;
+        `
 
-        if (!item) {
-            const rows = await sql<kGuild[]>`
-                SELECT
-                    mod_log_channel, max_warning_points,
-                    welcome_channel, ticketChannel, "staffChannel"
-                FROM kbGuild
-                WHERE guild_id = ${oldMember.guild.id}::text
-                LIMIT 1;
-            `
-
-            if (rows.length !== 0) {
-                cache.set(oldMember.guild.id, rows[0])
-                item = rows[0]
-            } else {
-                return
-            }
+        if (!item?.mod_log_channel) {
+            return
         }
 
         const logChannel = item.mod_log_channel
@@ -55,10 +46,6 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
         let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined
         let change!: AuditLogChange
-
-        if (logChannel === null) {
-            return
-        }
 
         const channel = await oldMember.guild.channels.fetch(logChannel)
 

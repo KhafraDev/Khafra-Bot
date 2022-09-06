@@ -1,6 +1,5 @@
 import { KhafraClient } from '#khaf/Bot'
 import { MessagesLRU } from '#khaf/cache/Messages.js'
-import { cache } from '#khaf/cache/Settings.js'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
@@ -72,25 +71,17 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         let guild!: typeof defaultSettings | kGuild
 
         if (command.init.length === 3) {
-            const row = cache.get(message.guild.id)
+            const rows = await sql<[kGuild?]>`
+                SELECT * 
+                FROM kbGuild
+                WHERE guild_id = ${message.guildId}::text
+                LIMIT 1;
+            `
 
-            if (row) {
-                guild = { ...defaultSettings, ...row }
+            if (rows.length !== 0) {
+                guild = { ...defaultSettings, ...rows.shift() }
             } else {
-                const rows = await sql<kGuild[]>`
-                    SELECT * 
-                    FROM kbGuild
-                    WHERE guild_id = ${message.guildId}::text
-                    LIMIT 1;
-                `
-
-                if (rows.length !== 0) {
-                    cache.set(message.guild.id, rows[0])
-
-                    guild = { ...defaultSettings, ...rows.shift() }
-                } else {
-                    guild = { ...defaultSettings }
-                }
+                guild = { ...defaultSettings }
             }
         }
 

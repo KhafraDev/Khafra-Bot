@@ -29,7 +29,7 @@ export class kSubCommand extends InteractionSubCommand {
             ? sql`kbGiveaways.id = ${idOrText}::uuid`
             : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
 
-        const giveaways = await sql<Giveaway[]>`
+        const [giveaway] = await sql<[Giveaway?]>`
             SELECT * FROM kbGiveaways
             WHERE
                 ${where} AND
@@ -39,14 +39,14 @@ export class kSubCommand extends InteractionSubCommand {
             LIMIT 1;
         `
 
-        if (giveaways.length === 0) {
+        if (!giveaway) {
             return {
                 content: '❌ No giveaway could be found.',
                 ephemeral: true
             }
         }
 
-        const [{ channelid, guildid, messageid, id }] = giveaways
+        const { channelid, guildid, messageid, id } = giveaway
 
         await sql`
 			UPDATE kbGiveaways SET
@@ -55,7 +55,7 @@ export class kSubCommand extends InteractionSubCommand {
 		`
 
         const timer = KhafraClient.Timers.get('GiveawayTimer')!
-        await timer.action(giveaways[0]) // run giveaway
+        await timer.action(giveaway) // run giveaway
 
         const url = `https://discord.com/channels/${guildid}/${channelid}/${messageid}`
 

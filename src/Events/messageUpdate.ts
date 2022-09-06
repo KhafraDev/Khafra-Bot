@@ -1,6 +1,5 @@
 import { KhafraClient } from '#khaf/Bot'
 import { MessagesLRU } from '#khaf/cache/Messages.js'
-import { cache } from '#khaf/cache/Settings.js'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
@@ -67,25 +66,17 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         let guild!: typeof defaultSettings | kGuild
 
         if (command.init.length === 3) {
-            const row = cache.get(newMessage.guild.id)
+            const rows = await sql<[kGuild?]>`
+                SELECT * 
+                FROM kbGuild
+                WHERE guild_id = ${newMessage.guildId}::text
+                LIMIT 1;
+            `
 
-            if (row) {
-                guild = { ...defaultSettings, ...row }
+            if (rows.length !== 0) {
+                guild = { ...defaultSettings, ...rows.shift() }
             } else {
-                const rows = await sql<kGuild[]>`
-                    SELECT * 
-                    FROM kbGuild
-                    WHERE guild_id = ${newMessage.guildId}::text
-                    LIMIT 1;
-                `
-
-                if (rows.length !== 0) {
-                    cache.set(newMessage.guild.id, rows[0])
-
-                    guild = { ...defaultSettings, ...rows.shift() }
-                } else {
-                    guild = { ...defaultSettings }
-                }
+                guild = { ...defaultSettings }
             }
         }
 

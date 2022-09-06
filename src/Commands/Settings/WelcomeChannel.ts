@@ -1,7 +1,5 @@
-import { cache } from '#khaf/cache/Settings.js'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
@@ -49,14 +47,11 @@ export class kCommand extends Command {
             return Embed.perms(channel, message.guild.members.me, basic)
         }
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild
             SET welcome_channel = ${channel.id}::text
-            WHERE guild_id = ${message.guildId}::text
-            RETURNING *;
+            WHERE guild_id = ${message.guildId}::text;
         `
-
-        cache.set(message.guild.id, rows[0])
 
         return Embed.ok(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!

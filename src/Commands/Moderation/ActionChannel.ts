@@ -1,7 +1,5 @@
-import { cache } from '#khaf/cache/Settings.js'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
@@ -42,14 +40,11 @@ export class kCommand extends Command {
             return Embed.error('Channel isn\'t cached or the ID is incorrect.')
         }
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild 
             SET mod_log_channel = ${channel.id}::text
-            WHERE kbGuild.guild_id = ${message.guildId}::text
-            RETURNING *;
+            WHERE kbGuild.guild_id = ${message.guildId}::text;
         `
-
-        cache.set(message.guild.id, rows[0])
 
         return Embed.ok(`
         Set public mod-logging channel to ${channel}!

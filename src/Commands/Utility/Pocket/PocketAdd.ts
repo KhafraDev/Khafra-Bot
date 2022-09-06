@@ -30,7 +30,7 @@ export class kCommand extends Command {
     }
 
     async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const rows = await sql<PocketUser[]>`
+        const rows = await sql<[PocketUser] | []>`
             SELECT access_token, request_token, username
             FROM kbPocket
             WHERE user_id = ${message.author.id}::text

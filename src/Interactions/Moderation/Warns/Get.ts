@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const rows = await sql<Total[]>`
+        const rows = await sql<[Total] | []>`
             SELECT 
                 SUM(k_points) AS total_points,
                 ARRAY_AGG(k_ts) dates,
@@ -58,7 +58,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const { dates, ids, points, total_points } = rows.shift()!
+        const { dates, ids, points, total_points } = rows[0]
         const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]])
         let content =
             `✅ ${member} has ${ids.length.toLocaleString()} warnings ` +
