@@ -85,21 +85,21 @@ export class kInteraction extends Interactions {
         const footer = ` ${'-'.repeat(max + 2)}\n`
         let output = header
 
-        for (const line of lines) {
-            const idx = lines.indexOf(line)
-            const l = line.padEnd(max, ' ')
-
-            if (idx === 0) {
-                output += `/ ${l} \\\n`
-            } else if (idx === lines.length - 1) {
-                output += `\\ ${l} /\n`
-            } else {
-                output += `| ${l} |\n`
-            }
-        }
-
         if (lines.length === 1) {
-            output += `\\${' '.repeat(max + 2)}/\n`
+            output += `< ${lines[0]} >\n`
+        } else {
+            for (const line of lines) {
+                const idx = lines.indexOf(line)
+                const l = line.padEnd(max, ' ')
+
+                if (idx === 0) {
+                    output += `/ ${l} \\\n`
+                } else if (idx === lines.length - 1) {
+                    output += `\\ ${l} /\n`
+                } else {
+                    output += `| ${l} |\n`
+                }
+            }
         }
 
         return {
