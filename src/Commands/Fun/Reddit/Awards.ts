@@ -1,14 +1,15 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { URLFactory } from '#khaf/utility/Valid/URL.js'
 import { inlineCode } from '@discordjs/builders'
-import type { Reddit } from '@khaf/badmeme'
+import { apiSchema } from '@khaf/badmeme'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { request } from 'undici'
 
 const PER_COIN = 1.99 / 500
+const isArray = (arr: unknown): arr is unknown[] => Array.isArray(arr)
 
 export class kCommand extends Command {
     constructor () {
@@ -44,9 +45,15 @@ export class kCommand extends Command {
         }
 
         const { body } = await request(`${url.href.replace(/.json$/, '')}.json`)
-        const json = await body.json() as [Reddit, Reddit]
+        const json: unknown = await body.json().catch(() => null)
 
-        const post = json[0].data!.children[0].data
+        if (json === null || !isArray(json) || !apiSchema.is(json[0])) {
+            return Embed.error('Received an invalid response.')
+        } else if ('error' in json[0]) {
+            return Embed.error('Error occurred.')
+        }
+
+        const post = json[0].data.children[0].data
         const coins = post.all_awardings.reduce(
             (p, c) => p + c.coin_price * c.count, 0
         )

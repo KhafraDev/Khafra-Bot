@@ -2,9 +2,9 @@ import { decodeXML } from 'entities'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
-import type { Reddit } from './types/BadMeme.d'
+import { apiSchema, type Reddit } from './Schema.js'
 
-export type { Reddit }
+export { type Reddit, apiSchema }
 
 export interface IBadMemeCache {
     nsfw: boolean
@@ -73,15 +73,19 @@ export const badmeme = async (
         }
     }
 
-    const j = await body.json() as Reddit
+    const j: unknown = await body.json().catch(() => null)
+
+    if (!apiSchema.is(j)) {
+        return {
+            message: 'Invalid response.',
+            error: 69
+        }
+    }
 
     if ('error' in j) {
-        return j as {
-            message: string
-            error: number
-            reason: string
-        }
-    } else if (!j.data || j.data.children.length === 0) {
+        return j
+    } else if (j.data.children.length === 0) {
+        // No posts
         return null
     }
 

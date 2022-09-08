@@ -74,7 +74,7 @@ export const translate = async (
         }
     })
     // setting real types for this is a waste of time
-    const j = await body.json() as unknown[][][]
+    const j: unknown = await body.json()
 
     if (!schema.is(j)) {
         return 'Invalid response received!'

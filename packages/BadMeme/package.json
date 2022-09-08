@@ -2,8 +2,8 @@
   "name": "@khaf/badmeme",
   "version": "3.1.0",
   "description": "Get a bad meme from Reddit.",
-  "main": "./BadMeme.js",
-  "typings": "./BadMeme.d.ts",
+  "main": "./dist/BadMeme.js",
+  "typings": "./types/BadMeme.d.ts",
   "type": "module",
   "repository": {
     "type": "git",
