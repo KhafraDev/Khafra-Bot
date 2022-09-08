@@ -7,7 +7,7 @@ import { KhafraClient } from '#khaf/Bot'
 import type { Event } from '#khaf/Event'
 import { RESTEvents, type RestEvents } from '@discordjs/rest'
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
-import { type ClientEvents, Partials, Events } from 'discord.js'
+import { type ClientEvents, Partials, Events, Options } from 'discord.js'
 import { logError } from '#khaf/utility/Rejections.js'
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
@@ -41,7 +41,14 @@ export const client = new KhafraClient({
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent
-    ]
+    ],
+    makeCache: Options.cacheWithLimits({
+        MessageManager: 10,
+        GuildStickerManager: 0,
+        GuildScheduledEventManager: 0,
+        StageInstanceManager: 0,
+        VoiceStateManager: 0
+    })
 })
     .on(Events.ClientReady,         emitted(Events.ClientReady))
     .on(Events.MessageCreate,       emitted(Events.MessageCreate))
