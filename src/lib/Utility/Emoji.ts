@@ -19,7 +19,7 @@ const unicodeRegex = /^((?<codePoints>.*?)\s+; (?<identifier>[a-z-]+)\s+# (?<com
 
 export const parseEmojiList = once(async () => {
     const cache = new Map<string, { [key in keyof IEmoji]: string }>()
-    const { body } = await request('https://unicode.org/Public/emoji/14.0/emoji-test.txt')
+    const { body } = await request('https://unicode.org/Public/emoji/15.0/emoji-test.txt')
     const fullList = await body.text()
 
     const list = fullList.matchAll(unicodeRegex)
