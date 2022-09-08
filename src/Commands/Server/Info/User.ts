@@ -1,54 +1,57 @@
-import { client } from '#khaf/Client';
-import { Arguments, Command } from '#khaf/Command';
-import { logger } from '#khaf/Logger';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, italic, time, type UnsafeEmbed } from '@discordjs/builders';
-import { ActivityType } from 'discord-api-types/v10';
-import { Activity, Message, Snowflake, SnowflakeUtil, UserFlagsString } from 'discord.js';
-import { join } from 'path';
+import { client } from '#khaf/Client'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { logger } from '#khaf/structures/Logger.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { once } from '#khaf/utility/Memoize.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { ActivityType } from 'discord-api-types/v10'
+import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js'
+import { SnowflakeUtil } from 'discord.js'
+import { join } from 'node:path'
 
-const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../../../config.json'), join(cwd, 'config.json'))
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
 
 const formatPresence = (activities: Activity[] | undefined): string => {
-    if (!Array.isArray(activities)) return '';
-    const push: string[] = [];
+    if (!Array.isArray(activities)) return ''
+    const push: string[] = []
 
     for (const activity of activities) {
         switch (activity.type) {
             case ActivityType.Custom:
-                push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`);
-                break;
+                push.push(`${activity.emoji ?? ''}${activity.state ? ` ${inlineCode(activity.state)}` : ''}`)
+                break
             case ActivityType.Listening:
-                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`);
-                break;
+                push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`)
+                break
             case ActivityType.Playing:
-                push.push(`Playing ${italic(activity.name)}.`);
-                break;
+                push.push(`Playing ${italic(activity.name)}.`)
+                break
             default:
-                logger.log(activity);
+                logger.warn(activity, 'unknown activity')
         }
     }
 
-    return push.join('\n');
+    return push.join('\n')
 }
 
-const emojis = new Map<UserFlagsString, string | undefined>();
+const emojis = new Map<UserFlagsString, string | undefined>()
 // lazy load emojis
 const getEmojis = once(() => {
-    const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][];
+    const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
     for (const [flag, emojiID] of flags)
     // not ruling out the possibility of the emoji not being cached
-        emojis.set(flag, client.emojis.cache.get(emojiID)?.toString());
+        emojis.set(flag, client.emojis.cache.get(emojiID)?.toString())
 
-    return emojis;
-});
+    return emojis
+})
 
 // 84484653687267328 -> Certified moderator; early supporter; partnered server owner; early verified bot owner; brilliance
 // 173547401905176585 -> Discord employee; bravery
@@ -70,36 +73,39 @@ export class kCommand extends Command {
                 aliases: ['userinfo'],
                 guildOnly: true
             }
-        );
+        )
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
-        const user = await getMentions(message, 'users', content) ?? message.author;
+    async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
+        const user = await getMentions(message, 'users', content) ?? message.author
         const member = user.equals(message.author)
             ? message.member
-            : message.guild.members.resolve(user);
+            : message.guild.members.resolve(user)
 
-        const snowflake = SnowflakeUtil.timestampFrom(user.id);
+        const snowflake = SnowflakeUtil.timestampFrom(user.id)
         const flags = user.flags?.bitfield
             ? user.flags.toArray()
-            : [];
+            : []
 
         const emojis = flags
             .filter(f => getEmojis()?.has(f))
-            .map(f => getEmojis()?.get(f));
+            .map(f => getEmojis()?.get(f))
 
-        return Embed.ok(formatPresence(member?.presence?.activities))
-            .setAuthor({
+        return Embed.json({
+            color: colors.ok,
+            description: formatPresence(member?.presence?.activities),
+            author: {
                 name: user.tag,
-                iconURL: user.displayAvatarURL()
-            })
-            .addFields(
+                icon_url: user.displayAvatarURL()
+            },
+            fields: [
                 { name: bold('Username:'), value: user.username, inline: true },
                 { name: bold('ID:'), value: user.id, inline: true },
                 { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
                 { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
                 { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
                 { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
-            );
+            ]
+        })
     }
 }

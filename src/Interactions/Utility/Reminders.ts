@@ -1,8 +1,9 @@
-import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'reminders',
             description: 'Handle and modify your reminders!',
@@ -87,8 +88,8 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 }

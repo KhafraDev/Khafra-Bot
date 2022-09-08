@@ -1,11 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { Cartoonize } from '#khaf/utility/commands/Cartoonize';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
-import { Buffer } from 'buffer';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { request } from 'undici';
+import { Interactions } from '#khaf/Interaction'
+import { Cartoonize } from '#khaf/utility/commands/Cartoonize'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -20,32 +20,39 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | UnsafeEmbed> {
-        const image = interaction.options.getAttachment('image', true);
-        const cartoon = await Cartoonize.cartoonize(image);
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const image = interaction.options.getAttachment('image', true)
+        const cartoon = await Cartoonize.cartoonize(image)
 
         if (!cartoon) {
-            return Embed.error('Failed to extract the image from the HTML. 😕');
+            return {
+                embeds: [
+                    Embed.error('Failed to extract the image from the HTML. 😕')
+                ]
+            }
         }
 
-        const { body } = await request(cartoon);
-        const imageBuffer = Buffer.from(await body.arrayBuffer());
-        const attachment = new MessageAttachment(imageBuffer, 'cartoonized.jpeg');
+        const { body } = await request(cartoon)
+        const imageBuffer = arrayBufferToBuffer(await body.arrayBuffer())
 
         return {
             embeds: [
-                Embed
-                    .ok(`[Click Here](${cartoon}) to download (link is only valid for a few minutes)!`)
-                    .setImage('attachment://cartoonized.jpeg')
+                Embed.json({
+                    description: `[Click Here](${cartoon}) to download (link is only valid for a few minutes)!`,
+                    image: { url: 'attachment://cartoonized.jpeg' }
+                })
             ],
-            files: [attachment]
+            files: [{
+                attachment: imageBuffer,
+                name: 'cartoonized.jpeg'
+            }]
         }
     }
 }

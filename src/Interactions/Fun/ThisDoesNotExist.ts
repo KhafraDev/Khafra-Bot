@@ -1,12 +1,14 @@
-import { Interactions } from '#khaf/Interaction';
-import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson';
-import { DNE, thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist';
-import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { bold, hyperlink, inlineCode, italic, underscore, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson'
+import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { logError } from '#khaf/utility/Rejections.js'
+import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -31,42 +33,69 @@ export class kInteraction extends Interactions {
             ]
         }
 
-        super(sc);
+        super(sc)
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
-        const type = interaction.options.getString('type', true);
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const type = interaction.options.getString('type', true)
         if (type === 'tdne_fuhomer') {
-            const [err, homer] = await dontThrow(thisSimpsonDoesNotExist());
+            const homer = await thisSimpsonDoesNotExist().catch((err: Error) => {
+                logError(err)
+                return null
+            })
 
-            if (err !== null) {
-                return '❌ An unexpected error occurred getting a Homer!';
+            if (homer === null) {
+                return {
+                    content: '❌ An unexpected error occurred getting a Homer!',
+                    ephemeral: true
+                }
             }
 
-            return Embed.ok().setImage(homer);
+            return {
+                embeds: [
+                    Embed.json({
+                        color: colors.ok,
+                        image: { url: homer }
+                    })
+                ]
+            }
         } else if (type === 'tdne_word') {
-            const [err, word] = await dontThrow(thisWordDoesNotExist());
+            const word = await thisWordDoesNotExist().catch((err: Error) => {
+                logError(err)
+                return null
+            })
 
-            if (err !== null || word === null) {
-                return '❌ An unexpected error occurred getting a word!';
+            if (word === null) {
+                return {
+                    content: '❌ An unexpected error occurred getting a word!',
+                    ephemeral: true
+                }
             }
 
-            return Embed.ok(`
+            const embed = Embed.ok(`
             ${bold(word.word.word.toUpperCase())} - ${word.word.pos}
             ${italic(word.word.syllables.join(' − '))}
             ${inlineCode(word.word.definition)}
             ${word.word.example ? `${italic(underscore(word.word.example))}` : ''}
 
             ${hyperlink('View Online', word.permalink_url)}
-            `);
-        } else {
-            const [err, image] = await dontThrow(thisDoesNotExist(type.split('_')[1] as DNE));
+            `)
 
-            if (err !== null || image === null) {
-                return '❌ Not yet implemented or an error occurred!';
+            return { embeds: [embed] }
+        } else {
+            const image = await thisDoesNotExist(type.split('_')[1] as DNE).catch((err: Error) => {
+                logError(err)
+                return null
+            })
+
+            if (image === null) {
+                return {
+                    content: '❌ Not yet implemented or an error occurred!',
+                    ephemeral: true
+                }
             }
 
-            return image as InteractionReplyOptions;
+            return image as InteractionReplyOptions
         }
     }
 }

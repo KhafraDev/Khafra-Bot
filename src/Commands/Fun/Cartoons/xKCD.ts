@@ -1,9 +1,9 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
-import { decodeXML } from 'entities';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { once } from '#khaf/utility/Memoize.js'
+import { RSSReader } from '#khaf/utility/RSS.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { decodeXML } from 'entities'
 
 interface IxKCD {
     title: string
@@ -13,8 +13,8 @@ interface IxKCD {
     guid: string
 }
 
-const rss = new RSSReader<IxKCD>();
-const cache = once(() => rss.cache('https://xkcd.com/rss.xml'));
+const rss = new RSSReader<IxKCD>()
+const cache = once(async () => rss.cache('https://xkcd.com/rss.xml'))
 
 export class kCommand extends Command {
     constructor () {
@@ -28,22 +28,24 @@ export class kCommand extends Command {
                 args: [0, 0],
                 ratelimit: 5
             }
-        );
+        )
     }
 
-    async init (): Promise<UnsafeEmbed> {
-        const state = await cache();
+    async init (): Promise<APIEmbed> {
+        const state = await cache()
 
         if (state === null) {
-            return Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!')
         }
 
-        const values = Array.from(rss.results);
-        const comic = values[Math.floor(Math.random() * values.length)];
+        const values = Array.from(rss.results)
+        const comic = values[Math.floor(Math.random() * values.length)]
 
-        return Embed.ok()
-            .setTitle(decodeXML(comic.title))
-            .setURL(comic.link)
-            .setImage(`${/src="(.*?)"/.exec(comic.description)?.[1]}`);
+        return Embed.json({
+            color: colors.ok,
+            title: decodeXML(comic.title),
+            url: comic.link,
+            image: { url: `${/src="(.*?)"/.exec(comic.description)?.[1]}` }
+        })
     }
 }

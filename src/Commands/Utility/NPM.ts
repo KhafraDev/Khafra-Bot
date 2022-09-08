@@ -1,8 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
-import { npm } from '@khaf/npm';
-import { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
+import { npm } from '@khaf/npm'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -17,39 +19,40 @@ export class kCommand extends Command {
                 aliases: ['npmjs'],
                 args: [1, 2]
             }
-        );
+        )
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string | UnsafeEmbed> {
-        const [name, version = 'latest'] = args;
-        const p = await npm(name);
+    async init (_message: Message, { args }: Arguments): Promise<string | APIEmbed> {
+        const [name, version = 'latest'] = args
+        const p = await npm(name)
 
         if ('code' in p) {
-            return '❌ No package with that name was found!';
+            return '❌ No package with that name was found!'
         } else if ('error' in p) {
-            return `❌ An unexpected error has occurred: ${inlineCode(p.error)}!`;
+            return `❌ An unexpected error has occurred: ${inlineCode(p.error)}!`
         }
 
-        const ver = version.startsWith('v') ? version.slice(1) : version;
+        const ver = version.startsWith('v') ? version.slice(1) : version
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']];
+        const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']]
 
         const maintainers = dist.maintainers
             .slice(0, 10)
             .map(u => u.name)
-            .join(', ');
+            .join(', ')
 
-        return Embed.ok()
-            .setAuthor({
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: 'NPM',
-                iconURL: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
+                icon_url: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
                 url: 'https://npmjs.com/'
-            })
-            .setDescription(`
+            },
+            description: `
             [${dist.name}](https://npmjs.com/package/${dist.name})
             ${inlineCode(p.description.slice(0, 2000))}
-            `)
-            .addFields(
+            `,
+            fields: [
                 { name: bold('Version:'), value: dist.version, inline: true },
                 { name: bold('License:'), value: dist.license, inline: true },
                 { name: bold('Author:'), value: p.author?.name ?? 'N/A', inline: true },
@@ -61,6 +64,7 @@ export class kCommand extends Command {
                 { name: bold('Published:'), value: time(new Date(p.time?.created ?? Date.now())), inline: true },
                 { name: bold('Homepage:'), value: p.homepage ?? 'None', inline: true },
                 { name: bold('Maintainers:'), value: maintainers }
-            );
+            ]
+        })
     }
 }

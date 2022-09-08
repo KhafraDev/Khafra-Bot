@@ -1,28 +1,28 @@
-import { rest } from '#khaf/Bot';
-import { Arguments, Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isVoice } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ActionRow, hideLinkEmbed, hyperlink, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
-import {
-    APIInvite, InviteTargetType, PermissionFlagsBits, RESTPostAPIChannelInviteJSONBody, Routes
-} from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import { rest } from '#khaf/Bot'
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isVoice } from '#khaf/utility/Discord.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { getMentions, validSnowflake } from '#khaf/utility/Mentions.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
+import type { APIEmbed, APIInvite, RESTPostAPIChannelInviteJSONBody } from 'discord-api-types/v10'
+import { InviteTargetType, PermissionFlagsBits, Routes } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const enum Activities {
-    POKER = '755827207812677713',
-    BETRAYALIO = '773336526917861400',
-    YOUTUBE_TOGETHER = '755600276941176913',
-    FISHINGTONIO = '814288819477020702',
-    CHESS = '832012774040141894',
-    DOODLECREW = '878067389634314250',
-    WORDSNACKS = '879863976006127627',
-    LETTERTILE = '879863686565621790',
-    SPELLCAST = '852509694341283871'
-}
+const Activities = {
+    POKER: '755827207812677713',
+    BETRAYALIO: '773336526917861400',
+    YOUTUBE_TOGETHER: '755600276941176913',
+    FISHINGTONIO: '814288819477020702',
+    CHESS: '832012774040141894',
+    DOODLECREW: '878067389634314250',
+    WORDSNACKS: '879863976006127627',
+    LETTERTILE: '879863686565621790',
+    SPELLCAST: '852509694341283871'
+} as const
 
 export class kCommand extends Command {
     constructor () {
@@ -43,20 +43,20 @@ export class kCommand extends Command {
                 ],
                 guildOnly: true
             }
-        );
+        )
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed | undefined> {
+    async init (message: Message<true>, { content }: Arguments): Promise<undefined | APIEmbed> {
         const channel =
             await getMentions(message, 'channels') ??
-            message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase());
+            message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase())
 
         if (!isVoice(channel)) {
-            return Embed.error('Games can only be created in voice channels!');
+            return Embed.error('Games can only be created in voice channels!')
         } else if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
-            return Embed.error('No channel with that name was found!');
-        } else if (!hasPerms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite)) {
-            return Embed.perms(channel, message.guild.me, PermissionFlagsBits.CreateInstantInvite);
+            return Embed.error('No channel with that name was found!')
+        } else if (!hasPerms(channel, message.guild.members.me, PermissionFlagsBits.CreateInstantInvite)) {
+            return Embed.perms(channel, message.guild.members.me, PermissionFlagsBits.CreateInstantInvite)
         }
 
         const m = await message.channel.send({
@@ -64,27 +64,27 @@ export class kCommand extends Command {
                 Embed.ok(`Please choose which activity you want! -> ${channel}`)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    Components.approve('Poker', Activities.POKER),
-                    Components.deny('Betrayal.io', Activities.BETRAYALIO),
-                    Components.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
-                    Components.secondary('Fishington.io', Activities.FISHINGTONIO),
-                    Components.approve('Chess in the Park', Activities.CHESS)
-                ),
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    Components.approve('Doodle Crew', Activities.DOODLECREW),
-                    Components.deny('WordSnacks', Activities.WORDSNACKS),
-                    Components.primary('LetterTile', Activities.LETTERTILE)
-                )
+                Components.actionRow([
+                    Buttons.approve('Poker', Activities.POKER),
+                    Buttons.deny('Betrayal.io', Activities.BETRAYALIO),
+                    Buttons.primary('YouTube Together', Activities.YOUTUBE_TOGETHER),
+                    Buttons.secondary('Fishington.io', Activities.FISHINGTONIO),
+                    Buttons.approve('Chess in the Park', Activities.CHESS)
+                ]),
+                Components.actionRow([
+                    Buttons.approve('Doodle Crew', Activities.DOODLECREW),
+                    Buttons.deny('WordSnacks', Activities.WORDSNACKS),
+                    Buttons.primary('LetterTile', Activities.LETTERTILE)
+                ])
             ]
-        });
+        })
 
         const [discordError, interaction] = await dontThrow(m.awaitMessageComponent({
             time: 60_000,
             filter: (interaction) =>
                 interaction.user.id === message.author.id &&
                 validSnowflake(interaction.customId)
-        }));
+        }))
 
         if (discordError !== null) {
             return void dontThrow(m.edit({
@@ -92,11 +92,11 @@ export class kCommand extends Command {
                     Embed.ok('No response, canceled the command.')
                 ],
                 components: disableAll(m)
-            }));
+            }))
         } else {
             void dontThrow(interaction.update({
                 components: disableAll(m)
-            }));
+            }))
         }
 
         const [fetchError, invite] = await dontThrow(rest.post(
@@ -109,15 +109,15 @@ export class kCommand extends Command {
                     target_application_id: interaction.customId
                 } as RESTPostAPIChannelInviteJSONBody
             }
-        ) as Promise<APIInvite>);
+        ) as Promise<APIInvite>)
 
         if (fetchError !== null) {
-            return Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(fetchError.message)}`)
         }
 
-        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
-        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
+        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`))
+        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`
 
-        return Embed.ok(str);
+        return Embed.ok(str)
     }
 }

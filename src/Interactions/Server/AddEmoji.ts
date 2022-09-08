@@ -1,20 +1,24 @@
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import { logError } from '#khaf/utility/Rejections.js'
+import { inlineCode } from '@discordjs/builders'
+import type {
+    APIRole,
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
-    PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Role } from 'discord.js';
+    PermissionFlagsBits
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js'
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'addemoji',
             description: 'Adds an emoji to the server!',
-            default_permission: false,
+            default_member_permissions: toString([PermissionFlagsBits.ManageEmojisAndStickers]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -59,50 +63,67 @@ export class kInteraction extends Interactions {
                     description: 'Limit the emoji to this role.'
                 }
             ]
-        };
-
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.ManageEmojisAndStickers
-            ]
-        });
-    }
-
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
-        if (!interaction.inCachedGuild()) {
-            return '❌ Please re-invite the bot with default permissions to use this command.';
-        } else if (!hasPerms(interaction.channel, interaction.guild.me, this.options.permissions!)) {
-            return '❌ I need permission to manage emojis to use this command.';
         }
 
-        const attachment = interaction.options.getAttachment('emoji', true);
-        const name = interaction.options.getString('name', true);
-        const reason = interaction.options.getString('reason') ?? undefined;
-        const roles: Role[] = [];
+        super(sc)
+    }
+
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
+            return {
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+                ephemeral: true
+            }
+        }
+
+        const attachment = interaction.options.getAttachment('emoji', true)
+        const name = interaction.options.getString('name', true)
+        const reason = interaction.options.getString('reason') ?? undefined
+        const roles: (Role | APIRole)[] = []
 
         for (let i = 1; i <= 5; i++) {
-            const role = interaction.options.getRole(`role${i}`);
+            const role = interaction.options.getRole(`role${i}`)
 
             if (role) {
-                roles.push(role);
+                roles.push(role)
             }
         }
 
         if (attachment.size > 256_000) {
-            const kb = (attachment.size / 1000).toLocaleString(interaction.locale);
-            return `❌ Emoji must be under 256 KB in size (got ${inlineCode(kb)} kb).`;
+            const kb = (attachment.size / 1000).toLocaleString(interaction.locale)
+            return {
+                content: `❌ Emoji must be under 256 KB in size (got ${inlineCode(kb)} kb).`,
+                ephemeral: true
+            }
         }
 
-        const [err, emoji] = await dontThrow(interaction.guild.emojis.create(
-            attachment.proxyURL,
+        const emoji = await interaction.guild.emojis.create({
             name,
-            { reason, roles }
-        ));
+            reason,
+            attachment: attachment.proxyURL,
+            roles: roles.map(role => role.id)
+        }).catch(logError)
 
-        if (err !== null) {
-            return `❌ An unexpected error has occurred: ${inlineCode(err.message)}`;
+        if (emoji instanceof Error) {
+            return {
+                content: `❌ An unexpected error has occurred: ${inlineCode(emoji.message)}`,
+                ephemeral: true
+            }
         }
 
-        return `${emoji} is now a guild emoji!`;
+        return {
+            content: `${emoji} is now a guild emoji!`
+        }
     }
 }

@@ -1,25 +1,25 @@
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { inlineCode } from '@discordjs/builders';
-import {
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import type {
     APIApplicationCommandOption,
-    ApplicationCommandOptionType,
-    PermissionFlagsBits,
     RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, Guild, GuildMemberManager } from 'discord.js';
-import { setTimeout } from 'timers/promises';
+} from 'discord-api-types/v10'
+import {
+    ApplicationCommandOptionType,
+    PermissionFlagsBits
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, GuildMemberManager, InteractionReplyOptions } from 'discord.js'
+import { setTimeout } from 'node:timers/promises'
 
-const pleaseInvite = `invite the bot to the guild using the ${inlineCode('invite')} command!`;
-const perms = PermissionFlagsBits.BanMembers;
+const perms = PermissionFlagsBits.BanMembers
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'massban',
             description: 'Ban someone!',
-            default_permission: false,
+            default_member_permissions: toString([perms]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Integer,
@@ -39,76 +39,81 @@ export class kInteraction extends Interactions {
                     description: 'Member to ban.'
                 }))
             ]
-        };
+        }
 
         super(sc, {
-            defer: true,
-            permissions: [perms]
-        });
+            defer: true
+        })
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
-        if (!interaction.inGuild()) {
-            return `❌ Invalid permissions, ${pleaseInvite}`;
-        } else if (!hasPerms(interaction.channel, interaction.guild?.me, perms)) {
-            return '❌ I don\'t have permission to ban members in this guild!';
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+        if (!interaction.memberPermissions?.has(perms)) {
+            return {
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(perms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+                ephemeral: true
+            }
         }
 
-        const [err, guild] = interaction.guild
-            ? [null, interaction.guild as Guild | null]
-            : await dontThrow(interaction.client.guilds.fetch(interaction.guildId));
-
-        if (err !== null || guild === null) {
-            return `❌ I couldn't fetch this guild, ${pleaseInvite}`;
-        }
-
-        const deleteMessageDays = interaction.options.getInteger('days') ?? 7;
+        const deleteMessageDays = interaction.options.getInteger('days') ?? 7
         const reason =
             interaction.options.getString('reason') ??
-            `Requested by ${interaction.user.tag} (${interaction.user.id})`;
+            `Requested by ${interaction.user.tag} (${interaction.user.id})`
 
-        const users: Map<string, ReturnType<GuildMemberManager['ban']>> = new Map();
+        const users: Map<string, ReturnType<GuildMemberManager['ban']>> = new Map()
 
         for (let i = 1; i < 18; i++) {
-            const userOption = interaction.options.getUser(`member${i}`);
+            const userOption = interaction.options.getUser(`member${i}`)
 
             if (userOption) {
-                const member = interaction.options.getMember(`member${i}`);
+                const member = interaction.options.getMember(`member${i}`)
 
                 if (member) {
                     const memberPerms = typeof member.permissions !== 'string'
                         ? member.permissions.bitfield
-                        : BigInt(member.permissions);
+                        : BigInt(member.permissions)
 
+                    // If the member listed has permission to ban, disallow banning them.
                     if ((perms & memberPerms) === perms) {
-                        return `❌ I cannot ban ${member}!`;
+                        return {
+                            content: `❌ I cannot ban ${member}!`,
+                            ephemeral: true
+                        }
                     }
                 }
 
-                users.set(userOption.id, guild.members.ban(userOption, { reason, deleteMessageDays }));
+                users.set(userOption.id, interaction.guild.members.ban(userOption, { reason, deleteMessageDays }))
             }
         }
 
-        await dontThrow(interaction.editReply({
+        await interaction.editReply({
             content: '✅ Starting to ban these members... if you provided multiple, it may take a minute!'
-        }));
+        })
 
-        let description = '';
+        let description = ''
         for (const [id, user] of users.entries()) {
             try {
-                const r = await user;
-                description += `• - Successfully banned ${r}\n`;
+                const r = await user
+                description += `• - Successfully banned ${r}\n`
             } catch (e) {
-                description += `⨯ - Failed to ban ${id}\n`;
+                description += `⨯ - Failed to ban ${id}\n`
             } finally {
                 // The less users there are, the less delay
                 // we need as there's less chance of a ratelimit.
-                await setTimeout(users.size ** 2 * 10);
+                await setTimeout(users.size ** 2 * 10)
             }
         }
 
-        return void dontThrow(interaction.followUp({
+        return void interaction.followUp({
             content: description
-        }));
+        })
     }
 }

@@ -1,15 +1,14 @@
-import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import {
     GoogleLanguages, GoogleTranslate, LibreTranslate,
     LibreTranslateGetLanguages
-} from '@khaf/translate';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+} from '@khaf/translate'
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'translate',
             description: 'Use Google Translate to translate some text!',
@@ -41,21 +40,24 @@ export class kInteraction extends Interactions {
                     description: 'Language code to translate from (default: "from").'
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | string | undefined> {
-        const to = interaction.options.getString('to');
-        const from = interaction.options.getString('from');
-        const text = interaction.options.getString('text', true);
-        const engine = interaction.options.getString('engine') ?? 'googletranslate';
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+        const to = interaction.options.getString('to')
+        const from = interaction.options.getString('from')
+        const text = interaction.options.getString('text', true)
+        const engine = interaction.options.getString('engine') ?? 'googletranslate'
 
-        const embed = Embed.ok().setAuthor({
-            name: interaction.user.username,
-            iconURL: interaction.user.displayAvatarURL()
-        });
+        const embed = Embed.json({
+            color: colors.ok,
+            author: {
+                name: interaction.user.username,
+                icon_url: interaction.user.displayAvatarURL()
+            }
+        })
 
         if (engine === 'googletranslate') {
             const translated = await GoogleTranslate(
@@ -68,11 +70,15 @@ export class kInteraction extends Interactions {
                         ? from.toLowerCase()
                         : 'auto'
                 }
-            );
+            )
 
-            return embed.setDescription(translated);
+            embed.description = translated
+
+            return {
+                embeds: [embed]
+            }
         } else if (engine === 'libretranslate') {
-            const supported = await LibreTranslateGetLanguages();
+            const supported = await LibreTranslateGetLanguages()
             const translated = await LibreTranslate({
                 query: text,
                 to: to && supported.includes(to.toLowerCase())
@@ -81,13 +87,20 @@ export class kInteraction extends Interactions {
                 from: from && supported.includes(from.toLowerCase())
                     ? from.toLowerCase()
                     : 'en'
-            });
+            })
 
             if (translated === null) {
-                return '❌ An error occurred using LibreTranslate, try another service!';
+                return {
+                    content: '❌ An error occurred using LibreTranslate, try another service!',
+                    ephemeral: true
+                }
             }
 
-            return embed.setDescription(translated.translatedText);
+            embed.description = translated.translatedText
+
+            return {
+                embeds: [embed]
+            }
         }
     }
 }

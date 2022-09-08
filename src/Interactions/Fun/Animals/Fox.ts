@@ -1,26 +1,44 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { s } from '@sapphire/shapeshift'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
-interface RandomFoxCA {
-    image: string
-    link: string
-}
+const schema = s.object({
+    image: s.string,
+    link: s.string
+})
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'animal',
             name: 'fox'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
-        await interaction.deferReply();
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        await interaction.deferReply()
 
-        const { body } = await request('https://randomfox.ca/floof/');
-        const j = await body.json() as RandomFoxCA;
+        const { body, statusCode } = await request('https://randomfox.ca/floof/')
 
-        return j.image;
+        if (statusCode !== 200) {
+            return {
+                content: '🦊 Couldn\'t get a picture of a random fox!',
+                ephemeral: true
+            }
+        }
+
+        const j: unknown = await body.json()
+
+        if (!schema.is(j)) {
+            return {
+                content: '🦊 Couldn\'t get a picture of a random fox!',
+                ephemeral: true
+            }
+        }
+
+        return {
+            content: j.image
+        }
     }
 }

@@ -1,11 +1,9 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
-import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { URLSearchParams } from 'url';
-import { request } from 'undici';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { URLSearchParams } from 'node:url'
+import { request } from 'undici'
 
 interface Insights {
     k_date: Date
@@ -13,37 +11,38 @@ interface Insights {
     k_joined: number
 }
 
-const Chart = (o: Record<string, string | number>): () => Promise<ArrayBuffer> => {
-    const query = new URLSearchParams();
+const Chart = async (o: Record<string, string | number>): Promise<ArrayBuffer> => {
+    const query = new URLSearchParams()
 
     for (const [key, value] of Object.entries(o)) {
-        query.set(key, `${value}`);
+        query.set(key, `${value}`)
     }
 
-    return async (): Promise<ArrayBuffer> => {
-        const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
-            headers: {
-                'User-Agent': 'PseudoBot'
-            }
-        });
+    const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
+        headers: {
+            'User-Agent': 'PseudoBot'
+        }
+    })
 
-        return body.arrayBuffer();
-    }
+    return body.arrayBuffer()
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'insights',
-            name: 'view'
-        });
+            name: 'graph'
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
-        const id = interaction.guildId ?? interaction.guild?.id;
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const id = interaction.guildId ?? interaction.guild?.id
 
         if (!id) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Insights[]>`
@@ -59,27 +58,31 @@ export class kSubCommand extends InteractionSubCommand {
                 k_date > CURRENT_DATE - 14 AND
                 k_date < CURRENT_DATE
             ORDER BY kbInsights.k_date ASC;
-        `;
+        `
 
         if (rows.length === 0) {
-            return '❌ There are no insights available for the last 14 days!';
+            return {
+                content: '❌ There are no insights available for the last 14 days!',
+                ephemeral: true
+            }
         }
 
-        const locale = interaction.guild?.preferredLocale ?? 'en-US';
-        const intl = Intl.DateTimeFormat(locale, { dateStyle: 'long' });
+        const locale = interaction.guild?.preferredLocale ?? 'en-US'
+        const intl = Intl.DateTimeFormat(locale, { dateStyle: 'long' })
 
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(intl.format(row.k_date));
-            red.Joins.push(row.k_joined.toLocaleString(locale));
-            red.Leaves.push(row.k_left.toLocaleString(locale));
+            red.Dates.push(intl.format(row.k_date))
+            red.Joins.push(row.k_joined.toLocaleString(locale))
+            red.Leaves.push(row.k_left.toLocaleString(locale))
 
-            return red;
+            return red
         }, {
             Dates: [] as string[],
             Joins: [] as string[],
             Leaves: [] as string[]
-        });
+        })
 
+        // https://www.chartjs.org/docs/2.8.0/
         const data = JSON.stringify({
             type: 'line',
             data: {
@@ -98,26 +101,66 @@ export class kSubCommand extends InteractionSubCommand {
                         data: Leaves
                     }
                 ]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Members',
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        },
+                        offset: true,
+                        ticks: {
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 30
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date',
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        },
+                        offset: true,
+                        ticks: {
+                            fontColor: 'rgb(255, 255, 255)',
+                            fontSize: 20
+                        }
+                    }]
+                },
+                legend: {
+                    labels: {
+                        fontColor: 'rgb(255, 255, 255)',
+                        fontSize: 30
+                    }
+                }
             }
-        });
+        })
 
-        const chart = Chart({
+        const chart = await Chart({
             chart: data,
-            width: 500,
-            height: 300,
-            backgroundColor: 'black'
-        });
+            width: 1920,
+            height: 1080,
+            backgroundColor: 'rgb(54, 57, 63)'
+        }).catch(() => null)
 
-        const [err, blob] = await dontThrow(chart());
-
-        if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
+        if (chart === null) {
+            return {
+                content: '❌ An unexpected error occurred.',
+                ephemeral: true
+            }
         }
 
         return {
             files: [
-                new MessageAttachment(Buffer.from(blob), 'chart.png')
+                {
+                    attachment: arrayBufferToBuffer(chart),
+                    name: 'chart.png'
+                }
             ]
-        } as InteractionReplyOptions;
+        }
     }
 }

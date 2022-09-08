@@ -1,4 +1,4 @@
-import { request } from 'undici';
+import { request } from 'undici'
 
 export interface MDNSearchResult {
     mdn_url: string
@@ -51,12 +51,12 @@ const defaultOpts = {
  */
 export const fetchMDN = async (q: string, opts = defaultOpts): Promise<MDNResult | MDNError> => {
     if (typeof q !== 'string' || q.trim().length === 0)
-        throw new RangeError(`Expected query type "string", got "${typeof q}"!`);
+        throw new RangeError(`Expected query type "string", got "${typeof q}"!`)
 
-    q = encodeURIComponent(q.replace(/\s/g, '+'));
+    q = encodeURIComponent(q.replace(/\s/g, '+'))
 
-    const { body } = await request(`https://developer.mozilla.org/api/v1/search/${opts.locale}?q=${q}`);
-    const j = await body.json() as MDNResult | MDNError;
+    const { body } = await request(`https://developer.mozilla.org/api/v1/search/${opts.locale}?q=${q}`)
+    const j = await body.json() as MDNResult | MDNError
 
-    return j;
+    return j
 }

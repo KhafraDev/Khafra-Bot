@@ -27,9 +27,9 @@
   },
   "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
   "devDependencies": {
-    "@types/node": "^17.0.7"
+    "@types/node": "^18.7.13"
   },
   "dependencies": {
-    "undici": "^4.12.1"
+    "undici": "^5.0.0"
   }
 }

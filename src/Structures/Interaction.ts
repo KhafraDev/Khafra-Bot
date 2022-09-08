@@ -1,13 +1,12 @@
-import { KhafraClient } from '#khaf/Bot';
-import { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import {
+import { KhafraClient } from '#khaf/Bot'
+import type { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type {
     AutocompleteInteraction,
     ChatInputCommandInteraction,
     InteractionReplyOptions,
     MessageContextMenuCommandInteraction,
-    PermissionResolvable,
     UserContextMenuCommandInteraction
-} from 'discord.js';
+} from 'discord.js'
 
 interface InteractionOptions {
     defer?: boolean
@@ -17,7 +16,6 @@ interface InteractionOptions {
 	 */
 	deploy?: boolean
     replyOpts?: InteractionReplyOptions
-    permissions?: PermissionResolvable
 }
 
 interface SubcommandOptions {
@@ -26,22 +24,17 @@ interface SubcommandOptions {
 }
 
 type HandlerReturn =
-    | string
-    | import('@discordjs/builders').UnsafeEmbed
-    | import('discord.js').MessageAttachment
     | import('discord.js').InteractionReplyOptions
     | null
-    | void;
+    | void
 
 type InteractionData =
-    | RESTPostAPIApplicationCommandsJSONBody;
-
-const kId = Symbol('Khafra.Interaction.Id');
+    | RESTPostAPIApplicationCommandsJSONBody
 
 export class Interactions {
-    private [kId]: APIApplicationCommand['id'];
+    #id: APIApplicationCommand['id'] | undefined
 
-    constructor(
+    constructor (
         public data: InteractionData,
         public options: InteractionOptions = {}
     ) {}
@@ -49,24 +42,34 @@ export class Interactions {
     async init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> {
         const subcommand =
             interaction.options.getSubcommandGroup(false) ??
-            interaction.options.getSubcommand();
-        const subcommandName = `${this.data.name}-${subcommand}`;
+            interaction.options.getSubcommand()
+        const subcommandName = `${this.data.name}-${subcommand}`
 
         if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
-            return '❌ This option has not been implemented yet!';
+            return {
+                content: '❌ This option has not been implemented yet!'
+            }
+        } else if (this.data.default_member_permissions) {
+            const defaultPerms = BigInt(this.data.default_member_permissions)
+
+            if (!interaction.memberPermissions?.has(defaultPerms)) {
+                return {
+                    content: '❌ You do not have permission to use this command!'
+                }
+            }
         }
 
-        const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!;
+        const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!
 
-        return await option.handle(interaction);
+        return await option.handle(interaction)
     }
 
     public set id (body: APIApplicationCommand['id']) {
-        this[kId] = body;
+        this.#id = body
     }
 
     public get id (): string {
-        return this[kId];
+        return this.#id!
     }
 }
 
@@ -74,16 +77,16 @@ export abstract class InteractionSubCommand {
     public constructor (public data: SubcommandOptions) {}
 
     public get references (): Interactions {
-        return KhafraClient.Interactions.Commands.get(this.data.references)!;
+        return KhafraClient.Interactions.Commands.get(this.data.references)!
     }
 
-    abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn>;
+    abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn>
 }
 
 export abstract class InteractionAutocomplete {
     public constructor (public data: SubcommandOptions) {}
 
-    abstract handle (arg: AutocompleteInteraction): Promise<void>;
+    abstract handle (arg: AutocompleteInteraction): Promise<void>
 }
 
 /**
@@ -95,5 +98,5 @@ export abstract class InteractionUserCommand {
         public options: InteractionOptions = {}
     ) {}
 
-    abstract init (interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction): Promise<HandlerReturn>;
+    abstract init (interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction): Promise<HandlerReturn>
 }

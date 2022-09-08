@@ -1,25 +1,41 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { ChatInputCommandInteraction } from 'discord.js';
-import { request } from 'undici';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { s } from '@sapphire/shapeshift'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 
-interface SomeRandomPanda {
-    link: string
-}
+const schema = s.object({ link: s.string })
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'animal',
             name: 'redpanda'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
-        await interaction.deferReply();
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        await interaction.deferReply()
 
-        const { body } = await request('https://some-random-api.ml/img/red_panda');
-        const j = await body.json() as SomeRandomPanda;
+        const { body, statusCode } = await request('https://some-random-api.ml/img/red_panda')
 
-        return j.link;
+        if (statusCode !== 200) {
+            return {
+                content: '🐼 Couldn\'t get a picture of a random red panda!',
+                ephemeral: true
+            }
+        }
+
+        const j: unknown = await body.json()
+
+        if (!schema.is(j)) {
+            return {
+                content: '🐼 Couldn\'t get a picture of a random red panda!',
+                ephemeral: true
+            }
+        }
+
+        return {
+            content: j.link
+        }
     }
 }

@@ -1,12 +1,12 @@
 {
   "name": "khafra-bot",
-  "version": "1.10.0",
+  "version": "1.12.0",
   "description": "Discord Bot",
   "main": "build/src/index.js",
   "type": "module",
   "imports": {
     "#khaf/utility/*": "./src/lib/Utility/*",
-    "#khaf/utility/commands/*": "./src/lib/Packages/*.js",
+    "#khaf/utility/commands/*": "./src/lib/common/*.js",
     "#khaf/utility/Discord.js": "./src/lib/types/Discord.js.js",
     "#khaf/database/*": "./src/Structures/Database/*",
     "#khaf/migration/*": "./src/lib/Migration/*",
@@ -21,32 +21,34 @@
     "#khaf/LRU": "./src/Structures/LRU.js",
     "#khaf/Timer": "./src/Structures/Timer.js",
     "#khaf/Images": "./src/Images/*",
-    "#khaf/structures/*": "./src/Structures/*"
+    "#khaf/structures/*": "./src/Structures/*",
+    "#khaf/image/*": "./src/lib/Image/*"
   },
   "dependencies": {
-    "@discordjs/builders": "^0.13.0-dev.1646913825.dcd4797",
-    "@discordjs/rest": "^0.4.0-dev.1646913818.dcd4797",
-    "@imagemagick/magick-wasm": "^0.0.10",
-    "@napi-rs/canvas": "^0.1.21",
+    "@discordjs/builders": "^1.2.0",
+    "@discordjs/rest": "^1.1.0",
+    "@imagemagick/magick-wasm": "^0.0.14",
+    "@khaf/qrcode": "^0.0.8",
+    "@napi-rs/canvas": "^0.1.29",
+    "@sapphire/shapeshift": "^3.6.0",
     "@skyra/gifenc": "^1.0.0",
-    "discord-api-types": "^0.29.0",
-    "discord.js": "^14.0.0-dev.1646395406.6f7a366",
-    "entities": "^3.0.1",
-    "fast-xml-parser": "^4.0.7",
-    "node-graceful": "^3.1.0",
-    "postgres": "^3.0.0",
-    "sonic-boom": "^2.6.0",
+    "discord-api-types": "^0.37.5",
+    "discord.js": "^14.3.0",
+    "entities": "^4.3.1",
+    "fast-xml-parser": "^4.0.9",
+    "pino": "^8.4.2",
+    "postgres": "^3.2.4",
     "twemoji-parser": "^14.0.0",
-    "undici": "^4.16.0"
+    "undici": "^5.10.0"
   },
   "devDependencies": {
-    "@types/node": "^17.0.23",
+    "@types/node": "^18.7.14",
     "@types/twemoji-parser": "^13.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.16.0",
-    "@typescript-eslint/parser": "^5.16.0",
-    "eslint": "^8.12.0",
-    "husky": "^7.0.4",
-    "typescript": "^4.6.3"
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
+    "eslint": "^8.23.0",
+    "husky": "^8.0.1",
+    "typescript": "^4.8.2"
   },
   "scripts": {
     "dev:check": "npx -p typescript tsc",
@@ -54,8 +56,7 @@
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --enable-source-maps build/src/index --dev",
-    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --enable-source-maps build/src/index --prod",
-    "v1.10": "npm run dev:build && node scripts/dump",
+    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --enable-source-maps build/src/index",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install"
@@ -71,7 +72,7 @@
   },
   "homepage": "https://github.com/khafradev/khafra-bot#readme",
   "engines": {
-    "node": ">=15.4.0"
+    "node": ">=18.3.0"
   },
   "workspaces": [
     "packages/**"

@@ -1,15 +1,15 @@
-import { cache } from '#khaf/cache/Settings.js';
-import { Arguments, Command } from '#khaf/Command';
-import { sql } from '#khaf/database/Postgres.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Range } from '#khaf/utility/Valid/Number.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { Range } from '#khaf/utility/Valid/Number.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
-const inRange = Range({ min: 0, max: 32767, inclusive: true }); // small int
+const inRange = Range({ min: 0, max: 32767, inclusive: true }) // small int
 
 export class kCommand extends Command {
     constructor () {
@@ -27,30 +27,27 @@ export class kCommand extends Command {
                 args: [1, 1],
                 guildOnly: true
             }
-        );
+        )
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
-        const newAmount = Number(args[0]!);
+    async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
+        const newAmount = Number(args[0]!)
 
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))
             return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
-            );
+            )
         else if (!inRange(newAmount))
-            return Embed.error('An invalid number of points was provided, try with a positive whole number instead!');
+            return Embed.error('An invalid number of points was provided, try with a positive whole number instead!')
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild
             SET max_warning_points = ${newAmount}::smallint
-            WHERE guild_id = ${message.guildId}::text
-            RETURNING *;
-        `;
+            WHERE guild_id = ${message.guildId}::text;
+        `
 
-        cache.set(message.guild.id, rows[0]);
-
-        return Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`);
+        return Embed.ok(`Set the max warning points limit to ${inlineCode(newAmount.toLocaleString())}!`)
     }
 }

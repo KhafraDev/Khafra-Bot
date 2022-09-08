@@ -1,10 +1,13 @@
-import { Arguments, Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { validURL } from '#khaf/utility/Valid/URL.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, MessageAttachment } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { validURL } from '#khaf/utility/Valid/URL.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message} from 'discord.js'
+import { Attachment } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -22,47 +25,47 @@ export class kCommand extends Command {
                 guildOnly: true,
                 permissions: [PermissionFlagsBits.ManageEmojisAndStickers]
             }
-        );
+        )
     }
 
-    async init (message: Message<true>, { args }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
         if (args.length === 1 && message.attachments.size === 0)
-            return Embed.error('No attachment was included and no image link was provided!');
+            return Embed.error('No attachment was included and no image link was provided!')
 
         let name: string | null = null,
-            link: string | MessageAttachment | null = null;
+            link: string | Attachment | null = null
 
         if (args.length === 1) {
-            name = args[0];
-            link = message.attachments.first() ?? null;
+            name = args[0]
+            link = message.attachments.first() ?? null
         } else {
-            const info = validURL(args);
+            const info = validURL(args)
             if (info.length === 0 || info[0].url === null)
-                return Embed.error('No image link provided!');
+                return Embed.error('No image link provided!')
 
-            name = args[Number(!info[0].idx)];
-            link = `${info[0].url}`;
+            name = args[Number(!info[0].idx)]
+            link = `${info[0].url}`
         }
 
-        if (link instanceof MessageAttachment) {
+        if (link instanceof Attachment) {
             if (link.size > 256_000)
-                return Embed.error('Guild emojis can only be a maximum of 256kb! Try a smaller image!');
+                return Embed.error('Guild emojis can only be a maximum of 256kb! Try a smaller image!')
 
-            link = link.url;
+            link = link.url
         } else if (typeof link !== 'string') {
-            return Embed.error('Invalid link!');
+            return Embed.error('Invalid link!')
         }
 
-        const [createError, e] = await dontThrow(message.guild.emojis.create(
-            link,
+        const [createError, e] = await dontThrow(message.guild.emojis.create({
+            reason: `${message.author.id} (${message.author.tag}) requested.`,
             name,
-            { reason: `${message.author.id} (${message.author.tag}) requested.` }
-        ));
+            attachment: link
+        }))
 
         if (createError !== null) {
-            return Embed.error(`An unexpected error occurred: ${inlineCode(createError.message)}`);
+            return Embed.error(`An unexpected error occurred: ${inlineCode(createError.message)}`)
         }
 
-        return Embed.ok(`Added ${e} to the guild emojis!`);
+        return Embed.ok(`Added ${e} to the guild emojis!`)
     }
 }

@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS kbGiveaways (
     initiator TEXT NOT NULL,
     endDate TIMESTAMP NOT NULL,
     prize TEXT DEFAULT 'Nothing',
-    winners SMALLINT DEFAULT 1
+    winners SMALLINT DEFAULT 1,
+    "didEnd" BOOLEAN DEFAULT FALSE
 );

@@ -1,51 +1,78 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { Giveaway } from '#khaf/types/KhafraBot.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { inlineCode } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { Giveaway } from '#khaf/types/KhafraBot.js'
+import { inlineCode } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js'
 
-type GiveawayRow = Pick<Giveaway, 'guildid' | 'messageid' | 'channelid' | 'initiator' | 'id' | 'enddate' | 'prize'>;
+type GiveawayRow = Pick<Giveaway, 'messageid' | 'channelid' | 'id'>
 
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
-const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'giveaway',
             name: 'delete'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
-        const id = interaction.options.getString('id', true);
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const id = interaction.options.getString('id', true)
 
         if (!uuidRegex.test(id)) {
-            return '❌ That id is invalid, try again!';
-        } else if (!interaction.guildId || !interaction.guild) {
-            return '❌ No guild id provided in the command, re-invite the bot with the correct permissions.';
+            return {
+                content: '❌ That id is invalid, try again!',
+                ephemeral: true
+            }
+        } else if (interaction.guild === null) {
+            return {
+                content: '❌ No guild id provided in the command, re-invite the bot with the correct permissions.',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<GiveawayRow[]>`
             DELETE FROM kbGiveaways
             WHERE
-                guildId = ${interaction.guildId}::text AND 
-                id = ${id}::uuid
-            RETURNING guildId, messageId, channelId, initiator, endDate, prize, id;
-        `;
+                kbGiveaways.guildId = ${interaction.guild.id}::text AND
+                kbGiveaways.id = ${id}::uuid AND
+                kbGiveaways.initiator = ${interaction.user.id}::text
+            RETURNING messageId, channelId, id;
+        `
 
-        try {
-            const channel = await interaction.guild.channels.fetch(rows[0].channelid);
-            if (!isText(channel)) throw ''; // not possible
-
-            const giveawayMessage = await channel.messages.fetch(rows[0].messageid);
-
-            await giveawayMessage.delete();
-        } catch {
-            return '✅ The giveaway has been stopped, but I could not delete the giveaway message!'
+        if (rows.length === 0) {
+            return {
+                content: '❌ No giveaway with that ID exists.',
+                ephemeral: true
+            }
         }
 
-        return `✅ Giveaway ${inlineCode(rows[0].id)} has been deleted!`;
+        const [{ channelid, messageid, id: uuid }] = rows
+
+        try {
+            const channel = await interaction.guild.channels.fetch(channelid) as TextChannel | null
+
+            if (channel === null) {
+                return {
+                    content: '❌ Channel has been deleted or I do not have permission to see it.',
+                    ephemeral: true
+                }
+            }
+
+            const giveawayMessage = await channel.messages.fetch(messageid)
+
+            await giveawayMessage.delete()
+        } catch {
+            return {
+                content: '✅ The giveaway has been stopped, but I could not delete the giveaway message!',
+                ephemeral: true
+            }
+        }
+
+        return {
+            content: `✅ Giveaway ${inlineCode(uuid)} has been deleted!`,
+            ephemeral: true
+        }
     }
 }

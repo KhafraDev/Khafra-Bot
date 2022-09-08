@@ -1,16 +1,20 @@
-import { Interactions } from '#khaf/Interaction';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import type {
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
-    PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+    PermissionFlagsBits
+} from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'warns',
             description: 'Handle warnings in this guild.',
-            default_permission: false,
+            default_member_permissions: toString([PermissionFlagsBits.KickMembers]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
@@ -41,7 +45,7 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'get',
-                    description: 'Stops a running giveaway.',
+                    description: 'Returns the warnings a member currently has.',
                     options: [
                         {
                             type: ApplicationCommandOptionType.User,
@@ -65,13 +69,10 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
         super(sc, {
-            defer: true,
-            permissions: [
-                PermissionFlagsBits.KickMembers
-            ]
-        });
+            defer: true
+        })
     }
 }

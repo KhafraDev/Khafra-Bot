@@ -1,91 +1,85 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
-import { InteractionType } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionCollector, MessageComponentInteraction } from 'discord.js';
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { randomUUID } from 'node:crypto'
+import { InteractionType } from 'discord-api-types/v10'
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionCollector } from 'discord.js'
 
-type Keys = keyof typeof emojis;
+type Keys = keyof typeof emojis
 
 const emojis = {
     rock: '🌑',
     paper: '🧻',
     scissors: '✂️'
-} as const;
-
-const row = new ActionRow<MessageActionRowComponent>().addComponents(
-    Components.primary('🌑', 'rock'),
-    Components.secondary('🧻', 'paper'),
-    Components.approve('✂️', 'scissors')
-);
+} as const
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'games',
             name: 'rockpaperscissors'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
-        const [err, int] = await dontThrow(interaction.editReply({
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+        const id = randomUUID()
+        const row = Components.actionRow([
+            Buttons.primary('🌑', `rock-${id}`),
+            Buttons.secondary('🧻', `paper-${id}`),
+            Buttons.approve('✂️', `scissors-${id}`)
+        ])
+
+        const int = await interaction.editReply({
             embeds: [
                 Embed.ok('Rock, paper, scissors, shoot!')
             ],
             components: [row]
-        }));
+        })
 
-        if (err !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(err.message)}`;
-        }
-
-        const collector = new InteractionCollector<MessageComponentInteraction>(interaction.client, {
+        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
             interactionType: InteractionType.MessageComponent,
             message: int,
             time: 15_000,
             max: 1,
             filter: (i) =>
                 interaction.user.id === i.user.id &&
-                int.id === i.message.id
-        });
+                int.id === i.message.id &&
+                i.customId.endsWith(id)
+        })
 
-        const [canceled, c] = await dontThrow(new Promise<MessageComponentInteraction>((res, rej) => {
-            collector.once('collect', (i) => {
-                collector.stop('res');
-                return res(i);
-            });
+        let c: ButtonInteraction | undefined
 
-            collector.once('end', (_, reason) => {
-                if (reason !== 'res') rej(reason);
-            });
-        }));
+        for await (const [i] of collector) {
+            c = i
+        }
 
-        if (canceled !== null) {
-            return void dontThrow(interaction.editReply({
+        if (c === undefined) {
+            return void interaction.editReply({
                 embeds: [
                     Embed.error('❌ Game was canceled! Play again another time.')
                 ],
-                components: []
-            }));
+                components: disableAll(int)
+            })
         }
 
-        const botChoice = Object.keys(emojis)[Math.floor(Math.random() * 3)] as Keys;
-        let embed = Embed.ok(`You lost - ${botChoice} beats ${c.customId}!`);
+        const botChoice = Object.keys(emojis)[Math.floor(Math.random() * 3)] as Keys
+        const userChoice = c.customId.split('-')[0]
+        let embed = Embed.ok(`You lost - ${botChoice} beats ${userChoice}!`)
 
-        if (c.customId === botChoice) {
-            embed = Embed.ok(`It's a tie - we both chose ${emojis[botChoice]}!`);
+        if (userChoice === botChoice) {
+            embed = Embed.ok(`It's a tie - we both chose ${emojis[botChoice]}!`)
         } else if (
-            (c.customId === 'rock' && botChoice === 'scissors') || // rock beats scissors
-            (c.customId === 'paper' && botChoice === 'rock') || // paper beats rock
-            (c.customId === 'scissors' && botChoice === 'paper') // scissors beats paper
+            (userChoice === 'rock' && botChoice === 'scissors') || // rock beats scissors
+            (userChoice === 'paper' && botChoice === 'rock') || // paper beats rock
+            (userChoice === 'scissors' && botChoice === 'paper') // scissors beats paper
         ) {
-            embed = Embed.ok(`You win with ${emojis[c.customId]}, I chose ${emojis[botChoice]}!`)
+            embed = Embed.ok(`You win with ${emojis[userChoice]}, I chose ${emojis[botChoice]}!`)
         }
 
-        return void dontThrow(c.update({
+        return void c.update({
             embeds: [embed],
-            components: []
-        }));
+            components: disableAll(int)
+        })
     }
 }

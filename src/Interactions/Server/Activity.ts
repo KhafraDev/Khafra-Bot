@@ -1,15 +1,17 @@
-import { rest } from '#khaf/Bot';
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders';
+import { rest } from '#khaf/Bot'
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import { logError } from '#khaf/utility/Rejections.js'
+import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
+import type {
+    APIInvite, RESTPostAPIApplicationCommandsJSONBody,
+    RESTPostAPIChannelInviteJSONBody
+} from 'discord-api-types/v10'
 import {
-    APIInvite,
     ApplicationCommandOptionType, ChannelType,
-    InviteTargetType, PermissionFlagsBits, RESTPostAPIApplicationCommandsJSONBody,
-    RESTPostAPIChannelInviteJSONBody, Routes
-} from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, VoiceChannel } from 'discord.js';
+    InviteTargetType, PermissionFlagsBits, Routes
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js'
 
 const Activities = {
     'Poker': '755827207812677713',
@@ -25,14 +27,18 @@ const Activities = {
     'Checkers': '832013003968348200',
     // 'Sketchy Artist': '879864070101172255',
     'Putt Party': '832012854282158180'
-} as const;
+} as const
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'activity',
             description: 'Play a game in VC!',
-            default_permission: false,
+            default_member_permissions: toString([
+                PermissionFlagsBits.CreateInstantInvite,
+                PermissionFlagsBits.UseEmbeddedActivities
+            ]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.String,
@@ -49,27 +55,34 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
-
-        super(sc, {
-            permissions: [
-                PermissionFlagsBits.CreateInstantInvite,
-                PermissionFlagsBits.UseEmbeddedActivities
-            ]
-        });
-    }
-
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
-        if (!interaction.inGuild()) {
-            return '❌ This command is not available in this guild, please re-invite the bot with the correct permissions!';
-        } else if (!hasPerms(interaction.channel, interaction.guild?.me, this.options.permissions!)) {
-            return '❌ I do not have perms to create an activity in this channel!';
         }
 
-        const activityId = interaction.options.getString('game', true);
-        const channel = interaction.options.getChannel('channel', true) as VoiceChannel;
+        super(sc)
+    }
 
-        const [fetchError, invite] = await dontThrow(rest.post(
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
+
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
+            return {
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+                ephemeral: true
+            }
+        }
+
+        const activityId = interaction.options.getString('game', true)
+        const channel = interaction.options.getChannel('channel', true) as VoiceChannel
+
+        const invite = await rest.post(
             Routes.channelInvites(channel.id),
             {
                 headers: { 'Content-Type': 'application/json' },
@@ -79,15 +92,18 @@ export class kInteraction extends Interactions {
                     target_application_id: activityId
                 } as RESTPostAPIChannelInviteJSONBody
             }
-        ) as Promise<APIInvite>);
+        ).catch(logError) as APIInvite | ReturnType<typeof logError>
 
-        if (fetchError !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(fetchError.message)}`;
+        if (invite instanceof Error) {
+            return {
+                content: `❌ An unexpected error occurred: ${inlineCode(invite.message)}`,
+                ephemeral: true
+            }
         }
 
-        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`));
-        const str = `${hl} to open ${invite.target_application!.name} in ${channel}!`;
-
-        return str;
+        const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`))
+        return {
+            content: `${hl} to open ${invite.target_application!.name} in ${channel}!`
+        }
     }
 }

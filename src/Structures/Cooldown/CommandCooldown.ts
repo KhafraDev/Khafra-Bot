@@ -1,55 +1,55 @@
-import { Snowflake } from 'discord.js';
-import { setInterval } from 'timers';
+import type { Snowflake } from 'discord.js'
+import { setInterval } from 'node:timers'
 
-type UserCooldown = {
-    added: number,
+interface UserCooldown {
+    added: number
     notified?: boolean
 }
 
 export class Cooldown extends Map<Snowflake, UserCooldown> {
     /** @type {number} */
-    #maxAge: number;
+    #maxAge: number
 
     /**
      * Max age of an item in seconds
      * @param {number} maxAge
      */
-    constructor(maxAge: number) {
-        super();
-        this.#maxAge = maxAge * 1_000;
-        this.#createClearInterval();
+    constructor (maxAge: number) {
+        super()
+        this.#maxAge = maxAge * 1_000
+        this.#createClearInterval()
     }
 
     #createClearInterval(): void {
         setInterval(() => {
-            const maxAgeMs = this.#maxAge;
-            const now = Date.now();
+            const maxAgeMs = this.#maxAge
+            const now = Date.now()
 
             for (const [id, { added }] of this.entries()) {
                 if ((now - added) >= maxAgeMs) {
-                    this.delete(id);
+                    this.delete(id)
                 }
             }
-        }, 30_000);
+        }, 30_000)
     }
 
     isRateLimited(id: Snowflake): boolean {
-        const maxAgeMs = this.#maxAge;
-        const info = this.get(id);
+        const maxAgeMs = this.#maxAge
+        const info = this.get(id)
 
-        if (!info) return false; // not cached
+        if (!info) return false // not cached
 
         if ((Date.now() - info.added) >= maxAgeMs) {
-            this.delete(id);
-            return false;
+            this.delete(id)
+            return false
         }
 
-        return true;
+        return true
     }
 
     rateLimitUser(id: Snowflake): boolean {
-        this.set(id, { added: Date.now() });
-        return true;
+        this.set(id, { added: Date.now() })
+        return true
     }
 
     /**
@@ -58,17 +58,17 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
      * @returns {boolean} true if the user has been notified, false if they haven't been, null if not on cooldown
      */
     isNotified(id: Snowflake): boolean | null {
-        const info = this.get(id);
-        if (!info) return null;
-        if (info.notified) return true;
+        const info = this.get(id)
+        if (!info) return null
+        if (info.notified) return true
 
-        info.notified = true;
-        this.set(id, info);
+        info.notified = true
+        this.set(id, info)
 
-        return false;
+        return false
     }
 
     get rateLimitSeconds(): number {
-        return this.#maxAge / 1000;
+        return this.#maxAge / 1000
     }
 }

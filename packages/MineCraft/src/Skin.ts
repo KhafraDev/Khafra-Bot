@@ -1,3 +1,3 @@
-import { getProfile } from './Profile.js';
+import { getProfile } from './Profile.js'
 
-export const getSkin = (uuid: string): Promise<string[]> => getProfile(uuid, 'SKIN');
+export const getSkin = (uuid: string): Promise<string[]> => getProfile(uuid, 'SKIN')

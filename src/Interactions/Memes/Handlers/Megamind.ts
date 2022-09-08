@@ -1,44 +1,51 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { templates } from '#khaf/utility/Constants/Path.js';
-import { ImageUtil } from '#khaf/utility/ImageUtil.js';
-import { createCanvas, Image } from '@napi-rs/canvas';
-import { Buffer } from 'buffer';
-import { ChatInputCommandInteraction, MessageAttachment } from 'discord.js';
-import { readFileSync } from 'fs';
+import { ImageUtil } from '#khaf/image/ImageUtil.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { templates } from '#khaf/utility/Constants/Path.js'
+import { createCanvas, Image } from '@napi-rs/canvas'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import type { Buffer } from 'node:buffer'
+import { readFileSync } from 'node:fs'
 
-let image: Image | undefined;
+let image: Image | undefined
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'memes',
             name: 'megamind'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<MessageAttachment | string> {
-        const buffer = await this.image(interaction);
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const buffer = await this.image(interaction)
 
-        return new MessageAttachment(buffer, 'no_beaches.png');
+        return {
+            files: [
+                {
+                    attachment: buffer,
+                    name: 'no_beaches.png'
+                }
+            ]
+        }
     }
 
     async image (interaction: ChatInputCommandInteraction): Promise<Buffer> {
         if (!image) {
-            image = new Image();
-            image.src = readFileSync(templates('megamind.png'));
+            image = new Image()
+            image.src = readFileSync(templates('megamind.png'))
         }
 
-        const canvas = createCanvas(image.width, image.height);
-        const ctx = canvas.getContext('2d');
+        const canvas = createCanvas(image.width, image.height)
+        const ctx = canvas.getContext('2d')
 
-        ctx.drawImage(image, 0, 0);
-        ctx.font = '50px Impact';
-        ctx.fillStyle = '#FFF';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
+        ctx.drawImage(image, 0, 0)
+        ctx.font = '50px Impact'
+        ctx.fillStyle = '#FFF'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
 
-        const text = interaction.options.getString('text', true);
-        const lines = ImageUtil.split(text, image.width, ctx);
+        const text = interaction.options.getString('text', true)
+        const lines = ImageUtil.split(text, image.width, ctx)
 
         for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
             ctx.fillText(
@@ -46,9 +53,9 @@ export class kSubCommand extends InteractionSubCommand {
                 canvas.width / 2,
                 35 + (50 * lineIdx),
                 canvas.width
-            );
+            )
         }
 
-        return canvas.toBuffer('image/png');
+        return canvas.toBuffer('image/png')
     }
 }

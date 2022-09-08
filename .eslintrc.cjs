@@ -1,3 +1,5 @@
+const { builtinModules } = require('node:module');
+
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
@@ -41,8 +43,10 @@ module.exports = {
 		'keyword-spacing': ['error', { 'before': true }],
 		'max-statements-per-line': ['error', { 'max': 1 }],
 		'newline-per-chained-call': ['error', { 'ignoreChainWithDepth': 3 }],
+		'no-restricted-imports': [2, ...builtinModules.map((m) => ({ name: m, message: `Import node:${m} instead` }))],
 		'no-trailing-spaces': 'error',
 		'no-whitespace-before-property': 'error',
+		'@typescript-eslint/semi': ['error', 'never'],
 
 		'no-empty': 'off',
 		'no-mixed-spaces-and-tabs': 'off',
@@ -70,6 +74,19 @@ module.exports = {
 		'@typescript-eslint/await-thenable': 'error',
 		'@typescript-eslint/adjacent-overload-signatures': 'error',
 		'@typescript-eslint/array-type': 'error',
+		'@typescript-eslint/consistent-type-assertions': [ 'error', { 'assertionStyle': 'as' }],
+		'@typescript-eslint/consistent-type-definitions': 'error',
+		'@typescript-eslint/consistent-type-exports': 'error',
+		'@typescript-eslint/consistent-type-imports': ['error', { 'disallowTypeAnnotations': false }],
+		'@typescript-eslint/member-delimiter-style': ['error', {
+			'multiline': {
+				'delimiter': 'none'
+			},
+			'singleline': {
+				'delimiter': 'comma'
+			}
+		}],
+		'@typescript-eslint/no-confusing-non-null-assertion': 'error',
 		'@typescript-eslint/no-empty-interface': 'error',
 		'@typescript-eslint/no-explicit-any': 'error',
 		'@typescript-eslint/no-extra-non-null-assertion': 'error',

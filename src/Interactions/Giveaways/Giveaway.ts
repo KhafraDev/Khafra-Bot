@@ -1,17 +1,21 @@
-import { Interactions } from '#khaf/Interaction';
+import { Interactions } from '#khaf/Interaction'
+import { toString } from '#khaf/utility/Permissions.js'
+import type {
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     ChannelType,
-    PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
+    PermissionFlagsBits
+} from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'giveaway',
             description: 'Giveaway settings.',
-            default_permission: false,
+            default_member_permissions: toString([PermissionFlagsBits.ManageEvents]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
@@ -68,20 +72,52 @@ export class kInteraction extends Interactions {
                     options: [
                         {
                             type: ApplicationCommandOptionType.String,
-                            name: 'url',
-                            description: 'The link to the giveaway message.',
+                            name: 'giveaway-id-or-prize',
+                            description: 'The id of the giveaway, or a piece of the prize.',
                             required: true
+                        }
+                    ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'end',
+                    description: 'Immediately ends a giveaway.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.String,
+                            name: 'giveaway-id-or-prize',
+                            description: 'The id of the giveaway, or a piece of the prize.',
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'view',
+                    description: 'View all, ended, or active giveaways.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'all',
+                            description: 'View all your giveaways.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'active',
+                            description: 'View all of your ongoing giveaways.'
+                        },
+                        {
+                            type: ApplicationCommandOptionType.Boolean,
+                            name: 'ended',
+                            description: 'View all of your giveaways that have already ended.'
                         }
                     ]
                 }
             ]
-        };
+        }
 
         super(sc, {
-            defer: true,
-            permissions: [
-                PermissionFlagsBits.ManageEvents
-            ]
-        });
+            defer: true
+        })
     }
 }

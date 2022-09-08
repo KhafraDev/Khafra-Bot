@@ -1,4 +1,4 @@
-import { logger } from '#khaf/Logger';
+import { logger } from '#khaf/structures/Logger.js'
 
 interface Options {
     logOnFail?: boolean
@@ -16,16 +16,14 @@ export async function dontThrow<T = unknown>(
         logOnFail: true
     }
 ): Promise<[null, T] | [Error, null]> {
-    let err: Error | void;
-
     try {
-        return [null, await promise];
+        return [null, await promise]
     } catch (e) {
-        err = e as Error;
-        return [err, null];
-    } finally {
-        if (err && options.logOnFail) {
-            logger.warn('An error occurred but was caught.', err);
+        if (options.logOnFail && e instanceof Error) {
+            Error.captureStackTrace(e, dontThrow)
+            logger.error(e, 'error in dontThrow')
         }
+
+        return [e as Error, null]
     }
 }

@@ -1,15 +1,15 @@
-import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ImageExtension, ImageSize } from '@discordjs/rest';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { ImageExtension, ImageSize } from '@discordjs/rest'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096];
-const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
+const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
+const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif']
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'avatar',
             description: 'Get someone\'s avatar!',
@@ -33,21 +33,28 @@ export class kInteraction extends Interactions {
                     choices: formats.map(f => ({ name: f, value: f }))
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<MessageEmbed> {
-        const user = interaction.options.getUser('user', true);
-        const size = interaction.options.getString('size') ?? '256';
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const user = interaction.options.getUser('user', true)
+        const size = interaction.options.getString('size') ?? '256'
         const format = interaction.options.getString('format') ?? 'webp'
 
         const avatar = user.displayAvatarURL({
             size: Number(size) as ImageSize,
             extension: format as ImageExtension
-        });
+        })
 
-        return Embed.ok().setImage(avatar);
+        return {
+            embeds: [
+                Embed.json({
+                    color: colors.ok,
+                    image: { url: avatar }
+                })
+            ]
+        }
     }
 }

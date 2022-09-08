@@ -1,36 +1,36 @@
-import { Command } from '#khaf/Command';
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText, isThread } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { ellipsis } from '#khaf/utility/String.js';
-import { ActionRow, inlineCode, MessageActionRowComponent } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message, TextBasedChannel } from 'discord.js';
-import { setTimeout } from 'timers/promises';
+import { Command } from '#khaf/Command'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText, isThread } from '#khaf/utility/Discord.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import { ellipsis } from '#khaf/utility/String.js'
+import { inlineCode } from '@discordjs/builders'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message, TextBasedChannel } from 'discord.js'
+import { setTimeout } from 'node:timers/promises'
 
 interface Settings {
     channel: TextBasedChannel | null
     options: string[]
 }
 
-enum Actions {
-    ADD = 'add',
-    POST = 'post',
-    CHANNEL = 'channel',
-    CANCEL = 'cancel'
-}
+const Actions = {
+    ADD: 'add',
+    POST: 'post',
+    CHANNEL: 'channel',
+    CANCEL: 'cancel'
+} as const
 
 const emojis = [
     '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣',
     '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
-] as const;
+] as const
 const perms =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks;
+    PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
     constructor () {
@@ -46,16 +46,16 @@ export class kCommand extends Command {
                 ratelimit: 30,
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message<true>): Promise<void> {
         // the current option the user is setting
-        let currentOption: `${Actions}` | null = null;
+        let currentOption: typeof Actions[keyof typeof Actions] | null = null
         const settings: Settings = {
             channel: null,
             options: []
-        };
+        }
 
         const m = await message.reply({
             embeds: [
@@ -68,14 +68,14 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    Components.approve('Add Option', Actions.ADD),
-                    Components.primary('Post Poll', Actions.POST),
-                    Components.secondary('Add Channel', Actions.CHANNEL),
-                    Components.deny('Cancel', Actions.CANCEL)
-                )
+                Components.actionRow([
+                    Buttons.approve('Add Option', Actions.ADD),
+                    Buttons.primary('Post Poll', Actions.POST),
+                    Buttons.secondary('Add Channel', Actions.CHANNEL),
+                    Buttons.deny('Cancel', Actions.CANCEL)
+                ])
             ]
-        });
+        })
 
         const interactionCollector = m.createMessageComponentCollector({
             filter: (interaction) =>
@@ -83,7 +83,7 @@ export class kCommand extends Command {
                 currentOption === null,
             idle: 60_000,
             max: 10
-        });
+        })
 
         const messageCollector = m.channel.createMessageCollector({
             filter: (mm) =>
@@ -91,10 +91,10 @@ export class kCommand extends Command {
                 currentOption !== null,
             time: 60_000 * 5,
             max: 10
-        });
+        })
 
         interactionCollector.on('collect', async (i) => {
-            currentOption = i.customId as `${Actions}`;
+            currentOption = i.customId as typeof Actions[keyof typeof Actions]
 
             if (currentOption === Actions.POST) {
                 if (settings.channel === null || settings.options.length === 0) {
@@ -102,77 +102,79 @@ export class kCommand extends Command {
                         content: 'No channel or options were present. Canceled the poll creation!',
                         embeds: [],
                         components: disableAll(m)
-                    }));
+                    }))
                 }
 
-                const embed = Embed.ok()
-                    .setTitle('Poll')
-                    .setAuthor({
-                        name: message.author.username,
-                        iconURL: message.author.displayAvatarURL()
-                    });
+                let description = ''
 
                 for (let i = 0; i < settings.options.length; i++) {
-                    const option = settings.options[i];
-                    const emoji = emojis[i];
+                    const option = settings.options[i]
+                    const emoji = emojis[i]
 
-                    embed.setDescription(
-                        (embed.description ?? '') +
-                        `${emoji}. ${option}\n`
-                    );
+                    description += `${emoji}. ${option}\n`
                 }
 
-                const [err, pollMessage] = await dontThrow(settings.channel.send({
+                const embed = Embed.json({
+                    color: colors.ok,
+                    title: 'Poll',
+                    author: {
+                        name: message.author.username,
+                        icon_url: message.author.displayAvatarURL()
+                    },
+                    description
+                })
+
+                const [err, pollMessage] = await dontThrow<Message<boolean>>(settings.channel.send({
                     embeds: [embed]
-                }));
+                }))
 
                 if (err === null) {
                     const prs = settings.options.reduce((a, _b, i) => {
-                        a.push(pollMessage.react(emojis[i]));
-                        a.push(setTimeout(1500));
-                        return a;
-                    }, [] as Promise<unknown>[]);
-                    void Promise.allSettled(prs);
+                        a.push(pollMessage.react(emojis[i]))
+                        a.push(setTimeout(1500))
+                        return a
+                    }, [] as Promise<unknown>[])
+                    void Promise.allSettled(prs)
                 }
             }
 
-            void dontThrow(i.update({}));
-        });
+            void dontThrow(i.update({}))
+        })
 
         messageCollector.on('collect', async (msg) => {
             if (currentOption === Actions.CANCEL) {
-                return messageCollector.stop();
+                return messageCollector.stop()
             } else if (currentOption === Actions.CHANNEL) {
-                const channel = await getMentions(msg as Message<true>, 'channels');
+                const channel = await getMentions(msg as Message<true>, 'channels')
 
                 if (!isText(channel) && !isThread(channel)) {
                     return void dontThrow(m.edit({
                         content: 'Only text, news, and thread channels are allowed to be poll channels!'
-                    }));
-                } else if (!hasPerms(channel, message.guild.me, perms)) {
+                    }))
+                } else if (!hasPerms(channel, message.guild.members.me, perms)) {
                     return void dontThrow(m.edit({
                         content: 'I don\'t have enough permissions to create a poll in this channel!'
-                    }));
+                    }))
                 }
 
-                settings.channel = channel;
+                settings.channel = channel
                 await dontThrow(m.edit({
                     content: `The poll channel is now set to ${channel}!`
-                }));
-                currentOption = null;
+                }))
+                currentOption = null
             } else if (currentOption === Actions.ADD) {
-                const option = ellipsis(msg.content, 200);
-                settings.options.push(option);
+                const option = ellipsis(msg.content, 200)
+                settings.options.push(option)
                 await dontThrow(m.edit({
                     content: `${inlineCode(option)} has been added as a poll option!`
-                }));
-                currentOption = null;
+                }))
+                currentOption = null
             }
-        });
+        })
 
         const end = (): undefined => {
-            if (!interactionCollector.ended) interactionCollector.stop();
-            if (!messageCollector.ended) messageCollector.stop();
+            if (!interactionCollector.ended) interactionCollector.stop()
+            if (!messageCollector.ended) messageCollector.stop()
 
             return void dontThrow(m.edit({
                 embeds: [],
@@ -181,7 +183,7 @@ export class kCommand extends Command {
             }))
         }
 
-        interactionCollector.once('end', end);
-        messageCollector.once('end', end);
+        interactionCollector.once('end', end)
+        messageCollector.once('end', end)
     }
 }

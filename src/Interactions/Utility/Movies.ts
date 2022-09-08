@@ -1,11 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { searchMovie } from '#khaf/utility/commands/TMDB';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isDM, isText } from '#khaf/utility/Discord.js';
-import { ActionRow, bold, hyperlink, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { searchMovie } from '#khaf/utility/commands/TMDB'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { bold, hyperlink, time } from '@discordjs/builders'
+import type { APIActionRowComponent, APIMessageActionRowComponent, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const formatMS = (ms: number): string => {
     return Object.entries({
@@ -16,11 +17,11 @@ const formatMS = (ms: number): string => {
     })
         .filter(f => f[1] > 0)
         .map(t => `${t[1]}${t[0]}`)
-        .join(' ');
+        .join(' ')
 }
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'movie',
             description: 'Gets information about a movie!',
@@ -32,26 +33,30 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
-        super(sc, { defer: true });
+        super(sc, { defer: true })
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed | InteractionReplyOptions> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const movies = await searchMovie(
             interaction.options.getString('name', true),
             isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
-        );
+        )
 
         if (!movies) {
-            return '❌ No movie with that name was found!';
+            return {
+                content: '❌ No movie with that name was found!',
+                ephemeral: true
+            }
         }
 
-        const components: ActionRow[] = [];
-        const embed = Embed.ok()
-            .setTitle(movies.original_title ?? movies.title)
-            .setDescription(movies.overview ?? '')
-            .addFields(
+        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = []
+        const embed = Embed.json({
+            color: colors.ok,
+            title: movies.original_title ?? movies.title,
+            description: movies.overview ?? '',
+            fields: [
                 {
                     name: bold('Genres:'),
                     value: movies.genres.map(g => g.name).join(', '),
@@ -69,33 +74,34 @@ export class kInteraction extends Interactions {
                     value: `[TMDB](https://www.themoviedb.org/movie/${movies.id})`,
                     inline: true
                 }
-            )
-            .setFooter({ text: 'Data provided by https://www.themoviedb.org/' });
+            ],
+            footer: { text: 'Data provided by https://www.themoviedb.org/' }
+        })
 
         if (movies.homepage) {
-            embed.setURL(movies.homepage);
+            embed.url = movies.homepage
         }
 
         if (movies.imdb_id) {
-            const link = `https://www.imdb.com/title/${movies.imdb_id}/`;
-            embed.addFields({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true });
+            const link = `https://www.imdb.com/title/${movies.imdb_id}/`
+            embed.fields?.push({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true })
 
             components.push(
-                new ActionRow().addComponents(
-                    Components.link('Go to IMDB', link)
-                )
-            );
+                Components.actionRow([
+                    Buttons.link('Go to IMDB', link)
+                ])
+            )
         }
 
         if (movies.poster_path) {
-            embed.setImage(`https://image.tmdb.org/t/p/original${movies.poster_path}`);
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.poster_path}` }
         } else if (movies.backdrop_path) {
-            embed.setImage(`https://image.tmdb.org/t/p/original${movies.backdrop_path}`);
+            embed.image = { url: `https://image.tmdb.org/t/p/original${movies.backdrop_path}` }
         }
 
         return {
             embeds: [embed],
             components
-        } as InteractionReplyOptions;
+        }
     }
 }

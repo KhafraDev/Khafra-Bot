@@ -1,10 +1,10 @@
-import { Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { once } from '#khaf/utility/Memoize.js';
-import { RSSReader } from '#khaf/utility/RSS.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
-import { decodeXML } from 'entities';
-import { request } from 'undici';
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { once } from '#khaf/utility/Memoize.js'
+import { RSSReader } from '#khaf/utility/RSS.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { decodeXML } from 'entities'
+import { request } from 'undici'
 
 interface ITheOnionAPI {
     data: {
@@ -39,12 +39,12 @@ interface ITheOnionAPI {
         isRoundup: boolean
         relatedModule: unknown
         defaultBlogId: number
-        approved: boolean,
-        headline:string,
-        headlineSfw:string,
+        approved: boolean
+        headline:string
+        headlineSfw:string
         subhead: unknown[]
         body: unknown[]
-        lightbox: boolean,
+        lightbox: boolean
         imageRights: string
         hideCredit: boolean
         type: string
@@ -63,8 +63,8 @@ interface ITheOnion {
     'dc:creator': string
 }
 
-const rss = new RSSReader<ITheOnion>();
-const cache = once(() => rss.cache('https://www.theonion.com/rss'));
+const rss = new RSSReader<ITheOnion>()
+const cache = once(async () => rss.cache('https://www.theonion.com/rss'))
 
 export class kCommand extends Command {
     constructor () {
@@ -79,35 +79,37 @@ export class kCommand extends Command {
                 aliases: ['onion', 'realnews'],
                 args: [0, 0]
             }
-        );
+        )
     }
 
-    async init (): Promise<UnsafeEmbed> {
-        const state = await cache();
+    async init (): Promise<APIEmbed> {
+        const state = await cache()
 
         if (state === null) {
-            return Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!')
         }
 
-        const i = Math.floor(Math.random() * rss.results.size);
-        const id = [...rss.results][i].guid;
+        const i = Math.floor(Math.random() * rss.results.size)
+        const id = [...rss.results][i].guid
 
-        const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`);
-        const j = await body.json() as ITheOnionAPI;
+        const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`)
+        const j = await body.json() as ITheOnionAPI
 
         if (j.data.length === 0)
             return Embed.error(`
             You'll have to read the article on TheOnion this time, sorry!
             https://www.theonion.com/${id}
-            `);
+            `)
 
-        return Embed.ok()
-            .setAuthor({
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: decodeXML(j.data[0].headline).slice(0, 256),
-                iconURL: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
+                icon_url: 'https://arc-anglerfish-arc2-prod-tronc.s3.amazonaws.com/public/3ED55FMQGXT2OG4GOBTP64LCYU.JPG',
                 url: j.data[0].permalink
-            })
-            .setTimestamp(j.data[0].publishTimeMillis)
-            .setDescription(j.data[0].plaintext.slice(0, 2048));
+            },
+            timestamp: new Date(j.data[0].publishTimeMillis).toISOString(),
+            description: j.data[0].plaintext.slice(0, 2048)
+        })
     }
 }

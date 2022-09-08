@@ -1,7 +1,7 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { ZipFile } from '#khaf/utility/Unzip.js';
-import { Buffer } from 'buffer';
-import { request } from 'undici';
+import { sql } from '#khaf/database/Postgres.js'
+import { ZipFile } from '#khaf/utility/Unzip.js'
+import { Buffer } from 'node:buffer'
+import { request } from 'undici'
 
 interface IBibleVerse {
     idx: number
@@ -107,49 +107,49 @@ export const titles = {
     '3 John': 'jo3',
     'Jude': 'jde',
     'Revelation': 'rev'
-};
+}
 
-export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i');
+export const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i')
 
 export const parseBible = async (): Promise<Omit<IBibleVerse, 'idx'>[]> => {
-    const { body } = await request('https://www.sacred-texts.com/bib/osrc/kjvdat.zip');
-    const buffer = await body.arrayBuffer();
+    const { body } = await request('https://www.sacred-texts.com/bib/osrc/kjvdat.zip')
+    const buffer = await body.arrayBuffer()
 
-    const zip = ZipFile(Buffer.from(buffer));
-    const bible = zip.toString('utf-8');
+    const zip = ZipFile(Buffer.from(buffer))
+    const bible = zip.toString('utf-8')
 
     const lines: Omit<IBibleVerse, 'idx'>[] = bible
         .split(/~/g) // each line ends with ~ to denote the end of a verse
         .filter(l => l.trim().length > 0) // for example the last line is a newline, causing an undefined/NaN combo below
         .map(line => {
-            const [book, chapter, verse, content = ''] = line.split('|');
+            const [book, chapter, verse, content = ''] = line.split('|')
             return {
                 book: book.trim(),
                 chapter: +chapter,
                 verse: +verse,
                 content: content.trim()
-            };
-        });
+            }
+        })
 
-    return lines;
+    return lines
 }
 
-let ran = false;
+let ran = false
 
 export const bibleInsertDB = async (): Promise<boolean> => {
-    if (ran) return true;
+    if (ran) return true
 
-    const rows = await sql<{ exists: boolean }[]>`SELECT EXISTS(SELECT 1 FROM kbBible);`;
+    const rows = await sql<{ exists: boolean }[]>`SELECT EXISTS(SELECT 1 FROM kbBible);`
 
     if (rows[0].exists === true) {
-        ran = true;
-        return true;
+        ran = true
+        return true
     }
 
-    const bible = await parseBible();
+    const bible = await parseBible()
 
     await sql.begin<IBibleVerse[]>(async sql => {
-        const docs: IBibleVerse[] = [];
+        const docs: IBibleVerse[] = []
 
         for (const { book, chapter, verse, content } of bible) {
             const doc = await sql<IBibleVerse[]>`
@@ -158,14 +158,14 @@ export const bibleInsertDB = async (): Promise<boolean> => {
                 ) VALUES (
                     ${book}, ${chapter}, ${verse}, ${content}
                 ) ON CONFLICT DO NOTHING;
-            `;
+            `
 
-            docs.push(...doc);
+            docs.push(...doc)
         }
 
-        return docs;
-    });
+        return docs
+    })
 
-    ran = true;
-    return true;
+    ran = true
+    return true
 }

@@ -1,137 +1,78 @@
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { isText } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { plural } from '#khaf/utility/String.js';
-import { URLFactory } from '#khaf/utility/Valid/URL.js';
-import { bold, hyperlink, inlineCode } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { AnyChannel, ChatInputCommandInteraction, User } from 'discord.js';
+import { KhafraClient } from '#khaf/Bot'
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { Giveaway } from '#khaf/types/KhafraBot'
+import * as DiscordUtil from '#khaf/utility/Discord.js'
+import { plural } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { inlineCode, time } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const channelsURLReg = /^\/channels\/(?<guildId>\d{17,19})\/(?<channelId>\d{17,19})\/(?<messageId>\d{17,19})\/?$/;
-const perms =
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.ReadMessageHistory;
+// https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
         super({
             references: 'giveaway',
             name: 'reroll'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | undefined> {
-        const messageURL = URLFactory(interaction.options.getString('url', true));
-
-        if (messageURL === null) {
-            return '❌ An invalid message link was provided!';
-        } else if (
-            messageURL.hostname !== 'discord.com' &&
-            messageURL.hostname !== 'canary.discord.com' ||
-            !channelsURLReg.test(messageURL.pathname)
-        ) {
-            return '❌ The first argument must be a link to a message!';
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        if (interaction.guild === null) {
+            return {
+                content: '❌ Unable to use the command.',
+                ephemeral: true
+            }
         }
 
-        const match = channelsURLReg.exec(messageURL.pathname)!.groups!;
-        const { guildId, channelId, messageId } = match;
+        const idOrText = interaction.options.getString('giveaway-id-or-prize', true)
+        const where = uuidRegex.test(idOrText)
+            ? sql`kbGiveaways.id = ${idOrText}::uuid`
+            : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
+
+        const [giveaway] = await sql<[Giveaway?]>`
+            SELECT * FROM kbGiveaways
+            WHERE
+                ${where} AND
+                kbGiveaways.guildid = ${interaction.guild.id}::text AND
+                kbGiveaways.initiator = ${interaction.user.id}::text AND
+                kbGiveaways."didEnd" = TRUE::boolean
+            LIMIT 1;
+        `
+
+        if (!giveaway) {
+            return {
+                content: '❌ No giveaways were found, is it older than a week?',
+                ephemeral: true
+            }
+        }
+
+        const { channelid, winners, enddate, id } = giveaway
+        const channel = await interaction.guild.channels.fetch(channelid)
 
         if (
-            !validSnowflake(messageId) ||
-            !validSnowflake(channelId) ||
-            !validSnowflake(guildId)
+            channel === null ||
+            !DiscordUtil.isTextBased(channel)
         ) {
-            return '❌ An invalid message link was sent! :(';
-        }
-
-        if (guildId !== interaction.guildId || !interaction.guild) {
-            return '❌ Please re-invite the bot with the required permissions to re-roll a giveaway!';
-        }
-
-        let channel: AnyChannel | null = interaction.guild.channels.cache.get(channelId) ?? null;
-        if (!channel) {
-            ([, channel] = await dontThrow(interaction.client.channels.fetch(channelId)));
-        }
-
-        if (!isText(channel)) {
-            return `❌ ${channel} isn't a text or news channel! You can't have a giveaway here.`;
-        } else if (!hasPerms(channel, interaction.guild.me, perms)) {
-            return `❌ I do not have enough permission to edit the giveaway in ${channel}!`;
-        }
-
-        const [fetchMessageError, m] = await dontThrow(channel.messages.fetch(messageId));
-
-        if (fetchMessageError !== null) {
-            return `❌ Could not fetch the message! Was it deleted? (${inlineCode(fetchMessageError.message)})`;
-        } else if (
-            !m || // eslint-disable-line @typescript-eslint/no-unnecessary-condition
-            m.author.id !== interaction.client.user?.id ||
-            m.embeds.length !== 1 ||
-            Number(m.embeds[0].timestamp!) > Date.now()
-        ) {
-            return '❌ This message is not a giveaway.';
-        }
-
-        const emoji = m.reactions.resolve('🎉');
-        if (m.reactions.cache.size === 0 && emoji) {
-            await dontThrow(emoji.users.fetch());
-        }
-
-        if (!m.reactions.cache.has('🎉')) {
-            return '❌ This message has no 🎉 reactions.';
-        }
-
-        const { count, users } = m.reactions.cache.get('🎉')!;
-        const numWinners = Number(/^(\d+)\s/.exec(m.embeds[0].footer!.text)![1]);
-        const winners: User[] = [];
-
-        if (count !== users.cache.size) {
-            await dontThrow(users.fetch());
-        }
-
-        if (count > numWinners) {
-            while (winners.length < numWinners) {
-                const random = users.cache.random();
-                if (!random) break;
-                if (random.bot) continue;
-                if (winners.some(u => u.id === random.id)) continue;
-
-                winners.push(random);
-            }
-        } else if (
-            count === 1 &&
-            users.cache.first()?.id === interaction.client.user.id
-        ) { // no one entered
-            if (m.editable) {
-                return void dontThrow(m.edit({
-                    content: `${bold('Re-rolled:')} No one entered the giveaway!`
-                }));
-            } else {
-                return void dontThrow(m.channel.send({
-                    content: `${bold('Re-Rolled:')} No one entered the giveaway!`
-                }));
-            }
-        } else if (count <= numWinners) { // less entered than number of winners
-            for (const user of users.cache.values()) {
-                if (user.bot) continue;
-                winners.push(user);
+            return {
+                content: '❌ I couldn\'t find the channel.',
+                ephemeral: true
             }
         }
 
-        const isAre = winners.length === 1 ? 'is' : 'are';
-        const line = `${bold('Re-Rolled:')} the winner${plural(winners.length)} ${isAre} ${winners.join(', ')}!`;
+        // Edit the old message & handles all the logic.
+        const timer = KhafraClient.Timers.get('GiveawayTimer')!
+        await timer.action(giveaway)
 
-        if (m.editable) {
-            await dontThrow(m.edit({ content: line }));
-        } else {
-            await dontThrow(m.channel.send({
-                content: line,
-                embeds: m.embeds
-            }));
+        return {
+            content: stripIndents`
+            ✅ Re-rolled the giveaway in ${channel} if it was possible.
+
+            • ${winners} winner${plural(winners)}
+            • Ends ${time(enddate)}
+            • ID ${inlineCode(id)}`
         }
-
-        return `✅ Re-rolled the giveaway! [${hyperlink('URL', m.url)}]`;
     }
 }

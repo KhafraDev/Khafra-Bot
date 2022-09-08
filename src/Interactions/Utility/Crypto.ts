@@ -1,16 +1,22 @@
-import { Interactions } from '#khaf/Interaction';
-import { CoinGecko } from '#khaf/utility/commands/CoinGecko';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { stripIndents } from '#khaf/utility/Template.js';
-import { bold, inlineCode, time, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, time } from '@discordjs/builders'
+import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format;
+const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format
+const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format
+
+const field = (name: string, value: number | string, formatter = f): APIEmbedField => ({
+    name: bold(name),
+    value: typeof value === 'string' ? value : formatter(value),
+    inline: true
+})
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'crypto',
             description: 'Gets information about a cryptocurrency. Kill the environment!',
@@ -22,60 +28,52 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
-
-        super(sc);
-    }
-
-    async init(interaction: ChatInputCommandInteraction): Promise<MessageEmbed | InteractionReplyOptions | string> {
-        const currencies = await CoinGecko.get(
-            interaction.options.getString('search', true),
-            () => void dontThrow(interaction.deferReply())
-        );
-
-        if (currencies === undefined) {
-            return '❌ The cache is being loaded for the first time, please wait a minute!';
-        } else if (currencies.length === 0) {
-            return '❌ No currency with that name or id could be found!';
         }
 
-        const currency = Array.isArray(currencies) ? currencies[0] : currencies;
+        super(sc)
+    }
 
-        const embed = Embed.ok()
-            .setThumbnail(currency.image)
-            .setTitle(`${currency.name} (${currency.symbol.toUpperCase()})`)
-            .setTimestamp(currency.last_updated)
-            .addFields(
-                { name: bold('Current Price:'), value: f(currency.current_price), inline: true },
-                { name: bold('High 24H:'),      value: f(currency.high_24h), inline: true },
-                { name: bold('Low 24H:'),       value: f(currency.low_24h), inline: true },
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const currency = await CoinGecko.get(interaction.options.getString('search', true))
 
-                { name: bold('Market Cap:'),    value: currency.market_cap.toLocaleString(), inline: true },
-                { name: bold('Total Volume:'),  value: currency.total_volume.toLocaleString(), inline: true },
-                { name: bold('Circulating:'),   value: currency.circulating_supply.toLocaleString(), inline: true },
+        if (currency === null) {
+            return {
+                content: '❌ The cache is being loaded for the first time, please wait a minute!',
+                ephemeral: true
+            }
+        }
 
-                { name: bold('All Time High:'), value: f(currency.ath), inline: true },
-                { name: bold('% Change ATH:'),  value: `${currency.ath_change_percentage.toFixed(2)}%`, inline: true },
-                { name: bold('ATH Date:'),      value: time(new Date(currency.ath_date), 'D'), inline: true },
+        const embed = Embed.json({
+            color: colors.ok,
+            thumbnail: { url: currency.image.large },
+            title: `${currency.name} (${currency.symbol.toUpperCase()})`,
+            timestamp: new Date(currency.last_updated).toISOString(),
+            fields: [
+                field('Current Price:', currency.market_data.current_price.usd),
+                field('High (Past day):', currency.market_data.high_24h.usd),
+                field('Low (Past day):', currency.market_data.low_24h.usd),
 
-                { name: bold('All Time Low:'),  value: f(currency.atl), inline: true },
-                { name: bold('% Change ATL:'),  value: `${currency.atl_change_percentage.toFixed(2)}%`, inline: true },
-                { name: bold('ATL Date:'),      value: time(new Date(currency.atl_date), 'D'), inline: true },
+                field('Market Cap:', currency.market_data.market_cap.usd),
+                field('Total Volume:', currency.market_data.total_volume.usd),
+                field('Circulating:', currency.market_data.circulating_supply, g),
 
-                { name: bold('Change 24H:'),    value: f(currency.price_change_24h), inline: true },
-                { name: bold('% Change 24H:'),  value: `${currency.price_change_percentage_24h}%`, inline: true }
-            );
+                field('All Time High:', currency.market_data.ath.usd),
+                field(
+                    'All Time High Change:',
+                    `${g(currency.market_data.ath_change_percentage.usd)}%`),
+                field('All Time High Date:', time(new Date(currency.market_data.ath_date.usd))),
 
-        if (!Array.isArray(currencies)) return embed;
+                field('All Time Low:', currency.market_data.atl.usd),
+                field(
+                    'All Time Low Change:',
+                    `${g(currency.market_data.atl_change_percentage.usd)}%`
+                ),
+                field('All Time Low Date:', time(new Date(currency.market_data.atl_date.usd)))
+            ]
+        })
 
         return {
-            content: currencies.length === 1 ? null : stripIndents`
-            There were ${currencies.length} cryptocurrencies with that search query provided.
-
-            If this is the wrong currency, try using one of the following IDs:
-            ${currencies.map(c => inlineCode(c.id)).join(', ')}
-            `.trim(),
             embeds: [embed]
-        } as InteractionReplyOptions;
+        }
     }
 }

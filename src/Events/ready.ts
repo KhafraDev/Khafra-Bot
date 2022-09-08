@@ -1,38 +1,35 @@
-import { client } from '#khaf/Client';
-import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
-import { yellow } from '#khaf/utility/Colors.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { validSnowflake } from '#khaf/utility/Mentions.js';
-import { join } from 'path';
+import { client } from '#khaf/Client'
+import { Event } from '#khaf/Event'
+import { logger } from '#khaf/structures/Logger.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { validSnowflake } from '#khaf/utility/Mentions.js'
+import { Events } from 'discord.js'
+import { join } from 'node:path'
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'));
+const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
 
-export class kEvent extends Event<'ready'> {
-    name = 'ready' as const;
+export class kEvent extends Event<typeof Events.ClientReady> {
+    name = Events.ClientReady as const
 
     async init (): Promise<void> {
-        const s = `Logged in at ${new Date()}`;
-        logger.log(yellow(s));
+        const s = `Logged in at ${new Date()}`
+        logger.info(s)
 
         if (typeof config.botOwner === 'string') {
             if (!validSnowflake(config.botOwner)) {
-                return logger.warn('Logged in, configuration bot owner is not a valid Snowflake!');
+                return logger.warn('Logged in, configuration bot owner is not a valid Snowflake!')
             }
 
-            const user = await client.users.fetch(config.botOwner);
-            const [err] = await dontThrow(user.send({
+            const user = await client.users.fetch(config.botOwner)
+            const sentMessage = await user.send({
                 embeds: [Embed.ok(s)]
-            }));
+            }).then(() => true, () => false)
 
-            if (err !== null) {
-                logger.warn('Logged in! Could not send message to the bot owner.');
+            if (sentMessage === false) {
+                logger.warn('Logged in! Could not send message to the bot owner.')
             }
         }
-
-        void client.loadInteractions();
     }
 }

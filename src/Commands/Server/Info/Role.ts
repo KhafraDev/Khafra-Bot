@@ -1,8 +1,11 @@
-import { Arguments, Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { bold, inlineCode, time, type UnsafeEmbed } from '@discordjs/builders';
-import { Message, Role } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message} from 'discord.js'
+import { Role } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -19,26 +22,25 @@ export class kCommand extends Command {
                 args: [1, 50],
                 guildOnly: true
             }
-        );
+        )
     }
 
-    async init (message: Message<true>, { content }: Arguments): Promise<UnsafeEmbed> {
+    async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
         const role =
             await getMentions(message, 'roles') ??
-            message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase());
+            message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase())
 
         if (!(role instanceof Role)) {
-            return Embed.error('No role found!');
+            return Embed.error('No role found!')
         }
 
-        const embed = Embed.ok()
-            .setDescription(`
-            ${role}
+        return Embed.json({
+            color: colors.ok,
+            description: `${role}
             
             Permissions: 
-            ${inlineCode(role.permissions.toArray().join(', '))}
-            `)
-            .addFields(
+            ${inlineCode(role.permissions.toArray().join(', '))}`,
+            fields: [
                 { name: bold('Name:'), value: role.name, inline: true },
                 { name: bold('Color:'), value: role.hexColor, inline: true },
                 { name: bold('Created:'), value: time(role.createdAt), inline: true },
@@ -46,12 +48,8 @@ export class kCommand extends Command {
                 { name: bold('Hoisted:'), value: role.hoist ? 'Yes' : 'No', inline: true },
                 { name: bold('Position:'), value: `${role.position}`, inline: true },
                 { name: bold('Managed:'), value: role.managed ? 'Yes' : 'No' }
-            );
-
-        if (role.icon) {
-            embed.setImage(role.iconURL());
-        }
-
-        return embed;
+            ],
+            image: role.icon ? { url: role.iconURL()! } : undefined
+        })
     }
 }

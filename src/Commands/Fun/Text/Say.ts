@@ -1,7 +1,8 @@
-import { Arguments, Command } from '#khaf/Command';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -17,15 +18,17 @@ export class kCommand extends Command {
                 args: [1],
                 ratelimit: 3
             }
-        );
+        )
     }
 
-    async init (message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
-        return Embed.ok()
-            .setAuthor({
+    async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
+        return Embed.json({
+            color: colors.ok,
+            author: {
                 name: message.author.username,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setDescription(args.join(' '));
+                icon_url: message.author.displayAvatarURL()
+            },
+            description: args.join(' ')
+        })
     }
 }

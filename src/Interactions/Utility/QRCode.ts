@@ -1,13 +1,12 @@
-import { Interactions } from '#khaf/Interaction';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { inlineCode } from '@discordjs/builders';
-import { Buffer } from 'buffer';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions, MessageAttachment } from 'discord.js';
-import { request } from 'undici';
+import { Interactions } from '#khaf/Interaction'
+import { qrcodeImage } from '@khaf/qrcode'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Buffer } from 'node:buffer'
 
 export class kInteraction extends Interactions {
-    constructor() {
+    constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'qr',
             description: 'Gets the QR code for some text.',
@@ -19,29 +18,21 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
-
-        super(sc, { defer: true });
-    }
-
-    async init(interaction: ChatInputCommandInteraction): Promise<string | InteractionReplyOptions> {
-        const text = interaction.options.getString('input', true);
-        const [e, r] = await dontThrow(request(`https://qrcode.show/${text}`, {
-            headers: {
-                Accept: 'image/png'
-            }
-        }));
-
-        if (e !== null) {
-            return `❌ An unexpected error occurred: ${inlineCode(e.message)}.`;
         }
 
-        const buffer = Buffer.from(await r.body.arrayBuffer());
-        const attachment = new MessageAttachment(buffer, 'qr.png')
-            .setDescription('A QR Code!');
+        super(sc, { defer: true })
+    }
+
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const text = interaction.options.getString('input', true)
+        const qrcode = Buffer.from(qrcodeImage(text), text.length)
 
         return {
-            files: [attachment]
-        } as InteractionReplyOptions;
+            files: [{
+                attachment: qrcode,
+                name: 'qr.png',
+                description: 'A QR Code!'
+            }]
+        }
     }
 }

@@ -1,9 +1,10 @@
-import { KhafraClient } from '#khaf/Bot';
-import { Arguments, Command } from '#khaf/Command';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { inlineCode } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import { KhafraClient } from '#khaf/Bot'
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { inlineCode } from '@discordjs/builders'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -18,28 +19,28 @@ export class kCommand extends Command {
                 args: [0],
                 guildOnly: true
             }
-        );
+        )
     }
 
     async init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
         if (argument.args.length === 0) {
             // help message
-            return Embed.error('not implemented yet');
+            return Embed.error('not implemented yet')
         }
 
-        const name = argument.args[0].toLowerCase();
+        const name = argument.args[0].toLowerCase()
         const commandName = name.startsWith('ticket:') || name.startsWith('tickets:')
             ? name
-            : `ticket:${name}`;
+            : `ticket:${name}`
 
         if (!KhafraClient.Commands.has(commandName.toLowerCase())) {
             return Embed.error(
                 `Ticket.${name} command doesn't exist, use ${inlineCode('ticket')} for more information!`
-            );
+            )
         }
 
-        const command = KhafraClient.Commands.get(commandName.toLowerCase())!;
+        const command = KhafraClient.Commands.get(commandName.toLowerCase())!
 
-        return command.init(message, argument, settings);
+        return command.init(message, argument, settings)
     }
 }

@@ -1,9 +1,9 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { table } from '#khaf/utility/CLITable.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock, type UnsafeEmbed as MessageEmbed } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { table } from '#khaf/utility/CLITable.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { codeBlock } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 interface Insights {
     k_date: Date
@@ -12,18 +12,21 @@ interface Insights {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'insights',
             name: 'view'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string | MessageEmbed> {
-        const id = interaction.guildId ?? interaction.guild?.id;
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+        const id = interaction.guildId ?? interaction.guild?.id
 
         if (!id) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
         }
 
         const rows = await sql<Insights[]>`
@@ -39,29 +42,36 @@ export class kSubCommand extends InteractionSubCommand {
                 k_date > CURRENT_DATE - 14 AND
                 k_date < CURRENT_DATE
             ORDER BY kbInsights.k_date ASC;
-        `;
+        `
 
         if (rows.length === 0) {
-            return '❌ There are no insights available for the last 14 days!';
+            return {
+                content: '❌ There are no insights available for the last 14 days!',
+                ephemeral: true
+            }
         }
 
-        const locale = interaction.guild?.preferredLocale ?? 'en-US';
-        const intl = Intl.DateTimeFormat(locale, { dateStyle: 'long' });
+        const locale = interaction.guild?.preferredLocale ?? 'en-US'
+        const intl = Intl.DateTimeFormat(locale, { dateStyle: 'long' })
 
         const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-            red.Dates.push(intl.format(row.k_date));
-            red.Joins.push(row.k_joined.toLocaleString(locale));
-            red.Leaves.push(row.k_left.toLocaleString(locale));
+            red.Dates.push(intl.format(row.k_date))
+            red.Joins.push(row.k_joined.toLocaleString(locale))
+            red.Leaves.push(row.k_left.toLocaleString(locale))
 
-            return red;
+            return red
         }, {
             Dates: [] as string[],
             Joins: [] as string[],
             Leaves: [] as string[]
-        });
+        })
 
-        const t = table({ Dates, Joins, Leaves });
+        const t = table({ Dates, Joins, Leaves })
 
-        return Embed.ok().setDescription(codeBlock(t));
+        return {
+            embeds: [
+                Embed.ok(codeBlock(t))
+            ]
+        }
     }
 }

@@ -1,19 +1,17 @@
-import { cache } from '#khaf/cache/Settings.js';
-import { Command } from '#khaf/Command';
-import { sql } from '#khaf/database/Postgres.js';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText } from '#khaf/utility/Discord.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { type UnsafeEmbed } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { hasPerms } from '#khaf/utility/Permissions.js'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 const basic =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks;
+    PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
     constructor () {
@@ -29,37 +27,34 @@ export class kCommand extends Command {
                 guildOnly: true,
                 aliases: ['welcomechannel']
             }
-        );
+        )
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbed> {
+    async init (message: Message<true>): Promise<APIEmbed> {
         if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
             return Embed.perms(
                 message.channel,
                 message.member,
                 PermissionFlagsBits.Administrator
-            );
+            )
         }
 
-        const channel = await getMentions(message, 'channels');
+        const channel = await getMentions(message, 'channels')
 
         if (!isText(channel)) {
-            return Embed.error(`${channel} is not a text channel!`);
-        } else if (!hasPerms(channel, message.guild.me, basic)) {
-            return Embed.perms(channel, message.guild.me, basic);
+            return Embed.error(`${channel} is not a text channel!`)
+        } else if (!hasPerms(channel, message.guild.members.me, basic)) {
+            return Embed.perms(channel, message.guild.members.me, basic)
         }
 
-        const rows = await sql<kGuild[]>`
+        await sql`
             UPDATE kbGuild
             SET welcome_channel = ${channel.id}::text
-            WHERE guild_id = ${message.guildId}::text
-            RETURNING *;
-        `;
-
-        cache.set(message.guild.id, rows[0]);
+            WHERE guild_id = ${message.guildId}::text;
+        `
 
         return Embed.ok(`
         You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
-        `);
+        `)
     }
 }

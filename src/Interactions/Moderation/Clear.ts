@@ -1,24 +1,27 @@
-import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isText, isThread } from '#khaf/utility/Discord.js';
-import { postToModLog } from '#khaf/utility/Discord/Interaction Util.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { bold, time } from '@discordjs/builders';
+import { Interactions } from '#khaf/Interaction'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText, isThread } from '#khaf/utility/Discord.js'
+import * as util from '#khaf/utility/Discord/util.js'
+import { toString } from '#khaf/utility/Permissions.js'
+import { bold, time } from '@discordjs/builders'
+import type {
+    RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import {
     ApplicationCommandOptionType,
     ChannelType,
-    PermissionFlagsBits,
-    RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10';
-import { ChatInputCommandInteraction } from 'discord.js';
+    PermissionFlagsBits
+} from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { setTimeout } from 'node:timers/promises'
 
 export class kInteraction extends Interactions {
     constructor () {
         const sc: RESTPostAPIApplicationCommandsJSONBody = {
             name: 'clear',
             description: 'Bulk deletes messages from a channel.',
-            default_permission: false,
+            default_member_permissions: toString([PermissionFlagsBits.ManageMessages]),
+            dm_permission: false,
             options: [
                 {
                     type: ApplicationCommandOptionType.Integer,
@@ -41,46 +44,70 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
-
-        super(sc, {
-            defer: true,
-            permissions: [
-                PermissionFlagsBits.ManageMessages
-            ]
-        });
-    }
-
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
-        const amount = interaction.options.getInteger('messages', true);
-        const channel = interaction.options.getChannel('channel') ?? interaction.channel;
-
-        if (!isText(channel) && !isThread(channel)) {
-            return `❌ I can't bulk delete messages in ${channel}!`;
-        } else if (!hasPerms(channel, interaction.guild?.me, this.options.permissions!)) {
-            return '❌ Re-invite the bot with the correct permissions to use this command!';
         }
 
-        await dontThrow(channel.bulkDelete(amount));
+        super(sc)
+    }
 
-        try {
-            return `✅ Cleared ${amount} messages from ${channel}`;
-        } finally {
-            // If the channel is private, we shouldn't broadcast
-            // information about it.
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+        const defaultPerms = BigInt(this.data.default_member_permissions!)
 
-            const everyone = channel.guild.roles.everyone.id;
+        if (!interaction.memberPermissions?.has(defaultPerms)) {
+            return {
+                content: '❌ You do not have permission to use this command!',
+                ephemeral: true
+            }
+        } else if (
+            interaction.guild === null ||
+            !interaction.guild.members.me ||
+            !interaction.guild.members.me.permissions.has(defaultPerms)
+        ) {
+            return {
+                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+                ephemeral: true
+            }
+        }
 
-            if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
-                const embed = Embed.ok(`
+        const amount = interaction.options.getInteger('messages', true)
+        const channel = interaction.options.getChannel('channel') ?? interaction.channel
+
+        if (!isText(channel) && !isThread(channel)) {
+            return {
+                content: `❌ I can't bulk delete messages in ${channel}!`,
+                ephemeral: true
+            }
+        } else if (!channel.permissionsFor(interaction.guild.members.me).has(defaultPerms)) {
+            return {
+                content: '❌ Re-invite the bot with the correct permissions to use this command!',
+                ephemeral: true
+            }
+        }
+
+        await interaction.reply({
+            content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`,
+            ephemeral: true
+        })
+        await setTimeout(5_000)
+        await interaction.deleteReply()
+        await channel.bulkDelete(amount)
+
+        // If the channel is private, we shouldn't broadcast
+        // information about it.
+
+        const everyone = channel.guild.roles.everyone.id
+
+        if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
+            const embed = Embed.json({
+                color: colors.ok,
+                description: `
                 ${bold('Channel:')} ${channel}
                 ${bold('Messages:')} ${amount}
                 ${bold('Staff:')} ${interaction.user}
-                ${bold('Time:')} ${time(new Date())}
-                `).setTitle('Channel Messages Cleared');
+                ${bold('Time:')} ${time(new Date())}`,
+                title: 'Channel Messages Cleared'
+            })
 
-                void postToModLog(interaction, [embed]);
-            }
+            return void util.postToModLog(interaction, [embed])
         }
     }
 }

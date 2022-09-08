@@ -1,10 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { assets } from '#khaf/utility/Constants/Path.js';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { readdirSync } from 'fs';
-import { extname } from 'path';
+import { Interactions } from '#khaf/Interaction'
+import { assets } from '#khaf/utility/Constants/Path.js'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { readdirSync } from 'node:fs'
+import { extname } from 'node:path'
 
-const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''));
+const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''))
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -80,10 +81,10 @@ export class kInteraction extends Interactions {
                     description: 'Play a game of slots!'
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 }

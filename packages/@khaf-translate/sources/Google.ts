@@ -4,10 +4,13 @@
  * that removes the token entirely.
  */
 
-import { request } from 'undici';
-import { URL, URLSearchParams } from 'url';
+import { URL, URLSearchParams } from 'node:url'
+import { request } from 'undici'
+import { s } from '@sapphire/shapeshift'
 
-type Opts = { to?: string, from?: string };
+interface Opts { to?: string, from?: string }
+
+const schema = s.array(s.array(s.array(s.unknown)))
 
 export const langs = [
     'auto', 'af', 'sq', 'am', 'ar',
@@ -32,7 +35,7 @@ export const langs = [
     'sv', 'tg', 'ta', 'te', 'th',
     'tr', 'uk', 'ur', 'uz', 'vi',
     'cy', 'xh', 'yi', 'yo', 'zu', 'fil'
-];
+]
 
 const staticParams = new URLSearchParams([
     ['client', 'gtx'],
@@ -45,7 +48,7 @@ const staticParams = new URLSearchParams([
     ['ssel', '0'],
     ['tsel', '0'],
     ['kc', '7']
-]);
+])
 
 export const translate = async (
     text: string,
@@ -53,28 +56,29 @@ export const translate = async (
 ): Promise<string> => {
     opts.from = typeof opts.from === 'string' && langs.includes(opts.from.toLowerCase())
         ? opts.from.toLowerCase()
-        : 'auto';
+        : 'auto'
     opts.to = typeof opts.to === 'string' && langs.includes(opts.to.toLowerCase())
         ? opts.to.toLowerCase()
-        : 'en';
+        : 'en'
 
-    const url = 'https://translate.google.com/translate_a/single?';
-    const params = new URLSearchParams(staticParams);
-    params.append('sl', opts.from);
-    params.append('tl', opts.to);
-    params.append('q', text);
+    const url = 'https://translate.google.com/translate_a/single?'
+    const params = new URLSearchParams(staticParams)
+    params.append('sl', opts.from)
+    params.append('tl', opts.to)
+    params.append('q', text)
 
     const { body } = await request(new URL(`?${params}`, url), {
         headers: {
             'Accept-Encoding': 'gzip, deflate, br',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0'
         }
-    });
+    })
     // setting real types for this is a waste of time
-    const j = await body.json() as unknown[][][];
+    const j: unknown = await body.json()
 
-    if (!Array.isArray(j) || !Array.isArray(j[0]))
-        return 'Invalid response received!';
+    if (!schema.is(j)) {
+        return 'Invalid response received!'
+    }
 
-    return j[0].map(tr => tr.shift()).join('');
+    return j[0].map(tr => tr.shift()).join('')
 }

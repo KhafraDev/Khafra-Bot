@@ -1,5 +1,6 @@
-import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -57,12 +58,26 @@ export class kInteraction extends Interactions {
                             required: true
                         }
                     ]
+                },
+                {
+                    type: ApplicationCommandOptionType.Subcommand,
+                    name: 'recipe',
+                    description: 'Get a crafting recipe for an item.',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.String,
+                            name: 'item',
+                            description: 'The display name of the item',
+                            required: true,
+                            autocomplete: true
+                        }
+                    ]
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 }

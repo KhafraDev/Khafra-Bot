@@ -1,10 +1,11 @@
-import { Interactions } from '#khaf/Interaction';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { codeBlock } from '@discordjs/builders';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js';
-import { inspect } from 'util';
-import { createContext, runInContext } from 'vm';
+import { Interactions } from '#khaf/Interaction'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { codeBlock } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { inspect } from 'node:util'
+import { createContext, runInContext } from 'node:vm'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -19,32 +20,32 @@ export class kInteraction extends Interactions {
                     required: true
                 }
             ]
-        };
+        }
 
         super(sc, {
             ownerOnly: true,
             deploy: false
-        });
+        })
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const text = interaction.options.getString('string', true);
+        const text = interaction.options.getString('string', true)
 
-        const context = createContext({ interaction });
-        let ret: unknown;
+        const context = createContext({ interaction })
+        let ret: unknown
 
         try {
-            ret = runInContext(text, context);
+            ret = runInContext(text, context)
         } catch (e) {
-            ret = e;
+            ret = e
         }
 
-        const inspected = inspect(ret, true, 1, false);
-        const embed = Embed.ok(`${codeBlock('js', inspected.slice(0, 2004).trim())}`);
+        const inspected = inspect(ret, true, 1, false)
+        const embed = Embed.ok(`${codeBlock('js', inspected.slice(0, 2004).trim())}`)
 
         return {
             ephemeral: true,
             embeds: [embed]
-        } as InteractionReplyOptions;
+        }
     }
 }

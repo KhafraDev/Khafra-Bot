@@ -1,9 +1,9 @@
-import { sql } from '#khaf/database/Postgres.js';
-import { InteractionSubCommand } from '#khaf/Interaction';
-import { Warning } from '#khaf/types/KhafraBot.js';
-import { plural } from '#khaf/utility/String.js';
-import { bold, inlineCode, time } from '@discordjs/builders';
-import { ChatInputCommandInteraction } from 'discord.js';
+import { sql } from '#khaf/database/Postgres.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import type { Warning } from '#khaf/types/KhafraBot.js'
+import { plural } from '#khaf/utility/String.js'
+import { bold, inlineCode, time } from '@discordjs/builders'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 interface Total {
     total_points: string
@@ -12,32 +12,33 @@ interface Total {
     points: Warning['k_points'][]
 }
 
-type FromArray<T extends unknown[]> = T extends (infer U)[]
-    ? U
-    : never;
+type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never
 
-type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>];
+type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>]
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor() {
+    constructor () {
         super({
             references: 'warns',
             name: 'get'
-        });
+        })
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<string> {
+    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const member =
             interaction.options.getMember('member') ??
-            interaction.options.getUser('member', true);
+            interaction.options.getUser('member', true)
 
-        const id = 'id' in member ? member.id : null;
+        const id = 'id' in member ? member.id : null
 
         if (!id || !interaction.inGuild()) {
-            return '❌ To use this command, re-invite the bot with all permissions!';
+            return {
+                content: '❌ To use this command, re-invite the bot with all permissions!',
+                ephemeral: true
+            }
         }
 
-        const rows = await sql<Total[]>`
+        const rows = await sql<[Total] | []>`
             SELECT 
                 SUM(k_points) AS total_points,
                 ARRAY_AGG(k_ts) dates,
@@ -48,27 +49,34 @@ export class kSubCommand extends InteractionSubCommand {
                 kbWarns.k_guild_id = ${interaction.guildId}::text AND
                 kbWarns.k_user_id = ${id}::text
             LIMIT 1;
-        `;
+        `
 
-        if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length)
-            return `✅ ${member} has no warning points!`;
+        if (rows.length === 0 || !rows[0].dates.length || !rows[0].ids.length) {
+            return {
+                content: `✅ ${member} has no warning points!`,
+                ephemeral: true
+            }
+        }
 
-        const { dates, ids, points, total_points } = rows.shift()!;
-        const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]]);
+        const { dates, ids, points, total_points } = rows[0]
+        const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]])
         let content =
             `✅ ${member} has ${ids.length.toLocaleString()} warnings ` +
-            `with ${Number(total_points).toLocaleString()} warning points total.\n`;
+            `with ${Number(total_points).toLocaleString()} warning points total.\n`
 
         // embeds can have a maximum of 25 fields
         for (const [id, date, p] of mapped) {
-            const points = p.toLocaleString(interaction.guild?.preferredLocale ?? 'en-US');
-            const line = `${bold(time(date))}: ${inlineCode(id)}: ${points} point${plural(p)}.\n`;
+            const points = p.toLocaleString(interaction.guild?.preferredLocale ?? 'en-US')
+            const line = `${bold(time(date))}: ${inlineCode(id)}: ${points} point${plural(p)}.\n`
 
-            if (content.length + line.length > 2048) break;
+            if (content.length + line.length > 2048) break
 
-            content += line;
+            content += line
         }
 
-        return content;
+        return {
+            content,
+            ephemeral: true
+        }
     }
 }

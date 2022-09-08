@@ -1,12 +1,14 @@
-import { Command } from '#khaf/Command';
-import { Components } from '#khaf/utility/Constants/Components.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { getMentions } from '#khaf/utility/Mentions.js';
-import { ActionRow, inlineCode, MessageActionRowComponent, type UnsafeEmbed } from '@discordjs/builders';
-import { PermissionFlagsBits } from 'discord-api-types/v10';
-import { GuildBasedChannel, GuildChannel, GuildChannelCloneOptions, Message } from 'discord.js';
+import { Command } from '#khaf/Command'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js'
+import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { getMentions } from '#khaf/utility/Mentions.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed} from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { GuildBasedChannel, GuildChannelCloneOptions, Message } from 'discord.js'
+import { GuildChannel } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -27,14 +29,14 @@ export class kCommand extends Command {
                     PermissionFlagsBits.ManageChannels
                 ]
             }
-        );
+        )
     }
 
-    async init (message: Message<true>): Promise<UnsafeEmbed | undefined> {
-        const channel = await getMentions(message, 'channels') ?? message.channel;
+    async init (message: Message<true>): Promise<undefined | APIEmbed> {
+        const channel = await getMentions(message, 'channels') ?? message.channel
 
         if (isThread(channel) || isDM(channel)) {
-            return Embed.error(`I cannot clone a ${channel.type} channel!`);
+            return Embed.error(`I cannot clone a ${channel.type} channel!`)
         }
 
         const [e, m] = await dontThrow(message.reply({
@@ -44,14 +46,14 @@ export class kCommand extends Command {
                 `)
             ],
             components: [
-                new ActionRow<MessageActionRowComponent>().addComponents(
-                    Components.approve('Yes', 'approve'),
-                    Components.deny('No', 'deny')
-                )
+                Components.actionRow([
+                    Buttons.approve('Yes', 'approve'),
+                    Buttons.deny('No', 'deny')
+                ])
             ]
-        }));
+        }))
 
-        if (e !== null) return;
+        if (e !== null) return
 
         {
             const [e, i] = await dontThrow(m.awaitMessageComponent({
@@ -59,12 +61,12 @@ export class kCommand extends Command {
                     ['approve', 'deny'].includes(interaction.customId) &&
                     interaction.user.id === message.author.id,
                 time: 60_000
-            }));
+            }))
 
             if (e !== null) {
-                return Embed.error('No response, command was canceled!');
+                return Embed.error('No response, command was canceled!')
             } else if (i.customId === 'deny') {
-                return Embed.error(`Command was canceled, ${channel} will not be cloned.`);
+                return Embed.error(`Command was canceled, ${channel} will not be cloned.`)
             }
         }
 
@@ -79,35 +81,35 @@ export class kCommand extends Command {
             userLimit: isStage(channel) || isVoice(channel) ? channel.userLimit : undefined,
             rateLimitPerUser: isExplicitText(channel) ? channel.rateLimitPerUser : undefined,
             position: channel.position
-        } as GuildChannelCloneOptions;
+        } as GuildChannelCloneOptions
 
         const clone = GuildChannel.prototype.clone.bind({
             ...opts,
             guild: message.guild,
             permissionOverwrites: channel.permissionOverwrites
-        });
+        })
 
         {
-            const [err] = await dontThrow<GuildBasedChannel>(channel.delete());
+            const [err] = await dontThrow<GuildBasedChannel>(channel.delete())
             if (err !== null) {
-                return Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`);
+                return Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`)
             }
         }
 
-        const [err, cloned] = await dontThrow(clone(opts));
+        const [err, cloned] = await dontThrow(clone(opts))
 
         if (err !== null) {
             return void dontThrow(message.author.send({
                 embeds: [Embed.error(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
-            }));
+            }))
         }
 
-        const embed = Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`);
+        const embed = Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`)
 
         if (isText(cloned)) {
-            return void dontThrow(cloned.send({ embeds: [embed] }));
+            return void dontThrow(cloned.send({ embeds: [embed] }))
         } else {
-            return void dontThrow(message.author.send({ embeds: [embed] }));
+            return void dontThrow(message.author.send({ embeds: [embed] }))
         }
     }
 }

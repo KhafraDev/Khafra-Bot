@@ -1,49 +1,118 @@
-import { APIMessage, ButtonStyle } from 'discord-api-types/v10';
-import { Message } from 'discord.js';
-import { ActionRow, MessageActionRowComponent, UnsafeButtonComponent } from '@discordjs/builders';
+import {
+    type APIMessage,
+    ButtonStyle,
+    ComponentType,
+    type APIActionRowComponent,
+    type APIMessageActionRowComponent,
+    type APIButtonComponent,
+    type APISelectMenuComponent,
+    type APITextInputComponent,
+    type APIActionRowComponentTypes
+} from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export const Components = {
-    approve: (label = 'approve', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
-        .setCustomId(id ?? 'approve')
-        .setLabel(label)
-        .setStyle(ButtonStyle.Success),
-    deny: (label = 'deny', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
-        .setCustomId(id ?? 'deny')
-        .setLabel(label)
-        .setStyle(ButtonStyle.Danger),
-    secondary: (label = 'next', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
-        .setCustomId(id ?? 'secondary')
-        .setLabel(label)
-        .setStyle(ButtonStyle.Secondary),
-    primary: (label = 'primary', id?: string): UnsafeButtonComponent => new UnsafeButtonComponent()
-        .setCustomId(id ?? 'primary')
-        .setLabel(label)
-        .setStyle(ButtonStyle.Primary),
-    link: (label: string, url: string): UnsafeButtonComponent => new UnsafeButtonComponent()
-        .setLabel(label)
-        .setStyle(ButtonStyle.Link)
-        .setURL(url)
-}
-
-const toggleComponents = (item: Message | APIMessage, disabled: boolean): ActionRow<MessageActionRowComponent>[] => {
-    if (!item.components) return [];
-
-    for (const component of item.components) {
-        for (const button of component.components) {
-            if ('setDisabled' in button) {
-                button.setDisabled(disabled);
-            } else {
-                button.disabled = disabled;
-            }
+    actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(components: T[] = []): APIActionRowComponent<T> {
+        return {
+            type: ComponentType.ActionRow,
+            components
+        }
+    },
+    selectMenu (options: Omit<APISelectMenuComponent, 'type'>): APISelectMenuComponent {
+        return {
+            type: ComponentType.SelectMenu,
+            ...options
+        }
+    },
+    textInput (
+        options: Required<
+            Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>> &
+            Partial<Omit<APITextInputComponent, 'type'>
+        >
+    ): APITextInputComponent {
+        return {
+            type: ComponentType.TextInput,
+            ...options
         }
     }
-
-    return 'channelId' in item
-        ? item.components as ActionRow<MessageActionRowComponent>[]
-        : item.components.map(r => new ActionRow(r));
 }
 
-export const disableAll = (item: Message | APIMessage):
-    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, true);
-export const enableAll = (item: Message | APIMessage):
-    ActionRow<MessageActionRowComponent>[] => toggleComponents(item, false);
+type ButtonOptions = Pick<APIButtonComponent, 'emoji' | 'disabled'>
+
+export const Buttons = {
+    approve (label = 'approve', id = 'approve', options: ButtonOptions = {}): APIButtonComponent {
+        return {
+            type: ComponentType.Button,
+            style: ButtonStyle.Success,
+            custom_id: id,
+            label,
+            ...options
+        }
+    },
+    deny (label = 'deny', id = 'deny', options: ButtonOptions = {}): APIButtonComponent {
+        return {
+            type: ComponentType.Button,
+            style: ButtonStyle.Danger,
+            custom_id: id,
+            label,
+            ...options
+        }
+    },
+    secondary (label = 'next', id = 'secondary', options: ButtonOptions = {}): APIButtonComponent {
+        return {
+            type: ComponentType.Button,
+            style: ButtonStyle.Secondary,
+            custom_id: id,
+            label,
+            ...options
+        }
+    },
+    primary (label = 'primary', id = 'primary', options: ButtonOptions = {}): APIButtonComponent {
+        return {
+            type: ComponentType.Button,
+            style: ButtonStyle.Primary,
+            custom_id: id,
+            label,
+            ...options
+        }
+    },
+    link (label: string, url: string, options: ButtonOptions = {}): APIButtonComponent {
+        return {
+            type: ComponentType.Button,
+            style: ButtonStyle.Link,
+            url,
+            label,
+            ...options
+        }
+    }
+}
+
+type ToggleableComponent =
+    | Message
+    | APIMessage
+    | { components: APIActionRowComponent<APIButtonComponent>[] }
+
+const toggleComponents = (item: ToggleableComponent, disabled: boolean): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+    if (!item.components) return []
+
+    const rows: APIActionRowComponent<APIMessageActionRowComponent>[] = []
+
+    for (const { components } of item.components) {
+        const newRow = Components.actionRow()
+        for (const button of components) {
+            const rawButton = 'toJSON' in button ? button.toJSON() : button
+            rawButton.disabled = disabled
+
+            newRow.components.push(rawButton)
+        }
+
+        rows.push(newRow)
+    }
+
+    return rows
+}
+
+export const disableAll = (item: ToggleableComponent):
+    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, true)
+export const enableAll = (item: ToggleableComponent):
+    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, false)

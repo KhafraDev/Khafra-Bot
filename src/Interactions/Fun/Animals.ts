@@ -1,5 +1,6 @@
-import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -63,8 +64,8 @@ export class kInteraction extends Interactions {
                     description: 'Pictures of shiba inus!! 🐶'
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 }

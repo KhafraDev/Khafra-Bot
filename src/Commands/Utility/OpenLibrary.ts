@@ -1,8 +1,10 @@
-import { Arguments, Command } from '#khaf/Command';
-import { openLibrary } from '#khaf/utility/commands/Openlibrary';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { bold, hyperlink, inlineCode, italic, type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { openLibrary } from '#khaf/utility/commands/Openlibrary'
+import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { bold, hyperlink, inlineCode, italic } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -18,19 +20,18 @@ export class kCommand extends Command {
                 args: [1],
                 aliases: ['library', 'book', 'books']
             }
-        );
+        )
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<UnsafeEmbed> {
-        const books = await openLibrary(args.join(' '));
+    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
+        const books = await openLibrary(args.join(' '))
 
         if (books.numFound === 0 || books.docs.length === 0) {
-            return Embed.error('No books found on OpenLibrary!');
+            return Embed.error('No books found on OpenLibrary!')
         }
 
-        const book = books.docs.shift()!;
-
-        const embed = Embed.ok(`
+        const book = books.docs.shift()!
+        const description = `
         ${italic(book.title)} by ${book.author_name.join(' and ')}
         Published in ${book.first_publish_year}
         ${Array.isArray(book.isbn) && book.isbn.length > 0 ? `ISBN: ${inlineCode(book.isbn[0])}` : ''}
@@ -42,9 +43,8 @@ export class kCommand extends Command {
         ${book.id_google?.[0] ? `[Google Books](https://books.google.com/books?id=${book.id_google[0]})` : ''}
         
         ${bold(hyperlink('Donate to the Internet Archive', 'https://archive.org/donate/'))}
-        `);
-        embed.setDescription(embed.description!.replace(/^(\s*\r?\n){2,}/gm, '\n'));
+        `.trim()
 
-        return embed;
+        return Embed.ok(description.replace(/^(\s*\r?\n){2,}/gm, '\n'))
     }
 }

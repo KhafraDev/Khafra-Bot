@@ -1,193 +1,199 @@
-import { KhafraClient } from '#khaf/Bot';
-import { MessagesLRU } from '#khaf/cache/Messages.js';
-import { cache } from '#khaf/cache/Settings.js';
-import { Arguments, Command } from '#khaf/Command';
-import { sql } from '#khaf/database/Postgres.js';
-import { Event } from '#khaf/Event';
-import { logger } from '#khaf/Logger';
-import { kGuild } from '#khaf/types/KhafraBot.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { cwd } from '#khaf/utility/Constants/Path.js';
-import { isDM } from '#khaf/utility/Discord.js';
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js';
-import { Sanitize } from '#khaf/utility/EventEvents/Message_SanitizeCommand.js';
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js';
-import { Minimalist } from '#khaf/utility/Minimalist.js';
-import { hasPerms } from '#khaf/utility/Permissions.js';
-import { Stats } from '#khaf/utility/Stats.js';
-import { plural, upperCase } from '#khaf/utility/String.js';
-import { UnsafeEmbed as MessageEmbed, inlineCode } from '@discordjs/builders';
-import { DiscordAPIError, Message, MessageAttachment, ReplyMessageOptions } from 'discord.js';
-import { join } from 'path';
-import { defaultSettings, disabled, processArgs, _cooldownGuild, _cooldownUsers } from './Message.js';
+import { KhafraClient } from '#khaf/Bot'
+import { MessagesLRU } from '#khaf/cache/Messages.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.js'
+import { Event } from '#khaf/Event'
+import { logger, loggerUtility } from '#khaf/structures/Logger.js'
+import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
+import { isDM } from '#khaf/utility/Discord.js'
+import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { Stats } from '#khaf/utility/Stats.js'
+import { plural, upperCase } from '#khaf/utility/String.js'
+import { inlineCode } from '@discordjs/builders'
+import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
+import { join } from 'node:path'
+import { argv } from 'node:process'
+import { parseArgs } from 'node:util'
+import { _cooldownGuild, _cooldownUsers } from './messageCreate.js'
 
 const config = createFileWatcher(
     {} as typeof import('../../config.json'),
     join(cwd, 'config.json')
-);
+)
 
-export class kEvent extends Event<'messageUpdate'> {
-    name = 'messageUpdate' as const;
+const defaultSettings: PartialGuild = {
+    max_warning_points: 20,
+    mod_log_channel: null,
+    welcome_channel: null
+}
+
+const { values: processArgs } = parseArgs({
+    args: argv.slice(2),
+    strict: false,
+    options: {
+        disabled: {
+            type: 'string'
+        }
+    }
+})
+const disabled = typeof processArgs['disabled'] === 'string'
+    ? processArgs['disabled'].split(',').map(c => c.toLowerCase())
+    : []
+
+export class kEvent extends Event<typeof Events.MessageUpdate> {
+    name = Events.MessageUpdate as const
 
     async init (oldMessage: Message<true>, newMessage: Message<true>): Promise<void> {
-        Stats.messages++;
+        Stats.messages++
 
-        if (!MessagesLRU.has(oldMessage.id)) return;
-        if (oldMessage.content === newMessage.content) return;
-        if (!Sanitize(newMessage) || isDM(newMessage.channel)) return;
+        if (!MessagesLRU.has(oldMessage.id)) return
+        if (oldMessage.content === newMessage.content) return
+        if (!Sanitize(newMessage) || isDM(newMessage.channel)) return
 
-        const [mention, name, ...args] = newMessage.content.split(/\s+/g);
+        const [mention, name, ...args] = newMessage.content.split(/\s+/g)
 
         if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
-            return;
+            return
         } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
-            return;
+            return
         }
 
-        const command = KhafraClient.Commands.get(name.toLowerCase())!;
-        let guild!: typeof defaultSettings | kGuild;
+        const command = KhafraClient.Commands.get(name.toLowerCase())!
+        let guild!: typeof defaultSettings | kGuild
 
         if (command.init.length === 3) {
-            const row = cache.get(newMessage.guild.id);
+            const rows = await sql<[kGuild?]>`
+                SELECT * 
+                FROM kbGuild
+                WHERE guild_id = ${newMessage.guildId}::text
+                LIMIT 1;
+            `
 
-            if (row) {
-                guild = { ...defaultSettings, ...row };
+            if (rows.length !== 0) {
+                guild = { ...defaultSettings, ...rows.shift() }
             } else {
-                const rows = await sql<kGuild[]>`
-                    SELECT * 
-                    FROM kbGuild
-                    WHERE guild_id = ${newMessage.guildId}::text
-                    LIMIT 1;
-                `;
-
-                if (rows.length !== 0) {
-                    cache.set(newMessage.guild.id, rows[0]);
-
-                    guild = { ...defaultSettings, ...rows.shift() };
-                } else {
-                    guild = { ...defaultSettings };
-                }
+                guild = { ...defaultSettings }
             }
         }
 
         // !say hello world -> hello world
-        const content = newMessage.content.slice(mention.length + name.length + 2);
-        const cli = new Minimalist(content);
+        const content = newMessage.content.slice(mention.length + name.length + 2)
 
         // command cooldowns are based around the commands name, not aliases
-        const limited = command.rateLimit.isRateLimited(newMessage.author.id);
+        const limited = command.rateLimit.isRateLimited(newMessage.author.id)
 
         if (limited) {
-            if (command.rateLimit.isNotified(newMessage.author.id)) return;
+            if (command.rateLimit.isNotified(newMessage.author.id)) return
 
-            const cooldownInfo = command.rateLimit.get(newMessage.author.id)!;
-            const rateLimitSeconds = command.rateLimit.rateLimitSeconds;
-            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000);
+            const cooldownInfo = command.rateLimit.get(newMessage.author.id)!
+            const rateLimitSeconds = command.rateLimit.rateLimitSeconds
+            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000)
 
-            return void dontThrow(newMessage.reply({
+            return void newMessage.reply({
                 content:
                     `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
                     `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
-            }));
+            })
         } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
-            return void dontThrow(newMessage.reply({
+            return void newMessage.reply({
                 content: `${inlineCode(name)} is temporarily disabled!`
-            }));
+            })
         } else {
-            command.rateLimit.rateLimitUser(newMessage.author.id);
+            command.rateLimit.rateLimitUser(newMessage.author.id)
         }
 
         if (command.settings.ownerOnly && !Command.isBotOwner(newMessage.author.id)) {
-            return void dontThrow(newMessage.reply({
+            return void newMessage.reply({
                 embeds: [
                     Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
                 ]
-            }));
+            })
         }
 
-        const [min, max = Infinity] = command.settings.args;
+        const [min, max = Infinity] = command.settings.args
         if (min > args.length || args.length > max) {
-            return void dontThrow(newMessage.reply({ embeds: [Embed.error(`
-            Incorrect number of arguments provided.
-            
-            The command requires ${min} minimum arguments and ${max} max.
-            Example(s):
-            ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
-            `)] }));
+            return void newMessage.reply({
+                embeds: [
+                    Embed.error(`
+                    Incorrect number of arguments provided.
+
+                    The command requires ${min} minimum arguments and ${max} max.
+                    Example(s):
+                    ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
+                    `)
+                ]
+            })
         }
 
         if (!_cooldownUsers(newMessage.author.id)) {
-            return void dontThrow(newMessage.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] }));
+            return void newMessage.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] })
         } else if (!_cooldownGuild(newMessage.guild.id)) {
-            return void dontThrow(newMessage.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] }));
-        } else if (!hasPerms(newMessage.channel, newMessage.member, command.permissions)) {
-            return void dontThrow(newMessage.reply({
+            return void newMessage.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
+        } else if (
+            newMessage.member === null ||
+            !newMessage.channel.permissionsFor(newMessage.member).has(command.permissions)
+        ) {
+            return void newMessage.reply({
                 embeds: [
                     Embed.perms(newMessage.channel, newMessage.member, command.permissions)
                 ]
-            }));
+            })
         }
 
-        let err: Error | void;
-        Stats.session++;
+        Stats.session++
 
         try {
-            const options: Arguments = { args, commandName: name.toLowerCase(), content, cli };
-            const returnValue = await command.init(newMessage, options, guild);
+            const options: Arguments = { args, commandName: name.toLowerCase(), content }
+            const returnValue = await command.init(newMessage, options, guild)
             if (!returnValue || returnValue instanceof Message)
-                return;
+                return
 
             const param = {
                 failIfNotExists: false
-            } as ReplyMessageOptions;
+            } as ReplyMessageOptions
 
-            if (typeof returnValue === 'string')
-                param.content = returnValue;
-            else if (returnValue instanceof MessageEmbed)
-                param.embeds = [returnValue];
-            else if (returnValue instanceof MessageAttachment)
-                param.files = [returnValue];
-            else if (typeof returnValue === 'object') // MessageOptions
-                Object.assign(param, returnValue);
-
-            return void await newMessage.reply(param);
-        } catch (e) {
-            err = e as Error;
-
-            if (processArgs.get('dev') === true) {
-                console.log(e); // eslint-disable-line no-console
+            if (typeof returnValue === 'string') {
+                param.content = returnValue
+            } else if (returnValue instanceof Attachment) {
+                param.files = [returnValue]
+            } else if (typeof returnValue === 'object') { // MessageOptions
+                if (EmbedUtil.isAPIEmbed(returnValue)) {
+                    param.embeds = [returnValue]
+                } else {
+                    Object.assign(param, returnValue)
+                }
             }
 
+            return void await newMessage.reply(param)
+        } catch (e) {
+            logger.error(e, 'message update error')
+
             if (!(e instanceof Error)) {
-                return;
+                return
             } else if (e instanceof DiscordAPIError) {
                 // if there's an error sending a message, we should probably
                 // not send another message. in the future try figuring out
                 // the error code and basing this check off of that.
-                return;
+                return
             }
 
-            const error = 'An unexpected error has occurred!';
+            const error = 'An unexpected error has occurred!'
 
-            return void dontThrow(newMessage.reply({
+            return void newMessage.reply({
                 embeds: [Embed.error(error)],
                 failIfNotExists: false
-            }));
+            })
         } finally {
-            MessagesLRU.delete(newMessage.id);
+            MessagesLRU.delete(newMessage.id)
 
-            if (err) {
-                logger.error(err);
-            } else {
-                logger.log(
-                    `${newMessage.author.tag} (${newMessage.author.id}) used the ${command.settings.name} command!`,
-                    {
-                        URL: newMessage.url,
-                        guild: newMessage.guild.id,
-                        input: `"${newMessage.content}"`
-                    }
-                );
-            }
+            logger.info({
+                oldMessage: loggerUtility.formatters.message(oldMessage),
+                newMessageId: newMessage.id
+            })
         }
     }
 }

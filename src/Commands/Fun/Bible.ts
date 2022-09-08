@@ -1,10 +1,12 @@
-import { Arguments, Command } from '#khaf/Command';
-import { sql } from '#khaf/database/Postgres.js';
-import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js';
-import { Embed } from '#khaf/utility/Constants/Embeds.js';
-import { upperCase } from '#khaf/utility/String.js';
-import { inlineCode, type UnsafeEmbed } from '@discordjs/builders';
-import { Message } from 'discord.js';
+import type { Arguments} from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.js'
+import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { upperCase } from '#khaf/utility/String.js'
+import { inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 
 interface IBibleVerse {
     idx: number
@@ -18,7 +20,7 @@ const R = {
     GENERIC: /(\d{1,2}):(\d{1,2})/,
     BETWEEN: /(\d{1,2}):(\d{1,2})-(\d{1,2})/,
     CHAPTER: /(\d{1,2})/
-} as const;
+} as const
 
 export class kCommand extends Command {
     constructor () {
@@ -32,52 +34,56 @@ export class kCommand extends Command {
                 folder: 'Fun',
                 args: [0]
             }
-        );
+        )
     }
 
-    async init (_message: Message, { args, content }: Arguments): Promise<UnsafeEmbed | undefined> {
-        const inserted = await bibleInsertDB();
+    async init (_message: Message, { args, content }: Arguments): Promise<undefined | APIEmbed> {
+        const inserted = await bibleInsertDB()
 
         if (inserted !== true) {
-            return Embed.error('Try again in a minute!');
+            return Embed.error('Try again in a minute!')
         }
 
         // no arguments provided, get a random entry
         if (args.length === 0) {
             const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible TABLESAMPLE BERNOULLI(.1) ORDER BY random() LIMIT 1;
-            `;
+            `
 
             // basically the same as bookAcronym down below
             const book = Object
                 .entries(titles)
                 .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
-                .shift()!;
+                .shift()!
 
-            return Embed.ok()
-                .setTitle(`${book} ${rows[0].chapter}:${rows[0].verse}`)
-                .setDescription(rows[0].content);
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${book} ${rows[0].chapter}:${rows[0].verse}`,
+                description: rows[0].content
+            })
+
+            return embed
         }
 
         // list all books available to the bot
         if (args[0].toLowerCase() === 'list') {
-            return Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '));
+            return Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '))
         } else if (!titleRegex.test(content)) {
             return Embed.error(`
             No book with that name was found!
 
             Use ${inlineCode(`${this.settings.name} list`)} to list all of the supported book names!
-            `);
+            `)
         }
 
-        const book = titleRegex.exec(content)![0].toLowerCase().trim();
+        const book = titleRegex.exec(content)![0].toLowerCase().trim()
         // get the acronym of the book, for example "Prayer of Azariah" -> "aza"
         const bookAcronym = Object
             .entries(titles)
-            .find(([n, acr]) => n.toLowerCase() === book || acr === book)!;
+            .find(([n, acr]) => n.toLowerCase() === book || acr === book)!
 
         // get the chapter+verse
-        const locationUnformatted = content.split(book).at(-1)!.trim();
+        const locationUnformatted = content.split(book).at(-1)!.trim()
 
         if (!R.GENERIC.test(locationUnformatted)) {
             // get verses in chapter
@@ -89,11 +95,11 @@ export class kCommand extends Command {
                         chapter = ${Number(locationUnformatted)}::smallint
                     ORDER BY verse DESC
                     LIMIT 1;
-                `;
+                `
 
                 return Embed.ok(`
                 Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
-                `);
+                `)
             }
 
             // if not chapter is provided, get the number of chapters in the book
@@ -102,10 +108,10 @@ export class kCommand extends Command {
                 WHERE book = ${upperCase(bookAcronym[1])}::text
                 ORDER BY chapter DESC
                 LIMIT 1;
-            `;
+            `
 
-            const chaper = rows.length === 0 ? 'no' : rows[0].chapter;
-            return Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`);
+            const chaper = rows.length === 0 ? 'no' : rows[0].chapter
+            return Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`)
         }
 
         // Example: 13:1-5
@@ -113,7 +119,7 @@ export class kCommand extends Command {
         if (R.BETWEEN.test(locationUnformatted)) {
             const [, chapter, ...verses] = R.BETWEEN
                 .exec(locationUnformatted)! // not null since it matches the pattern
-                .map(Number); // Not NaN because the regex checks for numbers
+                .map(Number) // Not NaN because the regex checks for numbers
 
             // prevent >10 verses from being sent at a time
             // not only to prevent abuse, but because of the 2048 character limit
@@ -128,26 +134,28 @@ export class kCommand extends Command {
                     chapter = ${chapter}::smallint AND
                     verse BETWEEN ${versesDiff[0]}::smallint AND ${versesDiff[1]}::smallint
                 LIMIT 10;
-            `;
+            `
 
             if (rows.length === 0)
                 return Embed.error(`
                 No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
-                `);
+                `)
 
-            const [first, last] = [rows.at(0)!, rows.at(-1)!];
-            return Embed.ok()
-                .setTitle(`${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`)
-                .setDescription(`
-                ${rows.map(v => v.content).join('\n')}
-                `.slice(0, 2048));
+            const [first, last] = [rows.at(0)!, rows.at(-1)!]
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`,
+                description: `${rows.map(v => v.content).join('\n')}`.slice(0, 2048)
+            })
+
+            return embed
         }
 
         // only one verse; doesn't fit criteria for other cases
         if (R.GENERIC.test(locationUnformatted)) {
             const [, chapter, verse] = R.GENERIC
                 .exec(locationUnformatted)!
-                .map(Number);
+                .map(Number)
 
             const rows = await sql<IBibleVerse[]>`
                 SELECT * FROM kbBible
@@ -156,16 +164,19 @@ export class kCommand extends Command {
                     chapter = ${chapter}::smallint AND
                     verse = ${verse}::smallint
                 LIMIT 1;
-            `;
+            `
 
-            if (rows.length === 0)
-                return Embed.error(`
-                No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕
-                `);
+            if (rows.length === 0) {
+                return Embed.error(`No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕`)
+            }
 
-            return Embed.ok()
-                .setTitle(`${bookAcronym.shift()} ${chapter}:${verse}`)
-                .setDescription(rows[0].content);
+            const embed = Embed.json({
+                color: colors.ok,
+                title: `${bookAcronym.shift()} ${chapter}:${verse}`,
+                description: rows[0].content
+            })
+
+            return embed
         }
     }
 }

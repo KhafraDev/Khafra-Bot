@@ -1,7 +1,18 @@
-import { Interactions } from '#khaf/Interaction';
-import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import { Interactions } from '#khaf/Interaction'
+import { inlineCode } from '@discordjs/builders'
+import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js'
+
+const getReasonString = (reason: string): string => {
+    switch (reason) {
+        case 'banned': return '❌ Subreddit is banned!'
+        case 'private': return '❌ Subreddit is set as private!'
+        case 'quarantined': return '❌ Subreddit is quarantined!'
+        default: return `❌ Subreddit is blocked for reason "${reason}"!`
+    }
+}
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -32,52 +43,66 @@ export class kInteraction extends Interactions {
                     )
                 }
             ]
-        };
+        }
 
-        super(sc);
+        super(sc)
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<string> {
+    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
         const subreddit =
             interaction.options.getString('subreddit')?.toLowerCase() ??
-            'dankmemes';
-        const modifier = interaction.options.getString('sort-by') as `${SortBy}` | null;
+            'dankmemes'
+        const modifier = interaction.options.getString('sort-by') as typeof SortBy[keyof typeof SortBy] | null
         const timeframe = modifier === 'top'
-            ? interaction.options.getString('timeframe') as `${Timeframe}` | null
+            ? interaction.options.getString('timeframe') as typeof Timeframe[keyof typeof Timeframe] | null
             : undefined
 
         if (!cache.has(subreddit))
-            await interaction.deferReply();
+            await interaction.deferReply()
 
-        const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw);
+        const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw)
         const item = await badmeme(
             subreddit,
             isNSFW,
             modifier ?? undefined,
             timeframe ?? undefined
-        );
+        )
 
         if (item === null) {
             const nsfwWarning = interaction.channel !== null && !isNSFW
                 ? ' NSFW subreddits do not work in age restricted channels!'
-                : '';
+                : ''
 
-            return `❌ No posts in this subreddit were found.${nsfwWarning}`;
+            return {
+                content: `❌ No posts in this subreddit were found.${nsfwWarning}`,
+                ephemeral: true
+            }
         } else if ('error' in item) {
             if (item.error === 404) {
-                return '❌ This subreddit doesn\'t exist!';
+                return {
+                    content: '❌ This subreddit doesn\'t exist!',
+                    ephemeral: true
+                }
+            } else if (item.reason === undefined) {
+                return {
+                    content: `❌ An unexpected error occurred: ${inlineCode(item.message)}`,
+                    ephemeral: true
+                }
             }
 
-            switch (item.reason) {
-                case 'banned': return '❌ Subreddit is banned!';
-                case 'private': return '❌ Subreddit is set as private!';
-                case 'quarantined': return '❌ Subreddit is quarantined!';
-                default: return `❌ Subreddit is blocked for reason "${item.reason}"!`;
+            return {
+                content: getReasonString(item.reason),
+                ephemeral: true
             }
         } else if (item.url.length === 0) {
-            return '❌ The requested post was filtered incorrectly.';
+            return {
+                content: '❌ The requested post was filtered incorrectly.',
+                ephemeral: true
+            }
         }
 
-        return Array.isArray(item.url) ? item.url[0] : item.url;
+        return {
+            content: Array.isArray(item.url) ? item.url[0] : item.url
+        }
     }
 }

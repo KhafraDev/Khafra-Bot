@@ -1,5 +1,6 @@
-import { Interactions } from '#khaf/Interaction';
-import { ApplicationCommandOptionType, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import { Interactions } from '#khaf/Interaction'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -9,19 +10,6 @@ export class kInteraction extends Interactions {
             options: [
                 {
                     type: ApplicationCommandOptionType.Subcommand,
-                    name: 'disabled',
-                    description: '"Some disabilities look like this"',
-                    options: [
-                        {
-                            type: ApplicationCommandOptionType.Attachment,
-                            name: 'image',
-                            description: 'The image to overlay.',
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    type: ApplicationCommandOptionType.Subcommand,
                     name: 'ifunny',
                     description: 'Show how funny a meme is by placing an iFunny watermark under it.',
                     options: [
@@ -29,25 +17,6 @@ export class kInteraction extends Interactions {
                             type: ApplicationCommandOptionType.Attachment,
                             name: 'image',
                             description: 'The image you want an iFunny watermark on.',
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    type: ApplicationCommandOptionType.Subcommand,
-                    name: 'watching_until_i_laugh',
-                    description: '"Watching a video until I laugh"',
-                    options: [
-                        {
-                            type: ApplicationCommandOptionType.Attachment,
-                            name: 'image',
-                            description: 'Something unfunny being reacted to.',
-                            required: true
-                        },
-                        {
-                            type: ApplicationCommandOptionType.String,
-                            name: 'title',
-                            description: 'The video\'s title.',
                             required: true
                         }
                     ]
@@ -137,10 +106,10 @@ export class kInteraction extends Interactions {
                     ]
                 }
             ]
-        };
+        }
 
         super(sc, {
             defer: true
-        });
+        })
     }
 }
