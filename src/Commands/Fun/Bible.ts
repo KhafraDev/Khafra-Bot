@@ -1,25 +1,126 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { sql } from '#khaf/database/Postgres.js'
-import { bibleInsertDB, titleRegex, titles } from '#khaf/migration/Bible.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { URL } from 'node:url'
+import { request } from 'undici'
 
 interface IBibleVerse {
-    idx: number
+    idx: null
     book: string
     chapter: number
     verse: number
     content: string
 }
 
+const base = 'https://khafrabot-bible.fly.dev'
+
+const titles = {
+    'Genesis': 'gen',
+    'Exodus': 'exo',
+    'Leviticus': 'lev',
+    'Numbers': 'num',
+    'Deuteronomy': 'deu',
+    'Joshua': 'jos',
+    'Judges': 'jdg',
+    'Ruth': 'rut',
+    '1 Samuel': 'sa1',
+    '2 Samuel': 'sa2',
+    '1 Kings': 'kg1',
+    '2 Kings': 'kg2',
+    '1 Chronicles': 'ch1',
+    '2 Chronicles': 'ch2',
+    'Ezra': 'ezr',
+    'Nehemiah': 'neh',
+    'Esther': 'est',
+    'Job': 'job',
+    'Psalms': 'psa',
+    'Proverbs': 'pro',
+    'Ecclesiastes': 'ecc',
+    'Song of Solomon': 'sol',
+    'Isaiah': 'isa',
+    'Jeremiah': 'jer',
+    'Lamentations': 'lam',
+    'Ezekiel': 'eze',
+    'Daniel': 'dan',
+    'Hosea': 'hos',
+    'Joel': 'joe',
+    'Amos': 'amo',
+    'Obadiah': 'oba',
+    'Jonah': 'jon',
+    'Micah': 'mic',
+    'Nahum': 'nah',
+    'Habakkuk': 'hab',
+    'Zephaniah': 'zep',
+    'Haggai': 'hag',
+    'Zechariah': 'zac',
+    'Malachi': 'mal',
+    '1 Esdras': 'es1',
+    '2 Esdras': 'es2',
+    'Tobias': 'tob',
+    'Judith': 'jdt',
+    'Additions to Esther': 'aes',
+    'Wisdom': 'wis',
+    'Baruch': 'bar',
+    'Epistle of Jeremiah': 'epj',
+    'Susanna': 'sus',
+    'Bel and the Dragon': 'bel',
+    'Prayer of Manasseh': 'man',
+    '1 Macabees': 'ma1',
+    '2 Macabees': 'ma2',
+    '3 Macabees': 'ma3',
+    '4 Macabees': 'ma4',
+    'Sirach': 'sir',
+    'Prayer of Azariah': 'aza',
+    'Laodiceans': 'lao',
+    'Joshua B': 'jsb',
+    'Joshua A': 'jsa',
+    'Judges B': 'jdb',
+    'Judges A': 'jda',
+    'Tobit BA': 'toa',
+    'Tobit S': 'tos',
+    'Psalms of Solomon': 'pss',
+    'Bel and the Dragon Th': 'bet',
+    'Daniel Th': 'dat',
+    'Susanna Th': 'sut',
+    'Odes': 'ode',
+    'Matthew': 'mat',
+    'Mark': 'mar',
+    'Luke': 'luk',
+    'John': 'joh',
+    'Acts': 'act',
+    'Romans': 'rom',
+    '1 Corinthians': 'co1',
+    '2 Corinthians': 'co2',
+    'Galatians': 'gal',
+    'Ephesians': 'eph',
+    'Philippians': 'phi',
+    'Colossians': 'col',
+    '1 Thessalonians': 'th1',
+    '2 Thessalonians': 'th2',
+    '1 Timothy': 'ti1',
+    '2 Timothy': 'ti2',
+    'Titus': 'tit',
+    'Philemon': 'plm',
+    'Hebrews': 'heb',
+    'James': 'jam',
+    '1 Peter': 'pe1',
+    '2 Peter': 'pe2',
+    '1 John': 'jo1',
+    '2 John': 'jo2',
+    '3 John': 'jo3',
+    'Jude': 'jde',
+    'Revelation': 'rev'
+}
+
+const titleRegex = new RegExp(Object.keys(titles).join('|'), 'i')
+
 const R = {
     GENERIC: /(\d{1,2}):(\d{1,2})/,
-    BETWEEN: /(\d{1,2}):(\d{1,2})-(\d{1,2})/,
-    CHAPTER: /(\d{1,2})/
+    BETWEEN: /(\d{1,2}):(\d{1,2})-(\d{1,2})/
 } as const
 
 export class kCommand extends Command {
@@ -38,28 +139,22 @@ export class kCommand extends Command {
     }
 
     async init (_message: Message, { args, content }: Arguments): Promise<undefined | APIEmbed> {
-        const inserted = await bibleInsertDB()
-
-        if (inserted !== true) {
-            return Embed.error('Try again in a minute!')
-        }
-
         // no arguments provided, get a random entry
         if (args.length === 0) {
-            const rows = await sql<IBibleVerse[]>`
-                SELECT * FROM kbBible TABLESAMPLE BERNOULLI(.1) ORDER BY random() LIMIT 1;
-            `
+            const url = new URL('/bible/random', base)
+            const { body } = await request(url)
+            const row = await body.json() as IBibleVerse
 
             // basically the same as bookAcronym down below
             const book = Object
                 .entries(titles)
-                .find(([, c]) => c.toLowerCase() === rows[0].book.toLowerCase())!
+                .find(([, c]) => c.toLowerCase() === row.book.toLowerCase())!
                 .shift()!
 
             const embed = Embed.json({
                 color: colors.ok,
-                title: `${book} ${rows[0].chapter}:${rows[0].verse}`,
-                description: rows[0].content
+                title: `${book} ${row.chapter}:${row.verse}`,
+                description: row.content
             })
 
             return embed
@@ -85,35 +180,6 @@ export class kCommand extends Command {
         // get the chapter+verse
         const locationUnformatted = content.split(book).at(-1)!.trim()
 
-        if (!R.GENERIC.test(locationUnformatted)) {
-            // get verses in chapter
-            if (R.CHAPTER.test(locationUnformatted)) {
-                const rows = await sql<IBibleVerse[]>`
-                    SELECT * FROM kbBible
-                    WHERE
-                        book = ${upperCase(bookAcronym[1])}::text AND
-                        chapter = ${Number(locationUnformatted)}::smallint
-                    ORDER BY verse DESC
-                    LIMIT 1;
-                `
-
-                return Embed.ok(`
-                Chapter ${rows[0].chapter} of ${bookAcronym[0]} has ${rows[0].verse} verses.
-                `)
-            }
-
-            // if not chapter is provided, get the number of chapters in the book
-            const rows = await sql<IBibleVerse[]>`
-                SELECT * FROM kbBible 
-                WHERE book = ${upperCase(bookAcronym[1])}::text
-                ORDER BY chapter DESC
-                LIMIT 1;
-            `
-
-            const chaper = rows.length === 0 ? 'no' : rows[0].chapter
-            return Embed.ok(`${bookAcronym[0]} has ${chaper} chapters.`)
-        }
-
         // Example: 13:1-5
         // Get verses 1 to 5 from Exodus chapter 13
         if (R.BETWEEN.test(locationUnformatted)) {
@@ -127,19 +193,21 @@ export class kCommand extends Command {
                 ? [verses[0], verses[0] + 9] // sql between is inclusive
                 : verses
 
-            const rows = await sql<IBibleVerse[]>`
-                SELECT * FROM kbBible
-                WHERE
-                    book = ${upperCase(bookAcronym.pop()!)}::text AND
-                    chapter = ${chapter}::smallint AND
-                    verse BETWEEN ${versesDiff[0]}::smallint AND ${versesDiff[1]}::smallint
-                LIMIT 10;
-            `
+            const book = upperCase(bookAcronym.pop()!)
+            const url = new URL(
+                `/bible/between?book=${book}&chapter=${chapter}&verse1=${versesDiff[0]}&verse2=${versesDiff[1]}`,
+                base
+            )
+            const { body } = await request(url)
+            const rows = await body.json() as IBibleVerse[] | { error: string }
 
-            if (rows.length === 0)
+            if ('error' in rows) {
+                return Embed.error(rows.error)
+            } else if (rows.length === 0) {
                 return Embed.error(`
                 No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
                 `)
+            }
 
             const [first, last] = [rows.at(0)!, rows.at(-1)!]
             const embed = Embed.json({
@@ -157,23 +225,21 @@ export class kCommand extends Command {
                 .exec(locationUnformatted)!
                 .map(Number)
 
-            const rows = await sql<IBibleVerse[]>`
-                SELECT * FROM kbBible
-                WHERE
-                    book = ${upperCase(bookAcronym[1])}::text AND
-                    chapter = ${chapter}::smallint AND
-                    verse = ${verse}::smallint
-                LIMIT 1;
-            `
+            const url = new URL(
+                `/bible/verse?book=${upperCase(bookAcronym[1])}&chapter=${chapter}&verse=${verse}`,
+                base
+            )
+            const { body } = await request(url)
+            const row = await body.json() as IBibleVerse | { error: string }
 
-            if (rows.length === 0) {
-                return Embed.error(`No verses found for ${bookAcronym.pop()} ${chapter}:${verse}! 😕`)
+            if ('error' in row) {
+                return Embed.error(row.error)
             }
 
             const embed = Embed.json({
                 color: colors.ok,
                 title: `${bookAcronym.shift()} ${chapter}:${verse}`,
-                description: rows[0].content
+                description: row.content
             })
 
             return embed
