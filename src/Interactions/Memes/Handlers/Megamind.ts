@@ -39,7 +39,7 @@ export class kSubCommand extends InteractionSubCommand {
         const ctx = canvas.getContext('2d')
 
         ctx.drawImage(image, 0, 0)
-        ctx.font = '50px Impact'
+        ctx.font = '50px Impact, Segoe UI Emoji'
         ctx.fillStyle = '#FFF'
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
