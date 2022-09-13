@@ -1,8 +1,8 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { hyperlink } from '@discordjs/builders'
 import type { ImageExtension, ImageSize } from '@discordjs/rest'
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
@@ -52,6 +52,7 @@ export class kInteraction extends Interactions {
             embeds: [
                 Embed.json({
                     color: colors.ok,
+                    description: user.avatar ? hyperlink(user.avatar, avatar) : undefined,
                     image: { url: avatar }
                 })
             ]
