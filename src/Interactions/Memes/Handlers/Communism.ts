@@ -49,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         const encoder = new GifEncoder(TWO_FIFTY_SIX, TWO_FIFTY_SIX)
             .setRepeat(0)
-            .setDelay(20)
+            .setDelay(35)
             .setQuality(100)
 
         const stream = encoder.createReadStream()
