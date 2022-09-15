@@ -193,7 +193,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
             logger.info({
                 oldMessage: loggerUtility.formatters.message(oldMessage),
                 newMessageId: newMessage.id
-            })
+            }, `message update command (${command.settings.name})`)
         }
     }
 }

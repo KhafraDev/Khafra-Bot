@@ -87,7 +87,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
 
             return void await interaction.reply(param)
         } catch (e) {
-            logger.error(e, 'interaction error')
+            logger.error(e, `interaction error (${interaction.commandName})`)
         } finally {
             loggerUtility.logInteraction(interaction, command.data.name)
         }

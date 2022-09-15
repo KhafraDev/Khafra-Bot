@@ -110,7 +110,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 failIfNotExists: false
             })
         } finally {
-            logger.info({ message }, 'handled DM')
+            logger.info({ message }, `handled DM (${command.settings.name})`)
         }
     }
 }

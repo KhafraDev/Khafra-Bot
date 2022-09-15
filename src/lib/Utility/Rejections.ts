@@ -6,7 +6,13 @@ import process, { exit } from 'node:process'
 
 const cleanup = once(async (...args: [unknown?, unknown?]) => {
     if (args.length !== 0) {
-        logger.debug(...args as [unknown, string])
+        const obj = {}
+        Error.captureStackTrace(obj)
+
+        logger.debug({
+            args,
+            stack: Reflect.get(obj, 'stack') as string
+        })
     }
 
     await PostgresClient.end({ timeout: 5 })
