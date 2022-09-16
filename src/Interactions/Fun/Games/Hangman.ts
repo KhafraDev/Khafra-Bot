@@ -15,12 +15,10 @@ import {
     type WebhookEditMessageOptions
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
-import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import { extname, join } from 'node:path'
+import { join } from 'node:path'
 
 const assetsPath = assets('Hangman')
-const listsByName = readdirSync(assetsPath).map(f => f.replace(extname(f), ''))
 const cachedLists = new Map<string, string[]>()
 const currentGames = new Set<Snowflake>()
 const images = [
@@ -166,20 +164,9 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const shouldList = interaction.options.getSubcommand() === 'list'
         const listName = interaction.options.getString('lists') ?? 'presidents'
-
-        if (shouldList) {
-            const lists = listsByName
-                .map(l => `• ${inlineCode(l)}`)
-                .join('\n')
-
-            return {
-                content: `✅ Here are the word lists that you can play:\n${lists}`
-            }
-        }
-
         let words: string[] = []
+
         if (cachedLists.has(listName)) {
             words = cachedLists.get(listName)!
         } else {
