@@ -228,6 +228,7 @@ export class kSubCommand extends InteractionSubCommand {
                     const hint = game.hint()
 
                     await i.reply({
+                        ...game.toJSON(),
                         content: `❓ Your hint is ${hint}!`,
                         ephemeral: true
                     })
@@ -285,6 +286,7 @@ export class kSubCommand extends InteractionSubCommand {
                 }
 
                 await i.reply({
+                    ...json,
                     content: `Checking your guess: ${inlineCode(guess)}.`,
                     ephemeral: true
                 })
@@ -295,7 +297,10 @@ export class kSubCommand extends InteractionSubCommand {
 
         currentGames.delete(interaction.user.id)
         await interaction.editReply({
-            components: disableAll(m)
+            components: disableAll(m),
+            content: c.endReason === 'idle'
+                ? `By the way, the word was ${inlineCode(word)}!`
+                : null
         })
     }
 }
