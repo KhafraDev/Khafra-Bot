@@ -5,7 +5,10 @@ interface Package {
     _rev: string,
     name: string,
     description: string,
-    'dist-tags': KeyString,
+    'dist-tags': {
+        latest: string
+        [key: string]: string | undefined
+    },
     versions: {
         [key: string]: {
             name: string

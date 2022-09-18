@@ -25,9 +25,9 @@ export class kCommand extends Command {
     }
 
     async init (_message: Message, { content }: Arguments): Promise<string | APIEmbed> {
-        const results = await weather(content)
+        const results = await weather(content).catch(() => null)
 
-        if (!results) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+        if (!results) {
             return '❌ An unexpected error occurred!'
         } else if ('Type' in results) {
             return `❌ ${results.Type}`

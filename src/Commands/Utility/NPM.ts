@@ -33,7 +33,6 @@ export class kCommand extends Command {
         }
 
         const ver = version.startsWith('v') ? version.slice(1) : version
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         const dist = p.versions[p['dist-tags'][ver] ?? p['dist-tags']['latest']]
 
         const maintainers = dist.maintainers
