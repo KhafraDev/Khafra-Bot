@@ -13,8 +13,7 @@ const characters = createFileWatcher(
 )
 
 const keys = (Object.keys(characters) as (keyof typeof characters)[])
-    .map(k => characters[k].map(char => char.name))
-    .flat()
+    .flatMap(k => characters[k].map(char => char.name))
 
 export class kAutocomplete extends InteractionAutocomplete {
     constructor () {

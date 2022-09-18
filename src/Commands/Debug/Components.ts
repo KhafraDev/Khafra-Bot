@@ -1,12 +1,11 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-
-type ComponentTypes = Exclude<keyof typeof Buttons, 'link'>
+import { randomUUID } from 'node:crypto'
 
 const inRange = Range({ min: 1, max: 5, inclusive: true })
 
@@ -33,13 +32,13 @@ export class kCommand extends Command {
             return Embed.error('Invalid number of buttons to add!')
 
         const row = Components.actionRow()
-        const keys = Object.keys(Buttons) as ComponentTypes[]
-        keys.splice(keys.findIndex(i => `${i}` === 'link'), 1)
+        const keys = Object.keys(Buttons) as (keyof typeof Buttons)[]
+        keys.splice(keys.indexOf('link'), 1)
 
         for (let i = 0; i < amount; i++) {
             const type = keys[Math.floor(Math.random() * keys.length)]
             const disabled = Boolean(Math.round(Math.random()))
-            const button = Buttons[type](type)
+            const button = Buttons[type as Exclude<keyof typeof Buttons, 'link'>](type, randomUUID())
             button.disabled = disabled
 
             row.components.push(button)

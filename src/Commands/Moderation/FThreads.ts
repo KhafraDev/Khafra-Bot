@@ -83,7 +83,7 @@ export class kCommand extends Command {
         )
 
         const pr: Promise<GuildChannel>[] = []
-        for (const [, channel] of channels) {
+        for (const channel of channels.values()) {
             const overwrites = channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id)
             const denied = overwrites?.deny.has(threadPerms)
 
