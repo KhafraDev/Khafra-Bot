@@ -24,15 +24,22 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const text = interaction.options.getString('input', true)
-        const qrcode = Buffer.from(qrcodeImage(text), text.length)
+        try {
+            const text = interaction.options.getString('input', true)
+            const qrcode = Buffer.from(qrcodeImage(text), text.length)
 
-        return {
-            files: [{
-                attachment: qrcode,
-                name: 'qr.png',
-                description: 'A QR Code!'
-            }]
+            return {
+                files: [{
+                    attachment: qrcode,
+                    name: 'qr.png',
+                    description: 'A QR Code!'
+                }]
+            }
+        } catch {
+            return {
+                content: 'Could not create a qr code. Input was too long.',
+                ephemeral: true
+            }
         }
     }
 }
