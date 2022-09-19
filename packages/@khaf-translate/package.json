@@ -25,11 +25,5 @@
   "bugs": {
     "url": "https://github.com/khafradev/Khafra-Bot/issues"
   },
-  "homepage": "https://github.com/khafradev/Khafra-Bot#readme",
-  "devDependencies": {
-    "@types/node": "^18.7.13"
-  },
-  "dependencies": {
-    "undici": "^5.0.0"
-  }
+  "homepage": "https://github.com/khafradev/Khafra-Bot#readme"
 }
