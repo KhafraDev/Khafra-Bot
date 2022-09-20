@@ -11,7 +11,7 @@ const cleanup = once(async (...args: [unknown?, unknown?]) => {
 
         logger.debug({
             args,
-            stack: Reflect.get(obj, 'stack') as string
+            stack: `${Reflect.get(obj, 'stack')}`
         })
     }
 
