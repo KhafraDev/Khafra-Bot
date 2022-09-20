@@ -1,8 +1,17 @@
-type Turn = 'X' | 'O' | null
+export type Turn = 'X' | 'O' | null
+
+export type Difficulty = 'easy' | 'normal' | 'impossible'
 
 export class TicTacToe {
-    public board: Turn[] = Array(9).fill(null) as Turn[]
+    #turns = 0
+    #difficulty: Difficulty
+
+    public board: Turn[] = Array<null>(9).fill(null)
     public turn: Turn = 'X'
+
+    public constructor (difficulty: Difficulty) {
+        this.#difficulty = difficulty
+    }
 
     /** Go at a given position (0-8) */
     public go(at: number): true | Turn {
@@ -10,6 +19,7 @@ export class TicTacToe {
             return this.turn
 
         this.board[at] = this.turn
+        this.#turns++
 
         if (this.winner())
             return this.turn
@@ -22,26 +32,63 @@ export class TicTacToe {
     public botGo(): true | undefined | Turn {
         const lines = [
             // horizontal
-            [0, 1, 2], [1, 2, 0], [0, 2, 1],
-            [3, 4, 5], [4, 5, 3], [3, 5, 4],
-            [6, 7, 8], [7, 8, 6], [6, 8, 7],
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
             // vertical
-            [0, 3, 6], [3, 6, 0], [0, 6, 3],
-            [0, 3, 6], [4, 7, 1], [1, 7, 4],
-            [2, 5, 8], [5, 8, 2], [2, 8, 5],
+            [0, 3, 6], [4, 7, 1], [2, 5, 8],
             // diagonal
-            [0, 4, 8], [4, 8, 0], [0, 8, 4],
-            [2, 4, 6], [4, 6, 2], [2, 6, 4]
+            [0, 4, 8], [2, 4, 6]
         ]
 
-        for (const [a, b, c] of lines) {
-            if (
-            // if there are any spots where a person could win in the next move, go there
-                ((this.board[a] === 'X' && this.board[b] === 'X') ||
-                (this.board[a] === 'O' && this.board[b] === 'O')) &&
-                this.board[c] === null // otherwise, just go somewhere empty
-            )  {
-                return this.go(c)
+        if (this.#difficulty !== 'easy') {
+            let potential: number | undefined
+
+            for (const [a, b, c] of lines) {
+                const atA = this.board[a]
+                const atB = this.board[b]
+                const atC = this.board[c]
+
+                // If two spots in the same row are empty, ignore it.
+                if (
+                    atA === null && atB === null ||
+                    atA === null && atC === null ||
+                    atB === null && atC === null
+                ) {
+                    continue
+                }
+
+                // If the difficulty is medium, have a 50% chance
+                // of throwing the game.
+                if (this.#difficulty === 'normal' && Math.random() * 10 < 5) {
+                    continue
+                }
+
+                // Find the first row where 1 space is empty and 2
+                // spaces are controlled by the same player.
+                // It also prioritizes choosing a spot where both
+                // taken spaces are controlled by the bot.
+                if (atC === null && atA === atB) {
+                    if (atA === 'X') {
+                        potential = c
+                    } else {
+                        return this.go(c)
+                    }
+                } else if (atB === null && atA === atC) {
+                    if (atA === 'X') {
+                        potential = b
+                    } else {
+                        return this.go(b)
+                    }
+                } else if (atA === null && atB === atC) {
+                    if (atB === 'X') {
+                        potential = a
+                    } else {
+                        return this.go(a)
+                    }
+                }
+            }
+
+            if (potential !== undefined) {
+                return this.go(potential)
             }
         }
 
@@ -60,7 +107,7 @@ export class TicTacToe {
 
     /** Detect if the board is full */
     public isFull(): boolean {
-        return this.board.every(b => b !== null)
+        return this.#turns === 9
     }
 
     public winner(): boolean {

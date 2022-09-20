@@ -61,7 +61,19 @@ export class kInteraction extends Interactions {
                 {
                     type: ApplicationCommandOptionType.Subcommand,
                     name: 'tictactoe',
-                    description: 'Play a game of Tic-Tac-Toe!'
+                    description: 'Play a game of Tic-Tac-Toe!',
+                    options: [
+                        {
+                            type: ApplicationCommandOptionType.String,
+                            name: 'difficulty',
+                            description: 'Play more challenging versions of the game.',
+                            choices: [
+                                { name: 'easy', value: 'easy' },
+                                { name: 'normal', value: 'normal' },
+                                { name: 'impossible', value: 'impossible' }
+                            ]
+                        }
+                    ]
                 },
                 {
                     type: ApplicationCommandOptionType.Subcommand,

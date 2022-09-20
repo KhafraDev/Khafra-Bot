@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { chunkSafe } from '#khaf/utility/Array.js'
-import { TicTacToe } from '#khaf/utility/commands/TicTacToe'
+import { TicTacToe, type Turn, type Difficulty } from '#khaf/utility/commands/TicTacToe'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { randomUUID } from 'node:crypto'
 import {
@@ -10,9 +10,7 @@ import {
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 
-type Board = ('X' | 'O' | null)[]
-
-const makeRows = (turns: Board, id: string, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
     const rows: APIButtonComponent[] = []
 
     for (let i = 0; i < turns.length; i++) {
@@ -43,7 +41,8 @@ export class kSubCommand extends InteractionSubCommand {
 
     async handle (interaction: ChatInputCommandInteraction): Promise<void> {
         const id = randomUUID()
-        const game = new TicTacToe()
+        const difficulty = interaction.options.getString('difficulty') ?? 'easy'
+        const game = new TicTacToe(difficulty as Difficulty)
         const int = await interaction.editReply({
             content: 'Tic-Tac-Toe',
             components: makeRows(game.board, id)
