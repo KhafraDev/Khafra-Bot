@@ -89,7 +89,7 @@ export class kInteraction extends Interactions {
 
         if (subcommand === 'info') {
             const memoryMB = memoryUsage().heapUsed / 2 ** 20 // same as 1024 * 1024
-            const uptime = getUptime(interaction.client.uptime ?? 0)
+            const uptime = getUptime(interaction.client.uptime)
 
             const embed = Embed.json({
                 color: colors.ok,

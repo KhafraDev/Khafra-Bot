@@ -26,8 +26,8 @@ export class kCommand extends Command {
         return Embed.json({
             color: colors.ok,
             author: {
-                name: message.client.user!.username,
-                icon_url: message.client.user!.displayAvatarURL()
+                name: message.client.user.username,
+                icon_url: message.client.user.displayAvatarURL()
             },
             timestamp: new Date().toISOString(),
             thumbnail: message.guild.icon ? { url: message.guild.iconURL()! } : undefined,

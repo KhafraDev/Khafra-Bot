@@ -8,7 +8,7 @@ import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { ChannelType } from 'discord-api-types/v10'
-import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
+import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
 
 const cooldownUsers = cooldown(10, 60000)
@@ -73,7 +73,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 return
             }
 
-            const param: ReplyMessageOptions = {
+            const param: MessageReplyOptions = {
                 failIfNotExists: false
             }
 

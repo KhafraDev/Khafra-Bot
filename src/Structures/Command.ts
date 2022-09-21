@@ -37,7 +37,7 @@ type HandlerReturn =
     | string
     | import('discord-api-types/v10').APIEmbed
     | import('discord.js').Attachment
-    | import('discord.js').ReplyMessageOptions
+    | import('discord.js').MessageReplyOptions
     | void
     | null
 

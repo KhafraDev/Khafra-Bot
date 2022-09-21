@@ -14,7 +14,7 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
-import { Attachment, DiscordAPIError, Events, Message, type ReplyMessageOptions } from 'discord.js'
+import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
@@ -152,9 +152,9 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
             if (!returnValue || returnValue instanceof Message)
                 return
 
-            const param = {
+            const param: MessageReplyOptions = {
                 failIfNotExists: false
-            } as ReplyMessageOptions
+            }
 
             if (typeof returnValue === 'string') {
                 param.content = returnValue

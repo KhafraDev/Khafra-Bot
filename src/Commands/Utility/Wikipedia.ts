@@ -6,7 +6,7 @@ import { ellipsis, plural } from '#khaf/utility/String.js'
 import { hideLinkEmbed, inlineCode } from '@discordjs/builders'
 import { getArticleById, search } from '@khaf/wikipedia'
 import { InteractionType } from 'discord-api-types/v10'
-import type { ReplyMessageOptions, SelectMenuInteraction } from 'discord.js'
+import type { MessageReplyOptions, SelectMenuInteraction } from 'discord.js'
 import { InteractionCollector, type Message } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 
@@ -29,7 +29,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init (message: Message, { content }: Arguments): Promise<ReplyMessageOptions | undefined> {
+    async init (message: Message, { content }: Arguments): Promise<MessageReplyOptions | undefined> {
         const [err, wiki] = await dontThrow(search(content))
 
         if (err !== null) {

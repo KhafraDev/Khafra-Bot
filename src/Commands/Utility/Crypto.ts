@@ -4,7 +4,7 @@ import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { bold, time } from '@discordjs/builders'
 import type { APIEmbed, APIEmbedField } from 'discord-api-types/v10'
-import type { Message, ReplyMessageOptions } from 'discord.js'
+import type { Message, MessageReplyOptions } from 'discord.js'
 
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format
 const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format
@@ -31,7 +31,7 @@ export class kCommand extends Command {
         )
     }
 
-    async init (_message: Message, { content }: Arguments): Promise<ReplyMessageOptions | APIEmbed> {
+    async init (_message: Message, { content }: Arguments): Promise<MessageReplyOptions | APIEmbed> {
         const currency = await CoinGecko.get(content)
 
         if (currency === null) {

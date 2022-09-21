@@ -7,7 +7,7 @@ import { hasPerms } from '#khaf/utility/Permissions.js'
 import { bold, inlineCode, italic } from '@discordjs/builders'
 import type { APIEmbed} from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { GuildChannel, Message } from 'discord.js'
+import type { GuildChannel, Message, NonThreadGuildBasedChannel } from 'discord.js'
 
 const threadPerms =
     PermissionFlagsBits.ManageThreads |
@@ -75,7 +75,8 @@ export class kCommand extends Command {
             return Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`)
         }
 
-        const channels = allChannels.filter(c =>
+        const channels = allChannels.filter((c): c is NonThreadGuildBasedChannel =>
+            c !== null &&
             !isStage(c) &&
             !isThread(c) &&
             !isVoice(c) &&
