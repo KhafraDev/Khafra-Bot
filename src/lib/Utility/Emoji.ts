@@ -21,7 +21,7 @@ type Matches<T extends string> = T extends `${infer _}?<${infer U}>${infer Rest}
     ? U | Matches<Rest>
     : never
 
-type RecordFromMatch<T extends string>={
+type RecordFromMatch<T extends string> = {
     [Key in Matches<T>]: string | undefined
 }
 
@@ -38,6 +38,11 @@ const typedRegexMatchAll = <
     }
 }
 
+// # (sub)group: face-neutral-skeptical
+//	   ^	^--- is group   ^
+//	   └-- is sub group     └-- group name
+// 1F910                                                  ; fully-qualified     # 🤐 E1.0 zipper-mouth face
+//   ^ codepoint(s)                                              ^ identifier                ^ comment
 const matchFn = typedRegexMatchAll(
     '^((?<codePoints>.*?)\\s+; (?<identifier>[a-z-]+)\\s+# (?<comment>(.*?))|# (?<isSub>sub)?group: (?<group>(.*?)))$',
     'gm'
