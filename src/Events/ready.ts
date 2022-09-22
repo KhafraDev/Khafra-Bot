@@ -1,11 +1,10 @@
-import { client } from '#khaf/Client'
 import { Event } from '#khaf/Event'
 import { logger } from '#khaf/structures/Logger.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
-import { Events } from 'discord.js'
+import { Events, type Client } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
@@ -13,7 +12,7 @@ const config = createFileWatcher({} as typeof import('../../config.json'), join(
 export class kEvent extends Event<typeof Events.ClientReady> {
     name = Events.ClientReady as const
 
-    async init (): Promise<void> {
+    async init (client: Client<true>): Promise<void> {
         const s = `Logged in at ${new Date()}`
         logger.info(s)
 
@@ -31,5 +30,9 @@ export class kEvent extends Event<typeof Events.ClientReady> {
                 logger.warn('Logged in! Could not send message to the bot owner.')
             }
         }
+
+        await client.application.commands.fetch().catch(
+            (err) => logger.error(err, 'error fetching commands')
+        )
     }
 }

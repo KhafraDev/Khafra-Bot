@@ -11,8 +11,10 @@ import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode } from '@discordjs/builders'
 import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
@@ -55,6 +57,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         if (!Sanitize(message)) return
 
         const [mention, name = '', ...args] = message.content.split(/\s+/g)
+        const commandName = name.toLowerCase()
         MessagesLRU.set(message.id, message)
 
         if (
@@ -63,11 +66,35 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
             mention !== `<@${config.botId}>`
         ) {
             return
-        } else if (!KhafraClient.Commands.has(name.toLowerCase())) {
+        } else if (!KhafraClient.Commands.has(commandName)) {
             return
         }
 
-        const command = KhafraClient.Commands.get(name.toLowerCase())!
+        const command = KhafraClient.Commands.get(commandName)!
+        // @PseudoBot say hello world -> hello world
+        const content = message.content.slice(mention.length + name.length + 2)
+
+        const interactionCache = message.client.application.commands.cache
+        const appCommand = interactionCache.find(({ name }) => {
+            return name === command.settings.name || !!command.settings.aliases?.includes(name)
+        })
+
+        if (appCommand !== undefined) {
+            // TODO: use `chatInputApplicationCommandMention` from @discordjs/builders
+            // once a new version (past v1.2.0) has been released.
+            // https://github.com/discord/discord-api-docs/pull/5186/files
+            const commandMention: `</${string}>` = command.appSuggestion
+                ? command.appSuggestion(appCommand, { args, content, commandName })
+                : `</${appCommand.name}:${appCommand.id}>`
+
+            return void message.reply({
+                content: stripIndents`
+                Hey ${message.member ?? message.author}, use the slash command version instead!
+                ${commandMention}
+                `
+            }).catch(logError)
+        }
+
         let guild!: typeof defaultSettings | kGuild
 
         if (command.init.length === 3) {
@@ -84,9 +111,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 guild = { ...defaultSettings }
             }
         }
-
-        // @PseudoBot say hello world -> hello world
-        const content = message.content.slice(mention.length + name.length + 2)
 
         // command cooldowns are based around the commands name, not aliases
         const limited = command.rateLimit.isRateLimited(message.author.id)
@@ -152,7 +176,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
         Stats.session++
 
         try {
-            const options: Arguments = { args, commandName: name.toLowerCase(), content }
+            const options: Arguments = { args, commandName, content }
             const returnValue = await command.init(message, options, guild)
             if (!returnValue || returnValue instanceof Message)
                 return

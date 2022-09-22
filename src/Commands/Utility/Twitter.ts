@@ -1,10 +1,4 @@
-import type { Arguments} from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
-import type { APIEmbed } from 'discord-api-types/v10'
-import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -22,23 +16,5 @@ export class kCommand extends Command {
         )
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<APIEmbed | string> {
-        const { hostname, pathname } = URLFactory(args[0]) ?? {}
-
-        if (hostname !== 'twitter.com' || !pathname)
-            return '❌ Not a Twitter status!'
-
-        // Your username can only contain letters, numbers and '_'
-        // Your username must be shorter than 15 characters.
-        if (!/\/[A-z0-9_]{3,15}\/status\/\d{17,19}$/.test(pathname))
-            return '❌ Invalid Twitter status!'
-
-        const id = /\/(\d+)$/.exec(pathname)![1]
-        const media = await getTwitterMediaURL(id)
-
-        if (!media)
-            return '❌ No media found in Tweet!'
-
-        return Embed.ok(media)
-    }
+    async init (): Promise<void> {}
 }

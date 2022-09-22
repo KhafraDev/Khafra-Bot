@@ -3,7 +3,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { Message, PermissionResolvable, Snowflake } from 'discord.js'
+import type { ApplicationCommand, Message, PermissionResolvable, Snowflake } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
@@ -30,6 +30,7 @@ interface ICommand {
         readonly aliases?: string[]
         readonly guildOnly?: boolean
         readonly ownerOnly?: boolean
+        readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
     }
 }
 
@@ -43,6 +44,8 @@ type HandlerReturn =
 
 export abstract class Command implements ICommand {
     readonly rateLimit: Cooldown
+
+    readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
 
     /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
     readonly permissions: PermissionResolvable[] = [
@@ -61,6 +64,10 @@ export abstract class Command implements ICommand {
         this.permissions = this.permissions.concat(settings.permissions ?? [])
         this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] })
         this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
+
+        if (settings.appSuggestion !== undefined) {
+            this.appSuggestion = settings.appSuggestion
+        }
     }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):

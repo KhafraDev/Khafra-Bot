@@ -1,7 +1,4 @@
 import { Command } from '#khaf/Command'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import type { APIEmbed } from 'discord-api-types/v10'
-import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
     constructor () {
@@ -20,9 +17,5 @@ export class kCommand extends Command {
         )
     }
 
-    async init (message: Message<true>): Promise<APIEmbed> {
-        return Embed.ok(`
-        There are **${message.guild.memberCount.toLocaleString()}** members in ${message.guild.name}!
-        `)
-    }
+    async init (): Promise<void> {}
 }

@@ -9,8 +9,6 @@ import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
 import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-let folders: string[]
-
 export class kCommand extends Command {
     constructor () {
         super(
@@ -30,7 +28,7 @@ export class kCommand extends Command {
     }
 
     async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
-        folders ??= [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))]
+        const folders = [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))]
 
         if (args.length !== 0) {
             const commandName = args[0].toLowerCase()
@@ -97,7 +95,7 @@ export class kCommand extends Command {
         c.on('collect', (i) => {
             if (i.isSelectMenu()) {
                 const category = i.values[0]
-                if (!folders!.includes(category)) return
+                if (!folders.includes(category)) return
 
                 pages = []
                 page = 0
