@@ -1,17 +1,14 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { once } from '#khaf/utility/Memoize.js'
+import { logError } from '#khaf/utility/Rejections.js'
 import { Range } from '#khaf/utility/Valid/Number.js'
 import type { ImageURLOptions } from '@discordjs/rest'
-import { ImageMagick, initializeImageMagick } from '@imagemagick/magick-wasm'
-import { MagickFormat } from '@imagemagick/magick-wasm/magick-format.js'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import type { Attachment } from 'discord.js'
+import { magik } from '@khaf/magik'
+import type { Attachment, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
 const options: ImageURLOptions = { extension: 'png', size: 256 }
-const mw = once(initializeImageMagick)
 const dimensionRange = Range({ min: 1, max: 1024 })
 
 export class kSubCommand extends InteractionSubCommand {
@@ -28,23 +25,34 @@ export class kSubCommand extends InteractionSubCommand {
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
 			interaction.user.displayAvatarURL(options)
 
-        const buffer = await this.image(option)
+        try {
+            const buffer = await this.image(option)
 
-        if (typeof buffer === 'string') {
-            return { content: buffer, ephemeral: true }
-        }
+            if (typeof buffer === 'string') {
+                return { content: buffer, ephemeral: true }
+            }
 
-        return {
-            files: [
-                {
-                    attachment: Buffer.from(buffer, buffer.byteOffset, buffer.byteLength),
-                    name: 'magik.png'
-                }
-            ]
+            return {
+                files: [
+                    {
+                        attachment: Buffer.from(buffer, buffer.byteOffset, buffer.byteLength),
+                        name: 'magik.png'
+                    }
+                ]
+            }
+        } catch (e) {
+            if (e instanceof Error) {
+                logError(e)
+            }
+
+            return {
+                content: '❌ An unexpected error occurred',
+                ephemeral: true
+            }
         }
     }
 
-    async image (avatarURL: string | Attachment): Promise<Uint8Array | string> {
+    async image (avatarURL: string | Attachment): Promise<Uint8ClampedArray | string> {
         if (typeof avatarURL === 'string') {
             if (!ImageUtil.isImage(avatarURL)) {
             	return '❌ This file type is not supported.'
@@ -62,18 +70,6 @@ export class kSubCommand extends InteractionSubCommand {
         const { body } = await request(typeof avatarURL === 'string' ? avatarURL : avatarURL.proxyURL)
         const buffer = new Uint8Array(await body.arrayBuffer())
 
-        const init = await mw()
-
-        if (init === null) return this.image(avatarURL)
-
-        return new Promise<Uint8Array>((res) => {
-            ImageMagick.read(buffer, (image) => {
-                image.liquidRescale(image.width * .5, image.height * .5)
-                image.liquidRescale(image.width * 1.5, image.height * 1.5)
-                image.resize(256, 256)
-
-                image.write(res, MagickFormat.Png)
-            })
-        })
+        return magik(buffer)
     }
 }
