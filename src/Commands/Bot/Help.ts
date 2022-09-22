@@ -1,13 +1,12 @@
 import { KhafraClient } from '#khaf/Bot'
-import type { Arguments} from '#khaf/Command'
-import { Command } from '#khaf/Command'
+import { Command, type Arguments } from '#khaf/Command'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
 import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 export class kCommand extends Command {
     constructor () {
@@ -60,9 +59,10 @@ export class kCommand extends Command {
             })
         }
 
+        const id = randomUUID()
         const categoryComponent = Components.actionRow([
             Components.selectMenu({
-                custom_id: 'help',
+                custom_id: `help-${id}`,
                 placeholder: 'Select a category of commands!',
                 options: folders.map((f) => ({
                     label: f,
@@ -81,24 +81,25 @@ export class kCommand extends Command {
                 `)
             ],
             components: [categoryComponent]
-        }) as Message<true>
-
-        let pages: APIEmbed[] = [],
-            page = 0
-
-        const c = m.createMessageComponentCollector({
-            time: 60_000,
-            max: 10,
-            filter: (interaction) => interaction.user.id === message.author.id
         })
 
-        c.on('collect', (i) => {
+        const collector = m.createMessageComponentCollector({
+            idle: 60_000,
+            max: 10,
+            filter: (i) =>
+                i.user.id === message.author.id &&
+                i.customId.endsWith(`-${id}`)
+        })
+
+        const pages: APIEmbed[] = []
+        let page = 0
+
+        for await (const [i] of collector) {
             if (i.isSelectMenu()) {
                 const category = i.values[0]
-                if (!folders.includes(category)) return
 
-                pages = []
-                page = 0
+                pages.length = page = 0
+
                 const all: Command[] = []
 
                 for (const command of KhafraClient.Commands.values()) {
@@ -111,56 +112,65 @@ export class kCommand extends Command {
                 for (const chunk of chunkSafe(all, 20)) {
                     let desc = ''
                     for (const { settings, help } of chunk) {
-                        if (help[0])
+                        if (help[0]) {
                             desc += `${bold(settings.name)}: ${inlineCode(help[0].slice(0, 190 - settings.name.length))}\n`
-                        else
+                        } else {
                             desc += `${bold(settings.name)}: ${inlineCode('No description')}`
+                        }
                     }
 
                     pages.push(Embed.ok(desc))
                 }
 
-                const components: APIActionRowComponent<APIMessageActionRowComponent>[] = []
+                const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [
+                    categoryComponent
+                ]
+
                 if (pages.length > 1) {
                     components.push(
                         Components.actionRow([
-                            Buttons.deny('Previous', 'previous'),
-                            Buttons.approve('Next', 'next'),
-                            Buttons.secondary('Stop', 'stop')
+                            Buttons.deny('Previous', `previous-${id}`),
+                            Buttons.approve('Next', `next-${id}`),
+                            Buttons.secondary('Stop', `stop-${id}`)
                         ])
                     )
                 }
 
-                components.push(categoryComponent)
-
-                return void dontThrow(i.update({
+                await i.update({
                     embeds: [pages[page]],
                     components
-                }))
+                })
             } else {
-                if (i.customId === 'stop') {
-                    c.stop()
-                    return void dontThrow(i.update({ components: disableAll(m) }))
-                } else if (i.customId === 'previous') {
-                    page = --page < 0 ? pages.length - 1 : page
-                } else {
-                    page = ++page >= pages.length ? 0 : page
+                const [customId] = i.customId.split('-')
+
+                if (customId === 'stop') {
+                    collector.stop()
+                    break
                 }
 
-                return void dontThrow(i.update({ embeds: [pages[page]] }))
-            }
-        })
+                customId === 'next' ? page++ : page--
+                if (page < 0) page = pages.length - 1
+                if (page >= pages.length) page = 0
 
-        c.once('end', () => {
-            for (const { components } of m.components) {
-                for (const component of components) {
-                    if (component.disabled) return
-                }
+                await i.update({
+                    embeds: [pages[page]]
+                })
             }
+        }
 
-            return void dontThrow<Message<boolean>>(m.edit({
+        const last = collector.collected.last()
+
+        if (
+            collector.collected.size !== 0 &&
+            last?.replied === false
+        ) {
+            return void await last.update({
                 components: disableAll(m)
-            }))
+            })
+        }
+
+        return void await m.edit({
+            components: disableAll(m)
         })
     }
 }
