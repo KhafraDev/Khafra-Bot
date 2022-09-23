@@ -32,8 +32,6 @@ export interface Giveaway {
     didEnd: boolean
 }
 
-export type PartialGuild = Pick<kGuild, 'max_warning_points' | 'mod_log_channel' | 'welcome_channel'>;
-
 export interface kReminder {
     id: UUID4
     userId: string

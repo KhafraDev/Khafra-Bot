@@ -6,7 +6,7 @@ import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
@@ -25,12 +25,6 @@ export const config = createFileWatcher(
     {} as typeof import('../../config.json'),
     join(cwd, 'config.json')
 )
-
-const defaultSettings: PartialGuild = {
-    max_warning_points: 20,
-    mod_log_channel: null,
-    welcome_channel: null
-}
 
 export const _cooldownGuild = cooldown(30, 60000)
 export const _cooldownUsers = cooldown(10, 60000)
@@ -95,7 +89,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
             }).catch(logError)
         }
 
-        let guild!: typeof defaultSettings | kGuild
+        let guild: kGuild | undefined
 
         if (command.init.length === 3) {
             const rows = await sql<[kGuild?]>`
@@ -105,11 +99,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 LIMIT 1;
             `
 
-            if (rows.length !== 0) {
-                guild = { ...defaultSettings, ...rows.shift() }
-            } else {
-                guild = { ...defaultSettings }
-            }
+            guild = rows[0]
         }
 
         // command cooldowns are based around the commands name, not aliases

@@ -5,7 +5,7 @@ import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
-import type { kGuild, PartialGuild } from '#khaf/types/KhafraBot.js'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isDM } from '#khaf/utility/Discord.js'
@@ -24,12 +24,6 @@ const config = createFileWatcher(
     {} as typeof import('../../config.json'),
     join(cwd, 'config.json')
 )
-
-const defaultSettings: PartialGuild = {
-    max_warning_points: 20,
-    mod_log_channel: null,
-    welcome_channel: null
-}
 
 const { values: processArgs } = parseArgs({
     args: argv.slice(2),
@@ -63,7 +57,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
         }
 
         const command = KhafraClient.Commands.get(name.toLowerCase())!
-        let guild!: typeof defaultSettings | kGuild
+        let guild: kGuild | undefined
 
         if (command.init.length === 3) {
             const rows = await sql<[kGuild?]>`
@@ -73,11 +67,7 @@ export class kEvent extends Event<typeof Events.MessageUpdate> {
                 LIMIT 1;
             `
 
-            if (rows.length !== 0) {
-                guild = { ...defaultSettings, ...rows.shift() }
-            } else {
-                guild = { ...defaultSettings }
-            }
+            guild = rows[0]
         }
 
         // !say hello world -> hello world
