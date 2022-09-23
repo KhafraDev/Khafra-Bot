@@ -29,7 +29,7 @@
     "@discordjs/rest": "^1.1.0",
     "@khaf/magik": "^0.0.3",
     "@khaf/qrcode": "^0.0.10",
-    "@napi-rs/canvas": "^0.1.28",
+    "@napi-rs/canvas": "^0.1.30",
     "@sapphire/shapeshift": "^3.6.0",
     "@skyra/gifenc": "^1.0.0",
     "discord-api-types": "^0.37.10",
