@@ -60,7 +60,7 @@ const getEmojis = once(() => {
 })
 
 const GUILD_EMOJI_REG = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
-const config = createFileWatcher({} as typeof import('../../../config.json'), join(cwd, 'config.json'))
+const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 const emojis = new Map<UserFlagsString, string | undefined>()
 
 export class kInteraction extends Interactions {

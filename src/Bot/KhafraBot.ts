@@ -24,7 +24,7 @@ type DynamicImportAppCommand =
     | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>
     | Promise<{ kUserCommand: new () => InteractionUserCommand }>
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
+const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 const toBase64 = (command: unknown): string => Buffer.from(JSON.stringify(command)).toString('base64')
 const setInteractionIds = (commands: APIApplicationCommand[]): void => {
     for (const { name, id } of commands) {

@@ -26,14 +26,14 @@
   },
   "dependencies": {
     "@discordjs/builders": "^1.2.0",
-    "@discordjs/rest": "^1.1.0",
+    "@discordjs/rest": "^1.2.0",
     "@khaf/magik": "^0.0.3",
     "@khaf/qrcode": "^0.0.10",
     "@napi-rs/canvas": "^0.1.30",
     "@sapphire/shapeshift": "^3.6.0",
     "@skyra/gifenc": "^1.0.0",
     "discord-api-types": "^0.37.10",
-    "discord.js": "^14.4.0",
+    "discord.js": "^14.5.0",
     "entities": "^4.4.0",
     "fast-xml-parser": "^4.0.10",
     "pino": "^8.6.0",
@@ -42,11 +42,11 @@
     "undici": "^5.10.0"
   },
   "devDependencies": {
-    "@types/node": "^18.7.18",
+    "@types/node": "^18.7.21",
     "@types/twemoji-parser": "^13.1.1",
     "@typescript-eslint/eslint-plugin": "^5.38.0",
     "@typescript-eslint/parser": "^5.38.0",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "husky": "^8.0.1",
     "typescript": "^4.8.3"
   },

@@ -1,7 +1,7 @@
 import { InteractionUserCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import * as util from '#khaf/utility/Discord/util.js'
+import * as util from '#khaf/utility/util.js'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import { PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandType } from 'discord-api-types/v10'

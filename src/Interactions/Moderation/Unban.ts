@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import * as util from '#khaf/utility/Discord/util.js'
+import * as util from '#khaf/utility/util.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
 import {

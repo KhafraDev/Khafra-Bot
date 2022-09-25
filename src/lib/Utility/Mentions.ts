@@ -8,7 +8,7 @@ import {
     type Snowflake,
     type User
 } from 'discord.js'
-import * as util from '#khaf/utility/Discord/util.js'
+import * as util from '#khaf/utility/util.js'
 
 type MentionTypes = User | Channel | GuildMember | Role
 

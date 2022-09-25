@@ -13,7 +13,7 @@ import { join } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { memoryUsage, version } from 'node:process'
 
-const pkg = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'))
+const pkg = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
 const getUptime = (ms: number): string => {
     return Object.entries({

@@ -12,8 +12,7 @@ import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions 
 import { join } from 'node:path'
 
 const cooldownUsers = cooldown(10, 60000)
-const config = createFileWatcher(
-    {} as typeof import('../../config.json'),
+const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
 )
 

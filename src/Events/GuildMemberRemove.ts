@@ -12,7 +12,7 @@ import { join } from 'node:path'
 
 type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
+const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 const basic =
     PermissionFlagsBits.ViewChannel |

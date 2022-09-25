@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText, isThread } from '#khaf/utility/Discord.js'
-import * as util from '#khaf/utility/Discord/util.js'
+import * as util from '#khaf/utility/util.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import { bold, time } from '@discordjs/builders'
 import type {

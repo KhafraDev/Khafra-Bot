@@ -7,8 +7,7 @@ import { join } from 'node:path'
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json')
 
-const characters = createFileWatcher(
-    {} as Characters,
+const characters = createFileWatcher<Characters>(
     join(cwd, 'packages/15.ai/Characters.json')
 )
 

@@ -1,17 +1,15 @@
-import { readFileSync, watch } from 'node:fs'
-import { readFile, access } from 'node:fs/promises'
+import { readFileSync, watch, existsSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 
 type Watcher = Record<string, unknown> | unknown[]
 
 const watchers = new Map<string, Watcher>()
 
-const exists = async (file: string): Promise<boolean> =>
-    access(file).then(() => true, () => false)
+export const createFileWatcher = <F extends Watcher>(path: string): F => {
+    const watcher = watchers.get(path)
 
-export const createFileWatcher = <F extends Watcher>(storage: F, path: string): F => {
-    if (watchers.has(path)) {
-        return watchers.get(path)! as F
+    if (watcher !== undefined) {
+        return watcher as F
     }
 
     const dir = dirname(path)
@@ -19,8 +17,9 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string): 
     const descriptors: PropertyDescriptor = { enumerable: true, configurable: true, writable: true }
 
     const file = JSON.parse(readFileSync(path, 'utf-8')) as F
+    const storage = (Array.isArray(file) ? [] : {}) as F
 
-    if (Array.isArray(storage) && Array.isArray(file)) {
+    if (Array.isArray(file) && Array.isArray(storage)) {
         storage.push(...file)
     } else {
         for (const [key, value] of Object.entries(file)) {
@@ -31,32 +30,26 @@ export const createFileWatcher = <F extends Watcher>(storage: F, path: string): 
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    watch(path, async (event, filename) => {
+    watch(path, (event, filename) => {
         if (event !== 'change') return
         if (base !== filename) return
-        if (!await exists(join(dir, filename))) return
+        if (!existsSync(join(dir, filename))) return
 
         let err: Error | null = null, file!: F
 
         try {
-            file = JSON.parse(await readFile(join(dir, filename), 'utf-8')) as F
+            file = JSON.parse(readFileSync(join(dir, filename), 'utf-8')) as F
         } catch (e) {
             err = e as Error
         }
 
         if (err === null) {
             if (Array.isArray(storage) && Array.isArray(file)) {
-                if (storage.length > file.length)
-                    storage.splice(storage.length)
-
-                for (let i = 0; i < file.length; i++) {
-                    storage.splice(i, 1)
-                    storage.push(file[i])
-                }
+                storage.length = 0
+                storage.push(...file)
             } else {
                 for (const [key, value] of Object.entries(file)) {
-                    delete (storage as Record<string, unknown>)[key]
+                    Reflect.deleteProperty(storage, key)
                     Object.defineProperty(storage, key, {
                         value,
                         ...descriptors

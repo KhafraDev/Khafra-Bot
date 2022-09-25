@@ -9,7 +9,7 @@ import { clearInterval, setInterval, setTimeout } from 'node:timers'
 import { setTimeout as delay } from 'node:timers/promises'
 import { request, type Dispatcher } from 'undici'
 
-const config = createFileWatcher({} as typeof import('../../../package.json'), join(cwd, 'package.json'))
+const config = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop: (() => void | Promise<void>) = () => {}

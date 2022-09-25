@@ -7,7 +7,7 @@ import { validSnowflake } from '#khaf/utility/Mentions.js'
 import { Events, type Client } from 'discord.js'
 import { join } from 'node:path'
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
+const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 export class kEvent extends Event<typeof Events.ClientReady> {
     name = Events.ClientReady as const

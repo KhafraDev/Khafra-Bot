@@ -47,6 +47,7 @@ module.exports = {
 		'no-trailing-spaces': 'error',
 		'no-whitespace-before-property': 'error',
 		'@typescript-eslint/semi': ['error', 'never'],
+		'space-before-blocks': 'error',
 
 		'no-empty': 'off',
 		'no-mixed-spaces-and-tabs': 'off',

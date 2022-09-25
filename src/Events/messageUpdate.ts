@@ -9,7 +9,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isDM } from '#khaf/utility/Discord.js'
-import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
+import { Sanitize } from '#khaf/utility/util.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
@@ -20,8 +20,7 @@ import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
 import { _cooldownGuild, _cooldownUsers } from './messageCreate.js'
 
-const config = createFileWatcher(
-    {} as typeof import('../../config.json'),
+const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
 )
 

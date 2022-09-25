@@ -5,7 +5,7 @@ import { writeFile } from 'node:fs/promises'
 import { setInterval } from 'node:timers'
 
 const path = Json('stats.json')
-const config = createFileWatcher({} as typeof import('../../../assets/JSON/stats.json'), path)
+const config = createFileWatcher<typeof import('../../../assets/JSON/stats.json')>(path)
 
 export class Stats {
     static messages = 0

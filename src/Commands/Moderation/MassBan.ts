@@ -1,6 +1,6 @@
 import { Command, type Arguments } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import * as util from '#khaf/utility/Discord/util.js'
+import * as util from '#khaf/utility/util.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
 import { inlineCode } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'

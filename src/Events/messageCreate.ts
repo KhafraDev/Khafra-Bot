@@ -9,7 +9,7 @@ import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { Sanitize } from '#khaf/utility/Discord/SanitizeMessage.js'
+import { Sanitize } from '#khaf/utility/util.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { Stats } from '#khaf/utility/Stats.js'
@@ -21,8 +21,7 @@ import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
 
-export const config = createFileWatcher(
-    {} as typeof import('../../config.json'),
+export const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
 )
 

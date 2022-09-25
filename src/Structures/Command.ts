@@ -6,7 +6,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ApplicationCommand, Message, PermissionResolvable, Snowflake } from 'discord.js'
 import { join } from 'node:path'
 
-const config = createFileWatcher({} as typeof import('../../config.json'), join(cwd, 'config.json'))
+const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 export interface Arguments {
     /** Default arguments, removes formatting (new lines, tabs, etc.) */

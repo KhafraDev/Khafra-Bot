@@ -13,7 +13,7 @@ import { join } from 'node:path'
 
 type Characters = typeof import('../../../packages/15.ai/Characters.json')
 
-const characters = createFileWatcher({}, join(cwd, 'packages/15.ai/Characters.json')) as Characters
+const characters = createFileWatcher<Characters>(join(cwd, 'packages/15.ai/Characters.json'))
 const keys = (Object.keys(characters) as (keyof typeof characters)[]).flatMap(k => characters[k])
 
 export class kInteraction extends Interactions {
