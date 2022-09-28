@@ -1,0 +1,17 @@
+name = "duckduckgo"
+type = "javascript"
+route = ''
+zone_id = ''
+usage_model = ''
+compatibility_flags = []
+workers_dev = true
+compatibility_date = "2022-09-28"
+
+[dev]
+local_protocol = "http"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"

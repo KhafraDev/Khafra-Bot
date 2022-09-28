@@ -1,0 +1,13 @@
+{
+  "name": "@khaf/workers-duckduckgo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "deploy": "wrangler publish",
+		"dev": "wrangler dev",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "MIT"
+}
