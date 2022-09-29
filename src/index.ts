@@ -16,7 +16,7 @@ const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
     let events: Event[]
 
     return (...args: Parameters<typeof events[number]['init']>): void => {
-        events ??= KhafraClient.Events.get(name)!
+        events ??= KhafraClient.Events.get(name) ?? []
 
         for (const event of events) {
             event.init(...args).catch(logError)
