@@ -52,7 +52,6 @@ export const client = new KhafraClient({
 })
     .on(Events.ClientReady,         emitted(Events.ClientReady))
     .on(Events.MessageCreate,       emitted(Events.MessageCreate))
-    .on(Events.MessageUpdate,       emitted(Events.MessageUpdate))
     .on(Events.GuildBanAdd,         emitted(Events.GuildBanAdd))
     .on(Events.GuildBanRemove,      emitted(Events.GuildBanRemove))
     .on(Events.GuildCreate,         emitted(Events.GuildCreate))
