@@ -1,13 +1,13 @@
 {
   "name": "@khaf/workers-duckduckgo",
   "version": "1.0.0",
-  "description": "",
+  "description": "A duckduckgo scraper that only returns YouTube links.",
   "main": "dist/index.js",
   "scripts": {
     "deploy": "wrangler publish",
-		"dev": "wrangler dev",
+    "dev": "wrangler dev",
     "build": "tsc"
   },
-  "author": "",
+  "author": "KhafraDev",
   "license": "MIT"
 }

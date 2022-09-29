@@ -1,7 +1,5 @@
 import { Event } from '#khaf/Event'
-import { LRU } from '#khaf/LRU'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { hours } from '#khaf/utility/ms.js'
 import { Events, type Message } from 'discord.js'
 import { env } from 'node:process'
 import { request, type Dispatcher } from 'undici'
@@ -69,7 +67,6 @@ interface ImgurCache {
 }
 
 class Imgur {
-    static cache = new LRU<string, ImgurCache>({ maxSize: 250, maxAgeMs: hours(24) })
     static ratelimit = {
         'x-ratelimit-userlimit': -1,
         'x-ratelimit-userremaining': -1,
@@ -93,8 +90,6 @@ class Imgur {
             Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
         ) {
             return
-        } else if (Imgur.cache.has(hash)) {
-            return Imgur.cache.get(hash)
         }
 
         const { headers, body, statusCode } = await request(`https://api.imgur.com/3/album/${hash}`, {
@@ -112,7 +107,6 @@ class Imgur {
         const j = await body.json() as ImgurAlbum
         const images = j.data.images.map(i => i.link)
         const cached = { u: images, t: j.data.title ?? 'Imgur Album' }
-        Imgur.cache.set(hash, cached)
 
         return cached
     }

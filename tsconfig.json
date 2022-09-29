@@ -59,7 +59,6 @@
       "#khaf/Logger": ["./src/Structures/Logger.js"],
       "#khaf/Bot": ["./src/Bot/KhafraBot.js"],
       "#khaf/Client": ["./src/index.js"],
-      "#khaf/LRU": ["./src/Structures/LRU.js"],
       "#khaf/Timer": ["./src/Structures/Timer.js"],
       "#khaf/Images/*": ["./src/Images/*"],
       "#khaf/structures/*": ["./src/Structures/*"],

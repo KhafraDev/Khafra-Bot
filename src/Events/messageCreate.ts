@@ -1,5 +1,4 @@
 import { KhafraClient } from '#khaf/Bot'
-import { MessagesLRU } from '#khaf/cache/Messages.js'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
@@ -21,12 +20,12 @@ import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
 
-export const config = createFileWatcher<typeof import('../../config.json')>(
+const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
 )
 
-export const _cooldownGuild = cooldown(30, 60000)
-export const _cooldownUsers = cooldown(10, 60000)
+const _cooldownGuild = cooldown(30, 60000)
+const _cooldownUsers = cooldown(10, 60000)
 
 const { values: processArgs } = parseArgs({
     args: argv.slice(2),
@@ -51,7 +50,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
         const [mention, name = '', ...args] = message.content.split(/\s+/g)
         const commandName = name.toLowerCase()
-        MessagesLRU.set(message.id, message)
 
         if (
             mention !== `<@!${config.botId}>` &&
@@ -206,8 +204,6 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
                 failIfNotExists: false
             })
         } finally {
-            MessagesLRU.delete(message.id)
-
             logger.info(loggerUtility.formatters.message(message), `message command ${command.settings.name}`)
         }
     }
