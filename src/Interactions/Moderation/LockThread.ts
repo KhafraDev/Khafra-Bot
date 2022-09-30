@@ -8,7 +8,7 @@ import {
     type RESTPatchAPIChannelJSONBody,
     type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
-import { inlineCode, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -56,11 +56,15 @@ export class kInteraction extends Interactions {
         const thread = interaction.options.getChannel('thread') ?? interaction.channel
 
         if (
-            thread?.type !== ChannelType.GuildPublicThread &&
-            thread?.type !== ChannelType.GuildPrivateThread
+            thread?.type !== ChannelType.PublicThread &&
+            thread?.type !== ChannelType.PrivateThread
         ) {
+            const message = thread === null
+                ? '❌ I\'m unsure what channel you are in, try putting it as an option instead.'
+                : `❌ ${thread} is not a forum channel.`
+
             return {
-                content: '❌ Can\'t detect what channel you are in. Explicitly input the channel instead.',
+                content: message,
                 ephemeral: true
             }
         }
@@ -74,8 +78,10 @@ export class kInteraction extends Interactions {
             archived: true
         }
 
+        const message = `thread ${thread} (${thread.id})`
+
         await interaction.reply({
-            content: `✅ Thread ${inlineCode(thread.name)} (${thread.id}) will be locked.`
+            content: `Locking ${message}...`
         })
 
         const response = await interaction.client.rest.patch(
@@ -89,6 +95,10 @@ export class kInteraction extends Interactions {
         if (response === null) {
             await interaction.editReply({
                 content: '❌ I was unable to lock the thread.'
+            })
+        } else {
+            await interaction.editReply({
+                content: `✅ Locked ${message}!`
             })
         }
     }
