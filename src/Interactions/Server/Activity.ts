@@ -1,4 +1,3 @@
-import { rest } from '#khaf/Bot'
 import { Interactions } from '#khaf/Interaction'
 import { toString } from '#khaf/utility/Permissions.js'
 import { logError } from '#khaf/utility/Rejections.js'
@@ -82,7 +81,7 @@ export class kInteraction extends Interactions {
         const activityId = interaction.options.getString('game', true)
         const channel = interaction.options.getChannel('channel', true) as VoiceChannel
 
-        const invite = await rest.post(
+        const invite = await interaction.client.rest.post(
             Routes.channelInvites(channel.id),
             {
                 headers: { 'Content-Type': 'application/json' },

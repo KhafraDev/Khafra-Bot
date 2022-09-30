@@ -1,4 +1,4 @@
-import { KhafraClient, rest } from '#khaf/Bot'
+import { KhafraClient } from '#khaf/Bot'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
@@ -38,7 +38,7 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         if (globally !== true) {
-            const commands = await rest.get(
+            const commands = await interaction.client.rest.get(
                 Routes.applicationGuildCommands(config.botId, config.guildId)
             ) as APIApplicationCommand[]
             const commandId = commands.find(c => c.name === command.data.name)
@@ -51,11 +51,11 @@ export class kSubCommand extends InteractionSubCommand {
             }
 
             // https://discord.com/developers/docs/interactions/application-commands#delete-guild-application-command
-            await rest.delete(
+            await interaction.client.rest.delete(
                 Routes.applicationGuildCommand(config.botId, config.guildId, commandId.id)
             )
         } else {
-            const commands = await rest.get(
+            const commands = await interaction.client.rest.get(
                 Routes.applicationCommands(config.botId)
             ) as APIApplicationCommand[]
 
@@ -69,7 +69,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
 
             // https://discord.com/developers/docs/interactions/application-commands#delete-global-application-command
-            await rest.delete(
+            await interaction.client.rest.delete(
                 Routes.applicationCommand(config.botId, commandId.id)
             )
         }

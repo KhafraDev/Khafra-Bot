@@ -6,8 +6,8 @@ import type { Timer } from '#khaf/Timer'
 import { assets, cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { once } from '#khaf/utility/Memoize.js'
-import { REST, type RestEvents } from '@discordjs/rest'
-import { APIVersion, Routes, type APIApplicationCommand } from 'discord-api-types/v10'
+import type { RestEvents } from '@discordjs/rest'
+import { Routes, type APIApplicationCommand } from 'discord-api-types/v10'
 import { Client, type ClientEvents } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
@@ -32,8 +32,6 @@ const setInteractionIds = (commands: APIApplicationCommand[]): void => {
         if (cached) cached.id = id
     }
 }
-
-export const rest = new REST({ version: APIVersion }).setToken(env.TOKEN!)
 
 export class KhafraClient extends Client {
     static Commands: Map<string, Command> = new Map()
@@ -161,7 +159,7 @@ export class KhafraClient extends Client {
             // Slash commands that have already been deployed.
             // We do not have to POST/PUT these, but PATCH them
             // if they have been updated.
-            const existingSlashCommands = await rest.get(
+            const existingSlashCommands = await this.rest.get(
                 Routes.applicationCommands(config.botId)
             ) as APIApplicationCommand[]
 
@@ -185,7 +183,7 @@ export class KhafraClient extends Client {
             if (previouslyDeployed.length === 0) {
                 logger.info(`Bulk creating ${loadedCommands.length} slash commands...`)
                 // https://discord.com/developers/docs/interactions/application-commands#bulk-overwrite-global-application-commands
-                const overwritten = await rest.put(
+                const overwritten = await this.rest.put(
                     Routes.applicationCommands(config.botId),
                     { body: loadedCommands }
                 ) as APIApplicationCommand[]
@@ -202,7 +200,7 @@ export class KhafraClient extends Client {
                 for (const deletedCommand of deleted) {
                     logger.info(`Deleting ${deletedCommand.name}!`)
 
-                    await rest.delete(
+                    await this.rest.delete(
                         Routes.applicationCommand(config.botId, deletedCommand.id)
                     )
                 }
@@ -228,7 +226,7 @@ export class KhafraClient extends Client {
                     if (!existing || !previous) {
                         logger.info(`Deploying ${current.name} slash command!`)
                         // https://discord.com/developers/docs/interactions/application-commands#create-global-application-command
-                        const added = await rest.post(
+                        const added = await this.rest.post(
                             Routes.applicationCommands(config.botId),
                             { body: current }
                         ) as APIApplicationCommand
@@ -240,7 +238,7 @@ export class KhafraClient extends Client {
 
                         logger.info(`Updating ${deployedName} slash command!`)
                         // https://discord.com/developers/docs/interactions/application-commands#edit-global-application-command
-                        const updated = await rest.patch(
+                        const updated = await this.rest.patch(
                             Routes.applicationCommand(config.botId, existing.id),
                             { body: current }
                         ) as APIApplicationCommand
@@ -300,7 +298,12 @@ export class KhafraClient extends Client {
     }
 
     init = once(async () => {
+        if (env.TOKEN === undefined) {
+            throw new TypeError('No TOKEN env variable set.')
+        }
+
         const start = performance.now()
+        this.rest.setToken(env.TOKEN) // token isn't set for us until we login
         await Promise.all([
             this.loadCommands(),
             this.loadEvents(),

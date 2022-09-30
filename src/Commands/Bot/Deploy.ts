@@ -1,4 +1,4 @@
-import { KhafraClient, rest } from '#khaf/Bot'
+import { KhafraClient } from '#khaf/Bot'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { cwd } from '#khaf/utility/Constants/Path.js'
@@ -25,7 +25,7 @@ export class kCommand extends Command {
         })
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<string> {
+    async init (message: Message, { args }: Arguments): Promise<string> {
         const commandName = args[0].toLowerCase()
         const command = KhafraClient.Interactions.Commands.get(commandName)
 
@@ -34,7 +34,7 @@ export class kCommand extends Command {
         }
 
         // https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
-        await rest.post(
+        await message.client.rest.post(
             Routes.applicationGuildCommands(config.botId, config.guildId),
             { body: command.data }
         )

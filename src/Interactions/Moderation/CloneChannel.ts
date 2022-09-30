@@ -1,4 +1,3 @@
-import { rest } from '#khaf/Bot'
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as util from '#khaf/utility/util.js'
@@ -96,7 +95,7 @@ export class kInteraction extends Interactions {
             default_auto_archive_duration: !isVoice ? channel.defaultAutoArchiveDuration : undefined
         }
 
-        await rest.post(
+        await interaction.client.rest.post(
             Routes.guildChannels(interaction.guild.id),
             { body }
         ) as RESTPostAPIGuildChannelResult
@@ -115,7 +114,7 @@ export class kInteraction extends Interactions {
 
         if (deleteAfterwards) {
             // https://discord.com/developers/docs/resources/channel#deleteclose-channel
-            await rest.delete(Routes.channel(channel.id))
+            await interaction.client.rest.delete(Routes.channel(channel.id))
         }
 
         // If the channel is private, we shouldn't broadcast
