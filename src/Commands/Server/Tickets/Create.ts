@@ -71,7 +71,7 @@ export class kCommand extends Command {
 
         if (isExplicitText(channel)) {
             const [err, thread] = await dontThrow(channel.threads.create({
-                type: ChannelType.GuildPrivateThread,
+                type: ChannelType.PrivateThread,
                 name: name,
                 autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
                 reason: `${message.author.tag} (${message.author.id}) created a support ticket.`

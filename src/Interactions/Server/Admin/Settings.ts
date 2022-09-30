@@ -30,7 +30,7 @@ export class kInteraction extends Interactions {
                     name: 'mod-logs-channel',
                     description: 'The channel where moderation logs are sent.',
                     channel_types: [
-                        ChannelType.GuildNews,
+                        ChannelType.GuildAnnouncement,
                         ChannelType.GuildText
                     ]
                 },
@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
                     name: 'welcome-channel',
                     description: 'The channel where member join and leave messages are posted.',
                     channel_types: [
-                        ChannelType.GuildNews,
+                        ChannelType.GuildAnnouncement,
                         ChannelType.GuildText
                     ]
                 },
@@ -48,7 +48,7 @@ export class kInteraction extends Interactions {
                     name: 'staff-channel',
                     description: 'Channel for general staff messages to be posted.',
                     channel_types: [
-                        ChannelType.GuildNews,
+                        ChannelType.GuildAnnouncement,
                         ChannelType.GuildText
                     ]
                 }

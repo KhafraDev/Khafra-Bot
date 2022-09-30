@@ -35,10 +35,10 @@ export class kInteraction extends Interactions {
                     required: true,
                     channel_types: [
                         ChannelType.GuildText,
-                        ChannelType.GuildNews,
-                        ChannelType.GuildNewsThread,
-                        ChannelType.GuildPublicThread,
-                        ChannelType.GuildPrivateThread,
+                        ChannelType.GuildAnnouncement,
+                        ChannelType.AnnouncementThread,
+                        ChannelType.PublicThread,
+                        ChannelType.PrivateThread,
                         ChannelType.GuildVoice
                     ]
                 },

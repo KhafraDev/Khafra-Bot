@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
                             description: 'Channel to create the giveaway in.',
                             required: true,
                             channel_types: [
-                                ChannelType.GuildNews, ChannelType.GuildText
+                                ChannelType.GuildAnnouncement, ChannelType.GuildText
                             ]
                         },
                         {

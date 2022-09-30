@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
                     required: true,
                     channel_types: [
                         ChannelType.GuildText,
-                        ChannelType.GuildNews,
+                        ChannelType.GuildAnnouncement,
                         ChannelType.GuildVoice
                     ]
                 },
@@ -73,7 +73,7 @@ export class kInteraction extends Interactions {
         const deleteAfterwards = interaction.options.getBoolean('delete-old-channel') ?? false
 
         const isVoice = channel.type === ChannelType.GuildVoice
-        const isNews = channel.type === ChannelType.GuildNews
+        const isNews = channel.type === ChannelType.GuildAnnouncement
 
         const body: RESTPostAPIGuildChannelJSONBody = {
             name: channel.name,

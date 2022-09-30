@@ -37,10 +37,10 @@ export class kInteraction extends Interactions {
                     description: 'The channel to delete the messages from (defaults to current channel).',
                     channel_types: [
                         ChannelType.GuildText,
-                        ChannelType.GuildNews,
-                        ChannelType.GuildNewsThread,
-                        ChannelType.GuildPublicThread,
-                        ChannelType.GuildPrivateThread
+                        ChannelType.GuildAnnouncement,
+                        ChannelType.AnnouncementThread,
+                        ChannelType.PublicThread,
+                        ChannelType.PrivateThread
                     ]
                 }
             ]

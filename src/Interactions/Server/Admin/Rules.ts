@@ -105,7 +105,7 @@ export class kInteraction extends Interactions {
                     required: true,
                     channel_types: [
                         ChannelType.GuildText,
-                        ChannelType.GuildNews
+                        ChannelType.GuildAnnouncement
                     ]
                 }
             ]
