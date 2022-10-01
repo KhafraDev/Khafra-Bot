@@ -1,12 +1,3 @@
-export const validateNumber = (num: unknown): num is number => {
-    return (
-        typeof num === 'number' &&
-        Number.isInteger(num) &&
-        num >= 1 &&
-        num <= Number.MAX_SAFE_INTEGER
-    )
-}
-
 /**
  * Ensures a value is a number, an integer, and between min-max values.
  */

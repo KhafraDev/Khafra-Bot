@@ -2,13 +2,14 @@ import { logger } from '#khaf/structures/Logger.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isRedirect } from '#khaf/utility/FetchUtils.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { validateNumber } from '#khaf/utility/Valid/Number.js'
+import { s } from '@sapphire/shapeshift'
 import { XMLParser, XMLValidator, type X2jOptionsOptional } from 'fast-xml-parser'
 import { join } from 'node:path'
 import { clearInterval, setInterval, setTimeout } from 'node:timers'
 import { setTimeout as delay } from 'node:timers/promises'
 import { request, type Dispatcher } from 'undici'
 
+const schema = s.number.safeInt.greaterThan(0)
 const config = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -138,12 +139,12 @@ export class RSSReader<T> {
                 const frequency = j.rss.channel['sy:updateFrequency']
 
                 // make sure that the period and frequency are both valid
-                if (!validateNumber(period) || !syUpdateFrequency.includes(frequency)) {
+                if (!schema.is(period) || !syUpdateFrequency.includes(frequency)) {
                     return clearInterval(this.#interval!)
                 }
 
                 const time = Math.floor(period * ms[frequency])
-                if (!validateNumber(time)) {
+                if (!schema.is(time)) {
                     return clearInterval(this.#interval!)
                 }
 
