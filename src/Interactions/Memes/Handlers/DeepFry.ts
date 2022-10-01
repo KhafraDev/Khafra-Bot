@@ -7,12 +7,12 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import type { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
-const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SKRSContext2D => {
-    const data = ctx.getImageData(x, y, TWO_FIFTY_SIX, TWO_FIFTY_SIX)
+const desaturate = (ctx: SKRSContext2D, level: number, width: number, height: number): SKRSContext2D => {
+    const data = ctx.getImageData(0, 0, width, height)
 
-    for (let i = 0; i < TWO_FIFTY_SIX; i++) {
-        for (let j = 0; j < TWO_FIFTY_SIX; j++) {
-            const xy = ((i * TWO_FIFTY_SIX) + j) * 4
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            const xy = ((i * width) + j) * 4
             // https://en.wikipedia.org/wiki/Luma_(video)
             const gray = 0.299 * data.data[xy] + 0.587 * data.data[xy + 1] + 0.114 * data.data[xy + 2]
 
@@ -22,12 +22,12 @@ const desaturate = (ctx: SKRSContext2D, level: number, x: number, y: number): SK
         }
     }
 
-    ctx.putImageData(data, x, y)
+    ctx.putImageData(data, 0, 0)
     return ctx
 }
 
-const contrast = (ctx: SKRSContext2D, x: number, y: number): SKRSContext2D => {
-    const data = ctx.getImageData(x, y, TWO_FIFTY_SIX, TWO_FIFTY_SIX)
+const contrast = (ctx: SKRSContext2D, width: number, height: number): SKRSContext2D => {
+    const data = ctx.getImageData(0, 0, width, height)
     const factor = (259 / 100) + 1
     const intercept = 64 * (1 - factor)
 
@@ -37,13 +37,11 @@ const contrast = (ctx: SKRSContext2D, x: number, y: number): SKRSContext2D => {
         data.data[i + 2] = (data.data[i + 2] * factor) + intercept
     }
 
-    ctx.putImageData(data, x, y)
+    ctx.putImageData(data, 0, 0)
     return ctx
 }
 
-// Descriptive comment.
-const TWO_FIFTY_SIX = 256
-const options: ImageURLOptions = { extension: 'jpeg', size: TWO_FIFTY_SIX }
+const options: ImageURLOptions = { extension: 'jpeg', size: 256 }
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -89,14 +87,15 @@ export class kSubCommand extends InteractionSubCommand {
         const ctx = canvas.getContext('2d')
 
         ctx.drawImage(image, 0, 0)
-        desaturate(ctx, -2, 0, 0)
-        contrast(ctx, 0, 0)
+        desaturate(ctx, -2, canvas.width, canvas.height)
+        contrast(ctx, canvas.width, canvas.height)
 
         // pick random emojis to draw
         const emojis = ['😂','💯', '👌', '🔥'].filter(() => Math.random() < .75)
+        const width = Math.round(canvas.width / 5)
 
         ctx.textAlign = 'center'
-        ctx.font = '45px Apple Color Emoji' // possibly needed on linux?
+        ctx.font = `${width}px Apple Color Emoji`
 
         for (const emoji of emojis) {
             // this is the only way to rotate text :|
@@ -105,9 +104,9 @@ export class kSubCommand extends InteractionSubCommand {
             ctx.rotate(Math.floor(Math.random() * (15 + 15 + 1) - 15) * (Math.PI / 180))
             ctx.fillText(
                 emoji,
-                Math.floor(Math.random() * (240 - 45 + 1) - 5),
-                Math.floor(Math.random() * (240 - 45 + 1) - 5),
-                35
+                Math.floor(Math.random() * (canvas.width - 45 + 1) - 5),
+                Math.floor(Math.random() * (canvas.height - 45 + 1) - 5),
+                width
             )
             ctx.restore()
         }
