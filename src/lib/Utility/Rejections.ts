@@ -5,7 +5,7 @@ import process, { exit } from 'node:process'
 
 type EventNames = NodeJS.UncaughtExceptionOrigin | NodeJS.Signals
 
-const cleanup = async (event: EventNames, error?: unknown): Promise<never> => {
+const cleanup = async (event: EventNames, error?: unknown): Promise<void> => {
     if (error !== undefined) {
         logger.error(error, event)
     }
@@ -13,7 +13,7 @@ const cleanup = async (event: EventNames, error?: unknown): Promise<never> => {
     await PostgresClient.end({ timeout: 5 })
     DiscordClient.destroy()
 
-    exit(1)
+    process.nextTick(() => exit(1))
 }
 
 process.on('SIGTERM', (signal) => void cleanup(signal))

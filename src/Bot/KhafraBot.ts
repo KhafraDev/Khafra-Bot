@@ -13,7 +13,7 @@ import { Buffer } from 'node:buffer'
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { env, exit } from 'node:process'
+import { env } from 'node:process'
 import { pathToFileURL } from 'node:url'
 
 type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>
@@ -76,8 +76,7 @@ export class KhafraClient extends Client {
 
         for (const fileImport of settled) {
             if (fileImport.status === 'rejected') {
-                logger.error(fileImport.reason)
-                exit(1)
+                throw fileImport.reason
             } else {
                 const kCommand = new fileImport.value.kCommand()
 
@@ -97,8 +96,7 @@ export class KhafraClient extends Client {
 
         for (const fileImport of settled) {
             if (fileImport.status === 'rejected') {
-                logger.error(fileImport.reason)
-                exit(1)
+                throw fileImport.reason
             } else {
                 const kEvent = new fileImport.value.kEvent()
                 const old = KhafraClient.Events.get(kEvent.name) ?? []
@@ -145,8 +143,7 @@ export class KhafraClient extends Client {
                     loadedUserCommands++
                 }
             } else {
-                logger.error(interaction)
-                exit(1)
+                throw interaction.reason
             }
         }
 
@@ -289,8 +286,7 @@ export class KhafraClient extends Client {
                 void timer.setInterval()
                 KhafraClient.Timers.set(key, timer)
             } else {
-                logger.error(imported.reason)
-                exit(1)
+                throw imported.reason
             }
         }
 
