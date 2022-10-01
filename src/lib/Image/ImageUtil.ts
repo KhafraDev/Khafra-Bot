@@ -1,4 +1,3 @@
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
 import type { Image, SKRSContext2D } from '@napi-rs/canvas'
 import { extname } from 'node:path'
 
@@ -67,9 +66,7 @@ export class ImageUtil {
      * `png`, `jp(e)g`, `avif`, `webp`.
      */
     static isImage (url: string): boolean {
-        const u = URLFactory(url)
-
-        const extension = extname(u ? u.toString() : url)
+        const extension = extname(url)
         const imageExts = [
             '.png',
             '.jpg',
@@ -78,7 +75,7 @@ export class ImageUtil {
             '.webp'
         ]
 
-        return imageExts.includes(extension)
+        return imageExts.some(ext => extension.startsWith(ext))
     }
 
     static centerImage (

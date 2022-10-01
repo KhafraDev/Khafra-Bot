@@ -1,12 +1,21 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
 import { codeBlock, inlineCode } from '@discordjs/builders'
 import { Pocket } from '@khaf/pocket'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { URL } from 'node:url'
+
+const schema = s.string.url({
+    allowedProtocols: ['http:', 'https:']
+}).transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    return url
+})
 
 interface PocketUser {
     access_token: string
@@ -45,10 +54,10 @@ export class kCommand extends Command {
             `)
 
         const pocket = new Pocket(rows.shift())
-        const article = URLFactory(args[0])
-        if (article === null)
+        const article = schema.run(args[0])
+        if (!article.isOk())
             return Embed.error('That\'s not an article URL, try again!')
-        const added = await pocket.add(article, args.slice(1).join(' '))
+        const added = await pocket.add(article.value, args.slice(1).join(' '))
 
         return Embed.json({
             color: colors.ok,

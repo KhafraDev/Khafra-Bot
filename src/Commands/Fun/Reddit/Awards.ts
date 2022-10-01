@@ -1,15 +1,24 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
 import { inlineCode } from '@discordjs/builders'
 import { apiSchema } from '@khaf/badmeme'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { URL } from 'node:url'
 import { request } from 'undici'
 
 const PER_COIN = 1.99 / 500
 const isArray = (arr: unknown): arr is unknown[] => Array.isArray(arr)
+const schema = s.string.url({
+    allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
+    allowedProtocols: ['http:', 'https:']
+}).transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    return url
+})
 
 export class kCommand extends Command {
     constructor () {
@@ -29,19 +38,17 @@ export class kCommand extends Command {
     }
 
     async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
-        const url = URLFactory(args[0])
-        if (url === null)
+        if (!schema.is(args[0])) {
             return Embed.error('Invalid Reddit post!')
+        }
+
+        const url = schema.parse(args[0])
 
         if (
-            url.origin !== 'https://www.reddit.com' ||
             // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
             !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
         ) {
-            return Embed.error(`
-            Not a valid reddit URL!
-            Make sure it's from ${inlineCode('https://www.reddit.com')} and it's a post!
-            `)
+            return Embed.error('Not a valid reddit URL!')
         }
 
         const { body } = await request(`${url.href.replace(/.json$/, '')}.json`)

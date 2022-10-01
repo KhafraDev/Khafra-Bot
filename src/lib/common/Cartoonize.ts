@@ -1,10 +1,15 @@
 import { logError } from '#khaf/utility/Rejections.js'
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
+import { s } from '@sapphire/shapeshift'
 import type { Attachment } from 'discord.js'
 import { decodeXML } from 'entities'
 import { type Blob } from 'node:buffer'
 import { basename } from 'node:path'
 import { FormData, request } from 'undici'
+
+const schema = s.string.url({
+    allowedDomains: ['cdn.discordapp.com', 'media.discordapp.net'],
+    allowedProtocols: ['http:', 'https:']
+})
 
 /*** Get the image from the html */
 const R = /<div class="image">\s+<img src="(.*?)">/
@@ -14,10 +19,10 @@ const R = /<div class="image">\s+<img src="(.*?)">/
  */
 export class Cartoonize {
     static async blobFromUrl(url: string): Promise<Blob | null> {
-        const u = URLFactory(url)
-        if (u === null) return null
+        const u = schema.run(url)
+        if (!u.isOk()) return null
 
-        const res = await request(u).catch((err: Error) => {
+        const res = await request(u.value).catch((err: Error) => {
             logError(err)
             return null
         })

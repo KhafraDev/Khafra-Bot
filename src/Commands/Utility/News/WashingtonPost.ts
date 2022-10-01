@@ -2,9 +2,18 @@ import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { once } from '#khaf/utility/Memoize.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
-import { URLFactory } from '#khaf/utility/Valid/URL.js'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
+import { URL } from 'node:url'
+
+const schema = s.string.url({
+    allowedProtocols: ['http:', 'https:']
+}).transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    return url
+})
 
 const settings = {
     rss: 'http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43',
@@ -55,8 +64,7 @@ export class kCommand extends Command {
         }
 
         const posts = [...rss.results.values()].map(p => {
-            const u = URLFactory(p.link)!
-            p.link = u.toString()
+            p.link = schema.parse(p.link).toString()
             return p
         })
 
