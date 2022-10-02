@@ -35,7 +35,7 @@ export class kCommand extends Command {
 
     async init (message: Message<true>, { args, content }: Arguments): Promise<undefined | APIEmbed> {
         const user = await getMentions(message, 'users', content)
-        const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1])! / 86400000) : 7
+        const clear = typeof args[1] === 'string' ? Math.ceil(parseStrToMs(args[1]) / 86400000) : 7
         const reason = args.slice(args[1] && parseStrToMs(args[1]) ? 2 : 1).join(' ')
 
         const member = user && message.guild.members.resolve(user)
