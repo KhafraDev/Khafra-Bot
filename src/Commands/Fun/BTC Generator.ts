@@ -2,11 +2,11 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
+import { s } from '@sapphire/shapeshift'
 import type { Message } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
-const inRange = Range({ min: 0, max: Number.MAX_SAFE_INTEGER })
+const schema = s.number.safeInt.greaterThan(0)
 
 export class kCommand extends Command {
     constructor () {
@@ -26,7 +26,7 @@ export class kCommand extends Command {
 
     async init (message: Message, { args }: Arguments): Promise<void> {
         const num = Number(args[0])
-        const btc = inRange(num) ? num : 1000
+        const btc = schema.is(num) ? num : 1000
 
         const embed = Embed.json({
             color: colors.ok,

@@ -1,15 +1,15 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { hasPerms } from '#khaf/utility/Permissions.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import { inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const inRange = Range({ min: 0, max: 32767, inclusive: true }) // small int
+const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(32767)
 
 export class kCommand extends Command {
     constructor () {
@@ -39,7 +39,7 @@ export class kCommand extends Command {
                 message.member,
                 PermissionFlagsBits.Administrator
             )
-        else if (!inRange(newAmount))
+        else if (!schema.is(newAmount))
             return Embed.error('An invalid number of points was provided, try with a positive whole number instead!')
 
         await sql`

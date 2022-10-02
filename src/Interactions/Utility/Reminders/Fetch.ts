@@ -5,17 +5,17 @@ import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { ellipsis } from '#khaf/utility/String.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import { inlineCode, time } from '@discordjs/builders'
-import { randomUUID } from 'node:crypto'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 type Row = Exclude<kReminder, 'userId'>
 
-const inRange = Range({ min: 1, max: 20 })
+const schema = s.number.greaterThan(1).lessThanOrEqual(20)
 
 const chunkEmbeds = (rows: Row[]): APIEmbed[] => {
     if (rows.length === 0) {
@@ -41,7 +41,7 @@ export class kSubCommand extends InteractionSubCommand {
     async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
         const amount = interaction.options.getInteger('amount') ?? 100
         const trueAmount = interaction.inRawGuild()
-            ? inRange(amount) ? amount : 10
+            ? schema.is(amount) ? amount : 10
             : amount
 
         const rows = await sql<Row[]>`

@@ -1,15 +1,15 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { logError } from '#khaf/utility/Rejections.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { magik } from '@khaf/magik'
+import { s } from '@sapphire/shapeshift'
 import type { Attachment, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
 const options: ImageURLOptions = { extension: 'png', size: 256 }
-const dimensionRange = Range({ min: 1, max: 1024 })
+const schema = s.number.greaterThan(1).lessThanOrEqual(1024)
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -62,7 +62,7 @@ export class kSubCommand extends InteractionSubCommand {
 
             if (!ImageUtil.isImage(proxyURL)) {
                 return '❌ This file type is not supported.'
-            } else if (!dimensionRange(width!) || !dimensionRange(height!)) {
+            } else if (!schema.is(width) || !schema.is(height)) {
                 return '❌ The max width and height is 1024 pixels.'
             }
         }

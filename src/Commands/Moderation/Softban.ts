@@ -1,14 +1,14 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const inRange = Range({ min: 0, max: 7, inclusive: true })
+const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
     constructor () {
@@ -43,7 +43,7 @@ export class kCommand extends Command {
 
         try {
             await message.guild.members.ban(member, {
-                deleteMessageDays: inRange(clear) ? clear : 7,
+                deleteMessageDays: schema.is(clear) ? clear : 7,
                 reason
             })
             await message.guild.members.unban(member, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`)

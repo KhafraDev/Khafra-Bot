@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
@@ -8,14 +8,14 @@ import { getMentions } from '#khaf/utility/Mentions.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
 import { hasPerms } from '#khaf/utility/Permissions.js'
 import { plural } from '#khaf/utility/String.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import { bold, inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const MAX_SECS = parseStrToMs('6h')! / 1000
-const inRange = Range({ min: 0, max: MAX_SECS, inclusive: true })
+const MAX_SECS = parseStrToMs('6h') / 1000
+const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(MAX_SECS)
 const perms =
     PermissionFlagsBits.ViewChannel |
     PermissionFlagsBits.SendMessages |
@@ -54,8 +54,11 @@ export class kCommand extends Command {
         // by default, reset the ratelimit (0s).
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) || '0s')! / 1000
 
-        if (!inRange(secs))
+        if (!schema.is(secs)) {
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             return Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`)
+        }
+
         // although there are docs for NewsChannel#setRateLimitPerUser, news channels
         // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
         if (!isExplicitText(guildChannel))

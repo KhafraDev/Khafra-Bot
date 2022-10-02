@@ -3,18 +3,18 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { type Giveaway } from '#khaf/types/KhafraBot.js'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { parseStrToMs } from '#khaf/utility/ms.js'
+import { days, parseStrToMs, seconds } from '#khaf/utility/ms.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
+import { s } from '@sapphire/shapeshift'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
-const timeRange = Range({ min: 60 * 1000, max: 60 * 1000 * 60 * 24 * 30, inclusive: true })
+const schema = s.number.greaterThanOrEqual(seconds(60)).lessThanOrEqual(days(30))
 
 const perms =
     PermissionFlagsBits.SendMessages |
@@ -35,7 +35,7 @@ export class kSubCommand extends InteractionSubCommand {
         const ends = parseStrToMs(interaction.options.getString('ends', true))
         const winners = interaction.options.getInteger('winners') ?? 1
 
-        if (!timeRange(ends)) {
+        if (!schema.is(ends)) {
             return {
                 content: '❌ A giveaway must last longer than a minute, and less than a month!',
                 ephemeral: true

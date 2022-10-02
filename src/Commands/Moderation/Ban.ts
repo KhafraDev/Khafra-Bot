@@ -5,14 +5,14 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
 import { inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { parseArgs } from 'node:util'
 
-const inRange = Range({ min: 0, max: 7, inclusive: true })
+const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
     constructor () {
@@ -75,14 +75,14 @@ export class kCommand extends Command {
         if (cli['days'] !== undefined || cli['time'] !== undefined) {
             const time = Number(cli['days'] ?? cli['time'])
 
-            if (inRange(time)) {
+            if (schema.is(time)) {
                 clear = time
             }
         } else if (typeof args[1] === 'string') {
             const ms = parseStrToMs(args[1])
             const time = Math.ceil(ms / 86_400_000) // ms -> days
 
-            if (ms && inRange(time)) {
+            if (ms && schema.is(time)) {
                 clear = time
                 usedMs = true
             }

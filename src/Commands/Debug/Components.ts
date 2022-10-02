@@ -2,12 +2,12 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 
-const inRange = Range({ min: 1, max: 5, inclusive: true })
+const schema = s.number.greaterThanOrEqual(1).lessThanOrEqual(5)
 
 export class kCommand extends Command {
     constructor () {
@@ -28,7 +28,7 @@ export class kCommand extends Command {
 
     async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
         const amount = Number(args[0])
-        if (!inRange(amount))
+        if (!schema.is(amount))
             return Embed.error('Invalid number of buttons to add!')
 
         const row = Components.actionRow()

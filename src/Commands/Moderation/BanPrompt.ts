@@ -6,12 +6,12 @@ import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
-import { Range } from '#khaf/utility/Valid/Number.js'
+import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const inRange = Range({ min: 0, max: 7, inclusive: true })
+const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
     constructor () {
@@ -79,7 +79,7 @@ export class kCommand extends Command {
         await button.deferUpdate()
 
         const [banError] = await dontThrow(message.guild.members.ban(user, {
-            deleteMessageDays: inRange(clear) ? clear : 7,
+            deleteMessageDays: schema.is(clear) ? clear : 7,
             reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
         }))
 
