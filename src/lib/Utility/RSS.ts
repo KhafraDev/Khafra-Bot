@@ -12,8 +12,6 @@ import { request, type Dispatcher } from 'undici'
 const schema = s.number.safeInt.greaterThan(0)
 const config = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop: (() => void | Promise<void>) = () => {}
 const syUpdateFrequency = ['hourly', 'daily', 'weekly', 'monthly', 'yearly'] as const
 const ms = {
     hourly: 3.6e+6,
@@ -58,13 +56,13 @@ export class RSSReader<T> {
     public save = 10
     public url = 'https://google.com/'
 
-    public afterSave = noop
+    public afterSave: null | (() => Promise<void> | void)
 
     /**
      * @param loadFunction function to run after RSS feed has been fetched and parsed.
      * @param options RSS reader options
      */
-    constructor (loadFunction = noop, options: X2jOptionsOptional = {}) {
+    constructor (loadFunction = null, options: X2jOptionsOptional = {}) {
         this.afterSave = loadFunction
         this.#parser = new XMLParser(options)
         this.#options = options
@@ -167,7 +165,7 @@ export class RSSReader<T> {
             this.results.add(i)
         }
 
-        return void this.afterSave()
+        return void this.afterSave?.()
     }
 
     async cache (url: string): Promise<NodeJS.Timer> {

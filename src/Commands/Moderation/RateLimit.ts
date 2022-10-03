@@ -54,8 +54,7 @@ export class kCommand extends Command {
         // by default, reset the ratelimit (0s).
         const secs = parseStrToMs((channelFirst ? args[1] : args[0]) || '0s') / 1000
 
-        if (!schema.is(secs)) {
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (schema.run(secs).isErr()) {
             return Embed.error(`Invalid number of seconds! ${secs ? `Received ${secs} seconds.` : ''}`)
         }
 
