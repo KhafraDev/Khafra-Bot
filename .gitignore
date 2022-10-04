@@ -6,6 +6,7 @@ assets/interaction_last_deployed.txt
 *.rdb
 assets/Fonts/*
 assets/log*.txt
+package-lock.json
 
 # Logs
 logs
