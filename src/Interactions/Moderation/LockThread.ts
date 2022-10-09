@@ -4,7 +4,6 @@ import {
     ApplicationCommandOptionType,
     ChannelType,
     PermissionFlagsBits, Routes,
-    type APIThreadChannel,
     type RESTPatchAPIChannelJSONBody,
     type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
@@ -90,7 +89,7 @@ export class kInteraction extends Interactions {
                 body,
                 headers: { 'X-Audit-Log-Reason': reason }
             }
-        ).catch(() => null) as APIThreadChannel | null
+        ).catch(() => null)
 
         if (response === null) {
             await interaction.editReply({

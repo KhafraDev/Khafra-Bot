@@ -67,7 +67,7 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
                 await interaction.deferReply()
 
             const result = await command.init(interaction as Interactions)
-            const param = {} as InteractionReplyOptions
+            const param: InteractionReplyOptions = {}
 
             if (interaction.replied) {
                 return
