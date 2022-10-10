@@ -5,6 +5,7 @@ import { ellipsis } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { performance } from 'node:perf_hooks'
 
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
@@ -45,7 +46,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const date = parsedTime ? new Date(Date.now() + parsedTime) : null
+        const date = parsedTime ? new Date(performance.now() + parsedTime) : null
 
         const rows = await sql<{ id: string }[]>`
             UPDATE "kbReminders" SET

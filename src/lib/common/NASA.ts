@@ -2,6 +2,7 @@ import { env } from 'node:process'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
 import { s } from '@sapphire/shapeshift'
+import { performance } from 'node:perf_hooks'
 
 const schema = s.object({
     copyright: s.string.optional,
@@ -36,7 +37,7 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
     })
 
     // ratelimited or cached results
-    if (ratelimit.remaining === 0 && Date.now() - ratelimit.firstRequest < hour || cache.length >= 5)
+    if (ratelimit.remaining === 0 && performance.now() - ratelimit.firstRequest < hour || cache.length >= 5)
         return cache.shift() ?? null
 
     const {
@@ -47,10 +48,11 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
 
     const XRateLimitRemaining = headers['x-ratelimit-remaining']
     ratelimit.remaining = Number(XRateLimitRemaining)
+    const now = performance.now()
 
     if (ratelimit.firstRequest === -1) {
-        ratelimit.firstRequest = Date.now()
-    } else if (Date.now() - ratelimit.firstRequest >= hour) {
+        ratelimit.firstRequest = now
+    } else if (now - ratelimit.firstRequest >= hour) {
         ratelimit.firstRequest = -1
     }
 

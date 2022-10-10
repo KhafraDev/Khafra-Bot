@@ -11,6 +11,7 @@ import { bold, inlineCode, time } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js'
+import { performance } from 'node:perf_hooks'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
@@ -56,7 +57,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const endsDate = new Date(Date.now() + ends)
+        const endsDate = new Date(performance.now() + ends)
         const embed = Embed.json({
             color: colors.ok,
             title: 'A giveaway is starting!',

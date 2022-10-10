@@ -2,6 +2,7 @@ import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { inlineCode } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
+import { performance } from 'node:perf_hooks'
 import { request } from 'undici'
 
 interface IMCOnline {
@@ -86,7 +87,7 @@ export class kCommand extends Command {
     }
 
     async init (): Promise<APIEmbed> {
-        if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
+        if (cache.time !== -1 && (performance.now() - cache.time) / 1000 / 60 < 5) {
             const sentence = cache.players === 1
                 ? 'is ``1`` player'
                 : `are ${inlineCode(`${cache.players}`)} players`
@@ -95,7 +96,7 @@ export class kCommand extends Command {
 
         const players = await fetchMeepOnline()
 
-        cache.time = Date.now()
+        cache.time = performance.now()
         cache.players = players.playersOnline
 
         const sentence = cache.players === 1

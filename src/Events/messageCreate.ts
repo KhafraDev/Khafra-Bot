@@ -19,6 +19,7 @@ import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions 
 import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
+import { performance } from 'node:perf_hooks'
 
 const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
@@ -107,7 +108,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             const cooldownInfo = command.rateLimit.get(message.author.id)!
             const rateLimitSeconds = command.rateLimit.rateLimitSeconds
-            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000)
+            const delay = rateLimitSeconds - ((performance.now() - cooldownInfo.added) / 1_000)
 
             return void message.reply({
                 content:

@@ -9,6 +9,7 @@ import {
     type User
 } from 'discord.js'
 import * as util from '#khaf/utility/util.js'
+import { performance } from 'node:perf_hooks'
 
 type MentionTypes = User | Channel | GuildMember | Role
 
@@ -63,5 +64,5 @@ export const validSnowflake = (id: unknown): id is Snowflake => {
 
     const timestamp = SnowflakeUtil.timestampFrom(id)
 
-    return timestamp > epoch && timestamp <= Date.now()
+    return timestamp > epoch && timestamp <= performance.now()
 }

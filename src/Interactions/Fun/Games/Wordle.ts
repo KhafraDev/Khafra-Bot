@@ -51,7 +51,6 @@ const wordleGetShareComponent = (
     { word, guesses }: { word: string, guesses: string[] },
     highContrast: boolean
 ): APIActionRowComponent<APIMessageActionRowComponent> => {
-    // const dayOffset = Math.floor((Date.now() - WordleEpoch) / 86_400_000);
     let board = `Wordle ${guesses.length}/6\n\n`
 
     for (let guessIdx = 0; guessIdx < guesses.length; guessIdx++) {
