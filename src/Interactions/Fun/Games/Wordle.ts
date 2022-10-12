@@ -118,14 +118,21 @@ export class kSubCommand extends InteractionSubCommand {
 
         const attachGame = async (content: string | undefined): Promise<WebhookEditMessageOptions> => {
             const buffer = await this.image(game.interaction, game.guesses, game.word)
+            const embed = Embed.json({
+                color: colors.ok,
+                image: { url: 'attachment://wordle.png' }
+            })
+
+            if (game.guesses.includes(game.word)) {
+                embed.description = 'You win!'
+                embed.title = game.word.split('').join(' ')
+            } else if (game.guesses.length === 6) {
+                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`
+                embed.title = game.word.split('').join(' ')
+            }
 
             return {
-                embeds: [
-                    Embed.json({
-                        color: colors.ok,
-                        image: { url: 'attachment://wordle.png' }
-                    })
-                ],
+                embeds: [embed],
                 files: [{
                     attachment: buffer,
                     name: 'wordle.png'
@@ -135,6 +142,13 @@ export class kSubCommand extends InteractionSubCommand {
         }
 
         const id = randomUUID()
+        const playComponents = [
+            Components.actionRow([
+                Buttons.approve('Guess', `showModal-${id}`),
+                Buttons.deny('Quit', `quit-${id}`)
+            ])
+        ]
+
         const game = {
             interaction,
             guesses: [] as string[],
@@ -143,12 +157,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         const reply = await interaction.editReply({
             ...await attachGame(undefined),
-            components: [
-                Components.actionRow([
-                    Buttons.approve('Guess', `showModal-${id}`),
-                    Buttons.deny('Quit', `quit-${id}`)
-                ])
-            ]
+            components: playComponents
         })
 
         const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
@@ -202,19 +211,16 @@ export class kSubCommand extends InteractionSubCommand {
                     content = 'That word isn\'t in my list, try another word!'
                 }
 
-                // This makes a new message, so we need to manually edit the game's message.
-                // We need to make this message or else the user will get "interaction failed".
+                const editOptions = await attachGame(content)
+
                 await i.reply({
+                    ...editOptions,
                     content: `Checking your answer ${inlineCode(answer)}`,
-                    ephemeral: true
+                    ephemeral: true,
+                    components: playComponents
                 })
 
-                const editOptions = await attachGame(content)
-                await interaction.editReply({
-                    embeds: editOptions.embeds,
-                    content: editOptions.content,
-                    files: editOptions.files
-                })
+                await interaction.editReply(editOptions)
 
                 if (game.guesses.includes(game.word) || game.guesses.length === 6) {
                     c.stop()
@@ -230,14 +236,6 @@ export class kSubCommand extends InteractionSubCommand {
 
             embed.title = game.word.split('').join(' ')
             games.delete(interaction.user.id)
-
-            if (game.guesses.includes(game.word)) {
-                embed.description = 'You win!'
-            } else if (game.guesses.length === 6) {
-                embed.description = `You lost!\n\nThe word was ${inlineCode(game.word)}!`
-            } else {
-                embed.description = `Game over (reason = ${inlineCode(c.endReason ?? 'unknown')})!`
-            }
 
             await interaction.editReply({
                 embeds: options.embeds,
