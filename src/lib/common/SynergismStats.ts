@@ -1,4 +1,3 @@
-import { performance } from 'node:perf_hooks'
 import { request } from 'undici'
 
 interface KongregateMetrics {
@@ -25,7 +24,7 @@ const cache: KongCache = {
 }
 
 export const Kongregate = async (): Promise<KongregateMetrics | null> => {
-    if ((performance.now() - cache.lastFetched) / 1000 / 60 < 5) {
+    if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
         return cache.res
     }
 
@@ -33,6 +32,6 @@ export const Kongregate = async (): Promise<KongregateMetrics | null> => {
     const json = await body.json() as KongregateMetrics
 
     cache.res = json
-    cache.lastFetched = performance.now()
+    cache.lastFetched = Date.now()
     return cache.res
 }

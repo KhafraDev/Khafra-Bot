@@ -1,5 +1,4 @@
 import type { Snowflake } from 'discord.js'
-import { performance } from 'node:perf_hooks'
 import { setInterval } from 'node:timers'
 
 interface UserCooldown {
@@ -24,7 +23,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     #createClearInterval(): void {
         setInterval(() => {
             const maxAgeMs = this.#maxAge
-            const now = performance.now()
+            const now = Date.now()
 
             for (const [id, { added }] of this.entries()) {
                 if ((now - added) >= maxAgeMs) {
@@ -40,7 +39,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
 
         if (!info) return false // not cached
 
-        if ((performance.now() - info.added) >= maxAgeMs) {
+        if ((Date.now() - info.added) >= maxAgeMs) {
             this.delete(id)
             return false
         }
@@ -49,7 +48,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     }
 
     rateLimitUser(id: Snowflake): boolean {
-        this.set(id, { added: performance.now() })
+        this.set(id, { added: Date.now() })
         return true
     }
 

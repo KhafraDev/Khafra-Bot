@@ -5,12 +5,10 @@ import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { bold, inlineCode } from '@discordjs/builders'
-import { OAuth2Scopes, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, OAuth2Scopes, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { version as DJSVersion } from 'discord.js'
 import { join } from 'node:path'
-import { performance } from 'node:perf_hooks'
 import { memoryUsage, version } from 'node:process'
 
 const pkg = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
@@ -84,7 +82,7 @@ export class kInteraction extends Interactions {
     }
 
     async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const was = performance.now()
+        const was = Date.now()
         const subcommand = interaction.options.getSubcommand(true)
 
         if (subcommand === 'info') {
@@ -114,7 +112,7 @@ export class kInteraction extends Interactions {
                 ephemeral: true
             })
 
-            const now = performance.now()
+            const now = Date.now()
             const embed = Embed.ok(`
             Pong! 🏓
 

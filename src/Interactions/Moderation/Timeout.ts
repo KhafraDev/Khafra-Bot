@@ -8,7 +8,6 @@ import {
     type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
-import { performance } from 'node:perf_hooks'
 
 export class kInteraction extends Interactions {
     constructor () {
@@ -78,7 +77,7 @@ export class kInteraction extends Interactions {
             await interaction.guild.members.edit(
                 user,
                 {
-                    communicationDisabledUntil: performance.now() + ms,
+                    communicationDisabledUntil: Date.now() + ms,
                     reason: interaction.options.getString('reason') ?? undefined
                 }
             )

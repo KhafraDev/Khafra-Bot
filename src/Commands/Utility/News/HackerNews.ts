@@ -3,7 +3,6 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes } from '#khaf/utility/ms.js'
 import { s, type InferType } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
-import { performance } from 'node:perf_hooks'
 import { request } from 'undici'
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json'
@@ -53,13 +52,13 @@ const fetchEntries = async (): Promise<InferType<typeof schema>[]> => {
 export const fetchHN = async (): Promise<typeof cache> => {
     if (cache.length !== 0) {
         // If the cache is stale
-        if (performance.now() - lastFetched! >= minutes(10)) {
+        if (Date.now() - lastFetched! >= minutes(10)) {
             await fetchEntries()
-            lastFetched = performance.now()
+            lastFetched = Date.now()
         }
     } else {
         await fetchEntries()
-        lastFetched = performance.now()
+        lastFetched = Date.now()
     }
 
     return cache

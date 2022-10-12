@@ -8,18 +8,17 @@ import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { Sanitize } from '#khaf/utility/util.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
+import { Sanitize } from '#khaf/utility/util.js'
 import { inlineCode } from '@discordjs/builders'
 import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
-import { performance } from 'node:perf_hooks'
 
 const config = createFileWatcher<typeof import('../../config.json')>(
     join(cwd, 'config.json')
@@ -108,7 +107,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
             const cooldownInfo = command.rateLimit.get(message.author.id)!
             const rateLimitSeconds = command.rateLimit.rateLimitSeconds
-            const delay = rateLimitSeconds - ((performance.now() - cooldownInfo.added) / 1_000)
+            const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000)
 
             return void message.reply({
                 content:

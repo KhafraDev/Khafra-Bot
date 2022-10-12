@@ -5,7 +5,6 @@ import { ellipsis } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { performance } from 'node:perf_hooks'
 
 export class kSubCommand extends InteractionSubCommand {
     constructor () {
@@ -34,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
             }
         }
 
-        const date = new Date(performance.now() + parsedTime)
+        const date = new Date(Date.now() + parsedTime)
         const rows = await sql<{ id: string }[]>`
             INSERT INTO "kbReminders" (
                 "userId", "message", "time", "once", "interval"

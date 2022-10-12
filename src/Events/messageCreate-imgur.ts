@@ -1,7 +1,6 @@
 import { Event } from '#khaf/Event'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Events, type Message } from 'discord.js'
-import { performance } from 'node:perf_hooks'
 import { env } from 'node:process'
 import { request, type Dispatcher } from 'undici'
 
@@ -88,7 +87,7 @@ class Imgur {
 
         if (
             Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
-            performance.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
+            Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
         ) {
             return
         }

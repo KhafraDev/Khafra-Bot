@@ -1,4 +1,3 @@
-import { performance } from 'node:perf_hooks'
 import { setInterval } from 'node:timers'
 
 /**
@@ -15,7 +14,8 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
     const m = new Map<string, number[]>()
     setInterval(() => { // clear out old entries
         m.forEach((v, k) => {
-            const f = v.filter(d => performance.now() - d < ms)
+            const now = Date.now()
+            const f = v.filter(d => now - d < ms)
             if (f.length === 0) {
                 m.delete(k)
             } else {
@@ -25,7 +25,7 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
     }, 1000 * 60 * 10).unref() // 10 minutes
 
     return (id: string): boolean => {
-        const now = performance.now()
+        const now = Date.now()
         if (!m.has(id)) {
             m.set(id, [now])
             return true

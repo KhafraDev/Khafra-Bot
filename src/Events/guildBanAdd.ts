@@ -7,7 +7,6 @@ import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits, type APIEmbedAuthor } from 'discord-api-types/v10'
 import { Events, SnowflakeUtil, type GuildBan, type User } from 'discord.js'
-import { performance } from 'node:perf_hooks'
 import { setTimeout } from 'node:timers/promises'
 
 type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
@@ -36,7 +35,7 @@ export class kEvent extends Event<typeof Events.GuildBanAdd> {
         // logs which includes the ban executor AND reason!
 
         const me = guild.members.me
-        const start = performance.now()
+        const start = Date.now()
 
         let staff: User | null = null
         let reason: string | null = null
