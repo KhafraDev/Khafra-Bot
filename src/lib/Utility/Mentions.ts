@@ -20,9 +20,6 @@ type MessageMentionTypes =
 
 const epoch = new Date('January 1, 2015 GMT-0').getTime()
 
-/** matches all Discord mention types */
-const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g
-
 export async function getMentions(message: Message<true>, type: 'roles'): Promise<Role | null>
 export async function getMentions(message: Message, type: 'users', content?: string): Promise<User | null>
 export async function getMentions(message: Message<true>, type: 'members', content?: string): Promise<GuildMember | null>
@@ -33,6 +30,9 @@ export async function getMentions(
     text?: string
 ): Promise<Role | User | GuildMember | GuildBasedChannel | MentionTypes | null> {
     if (fetchType !== 'users' && !message.inGuild()) return null
+
+    /** matches all Discord mention types */
+    const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g
 
     const { mentions, content: messageContent, guild, client} = message as Message<true>
     const content = typeof text === 'string' ? text : messageContent

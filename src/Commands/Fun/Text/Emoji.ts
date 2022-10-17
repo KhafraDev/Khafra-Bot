@@ -5,8 +5,6 @@ import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { parse } from 'twemoji-parser'
 
-const GUILD_EMOJI_REG = /<?(a)?:?(\w{2,32}):(\d{17,19})>?/g
-
 export class kCommand extends Command {
     constructor () {
         super(
@@ -29,7 +27,7 @@ export class kCommand extends Command {
         const unicode = parse(message.content, { assetType: 'png' })
             .map(e => e.url)
 
-        const guild = [...message.content.matchAll(GUILD_EMOJI_REG)]
+        const guild = [...message.content.matchAll(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g)]
             .filter(e => message.guild.emojis.cache.has(e[3]))
             .map(e => message.guild.emojis.resolve(e[3])!.url)
 
