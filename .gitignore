@@ -2,6 +2,7 @@
 build
 *.js
 !scripts/*.js
+!packages/krazy/scripts/*.js
 assets/interaction_last_deployed.txt
 *.rdb
 assets/Fonts/*
