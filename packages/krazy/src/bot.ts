@@ -10,7 +10,7 @@ import {
 export const handleRequest = async (request: Request): Promise<Response> => {
   if (
     !request.headers.get('X-Signature-Ed25519') ||
-        !request.headers.get('X-Signature-Timestamp')
+    !request.headers.get('X-Signature-Timestamp')
   ) {
     return Response.json({ error: 'Invalid request' }, {
       status: 400

@@ -92,8 +92,8 @@ export class kInteraction extends Interactions {
       const embed = Embed.json({
         color: colors.ok,
         description: `
-                ${bold('Dependencies')}
-                ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}`,
+          ${bold('Dependencies')}
+          ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npmjs.com/package/${k})`).join(', ')}`,
         fields: [
           { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
           { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },

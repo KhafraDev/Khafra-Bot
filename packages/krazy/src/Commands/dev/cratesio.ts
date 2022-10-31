@@ -1,6 +1,6 @@
 import { type APIEmbedField, ApplicationCommandOptionType, InteractionResponseType } from 'discord-api-types/v10'
 import type { InteractionCommand } from '../../types'
-import { getOption, time } from '../../lib/util.js'
+import { time } from '../../lib/util.js'
 import { cratesio } from '../../lib/cratesio.js'
 import { colors } from '../../lib/constants.js'
 
@@ -13,17 +13,16 @@ export const command: InteractionCommand = {
     options: [
       {
         type: ApplicationCommandOptionType.String,
-        name: 'search',
+        name: 'package-name',
         description: 'Crate to search for.',
         required: true
       }
     ]
   },
 
-  async run (interaction) {
-    const search = getOption<string>(interaction.data, 'search')!
-
-    const result = await cratesio(search.value)
+  async run (interaction, _, { options }) {
+    const search = options.getString('package-name', true)
+    const result = await cratesio(search)
 
     if ('errors' in result) {
       return {

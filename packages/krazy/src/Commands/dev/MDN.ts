@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, InteractionResponseType } from 'discord-api-types/v10'
 import type { InteractionCommand } from '../../types'
-import { getOption } from '../../lib/util.js'
 import { fetchMDN } from '../../lib/mdn.js'
 import { colors } from '../../lib/constants.js'
 
@@ -32,13 +31,13 @@ export const command: InteractionCommand = {
     ]
   },
 
-  async run (interaction) {
-    const search = getOption<string>(interaction.data, 'search')!
-    const locale = getOption<string>(interaction.data, 'locale')
-    const max = getOption<number>(interaction.data, 'limit')
+  async run (interaction, _, { options }) {
+    const search = options.getString('search', true)
+    const locale = options.getString('locale')
+    const max = options.getInteger('limit')
 
-    const result = await fetchMDN(search.value, {
-      locale: locale?.value ?? interaction.locale
+    const result = await fetchMDN(search, {
+      locale: locale ?? interaction.locale
     })
 
     if ('errors' in result) {
@@ -72,7 +71,7 @@ export const command: InteractionCommand = {
     }
 
     const best = result.documents.sort((a, b) => b.score - a.score)
-    const results = !max || max.value === best.length ? best : best.slice(0, max.value)
+    const results = !max || max === best.length ? best : best.slice(0, max)
 
     return {
       type: InteractionResponseType.ChannelMessageWithSource,

@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
 import type { InteractionCommand } from '../../types'
-import { getOption, time } from '../../lib/util.js'
+import { time } from '../../lib/util.js'
 import { npm } from '../../lib/npm.js'
 import { colors } from '../../lib/constants.js'
 
@@ -11,16 +11,16 @@ export const command: InteractionCommand = {
     options: [
       {
         type: ApplicationCommandOptionType.String,
-        name: 'search',
+        name: 'package-name',
         description: 'Package to search for.',
         required: true
       }
     ]
   },
 
-  async run (interaction) {
-    const search = getOption<string>(interaction.data, 'search')!
-    const result = await npm(search.value)
+  async run (_, __, { options }) {
+    const search = options.getString('package-name', true)
+    const result = await npm(search)
 
     if ('code' in result) {
       return {
