@@ -4,47 +4,47 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import { request } from 'undici'
 
 const schema = s.object({
-    thisServed: s.number,
-    totalServed: s.number,
-    id: s.string,
-    media: s.object({
-        gif: s.string,
-        poster: s.string
-    }),
-    source: s.string
+  thisServed: s.number,
+  totalServed: s.number,
+  id: s.string,
+  media: s.object({
+    gif: s.string,
+    poster: s.string
+  }),
+  source: s.string
 })
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'animal',
-            name: 'bunny'
-        })
+  constructor () {
+    super({
+      references: 'animal',
+      name: 'bunny'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    await interaction.deferReply()
+
+    const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif')
+
+    if (statusCode !== 200) {
+      return {
+        content: '🐰 Couldn\'t get a picture of a random bunny!',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        await interaction.deferReply()
+    const j: unknown = await body.json()
 
-        const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif')
-
-        if (statusCode !== 200) {
-            return {
-                content: '🐰 Couldn\'t get a picture of a random bunny!',
-                ephemeral: true
-            }
-        }
-
-        const j: unknown = await body.json()
-
-        if (!schema.is(j)) {
-            return {
-                content: '🐰 Couldn\'t get a picture of a random bunny!',
-                ephemeral: true
-            }
-        }
-
-        return {
-            content: j.media.gif
-        }
+    if (!schema.is(j)) {
+      return {
+        content: '🐰 Couldn\'t get a picture of a random bunny!',
+        ephemeral: true
+      }
     }
+
+    return {
+      content: j.media.gif
+    }
+  }
 }

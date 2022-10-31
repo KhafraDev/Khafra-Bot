@@ -59,48 +59,48 @@ interface IMCOffline {
 }
 
 const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {
-    const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com')
-    const j = await body.json() as IMCOnline | IMCOffline
+  const { body } = await request('https://api.mcsrvstat.us/2/meepcraft.com')
+  const j = await body.json() as IMCOnline | IMCOffline
 
-    return { playersOnline: j.online ? j.players.online : 0 }
+  return { playersOnline: j.online ? j.players.online : 0 }
 }
 
 const cache = {
-    time: -1,
-    players: 0
+  time: -1,
+  players: 0
 }
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Get the number of users playing MeepCraft right now.'
-            ],
-            {
-                name: 'meepcraft',
-                folder: 'Fun',
-                aliases: ['meep'],
-                args: [0, 0]
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Get the number of users playing MeepCraft right now.'
+      ],
+      {
+        name: 'meepcraft',
+        folder: 'Fun',
+        aliases: ['meep'],
+        args: [0, 0]
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
+      const sentence = cache.players === 1
+        ? 'is ``1`` player'
+        : `are ${inlineCode(`${cache.players}`)} players`
+      return Embed.ok(`There ${sentence} on Meepcraft right now!`)
     }
 
-    async init (): Promise<APIEmbed> {
-        if (cache.time !== -1 && (Date.now() - cache.time) / 1000 / 60 < 5) {
-            const sentence = cache.players === 1
-                ? 'is ``1`` player'
-                : `are ${inlineCode(`${cache.players}`)} players`
-            return Embed.ok(`There ${sentence} on Meepcraft right now!`)
-        }
+    const players = await fetchMeepOnline()
 
-        const players = await fetchMeepOnline()
+    cache.time = Date.now()
+    cache.players = players.playersOnline
 
-        cache.time = Date.now()
-        cache.players = players.playersOnline
-
-        const sentence = cache.players === 1
-            ? 'is ``1`` player'
-            : `are ${inlineCode(`${cache.players}`)} players`
-        return Embed.ok(`There ${sentence} on Meepcraft right now!`)
-    }
+    const sentence = cache.players === 1
+      ? 'is ``1`` player'
+      : `are ${inlineCode(`${cache.players}`)} players`
+    return Embed.ok(`There ${sentence} on Meepcraft right now!`)
+  }
 }

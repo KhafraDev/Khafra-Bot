@@ -4,7 +4,7 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import type { InteractionReplyOptions } from 'discord.js'
 
 const boomer1984 = (): string =>
-    `⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
+  `⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
 ⠀⠀⠀⠀⠀⢀⣾⣟⠳⢦⡀⠀⠀⠀⠀⠀⠀⢸⠀⠀⠀⠀⠉⠉⠉⠉⠉⠒⣲⡄ 
 ⠀⠀⠀⠀⠀⣿⣿⣿⡇⡇⡱⠲⢤⣀⠀⠀⠀⢸.⠀1984⠀⣠⠴⠊⢹⠁ 
 ⠀⠀⠀⠀⠀⠘⢻⠓⠀⠉⣥⣀⣠⠞⠀⠀⠀⢸.  ⠀⢀⡴⠋⠀⠀⠀⢸⠀ 
@@ -19,18 +19,18 @@ const boomer1984 = (): string =>
 `
 
 export class kInteraction extends Interactions {
-    constructor () {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: '1984',
-            description: 'It\'s literally 1984!'
-        }
-
-        super(sc)
+  constructor () {
+    const sc: RESTPostAPIApplicationCommandsJSONBody = {
+      name: '1984',
+      description: 'It\'s literally 1984!'
     }
 
-    async init (): Promise<InteractionReplyOptions> {
-        return {
-            content: codeBlock(boomer1984())
-        }
+    super(sc)
+  }
+
+  async init (): Promise<InteractionReplyOptions> {
+    return {
+      content: codeBlock(boomer1984())
     }
+  }
 }

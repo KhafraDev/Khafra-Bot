@@ -71,14 +71,14 @@ interface IOpenLibRes {
 }
 
 export const openLibrary = async (q: string): Promise<IOpenLibRes> => {
-    const params = new URLSearchParams({
-        q,
-        'has_fulltext': 'true',
-        'limit': '1'
-    })
+  const params = new URLSearchParams({
+    q,
+    'has_fulltext': 'true',
+    'limit': '1'
+  })
 
-    const { body } = await request(`https://openlibrary.org/search.json?${params}`)
-    const json = await body.json() as IOpenLibRes
+  const { body } = await request(`https://openlibrary.org/search.json?${params}`)
+  const json = await body.json() as IOpenLibRes
 
-    return json
+  return json
 }

@@ -6,40 +6,40 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import { Buffer } from 'node:buffer'
 
 export class kInteraction extends Interactions {
-    constructor () {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'qr',
-            description: 'Gets the QR code for some text.',
-            options: [
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'input',
-                    description: 'Text to get a QR code for.',
-                    required: true
-                }
-            ]
+  constructor () {
+    const sc: RESTPostAPIApplicationCommandsJSONBody = {
+      name: 'qr',
+      description: 'Gets the QR code for some text.',
+      options: [
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'input',
+          description: 'Text to get a QR code for.',
+          required: true
         }
-
-        super(sc, { defer: true })
+      ]
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        try {
-            const text = interaction.options.getString('input', true)
-            const qrcode = Buffer.from(qrcodeImage(text), text.length)
+    super(sc, { defer: true })
+  }
 
-            return {
-                files: [{
-                    attachment: qrcode,
-                    name: 'qr.png',
-                    description: 'A QR Code!'
-                }]
-            }
-        } catch {
-            return {
-                content: 'Could not create a qr code. Input was too long.',
-                ephemeral: true
-            }
-        }
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    try {
+      const text = interaction.options.getString('input', true)
+      const qrcode = Buffer.from(qrcodeImage(text), text.length)
+
+      return {
+        files: [{
+          attachment: qrcode,
+          name: 'qr.png',
+          description: 'A QR Code!'
+        }]
+      }
+    } catch {
+      return {
+        content: 'Could not create a qr code. Input was too long.',
+        ephemeral: true
+      }
     }
+  }
 }

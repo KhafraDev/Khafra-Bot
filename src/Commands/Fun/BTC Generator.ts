@@ -9,44 +9,44 @@ import { setTimeout } from 'node:timers/promises'
 const schema = s.number.safeInt.greaterThan(0)
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Generate free BTC!',
-                '1000'
-            ],
-            {
-                name: 'btc-generator',
-                folder: 'Fun',
-                aliases: ['btcgenerator', 'free-btc', 'freebtc', 'btcgenerate'],
-                args: [1, 1]
-            }
-        )
-    }
+  constructor () {
+    super(
+      [
+        'Generate free BTC!',
+        '1000'
+      ],
+      {
+        name: 'btc-generator',
+        folder: 'Fun',
+        aliases: ['btcgenerator', 'free-btc', 'freebtc', 'btcgenerate'],
+        args: [1, 1]
+      }
+    )
+  }
 
-    async init (message: Message, { args }: Arguments): Promise<void> {
-        const num = Number(args[0])
-        const btc = schema.is(num) ? num : 1000
+  async init (message: Message, { args }: Arguments): Promise<void> {
+    const num = Number(args[0])
+    const btc = schema.is(num) ? num : 1000
 
-        const embed = Embed.json({
-            color: colors.ok,
-            title: `Generating ${btc.toLocaleString()} BTC!`,
-            image: { url: 'https://i.imgur.com/8sIZySU.gif' }
-        })
+    const embed = Embed.json({
+      color: colors.ok,
+      title: `Generating ${btc.toLocaleString()} BTC!`,
+      image: { url: 'https://i.imgur.com/8sIZySU.gif' }
+    })
 
-        const msg = await message.reply({ embeds: [embed] })
+    const msg = await message.reply({ embeds: [embed] })
 
-        await setTimeout(
-            Math.floor(Math.random() * (10000 - 2500 + 1) + 2500),
-            undefined,
-            { ref: false }
-        )
+    await setTimeout(
+      Math.floor(Math.random() * (10000 - 2500 + 1) + 2500),
+      undefined,
+      { ref: false }
+    )
 
-        const embed2 = Embed.json({
-            color: colors.ok,
-            title: `Generated ${btc.toLocaleString()} BTC!`
-        })
+    const embed2 = Embed.json({
+      color: colors.ok,
+      title: `Generated ${btc.toLocaleString()} BTC!`
+    })
 
-        return void dontThrow(msg.edit({ embeds: [embed2] }))
-    }
+    return void dontThrow(msg.edit({ embeds: [embed2] }))
+  }
 }

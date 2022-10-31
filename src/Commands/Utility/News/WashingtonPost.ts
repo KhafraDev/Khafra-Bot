@@ -8,18 +8,18 @@ import { decodeXML } from 'entities'
 import { URL } from 'node:url'
 
 const schema = s.string.url({
-    allowedProtocols: ['http:', 'https:']
+  allowedProtocols: ['http:', 'https:']
 }).transform((value) => {
-    const url = new URL(value)
-    url.search = ''
-    return url
+  const url = new URL(value)
+  url.search = ''
+  return url
 })
 
 const settings = {
-    rss: 'http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43',
-    main: 'https://washingtonpost.com',
-    command: ['washingtonpost', 'thewashingtonpost'],
-    author: { name: 'The Washington Post', iconURL: 'https://i.imgur.com/TRRMCnb.png' }
+  rss: 'http://feeds.washingtonpost.com/rss/world?itid=lk_inline_manual_43',
+  main: 'https://washingtonpost.com',
+  command: ['washingtonpost', 'thewashingtonpost'],
+  author: { name: 'The Washington Post', iconURL: 'https://i.imgur.com/TRRMCnb.png' }
 } as const
 
 interface IWashingtonPost {
@@ -38,43 +38,43 @@ rss.save = 8
 const cache = once(async () => rss.cache(settings.rss))
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                `Get the latest articles from ${settings.main}!`
-            ],
-            {
-                name: settings.command[0],
-                folder: 'News',
-                args: [0, 0],
-                aliases: settings.command.slice(1)
-            }
-        )
+  constructor () {
+    super(
+      [
+        `Get the latest articles from ${settings.main}!`
+      ],
+      {
+        name: settings.command[0],
+        folder: 'News',
+        args: [0, 0],
+        aliases: settings.command.slice(1)
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    const state = await cache()
+
+    if (state === null) {
+      return Embed.error('Try again in a minute!')
     }
 
-    async init (): Promise<APIEmbed> {
-        const state = await cache()
-
-        if (state === null) {
-            return Embed.error('Try again in a minute!')
-        }
-
-        if (rss.results.size === 0) {
-            return Embed.error('An unexpected error occurred!')
-        }
-
-        const posts = [...rss.results.values()].map(p => {
-            p.link = schema.parse(p.link).toString()
-            return p
-        })
-
-        return Embed.json({
-            color: colors.ok,
-            description: posts
-                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
-                .join('\n')
-                .slice(0, 2048),
-            author: settings.author
-        })
+    if (rss.results.size === 0) {
+      return Embed.error('An unexpected error occurred!')
     }
+
+    const posts = [...rss.results.values()].map(p => {
+      p.link = schema.parse(p.link).toString()
+      return p
+    })
+
+    return Embed.json({
+      color: colors.ok,
+      description: posts
+        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .join('\n')
+        .slice(0, 2048),
+      author: settings.author
+    })
+  }
 }

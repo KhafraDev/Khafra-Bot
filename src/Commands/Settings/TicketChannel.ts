@@ -9,53 +9,53 @@ import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Select a channel to create private ticket threads on (if the server has enough boosts), ' +
+  constructor () {
+    super(
+      [
+        'Select a channel to create private ticket threads on (if the server has enough boosts), ' +
                 'or a category channel to create ticket channels in.',
-                '866022233330810930 [channel id]',
-                '#general [channel mention]'
-            ],
-            {
-                name: 'ticketchannel',
-                folder: 'Settings',
-                aliases: ['ticketchannels'],
-                args: [1, 1],
-                ratelimit: 10,
-                guildOnly: true
-            }
-        )
+        '866022233330810930 [channel id]',
+        '#general [channel mention]'
+      ],
+      {
+        name: 'ticketchannel',
+        folder: 'Settings',
+        aliases: ['ticketchannels'],
+        args: [1, 1],
+        ratelimit: 10,
+        guildOnly: true
+      }
+    )
+  }
+
+  async init (message: Message<true>): Promise<APIEmbed> {
+    if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
+      return Embed.perms(
+        message.channel,
+        message.member,
+        PermissionFlagsBits.Administrator
+      )
     }
 
-    async init (message: Message<true>): Promise<APIEmbed> {
-        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
-            return Embed.perms(
-                message.channel,
-                message.member,
-                PermissionFlagsBits.Administrator
-            )
-        }
+    /** guild can use private threads */
+    const privateThreads =
+      message.guild.premiumTier !== GuildPremiumTier.None &&
+      message.guild.premiumTier !== GuildPremiumTier.Tier1
 
-        /** guild can use private threads */
-        const privateThreads =
-            message.guild.premiumTier !== GuildPremiumTier.None &&
-            message.guild.premiumTier !== GuildPremiumTier.Tier1
+    const ticketChannel = await getMentions(message, 'channels')
 
-        const ticketChannel = await getMentions(message, 'channels')
-
-        if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
-            return Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`)
-        } else if (isExplicitText(ticketChannel) && !privateThreads) {
-            return Embed.error('This guild cannot use private threads, please use a category channel instead!')
-        }
-
-        await sql`
-            UPDATE kbGuild
-            SET ticketChannel = ${ticketChannel.id}::text
-            WHERE guild_id = ${message.guildId}::text;
-        `
-
-        return Embed.ok(`Changed the default ticket channel to ${ticketChannel}!`)
+    if (!isExplicitText(ticketChannel) && !isCategory(ticketChannel)) {
+      return Embed.error(`${ticketChannel ?? 'None'} is not a text or category channel!`)
+    } else if (isExplicitText(ticketChannel) && !privateThreads) {
+      return Embed.error('This guild cannot use private threads, please use a category channel instead!')
     }
+
+    await sql`
+      UPDATE kbGuild
+      SET ticketChannel = ${ticketChannel.id}::text
+      WHERE guild_id = ${message.guildId}::text;
+    `
+
+    return Embed.ok(`Changed the default ticket channel to ${ticketChannel}!`)
+  }
 }

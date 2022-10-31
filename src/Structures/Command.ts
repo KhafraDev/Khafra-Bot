@@ -43,32 +43,32 @@ type HandlerReturn =
     | null
 
 export abstract class Command implements ICommand {
-    readonly rateLimit: Cooldown
+  readonly rateLimit: Cooldown
 
-    readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
+  readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
 
-    /*** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-    readonly permissions: PermissionResolvable[] = [
-        PermissionFlagsBits.ViewChannel,
-        PermissionFlagsBits.SendMessages,
-        PermissionFlagsBits.EmbedLinks
-    ]
+  /** Permissions required to use a command, overrides whitelist/blacklist by guild. */
+  readonly permissions: PermissionResolvable[] = [
+    PermissionFlagsBits.ViewChannel,
+    PermissionFlagsBits.SendMessages,
+    PermissionFlagsBits.EmbedLinks
+  ]
 
-    constructor (
+  constructor (
         public readonly help: string[],
         public readonly settings: ICommand['settings']
-    ) {
-        this.help = help.length < 2
-            ? [...help, ...Array<string>(2 - help.length).fill('')]
-            : help
-        this.permissions = this.permissions.concat(settings.permissions ?? [])
-        this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] })
-        this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
+  ) {
+    this.help = help.length < 2
+      ? [...help, ...Array<string>(2 - help.length).fill('')]
+      : help
+    this.permissions = this.permissions.concat(settings.permissions ?? [])
+    this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] })
+    this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
 
-        if (settings.appSuggestion !== undefined) {
-            this.appSuggestion = settings.appSuggestion
-        }
+    if (settings.appSuggestion !== undefined) {
+      this.appSuggestion = settings.appSuggestion
     }
+  }
 
     abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
         Promise<HandlerReturn>

@@ -14,47 +14,47 @@ const basic =
     PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Set the welcome channel for messages when a user leaves, joins, or is kicked from the guild!',
-                '#general', '705896428287033375'
-            ],
-            {
-                name: 'welcome',
-                folder: 'Settings',
-                args: [1, 1],
-                guildOnly: true,
-                aliases: ['welcomechannel']
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Set the welcome channel for messages when a user leaves, joins, or is kicked from the guild!',
+        '#general', '705896428287033375'
+      ],
+      {
+        name: 'welcome',
+        folder: 'Settings',
+        args: [1, 1],
+        guildOnly: true,
+        aliases: ['welcomechannel']
+      }
+    )
+  }
+
+  async init (message: Message<true>): Promise<APIEmbed> {
+    if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
+      return Embed.perms(
+        message.channel,
+        message.member,
+        PermissionFlagsBits.Administrator
+      )
     }
 
-    async init (message: Message<true>): Promise<APIEmbed> {
-        if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
-            return Embed.perms(
-                message.channel,
-                message.member,
-                PermissionFlagsBits.Administrator
-            )
-        }
+    const channel = await getMentions(message, 'channels')
 
-        const channel = await getMentions(message, 'channels')
-
-        if (!isText(channel)) {
-            return Embed.error(`${channel} is not a text channel!`)
-        } else if (!hasPerms(channel, message.guild.members.me, basic)) {
-            return Embed.perms(channel, message.guild.members.me, basic)
-        }
-
-        await sql`
-            UPDATE kbGuild
-            SET welcome_channel = ${channel.id}::text
-            WHERE guild_id = ${message.guildId}::text;
-        `
-
-        return Embed.ok(`
-        You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
-        `)
+    if (!isText(channel)) {
+      return Embed.error(`${channel} is not a text channel!`)
+    } else if (!hasPerms(channel, message.guild.members.me, basic)) {
+      return Embed.perms(channel, message.guild.members.me, basic)
     }
+
+    await sql`
+      UPDATE kbGuild
+      SET welcome_channel = ${channel.id}::text
+      WHERE guild_id = ${message.guildId}::text;
+    `
+
+    return Embed.ok(`
+    You will now receive messages in ${channel} when a user joins, leaves, is kicked, or banned from the server!
+    `)
+  }
 }

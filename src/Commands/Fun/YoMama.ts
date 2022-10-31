@@ -12,24 +12,24 @@ const file = readFileSync(assets('yomama.txt'), 'utf-8')
 const jokes = file.split(/\r?\n/g).slice(0, -1) // last line will be empty
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'The most funny and epic jokes on the planet: Yo Mama jokes!'
-            ],
-            {
-                name: 'yomama',
-                folder: 'Fun',
-                args: [0, 0]
-            }
-        )
-    }
+  constructor () {
+    super(
+      [
+        'The most funny and epic jokes on the planet: Yo Mama jokes!'
+      ],
+      {
+        name: 'yomama',
+        folder: 'Fun',
+        args: [0, 0]
+      }
+    )
+  }
 
-    async init (message: Message): Promise<APIEmbed> {
-        if (isText(message.channel) && !message.channel.nsfw)
-            return Embed.error('🔞 This command only works in NSFW channels.')
+  async init (message: Message): Promise<APIEmbed> {
+    if (isText(message.channel) && !message.channel.nsfw)
+      return Embed.error('🔞 This command only works in NSFW channels.')
 
-        const joke = jokes[Math.floor(Math.random() * jokes.length)]
-        return Embed.ok(upperCase(joke))
-    }
+    const joke = jokes[Math.floor(Math.random() * jokes.length)]
+    return Embed.ok(upperCase(joke))
+  }
 }

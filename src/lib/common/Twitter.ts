@@ -9,18 +9,18 @@ import { request } from 'undici'
 
 type Indices = [number, number]
 interface Media {
-    id: number
-    id_str: string
-    indices: Indices
-    media_url: string
-    media_url_https: string
-    url: string
-    display_url: string
-    expanded_url: string
-    type: string
-    sizes: {
-        [K in 'thumb' | 'large' | 'small' | 'medium']: { w: number, h: number, resize: 'crop' | 'fit' }
-    }
+  id: number
+  id_str: string
+  indices: Indices
+  media_url: string
+  media_url_https: string
+  url: string
+  display_url: string
+  expanded_url: string
+  type: string
+  sizes: {
+    [K in 'thumb' | 'large' | 'small' | 'medium']: { w: number, h: number, resize: 'crop' | 'fit' }
+  }
 }
 
 interface ExtendedMedia extends Media {
@@ -121,43 +121,43 @@ interface ITweet {
 let token: string | null = null
 
 const getTwitterOAUTH = async (): Promise<string> => {
-    const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64')
-    const { body } = await request('https://api.twitter.com/oauth2/token', {
-        method: 'POST',
-        body: 'grant_type=client_credentials',
-        headers: {
-            Authorization: `Basic ${creds}`,
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        }
-    })
-    const j = await body.json() as OAuth
-    return `${j.token_type} ${j.access_token}`
+  const creds = Buffer.from(`${env.TWITTER_API}:${env.TWITTER_API_SECRET}`).toString('base64')
+  const { body } = await request('https://api.twitter.com/oauth2/token', {
+    method: 'POST',
+    body: 'grant_type=client_credentials',
+    headers: {
+      Authorization: `Basic ${creds}`,
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    }
+  })
+  const j = await body.json() as OAuth
+  return `${j.token_type} ${j.access_token}`
 }
 
 export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
-    token ??= await getTwitterOAUTH()
+  token ??= await getTwitterOAUTH()
 
-    const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
-        headers: {
-            Authorization: token
-        }
-    })
-
-    const j = await body.json() as ITweet
-
-    const media = j.extended_entities?.media
-    if (!media || media.length === 0)
-        return
-
-    if (media[0].type === 'video' || media[0].type === 'animated_gif') {
-        const medias = media[0].video_info.variants
-        return medias
-            .filter(u => u.content_type !== 'application/x-mpegURL')
-            .map(m => m.url)
-            .join('\n')
+  const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
+    headers: {
+      Authorization: token
     }
+  })
 
-    return media
-        .map(m => m.media_url_https)
-        .join('\n')
+  const j = await body.json() as ITweet
+
+  const media = j.extended_entities?.media
+  if (!media || media.length === 0)
+    return
+
+  if (media[0].type === 'video' || media[0].type === 'animated_gif') {
+    const medias = media[0].video_info.variants
+    return medias
+      .filter(u => u.content_type !== 'application/x-mpegURL')
+      .map(m => m.url)
+      .join('\n')
+  }
+
+  return media
+    .map(m => m.media_url_https)
+    .join('\n')
 }

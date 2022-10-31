@@ -16,40 +16,40 @@ import type { PendingQuery, Row } from 'postgres'
 type GiveawayRow = Pick<Giveaway, 'id' | 'enddate' | 'prize' | 'winners' | 'didEnd'>
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'giveaway',
-            name: 'view'
-        })
+  constructor () {
+    super({
+      references: 'giveaway',
+      name: 'view'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+    if (interaction.guild === null) {
+      return {
+        content: '❌ Unable to use the command.',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        if (interaction.guild === null) {
-            return {
-                content: '❌ Unable to use the command.',
-                ephemeral: true
-            }
-        }
+    const active = interaction.options.getBoolean('active')
+    const ended = interaction.options.getBoolean('ended')
 
-        const active = interaction.options.getBoolean('active')
-        const ended = interaction.options.getBoolean('ended')
+    let partialQuery: PendingQuery<Row[]>
+    let contentNoGiveaways: string
 
-        let partialQuery: PendingQuery<Row[]>
-        let contentNoGiveaways: string
+    if (active) {
+      partialQuery = sql`WHERE kbGiveaways."didEnd" = FALSE AND`
+      contentNoGiveaways = '❌ You do not have any active giveaways!'
+    } else if (ended) {
+      partialQuery = sql`WHERE kbGiveaways."didEnd" = TRUE AND`
+      contentNoGiveaways = '❌ You do not have any giveaways that have ended!'
+    } else {
+      // No options chosen/all
+      partialQuery = sql`WHERE`
+      contentNoGiveaways = '❌ You do not have any giveaways.'
+    }
 
-        if (active) {
-            partialQuery = sql`WHERE kbGiveaways."didEnd" = FALSE AND`
-            contentNoGiveaways = '❌ You do not have any active giveaways!'
-        } else if (ended) {
-            partialQuery = sql`WHERE kbGiveaways."didEnd" = TRUE AND`
-            contentNoGiveaways = '❌ You do not have any giveaways that have ended!'
-        } else {
-            // No options chosen/all
-            partialQuery = sql`WHERE`
-            contentNoGiveaways = '❌ You do not have any giveaways.'
-        }
-
-        const giveaways = await sql<GiveawayRow[]>`
+    const giveaways = await sql<GiveawayRow[]>`
 			SELECT id, enddate, prize, winners, "didEnd" FROM kbGiveaways
 			${partialQuery}
 				kbGiveaways.guildid = ${interaction.guild.id}::text AND
@@ -57,92 +57,92 @@ export class kSubCommand extends InteractionSubCommand {
 			LIMIT 10
 		`
 
-        if (giveaways.length === 0) {
-            return {
-                content: contentNoGiveaways,
-                ephemeral: true
-            }
-        }
+    if (giveaways.length === 0) {
+      return {
+        content: contentNoGiveaways,
+        ephemeral: true
+      }
+    }
 
-        const baseEmbed = (): APIEmbed => Embed.json({
-            color: colors.ok,
-            author: {
-                name: interaction.user.username,
-                icon_url: interaction.user.displayAvatarURL()
-            },
-            description: ''
-        })
+    const baseEmbed = (): APIEmbed => Embed.json({
+      color: colors.ok,
+      author: {
+        name: interaction.user.username,
+        icon_url: interaction.user.displayAvatarURL()
+      },
+      description: ''
+    })
 
-        let page = 0
-        const embeds: APIEmbed[] = [baseEmbed()]
+    let page = 0
+    const embeds: APIEmbed[] = [baseEmbed()]
 
-        for (const { id, enddate, prize, winners, didEnd } of giveaways) {
-            const description = stripIndents`
+    for (const { id, enddate, prize, winners, didEnd } of giveaways) {
+      const description = stripIndents`
 				${didEnd ? 'Inactive' : 'Active'} ${inlineCode(id)} (ends ${time(enddate, 'F')}, ${winners} winner${plural(winners)})
 				${inlineCode(prize)}
 			`
 
-            const lastEmbed = embeds[embeds.length - 1]
+      const lastEmbed = embeds[embeds.length - 1]
 
-            if (lastEmbed.description!.length + description.length + '\n\n'.length > 2048) {
-                const embed = baseEmbed()
-                embed.description = description
-                embeds.push(baseEmbed())
-            } else {
-                lastEmbed.description += `\n\n${description}`
-            }
-        }
+      if (lastEmbed.description!.length + description.length + '\n\n'.length > 2048) {
+        const embed = baseEmbed()
+        embed.description = description
+        embeds.push(baseEmbed())
+      } else {
+        lastEmbed.description += `\n\n${description}`
+      }
+    }
 
-        const id = randomUUID()
-        const reply = await interaction.editReply({
-            embeds: [embeds[0]],
-            content: `📖 Embed ${page}/${embeds.length}`,
-            components: embeds.length === 1 ? undefined : [
-                Components.actionRow([
-                    Buttons.approve('Next', `next-${id}`),
-                    Buttons.primary('Back', `back-${id}`),
-                    Buttons.deny('Stop', `stop-${id}`)
-                ])
-            ]
-        })
+    const id = randomUUID()
+    const reply = await interaction.editReply({
+      embeds: [embeds[0]],
+      content: `📖 Embed ${page}/${embeds.length}`,
+      components: embeds.length === 1 ? undefined : [
+        Components.actionRow([
+          Buttons.approve('Next', `next-${id}`),
+          Buttons.primary('Back', `back-${id}`),
+          Buttons.deny('Stop', `stop-${id}`)
+        ])
+      ]
+    })
 
-        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent,
-            message: reply,
-            time: 45_000,
-            max: embeds.length,
-            filter: (i) =>
-                interaction.user.id === i.user.id &&
+    const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
+      interactionType: InteractionType.MessageComponent,
+      message: reply,
+      time: 45_000,
+      max: embeds.length,
+      filter: (i) =>
+        interaction.user.id === i.user.id &&
                 reply.id === i.message.id &&
                 i.customId.endsWith(id)
+    })
+
+    for await (const [i] of collector) {
+      const [name] = i.customId.split(`-${id}`, 1)
+
+      if (name === 'stop') {
+        collector.stop('by-user')
+        await i.update({
+          components: disableAll(reply)
         })
+        break
+      }
 
-        for await (const [i] of collector) {
-            const [name] = i.customId.split(`-${id}`, 1)
+      name === 'next' ? page++ : page--
 
-            if (name === 'stop') {
-                collector.stop('by-user')
-                await i.update({
-                    components: disableAll(reply)
-                })
-                break
-            }
+      if (page < 0) page = embeds.length - 1
+      if (page >= embeds.length) page = 0
 
-            name === 'next' ? page++ : page--
-
-            if (page < 0) page = embeds.length - 1
-            if (page >= embeds.length) page = 0
-
-            await i.update({
-                embeds: [embeds[page]],
-                content: `📖 Embed ${page}/${embeds.length}`
-            })
-        }
-
-        if (collector.endReason !== 'by-user') {
-            await interaction.editReply({
-                components: disableAll(reply)
-            })
-        }
+      await i.update({
+        embeds: [embeds[page]],
+        content: `📖 Embed ${page}/${embeds.length}`
+      })
     }
+
+    if (collector.endReason !== 'by-user') {
+      await interaction.editReply({
+        components: disableAll(reply)
+      })
+    }
+  }
 }

@@ -42,49 +42,49 @@ export interface PasteGGError {
  * Seems to have issues with the word "function" (for whatever reason).
  */
 const hatebin = async (text: string): Promise<string | undefined> => {
-    const { body, statusCode } = await request('https://hatebin.com/index.php', {
-        method: 'POST',
-        body: `text=${encodeURIComponent(text)}`,
-        headers: { 'Content-type': 'application/x-www-form-urlencoded' }
-    })
+  const { body, statusCode } = await request('https://hatebin.com/index.php', {
+    method: 'POST',
+    body: `text=${encodeURIComponent(text)}`,
+    headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+  })
 
-    if (statusCode === 200) {
-        return `https://hatebin.com/${(await body.text()).trim()}`
-    }
+  if (statusCode === 200) {
+    return `https://hatebin.com/${(await body.text()).trim()}`
+  }
 }
 
 /**
  * Upload text to https://sourceb.in
  */
 const sourcebin = async (text: string): Promise<string | undefined> => {
-    const { body, statusCode } = await request('https://sourceb.in/api/bins', {
-        method: 'POST',
-        body: JSON.stringify({
-            files: [{ content: text }]
-        }),
-        headers: { 'Content-Type': 'application/json;charset=utf-8' }
-    })
+  const { body, statusCode } = await request('https://sourceb.in/api/bins', {
+    method: 'POST',
+    body: JSON.stringify({
+      files: [{ content: text }]
+    }),
+    headers: { 'Content-Type': 'application/json;charset=utf-8' }
+  })
 
-    if (statusCode === 200) {
-        const j = await body.json() as ISourcebin
-        return `https://sourceb.in/${j.key}`
-    }
+  if (statusCode === 200) {
+    const j = await body.json() as ISourcebin
+    return `https://sourceb.in/${j.key}`
+  }
 }
 
 /**
  * Upload text to https://paste.nomsy.net
  */
 const nomsy = async (text: string): Promise<string | undefined> => {
-    const { body, statusCode } = await request('https://paste.nomsy.net/documents', {
-        method: 'POST',
-        body: text,
-        headers: { 'Content-Type': 'application/json; charset=utf-8' }
-    })
+  const { body, statusCode } = await request('https://paste.nomsy.net/documents', {
+    method: 'POST',
+    body: text,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  })
 
-    if (statusCode === 200) {
-        const j = await body.json() as HasteServer
-        return `https://paste.nomsy.net/${j.key}`
-    }
+  if (statusCode === 200) {
+    const j = await body.json() as HasteServer
+    return `https://paste.nomsy.net/${j.key}`
+  }
 }
 
 /**
@@ -92,29 +92,29 @@ const nomsy = async (text: string): Promise<string | undefined> => {
  * @see https://github.com/ascclemens/paste/blob/master/api.md#post-pastes
  */
 const pastegg = async (text: string): Promise<string | undefined> => {
-    const { body, statusCode } = await request('https://api.paste.gg/v1/pastes', {
-        method: 'POST',
-        body: JSON.stringify({
-            visibility: 'unlisted',
-            files: [{ content: { format: 'text', value: text } }]
-        }),
-        headers: { 'Content-Type': 'application/json' }
-    })
+  const { body, statusCode } = await request('https://api.paste.gg/v1/pastes', {
+    method: 'POST',
+    body: JSON.stringify({
+      visibility: 'unlisted',
+      files: [{ content: { format: 'text', value: text } }]
+    }),
+    headers: { 'Content-Type': 'application/json' }
+  })
 
-    if (statusCode === 200) {
-        const j = await body.json() as PasteGGError | PasteGGSuccess
-        if (j.status === 'success')
-            return `https://paste.gg/anonymous/${j.result.id}`
-    }
+  if (statusCode === 200) {
+    const j = await body.json() as PasteGGError | PasteGGSuccess
+    if (j.status === 'success')
+      return `https://paste.gg/anonymous/${j.result.id}`
+  }
 }
 
 /**
  * List of aliases with the corresponding function.
  */
 export const pasteAliases = new Map<string, PasteFn>([
-    ['hatebin', hatebin],
-    ['sourcebin', sourcebin],
-    ['nomsy', nomsy],
-    ['paste', pastegg],
-    ['pastegg', pastegg]
+  ['hatebin', hatebin],
+  ['sourcebin', sourcebin],
+  ['nomsy', nomsy],
+  ['paste', pastegg],
+  ['pastegg', pastegg]
 ])

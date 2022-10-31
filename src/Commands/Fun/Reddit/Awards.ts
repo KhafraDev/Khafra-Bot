@@ -12,69 +12,69 @@ import { request } from 'undici'
 const PER_COIN = 1.99 / 500
 const isArray = (arr: unknown): arr is unknown[] => Array.isArray(arr)
 const schema = s.string.url({
-    allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
-    allowedProtocols: ['http:', 'https:']
+  allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
+  allowedProtocols: ['http:', 'https:']
 }).transform((value) => {
-    const url = new URL(value)
-    url.search = ''
-    return url
+  const url = new URL(value)
+  url.search = ''
+  return url
 })
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Calculate how much people have spent on Reddit awards for a post.',
-                'https://www.reddit.com/r/pics/comments/jcjf3d/wouldbe_president_joe_biden_wrote_this_letter_to/'
-            ],
-            {
-                name: 'award',
-                folder: 'Fun',
-                aliases: ['awards', 'awardprice'],
-                args: [1, 1],
-                ratelimit: 7
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Calculate how much people have spent on Reddit awards for a post.',
+        'https://www.reddit.com/r/pics/comments/jcjf3d/wouldbe_president_joe_biden_wrote_this_letter_to/'
+      ],
+      {
+        name: 'award',
+        folder: 'Fun',
+        aliases: ['awards', 'awardprice'],
+        args: [1, 1],
+        ratelimit: 7
+      }
+    )
+  }
+
+  async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
+    if (!schema.is(args[0])) {
+      return Embed.error('Invalid Reddit post!')
     }
 
-    async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
-        if (!schema.is(args[0])) {
-            return Embed.error('Invalid Reddit post!')
-        }
+    const url = schema.parse(args[0])
 
-        const url = schema.parse(args[0])
+    if (
+    // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
+      !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
+    ) {
+      return Embed.error('Not a valid reddit URL!')
+    }
 
-        if (
-            // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
-            !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
-        ) {
-            return Embed.error('Not a valid reddit URL!')
-        }
+    const { body } = await request(`${url.href.replace(/.json$/, '')}.json`)
+    const json: unknown = await body.json().catch(() => null)
 
-        const { body } = await request(`${url.href.replace(/.json$/, '')}.json`)
-        const json: unknown = await body.json().catch(() => null)
+    if (json === null || !isArray(json) || !apiSchema.is(json[0])) {
+      return Embed.error('Received an invalid response.')
+    } else if ('error' in json[0]) {
+      return Embed.error('Error occurred.')
+    }
 
-        if (json === null || !isArray(json) || !apiSchema.is(json[0])) {
-            return Embed.error('Received an invalid response.')
-        } else if ('error' in json[0]) {
-            return Embed.error('Error occurred.')
-        }
+    const post = json[0].data.children[0].data
+    const coins = post.all_awardings.reduce(
+      (p, c) => p + c.coin_price * c.count, 0
+    )
+    const price = (coins * PER_COIN).toLocaleString('en-US',
+      { style: 'currency', currency: 'USD' }
+    )
+    const count = post.all_awardings.reduce((p, c) => p + c.count, 0)
 
-        const post = json[0].data.children[0].data
-        const coins = post.all_awardings.reduce(
-            (p, c) => p + c.coin_price * c.count, 0
-        )
-        const price = (coins * PER_COIN).toLocaleString('en-US',
-            { style: 'currency', currency: 'USD' }
-        )
-        const count = post.all_awardings.reduce((p, c) => p + c.count, 0)
-
-        return Embed.json({
-            color: colors.ok,
-            description:
+    return Embed.json({
+      color: colors.ok,
+      description:
                 `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
                 `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`,
-            footer: { text: 'Free awards are counted in the cost!' }
-        })
-    }
+      footer: { text: 'Free awards are counted in the cost!' }
+    })
+  }
 }

@@ -7,41 +7,41 @@ import type { APIEmbed } from 'discord-api-types/v10'
 import { request } from 'undici'
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Get play stats about Synergism!'
-            ],
-            {
-                name: 'synergismstats',
-                folder: 'Fun',
-                args: [0, 0],
-                aliases: ['synergismstat']
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Get play stats about Synergism!'
+      ],
+      {
+        name: 'synergismstats',
+        folder: 'Fun',
+        args: [0, 0],
+        aliases: ['synergismstat']
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    const stats = await Kongregate()
+    const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'))
+
+    if (stats === null) {
+      return Embed.error('Failed to fetch the stats!')
+    } else if (err !== null) {
+      return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`)
     }
 
-    async init (): Promise<APIEmbed> {
-        const stats = await Kongregate()
-        const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'))
+    const quarks = await quarkBonus.body.json() as { bonus: number }
+    const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g)
 
-        if (stats === null) {
-            return Embed.error('Failed to fetch the stats!')
-        } else if (err !== null) {
-            return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`)
-        }
-
-        const quarks = await quarkBonus.body.json() as { bonus: number }
-        const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g)
-
-        return Embed.json({
-            color: colors.ok,
-            title: 'Synergism Stats (Kongregate)',
-            description: `
+    return Embed.json({
+      color: colors.ok,
+      title: 'Synergism Stats (Kongregate)',
+      description: `
             ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
             ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
             Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings!`,
-            fields: [{ name: bold('Quark Bonus:'), value: `${quarks.bonus}%`, inline: true }]
-        })
-    }
+      fields: [{ name: bold('Quark Bonus:'), value: `${quarks.bonus}%`, inline: true }]
+    })
+  }
 }

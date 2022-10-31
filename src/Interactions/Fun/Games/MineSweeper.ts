@@ -4,18 +4,18 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { InteractionReplyOptions } from 'discord.js'
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'games',
-            name: 'minesweeper'
-        })
-    }
+  constructor () {
+    super({
+      references: 'games',
+      name: 'minesweeper'
+    })
+  }
 
-    async handle (): Promise<InteractionReplyOptions> {
-        return {
-            embeds: [
-                Embed.ok(Board())
-            ]
-        }
+  async handle (): Promise<InteractionReplyOptions> {
+    return {
+      embeds: [
+        Embed.ok(Board())
+      ]
     }
+  }
 }

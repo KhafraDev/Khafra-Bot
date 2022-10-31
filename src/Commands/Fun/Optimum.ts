@@ -4,25 +4,25 @@ import { italic } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'See reviews for the worst ISP in the U.S.'
-            ],
-            {
-                name: 'optimum',
-                folder: 'Fun',
-                aliases: ['altice'],
-                args: [0, 0],
-                ratelimit: 3
-            }
-        )
-    }
+  constructor () {
+    super(
+      [
+        'See reviews for the worst ISP in the U.S.'
+      ],
+      {
+        name: 'optimum',
+        folder: 'Fun',
+        aliases: ['altice'],
+        args: [0, 0],
+        ratelimit: 3
+      }
+    )
+  }
 
-    async init (): Promise<APIEmbed> {
-        return Embed.json({
-            title: 'Optimum by Altice',
-            description: `
+  async init (): Promise<APIEmbed> {
+    return Embed.json({
+      title: 'Optimum by Altice',
+      description: `
             Reviews by ${italic('real')} people:
     
             [Consumer Affairs](https://www.consumeraffairs.com/cable_tv/optimum.html) - 1 ⭐
@@ -32,6 +32,6 @@ export class kCommand extends Command {
             [EMPLOYEE REVIEWS](https://www.indeed.com/cmp/Optimum-Cablevision/reviews) - 3.2 ⭐
             [SiteJabber](https://www.sitejabber.com/reviews/optimum.com) - 1 ⭐
             [ServiceReview users](https://servicereviews.org/review/optimum-internet/) - 1.4 ⭐`
-        })
-    }
+    })
+  }
 }

@@ -18,94 +18,94 @@ type Row = Exclude<kReminder, 'userId'>
 const schema = s.number.greaterThan(1).lessThanOrEqual(20)
 
 const chunkEmbeds = (rows: Row[]): APIEmbed[] => {
-    if (rows.length === 0) {
-        return []
-    }
+  if (rows.length === 0) {
+    return []
+  }
 
-    const embeds = rows.map(row => {
-        const repeats = row.once ? 'does not repeat' : 'repeats'
-        return `• ${inlineCode(row.id)}: ${time(row.time)} - ${inlineCode(ellipsis(row.message, 20))}, ${repeats}`
-    })
+  const embeds = rows.map(row => {
+    const repeats = row.once ? 'does not repeat' : 'repeats'
+    return `• ${inlineCode(row.id)}: ${time(row.time)} - ${inlineCode(ellipsis(row.message, 20))}, ${repeats}`
+  })
 
-    return chunkSafe(embeds, 7).map(lines => Embed.ok(lines.join('\n')))
+  return chunkSafe(embeds, 7).map(lines => Embed.ok(lines.join('\n')))
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'reminders',
-            name: 'fetch'
-        })
+  constructor () {
+    super({
+      references: 'reminders',
+      name: 'fetch'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    const amount = interaction.options.getInteger('amount') ?? 100
+    const trueAmount = interaction.inRawGuild()
+      ? schema.is(amount) ? amount : 10
+      : amount
+
+    const rows = await sql<Row[]>`
+      SELECT "id", "message", "time", "once", "interval"
+      FROM "kbReminders"
+      WHERE "userId" = ${interaction.user.id}::text
+      LIMIT ${trueAmount}::smallint;
+    `
+
+    const id = randomUUID()
+    const embeds = chunkEmbeds(rows)
+    let page = 0
+
+    if (embeds.length === 0) {
+      return {
+        content: 'You don\'t have any reminders, silly!',
+        ephemeral: true
+      }
+    } else if (embeds.length === 1 || interaction.inRawGuild()) {
+      return {
+        embeds: [embeds[0]]
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-        const amount = interaction.options.getInteger('amount') ?? 100
-        const trueAmount = interaction.inRawGuild()
-            ? schema.is(amount) ? amount : 10
-            : amount
+    const int = await interaction.editReply({
+      content: `Page ${page + 1} out of ${embeds.length}`,
+      embeds: [embeds[page]],
+      components: [
+        Components.actionRow([
+          Buttons.approve('Next', `next-${id}`, { emoji: { name: '▶️' } }),
+          Buttons.deny('Stop', `stop-${id}`, { emoji: { name: '🗑️' } }),
+          Buttons.secondary('Back', `back-${id}`, { emoji: { name: '◀️' } })
+        ])
+      ]
+    })
 
-        const rows = await sql<Row[]>`
-            SELECT "id", "message", "time", "once", "interval"
-            FROM "kbReminders"
-            WHERE "userId" = ${interaction.user.id}::text
-            LIMIT ${trueAmount}::smallint;
-        `
-
-        const id = randomUUID()
-        const embeds = chunkEmbeds(rows)
-        let page = 0
-
-        if (embeds.length === 0) {
-            return {
-                content: 'You don\'t have any reminders, silly!',
-                ephemeral: true
-            }
-        } else if (embeds.length === 1 || interaction.inRawGuild()) {
-            return {
-                embeds: [embeds[0]]
-            }
-        }
-
-        const int = await interaction.editReply({
-            content: `Page ${page + 1} out of ${embeds.length}`,
-            embeds: [embeds[page]],
-            components: [
-                Components.actionRow([
-                    Buttons.approve('Next', `next-${id}`, { emoji: { name: '▶️' } }),
-                    Buttons.deny('Stop', `stop-${id}`, { emoji: { name: '🗑️' } }),
-                    Buttons.secondary('Back', `back-${id}`, { emoji: { name: '◀️' } })
-                ])
-            ]
-        })
-
-        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent,
-            message: int,
-            idle: 30_000,
-            max: 10,
-            filter: (i) =>
-                interaction.user.id === i.user.id &&
+    const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
+      interactionType: InteractionType.MessageComponent,
+      message: int,
+      idle: 30_000,
+      max: 10,
+      filter: (i) =>
+        interaction.user.id === i.user.id &&
                 int.id === i.message.id &&
                 i.customId.endsWith(id)
-        })
+    })
 
-        for await (const [i] of collector) {
-            if (i.customId.startsWith('stop')) {
-                collector.stop()
-                break
-            }
+    for await (const [i] of collector) {
+      if (i.customId.startsWith('stop')) {
+        collector.stop()
+        break
+      }
 
-            i.customId.startsWith('next') ? page++ : page--
+      i.customId.startsWith('next') ? page++ : page--
 
-            if (page < 0) page = embeds.length - 1
-            if (page >= embeds.length) page = 0
+      if (page < 0) page = embeds.length - 1
+      if (page >= embeds.length) page = 0
 
-            await i.update({
-                content: `Page ${page + 1} out of ${embeds.length}`,
-                embeds: [embeds[page]]
-            })
-        }
-
-        await interaction.editReply({ components: disableAll(int) })
+      await i.update({
+        content: `Page ${page + 1} out of ${embeds.length}`,
+        embeds: [embeds[page]]
+      })
     }
+
+    await interaction.editReply({ components: disableAll(int) })
+  }
 }

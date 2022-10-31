@@ -12,67 +12,67 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'giveaway',
-            name: 'reroll'
-        })
+  constructor () {
+    super({
+      references: 'giveaway',
+      name: 'reroll'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    if (interaction.guild === null) {
+      return {
+        content: '❌ Unable to use the command.',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        if (interaction.guild === null) {
-            return {
-                content: '❌ Unable to use the command.',
-                ephemeral: true
-            }
-        }
+    const idOrText = interaction.options.getString('giveaway-id-or-prize', true)
+    const where = uuidRegex.test(idOrText)
+      ? sql`kbGiveaways.id = ${idOrText}::uuid`
+      : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
 
-        const idOrText = interaction.options.getString('giveaway-id-or-prize', true)
-        const where = uuidRegex.test(idOrText)
-            ? sql`kbGiveaways.id = ${idOrText}::uuid`
-            : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
+    const [giveaway] = await sql<[Giveaway?]>`
+      SELECT * FROM kbGiveaways
+      WHERE
+          ${where} AND
+          kbGiveaways.guildid = ${interaction.guild.id}::text AND
+          kbGiveaways.initiator = ${interaction.user.id}::text AND
+          kbGiveaways."didEnd" = TRUE::boolean
+      LIMIT 1;
+    `
 
-        const [giveaway] = await sql<[Giveaway?]>`
-            SELECT * FROM kbGiveaways
-            WHERE
-                ${where} AND
-                kbGiveaways.guildid = ${interaction.guild.id}::text AND
-                kbGiveaways.initiator = ${interaction.user.id}::text AND
-                kbGiveaways."didEnd" = TRUE::boolean
-            LIMIT 1;
-        `
+    if (!giveaway) {
+      return {
+        content: '❌ No giveaways were found, is it older than a week?',
+        ephemeral: true
+      }
+    }
 
-        if (!giveaway) {
-            return {
-                content: '❌ No giveaways were found, is it older than a week?',
-                ephemeral: true
-            }
-        }
+    const { channelid, winners, enddate, id } = giveaway
+    const channel = await interaction.guild.channels.fetch(channelid)
 
-        const { channelid, winners, enddate, id } = giveaway
-        const channel = await interaction.guild.channels.fetch(channelid)
-
-        if (
-            channel === null ||
+    if (
+      channel === null ||
             !DiscordUtil.isTextBased(channel)
-        ) {
-            return {
-                content: '❌ I couldn\'t find the channel.',
-                ephemeral: true
-            }
-        }
+    ) {
+      return {
+        content: '❌ I couldn\'t find the channel.',
+        ephemeral: true
+      }
+    }
 
-        // Edit the old message & handles all the logic.
-        const timer = KhafraClient.Timers.get('GiveawayTimer')!
-        await timer.action(giveaway)
+    // Edit the old message & handles all the logic.
+    const timer = KhafraClient.Timers.get('GiveawayTimer')!
+    await timer.action(giveaway)
 
-        return {
-            content: stripIndents`
+    return {
+      content: stripIndents`
             ✅ Re-rolled the giveaway in ${channel} if it was possible.
 
             • ${winners} winner${plural(winners)}
             • Ends ${time(enddate)}
             • ID ${inlineCode(id)}`
-        }
     }
+  }
 }

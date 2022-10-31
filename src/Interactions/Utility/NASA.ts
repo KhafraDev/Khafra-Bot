@@ -7,43 +7,43 @@ import type { InteractionReplyOptions } from 'discord.js'
 import { logError } from '#khaf/utility/Rejections.js'
 
 export class kInteraction extends Interactions {
-    constructor () {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'nasa',
-            description: 'Gets a random image of space from NASA!'
-        }
-
-        super(sc, { defer: true })
+  constructor () {
+    const sc: RESTPostAPIApplicationCommandsJSONBody = {
+      name: 'nasa',
+      description: 'Gets a random image of space from NASA!'
     }
 
-    async init (): Promise<InteractionReplyOptions> {
-        const result = await NASAGetRandom().catch(logError)
+    super(sc, { defer: true })
+  }
 
-        if (result instanceof Error) {
-            return {
-                content: `❌ An unexpected error occurred: ${inlineCode(result.message)}`,
-                ephemeral: true
-            }
-        } else if (result === null) {
-            return {
-                content: '❌ No images were fetched, try again?',
-                ephemeral: true
-            }
-        }
+  async init (): Promise<InteractionReplyOptions> {
+    const result = await NASAGetRandom().catch(logError)
 
-        const embed = Embed.json({
-            color: colors.ok,
-            title: result.title,
-            url: result.link,
-            image: { url: result.link }
-        })
-
-        if (typeof result.copyright === 'string') {
-            embed.footer = { text: `© ${result.copyright}` }
-        }
-
-        return {
-            embeds: [embed]
-        }
+    if (result instanceof Error) {
+      return {
+        content: `❌ An unexpected error occurred: ${inlineCode(result.message)}`,
+        ephemeral: true
+      }
+    } else if (result === null) {
+      return {
+        content: '❌ No images were fetched, try again?',
+        ephemeral: true
+      }
     }
+
+    const embed = Embed.json({
+      color: colors.ok,
+      title: result.title,
+      url: result.link,
+      image: { url: result.link }
+    })
+
+    if (typeof result.copyright === 'string') {
+      embed.footer = { text: `© ${result.copyright}` }
+    }
+
+    return {
+      embeds: [embed]
+    }
+  }
 }

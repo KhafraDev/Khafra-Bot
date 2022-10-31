@@ -11,86 +11,86 @@ const cache: InferType<typeof schema>[] = []
 let lastFetched: number
 
 const schema = s.object({
-    by: s.string,
-    descendants: s.number,
-    id: s.number,
-    kids: s.number.array,
-    score: s.number,
-    time: s.number,
-    title: s.string,
-    type: s.string,
-    url: s.string
+  by: s.string,
+  descendants: s.number,
+  id: s.number,
+  kids: s.number.array,
+  score: s.number,
+  time: s.number,
+  title: s.string,
+  type: s.string,
+  url: s.string
 })
 
 const fetchTop = async (): Promise<number[]> => {
-    const { body } = await request(top)
-    const j: unknown = await body.json()
+  const { body } = await request(top)
+  const j: unknown = await body.json()
 
-    if (!s.number.array.is(j)) {
-        return []
-    }
+  if (!s.number.array.is(j)) {
+    return []
+  }
 
-    return j.slice(0, 10)
+  return j.slice(0, 10)
 }
 
 const fetchEntries = async (): Promise<InferType<typeof schema>[]> => {
-    const ids = await fetchTop()
-    cache.length = 0
+  const ids = await fetchTop()
+  cache.length = 0
 
-    for (const id of ids) {
-        const { body } = await request(art.replace('{id}', `${id}`))
-        const j: unknown = await body.json()
+  for (const id of ids) {
+    const { body } = await request(art.replace('{id}', `${id}`))
+    const j: unknown = await body.json()
 
-        if (schema.is(j)) {
-            cache.push(j)
-        }
+    if (schema.is(j)) {
+      cache.push(j)
     }
+  }
 
-    return cache
+  return cache
 }
 
 export const fetchHN = async (): Promise<typeof cache> => {
-    if (cache.length !== 0) {
-        // If the cache is stale
-        if (Date.now() - lastFetched! >= minutes(10)) {
-            await fetchEntries()
-            lastFetched = Date.now()
-        }
-    } else {
-        await fetchEntries()
-        lastFetched = Date.now()
+  if (cache.length !== 0) {
+    // If the cache is stale
+    if (Date.now() - lastFetched! >= minutes(10)) {
+      await fetchEntries()
+      lastFetched = Date.now()
     }
+  } else {
+    await fetchEntries()
+    lastFetched = Date.now()
+  }
 
-    return cache
+  return cache
 }
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Fetch top articles from https://news.ycombinator.com/'
-            ],
-            {
-                name: 'hackernews',
-                folder: 'News',
-                args: [0, 0],
-                aliases: ['hn']
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Fetch top articles from https://news.ycombinator.com/'
+      ],
+      {
+        name: 'hackernews',
+        folder: 'News',
+        args: [0, 0],
+        aliases: ['hn']
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    await fetchHN()
+
+    if (cache.length === 0) {
+      return Embed.error('Failed to fetch the articles!')
     }
 
-    async init (): Promise<APIEmbed> {
-        await fetchHN()
+    const stories = [...cache.values()]
+    const list = stories
+      .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
+      .join('\n')
 
-        if (cache.length === 0) {
-            return Embed.error('Failed to fetch the articles!')
-        }
-
-        const stories = [...cache.values()]
-        const list = stories
-            .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
-            .join('\n')
-
-        return Embed.ok(list)
-    }
+    return Embed.ok(list)
+  }
 }

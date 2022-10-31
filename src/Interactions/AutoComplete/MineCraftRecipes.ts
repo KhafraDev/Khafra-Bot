@@ -4,7 +4,7 @@ import type { AutocompleteInteraction } from 'discord.js'
 import { request } from 'undici'
 
 const { body } = await request(
-    'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.19/items.json'
+  'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.19/items.json'
 )
 const json = await body.json() as {
     id: number
@@ -14,39 +14,39 @@ const json = await body.json() as {
 }[]
 
 export class kAutocomplete extends InteractionAutocomplete {
-    constructor () {
-        super({
-            name: 'item',
-            references: 'minecraft'
-        })
+  constructor () {
+    super({
+      name: 'item',
+      references: 'minecraft'
+    })
+  }
+
+  async handle (interaction: AutocompleteInteraction): Promise<undefined> {
+    const option = interaction.options.getFocused(true)
+
+    if (option.name !== 'item') return
+
+    const sortedKeys: APIApplicationCommandOptionChoice[] = []
+    const value = `${option.value}`.toLowerCase()
+
+    if (value.length !== 0) {
+      for (const item of json) {
+        if (sortedKeys.length >= 25) break
+
+        const displayName = item.displayName.toLowerCase()
+
+        if (displayName === value) {
+          sortedKeys.unshift({ name: item.displayName, value: item.displayName })
+        } else if (displayName.includes(value)) {
+          sortedKeys.push({ name: item.displayName, value: item.displayName })
+        }
+      }
     }
 
-    async handle (interaction: AutocompleteInteraction): Promise<undefined> {
-        const option = interaction.options.getFocused(true)
-
-        if (option.name !== 'item') return
-
-        const sortedKeys: APIApplicationCommandOptionChoice[] = []
-        const value = `${option.value}`.toLowerCase()
-
-        if (value.length !== 0) {
-            for (const item of json) {
-                if (sortedKeys.length >= 25) break
-
-                const displayName = item.displayName.toLowerCase()
-
-                if (displayName === value) {
-                    sortedKeys.unshift({ name: item.displayName, value: item.displayName })
-                } else if (displayName.includes(value)) {
-                    sortedKeys.push({ name: item.displayName, value: item.displayName })
-                }
-            }
-        }
-
-        if (sortedKeys.length === 0) {
-            sortedKeys.push({ name: 'No items found', value: 'invalid' })
-        }
-
-        await interaction.respond(sortedKeys)
+    if (sortedKeys.length === 0) {
+      sortedKeys.push({ name: 'No items found', value: 'invalid' })
     }
+
+    await interaction.respond(sortedKeys)
+  }
 }

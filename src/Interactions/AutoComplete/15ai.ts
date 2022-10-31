@@ -8,43 +8,43 @@ import { join } from 'node:path'
 type Characters = typeof import('../../../packages/15.ai/Characters.json')
 
 const characters = createFileWatcher<Characters>(
-    join(cwd, 'packages/15.ai/Characters.json')
+  join(cwd, 'packages/15.ai/Characters.json')
 )
 
 const keys = (Object.keys(characters) as (keyof typeof characters)[])
-    .flatMap(k => characters[k].map(char => char.name))
+  .flatMap(k => characters[k].map(char => char.name))
 
 export class kAutocomplete extends InteractionAutocomplete {
-    constructor () {
-        super({
-            name: 'voice',
-            references: '15ai'
-        })
+  constructor () {
+    super({
+      name: 'voice',
+      references: '15ai'
+    })
+  }
+
+  async handle (interaction: AutocompleteInteraction): Promise<undefined> {
+    const option = interaction.options.getFocused(true)
+
+    if (option.name !== 'voice') return
+
+    const sortedKeys: APIApplicationCommandOptionChoice[] = []
+    const value = `${option.value}`.toLowerCase()
+
+    for (const key of keys) {
+      if (sortedKeys.length >= 25) break
+
+      const k = key.toLowerCase()
+      if (k.startsWith(value)) {
+        sortedKeys.unshift({ name: key, value: key })
+      } else if (k.includes(value)) {
+        sortedKeys.push({ name: key, value: key })
+      }
     }
 
-    async handle (interaction: AutocompleteInteraction): Promise<undefined> {
-        const option = interaction.options.getFocused(true)
-
-        if (option.name !== 'voice') return
-
-        const sortedKeys: APIApplicationCommandOptionChoice[] = []
-        const value = `${option.value}`.toLowerCase()
-
-        for (const key of keys) {
-            if (sortedKeys.length >= 25) break
-
-            const k = key.toLowerCase()
-            if (k.startsWith(value)) {
-                sortedKeys.unshift({ name: key, value: key })
-            } else if (k.includes(value)) {
-                sortedKeys.push({ name: key, value: key })
-            }
-        }
-
-        if (sortedKeys.length === 0) {
-            sortedKeys.push({ name: 'No options available', value: 'invalid' })
-        }
-
-        return void interaction.respond(sortedKeys)
+    if (sortedKeys.length === 0) {
+      sortedKeys.push({ name: 'No options available', value: 'invalid' })
     }
+
+    return void interaction.respond(sortedKeys)
+  }
 }

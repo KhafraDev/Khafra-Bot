@@ -7,7 +7,7 @@ interface Options {
 type Generator = AsyncGenerator<number, never, unknown>
 
 export abstract class Timer {
-    public constructor (public options: Options) {}
+  public constructor (public options: Options) {}
 
     public abstract setInterval (): Promise<unknown>
 

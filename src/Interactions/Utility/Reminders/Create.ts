@@ -7,49 +7,49 @@ import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'reminders',
-            name: 'create'
-        })
+  constructor () {
+    super({
+      references: 'reminders',
+      name: 'create'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const text = interaction.options.getString('message', true)
+    const time = interaction.options.getString('time', true)
+    const once = !interaction.options.getBoolean('repeat')
+
+    const parsedTime = parseStrToMs(time)
+
+    if (parsedTime < 60 * 1000 * 1) {
+      return {
+        content: '❌ The shortest reminder you can set is 1 minute.',
+        ephemeral: true
+      }
+    } else if (parsedTime > 60 * 1000 * 60 * 24 * 7 * 4) {
+      return {
+        content: '❌ The longest reminder you can set is 4 weeks.',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const text = interaction.options.getString('message', true)
-        const time = interaction.options.getString('time', true)
-        const once = !interaction.options.getBoolean('repeat')
+    const date = new Date(Date.now() + parsedTime)
+    const rows = await sql<{ id: string }[]>`
+      INSERT INTO "kbReminders" (
+          "userId", "message", "time", "once", "interval"
+      ) VALUES (
+          ${interaction.user.id}::text,
+          ${text},
+          ${date}::timestamp,
+          ${once}::boolean,
+          ${parsedTime} * '1 millisecond'::interval
+      ) RETURNING id;
+    `
 
-        const parsedTime = parseStrToMs(time)
+    const intervalMessage = once ? '' : ` (Interval ${formatTime(Math.floor(parsedTime / 1000), 'R')})`
 
-        if (parsedTime < 60 * 1000 * 1) {
-            return {
-                content: '❌ The shortest reminder you can set is 1 minute.',
-                ephemeral: true
-            }
-        } else if (parsedTime > 60 * 1000 * 60 * 24 * 7 * 4) {
-            return {
-                content: '❌ The longest reminder you can set is 4 weeks.',
-                ephemeral: true
-            }
-        }
-
-        const date = new Date(Date.now() + parsedTime)
-        const rows = await sql<{ id: string }[]>`
-            INSERT INTO "kbReminders" (
-                "userId", "message", "time", "once", "interval"
-            ) VALUES (
-                ${interaction.user.id}::text,
-                ${text},
-                ${date}::timestamp,
-                ${once}::boolean,
-                ${parsedTime} * '1 millisecond'::interval
-            ) RETURNING id;
-        `
-
-        const intervalMessage = once ? '' : ` (Interval ${formatTime(Math.floor(parsedTime / 1000), 'R')})`
-
-        return {
-            content: stripIndents`
+    return {
+      content: stripIndents`
             ✅ Set a reminder for you!
     
             • Message: ${inlineCode(ellipsis(text, 100))}
@@ -57,7 +57,7 @@ export class kSubCommand extends InteractionSubCommand {
             • ID: ${inlineCode(rows[0].id)}
             • Repeat: ${!once}
             `,
-            ephemeral: true
-        }
+      ephemeral: true
     }
+  }
 }

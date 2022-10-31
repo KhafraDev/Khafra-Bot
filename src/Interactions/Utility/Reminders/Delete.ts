@@ -8,37 +8,37 @@ import { plural } from '#khaf/utility/String.js'
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'reminders',
-            name: 'delete'
-        })
+  constructor () {
+    super({
+      references: 'reminders',
+      name: 'delete'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const id = interaction.options.getString('id', true)
+    const idList = id.includes(',')
+      ? id.split(/[ ,]+/g).filter(v => uuidRegex.test(v))
+      : [id.trim()].filter(v => uuidRegex.test(v))
+
+    if (idList.length === 0) {
+      return {
+        content: '❌ No UUIDs provided were valid, try again!',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const id = interaction.options.getString('id', true)
-        const idList = id.includes(',')
-            ? id.split(/[ ,]+/g).filter(v => uuidRegex.test(v))
-            : [id.trim()].filter(v => uuidRegex.test(v))
+    const rows = await sql`
+      DELETE FROM "kbReminders"
+      WHERE 
+          "id" = ANY(ARRAY[${sql.array(idList)}]::uuid[]) AND
+          "userId" = ${interaction.user.id}::text
+      RETURNING "id";
+    `
 
-        if (idList.length === 0) {
-            return {
-                content: '❌ No UUIDs provided were valid, try again!',
-                ephemeral: true
-            }
-        }
-
-        const rows = await sql`
-            DELETE FROM "kbReminders"
-            WHERE 
-                "id" = ANY(ARRAY[${sql.array(idList)}]::uuid[]) AND
-                "userId" = ${interaction.user.id}::text
-            RETURNING "id";
-        `
-
-        return {
-            content: `✅ Deleted ${bold(`${rows.count}`)} row${plural(rows.count)}!`,
-            ephemeral: true
-        }
+    return {
+      content: `✅ Deleted ${bold(`${rows.count}`)} row${plural(rows.count)}!`,
+      ephemeral: true
     }
+  }
 }

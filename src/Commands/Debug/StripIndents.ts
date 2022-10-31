@@ -5,23 +5,23 @@ import { inlineCode } from '@discordjs/builders'
 import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Test the stripIndents function.'
-            ],
-            {
-                name: 'debug:stripindents',
-                folder: 'Debug',
-                args: [1],
-                ratelimit: 3
-            }
-        )
-    }
+  constructor () {
+    super(
+      [
+        'Test the stripIndents function.'
+      ],
+      {
+        name: 'debug:stripindents',
+        folder: 'Debug',
+        args: [1],
+        ratelimit: 3
+      }
+    )
+  }
 
-    async init (_message: Message, { content }: Arguments): Promise<string> {
-        return stripIndents`
+  async init (_message: Message, { content }: Arguments): Promise<string> {
+    return stripIndents`
         ${inlineCode(content.slice(0, 2040))}
         `
-    }
+  }
 }

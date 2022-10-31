@@ -22,98 +22,98 @@ const perms =
     PermissionFlagsBits.EmbedLinks
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'giveaway',
-            name: 'create'
-        })
-    }
+  constructor () {
+    super({
+      references: 'giveaway',
+      name: 'create'
+    })
+  }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel
-        const prize = interaction.options.getString('prize', true)
-        const ends = parseStrToMs(interaction.options.getString('ends', true))
-        const winners = interaction.options.getInteger('winners') ?? 1
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel
+    const prize = interaction.options.getString('prize', true)
+    const ends = parseStrToMs(interaction.options.getString('ends', true))
+    const winners = interaction.options.getInteger('winners') ?? 1
 
-        if (!schema.is(ends)) {
-            return {
-                content: '❌ A giveaway must last longer than a minute, and less than a month!',
-                ephemeral: true
-            }
-        } else if (!interaction.memberPermissions?.has(perms)) {
-            return {
-                content: '❌ You do not have permission to use this command!',
-                ephemeral: true
-            }
-        } else if (
-            interaction.guild === null ||
+    if (!schema.is(ends)) {
+      return {
+        content: '❌ A giveaway must last longer than a minute, and less than a month!',
+        ephemeral: true
+      }
+    } else if (!interaction.memberPermissions?.has(perms)) {
+      return {
+        content: '❌ You do not have permission to use this command!',
+        ephemeral: true
+      }
+    } else if (
+      interaction.guild === null ||
             interaction.guild.members.me === null ||
             !channel.permissionsFor(interaction.guild.members.me).has(perms)
-        ) {
-            return {
-                content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
-                ephemeral: true
-            }
-        }
+    ) {
+      return {
+        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        ephemeral: true
+      }
+    }
 
-        const endsDate = new Date(Date.now() + ends)
-        const embed = Embed.json({
-            color: colors.ok,
-            title: 'A giveaway is starting!',
-            description: `
+    const endsDate = new Date(Date.now() + ends)
+    const embed = Embed.json({
+      color: colors.ok,
+      title: 'A giveaway is starting!',
+      description: `
             ${prize.slice(0, 1950)}
             
             ${bold('React with 🎉 to enter!')}`,
-            timestamp: endsDate.toISOString(),
-            footer: { text: `${winners} winner${plural(winners)}` }
-        })
+      timestamp: endsDate.toISOString(),
+      footer: { text: `${winners} winner${plural(winners)}` }
+    })
 
-        const sent = await channel.send({
-            embeds: [embed]
-        })
+    const sent = await channel.send({
+      embeds: [embed]
+    })
 
-        if (sent instanceof Error) {
-            return {
-                content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sent.message)}`,
-                ephemeral: true
-            }
-        } else {
-            await sent.react('🎉').catch(logError)
-        }
-
-        const rows = await sql<GiveawayId[]>`
-            INSERT INTO kbGiveaways (
-                guildId, 
-                messageId,
-                channelId,
-                initiator,
-                endDate,
-                prize,
-                winners
-            ) VALUES (
-                ${interaction.guildId}::text, 
-                ${sent.id}::text, 
-                ${channel.id}::text,
-                ${interaction.user.id}::text,
-                ${endsDate}::timestamp,
-                ${prize},
-                ${winners}::smallint
-            ) ON CONFLICT DO NOTHING
-            RETURNING id;
-        `
-
-        return {
-            content: stripIndents`
-            ✅ Started a giveaway in ${channel}!
-    
-            • ${winners} winner${plural(winners)}
-            • Ends ${time(endsDate)}
-            • ID ${inlineCode(rows[0].id)}`,
-            components: [
-                Components.actionRow([
-                    Buttons.link('Message Link', sent.url)
-                ])
-            ]
-        }
+    if (sent instanceof Error) {
+      return {
+        content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sent.message)}`,
+        ephemeral: true
+      }
+    } else {
+      await sent.react('🎉').catch(logError)
     }
+
+    const rows = await sql<GiveawayId[]>`
+      INSERT INTO kbGiveaways (
+          guildId, 
+          messageId,
+          channelId,
+          initiator,
+          endDate,
+          prize,
+          winners
+      ) VALUES (
+          ${interaction.guildId}::text, 
+          ${sent.id}::text, 
+          ${channel.id}::text,
+          ${interaction.user.id}::text,
+          ${endsDate}::timestamp,
+          ${prize},
+          ${winners}::smallint
+      ) ON CONFLICT DO NOTHING
+      RETURNING id;
+    `
+
+    return {
+      content: stripIndents`
+        ✅ Started a giveaway in ${channel}!
+
+        • ${winners} winner${plural(winners)}
+        • Ends ${time(endsDate)}
+        • ID ${inlineCode(rows[0].id)}`,
+      components: [
+        Components.actionRow([
+          Buttons.link('Message Link', sent.url)
+        ])
+      ]
+    }
+  }
 }

@@ -19,19 +19,19 @@ interface KongCache {
 }
 
 const cache: KongCache = {
-    lastFetched: -1,
-    res: null
+  lastFetched: -1,
+  res: null
 }
 
 export const Kongregate = async (): Promise<KongregateMetrics | null> => {
-    if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
-        return cache.res
-    }
-
-    const { body } = await request('http://www.kongregate.com/games/Platonic/synergism/metrics.json')
-    const json = await body.json() as KongregateMetrics
-
-    cache.res = json
-    cache.lastFetched = Date.now()
+  if ((Date.now() - cache.lastFetched) / 1000 / 60 < 5) {
     return cache.res
+  }
+
+  const { body } = await request('http://www.kongregate.com/games/Platonic/synergism/metrics.json')
+  const json = await body.json() as KongregateMetrics
+
+  cache.res = json
+  cache.lastFetched = Date.now()
+  return cache.res
 }

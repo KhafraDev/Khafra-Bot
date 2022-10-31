@@ -13,49 +13,49 @@ interface PocketUser {
 }
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Pocket: retrieve your saved items!'
-            ],
-            {
-                name: 'pocketget',
-                folder: 'Pocket',
-                args: [0, 0]
-            }
-        )
-    }
+  constructor () {
+    super(
+      [
+        'Pocket: retrieve your saved items!'
+      ],
+      {
+        name: 'pocketget',
+        folder: 'Pocket',
+        args: [0, 0]
+      }
+    )
+  }
 
-    async init (message: Message): Promise<APIEmbed> {
-        const rows = await sql<[PocketUser] | []>`
-            SELECT access_token, request_token, username
-            FROM kbPocket
-            WHERE user_id = ${message.author.id}::text
-            LIMIT 1;
-        `
+  async init (message: Message): Promise<APIEmbed> {
+    const rows = await sql<[PocketUser] | []>`
+      SELECT access_token, request_token, username
+      FROM kbPocket
+      WHERE user_id = ${message.author.id}::text
+      LIMIT 1;
+    `
 
-        if (rows.length === 0)
-            return Embed.error(`
-            You haven't set-up Pocket integration!
+    if (rows.length === 0)
+      return Embed.error(`
+      You haven't set-up Pocket integration!
 
-            Try using the ${inlineCode('pocket')} command for more information.
-            `)
+      Try using the ${inlineCode('pocket')} command for more information.
+      `)
 
-        const pocket = new Pocket(rows.shift())
-        const latest = await pocket.getList()
+    const pocket = new Pocket(rows.shift())
+    const latest = await pocket.getList()
 
-        const formatted = Object.values(latest.list)
-            .map(item => `[${item.resolved_title}](${item.resolved_url})`)
-            .join('\n')
+    const formatted = Object.values(latest.list)
+      .map(item => `[${item.resolved_title}](${item.resolved_url})`)
+      .join('\n')
 
-        return Embed.json({
-            color: colors.ok,
-            description: formatted,
-            author: {
-                name: message.author.username + '\'s latest saves',
-                icon_url: message.author.displayAvatarURL(),
-                url: 'https://getpocket.com/'
-            }
-        })
-    }
+    return Embed.json({
+      color: colors.ok,
+      description: formatted,
+      author: {
+        name: message.author.username + '\'s latest saves',
+        icon_url: message.author.displayAvatarURL(),
+        url: 'https://getpocket.com/'
+      }
+    })
+  }
 }

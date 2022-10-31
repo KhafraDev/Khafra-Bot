@@ -6,10 +6,10 @@ import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
 
 const settings = {
-    rss: 'https://rss.politico.com/politics-news.xml',
-    main: 'https://politico.com',
-    command: ['politico'],
-    author: { name: 'Politico', iconURL: 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png' }
+  rss: 'https://rss.politico.com/politics-news.xml',
+  main: 'https://politico.com',
+  command: ['politico'],
+  author: { name: 'Politico', iconURL: 'https://static.politico.com/28/a1/2458979340028e7f25b0361f3674/politico-logo.png' }
 } as const
 
 interface IPolitico {
@@ -32,39 +32,39 @@ const rss = new RSSReader<IPolitico>()
 const cache = once(async () => rss.cache(settings.rss))
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                `Get the latest articles from ${settings.main}!`
-            ],
-            {
-                name: settings.command[0],
-                folder: 'News',
-                args: [0, 0],
-                aliases: settings.command.slice(1)
-            }
-        )
+  constructor () {
+    super(
+      [
+        `Get the latest articles from ${settings.main}!`
+      ],
+      {
+        name: settings.command[0],
+        folder: 'News',
+        args: [0, 0],
+        aliases: settings.command.slice(1)
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    const state = await cache()
+
+    if (state === null) {
+      return Embed.error('Try again in a minute!')
     }
 
-    async init (): Promise<APIEmbed> {
-        const state = await cache()
-
-        if (state === null) {
-            return Embed.error('Try again in a minute!')
-        }
-
-        if (rss.results.size === 0) {
-            return Embed.error('An unexpected error occurred!')
-        }
-
-        const posts = [...rss.results.values()]
-        return Embed.json({
-            color: colors.ok,
-            description: posts
-                .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
-                .join('\n')
-                .slice(0, 2048),
-            author: settings.author
-        })
+    if (rss.results.size === 0) {
+      return Embed.error('An unexpected error occurred!')
     }
+
+    const posts = [...rss.results.values()]
+    return Embed.json({
+      color: colors.ok,
+      description: posts
+        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .join('\n')
+        .slice(0, 2048),
+      author: settings.author
+    })
+  }
 }

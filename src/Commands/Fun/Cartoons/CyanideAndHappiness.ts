@@ -22,40 +22,40 @@ const rss = new RSSReader<ICyanideAndHappiness>()
 const cache = once(async () => rss.cache('https://explosm-1311.appspot.com/'))
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'
-            ],
-            {
-                name: 'cyanideandhappiness',
-                folder: 'Games',
-                args: [0, 0],
-                ratelimit: 5,
-                aliases: ['cah']
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'
+      ],
+      {
+        name: 'cyanideandhappiness',
+        folder: 'Games',
+        args: [0, 0],
+        ratelimit: 5,
+        aliases: ['cah']
+      }
+    )
+  }
+
+  async init (message: Message): Promise<APIEmbed> {
+    const state = await cache()
+
+    if (state === null) {
+      return Embed.error('Try again in a minute!')
     }
 
-    async init (message: Message): Promise<APIEmbed> {
-        const state = await cache()
-
-        if (state === null) {
-            return Embed.error('Try again in a minute!')
-        }
-
-        if (isText(message.channel) && !message.channel.nsfw) {
-            return Embed.error('Channel isn\'t marked as NSFW!')
-        }
-
-        const values = Array.from(rss.results)
-        const comic = values[Math.floor(Math.random() * values.length)]
-
-        return Embed.json({
-            color: colors.ok,
-            title: decodeXML(comic.title),
-            url: comic.link,
-            image: { url: `https:${/src="(.*?)"/.exec(comic.description)?.[1]}` }
-        })
+    if (isText(message.channel) && !message.channel.nsfw) {
+      return Embed.error('Channel isn\'t marked as NSFW!')
     }
+
+    const values = Array.from(rss.results)
+    const comic = values[Math.floor(Math.random() * values.length)]
+
+    return Embed.json({
+      color: colors.ok,
+      title: decodeXML(comic.title),
+      url: comic.link,
+      image: { url: `https:${/src="(.*?)"/.exec(comic.description)?.[1]}` }
+    })
+  }
 }

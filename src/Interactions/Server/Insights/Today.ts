@@ -11,50 +11,50 @@ interface Insights {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-    constructor () {
-        super({
-            references: 'insights',
-            name: 'today'
-        })
+  constructor () {
+    super({
+      references: 'insights',
+      name: 'today'
+    })
+  }
+
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const id = interaction.guildId ?? interaction.guild?.id
+
+    if (!id) {
+      return {
+        content: '❌ Re-invite the bot with the correct permissions to use this command!',
+        ephemeral: true
+      }
     }
 
-    async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-        const id = interaction.guildId ?? interaction.guild?.id
+    const rows = await sql<Insights[]>`
+      WITH removed AS (
+          DELETE FROM kbInsights
+          WHERE k_date <= CURRENT_DATE - 14 AND k_guild_id = ${id}::text
+      )
 
-        if (!id) {
-            return {
-                content: '❌ Re-invite the bot with the correct permissions to use this command!',
-                ephemeral: true
-            }
-        }
+      SELECT k_left, k_joined
+      FROM kbInsights
+      WHERE 
+          k_guild_id = ${id}::text AND
+          k_date = CURRENT_DATE
+      ;
+    `
 
-        const rows = await sql<Insights[]>`
-            WITH removed AS (
-                DELETE FROM kbInsights
-                WHERE k_date <= CURRENT_DATE - 14 AND k_guild_id = ${id}::text
-            )
+    const { k_joined = 0, k_left = 0 } = rows.length !== 0
+      ? rows[0]
+      : {}
+    const locale = interaction.guild?.preferredLocale ?? 'en-US'
+    const embed = Embed.ok(`
+    ✅ Here are the insights for today, as of ${time(new Date(), 'f')}!
+    
+    • ${k_joined.toLocaleString(locale)} member${plural(k_joined)} joined!
+    • ${k_left.toLocaleString(locale)} member${plural(k_left)} left!
+    `)
 
-            SELECT k_left, k_joined
-            FROM kbInsights
-            WHERE 
-                k_guild_id = ${id}::text AND
-                k_date = CURRENT_DATE
-            ;
-        `
-
-        const { k_joined = 0, k_left = 0 } = rows.length !== 0
-            ? rows[0]
-            : {}
-        const locale = interaction.guild?.preferredLocale ?? 'en-US'
-        const embed = Embed.ok(`
-        ✅ Here are the insights for today, as of ${time(new Date(), 'f')}!
-        
-        • ${k_joined.toLocaleString(locale)} member${plural(k_joined)} joined!
-        • ${k_left.toLocaleString(locale)} member${plural(k_left)} left!
-        `)
-
-        return {
-            embeds: [embed]
-        }
+    return {
+      embeds: [embed]
     }
+  }
 }

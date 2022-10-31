@@ -16,17 +16,17 @@ interface NonexistentWord {
 }
 
 export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> => {
-    const { body, statusCode } = await request('https://www.thisworddoesnotexist.com/api/random_word.json')
+  const { body, statusCode } = await request('https://www.thisworddoesnotexist.com/api/random_word.json')
 
-    if (statusCode !== 200) {
-        return null
-    }
+  if (statusCode !== 200) {
+    return null
+  }
 
-    const json = await body.json() as NonexistentWord
+  const json = await body.json() as NonexistentWord
 
-    if (!('word' in json) || !('permalink_url' in json)) {
-        return null
-    }
+  if (!('word' in json) || !('permalink_url' in json)) {
+    return null
+  }
 
-    return json
+  return json
 }

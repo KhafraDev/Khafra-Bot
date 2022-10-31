@@ -25,92 +25,92 @@ const perms =
     PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildBanAdd> {
-    name = Events.GuildBanAdd as const
+  name = Events.GuildBanAdd as const
 
-    async init ({ guild, user }: GuildBan): Promise<void> {
-        // This event will always return "partial" bans,
-        // where the reason & executor are not included!
-        // Plus, the reason, if fetched, can be null anyways!
-        // So, it's far more useful to try fetching the audit
-        // logs which includes the ban executor AND reason!
+  async init ({ guild, user }: GuildBan): Promise<void> {
+    // This event will always return "partial" bans,
+    // where the reason & executor are not included!
+    // Plus, the reason, if fetched, can be null anyways!
+    // So, it's far more useful to try fetching the audit
+    // logs which includes the ban executor AND reason!
 
-        const me = guild.members.me
-        const start = Date.now()
+    const me = guild.members.me
+    const start = Date.now()
 
-        let staff: User | null = null
-        let reason: string | null = null
+    let staff: User | null = null
+    let reason: string | null = null
 
-        if (me?.permissions.has(auditLogPerms)) {
-            for (let i = 0; i < 5; i++) {
-                const logs = await guild.fetchAuditLogs({
-                    type: AuditLogEvent.MemberBanAdd,
-                    limit: 5
-                })
+    if (me?.permissions.has(auditLogPerms)) {
+      for (let i = 0; i < 5; i++) {
+        const logs = await guild.fetchAuditLogs({
+          type: AuditLogEvent.MemberBanAdd,
+          limit: 5
+        })
 
-                for (const entry of logs.entries.values()) {
-                    const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
+        for (const entry of logs.entries.values()) {
+          const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
 
-                    if (diff < threshold) {
-                        staff = entry.executor
-                        reason = entry.reason
-                        break
-                    }
-                }
-
-                if (i !== 4) {
-                    await setTimeout(2_000)
-                }
-            }
+          if (diff < threshold) {
+            staff = entry.executor
+            reason = entry.reason
+            break
+          }
         }
 
-        const [item] = await sql<[kGuildModChannel?]>`
-            SELECT mod_log_channel
-            FROM kbGuild
-            WHERE guild_id = ${guild.id}::text
-            LIMIT 1;
-        `
-
-        if (!item?.mod_log_channel) {
-            return
+        if (i !== 4) {
+          await setTimeout(2_000)
         }
+      }
+    }
 
-        const channel = await guild.channels.fetch(item.mod_log_channel)
+    const [item] = await sql<[kGuildModChannel?]>`
+      SELECT mod_log_channel
+      FROM kbGuild
+      WHERE guild_id = ${guild.id}::text
+      LIMIT 1;
+    `
 
-        if (
-            channel === null ||
+    if (!item?.mod_log_channel) {
+      return
+    }
+
+    const channel = await guild.channels.fetch(item.mod_log_channel)
+
+    if (
+      channel === null ||
             me === null ||
             !DiscordUtil.isTextBased(channel) ||
             !channel.permissionsFor(me).has(perms)
-        ) {
-            return
-        }
-
-        const author: APIEmbedAuthor | undefined = staff !== null
-            ? {
-                name: `${staff.tag} (${staff.id})`,
-                icon_url: staff.displayAvatarURL()
-            }
-            : undefined
-
-        let description = `${bold('User:')} ${inlineCode(user.tag)} (${user.id})`
-        description += `\n${bold('Action:')} Ban`
-
-        if (staff !== null) {
-            description += `\n${bold('Staff:')} ${staff}`
-        }
-
-        if (reason !== null) {
-            description += `\n${bold('Reason:')} ${inlineCode(ellipsis(reason, 1500))}`
-        }
-
-        return void channel.send({
-            embeds: [
-                Embed.json({
-                    color: colors.ok,
-                    description,
-                    author
-                })
-            ]
-        }).catch(() => null)
+    ) {
+      return
     }
+
+    const author: APIEmbedAuthor | undefined = staff !== null
+      ? {
+        name: `${staff.tag} (${staff.id})`,
+        icon_url: staff.displayAvatarURL()
+      }
+      : undefined
+
+    let description = `${bold('User:')} ${inlineCode(user.tag)} (${user.id})`
+    description += `\n${bold('Action:')} Ban`
+
+    if (staff !== null) {
+      description += `\n${bold('Staff:')} ${staff}`
+    }
+
+    if (reason !== null) {
+      description += `\n${bold('Reason:')} ${inlineCode(ellipsis(reason, 1500))}`
+    }
+
+    return void channel.send({
+      embeds: [
+        Embed.json({
+          color: colors.ok,
+          description,
+          author
+        })
+      ]
+    }).catch(() => null)
+  }
 }

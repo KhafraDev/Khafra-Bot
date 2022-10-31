@@ -34,7 +34,7 @@ export interface MDNError {
 }
 
 const defaultOpts = {
-    locale: 'en-US'
+  locale: 'en-US'
 }
 
 const search = 'https://developer.mozilla.org/api/v1/search'
@@ -50,17 +50,17 @@ const search = 'https://developer.mozilla.org/api/v1/search'
 * const results = await fetchMDN('fetch', { locale: 'es' });
 */
 export const fetchMDN = async (q: string, opts = defaultOpts): Promise<MDNResult | MDNError> => {
-    if (typeof q !== 'string' || q.trim().length === 0)
-        throw new RangeError(`Expected query type "string", got "${typeof q}"!`)
+  if (typeof q !== 'string' || q.trim().length === 0)
+    throw new RangeError(`Expected query type "string", got "${typeof q}"!`)
 
-    q = encodeURIComponent(q.replace(/\s/g, '+'))
+  q = encodeURIComponent(q.replace(/\s/g, '+'))
 
-    // eslint-disable-next-line no-restricted-globals
-    const params = new URLSearchParams([
-        ['q', q],
-        ['locale', opts.locale]
-    ])
+  // eslint-disable-next-line no-restricted-globals
+  const params = new URLSearchParams([
+    ['q', q],
+    ['locale', opts.locale]
+  ])
 
-    const response = await fetch(`${search}?${params}`)
-    return await response.json()
+  const response = await fetch(`${search}?${params}`)
+  return await response.json()
 }

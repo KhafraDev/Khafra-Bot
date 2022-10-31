@@ -6,45 +6,45 @@ import type { Message } from 'discord.js'
 
 const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]
 const permissions = [
-    PermissionFlagsBits.AddReactions,
-    PermissionFlagsBits.AttachFiles,
-    PermissionFlagsBits.BanMembers,
-    PermissionFlagsBits.CreateInstantInvite,
-    PermissionFlagsBits.EmbedLinks,
-    PermissionFlagsBits.KickMembers,
-    PermissionFlagsBits.ManageChannels,
-    PermissionFlagsBits.ManageEmojisAndStickers,
-    PermissionFlagsBits.ManageGuild,
-    PermissionFlagsBits.ManageMessages,
-    PermissionFlagsBits.ManageRoles,
-    PermissionFlagsBits.ModerateMembers,
-    PermissionFlagsBits.ReadMessageHistory,
-    PermissionFlagsBits.SendMessages
+  PermissionFlagsBits.AddReactions,
+  PermissionFlagsBits.AttachFiles,
+  PermissionFlagsBits.BanMembers,
+  PermissionFlagsBits.CreateInstantInvite,
+  PermissionFlagsBits.EmbedLinks,
+  PermissionFlagsBits.KickMembers,
+  PermissionFlagsBits.ManageChannels,
+  PermissionFlagsBits.ManageEmojisAndStickers,
+  PermissionFlagsBits.ManageGuild,
+  PermissionFlagsBits.ManageMessages,
+  PermissionFlagsBits.ManageRoles,
+  PermissionFlagsBits.ModerateMembers,
+  PermissionFlagsBits.ReadMessageHistory,
+  PermissionFlagsBits.SendMessages
 ]
 
 export class kCommand extends Command {
-    constructor () {
-        super([
-            'Get the invite links for the bot! :)'
-        ], {
-            name: 'invite',
-            folder: 'Bot',
-            args: [0, 0],
-            ratelimit: 3,
-            aliases: ['botinvite']
-        })
-    }
+  constructor () {
+    super([
+      'Get the invite links for the bot! :)'
+    ], {
+      name: 'invite',
+      folder: 'Bot',
+      args: [0, 0],
+      ratelimit: 3,
+      aliases: ['botinvite']
+    })
+  }
 
-    async init (message: Message): Promise<APIEmbed> {
-        const everything = message.client.generateInvite({ scopes, permissions })
-        const slashCommands = message.client.generateInvite({ scopes, permissions: 0n })
+  async init (message: Message): Promise<APIEmbed> {
+    const everything = message.client.generateInvite({ scopes, permissions })
+    const slashCommands = message.client.generateInvite({ scopes, permissions: 0n })
 
-        return Embed.json({
-            color: colors.ok,
-            fields: [
-                { name: bold('Everything:'), value: everything },
-                { name: bold('Enable slash commands and buttons:'), value: slashCommands }
-            ]
-        })
-    }
+    return Embed.json({
+      color: colors.ok,
+      fields: [
+        { name: bold('Everything:'), value: everything },
+        { name: bold('Enable slash commands and buttons:'), value: slashCommands }
+      ]
+    })
+  }
 }

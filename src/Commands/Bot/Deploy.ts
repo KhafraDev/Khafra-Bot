@@ -9,36 +9,36 @@ import type { Message } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../../config.json')>(
-    join(cwd, 'config.json')
+  join(cwd, 'config.json')
 )
 
 export class kCommand extends Command {
-    constructor () {
-        super([
-            'Deploy an owner-only interaction!'
-        ], {
-            name: 'deploy',
-            folder: 'Bot',
-            args: [1, 1],
-            ratelimit: 0,
-            ownerOnly: true
-        })
+  constructor () {
+    super([
+      'Deploy an owner-only interaction!'
+    ], {
+      name: 'deploy',
+      folder: 'Bot',
+      args: [1, 1],
+      ratelimit: 0,
+      ownerOnly: true
+    })
+  }
+
+  async init (message: Message, { args }: Arguments): Promise<string> {
+    const commandName = args[0].toLowerCase()
+    const command = KhafraClient.Interactions.Commands.get(commandName)
+
+    if (!command) {
+      return `❌ Command "${inlineCode(commandName)}" does not exist, idiot.`
     }
 
-    async init (message: Message, { args }: Arguments): Promise<string> {
-        const commandName = args[0].toLowerCase()
-        const command = KhafraClient.Interactions.Commands.get(commandName)
+    // https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
+    await message.client.rest.post(
+      Routes.applicationGuildCommands(config.botId, config.guildId),
+      { body: command.data }
+    )
 
-        if (!command) {
-            return `❌ Command "${inlineCode(commandName)}" does not exist, idiot.`
-        }
-
-        // https://discord.com/developers/docs/interactions/application-commands#create-guild-application-command
-        await message.client.rest.post(
-            Routes.applicationGuildCommands(config.botId, config.guildId),
-            { body: command.data }
-        )
-
-        return `✅ Command "${inlineCode(commandName)}" has been deployed in ${inlineCode(config.botOwner)}!`
-    }
+    return `✅ Command "${inlineCode(commandName)}" has been deployed in ${inlineCode(config.botOwner)}!`
+  }
 }

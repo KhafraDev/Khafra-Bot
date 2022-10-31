@@ -29,7 +29,9 @@ module.exports = {
 
 		// style changes
 		'quotes': ['error', 'single'],
-		'indent': ['error', 4, { 'SwitchCase': 1 }],
+		'indent': ['error', 2, { 'SwitchCase': 1 }],
+		'eol-last': ['error', 'always'],
+		'linebreak-style': ['error', 'unix'],
 		'array-bracket-spacing': ['error', 'never'],
 		'arrow-spacing': 'error',
 		'brace-style': 'error',

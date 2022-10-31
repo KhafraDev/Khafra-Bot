@@ -17,35 +17,35 @@ const rss = new RSSReader<IxKCD>()
 const cache = once(async () => rss.cache('https://xkcd.com/rss.xml'))
 
 export class kCommand extends Command {
-    constructor () {
-        super(
-            [
-                'Get a random comic from xKCD!'
-            ],
-            {
-                name: 'xkcd',
-                folder: 'Games',
-                args: [0, 0],
-                ratelimit: 5
-            }
-        )
+  constructor () {
+    super(
+      [
+        'Get a random comic from xKCD!'
+      ],
+      {
+        name: 'xkcd',
+        folder: 'Games',
+        args: [0, 0],
+        ratelimit: 5
+      }
+    )
+  }
+
+  async init (): Promise<APIEmbed> {
+    const state = await cache()
+
+    if (state === null) {
+      return Embed.error('Try again in a minute!')
     }
 
-    async init (): Promise<APIEmbed> {
-        const state = await cache()
+    const values = Array.from(rss.results)
+    const comic = values[Math.floor(Math.random() * values.length)]
 
-        if (state === null) {
-            return Embed.error('Try again in a minute!')
-        }
-
-        const values = Array.from(rss.results)
-        const comic = values[Math.floor(Math.random() * values.length)]
-
-        return Embed.json({
-            color: colors.ok,
-            title: decodeXML(comic.title),
-            url: comic.link,
-            image: { url: `${/src="(.*?)"/.exec(comic.description)?.[1]}` }
-        })
-    }
+    return Embed.json({
+      color: colors.ok,
+      title: decodeXML(comic.title),
+      url: comic.link,
+      image: { url: `${/src="(.*?)"/.exec(comic.description)?.[1]}` }
+    })
+  }
 }

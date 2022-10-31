@@ -3,10 +3,10 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { s } from '@sapphire/shapeshift'
 import type {
-    APIEmbed
+  APIEmbed
 } from 'discord-api-types/v10'
 import {
-    ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody
+  ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ButtonInteraction } from 'discord.js'
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
@@ -18,169 +18,169 @@ import { request } from 'undici'
 const base = 'http://api.chartlyrics.com/'
 
 const getLyricsURL = (artist: string, title: string): URL =>
-    new URL(`/apiv1.asmx/SearchLyricDirect?artist=${artist}&song=${title}`, base)
+  new URL(`/apiv1.asmx/SearchLyricDirect?artist=${artist}&song=${title}`, base)
 
 const schema = s.object({
-    GetLyricResult: s.object({
-        TrackId: s.number,
-        LyricChecksum: s.string,
-        LyricId: s.number,
-        LyricSong: s.string,
-        LyricArtist: s.string,
-        LyricUrl: s.string,
-        LyricCovertArtUrl: s.string,
-        LyricRank: s.number,
-        LyricCorrectUrl: s.string,
-        Lyric: s.string
-    })
+  GetLyricResult: s.object({
+    TrackId: s.number,
+    LyricChecksum: s.string,
+    LyricId: s.number,
+    LyricSong: s.string,
+    LyricArtist: s.string,
+    LyricUrl: s.string,
+    LyricCovertArtUrl: s.string,
+    LyricRank: s.number,
+    LyricCorrectUrl: s.string,
+    Lyric: s.string
+  })
 })
 
 const paginateText = (text: string, max: number): string[] => {
-    const pages: string[] = []
+  const pages: string[] = []
 
-    for (let i = 0; i < text.length; i += max) {
-        pages.push(text.slice(i, i + max))
-    }
+  for (let i = 0; i < text.length; i += max) {
+    pages.push(text.slice(i, i + max))
+  }
 
-    return pages
+  return pages
 }
 
 export class kInteraction extends Interactions {
-    constructor () {
-        const sc: RESTPostAPIApplicationCommandsJSONBody = {
-            name: 'lyrics',
-            description: 'Get lyrics to a song! Defaults to your currently playing song.',
-            options: [
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'artist',
-                    description: 'Band or singer\'s name.',
-                    required: true
-                },
-                {
-                    type: ApplicationCommandOptionType.String,
-                    name: 'song',
-                    description: 'The name of the song.',
-                    required: true
-                }
-            ]
+  constructor () {
+    const sc: RESTPostAPIApplicationCommandsJSONBody = {
+      name: 'lyrics',
+      description: 'Get lyrics to a song! Defaults to your currently playing song.',
+      options: [
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'artist',
+          description: 'Band or singer\'s name.',
+          required: true
+        },
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'song',
+          description: 'The name of the song.',
+          required: true
         }
-
-        super(sc, {
-            defer: true
-        })
+      ]
     }
 
-    async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-        const artist = interaction.options.getString('artist', true)
-        const song = interaction.options.getString('song', true)
+    super(sc, {
+      defer: true
+    })
+  }
 
-        const {
-            body: lyricBody,
-            statusCode: lyricStatus
-        } = await request(getLyricsURL(artist, song))
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+    const artist = interaction.options.getString('artist', true)
+    const song = interaction.options.getString('song', true)
 
-        if (lyricStatus !== 200) {
-            return {
-                content: '❌ An error occurred getting these lyrics.'
-            }
-        }
+    const {
+      body: lyricBody,
+      statusCode: lyricStatus
+    } = await request(getLyricsURL(artist, song))
 
-        const lyricXML: unknown = new XMLParser().parse(await lyricBody.text())
+    if (lyricStatus !== 200) {
+      return {
+        content: '❌ An error occurred getting these lyrics.'
+      }
+    }
 
-        if (!schema.is(lyricXML)) {
-            return {
-                content: '❌ Invalid response received from server, sorry.'
-            }
-        }
+    const lyricXML: unknown = new XMLParser().parse(await lyricBody.text())
 
-        const {
-            Lyric,
-            LyricUrl,
-            LyricCovertArtUrl,
-            LyricCorrectUrl, // url to correct lyrics
-            LyricArtist,
-            LyricSong
-        } = lyricXML.GetLyricResult
+    if (!schema.is(lyricXML)) {
+      return {
+        content: '❌ Invalid response received from server, sorry.'
+      }
+    }
 
-        const basicEmbed = (): APIEmbed => Embed.json({
-            color: colors.ok,
-            title: `${LyricArtist} - ${LyricSong}`,
-            description: Lyric,
-            url: LyricUrl,
-            thumbnail: {
-                url: LyricCovertArtUrl
-            }
-        })
+    const {
+      Lyric,
+      LyricUrl,
+      LyricCovertArtUrl,
+      LyricCorrectUrl, // url to correct lyrics
+      LyricArtist,
+      LyricSong
+    } = lyricXML.GetLyricResult
 
-        if (Lyric.length <= 2048) {
-            return {
-                embeds: [basicEmbed()],
-                components: [
-                    Components.actionRow([
-                        Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
-                    ])
-                ]
-            }
-        }
+    const basicEmbed = (): APIEmbed => Embed.json({
+      color: colors.ok,
+      title: `${LyricArtist} - ${LyricSong}`,
+      description: Lyric,
+      url: LyricUrl,
+      thumbnail: {
+        url: LyricCovertArtUrl
+      }
+    })
 
-        let currentPage = 0
-        const id = randomUUID()
-        const pages = paginateText(Lyric, 2048).map((page) => {
-            const embed = basicEmbed()
-            embed.description = page
-            return embed
-        })
+    if (Lyric.length <= 2048) {
+      return {
+        embeds: [basicEmbed()],
+        components: [
+          Components.actionRow([
+            Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
+          ])
+        ]
+      }
+    }
 
-        const int = await interaction.editReply({
-            embeds: [pages[currentPage]],
-            components: [
-                Components.actionRow([
-                    Buttons.approve('Next', `next-${id}`),
-                    Buttons.secondary('Previous', `back-${id}`),
-                    Buttons.deny('Stop', `stop-${id}`),
-                    Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
-                ])
-            ]
-        })
+    let currentPage = 0
+    const id = randomUUID()
+    const pages = paginateText(Lyric, 2048).map((page) => {
+      const embed = basicEmbed()
+      embed.description = page
+      return embed
+    })
 
-        const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
-            interactionType: InteractionType.MessageComponent,
-            idle: 30_000,
-            filter: (i) =>
-                interaction.user.id === i.user.id &&
+    const int = await interaction.editReply({
+      embeds: [pages[currentPage]],
+      components: [
+        Components.actionRow([
+          Buttons.approve('Next', `next-${id}`),
+          Buttons.secondary('Previous', `back-${id}`),
+          Buttons.deny('Stop', `stop-${id}`),
+          Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
+        ])
+      ]
+    })
+
+    const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
+      interactionType: InteractionType.MessageComponent,
+      idle: 30_000,
+      filter: (i) =>
+        interaction.user.id === i.user.id &&
                 int.interaction?.id === i.message.interaction?.id &&
                 i.customId.endsWith(id)
-        })
+    })
 
-        for await (const [collected] of collector) {
-            const [action] = collected.customId.split('-')
+    for await (const [collected] of collector) {
+      const [action] = collected.customId.split('-')
 
-            if (action === 'stop') break
+      if (action === 'stop') break
 
-            action === 'next' ? currentPage++ : currentPage--
-            if (currentPage < 0) currentPage = pages.length - 1
-            if (currentPage >= pages.length) currentPage = 0
+      action === 'next' ? currentPage++ : currentPage--
+      if (currentPage < 0) currentPage = pages.length - 1
+      if (currentPage >= pages.length) currentPage = 0
 
-            await collected.update({
-                embeds: [pages[currentPage]],
-                components: int.components
-            })
-        }
-
-        const last = collector.collected.last()
-
-        if (
-            collector.collected.size !== 0 &&
-            last?.replied === false
-        ) {
-            return void await last.update({
-                components: disableAll(int)
-            })
-        }
-
-        return void await interaction.editReply({
-            components: disableAll(int)
-        })
+      await collected.update({
+        embeds: [pages[currentPage]],
+        components: int.components
+      })
     }
+
+    const last = collector.collected.last()
+
+    if (
+      collector.collected.size !== 0 &&
+            last?.replied === false
+    ) {
+      return void await last.update({
+        components: disableAll(int)
+      })
+    }
+
+    return void await interaction.editReply({
+      components: disableAll(int)
+    })
+  }
 }

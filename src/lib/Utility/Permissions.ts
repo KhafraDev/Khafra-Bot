@@ -7,18 +7,18 @@ import { GuildMember, PermissionsBitField, Role, type PermissionResolvable } fro
  * Check if a user or role has permissions in a channel.
  */
 export const hasPerms = (
-    channel: unknown,
-    memberOrRole: unknown,
-    perms: PermissionResolvable
+  channel: unknown,
+  memberOrRole: unknown,
+  perms: PermissionResolvable
 ): boolean => {
-    if (channel === undefined || channel === null)
-        return false
-    if (!isText(channel) && !isVoice(channel) && !isThread(channel))
-        return true
-    if (!(memberOrRole instanceof GuildMember) && !(memberOrRole instanceof Role))
-        return false
+  if (channel === undefined || channel === null)
+    return false
+  if (!isText(channel) && !isVoice(channel) && !isThread(channel))
+    return true
+  if (!(memberOrRole instanceof GuildMember) && !(memberOrRole instanceof Role))
+    return false
 
-    return channel.permissionsFor(memberOrRole).has(perms)
+  return channel.permissionsFor(memberOrRole).has(perms)
 }
 
 /**
@@ -27,16 +27,16 @@ export const hasPerms = (
  * @see https://discord.js.org/#/docs/main/stable/class/GuildMember?scrollTo=manageable
  */
 export const hierarchy = (
-    a: GuildMember | null,
-    b: GuildMember | null,
-    strict = true
+  a: GuildMember | null,
+  b: GuildMember | null,
+  strict = true
 ): boolean => {
-    if (!a || !b) return false
-    if (a.guild.ownerId === a.id) return true
+  if (!a || !b) return false
+  if (a.guild.ownerId === a.id) return true
 
-    return strict
-        ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
-        : a.roles.highest.comparePositionTo(b.roles.highest) >= 0
+  return strict
+    ? a.roles.highest.comparePositionTo(b.roles.highest) > 0
+    : a.roles.highest.comparePositionTo(b.roles.highest) >= 0
 }
 
 const all = Object.entries(PermissionFlagsBits) as [
@@ -44,24 +44,24 @@ const all = Object.entries(PermissionFlagsBits) as [
 ][]
 
 export const permResolvableToString = (perms: PermissionResolvable): string[] => {
-    const bitfield = PermissionsBitField.resolve(perms)
-    const has: string[] = []
+  const bitfield = PermissionsBitField.resolve(perms)
+  const has: string[] = []
 
-    for (const [name, bit] of all) {
-        if ((bit & bitfield) === bit) {
-            if (name === 'Administrator') {
-                return [inlineCode(name)]
-            }
+  for (const [name, bit] of all) {
+    if ((bit & bitfield) === bit) {
+      if (name === 'Administrator') {
+        return [inlineCode(name)]
+      }
 
-            has.push(inlineCode(name))
-        }
+      has.push(inlineCode(name))
     }
+  }
 
-    return has
+  return has
 }
 
 export const toString = (perms: bigint[]): string => {
-    return perms.reduce(
-        (a, b) => a | b, 0n
-    ).toString()
+  return perms.reduce(
+    (a, b) => a | b, 0n
+  ).toString()
 }

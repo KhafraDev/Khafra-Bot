@@ -7,91 +7,91 @@ import { colors } from '../../lib/constants.js'
 const logo = 'https://i.imgur.com/4YsLw0J.png'
 
 export const command: InteractionCommand = {
-    data: {
-        name: 'mdn',
-        description: 'Search on MDN!',
-        options: [
+  data: {
+    name: 'mdn',
+    description: 'Search on MDN!',
+    options: [
+      {
+        type: ApplicationCommandOptionType.String,
+        name: 'search',
+        description: 'Term to search for.',
+        required: true
+      },
+      {
+        type: ApplicationCommandOptionType.String,
+        name: 'locale',
+        description: 'Use a different locale.'
+      },
+      {
+        type: ApplicationCommandOptionType.Integer,
+        name: 'limit',
+        description: 'The max number of results to display.',
+        max_value: 10,
+        min_value: 1
+      }
+    ]
+  },
+
+  async run (interaction) {
+    const search = getOption<string>(interaction.data, 'search')!
+    const locale = getOption<string>(interaction.data, 'locale')
+    const max = getOption<number>(interaction.data, 'limit')
+
+    const result = await fetchMDN(search.value, {
+      locale: locale?.value ?? interaction.locale
+    })
+
+    if ('errors' in result) {
+      return {
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          embeds: [
             {
-                type: ApplicationCommandOptionType.String,
-                name: 'search',
-                description: 'Term to search for.',
-                required: true
-            },
-            {
-                type: ApplicationCommandOptionType.String,
-                name: 'locale',
-                description: 'Use a different locale.'
-            },
-            {
-                type: ApplicationCommandOptionType.Integer,
-                name: 'limit',
-                description: 'The max number of results to display.',
-                max_value: 10,
-                min_value: 1
+              color: colors.error,
+              description: Object.values(result.errors).map(
+                (err) => err.map((e) => e.message).join('\n')
+              ).join('\n')
             }
-        ]
-    },
-
-    async run (interaction) {
-        const search = getOption<string>(interaction.data, 'search')!
-        const locale = getOption<string>(interaction.data, 'locale')
-        const max = getOption<number>(interaction.data, 'limit')
-
-        const result = await fetchMDN(search.value, {
-            locale: locale?.value ?? interaction.locale
-        })
-
-        if ('errors' in result) {
-            return {
-                type: InteractionResponseType.ChannelMessageWithSource,
-                data: {
-                    embeds: [
-                        {
-                            color: colors.error,
-                            description: Object.values(result.errors).map(
-                                (err) => err.map((e) => e.message).join('\n')
-                            ).join('\n')
-                        }
-                    ]
-                }
-            }
+          ]
         }
-
-        if (result.documents.length === 0) {
-            return {
-                type: InteractionResponseType.ChannelMessageWithSource,
-                data: {
-                    embeds: [
-                        {
-                            color: colors.error,
-                            description: 'No results found.'
-                        }
-                    ]
-                }
-            }
-        }
-
-        const best = result.documents.sort((a, b) => b.score - a.score)
-        const results = !max || max.value === best.length ? best : best.slice(0, max.value)
-
-        return {
-            type: InteractionResponseType.ChannelMessageWithSource,
-            data: {
-                embeds: [
-                    {
-                        color: colors.ok,
-                        author: {
-                            name: 'Mozilla Development Network',
-                            icon_url: logo
-                        },
-                        description: results.map(doc =>
-                            `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug}): ${doc.summary}`
-                        ).join('\n'),
-                        footer: interaction.user ? { text: `Requested by ${interaction.user.username}` } : undefined,
-                        timestamp: new Date().toISOString()
-                    }
-                ]
-            }
-        }
+      }
     }
+
+    if (result.documents.length === 0) {
+      return {
+        type: InteractionResponseType.ChannelMessageWithSource,
+        data: {
+          embeds: [
+            {
+              color: colors.error,
+              description: 'No results found.'
+            }
+          ]
+        }
+      }
+    }
+
+    const best = result.documents.sort((a, b) => b.score - a.score)
+    const results = !max || max.value === best.length ? best : best.slice(0, max.value)
+
+    return {
+      type: InteractionResponseType.ChannelMessageWithSource,
+      data: {
+        embeds: [
+          {
+            color: colors.ok,
+            author: {
+              name: 'Mozilla Development Network',
+              icon_url: logo
+            },
+            description: results.map(doc =>
+              `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug}): ${doc.summary}`
+            ).join('\n'),
+            footer: interaction.user ? { text: `Requested by ${interaction.user.username}` } : undefined,
+            timestamp: new Date().toISOString()
+          }
+        ]
+      }
+    }
+  }
 }

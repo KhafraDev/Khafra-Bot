@@ -80,8 +80,8 @@ interface NPMError {
 export type INPMPackage = NPMError | Package | { error: string }
 
 export const npm = async (packageName: string): Promise<INPMPackage> => {
-    const name = encodeURIComponent(packageName)
-    const response = await fetch(`https://registry.npmjs.com/${name}`)
+  const name = encodeURIComponent(packageName)
+  const response = await fetch(`https://registry.npmjs.com/${name}`)
 
-    return await response.json()
+  return await response.json()
 }

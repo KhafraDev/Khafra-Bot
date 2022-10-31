@@ -15,52 +15,52 @@ const basic =
     PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildMemberAdd> {
-    name = Events.GuildMemberAdd as const
+  name = Events.GuildMemberAdd as const
 
-    async init (member: GuildMember): Promise<void> {
-        await sql`
-            INSERT INTO kbInsights (
-                k_guild_id, k_joined
-            ) VALUES (
-                ${member.guild.id}::text, ${1}::integer
-            ) ON CONFLICT (k_guild_id, k_date) DO UPDATE SET
-                k_joined = kbInsights.k_joined + 1
-                WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
-        `
+  async init (member: GuildMember): Promise<void> {
+    await sql`
+      INSERT INTO kbInsights (
+          k_guild_id, k_joined
+      ) VALUES (
+          ${member.guild.id}::text, ${1}::integer
+      ) ON CONFLICT (k_guild_id, k_date) DO UPDATE SET
+          k_joined = kbInsights.k_joined + 1
+          WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
+    `
 
-        const [item] = await sql<[kGuildWelcomeChannel?]>`
-            SELECT welcome_channel
-            FROM kbGuild
-            WHERE guild_id = ${member.guild.id}::text
-            LIMIT 1;
-        `
+    const [item] = await sql<[kGuildWelcomeChannel?]>`
+      SELECT welcome_channel
+      FROM kbGuild
+      WHERE guild_id = ${member.guild.id}::text
+      LIMIT 1;
+    `
 
-        if (!item?.welcome_channel) {
-            return
-        }
+    if (!item?.welcome_channel) {
+      return
+    }
 
-        const channel = await member.guild.channels.fetch(item.welcome_channel)
-        const me = member.guild.members.me
+    const channel = await member.guild.channels.fetch(item.welcome_channel)
+    const me = member.guild.members.me
 
-        if (
-            channel === null ||
+    if (
+      channel === null ||
             me === null ||
             !isTextBased(channel) ||
             !channel.permissionsFor(me).has(basic)
-        ) {
-            return
-        }
+    ) {
+      return
+    }
 
-        const embed = Embed.json({
-            color: colors.ok,
-            author: { name: member.user.username, icon_url: member.user.displayAvatarURL() },
-            description: `
+    const embed = Embed.json({
+      color: colors.ok,
+      author: { name: member.user.username, icon_url: member.user.displayAvatarURL() },
+      description: `
             ${member} (${member.user.tag}) joined the server!
             • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
             • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})`,
-            footer: { text: 'User joined' }
-        })
+      footer: { text: 'User joined' }
+    })
 
-        await channel.send({ embeds: [embed] })
-    }
+    await channel.send({ embeds: [embed] })
+  }
 }

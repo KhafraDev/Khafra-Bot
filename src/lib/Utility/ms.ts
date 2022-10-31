@@ -27,18 +27,18 @@ export const parseStrToMs = (str: string): number => {
     	const unit = unitRatio(units)
 
     	if (unit) {
-            result += parseFloat(n) * unit
-        }
+      result += parseFloat(n) * unit
+    }
 
-        return '' // so typescript is happy
+    return '' // so typescript is happy
   	})
 
-    return result / Math.max(unitRatio(), 1)
+  return result / Math.max(unitRatio(), 1)
 }
 
 const unitRatio = (str = 'ms'): number => {
-    str = str.toLowerCase()
-    return conversions[str] || conversions[str.replace(/s$/, '')]
+  str = str.toLowerCase()
+  return conversions[str] || conversions[str.replace(/s$/, '')]
 }
 
 export const seconds = (s: number): number => s * 1000
