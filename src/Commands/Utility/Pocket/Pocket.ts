@@ -17,7 +17,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (): Promise<APIEmbed> {
+  init (): APIEmbed {
     return Embed.json({
       color: colors.ok,
       description: `

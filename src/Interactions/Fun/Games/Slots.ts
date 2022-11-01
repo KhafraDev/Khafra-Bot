@@ -34,13 +34,13 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  async handle (): Promise<InteractionReplyOptions> {
+  handle (): InteractionReplyOptions {
     const board = chunkSafe(Array.from(
       { length: 9 },
       () => possible[Math.floor(Math.random() * possible.length)]
     ), 3)
 
-    const slots = await this.image(board)
+    const slots = this.image(board)
 
     return {
       embeds: [
@@ -56,7 +56,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (board: string[][]): Promise<Buffer> {
+  image (board: string[][]): Buffer {
     const canvas = createCanvas(Dims.Width, Dims.Height)
     const ctx = canvas.getContext('2d')
 

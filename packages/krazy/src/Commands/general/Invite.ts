@@ -10,7 +10,7 @@ export const command: InteractionCommand = {
     description: 'Add Krazy to your Discord server!'
   },
 
-  async run () {
+  run () {
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
       data: {

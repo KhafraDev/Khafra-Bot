@@ -13,7 +13,7 @@ export class kCommand extends Command {
     })
   }
 
-  async init (): Promise<APIEmbed> {
+  init (): APIEmbed {
     return Embed.ok(`
     [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
     [Synergism Discord](https://discord.gg/synergism)

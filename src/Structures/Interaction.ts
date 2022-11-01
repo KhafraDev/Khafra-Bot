@@ -24,25 +24,25 @@ interface SubcommandOptions {
 }
 
 type HandlerReturn =
-    | import('discord.js').InteractionReplyOptions
-    | null
-    | void
+  | import('discord.js').InteractionReplyOptions
+  | null
+  | void
 
 type InteractionData =
-    | RESTPostAPIApplicationCommandsJSONBody
+  | RESTPostAPIApplicationCommandsJSONBody
 
 export class Interactions {
   #id: APIApplicationCommand['id'] | undefined
 
   constructor (
-        public data: InteractionData,
-        public options: InteractionOptions = {}
+    public data: InteractionData,
+    public options: InteractionOptions = {}
   ) {}
 
-  async init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> {
+  init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn {
     const subcommand =
-            interaction.options.getSubcommandGroup(false) ??
-            interaction.options.getSubcommand()
+      interaction.options.getSubcommandGroup(false) ??
+      interaction.options.getSubcommand()
     const subcommandName = `${this.data.name}-${subcommand}`
 
     if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
@@ -61,7 +61,7 @@ export class Interactions {
 
     const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!
 
-    return await option.handle(interaction)
+    return option.handle(interaction)
   }
 
   public set id (body: APIApplicationCommand['id']) {
@@ -80,13 +80,13 @@ export abstract class InteractionSubCommand {
     return KhafraClient.Interactions.Commands.get(this.data.references)!
   }
 
-  abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn>
+  abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn
 }
 
 export abstract class InteractionAutocomplete {
   public constructor (public data: SubcommandOptions) {}
 
-  abstract handle (arg: AutocompleteInteraction): Promise<void>
+  abstract handle (arg: AutocompleteInteraction): Promise<void> | void
 }
 
 /**
@@ -94,8 +94,8 @@ export abstract class InteractionAutocomplete {
  */
 export abstract class InteractionUserCommand {
   constructor (
-        public data: InteractionData,
-        public options: InteractionOptions = {}
+    public data: InteractionData,
+    public options: InteractionOptions = {}
   ) {}
 
   abstract init (interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction): Promise<HandlerReturn>

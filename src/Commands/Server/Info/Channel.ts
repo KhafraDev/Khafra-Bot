@@ -62,7 +62,7 @@ export class kCommand extends Command {
       if (isExplicitText(channel)) {
         embed.fields?.push({
           name: bold('Rate-Limit:'),
-          value: channel.rateLimitPerUser + ' seconds',
+          value: `${channel.rateLimitPerUser} seconds`,
           inline: true
         })
       }

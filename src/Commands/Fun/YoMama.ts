@@ -25,7 +25,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message): Promise<APIEmbed> {
+  init (message: Message): APIEmbed {
     if (isText(message.channel) && !message.channel.nsfw)
       return Embed.error('🔞 This command only works in NSFW channels.')
 

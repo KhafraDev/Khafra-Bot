@@ -35,7 +35,7 @@ export class kCommand extends Command {
     })
   }
 
-  async init (message: Message): Promise<APIEmbed> {
+  init (message: Message): APIEmbed {
     const everything = message.client.generateInvite({ scopes, permissions })
     const slashCommands = message.client.generateInvite({ scopes, permissions: 0n })
 

@@ -11,7 +11,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  async handle (): Promise<InteractionReplyOptions> {
+  handle (): InteractionReplyOptions {
     return {
       embeds: [
         Embed.ok(Board())

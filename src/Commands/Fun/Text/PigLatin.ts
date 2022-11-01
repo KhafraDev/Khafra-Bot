@@ -85,7 +85,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
+  init (_message: Message, { content }: Arguments): APIEmbed {
     const pig = toPigLatin(content)
     return Embed.ok(pig.slice(0, 2048))
   }

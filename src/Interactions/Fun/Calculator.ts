@@ -8,7 +8,7 @@ import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import { randomUUID } from 'node:crypto'
-import { createContext, runInContext } from 'node:vm'
+import { createContext, runInContext, type Context } from 'node:vm'
 
 class Parser extends Array<string> {
   private openParenthesis = 0
@@ -142,7 +142,7 @@ class Parser extends Array<string> {
   }
 }
 
-const context = createContext(Object.create(null))
+const context = createContext(Object.create(null) as Context)
 const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'

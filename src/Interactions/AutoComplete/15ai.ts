@@ -45,6 +45,6 @@ export class kAutocomplete extends InteractionAutocomplete {
       sortedKeys.push({ name: 'No options available', value: 'invalid' })
     }
 
-    return void interaction.respond(sortedKeys)
+    return void await interaction.respond(sortedKeys)
   }
 }

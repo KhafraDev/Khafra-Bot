@@ -23,7 +23,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>): Promise<string | APIEmbed> {
+  init (message: Message<true>): string | APIEmbed {
     const unicode = parse(message.content, { assetType: 'png' })
       .map(e => e.url)
 

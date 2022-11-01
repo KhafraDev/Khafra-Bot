@@ -5,7 +5,7 @@ import type { RateLimitData } from '@discordjs/rest'
 export class kEvent extends Event<'rateLimited'> {
   name = 'rateLimited' as const
 
-  async init (data: RateLimitData): Promise<void> {
+  init (data: RateLimitData): void {
     logger.warn({ rateLimitData: data }, 'ratelimit')
   }
 }

@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
     const hex = interaction.options.getString('hex-color')
     const isHex = hex && /^#+([A-F0-9]{6}|[A-F0-9]{3})$/i.test(hex)
 
@@ -46,16 +46,16 @@ export class kInteraction extends Interactions {
     const hexColor = isHex ? hex : rgbToHex(rgb)
     const isRandom = hex === hexColor ? 'Random Color' : ''
 
-    const buffer = await this.image(hexColor)
+    const buffer = this.image(hexColor)
 
     return {
       embeds: [
         Embed.json({
           color: colors.ok,
           description: `
-                    ${isRandom}
-                    ● ${bold('Hex Color Code:')} ${hexColor}
-                    ● ${bold('RGB:')} (${rgb.join(', ')})`,
+            ${isRandom}
+            ● ${bold('Hex Color Code:')} ${hexColor}
+            ● ${bold('RGB:')} (${rgb.join(', ')})`,
           image: { url: 'attachment://color.png' }
         })
       ],
@@ -66,7 +66,7 @@ export class kInteraction extends Interactions {
     }
   }
 
-  async image (hex: string): Promise<Buffer> {
+  image (hex: string): Buffer {
     const canvas = createCanvas(128, 128)
     const ctx = canvas.getContext('2d')
 

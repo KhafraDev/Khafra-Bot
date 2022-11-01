@@ -17,7 +17,7 @@ export class kCommand extends Command {
     })
   }
 
-  async init (message: Message): Promise<APIEmbed> {
+  init (message: Message): APIEmbed {
     const guilds = message.client.guilds.cache
     const {
       globalCommandsUsed,
@@ -29,7 +29,7 @@ export class kCommand extends Command {
       .toLocaleString()
     const totalGuilds = guilds.size.toLocaleString()
 
-    const embed = Embed.json({
+    return Embed.json({
       color: colors.ok,
       title: 'Bot Statistics',
       fields: [
@@ -41,7 +41,5 @@ export class kCommand extends Command {
         { name: '\u200b', value: '\u200b', inline: true }
       ]
     })
-
-    return embed
   }
 }

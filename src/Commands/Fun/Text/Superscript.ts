@@ -36,7 +36,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
+  init (_message: Message, { content }: Arguments): APIEmbed {
     const split = [...content]
       .map(c => c.toLowerCase() in superscript ? superscript[c.toLowerCase()] : c)
       .join('')

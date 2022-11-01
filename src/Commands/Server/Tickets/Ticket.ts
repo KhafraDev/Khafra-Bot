@@ -22,7 +22,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
+  init (message: Message, argument: Arguments, settings: kGuild): ReturnType<Command['init']> {
     if (argument.args.length === 0) {
       // help message
       return Embed.error('not implemented yet')

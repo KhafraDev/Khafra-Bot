@@ -40,8 +40,8 @@ export class Pocket {
     if (rateLimited) {
       throw new Error(
         `Rate-limited: 
-                * ${limits['x-limit-key-reset']} seconds consumer key, 
-                * ${limits['x-limit-user-reset']} seconds for the user.`
+        * ${limits['x-limit-key-reset']} seconds consumer key, 
+        * ${limits['x-limit-user-reset']} seconds for the user.`
       )
     }
 
@@ -60,9 +60,7 @@ export class Pocket {
 
     setRateLimits(headers)
     if (statusCode !== 200) {
-      throw new Error(
-        headers['x-error-code'] + ': ' + headers['x-error']
-      )
+      throw new Error(`${headers['x-error-code']}: ${headers['x-error']}`)
     }
 
     const responseBody = await body.json() as { code: string }
@@ -75,7 +73,8 @@ export class Pocket {
    * @throws {Error} if there is no request_token
    */
   get requestAuthorization (): string {
-    return 'https://getpocket.com/auth/authorize?request_token=' + this.request_token + '&redirect_uri=' + this.redirect_uri
+    return 'https://getpocket.com/auth/authorize?request_token=' +
+           `${this.request_token}&redirect_uri=${this.redirect_uri}`
   }
 
   async accessToken (): Promise<string> {
@@ -83,8 +82,8 @@ export class Pocket {
     if (rateLimited) {
       throw new Error(
         `Rate-limited: 
-                * ${limits['x-limit-key-reset']} seconds consumer key, 
-                * ${limits['x-limit-user-reset']} seconds for the user.`
+          * ${limits['x-limit-key-reset']} seconds consumer key, 
+          * ${limits['x-limit-user-reset']} seconds for the user.`
       )
     }
 
@@ -103,9 +102,7 @@ export class Pocket {
 
     setRateLimits(headers)
     if (statusCode !== 200) {
-      throw new Error(
-        headers['x-error-code'] + ': ' + headers['x-error']
-      )
+      throw new Error(`${headers['x-error-code']}: ${headers['x-error']}`)
     }
 
     const responseBody = await body.json() as { access_token: string, username: string }
@@ -142,9 +139,7 @@ export class Pocket {
 
     setRateLimits(headers)
     if (statusCode !== 200) {
-      throw new Error(
-        headers['x-error-code'] + ': ' + headers['x-error']
-      )
+      throw new Error(`${headers['x-error-code']}: ${headers['x-error']}`)
     }
 
     return await body.json() as PocketGetResults
@@ -155,8 +150,8 @@ export class Pocket {
     if (rateLimited) {
       throw new Error(
         `Rate-limited: 
-                * ${limits['x-limit-key-reset']} seconds consumer key, 
-                * ${limits['x-limit-user-reset']} seconds for the user.`
+          * ${limits['x-limit-key-reset']} seconds consumer key, 
+          * ${limits['x-limit-user-reset']} seconds for the user.`
       )
     }
 
@@ -178,9 +173,7 @@ export class Pocket {
 
     setRateLimits(headers)
     if (statusCode !== 200) {
-      throw new Error(
-        headers['x-error-code'] + ': ' + headers['x-error']
-      )
+      throw new Error(`${headers['x-error-code']}: ${headers['x-error']}`)
     }
 
     return body.json() as Promise<PocketAddResults>

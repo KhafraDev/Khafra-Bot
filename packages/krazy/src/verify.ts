@@ -37,7 +37,7 @@ export const verify = async (request: Request): Promise<boolean> => {
     'NODE-ED25519',
     await PUBLIC_KEY,
     signature,
-    encoder.encode(timestamp + unknown)
+    encoder.encode(`${timestamp}${unknown}`)
   )
 
   return verified

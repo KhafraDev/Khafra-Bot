@@ -47,7 +47,9 @@ const resizeText = (ctx: SKRSContext2D, text: string, maxWidth: number, fontSize
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const monthF = new Intl.DateTimeFormat('en-US', { month: 'long' }).format
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const weekdayF = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format
 
 const sunrise = new Image()
@@ -101,7 +103,7 @@ export class kInteraction extends Interactions {
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const location = interaction.options.getString('location', true)
     const results = await wttrin(location)
-    const buffer = await this.image(results)
+    const buffer = this.image(results)
 
     return {
       embeds: [
@@ -117,7 +119,7 @@ export class kInteraction extends Interactions {
     }
   }
 
-  async image (weather: WttrInResult): Promise<Buffer> {
+  image (weather: WttrInResult): Buffer {
     const canvas = createCanvas(520, 320)
     const ctx = canvas.getContext('2d')
 

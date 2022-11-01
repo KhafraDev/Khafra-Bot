@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
     const text = interaction.options.getString('string', true)
 
     const context = createContext({ interaction })

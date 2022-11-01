@@ -9,38 +9,38 @@ import { join } from 'node:path'
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 export interface Arguments {
-    /** Default arguments, removes formatting (new lines, tabs, etc.) */
-    readonly args: string[]
-    /** Command used. */
-    readonly commandName: string
-    /** Text unformatted, removes mention+command with leading whitespace. */
-    readonly content: string
+  /** Default arguments, removes formatting (new lines, tabs, etc.) */
+  readonly args: string[]
+  /** Command used. */
+  readonly commandName: string
+  /** Text unformatted, removes mention+command with leading whitespace. */
+  readonly content: string
 }
 
 interface ICommand {
-    readonly help: string[]
-    readonly permissions: PermissionResolvable
-    readonly settings: {
-        readonly name: string
-        readonly folder: string
-        readonly args: [number, number?]
-        /** Ratelimit in seconds, defaults to 5 */
-        readonly ratelimit?: number
-        readonly permissions?: PermissionResolvable
-        readonly aliases?: string[]
-        readonly guildOnly?: boolean
-        readonly ownerOnly?: boolean
-        readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
-    }
+  readonly help: string[]
+  readonly permissions: PermissionResolvable
+  readonly settings: {
+    readonly name: string
+    readonly folder: string
+    readonly args: [number, number?]
+    /** Ratelimit in seconds, defaults to 5 */
+    readonly ratelimit?: number
+    readonly permissions?: PermissionResolvable
+    readonly aliases?: string[]
+    readonly guildOnly?: boolean
+    readonly ownerOnly?: boolean
+    readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
+  }
 }
 
 type HandlerReturn =
-    | string
-    | import('discord-api-types/v10').APIEmbed
-    | import('discord.js').Attachment
-    | import('discord.js').MessageReplyOptions
-    | void
-    | null
+  | string
+  | import('discord-api-types/v10').APIEmbed
+  | import('discord.js').Attachment
+  | import('discord.js').MessageReplyOptions
+  | void
+  | null
 
 export abstract class Command implements ICommand {
   readonly rateLimit: Cooldown
@@ -55,8 +55,8 @@ export abstract class Command implements ICommand {
   ]
 
   constructor (
-        public readonly help: string[],
-        public readonly settings: ICommand['settings']
+    public readonly help: string[],
+    public readonly settings: ICommand['settings']
   ) {
     this.help = help.length < 2
       ? [...help, ...Array<string>(2 - help.length).fill('')]
@@ -70,12 +70,12 @@ export abstract class Command implements ICommand {
     }
   }
 
-    abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
-        Promise<HandlerReturn>
+  abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
+    Promise<HandlerReturn> | HandlerReturn
 
-    static isBotOwner (id: Snowflake): boolean {
-    	return Array.isArray(config.botOwner)
-    		? config.botOwner.includes(id)
-    		: config.botOwner === id
-    }
+  static isBotOwner (id: Snowflake): boolean {
+    return Array.isArray(config.botOwner)
+      ? config.botOwner.includes(id)
+      : config.botOwner === id
+  }
 }

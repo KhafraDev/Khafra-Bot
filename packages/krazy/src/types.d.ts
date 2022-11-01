@@ -20,5 +20,5 @@ export interface InteractionCommand {
     interaction: APIApplicationCommandInteraction,
     response: Request,
     options: Options
-  ): Promise<APIInteractionResponse>
+  ): Promise<APIInteractionResponse> | APIInteractionResponse
 }

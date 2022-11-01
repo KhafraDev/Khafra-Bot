@@ -31,7 +31,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { content }: Arguments): Promise<APIEmbed> {
+  init (_message: Message, { content }: Arguments): APIEmbed {
     const blocks = [...content]
       .map(l => l.toLowerCase() in letters ? letters[l.toLowerCase()] : l)
       .join(' ')

@@ -19,7 +19,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { content }: Arguments): Promise<string> {
+  init (_message: Message, { content }: Arguments): string {
     return stripIndents`
         ${inlineCode(content.slice(0, 2040))}
         `

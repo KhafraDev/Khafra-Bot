@@ -19,7 +19,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (): Promise<APIEmbed> {
+  init (): APIEmbed {
     return Embed.json({
       title: 'Optimum by Altice',
       description: `

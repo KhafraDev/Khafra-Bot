@@ -18,7 +18,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message): Promise<APIEmbed> {
+  init (message: Message): APIEmbed {
     return Embed.ok(`Hello, ${message.author}!`)
   }
 }

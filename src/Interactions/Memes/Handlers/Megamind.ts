@@ -16,8 +16,8 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    const buffer = await this.image(interaction)
+  handle (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+    const buffer = this.image(interaction)
 
     return {
       files: [
@@ -29,7 +29,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (interaction: ChatInputCommandInteraction): Promise<Buffer> {
+  image (interaction: ChatInputCommandInteraction): Buffer {
     if (!image) {
       image = new Image()
       image.src = readFileSync(templates('megamind.png'))

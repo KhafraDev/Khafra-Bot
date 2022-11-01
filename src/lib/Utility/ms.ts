@@ -20,18 +20,18 @@ conversions.year = conversions.yr = conversions.y = conversions.d * 365.25
  * changes: remove times less than a ms, remove some dead/extraneous/old code
  */
 export const parseStrToMs = (str: string): number => {
-  	let result = 0
-  	// remove commas/placeholders
-  	str = str.replace(/(\d)[,_](\d)/g, '$1$2')
-  	str.replace(durationRE, (_, n, units) => {
-    	const unit = unitRatio(units)
+  let result = 0
+  // remove commas/placeholders
+  str = str.replace(/(\d)[,_](\d)/g, '$1$2')
+  str.replace(durationRE, (_, n: string, units: string) => {
+    const unit = unitRatio(units)
 
-    	if (unit) {
+    if (unit) {
       result += parseFloat(n) * unit
     }
 
     return '' // so typescript is happy
-  	})
+  })
 
   return result / Math.max(unitRatio(), 1)
 }

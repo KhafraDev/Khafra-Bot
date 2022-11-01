@@ -20,7 +20,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>): Promise<APIEmbed> {
+  init (message: Message<true>): APIEmbed {
     const locale = message.guild.preferredLocale
 
     return Embed.json({

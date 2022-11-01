@@ -6,7 +6,9 @@ import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'disc
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format
 
 const field = (name: string, value: number | string, formatter = f): APIEmbedField => ({

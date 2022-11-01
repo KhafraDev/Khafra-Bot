@@ -116,8 +116,8 @@ export class kSubCommand extends InteractionSubCommand {
       ? wordleChoose()
       : WordList[Math.floor(Math.random() * WordList.length)]
 
-    const attachGame = async (content: string | undefined): Promise<WebhookEditMessageOptions> => {
-      const buffer = await this.image(game.interaction, game.guesses, game.word)
+    const attachGame = (content: string | undefined): WebhookEditMessageOptions => {
+      const buffer = this.image(game.interaction, game.guesses, game.word)
       const embed = Embed.json({
         color: colors.ok,
         image: { url: 'attachment://wordle.png' }
@@ -156,7 +156,7 @@ export class kSubCommand extends InteractionSubCommand {
     } as const
 
     const reply = await interaction.editReply({
-      ...await attachGame(undefined),
+      ...attachGame(undefined),
       components: playComponents
     })
 
@@ -164,7 +164,7 @@ export class kSubCommand extends InteractionSubCommand {
       idle: 300_000,
       filter: (i) =>
         i.user.id === interaction.user.id &&
-                i.customId.endsWith(id)
+        i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -211,7 +211,7 @@ export class kSubCommand extends InteractionSubCommand {
           content = 'That word isn\'t in my list, try another word!'
         }
 
-        const editOptions = await attachGame(content)
+        const editOptions = attachGame(content)
 
         await i.reply({
           ...editOptions,
@@ -231,7 +231,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     // The game ended
     if (c.endReason !== 'user quit') {
-      const options = await attachGame('')
+      const options = attachGame('')
       const embed = (options.embeds as APIEmbed[])[0]
 
       embed.title = game.word.split('').join(' ')
@@ -250,11 +250,11 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (
+  image (
     interaction: ChatInputCommandInteraction,
     guesses: string[],
     word: string
-  ): Promise<Buffer> {
+  ): Buffer {
     const highContrast = interaction.options.getBoolean('highcontrast') ?? false
 
     const canvas = createCanvas(Dims.Width + 60 + 5, Dims.Box * 6 + 6 * 4)
