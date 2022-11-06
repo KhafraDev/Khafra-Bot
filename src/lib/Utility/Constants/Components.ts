@@ -5,9 +5,9 @@ import {
   type APIActionRowComponent,
   type APIMessageActionRowComponent,
   type APIButtonComponent,
-  type APISelectMenuComponent,
   type APITextInputComponent,
-  type APIActionRowComponentTypes
+  type APIActionRowComponentTypes,
+  type APIStringSelectComponent
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -18,7 +18,7 @@ export const Components = {
       components
     }
   },
-  selectMenu (options: Omit<APISelectMenuComponent, 'type'>): APISelectMenuComponent {
+  selectMenu (options: Omit<APIStringSelectComponent, 'type'>): APIStringSelectComponent {
     return {
       type: ComponentType.SelectMenu,
       ...options
@@ -26,9 +26,9 @@ export const Components = {
   },
   textInput (
     options: Required<
-            Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>> &
-            Partial<Omit<APITextInputComponent, 'type'>
-        >
+      Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>> &
+      Partial<Omit<APITextInputComponent, 'type'>
+    >
   ): APITextInputComponent {
     return {
       type: ComponentType.TextInput,

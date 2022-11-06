@@ -8,8 +8,7 @@ import { parseStrToMs } from '#khaf/utility/ms.js'
 import { plural } from '#khaf/utility/String.js'
 import { bold } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const schema = s.number.greaterThanOrEqual(0).greaterThanOrEqual(7)
@@ -62,11 +61,11 @@ export class kCommand extends Command {
       components: [row]
     })
 
-    const [buttonError, button] = await dontThrow(msg.awaitMessageComponent({
+    const [buttonError, button] = await dontThrow(msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
         ['approve', 'deny'].includes(interaction.customId) &&
-                interaction.user.id === message.author.id &&
-                interaction.message.id === msg.id,
+        interaction.user.id === message.author.id &&
+        interaction.message.id === msg.id,
       time: 20_000
     }))
 

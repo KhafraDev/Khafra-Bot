@@ -4,7 +4,7 @@ import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
-import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent } from 'discord-api-types/v10'
+import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent, ComponentType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 
@@ -45,12 +45,12 @@ export class kCommand extends Command {
       return Embed.json({
         color: colors.ok,
         description: `
-                The ${inlineCode(settings.name)} command:
-                ${codeBlock(help.shift()!)}
-    
-                Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
-                Example:
-                ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}`,
+        The ${inlineCode(settings.name)} command:
+        ${codeBlock(help.shift()!)}
+
+        Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
+        Example:
+        ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}`,
         fields: [
           { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
@@ -83,12 +83,15 @@ export class kCommand extends Command {
       components: [categoryComponent]
     })
 
-    const collector = m.createMessageComponentCollector({
+    const collector = m.createMessageComponentCollector<
+      ComponentType.Button |
+      ComponentType.StringSelect
+    >({
       idle: 60_000,
       max: 10,
       filter: (i) =>
         i.user.id === message.author.id &&
-                i.customId.endsWith(`-${id}`)
+        i.customId.endsWith(`-${id}`)
     })
 
     const pages: APIEmbed[] = []

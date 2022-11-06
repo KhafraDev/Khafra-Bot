@@ -5,8 +5,7 @@ import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { GuildBasedChannel, GuildChannelCloneOptions, Message } from 'discord.js'
 import { GuildChannel } from 'discord.js'
 
@@ -56,10 +55,10 @@ export class kCommand extends Command {
     if (e !== null) return
 
     {
-      const [e, i] = await dontThrow(m.awaitMessageComponent({
+      const [e, i] = await dontThrow(m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
           ['approve', 'deny'].includes(interaction.customId) &&
-                    interaction.user.id === message.author.id,
+          interaction.user.id === message.author.id,
         time: 60_000
       }))
 

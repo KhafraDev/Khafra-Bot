@@ -5,7 +5,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import { Pocket } from '@khaf/pocket'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
@@ -55,11 +55,11 @@ export class kCommand extends Command {
       components: [row]
     })
 
-    const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent({
+    const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
         ['approve', 'deny'].includes(interaction.customId) &&
-                interaction.user.id === message.author.id &&
-                interaction.message.id === msg.id,
+        interaction.user.id === message.author.id &&
+        interaction.message.id === msg.id,
       time: 120_000
     }))
 

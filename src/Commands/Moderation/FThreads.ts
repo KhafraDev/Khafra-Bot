@@ -5,15 +5,14 @@ import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { hasPerms } from '#khaf/utility/Permissions.js'
 import { bold, inlineCode, italic } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { GuildChannel, Message, NonThreadGuildBasedChannel } from 'discord.js'
 
 const threadPerms =
-    PermissionFlagsBits.ManageThreads |
-    PermissionFlagsBits.CreatePublicThreads |
-    PermissionFlagsBits.CreatePrivateThreads |
-    PermissionFlagsBits.SendMessagesInThreads
+  PermissionFlagsBits.ManageThreads |
+  PermissionFlagsBits.CreatePublicThreads |
+  PermissionFlagsBits.CreatePrivateThreads |
+  PermissionFlagsBits.SendMessagesInThreads
 
 export class kCommand extends Command {
   constructor () {
@@ -53,10 +52,10 @@ export class kCommand extends Command {
     if (e !== null) return
 
     {
-      const [e, i] = await dontThrow(m.awaitMessageComponent({
+      const [e, i] = await dontThrow(m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
           ['approve', 'deny'].includes(interaction.customId) &&
-                    interaction.user.id === message.author.id,
+          interaction.user.id === message.author.id,
         time: 60_000
       }))
 
@@ -76,11 +75,7 @@ export class kCommand extends Command {
     }
 
     const channels = allChannels.filter((c): c is NonThreadGuildBasedChannel =>
-      c !== null &&
-            !isStage(c) &&
-            !isThread(c) &&
-            !isVoice(c) &&
-            !c.permissionsLocked
+      c !== null && !isStage(c) && !isThread(c) && !isVoice(c) && !c.permissionsLocked
     )
 
     const pr: Promise<GuildChannel>[] = []
