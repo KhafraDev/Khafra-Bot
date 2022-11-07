@@ -9,18 +9,18 @@
     },
     "emoji": {
         "flags": {
-            "EARLY_SUPPORTER": "829468904790687795",
-            "EARLY_VERIFIED_BOT_DEVELOPER": "829469395239174144",
-            "HOUSE_BALANCE": "829467250851446797",
-            "HOUSE_BRAVERY": "829468658178719776",
-            "HOUSE_BRILLIANCE": "829468012599312456",
-            "PARTNERED_SERVER_OWNER": "829464454173163541",
-            "VERIFIED_BOT": "829469395239174144",
-            "BUGHUNTER_LEVEL_1": "865406920814100510",
-            "BUGHUNTER_LEVEL_2": "865405436182134805",
-            "DISCORD_EMPLOYEE": "852744525045956648",
-            "DISCORD_CERTIFIED_MODERATOR": "852745173388754974",
-            "HYPESQUAD_EVENTS": "865406317640417310"
+            "PremiumEarlySupporter": "829468904790687795",
+            "VerifiedDeveloper": "829469395239174144",
+            "HypeSquadOnlineHouse3": "829467250851446797",
+            "HypeSquadOnlineHouse1": "829468658178719776",
+            "HypeSquadOnlineHouse2": "829468012599312456",
+            "Partner": "829464454173163541",
+            "VerifiedBot": "829469395239174144",
+            "BugHunterLevel1": "865406920814100510",
+            "BugHunterLevel2": "865405436182134805",
+            "Staff": "852744525045956648",
+            "CertifiedModerator": "852745173388754974",
+            "Hypesquad": "865406317640417310"
         }
     },
     "interactions": {

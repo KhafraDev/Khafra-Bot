@@ -78,14 +78,11 @@ export class kCommand extends Command {
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
     const user = await getMentions(message, 'users', content) ?? message.author
-    const member = user.equals(message.author)
-      ? message.member
-      : message.guild.members.resolve(user)
+    const member = await message.guild.members.fetch(user.id)
+      .catch(() => null)
 
     const snowflake = SnowflakeUtil.timestampFrom(user.id)
-    const flags = user.flags?.bitfield
-      ? user.flags.toArray()
-      : []
+    const flags = user.flags?.toArray() ?? []
 
     const emojis = flags
       .filter(f => getEmojis()?.has(f))

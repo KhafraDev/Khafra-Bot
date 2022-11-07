@@ -57,7 +57,7 @@
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --enable-source-maps build/src/index --dev",
-    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --enable-source-maps build/src/index",
+    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- build/src/index",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install"

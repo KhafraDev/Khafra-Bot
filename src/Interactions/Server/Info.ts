@@ -3,7 +3,6 @@ import { Interactions } from '#khaf/Interaction'
 import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
-import { parseEmojiList } from '#khaf/utility/Emoji.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { once } from '#khaf/utility/Memoize.js'
 import { bold, inlineCode, italic, time } from '@discordjs/builders'
@@ -12,7 +11,6 @@ import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v1
 import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js'
 import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js'
 import { join } from 'node:path'
-import { parse, toCodePoints } from 'twemoji-parser'
 
 const formatPresence = (activities: Activity[] | undefined): string => {
   if (!Array.isArray(activities)) return ''
@@ -59,7 +57,6 @@ const getEmojis = once(() => {
   return emojis
 })
 
-const GUILD_EMOJI_REG = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
 const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 const emojis = new Map<UserFlagsString, string | undefined>()
 
@@ -71,13 +68,9 @@ export class kInteraction extends Interactions {
       options: [
         {
           type: ApplicationCommandOptionType.Mentionable,
-          name: 'type',
-          description: 'Role, member, or user to get information about.'
-        },
-        {
-          type: ApplicationCommandOptionType.String,
-          name: 'emoji',
-          description: 'A guild emoji or unicode emoji to get the information of.'
+          name: 'user-role-or-member',
+          description: 'Role, member, or user to get information about.',
+          required: true
         }
       ]
     }
@@ -86,92 +79,12 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-    const option =
-            interaction.options.getMentionable('type') ??
-            interaction.options.getString('emoji') ??
-            interaction.user
-    const createdAt = typeof option === 'string'
-      ? null
-      : 'joined_at' in option
-        ? new Date(option.joined_at)
-        : new Date(SnowflakeUtil.timestampFrom(option.id))
+    const option = interaction.options.getMentionable('user-role-or-member', true)
+    const createdAt = 'joined_at' in option
+      ? new Date(option.joined_at)
+      : new Date(SnowflakeUtil.timestampFrom(option.id))
 
-    if (typeof option === 'string') {
-      if (GUILD_EMOJI_REG.test(option)) {
-        const { animated, name, id } = GUILD_EMOJI_REG.exec(option)!.groups as {
-                    animated: 'a' | undefined
-                    name: string
-                    id: string
-                }
-
-        const url = `https://cdn.discordapp.com/emojis/${id}.webp`
-        const createdAt = new Date(SnowflakeUtil.timestampFrom(id))
-        const embed = Embed.json({
-          color: colors.ok,
-          description: option,
-          title: name,
-          image: { url },
-          fields: [
-            { name: bold('ID:'), value: id, inline: true },
-            { name: bold('Name:'), value: name, inline: true },
-            { name: '\u200b', value: '\u200b', inline: true },
-            { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true },
-            { name: bold('Created:'), value: time(createdAt, 'f'), inline: true },
-            { name: '\u200b', value: '\u200b', inline: true }
-          ]
-        })
-
-        return {
-          embeds: [embed]
-        }
-      }
-
-      const unicodeEmoji = parse(option, { assetType: 'png' })
-      const cache = await parseEmojiList()
-
-      if (unicodeEmoji.length === 0) {
-        return {
-          content: '❌ No emojis were found in your message.',
-          ephemeral: true
-        }
-      } else if (cache === null) {
-        return {
-          content: '❌ Emojis are being cached, please re-run this command in a minute!',
-          ephemeral: true
-        }
-      }
-
-      const codePoints = toCodePoints(unicodeEmoji[0].text)
-      const key = codePoints.join(' ').toUpperCase()
-
-      if (!cache.has(key)) {
-        return {
-          embeds: [
-            Embed.json({
-              color: colors.error,
-              description: '❌ This emoji is invalid or unsupported!'
-            })
-          ],
-          ephemeral: true
-        }
-      }
-
-      const emoji = cache.get(key)!
-      const embed = Embed.json({
-        color: colors.ok,
-        description: unicodeEmoji[0].text,
-        image: { url: unicodeEmoji[0].url },
-        fields: [
-          { name: bold('Name:'), value: emoji.comment, inline: true },
-          { name: bold('Category:'), value: emoji.group, inline: true },
-          { name: bold('Unicode:'), value: emoji.codePoints, inline: true }
-        ]
-      })
-
-      return {
-        embeds: [embed]
-      }
-    } else if (option instanceof GuildMember) {
+    if (option instanceof GuildMember) {
       const embed = Embed.json({
         color: colors.ok,
         author: {
@@ -195,7 +108,7 @@ export class kInteraction extends Interactions {
             value: option.premiumSince ? time(option.premiumSince) : 'Not boosting',
             inline: true
           },
-          { name: bold('Account Created:'), value: time(createdAt!, 'f'), inline: true },
+          { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true },
           { name: '\u200b', value: '\u200b', inline: true }
         ],
         footer: { text: 'For general user info mention a user!' }
@@ -229,16 +142,10 @@ export class kInteraction extends Interactions {
         embeds: [embed]
       }
     } else if (option instanceof User) {
-      const member = option.equals(interaction.user)
-        ? interaction.member
-        : interaction.guild?.members.resolve(option)
-      const guildMember = member instanceof GuildMember
-        ? member
-        : null
+      const member = await interaction.guild?.members.fetch(option.id)
+        .catch(() => null) ?? null
 
-      const flags = option.flags?.bitfield
-        ? option.flags.toArray()
-        : []
+      const flags = option.flags?.toArray() ?? []
 
       const emojis = flags
         .filter(f => getEmojis()?.has(f))
@@ -246,7 +153,7 @@ export class kInteraction extends Interactions {
 
       const embed = Embed.json({
         color: colors.ok,
-        description: formatPresence(guildMember?.presence?.activities),
+        description: formatPresence(member?.presence?.activities),
         author: {
           name: option.tag,
           icon_url: option.displayAvatarURL()
@@ -257,7 +164,7 @@ export class kInteraction extends Interactions {
           { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
           { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
           { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
-          { name: bold('Account Created:'), value: time(createdAt!, 'f'), inline: true }
+          { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true }
         ]
       })
 
