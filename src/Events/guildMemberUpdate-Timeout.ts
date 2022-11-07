@@ -13,9 +13,9 @@ type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
 
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const basic =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
   name = Events.GuildMemberUpdate as const
@@ -30,8 +30,8 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
     const [item] = await sql<[kGuildModChannel?]>`
       SELECT
-          mod_log_channel, max_warning_points,
-          welcome_channel, ticketChannel, "staffChannel"
+        mod_log_channel, max_warning_points,
+        welcome_channel, ticketChannel, "staffChannel"
       FROM kbGuild
       WHERE guild_id = ${oldMember.guild.id}::text
       LIMIT 1;
@@ -51,9 +51,9 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
     if (
       channel === null ||
-            me === null ||
-            !isTextBased(channel) ||
-            !channel.permissionsFor(me).has(basic)
+      me === null ||
+      !isTextBased(channel) ||
+      !channel.permissionsFor(me).has(basic)
     ) {
       return
     }

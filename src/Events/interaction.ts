@@ -16,9 +16,9 @@ import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
 
 type Interactions =
-    ChatInputCommandInteraction &
-    MessageContextMenuCommandInteraction &
-    UserContextMenuCommandInteraction
+  ChatInputCommandInteraction &
+  MessageContextMenuCommandInteraction &
+  UserContextMenuCommandInteraction
 
 const { values: processArgs } = parseArgs({
   args: argv.slice(2),

@@ -18,8 +18,8 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
       return
     } else if (
       !interaction.customId.includes('react-role') &&
-            !validSnowflake(interaction.customId) || // old ids were just the role ids
-            interaction.message.author.id !== interaction.client.user.id
+      !validSnowflake(interaction.customId) || // old ids were just the role ids
+      interaction.message.author.id !== interaction.client.user.id
     ) {
       return
     }

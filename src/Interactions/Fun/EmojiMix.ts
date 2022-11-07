@@ -25,29 +25,29 @@ const SubcommandOptions = {
 } as const
 
 interface EmojiKitchen {
-    locale: string
-    results: {
-        id: string
-        title: string
-        media_formats: {
-            [key: string]: {
-                url: string
-                duration: number
-                preview: string
-                dims: number[]
-                size: number
-            }
-        }
-        created: number
-        content_description: string
-        h1_title: string
-        itemurl: string
+  locale: string
+  results: {
+    id: string
+    title: string
+    media_formats: {
+      [key: string]: {
         url: string
-        tags: string[]
-        flags: string[]
-        hasaudio: boolean
-    }[]
-    next: string
+        duration: number
+        preview: string
+        dims: number[]
+        size: number
+      }
+    }
+    created: number
+    content_description: string
+    h1_title: string
+    itemurl: string
+    url: string
+    tags: string[]
+    flags: string[]
+    hasaudio: boolean
+  }[]
+  next: string
 }
 
 const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Sticker-Mashup-Research/main/emojis.txt'

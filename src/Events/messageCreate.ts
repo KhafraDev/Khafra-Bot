@@ -53,8 +53,8 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
     if (
       mention !== `<@!${config.botId}>` &&
-            mention !== `<@&${config.botId}>` &&
-            mention !== `<@${config.botId}>`
+      mention !== `<@&${config.botId}>` &&
+      mention !== `<@${config.botId}>`
     ) {
       return
     } else if (!KhafraClient.Commands.has(commandName)) {
@@ -80,9 +80,9 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
       return void message.reply({
         content: stripIndents`
-                Hey ${message.member ?? message.author}, use the slash command version instead!
-                ${commandMention}
-                `
+          Hey ${message.member ?? message.author}, use the slash command version instead!
+          ${commandMention}
+          `
       }).catch(logError)
     }
 
@@ -111,8 +111,8 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
       return void message.reply({
         content:
-                    `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
-                    `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
+          `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
+          `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
       })
     } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
       return void message.reply({
@@ -151,7 +151,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
       return void message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
     } else if (
       message.member === null ||
-            !message.channel.permissionsFor(message.member).has(command.permissions)
+      !message.channel.permissionsFor(message.member).has(command.permissions)
     ) {
       return void message.reply({
         embeds: [

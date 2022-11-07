@@ -10,9 +10,9 @@ import { Events, type GuildMember } from 'discord.js'
 type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 
 const basic =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildMemberAdd> {
   name = Events.GuildMemberAdd as const
@@ -44,9 +44,9 @@ export class kEvent extends Event<typeof Events.GuildMemberAdd> {
 
     if (
       channel === null ||
-            me === null ||
-            !isTextBased(channel) ||
-            !channel.permissionsFor(me).has(basic)
+      me === null ||
+      !isTextBased(channel) ||
+      !channel.permissionsFor(me).has(basic)
     ) {
       return
     }

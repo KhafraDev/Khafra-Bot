@@ -5,65 +5,65 @@ import { env } from 'node:process'
 import { request, type Dispatcher } from 'undici'
 
 interface ImgurAlbum {
-    data: {
-        id: string
-        title: string | null
-        description: string | null
-        datetime: number
-        cover: string
-        cover_edited: number | null
-        cover_width: number
-        cover_height: number
-        account_url: unknown | null
-        account_id: string | null
-        privacy: string
-        layout: string
-        views: number
-        link: string
-        favorite: boolean
-        nsfw: boolean
-        section: unknown
-        images_count: number
-        in_gallery: boolean
-        is_ad: boolean
-        include_album_ads: boolean
-        is_album: boolean
-        images: {
-            id: string
-            title: string | null
-            description: string | null
-            datetime: number
-            type: string
-            animated: boolean
-            width: number
-            height: number
-            size: number
-            views: number
-            bandwidth: number
-            vote: unknown
-            favorite: boolean
-            nsfw: boolean | null
-            section: unknown
-            account_url: unknown
-            account_id: unknown
-            is_ad: boolean
-            in_most_viral: boolean
-            has_sound: boolean
-            tags: string[]
-            ad_type: number
-            ad_url: string
-            edited: string
-            in_gallery: boolean
-            link: string
-        }[]
-    }
-    success: boolean
-    status: 200
+  data: {
+    id: string
+    title: string | null
+    description: string | null
+    datetime: number
+    cover: string
+    cover_edited: number | null
+    cover_width: number
+    cover_height: number
+    account_url: unknown | null
+    account_id: string | null
+    privacy: string
+    layout: string
+    views: number
+    link: string
+    favorite: boolean
+    nsfw: boolean
+    section: unknown
+    images_count: number
+    in_gallery: boolean
+    is_ad: boolean
+    include_album_ads: boolean
+    is_album: boolean
+    images: {
+      id: string
+      title: string | null
+      description: string | null
+      datetime: number
+      type: string
+      animated: boolean
+      width: number
+      height: number
+      size: number
+      views: number
+      bandwidth: number
+      vote: unknown
+      favorite: boolean
+      nsfw: boolean | null
+      section: unknown
+      account_url: unknown
+      account_id: unknown
+      is_ad: boolean
+      in_most_viral: boolean
+      has_sound: boolean
+      tags: string[]
+      ad_type: number
+      ad_url: string
+      edited: string
+      in_gallery: boolean
+      link: string
+    }[]
+  }
+  success: boolean
+  status: 200
 }
 
 interface ImgurCache {
-    u: string[]
-    t: string
+  u: string[]
+  t: string
 }
 
 class Imgur {
@@ -87,7 +87,7 @@ class Imgur {
 
     if (
       Imgur.ratelimit['x-ratelimit-userremaining'] === 0 && // ratelimit hit
-            Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
+      Date.now() < Imgur.ratelimit['x-ratelimit-userreset'] // not reset yet
     ) {
       return
     }
@@ -120,7 +120,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
   async init (message: Message): Promise<void> {
     if (
       !message.content.includes('imgur.com/a/') &&
-            message.embeds.every(embed => !embed.url?.includes('imgur.com/a/'))
+      message.embeds.every(embed => !embed.url?.includes('imgur.com/a/'))
     ) {
       return
     }
@@ -152,8 +152,8 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
     return void await message.reply({
       content:
-                'You posted an Imgur album, which doesn\'t embed all of the images! ' +
-                'Here are all the images in the album:',
+        'You posted an Imgur album, which doesn\'t embed all of the images! ' +
+        'Here are all the images in the album:',
       embeds: [
         Embed.json({
           color: colors.ok,

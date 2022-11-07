@@ -20,9 +20,9 @@ type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
 const threshold = 10_000
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const perms =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildBanRemove> {
   name = Events.GuildBanRemove as const
@@ -78,9 +78,9 @@ export class kEvent extends Event<typeof Events.GuildBanRemove> {
 
     if (
       channel === null ||
-            me === null ||
-            !DiscordUtil.isTextBased(channel) ||
-            !channel.permissionsFor(me).has(perms)
+      me === null ||
+      !DiscordUtil.isTextBased(channel) ||
+      !channel.permissionsFor(me).has(perms)
     ) {
       return
     }

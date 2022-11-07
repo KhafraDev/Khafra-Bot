@@ -15,9 +15,9 @@ type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 const basic =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.EmbedLinks
 
 export class kEvent extends Event<typeof Events.GuildMemberRemove> {
   name = Events.GuildMemberRemove as const
@@ -54,16 +54,16 @@ export class kEvent extends Event<typeof Events.GuildMemberRemove> {
 
     if (
       channel === null ||
-            me === null ||
-            !isTextBased(channel) ||
-            !channel.permissionsFor(me).has(basic)
+      me === null ||
+      !isTextBased(channel) ||
+      !channel.permissionsFor(me).has(basic)
     ) {
       return
     }
 
     const joined =
-            (member.joinedAt ? time(member.joinedAt) : 'N/A') +
-            ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`
+      (member.joinedAt ? time(member.joinedAt) : 'N/A') +
+      ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`
 
     const embed = Embed.json({
       color: colors.ok,
