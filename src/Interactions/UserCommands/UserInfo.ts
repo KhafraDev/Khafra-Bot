@@ -57,7 +57,7 @@ export class kUserCommand extends InteractionUserCommand {
   }
 
   async init (interaction: UserContextMenuCommandInteraction): Promise<InteractionReplyOptions> {
-    const { user, guild } = interaction
+    const { targetUser: user, guild } = interaction
 
     if (emojis.size === 0) {
       const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
