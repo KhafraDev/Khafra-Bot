@@ -15,13 +15,6 @@ import {
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-type SelectMenuTypes =
-  | ComponentType.RoleSelect
-  | ComponentType.UserSelect
-  | ComponentType.StringSelect
-  | ComponentType.ChannelSelect
-  | ComponentType.MentionableSelect
-
 interface SelectMenuReturnType {
   [ComponentType.RoleSelect]: APIRoleSelectComponent
   [ComponentType.UserSelect]: APIUserSelectComponent
@@ -39,13 +32,15 @@ export const Components = {
       components
     }
   },
-  selectMenu <T extends SelectMenuTypes = ComponentType.StringSelect>(
-    options: Omit<SelectMenuReturnType[T], 'type'>,
-    type: T = ComponentType.StringSelect as T
+  selectMenu <T extends keyof SelectMenuReturnType = ComponentType.StringSelect>(
+    options: T extends ComponentType.StringSelect
+      ? Omit<SelectMenuReturnType[T], 'type'>
+      : SelectMenuReturnType[T],
+    type: keyof SelectMenuReturnType = ComponentType.StringSelect
   ): SelectMenuReturnType[T] {
     return {
-      ...options,
-      type
+      type,
+      ...options
     } as SelectMenuReturnType[T]
   },
   textInput (
