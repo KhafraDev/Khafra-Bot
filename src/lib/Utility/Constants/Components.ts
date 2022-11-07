@@ -1,28 +1,52 @@
 import {
-  type APIMessage,
   ButtonStyle,
   ComponentType,
+  type APIMessage,
   type APIActionRowComponent,
   type APIMessageActionRowComponent,
   type APIButtonComponent,
   type APITextInputComponent,
   type APIActionRowComponentTypes,
-  type APIStringSelectComponent
+  type APIStringSelectComponent,
+  type APIUserSelectComponent,
+  type APIRoleSelectComponent,
+  type APIChannelSelectComponent,
+  type APIMentionableSelectComponent
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
+type SelectMenuTypes =
+  | ComponentType.RoleSelect
+  | ComponentType.UserSelect
+  | ComponentType.StringSelect
+  | ComponentType.ChannelSelect
+  | ComponentType.MentionableSelect
+
+interface SelectMenuReturnType {
+  [ComponentType.RoleSelect]: APIRoleSelectComponent
+  [ComponentType.UserSelect]: APIUserSelectComponent
+  [ComponentType.StringSelect]: APIStringSelectComponent
+  [ComponentType.ChannelSelect]: APIChannelSelectComponent
+  [ComponentType.MentionableSelect]: APIMentionableSelectComponent
+}
+
 export const Components = {
-  actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(components: T[] = []): APIActionRowComponent<T> {
+  actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(
+    components: T[] = []
+  ): APIActionRowComponent<T> {
     return {
       type: ComponentType.ActionRow,
       components
     }
   },
-  selectMenu (options: Omit<APIStringSelectComponent, 'type'>): APIStringSelectComponent {
+  selectMenu <T extends SelectMenuTypes = ComponentType.StringSelect>(
+    options: Omit<SelectMenuReturnType[T], 'type'>,
+    type: T = ComponentType.StringSelect as T
+  ): SelectMenuReturnType[T] {
     return {
-      type: ComponentType.SelectMenu,
-      ...options
-    }
+      ...options,
+      type
+    } as SelectMenuReturnType[T]
   },
   textInput (
     options: Required<
