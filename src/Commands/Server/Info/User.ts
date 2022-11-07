@@ -1,17 +1,14 @@
-import { client } from '#khaf/Client'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { once } from '#khaf/utility/Memoize.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { ActivityType } from 'discord-api-types/v10'
 import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js'
-import { SnowflakeUtil } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../../../config.json')>(join(cwd, 'config.json'))
@@ -42,16 +39,7 @@ const formatPresence = (activities: Activity[] | undefined): string => {
   return push.join('\n')
 }
 
-const emojis = new Map<UserFlagsString, string | undefined>()
-// lazy load emojis
-const getEmojis = once(() => {
-  const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
-  for (const [flag, emojiID] of flags)
-    // not ruling out the possibility of the emoji not being cached
-    emojis.set(flag, client.emojis.cache.get(emojiID)?.toString())
-
-  return emojis
-})
+const emojis = new Map<UserFlagsString, string>()
 
 // 84484653687267328 -> Certified moderator; early supporter; partnered server owner; early verified bot owner; brilliance
 // 173547401905176585 -> Discord employee; bravery
@@ -77,16 +65,21 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
+    if (emojis.size === 0) {
+      const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
+      for (const [flag, emojiID] of flags) {
+        emojis.set(flag, formatEmoji(emojiID, false))
+      }
+    }
+
     const user = await getMentions(message, 'users', content) ?? message.author
     const member = await message.guild.members.fetch(user.id)
       .catch(() => null)
 
-    const snowflake = SnowflakeUtil.timestampFrom(user.id)
     const flags = user.flags?.toArray() ?? []
-
-    const emojis = flags
-      .filter(f => getEmojis()?.has(f))
-      .map(f => getEmojis()?.get(f))
+    const badgeEmojis = flags
+      .map(f => emojis.get(f))
+      .filter((f): f is string => f !== undefined)
 
     return Embed.json({
       color: colors.ok,
@@ -100,8 +93,8 @@ export class kCommand extends Command {
         { name: bold('ID:'), value: user.id, inline: true },
         { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
         { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
-        { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
-        { name: bold('Account Created:'), value: time(Math.floor(snowflake / 1000)), inline: true }
+        { name: bold('Badges:'), value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`, inline: true },
+        { name: bold('Account Created:'), value: time(user.createdAt), inline: true }
       ]
     })
   }

@@ -3,8 +3,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/util.js'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
-import { PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ApplicationCommandType } from 'discord-api-types/v10'
+import { ApplicationCommandType, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
@@ -20,9 +19,9 @@ const { values: args } = parseArgs({
 const isDev = args['dev'] === true
 
 const perms =
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.EmbedLinks
 
 export class kUserCommand extends InteractionUserCommand {
   constructor () {
@@ -80,8 +79,8 @@ export class kUserCommand extends InteractionUserCommand {
       }
     } else if (
       interaction.guild === null ||
-            interaction.guild.members.me === null ||
-            !channel.permissionsFor(interaction.guild.members.me).has(perms)
+      interaction.guild.members.me === null ||
+      !channel.permissionsFor(interaction.guild.members.me).has(perms)
     ) {
       return {
         content: '❌ I cannot send the message to staff, please contact an admin to correct this!',

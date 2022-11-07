@@ -1,11 +1,9 @@
-import { client } from '#khaf/Client'
 import { Interactions } from '#khaf/Interaction'
 import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { once } from '#khaf/utility/Memoize.js'
-import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js'
@@ -46,16 +44,6 @@ const formatPresence = (activities: Activity[] | undefined): string => {
 
   return push.join('\n')
 }
-
-// lazy load emojis
-const getEmojis = once(() => {
-  const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
-  for (const [flag, emojiID] of flags)
-    // not ruling out the possibility of the emoji not being cached
-    emojis.set(flag, client.emojis.cache.get(emojiID)?.toString())
-
-  return emojis
-})
 
 const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 const emojis = new Map<UserFlagsString, string | undefined>()
@@ -142,14 +130,20 @@ export class kInteraction extends Interactions {
         embeds: [embed]
       }
     } else if (option instanceof User) {
+      if (emojis.size === 0) {
+        const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
+        for (const [flag, emojiID] of flags) {
+          emojis.set(flag, formatEmoji(emojiID, false))
+        }
+      }
+
       const member = await interaction.guild?.members.fetch(option.id)
         .catch(() => null) ?? null
 
       const flags = option.flags?.toArray() ?? []
-
-      const emojis = flags
-        .filter(f => getEmojis()?.has(f))
-        .map(f => getEmojis()?.get(f))
+      const badgeEmojis = flags
+        .map(f => emojis.get(f))
+        .filter((f): f is string => f !== undefined)
 
       const embed = Embed.json({
         color: colors.ok,
@@ -163,7 +157,7 @@ export class kInteraction extends Interactions {
           { name: bold('ID:'), value: option.id, inline: true },
           { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
           { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
-          { name: bold('Badges:'), value: `${emojis.length > 0 ? emojis.join(' ') : 'None/Unknown'}`, inline: true },
+          { name: bold('Badges:'), value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`, inline: true },
           { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true }
         ]
       })
