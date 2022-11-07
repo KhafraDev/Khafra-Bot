@@ -80,8 +80,8 @@ export class kInteraction extends Interactions {
       idle: 120_000,
       filter: (i) =>
         i.message.id === int.id &&
-                i.user.id === interaction.user.id &&
-                i.customId.endsWith(id)
+        i.user.id === interaction.user.id &&
+        i.customId.endsWith(id)
     })
 
     for await (const [collected] of collector) {

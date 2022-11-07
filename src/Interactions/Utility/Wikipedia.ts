@@ -67,8 +67,8 @@ export class kInteraction extends Interactions {
       max: wiki.pages.length,
       filter: (i) =>
         i.user.id === interaction.user.id &&
-                i.message.id === m.id &&
-                i.customId.endsWith(id)
+        i.message.id === m.id &&
+        i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {

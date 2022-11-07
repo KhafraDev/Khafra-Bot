@@ -33,9 +33,9 @@ export class kSubCommand extends InteractionSubCommand {
       if (!schema.is(j)) {
         return {
           content: `
-                    Whoops, an error occurred. Here's a shibe in the meantime.
-                    https://i.redd.it/jteq294ddwg11.jpg
-                    `,
+            Whoops, an error occurred. Here's a shibe in the meantime.
+            https://i.redd.it/jteq294ddwg11.jpg
+            `,
           ephemeral: true
         }
       }

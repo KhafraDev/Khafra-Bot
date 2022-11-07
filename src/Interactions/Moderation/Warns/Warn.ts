@@ -141,12 +141,12 @@ export class kSubCommand extends InteractionSubCommand {
     const embed = Embed.json({
       color: colors.ok,
       description: `
-            ${bold('Offender:')} ${member}
-            ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
-            ${bold('Staff:')} ${interaction.member}
-            ${bold('Points:')} ${points} warning point${plural(points)} given.
-            ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
-            ${bold('ID:')} ${inlineCode(k_id)}`,
+        ${bold('Offender:')} ${member}
+        ${bold('Reason:')} ${inlineCode(reason && reason.length > 0 ? reason.slice(0, 100) : 'No reason given.')}
+        ${bold('Staff:')} ${interaction.member}
+        ${bold('Points:')} ${points} warning point${plural(points)} given.
+        ${bold('Kicked:')} ${kicked} (${totalPoints.toLocaleString()} total point${plural(totalPoints)}).
+        ${bold('ID:')} ${inlineCode(k_id)}`,
       title: 'Member Warned'
     })
 

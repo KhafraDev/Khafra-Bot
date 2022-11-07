@@ -98,9 +98,9 @@ class Hangman {
         Embed.json({
           color: colors.ok,
           description: `
-                    ${this.hide()}
-                    ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
-                    Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
+            ${this.hide()}
+            ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
+            Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
           image: { url: images[this.wrong] },
           title
         })
@@ -191,7 +191,7 @@ export class kSubCommand extends InteractionSubCommand {
       idle: 30_000,
       filter: (i) =>
         i.user.id === interaction.user.id &&
-                i.customId.endsWith(id)
+        i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {

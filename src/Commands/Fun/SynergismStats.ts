@@ -38,9 +38,9 @@ export class kCommand extends Command {
       color: colors.ok,
       title: 'Synergism Stats (Kongregate)',
       description: `
-            ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
-            ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
-            Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings!`,
+        ${bold('Plays')}: ${stats.gameplays_count.toLocaleString()}
+        ${bold('Favorites')}: ${stats.favorites_count.toLocaleString()}
+        Synergism averages ${bold(average)}/5 ⭐ from ${bold(ratings)} ratings!`,
       fields: [{ name: bold('Quark Bonus:'), value: `${quarks.bonus}%`, inline: true }]
     })
   }

@@ -59,10 +59,10 @@ export class kSubCommand extends InteractionSubCommand {
         Embed.json({
           color: colors.ok,
           description: `
-                    ${missingCapeWarning}
+            ${missingCapeWarning}
 
-                    ● ${bold('Username:')} ${uuid.name}
-                    ● ${bold('ID:')} ${uuid.id}`,
+            ● ${bold('Username:')} ${uuid.name}
+            ● ${bold('ID:')} ${uuid.id}`,
           image: { url: 'attachment://capes.png' }
         })
       ],

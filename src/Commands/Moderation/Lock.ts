@@ -75,8 +75,8 @@ export class kCommand extends Command {
           Embed.json({
             color: colors.ok,
             description: `
-                        ${bold('Channel:')} ${text} (${text.id}).
-                        ${bold('Staff:')} ${message.member}`,
+              ${bold('Channel:')} ${text} (${text.id}).
+              ${bold('Staff:')} ${message.member}`,
             title: 'Channel Locked'
           })
         ]

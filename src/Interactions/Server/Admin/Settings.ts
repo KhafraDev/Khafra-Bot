@@ -94,12 +94,12 @@ export class kInteraction extends Interactions {
             color: colors.ok,
             title: `✅ ${interaction.guild.name} Settings`,
             description: `
-                        ${bold('Warning Points Limit:')} ${unset(guild.max_warning_points)}
-                        ${bold('Mod Logs:')} ${unset(guild.mod_log_channel)}
-                        ${bold('Welcome Channel:')} ${unset(guild.welcome_channel)}
-                        ${bold('Ticket Channel:')} ${unset(guild.ticketchannel)}
-                        ${bold('Staff Channel:')} ${unset(guild.staffChannel)}
-                        `
+              ${bold('Warning Points Limit:')} ${unset(guild.max_warning_points)}
+              ${bold('Mod Logs:')} ${unset(guild.mod_log_channel)}
+              ${bold('Welcome Channel:')} ${unset(guild.welcome_channel)}
+              ${bold('Ticket Channel:')} ${unset(guild.ticketchannel)}
+              ${bold('Staff Channel:')} ${unset(guild.staffChannel)}
+              `
           })
         ]
       }

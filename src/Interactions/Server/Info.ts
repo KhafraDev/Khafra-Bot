@@ -179,12 +179,12 @@ export class kInteraction extends Interactions {
           icon_url: option.user.displayAvatarURL()
         },
         description: `
-                ${option} on ${italic(option.guild.name)}.
-                ${formatPresence(option.presence?.activities)}
-                
-                Roles:
-                ${[...option.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
-                `,
+          ${option} on ${italic(option.guild.name)}.
+          ${formatPresence(option.presence?.activities)}
+          
+          Roles:
+          ${[...option.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
+          `,
         thumbnail: { url: option.user.displayAvatarURL() },
         fields: [
           { name: bold('Role Color:'), value: option.displayHexColor, inline: true },
@@ -208,11 +208,11 @@ export class kInteraction extends Interactions {
       const embed = Embed.json({
         color: colors.ok,
         description: `
-                ${option}
-                
-                Permissions: 
-                ${inlineCode(option.permissions.toArray().join(', '))}
-                `,
+          ${option}
+          
+          Permissions: 
+          ${inlineCode(option.permissions.toArray().join(', '))}
+          `,
         fields: [
           { name: bold('Name:'), value: option.name, inline: true },
           { name: bold('Color:'), value: option.hexColor, inline: true },

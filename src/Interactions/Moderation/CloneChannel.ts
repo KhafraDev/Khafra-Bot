@@ -125,9 +125,9 @@ export class kInteraction extends Interactions {
           const embed = Embed.json({
             color: colors.ok,
             description: `
-                ${bold('Channel:')} ${channel}
-                ${bold('Staff:')} ${interaction.user}
-                ${bold('Time:')} ${time(new Date())}`,
+              ${bold('Channel:')} ${channel}
+              ${bold('Staff:')} ${interaction.user}
+              ${bold('Time:')} ${time(new Date())}`,
             title: 'Channel Cloned'
           })
 

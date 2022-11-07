@@ -62,10 +62,10 @@ export class kSubCommand extends InteractionSubCommand {
     const embed = Embed.json({
       color: colors.ok,
       description: `
-            ${bold('Removed From:')} ${deleted[0].k_user_id}
-            ${bold('Staff:')} ${interaction.user}
-            ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
-            ${bold('ID:')} ${inlineCode(uuid)}`,
+        ${bold('Removed From:')} ${deleted[0].k_user_id}
+        ${bold('Staff:')} ${interaction.user}
+        ${bold('Points:')} ${deleted[0].k_points} warning point${plural(deleted[0].k_points)} removed.
+        ${bold('ID:')} ${inlineCode(uuid)}`,
       title: 'Warning Removed'
     })
 

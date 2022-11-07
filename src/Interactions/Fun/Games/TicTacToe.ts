@@ -56,8 +56,8 @@ export class kSubCommand extends InteractionSubCommand {
       max: 5,
       filter: (i) =>
         i.message.id === int.id &&
-                i.user.id === interaction.user.id &&
-                i.customId.endsWith(id)
+        i.user.id === interaction.user.id &&
+        i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

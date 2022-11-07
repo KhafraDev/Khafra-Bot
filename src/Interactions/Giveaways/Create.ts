@@ -61,9 +61,9 @@ export class kSubCommand extends InteractionSubCommand {
       color: colors.ok,
       title: 'A giveaway is starting!',
       description: `
-            ${prize.slice(0, 1950)}
-            
-            ${bold('React with 🎉 to enter!')}`,
+        ${prize.slice(0, 1950)}
+        
+        ${bold('React with 🎉 to enter!')}`,
       timestamp: endsDate.toISOString(),
       footer: { text: `${winners} winner${plural(winners)}` }
     })

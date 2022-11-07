@@ -67,9 +67,9 @@ export class kCommand extends Command {
           Embed.json({
             color: colors.ok,
             description: `
-                        ${bold('Offender:')} ${member}
-                        ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
-                        ${bold('Staff:')} ${message.member}`,
+              ${bold('Offender:')} ${member}
+              ${bold('Reason:')} ${reason.length > 0 ? reason.slice(0, 100) : 'No reason given.'}
+              ${bold('Staff:')} ${message.member}`,
             title: 'Member Kicked'
           })
         ]

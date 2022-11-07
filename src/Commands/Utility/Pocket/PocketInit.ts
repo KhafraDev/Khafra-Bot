@@ -36,12 +36,12 @@ export class kCommand extends Command {
     const embed = Embed.json({
       color: colors.ok,
       description: `
-            Authorize Khafra-Bot using the link below! 
-            
-            [Click Here](${pocket.requestAuthorization})!
-            After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
-            
-            ${bold('Command will be canceled after 2 minutes automatically.')}`,
+        Authorize Khafra-Bot using the link below! 
+        
+        [Click Here](${pocket.requestAuthorization})!
+        After authorizing click the approve ✅ button, or click the cancel ❌ button to cancel! 
+        
+        ${bold('Command will be canceled after 2 minutes automatically.')}`,
       title: 'Pocket'
     })
 

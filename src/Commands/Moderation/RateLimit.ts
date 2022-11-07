@@ -86,9 +86,9 @@ export class kCommand extends Command {
           Embed.json({
             color: colors.ok,
             description: `
-                        ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
-                        ${bold('Staff:')} ${message.member}
-                        ${bold('Duration:')} ${secs} second${plural(secs)}`,
+              ${bold('Channel:')} ${guildChannel} (${guildChannel.id}, ${guildChannel.type}).
+              ${bold('Staff:')} ${message.member}
+              ${bold('Duration:')} ${secs} second${plural(secs)}`,
             title: 'Channel Rate-Limited'
           })
         ]

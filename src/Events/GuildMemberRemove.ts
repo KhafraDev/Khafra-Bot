@@ -69,10 +69,10 @@ export class kEvent extends Event<typeof Events.GuildMemberRemove> {
       color: colors.ok,
       author: { name: member.user.username, icon_url: member.user.displayAvatarURL() },
       description: `
-            ${member} (${member.user.tag}) has left the server!
-            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${joined}
-            • Left: ${time(new Date())} (${time(new Date(), 'R')})`,
+        ${member} (${member.user.tag}) has left the server!
+        • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+        • Joined: ${joined}
+        • Left: ${time(new Date())} (${time(new Date(), 'R')})`,
       footer: { text: 'User left' }
     })
 

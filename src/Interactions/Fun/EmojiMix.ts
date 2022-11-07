@@ -133,9 +133,9 @@ export class kInteraction extends Interactions {
         idle: 30_000,
         filter: (i) =>
           i.user.id === interaction.user.id &&
-                    i.customId === `${uuid}-next` ||
-                    i.customId === `${uuid}-prev` ||
-                    i.customId === `${uuid}-trash`
+          i.customId === `${uuid}-next` ||
+          i.customId === `${uuid}-prev` ||
+          i.customId === `${uuid}-trash`
       })
 
       for await (const [collected] of collector) {

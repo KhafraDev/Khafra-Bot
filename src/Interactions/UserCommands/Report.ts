@@ -97,9 +97,9 @@ export class kUserCommand extends InteractionUserCommand {
       author: { name: interaction.user.tag, icon_url: interaction.user.displayAvatarURL() },
       title: 'Message Reported!',
       description: `
-            ${interaction.user} reported ${m}:
-    
-            ${content.length !== 0 ? codeBlock(content) : ''}`
+        ${interaction.user} reported ${m}:
+
+        ${content.length !== 0 ? codeBlock(content) : ''}`
     })
 
     await channel.send({

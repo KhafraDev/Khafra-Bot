@@ -44,8 +44,8 @@ export class kSubCommand extends InteractionSubCommand {
       max: 1,
       filter: (i) =>
         interaction.user.id === i.user.id &&
-                int.id === i.message.id &&
-                i.customId.endsWith(id)
+        int.id === i.message.id &&
+        i.customId.endsWith(id)
     })
 
     let c: ButtonInteraction | undefined

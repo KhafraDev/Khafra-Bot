@@ -55,9 +55,9 @@ export class kEvent extends Event<typeof Events.GuildMemberAdd> {
       color: colors.ok,
       author: { name: member.user.username, icon_url: member.user.displayAvatarURL() },
       description: `
-            ${member} (${member.user.tag}) joined the server!
-            • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
-            • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})`,
+        ${member} (${member.user.tag}) joined the server!
+        • Account Created: ${time(member.user.createdAt)} (${time(member.user.createdAt, 'R')})
+        • Joined: ${time(member.joinedAt!)} (${time(member.joinedAt!, 'R')})`,
       footer: { text: 'User joined' }
     })
 
