@@ -1,42 +1,62 @@
-import type { Snowflake } from 'discord.js';
+import type { Snowflake } from 'discord.js'
 
-type UUID4 = `${string}-${string}-${string}-${string}-${string}`;
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      HERE_WEATHER: string
+      IMGUR_CLIENT_ID: string | undefined
+      NASA: string
+      OWLBOTIO: string | undefined
+      POCKET_CONSUMER_KEY: string
+      POSTGRES_USER: string | undefined
+      POSTGRES_PASS: string | undefined
+      TIMEZONEDB: string
+      TMDB: string
+      TOKEN: string
+      TWITTER_API: string
+      TWITTER_API_SECRET: string
+      [key: string]: never
+    }
+  }
+}
+
+type UUID4 = `${string}-${string}-${string}-${string}-${string}`
 
 export interface kGuild {
-    id: UUID4
-    guild_id: Snowflake
-    max_warning_points: number
-    mod_log_channel: Snowflake | null
-    welcome_channel: Snowflake | null
-    ticketchannel: Snowflake | null
-    staffChannel: Snowflake | null
+  id: UUID4
+  guild_id: Snowflake
+  max_warning_points: number
+  mod_log_channel: Snowflake | null
+  welcome_channel: Snowflake | null
+  ticketchannel: Snowflake | null
+  staffChannel: Snowflake | null
 }
 
 export interface Warning {
-    id: UUID4
-    k_guild_id: Snowflake
-    k_user_id: Snowflake
-    k_points: number
-    k_ts: Date
+  id: UUID4
+  k_guild_id: Snowflake
+  k_user_id: Snowflake
+  k_points: number
+  k_ts: Date
 }
 
 export interface Giveaway {
-    id: UUID4
-    guildid: Snowflake
-    messageid: Snowflake
-    channelid: Snowflake
-    initiator: Snowflake
-    enddate: Date
-    prize: string
-    winners: number
-    didEnd: boolean
+  id: UUID4
+  guildid: Snowflake
+  messageid: Snowflake
+  channelid: Snowflake
+  initiator: Snowflake
+  enddate: Date
+  prize: string
+  winners: number
+  didEnd: boolean
 }
 
 export interface kReminder {
-    id: UUID4
-    userId: string
-    message: string
-    time: Date
-    once: boolean
-    interval: string
+  id: UUID4
+  userId: string
+  message: string
+  time: Date
+  once: boolean
+  interval: string
 }

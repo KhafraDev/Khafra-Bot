@@ -5,7 +5,7 @@ import type { HereResult } from '../types'
 
 export const weather = async (q: string): Promise<HereResult> => {
   const params = new URLSearchParams({
-    apiKey: env.HERE_WEATHER!,
+    apiKey: `${env.HERE_WEATHER}`,
     product: 'observation',
     name: q
   })

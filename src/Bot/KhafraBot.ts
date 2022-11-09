@@ -299,10 +299,6 @@ export class KhafraClient extends Client {
   }
 
   init = once(async () => {
-    if (env.TOKEN === undefined) {
-      throw new TypeError('No TOKEN env variable set.')
-    }
-
     const start = performance.now()
     this.rest.setToken(env.TOKEN) // token isn't set for us until we login
     await Promise.all([

@@ -109,7 +109,7 @@ export class kInteraction extends Interactions {
 
     let resTDB: Dispatcher.ResponseData | undefined
     const queryTDB = new URLSearchParams()
-    queryTDB.set('key', env.TIMEZONEDB!)
+    queryTDB.set('key', env.TIMEZONEDB)
     queryTDB.set('format', 'json')
     queryTDB.set('by', 'position')
     queryTDB.set('lat', jNom[0].lat)

@@ -32,7 +32,7 @@ export const cache: NASACache[] = []
 export const NASAGetRandom = async (): Promise<NASACache | null> => {
   const params = new URLSearchParams({
     count: '25',
-    api_key: env.NASA ?? 'DEMO_KEY'
+    api_key: env.NASA
   })
 
   // ratelimited or cached results
