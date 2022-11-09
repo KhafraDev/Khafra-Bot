@@ -35,22 +35,21 @@ export class kCommand extends Command {
         return Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`)
 
       const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!
-      const helpF = help.length === 2 && help[1] === ''
-        ? [help[0], '[No arguments]']
-        : help
-      const aliases = settings.aliases!.length === 0
+      const helpF = [...help, Array(Math.max(help.length - 2, 0)).fill('')]
+        .map((h) => h || '[No Arguments]')
+      const aliases = !settings.aliases?.length
         ? ['No aliases!']
-        : settings.aliases!
+        : settings.aliases
 
       return Embed.json({
         color: colors.ok,
         description: `
         The ${inlineCode(settings.name)} command:
-        ${codeBlock(help.shift()!)}
+        ${help.length ? codeBlock(help[0]) : ''}
 
         Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
         Example:
-        ${helpF.map(c => inlineCode(`${settings.name} ${c || '​'}`).trim()).join('\n')}`,
+        ${helpF.map(c => inlineCode(`${settings.name} ${c || '\u200B'}`).trim()).join('\n')}`,
         fields: [
           { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },

@@ -3,7 +3,13 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { ApplicationCommand, Message, PermissionResolvable, Snowflake } from 'discord.js'
+import {
+  PermissionsBitField,
+  type ApplicationCommand,
+  type Message,
+  type PermissionResolvable,
+  type Snowflake
+} from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
@@ -19,7 +25,7 @@ export interface Arguments {
 
 interface ICommand {
   readonly help: string[]
-  readonly permissions: PermissionResolvable
+  readonly permissions: bigint[]
   readonly settings: {
     readonly name: string
     readonly folder: string
@@ -42,38 +48,41 @@ type HandlerReturn =
   | void
   | null
 
+/** Permissions required to use a command */
+const defaultPerms = [
+  PermissionFlagsBits.ViewChannel,
+  PermissionFlagsBits.SendMessages,
+  PermissionFlagsBits.EmbedLinks
+]
+
 export abstract class Command implements ICommand {
-  readonly rateLimit: Cooldown
+  #perms = PermissionsBitField.Default
 
-  readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
+  public readonly rateLimit: Cooldown
 
-  /** Permissions required to use a command, overrides whitelist/blacklist by guild. */
-  readonly permissions: PermissionResolvable[] = [
-    PermissionFlagsBits.ViewChannel,
-    PermissionFlagsBits.SendMessages,
-    PermissionFlagsBits.EmbedLinks
-  ]
+  public readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
 
-  constructor (
+  public constructor (
     public readonly help: string[],
     public readonly settings: ICommand['settings']
   ) {
-    this.help = help.length < 2
-      ? [...help, ...Array<string>(2 - help.length).fill('')]
-      : help
-    this.permissions = this.permissions.concat(settings.permissions ?? [])
-    this.settings = Object.assign(settings, { aliases: settings.aliases ?? [] })
     this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
 
-    if (settings.appSuggestion !== undefined) {
-      this.appSuggestion = settings.appSuggestion
+    if (this.settings.permissions) {
+      this.#perms = PermissionsBitField.resolve(this.settings.permissions)
     }
+
+    this.appSuggestion = settings.appSuggestion
   }
 
-  abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
+  public abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
     Promise<HandlerReturn> | HandlerReturn
 
-  static isBotOwner (id: Snowflake): boolean {
+  public get permissions (): bigint[] {
+    return [...defaultPerms, this.#perms]
+  }
+
+  public static isBotOwner (id: Snowflake): boolean {
     return Array.isArray(config.botOwner)
       ? config.botOwner.includes(id)
       : config.botOwner === id

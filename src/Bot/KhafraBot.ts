@@ -81,7 +81,7 @@ export class KhafraClient extends Client {
         const kCommand = new fileImport.value.kCommand()
 
         KhafraClient.Commands.set(kCommand.settings.name.toLowerCase(), kCommand)
-                kCommand.settings.aliases!.forEach(alias => KhafraClient.Commands.set(alias, kCommand))
+        kCommand.settings.aliases?.forEach(alias => KhafraClient.Commands.set(alias, kCommand))
       }
     }
 
@@ -257,9 +257,9 @@ export class KhafraClient extends Client {
     }
 
     const loadedMessage =
-            `Loaded ${loaded.length} interactions, ` +
-            `${loadedSubCommands} sub commands, ` +
-            `and ${loadedUserCommands} user commands!`
+      `Loaded ${loaded.length} interactions, ` +
+      `${loadedSubCommands} sub commands, ` +
+      `and ${loadedUserCommands} user commands!`
 
     logger.info(loadedMessage)
     return KhafraClient.Interactions.Commands
@@ -272,7 +272,7 @@ export class KhafraClient extends Client {
     )
 
     const importPromise = timers.map(timer =>
-            import(pathToFileURL(timer).href) as Promise<{ [key: string]: new () => Timer }>
+      import(pathToFileURL(timer).href) as Promise<{ [key: string]: new () => Timer }>
     )
     const settled = await Promise.allSettled(importPromise)
     let loadedTimers = 0

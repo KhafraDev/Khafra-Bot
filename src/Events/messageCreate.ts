@@ -132,6 +132,10 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
     const [min, max = Infinity] = command.settings.args
     if (min > args.length || args.length > max) {
+      const help = command.help.length < 2
+        ? [...command.help, ...Array<string>(2 - command.help.length).fill('')]
+        : command.help
+
       return void message.reply({
         embeds: [
           Embed.error(`
@@ -139,7 +143,7 @@ export class kEvent extends Event<typeof Events.MessageCreate> {
 
           The command requires ${min} minimum arguments and ${max} max.
           Example(s):
-          ${command.help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '​'}`.trim())).join('\n')}
+          ${help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '\u200B'}`.trim())).join('\n')}
           `)
         ]
       })
