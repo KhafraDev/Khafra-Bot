@@ -93,7 +93,11 @@ export class kCommand extends Command {
         { name: bold('ID:'), value: user.id, inline: true },
         { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
         { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
-        { name: bold('Badges:'), value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`, inline: true },
+        {
+          name: bold('Badges:'),
+          value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`,
+          inline: true
+        },
         { name: bold('Account Created:'), value: time(user.createdAt), inline: true }
       ]
     })

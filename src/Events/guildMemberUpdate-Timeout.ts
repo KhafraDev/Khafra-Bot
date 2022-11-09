@@ -6,7 +6,13 @@ import { isTextBased } from '#khaf/utility/Discord.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
-import { Events, PermissionFlagsBits, type AuditLogChange, type GuildAuditLogsEntry, type GuildMember } from 'discord.js'
+import {
+  Events,
+  PermissionFlagsBits,
+  type AuditLogChange,
+  type GuildAuditLogsEntry,
+  type GuildMember
+} from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
 type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>

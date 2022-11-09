@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://slate.com/feeds/all.rss',
   main: 'https://slate.com',
   command: ['slate'],
-  author: { name: 'Slate', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Slate_new_logo.png/250px-Slate_new_logo.png' }
+  author: {
+    name: 'Slate',
+    iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Slate_new_logo.png/250px-Slate_new_logo.png'
+  }
 } as const
 
 interface ISlate {

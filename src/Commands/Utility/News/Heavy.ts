@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://heavy.com/feed/',
   main: 'https://heavy.com',
   command: ['heavy'],
-  author: { name: 'Heavy', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Heavy.com_Logo_2017.svg/1200px-Heavy.com_Logo_2017.svg.png' }
+  author: {
+    name: 'Heavy',
+    iconURL: 'https://i.imgur.com/h9hJuF7.png'
+  }
 } as const
 
 interface IHeavy {

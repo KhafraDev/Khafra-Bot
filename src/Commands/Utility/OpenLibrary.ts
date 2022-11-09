@@ -10,8 +10,8 @@ export class kCommand extends Command {
   constructor () {
     super(
       [
-        'Open Library is an open, editable library catalog, building towards a web page for every book ever published.\n\n' +
-                'https://openlibrary.org/about',
+        'Open Library is an open, editable library catalog, building towards a web page for ' +
+        'every book ever published.\n\nhttps://openlibrary.org/about',
         'The Great Gatsby'
       ],
       {

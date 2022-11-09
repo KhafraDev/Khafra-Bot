@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://feeds.thedailybeast.com/rss/articles',
   main: 'https://www.thedailybeast.com/',
   command: ['dailybeast', 'thedailybeast'],
-  author: { name: 'The Daily Beast', iconURL: 'https://img.thedailybeast.com/image/upload/v1550872986/Whitelr_soctf0.png' }
+  author: {
+    name: 'The Daily Beast',
+    iconURL: 'https://img.thedailybeast.com/image/upload/v1550872986/Whitelr_soctf0.png'
+  }
 } as const
 
 interface IDailyBeast {

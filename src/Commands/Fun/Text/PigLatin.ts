@@ -4,7 +4,10 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z']
+const consonants = [
+  'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
+  'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'
+]
 const vowels = ['A', 'E', 'I', 'O', 'U']
 
 const splitWord = (word: string): { an: string[], p: string[] } => {

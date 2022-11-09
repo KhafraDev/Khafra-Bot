@@ -1,15 +1,24 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import * as util from '#khaf/utility/util.js'
 import { toString } from '#khaf/utility/Permissions.js'
+import * as util from '#khaf/utility/util.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   ChannelType,
-  PermissionFlagsBits, Routes, type RESTPostAPIApplicationCommandsJSONBody, type RESTPostAPIGuildChannelJSONBody,
+  PermissionFlagsBits,
+  Routes,
+  type RESTPostAPIApplicationCommandsJSONBody,
+  type RESTPostAPIGuildChannelJSONBody,
   type RESTPostAPIGuildChannelResult
 } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel, VoiceChannel } from 'discord.js'
+import type {
+  ChatInputCommandInteraction,
+  InteractionReplyOptions,
+  NewsChannel,
+  TextChannel,
+  VoiceChannel
+} from 'discord.js'
 
 type CloneableChannel =
     | TextChannel

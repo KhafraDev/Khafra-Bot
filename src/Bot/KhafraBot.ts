@@ -1,6 +1,11 @@
 import type { Command } from '#khaf/Command'
 import type { Event } from '#khaf/Event'
-import type { InteractionAutocomplete, Interactions, InteractionSubCommand, InteractionUserCommand } from '#khaf/Interaction'
+import type {
+  InteractionAutocomplete,
+  Interactions,
+  InteractionSubCommand,
+  InteractionUserCommand
+} from '#khaf/Interaction'
 import { logger } from '#khaf/structures/Logger.js'
 import type { Timer } from '#khaf/Timer'
 import { assets, cwd } from '#khaf/utility/Constants/Path.js'

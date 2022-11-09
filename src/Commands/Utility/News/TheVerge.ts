@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.theverge.com/rss/index.xml',
   main: 'https://www.theverge.com',
   command: ['theverge', 'verge'],
-  author: { name: 'The Verge', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/The_Verge_Logo_2016.svg/1024px-The_Verge_Logo_2016.svg.png' }
+  author: {
+    name: 'The Verge',
+    iconURL: 'https://i.imgur.com/XEVj5xN.png'
+  }
 } as const
 
 interface ITheVerge {

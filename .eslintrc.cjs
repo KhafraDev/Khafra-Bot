@@ -51,6 +51,7 @@ module.exports = {
     'no-whitespace-before-property': 'error',
     '@typescript-eslint/semi': ['error', 'never'],
     'space-before-blocks': 'error',
+    'max-len': ['error', { code: 120, ignoreComments: true }],
 
     'no-empty': 'off',
     'no-mixed-spaces-and-tabs': 'off',

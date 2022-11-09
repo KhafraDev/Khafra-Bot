@@ -98,5 +98,7 @@ export abstract class InteractionUserCommand {
     public options: InteractionOptions = {}
   ) {}
 
-  abstract init (interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction): Promise<HandlerReturn>
+  abstract init (
+    interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction
+  ): Promise<HandlerReturn>
 }

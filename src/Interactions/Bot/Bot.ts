@@ -5,7 +5,12 @@ import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { bold, inlineCode } from '@discordjs/builders'
-import { ApplicationCommandOptionType, OAuth2Scopes, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import {
+  ApplicationCommandOptionType,
+  OAuth2Scopes,
+  PermissionFlagsBits,
+  type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { version as DJSVersion } from 'discord.js'
 import { join } from 'node:path'

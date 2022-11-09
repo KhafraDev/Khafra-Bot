@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.tmz.com/rss.xml',
   main: 'https://tmz.com',
   command: ['tmz'],
-  author: { name: 'TMZ', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png' }
+  author: {
+    name: 'TMZ',
+    iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/TMZLogo.svg/1200px-TMZLogo.svg.png'
+  }
 } as const
 
 interface ITMZ {

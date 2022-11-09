@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.newyorker.com/feed/everything',
   main: 'https://www.newyorker.com/',
   command: ['newyorker', 'thenewyorker'],
-  author: { name: 'The New Yorker', iconURL: 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png' }
+  author: {
+    name: 'The New Yorker',
+    iconURL: 'https://media.newyorker.com/photos/59096d7d6552fa0be682ff8f/1:1/w_68,c_limit/eustace-400.png'
+  }
 } as const
 
 interface ITheNewYorker {

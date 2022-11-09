@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://news.google.com/rss/search?q=when:24h+allinurl:reuters.com&ceid=US:en&hl=en-US&gl=US',
   main: 'https://reuters.com',
   command: ['reuters'],
-  author: { name: 'Reuters', iconURL: 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048' }
+  author: {
+    name: 'Reuters',
+    iconURL: 'https://static.reuters.com/resources/r/?m=02&d=20171122&t=2&i=1210836860&r=LYNXMPEDAL0X1&w=2048'
+  }
 } as const
 
 interface IReuters {

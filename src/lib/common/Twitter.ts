@@ -137,11 +137,12 @@ const getTwitterOAUTH = async (): Promise<string> => {
 export const getTwitterMediaURL = async (id: string): Promise<string | undefined> => {
   token ??= await getTwitterOAUTH()
 
-  const { body } = await request(`https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`, {
-    headers: {
-      Authorization: token
+  const { body } = await request(
+    `https://api.twitter.com/1.1/statuses/show.json?id=${id}&include_entities=true&tweet_mode=extended`,
+    {
+      headers: { Authorization: token }
     }
-  })
+  )
 
   const j = await body.json() as ITweet
 

@@ -6,7 +6,13 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
-import type { Activity, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake, UserFlagsString } from 'discord.js'
+import type {
+  Activity,
+  ChatInputCommandInteraction,
+  InteractionReplyOptions,
+  Snowflake,
+  UserFlagsString
+} from 'discord.js'
 import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js'
 import { join } from 'node:path'
 
@@ -30,7 +36,10 @@ const formatPresence = (activities: Activity[] | undefined): string => {
       }
       case ActivityType.Streaming: {
         const details = activity.details ?? activity.url
-        push.push(`Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}${details ? `- ${inlineCode(details)}` : ''}`)
+        push.push(
+          `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
+          `${details ? `- ${inlineCode(details)}` : ''}`
+        )
         break
       }
       case ActivityType.Watching: {
@@ -157,7 +166,11 @@ export class kInteraction extends Interactions {
           { name: bold('ID:'), value: option.id, inline: true },
           { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
           { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
-          { name: bold('Badges:'), value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`, inline: true },
+          {
+            name: bold('Badges:'),
+            value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`,
+            inline: true
+          },
           { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true }
         ]
       })

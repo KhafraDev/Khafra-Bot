@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.buzzfeed.com/ca/world.xml',
   main: 'https://www.buzzfeed.com/',
   command: ['buzzfeed'],
-  author: { name: 'BuzzFeed', iconURL: 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png' }
+  author: {
+    name: 'BuzzFeed',
+    iconURL: 'https://www.buzzfeed.com/obiwan-static/images/about/press-assets/BuzzFeed_News_Logo.png'
+  }
 } as const
 
 interface IBuzzfeed {

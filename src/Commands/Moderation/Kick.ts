@@ -47,7 +47,9 @@ export class kCommand extends Command {
       return Embed.error(`${member} is too high up in the hierarchy for me to kick.`)
     }
 
-    const [kickError] = await dontThrow(member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`))
+    const [kickError] = await dontThrow(
+      member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`)
+    )
 
     if (kickError !== null) {
       return Embed.error(`An unexpected error occurred: ${inlineCode(kickError.message)}`)

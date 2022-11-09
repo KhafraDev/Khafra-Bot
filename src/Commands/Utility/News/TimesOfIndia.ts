@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://timesofindia.indiatimes.com/rssfeeds/296589292.cms',
   main: 'https://timesofindia.indiatimes.com',
   command: ['timesofindia'],
-  author: { name: 'Times of India', iconURL: 'https://lawprofessors.typepad.com/.a/6a00d8341bfae553ef01b8d1594773970c-800wi' }
+  author: {
+    name: 'Times of India',
+    iconURL: 'https://lawprofessors.typepad.com/.a/6a00d8341bfae553ef01b8d1594773970c-800wi'
+  }
 } as const
 
 interface ITimesOfIndia {

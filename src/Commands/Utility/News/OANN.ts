@@ -19,7 +19,10 @@ const settings = {
   rss: 'https://www.oann.com/feed/',
   main: 'https://oann.com',
   command: ['oann'],
-  author: { name: 'OANN', iconURL: 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg' }
+  author: {
+    name: 'OANN',
+    iconURL: 'https://d2pggiv3o55wnc.cloudfront.net/oann/wp-content/uploads/2019/10/OANtoplogo.jpg'
+  }
 } as const
 
 interface IOANN {

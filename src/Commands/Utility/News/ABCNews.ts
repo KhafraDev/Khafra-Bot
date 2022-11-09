@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://abcnews.go.com/abcnews/internationalheadlines',
   main: 'https://abcnews.go.com',
   command: ['abc', 'abcnews'],
-  author: { name: 'ABC News', iconURL: 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png' }
+  author: {
+    name: 'ABC News',
+    iconURL: 'https://s.abcnews.com/assets/beta/assets/abcn_images/abcnews_pearl_stacked.png'
+  }
 } as const
 
 interface IABCNews {

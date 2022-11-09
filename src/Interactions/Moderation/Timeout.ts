@@ -65,7 +65,8 @@ export class kInteraction extends Interactions {
             !interaction.guild.members.me.permissions.has(defaultPerms)
     ) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to moderate members.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to moderate members.',
         ephemeral: true
       }
     }

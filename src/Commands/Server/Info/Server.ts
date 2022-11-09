@@ -42,9 +42,17 @@ export class kCommand extends Command {
         { name: bold('Partnered:'), value: message.guild.partnered ? 'Yes' : 'No', inline: true },
         { name: bold('Members:'), value: message.guild.memberCount.toLocaleString(locale), inline: true },
         { name: bold('Owner:'), value: `<@!${message.guild.ownerId}>`, inline: true },
-        { name: bold('Boosts:'), value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None', inline: true },
+        {
+          name: bold('Boosts:'),
+          value: message.guild.premiumSubscriptionCount?.toLocaleString(locale) ?? 'None',
+          inline: true
+        },
         { name: bold('Tier:'), value: `${message.guild.premiumTier}`, inline: true },
-        { name: bold('Vanity URL:'), value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None', inline: true },
+        {
+          name: bold('Vanity URL:'),
+          value: message.guild.vanityURLCode ? `https://discord.gg/${message.guild.vanityURLCode}` : 'None',
+          inline: true
+        },
         { name: bold('Verification:'), value: `Level ${message.guild.verificationLevel}`, inline: true },
         { name: bold('Created:'), value: time(message.guild.createdAt), inline: false }
       ]

@@ -4,7 +4,12 @@ import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
-import type { APIActionRowComponent, APIEmbed, APIMessageActionRowComponent, ComponentType } from 'discord-api-types/v10'
+import type {
+  APIActionRowComponent,
+  APIEmbed,
+  APIMessageActionRowComponent,
+  ComponentType
+} from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 

@@ -1,6 +1,11 @@
 import { Interactions } from '#khaf/Interaction'
 import { toString } from '#khaf/utility/Permissions.js'
-import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import {
+  ApplicationCommandOptionType,
+  ChannelType,
+  PermissionFlagsBits,
+  type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { sql } from '#khaf/database/Postgres.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'

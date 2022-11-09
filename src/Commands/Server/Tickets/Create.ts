@@ -5,8 +5,14 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isExplicitText } from '#khaf/utility/Discord.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
-import { ChannelType, GuildPremiumTier, OverwriteType, PermissionFlagsBits, ThreadAutoArchiveDuration } from 'discord-api-types/v10'
+import {
+  ChannelType,
+  GuildPremiumTier,
+  OverwriteType,
+  PermissionFlagsBits,
+  ThreadAutoArchiveDuration,
+  type APIEmbed
+} from 'discord-api-types/v10'
 import type { CategoryChannel, Message, TextChannel } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 

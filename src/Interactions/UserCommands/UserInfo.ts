@@ -4,7 +4,12 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
-import { ActivityType, ApplicationCommandType, type RESTPostAPIApplicationCommandsJSONBody, type Snowflake } from 'discord-api-types/v10'
+import {
+  ActivityType,
+  ApplicationCommandType,
+  type RESTPostAPIApplicationCommandsJSONBody,
+  type Snowflake
+} from 'discord-api-types/v10'
 import type { Activity, InteractionReplyOptions, UserContextMenuCommandInteraction, UserFlagsString } from 'discord.js'
 import { join } from 'node:path'
 
@@ -28,7 +33,10 @@ const formatPresence = (activities: Activity[] | undefined): string => {
       }
       case ActivityType.Streaming: {
         const details = activity.details ?? activity.url
-        push.push(`Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}${details ? `- ${inlineCode(details)}` : ''}`)
+        push.push(
+          `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
+          `${details ? `- ${inlineCode(details)}` : ''}`
+        )
         break
       }
       case ActivityType.Watching: {
@@ -86,7 +94,11 @@ export class kUserCommand extends InteractionUserCommand {
             { name: bold('ID:'), value: user.id, inline: true },
             { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
             { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
-            { name: bold('Badges:'), value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`, inline: true },
+            {
+              name: bold('Badges:'),
+              value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`,
+              inline: true
+            },
             { name: bold('Account Created:'), value: time(user.createdAt, 'f'), inline: true }
           ]
         })

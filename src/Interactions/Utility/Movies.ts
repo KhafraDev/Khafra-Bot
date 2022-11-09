@@ -4,7 +4,11 @@ import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isDM, isText } from '#khaf/utility/Discord.js'
 import { bold, hyperlink, time } from '@discordjs/builders'
-import type { APIActionRowComponent, APIMessageActionRowComponent, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type {
+  APIActionRowComponent,
+  APIMessageActionRowComponent,
+  RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 

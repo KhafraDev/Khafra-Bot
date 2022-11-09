@@ -49,7 +49,8 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.Boolean,
               name: 'official-word',
-              description: 'Use the current word from the official Wordle site, might choose tomorrow\'s word based on timezones.'
+              description:
+                'Use the current word from the official Wordle site, might choose tomorrow\'s word based on timezones.'
             },
             {
               type: ApplicationCommandOptionType.Boolean,

@@ -48,7 +48,11 @@ export class kCommand extends Command {
         { name: bold('High:'), value: `${ctof(first.highTemperature)}°F, ${first.highTemperature}°C`, inline: true },
         { name: bold('Low:'), value: `${ctof(first.temperature)}°F, ${first.temperature}°C`, inline: true },
         { name: bold('Humidity:'), value: `${first.humidity}%`, inline: true },
-        { name: bold('Wind:'), value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`, inline: true },
+        {
+          name: bold('Wind:'),
+          value: `${first.windSpeed} MPH ${first.windDirection}° ${first.windDescShort}`,
+          inline: true
+        },
         { name: bold('Coordinates:'), value: `(${first.latitude}, ${first.longitude})`, inline: true }
       ],
       footer: { text: '© 2020 HERE' }

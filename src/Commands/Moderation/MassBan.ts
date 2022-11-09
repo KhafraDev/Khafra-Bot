@@ -42,7 +42,9 @@ export class kCommand extends Command {
       .map(id => message.guild.members.ban(id, { reason }))
 
     const resolved = await Promise.allSettled(promiseArr)
-    const good = resolved.filter((p): p is PromiseFulfilledResult<string | User | GuildMember> => p.status === 'fulfilled')
+    const good = resolved.filter(
+      (p): p is PromiseFulfilledResult<string | User | GuildMember> => p.status === 'fulfilled'
+    )
     const goodFormat = good.map(x => typeof x.value === 'string' ? inlineCode(x.value) : `${x.value}`).join(', ')
 
     return Embed.ok(`

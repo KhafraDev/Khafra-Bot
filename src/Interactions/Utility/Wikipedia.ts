@@ -5,7 +5,11 @@ import { ellipsis, plural } from '#khaf/utility/String.js'
 import { hideLinkEmbed } from '@discordjs/builders'
 import { getArticleById, search } from '@khaf/wikipedia'
 import { randomUUID } from 'node:crypto'
-import { ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import {
+  ApplicationCommandOptionType,
+  InteractionType,
+  type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
 import type { SelectMenuInteraction} from 'discord.js'
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 

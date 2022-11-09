@@ -55,7 +55,8 @@ export class kCommand extends Command {
         Embed.ok(`
         Are you sure you want to soft-ban ${user}? 
 
-        This will delete ${clear} day${plural(clear)} worth of messages from them, but they ${bold('will be')} allowed to rejoin the guild.
+        This will delete ${clear} day${plural(clear)} worth of messages from them, ` +
+        `but they ${bold('will be')} allowed to rejoin the guild.
         `)
       ],
       components: [row]

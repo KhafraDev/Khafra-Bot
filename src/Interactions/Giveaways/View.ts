@@ -77,8 +77,9 @@ export class kSubCommand extends InteractionSubCommand {
     const embeds: APIEmbed[] = [baseEmbed()]
 
     for (const { id, enddate, prize, winners, didEnd } of giveaways) {
+      const ended = didEnd ? 'Inactive' : 'Active'
       const description = stripIndents`
-				${didEnd ? 'Inactive' : 'Active'} ${inlineCode(id)} (ends ${time(enddate, 'F')}, ${winners} winner${plural(winners)})
+				${ended} ${inlineCode(id)} (ends ${time(enddate, 'F')}, ${winners} winner${plural(winners)})
 				${inlineCode(prize)}
 			`
 

@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.vox.com/rss/index.xml',
   main: 'https://vox.com',
   command: ['vox'],
-  author: { name: 'Vox', iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vox_logo.svg/1200px-Vox_logo.svg.png' }
+  author: {
+    name: 'Vox',
+    iconURL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Vox_logo.svg/1200px-Vox_logo.svg.png'
+  }
 } as const
 
 interface IVox {

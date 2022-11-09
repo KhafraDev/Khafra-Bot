@@ -111,7 +111,10 @@ type ToggleableComponent =
     | APIMessage
     | { components: APIActionRowComponent<APIButtonComponent>[] }
 
-const toggleComponents = (item: ToggleableComponent, disabled: boolean): APIActionRowComponent<APIMessageActionRowComponent>[] => {
+const toggleComponents = (
+  item: ToggleableComponent,
+  disabled: boolean
+): APIActionRowComponent<APIMessageActionRowComponent>[] => {
   if (!item.components) return []
 
   const rows: APIActionRowComponent<APIMessageActionRowComponent>[] = []

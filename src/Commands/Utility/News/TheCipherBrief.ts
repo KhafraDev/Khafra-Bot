@@ -9,7 +9,10 @@ const settings = {
   rss: 'https://www.thecipherbrief.com/feed',
   main: 'https://thecipherbrief.com',
   command: ['thecipherbrief', 'cipherbrief'],
-  author: { name: 'The Cipher Brief', iconURL: 'https://www.thecipherbrief.com/wp-content/uploads/2017/07/cropped-logo-768x228.png' }
+  author: {
+    name: 'The Cipher Brief',
+    iconURL: 'https://www.thecipherbrief.com/wp-content/uploads/2017/07/cropped-logo-768x228.png'
+  }
 } as const
 
 interface ICipherBrief {

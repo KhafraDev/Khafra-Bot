@@ -149,7 +149,8 @@ export class kInteraction extends Interactions {
       !(interaction.member.roles instanceof GuildMemberRoleManager)
     ) {
       return {
-        content: '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!',
+        content:
+          '❌ You need to re-invite me with the proper permissions (click the "Add to Server" button on my profile)!',
         ephemeral: true
       }
     } else if (
