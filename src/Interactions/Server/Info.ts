@@ -92,7 +92,7 @@ export class kInteraction extends Interactions {
       const member = await interaction.guild?.members.fetch(option.id)
         .catch(() => null) ?? null
 
-      const flags = option.flags?.toArray() ?? []
+      const flags = option.flags?.bitfield
       const badgeEmojis = userflagBitfieldToEmojis(flags)
 
       const embed = Embed.json({

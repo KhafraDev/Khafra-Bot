@@ -19,7 +19,7 @@ export class kUserCommand extends InteractionUserCommand {
     const { targetUser: user, guild } = interaction
 
     const member = await guild?.members.fetch(user.id).catch(() => null) ?? null
-    const flags = user.flags?.toArray() ?? []
+    const flags = user.flags?.bitfield
     const badgeEmojis = userflagBitfieldToEmojis(flags)
 
     return {
