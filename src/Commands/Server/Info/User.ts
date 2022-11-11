@@ -2,16 +2,11 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { cwd } from '#khaf/utility/Constants/Path.js'
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { ActivityType } from 'discord-api-types/v10'
-import type { Activity, Message, Snowflake, UserFlagsString } from 'discord.js'
-import { join } from 'node:path'
-
-const config = createFileWatcher<typeof import('../../../../config.json')>(join(cwd, 'config.json'))
+import { userflagBitfieldToEmojis } from '#khaf/utility/util.js'
+import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import { ActivityType, type APIEmbed } from 'discord-api-types/v10'
+import type { Activity, Message } from 'discord.js'
 
 // found some of these images on a 3 year old reddit post
 // https://www.reddit.com/r/discordapp/comments/8oa1jg/discord_badges/e025kpl
@@ -39,8 +34,6 @@ const formatPresence = (activities: Activity[] | undefined): string => {
   return push.join('\n')
 }
 
-const emojis = new Map<UserFlagsString, string>()
-
 // 84484653687267328 -> Certified moderator; early supporter; partnered server owner; early verified bot owner; brilliance
 // 173547401905176585 -> Discord employee; bravery
 // 104360151208706048 -> balance
@@ -65,21 +58,12 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
-    if (emojis.size === 0) {
-      const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
-      for (const [flag, emojiID] of flags) {
-        emojis.set(flag, formatEmoji(emojiID, false))
-      }
-    }
-
     const user = await getMentions(message, 'users', content) ?? message.author
     const member = await message.guild.members.fetch(user.id)
       .catch(() => null)
 
-    const flags = user.flags?.toArray() ?? []
-    const badgeEmojis = flags
-      .map(f => emojis.get(f))
-      .filter((f): f is string => f !== undefined)
+    const flags = user.flags?.bitfield
+    const badgeEmojis = userflagBitfieldToEmojis(flags)
 
     return Embed.json({
       color: colors.ok,

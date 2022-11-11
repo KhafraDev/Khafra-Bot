@@ -1,20 +1,16 @@
 import { Interactions } from '#khaf/Interaction'
 import { logger } from '#khaf/structures/Logger.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { cwd } from '#khaf/utility/Constants/Path.js'
-import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { bold, formatEmoji, inlineCode, italic, time } from '@discordjs/builders'
+import { userflagBitfieldToEmojis } from '#khaf/utility/util.js'
+import { bold, inlineCode, italic, time } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type {
   Activity,
   ChatInputCommandInteraction,
-  InteractionReplyOptions,
-  Snowflake,
-  UserFlagsString
+  InteractionReplyOptions
 } from 'discord.js'
 import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js'
-import { join } from 'node:path'
 
 const formatPresence = (activities: Activity[] | undefined): string => {
   if (!Array.isArray(activities)) return ''
@@ -53,9 +49,6 @@ const formatPresence = (activities: Activity[] | undefined): string => {
 
   return push.join('\n')
 }
-
-const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
-const emojis = new Map<UserFlagsString, string | undefined>()
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -139,20 +132,11 @@ export class kInteraction extends Interactions {
         embeds: [embed]
       }
     } else if (option instanceof User) {
-      if (emojis.size === 0) {
-        const flags = Object.entries(config.emoji.flags) as [UserFlagsString, Snowflake][]
-        for (const [flag, emojiID] of flags) {
-          emojis.set(flag, formatEmoji(emojiID, false))
-        }
-      }
-
       const member = await interaction.guild?.members.fetch(option.id)
         .catch(() => null) ?? null
 
       const flags = option.flags?.toArray() ?? []
-      const badgeEmojis = flags
-        .map(f => emojis.get(f))
-        .filter((f): f is string => f !== undefined)
+      const badgeEmojis = userflagBitfieldToEmojis(flags)
 
       const embed = Embed.json({
         color: colors.ok,

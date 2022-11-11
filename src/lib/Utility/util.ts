@@ -1,17 +1,25 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { ChannelType, MessageType, PermissionFlagsBits } from 'discord-api-types/v10'
-import type {
-  ChatInputCommandInteraction, Message, MessageContextMenuCommandInteraction,
-  UserContextMenuCommandInteraction
+import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { ChannelType, MessageType, PermissionFlagsBits, type APIEmbed, type Snowflake } from 'discord-api-types/v10'
+import {
+  formatEmoji,
+  type ChatInputCommandInteraction,
+  type Message,
+  type MessageContextMenuCommandInteraction,
+  type UserContextMenuCommandInteraction,
+  type UserFlagsString
 } from 'discord.js'
+import { join } from 'node:path'
 
 const perms =
   PermissionFlagsBits.ViewChannel |
   PermissionFlagsBits.SendMessages |
   PermissionFlagsBits.EmbedLinks
+
+const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 
 type Interactions =
   | ChatInputCommandInteraction
@@ -25,12 +33,12 @@ type Interactions =
 export const Sanitize = (message: Message): message is Message<true> => {
   if (
     message.webhookId || // author is null in webhook messages
-        message.author.bot ||
-        (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
-        message.system ||
-        message.tts ||
-        message.content.length === 0 ||
-        !message.guild?.available
+    message.author.bot ||
+    (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
+    message.system ||
+    message.tts ||
+    message.content.length === 0 ||
+    !message.guild?.available
   ) {
     return false
   }
@@ -104,4 +112,34 @@ export const isSnowflake = (id: string): boolean => {
   }
 
   return true
+}
+
+const badgeCache = new Map<UserFlagsString, [number, Snowflake]>()
+
+export const getBadgeEmojis = (): typeof badgeCache => {
+  if (badgeCache.size === 0) {
+    const flags = Object.entries(config.emoji.flags) as [UserFlagsString, [number, Snowflake]][]
+    for (const [flag, [bitfield, emojiID]] of flags) {
+      badgeCache.set(flag, [bitfield, formatEmoji(emojiID, false)])
+    }
+  }
+
+  return badgeCache
+}
+
+export const userflagBitfieldToEmojis = (flags: unknown): string[] => {
+  if (!flags || typeof flags !== 'number') {
+    return []
+  }
+
+  const badgeEmojis: string[] = []
+  const emojis = getBadgeEmojis()
+
+  for (const [bitfield, emoji] of emojis.values()) {
+    if ((flags & bitfield) === bitfield) {
+      badgeEmojis.push(emoji)
+    }
+  }
+
+  return badgeEmojis
 }
