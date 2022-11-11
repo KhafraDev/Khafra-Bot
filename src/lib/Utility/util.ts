@@ -1,11 +1,21 @@
 import { sql } from '#khaf/database/Postgres.js'
+import { logger } from '#khaf/Logger'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { ChannelType, MessageType, PermissionFlagsBits, type APIEmbed, type Snowflake } from 'discord-api-types/v10'
+import { bold, inlineCode, italic } from '@discordjs/builders'
+import {
+  ActivityType,
+  ChannelType,
+  MessageType,
+  PermissionFlagsBits,
+  type APIEmbed,
+  type Snowflake
+} from 'discord-api-types/v10'
 import {
   formatEmoji,
+  type Activity,
   type ChatInputCommandInteraction,
   type Message,
   type MessageContextMenuCommandInteraction,
@@ -142,4 +152,44 @@ export const userflagBitfieldToEmojis = (flags: unknown): string[] => {
   }
 
   return badgeEmojis
+}
+
+export const formatPresence = (activities: Activity[] | undefined): string => {
+  if (!Array.isArray(activities)) {
+    return ''
+  }
+
+  let desc = ''
+
+  for (const activity of activities) {
+    switch (activity.type) {
+      case ActivityType.Custom: {
+        desc += `${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}\n`
+        break
+      }
+      case ActivityType.Listening: {
+        desc += `Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.\n`
+        break
+      }
+      case ActivityType.Playing: {
+        desc += `Playing ${italic(activity.name)}.\n`
+        break
+      }
+      case ActivityType.Streaming: {
+        const details = activity.details ?? activity.url
+        desc +=
+          `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
+          `${details ? `- ${inlineCode(details)}` : ''}\n`
+        break
+      }
+      case ActivityType.Watching: {
+        desc += `Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}\n`
+        break
+      }
+      default:
+        logger.warn(activity, 'unknown activity')
+    }
+  }
+
+  return desc.trimEnd()
 }

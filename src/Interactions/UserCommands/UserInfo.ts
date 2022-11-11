@@ -1,52 +1,9 @@
 import { InteractionUserCommand } from '#khaf/Interaction'
-import { logger } from '#khaf/Logger'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { userflagBitfieldToEmojis } from '#khaf/utility/util.js'
-import { bold, inlineCode, italic, time } from '@discordjs/builders'
-import {
-  ActivityType,
-  ApplicationCommandType,
-  type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import type { Activity, InteractionReplyOptions, UserContextMenuCommandInteraction } from 'discord.js'
-
-const formatPresence = (activities: Activity[] | undefined): string => {
-  if (!Array.isArray(activities)) return ''
-
-  const push: string[] = []
-  for (const activity of activities) {
-    switch (activity.type) {
-      case ActivityType.Custom: {
-        push.push(`${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}`)
-        break
-      }
-      case ActivityType.Listening: {
-        push.push(`Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.`)
-        break
-      }
-      case ActivityType.Playing: {
-        push.push(`Playing ${italic(activity.name)}.`)
-        break
-      }
-      case ActivityType.Streaming: {
-        const details = activity.details ?? activity.url
-        push.push(
-          `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
-          `${details ? `- ${inlineCode(details)}` : ''}`
-        )
-        break
-      }
-      case ActivityType.Watching: {
-        push.push(`Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}`)
-        break
-      }
-      default:
-        logger.warn(activity, 'unknown activity')
-    }
-  }
-
-  return push.join('\n')
-}
+import { userflagBitfieldToEmojis, formatPresence } from '#khaf/utility/util.js'
+import { bold, time } from '@discordjs/builders'
+import { ApplicationCommandType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { InteractionReplyOptions, UserContextMenuCommandInteraction } from 'discord.js'
 
 export class kUserCommand extends InteractionUserCommand {
   constructor () {
