@@ -1,11 +1,24 @@
 import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.js'
 import { bold, inlineCode, italic, time } from '@discordjs/builders'
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ApplicationCommandOptionType } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { GuildMember, Role, SnowflakeUtil, User } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  InteractionType,
+  type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
+import {
+  GuildMember,
+  InteractionCollector, Role,
+  SnowflakeUtil,
+  User,
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+  type InteractionReplyOptions
+} from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -31,28 +44,60 @@ export class kInteraction extends Interactions {
       ? new Date(option.joined_at)
       : new Date(SnowflakeUtil.timestampFrom(option.id))
 
-    if (option instanceof GuildMember) {
-      const embed = Embed.json({
+    if (option instanceof GuildMember || option instanceof User) {
+      const isGuildMember = option instanceof GuildMember
+
+      const user = 'user' in option ? option.user : option
+      const member = isGuildMember ?
+        option
+        : await interaction.guild?.members.fetch(option.id).catch(() => null) ?? null
+
+      let currentPage: 'user' | 'member' = isGuildMember ? 'member' : 'user'
+      const flags = user.flags?.bitfield
+      const badgeEmojis = userflagBitfieldToEmojis(flags)
+
+      const userEmbed = Embed.json({
+        color: colors.ok,
+        description: formatPresence(member?.presence?.activities),
+        author: {
+          name: user.tag,
+          icon_url: option.displayAvatarURL()
+        },
+        fields: [
+          { name: bold('Username:'), value: user.username, inline: true },
+          { name: bold('ID:'), value: option.id, inline: true },
+          { name: bold('Discriminator:'), value: `#${user.discriminator}`, inline: true },
+          { name: bold('Bot:'), value: user.bot ? 'Yes' : 'No', inline: true },
+          {
+            name: bold('Badges:'),
+            value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`,
+            inline: true
+          },
+          { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true }
+        ]
+      })
+
+      const memberEmbed = !member ? null : Embed.json({
         color: colors.ok,
         author: {
-          name: option.displayName,
-          icon_url: option.user.displayAvatarURL()
+          name: member.displayName,
+          icon_url: user.displayAvatarURL()
         },
         description: `
-          ${option} on ${italic(option.guild.name)}.
-          ${formatPresence(option.presence?.activities)}
+          ${option} on ${italic(member.guild.name)}.
+          ${formatPresence(member.presence?.activities)}
           
           Roles:
-          ${[...option.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
+          ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
           `,
-        thumbnail: { url: option.user.displayAvatarURL() },
+        thumbnail: { url: user.displayAvatarURL() },
         fields: [
-          { name: bold('Role Color:'), value: option.displayHexColor, inline: true },
-          { name: bold('Joined Guild:'), value: time(option.joinedAt ?? new Date()), inline: true },
+          { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
+          { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: true },
           { name: '\u200b', value: '\u200b', inline: true },
           {
             name: bold('Boosting Since:'),
-            value: option.premiumSince ? time(option.premiumSince) : 'Not boosting',
+            value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
             inline: true
           },
           { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true },
@@ -61,9 +106,48 @@ export class kInteraction extends Interactions {
         footer: { text: 'For general user info mention a user!' }
       })
 
-      return {
-        embeds: [embed]
+      const id = randomUUID()
+      const makeOptions = (): InteractionReplyOptions & { fetchReply: true } => ({
+        embeds: [
+          currentPage === 'user' ? userEmbed : (memberEmbed ?? userEmbed)
+        ],
+        components: [
+          Components.actionRow([
+            Buttons.primary(
+              currentPage === 'user' ? 'Member Info' : 'User Info',
+              id,
+              {
+                disabled: currentPage === 'user' && member === null
+              }
+            )
+          ])
+        ],
+        fetchReply: true
+      })
+
+      const message = await interaction.reply(makeOptions())
+
+      const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
+        interactionType: InteractionType.MessageComponent,
+        message,
+        time: minutes(2),
+        max: 10,
+        filter: (i) =>
+          interaction.user.id === i.user.id &&
+          message.id === i.message.id &&
+          i.customId === id
+      })
+
+      for await (const [i] of collector) {
+        currentPage = currentPage === 'user' && memberEmbed ? 'member' : 'user'
+
+        const { embeds, components } = makeOptions()
+        await i.update({ embeds, components })
       }
+
+      await interaction.editReply({
+        components: disableAll(message)
+      })
     } else if (option instanceof Role) {
       const embed = Embed.json({
         color: colors.ok,
@@ -83,37 +167,6 @@ export class kInteraction extends Interactions {
           { name: bold('Managed:'), value: option.managed ? 'Yes' : 'No', inline: true }
         ],
         image: option.icon ? { url: option.iconURL()! } : undefined
-      })
-
-      return {
-        embeds: [embed]
-      }
-    } else if (option instanceof User) {
-      const member = await interaction.guild?.members.fetch(option.id)
-        .catch(() => null) ?? null
-
-      const flags = option.flags?.bitfield
-      const badgeEmojis = userflagBitfieldToEmojis(flags)
-
-      const embed = Embed.json({
-        color: colors.ok,
-        description: formatPresence(member?.presence?.activities),
-        author: {
-          name: option.tag,
-          icon_url: option.displayAvatarURL()
-        },
-        fields: [
-          { name: bold('Username:'), value: option.username, inline: true },
-          { name: bold('ID:'), value: option.id, inline: true },
-          { name: bold('Discriminator:'), value: `#${option.discriminator}`, inline: true },
-          { name: bold('Bot:'), value: option.bot ? 'Yes' : 'No', inline: true },
-          {
-            name: bold('Badges:'),
-            value: `${badgeEmojis.length > 0 ? badgeEmojis.join(' ') : 'None/Unknown'}`,
-            inline: true
-          },
-          { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true }
-        ]
       })
 
       return {

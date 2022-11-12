@@ -155,7 +155,7 @@ export class kInteraction extends Interactions {
 
       if (
         collector.collected.size !== 0 &&
-                last?.replied === false
+        last?.replied === false
       ) {
         return void await last.update({
           components: disableAll(i)
