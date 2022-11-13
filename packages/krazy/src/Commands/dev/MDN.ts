@@ -34,11 +34,9 @@ export const command: InteractionCommand = {
   async run (interaction, _, { options }) {
     const search = options.getString('search', true)
     const locale = options.getString('locale')
-    const max = options.getInteger('limit')
+    const max = options.getInteger('limit') ?? 10
 
-    const result = await fetchMDN(search, {
-      locale: locale ?? interaction.locale
-    })
+    const result = await fetchMDN(search, locale ? { locale } : undefined)
 
     if ('errors' in result) {
       return {
@@ -71,7 +69,7 @@ export const command: InteractionCommand = {
     }
 
     const best = result.documents.sort((a, b) => b.score - a.score)
-    const results = !max || max === best.length ? best : best.slice(0, max)
+    const results = max >= best.length ? best : best.slice(0, max)
 
     return {
       type: InteractionResponseType.ChannelMessageWithSource,
