@@ -168,7 +168,12 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
         break
       }
       case ActivityType.Listening: {
-        desc += `Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.\n`
+        if (activity.name === 'Spotify') {
+          const emoji = formatEmoji(config.interactions.spotify)
+          desc += `${emoji} ${activity.details} - ${activity.state}`
+        } else {
+          desc += `Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.\n`
+        }
         break
       }
       case ActivityType.Playing: {
