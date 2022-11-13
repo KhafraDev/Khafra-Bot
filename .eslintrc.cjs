@@ -32,7 +32,6 @@ module.exports = {
     'quotes': ['error', 'single'],
     'indent': ['error', 2, { 'SwitchCase': 1 }],
     'eol-last': ['error', 'always'],
-    'linebreak-style': ['error', 'windows'],
     'array-bracket-spacing': ['error', 'never'],
     'arrow-spacing': 'error',
     'brace-style': 'error',
