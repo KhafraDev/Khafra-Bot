@@ -164,13 +164,18 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
   for (const activity of activities) {
     switch (activity.type) {
       case ActivityType.Custom: {
-        desc += `${activity.emoji ?? ''}${inlineCode(activity.state ?? 'N/A')}\n`
+        if (activity.emoji) {
+          desc += activity.emoji.id
+            ? formatEmoji(activity.emoji.id, !!activity.emoji.animated as true)
+            : activity.emoji.name
+        }
+        desc += `${inlineCode(activity.state ?? 'N/A')}\n`
         break
       }
       case ActivityType.Listening: {
         if (activity.name === 'Spotify') {
           const emoji = formatEmoji(config.interactions.spotify)
-          desc += `${emoji} ${activity.details} - ${activity.state}`
+          desc += `${emoji} ${activity.details} - ${activity.state}\n`
         } else {
           desc += `Listening to ${activity.details} - ${activity.state ?? 'N/A'} on ${activity.name}.\n`
         }
@@ -181,14 +186,24 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
         break
       }
       case ActivityType.Streaming: {
-        const details = activity.details ?? activity.url
-        desc +=
-          `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
-          `${details ? `- ${inlineCode(details)}` : ''}\n`
+        if (activity.name === 'Twitch') {
+          const emoji = formatEmoji(config.interactions.twitch)
+          desc += `${emoji} ${activity.state} - ${activity.details}\n`
+        } else {
+          const details = activity.details ?? activity.url
+          desc +=
+            `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
+            `${details ? `- ${inlineCode(details)}` : ''}\n`
+        }
         break
       }
       case ActivityType.Watching: {
-        desc += `Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}\n`
+        if (activity.name === 'Watch Together') {
+          const emoji = formatEmoji(config.interactions.youtube)
+          desc += `${emoji} ${activity.name} - ${activity.details}\n`
+        } else {
+          desc += `Watching ${bold(activity.name)}${activity.url ? `at ${activity.url}` : ''}\n`
+        }
         break
       }
       default:
