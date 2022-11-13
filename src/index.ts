@@ -1,6 +1,5 @@
 import '#khaf/utility/load.env.js'
 import '#khaf/utility/Rejections.js'
-import '#khaf/utility/__proto__.js'
 import '#khaf/image/ImageFonts.js'
 
 import { KhafraClient } from '#khaf/Bot'
