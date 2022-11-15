@@ -9,6 +9,7 @@ import { inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   ChannelType,
+  ComponentType,
   PermissionFlagsBits,
   TextInputStyle,
   type APIActionRowComponent,
@@ -17,7 +18,6 @@ import {
 } from 'discord-api-types/v10'
 import {
   InteractionCollector,
-  type TextInputModalData,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
@@ -88,7 +88,7 @@ const addInput = (action: string, id: string): APIActionRowComponent<APITextInpu
 }
 
 const getTextField = (i: ModalSubmitInteraction, name: string): string =>
-  (i.fields.getField(name) as TextInputModalData).value
+  i.fields.getField(name, ComponentType.TextInput).value
 
 export class kInteraction extends Interactions {
   constructor () {

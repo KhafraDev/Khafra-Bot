@@ -4,14 +4,13 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { assets } from '#khaf/utility/Constants/Path.js'
 import { plural } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
-import { TextInputStyle, type Snowflake } from 'discord-api-types/v10'
+import { ComponentType, TextInputStyle, type Snowflake } from 'discord-api-types/v10'
 import {
   InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
-  type TextInputModalData,
   type WebhookEditMessageOptions
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
@@ -245,7 +244,7 @@ export class kSubCommand extends InteractionSubCommand {
           ]
         })
       } else {
-        const guess = (i.fields.getField(`textInput-${id}`) as TextInputModalData).value.toLowerCase()
+        const guess = i.fields.getField(`textInput-${id}`, ComponentType.TextInput).value.toLowerCase()
         const guessed = game.guess(guess)
 
         if (guessed === false) {

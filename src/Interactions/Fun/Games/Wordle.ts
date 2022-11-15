@@ -5,6 +5,7 @@ import { Json } from '#khaf/utility/Constants/Path.js'
 import { inlineCode } from '@discordjs/builders'
 import { createCanvas } from '@napi-rs/canvas'
 import {
+  ComponentType,
   TextInputStyle,
   type APIActionRowComponent,
   type APIEmbed,
@@ -12,7 +13,6 @@ import {
 } from 'discord-api-types/v10'
 import {
   InteractionCollector,
-  type TextInputModalData,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
@@ -201,7 +201,7 @@ export class kSubCommand extends InteractionSubCommand {
           ]
         })
       } else {
-        const answer = (i.fields.getField(`textInput-${id}`) as TextInputModalData).value.toLowerCase()
+        const answer = i.fields.getField(`textInput-${id}`, ComponentType.TextInput).value.toLowerCase()
         let content = ''
 
         // force the idle time to refresh
