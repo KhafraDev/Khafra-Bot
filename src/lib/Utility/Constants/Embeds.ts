@@ -94,7 +94,7 @@ export const EmbedUtil = {
   isAPIEmbed (embed: unknown): embed is APIEmbed {
     return (
       embed != null &&
-            (embed as { [kIsJSONEmbed]?: boolean })[kIsJSONEmbed] === true
+      (embed as { [kIsJSONEmbed]?: boolean })[kIsJSONEmbed] === true
     )
   }
 }

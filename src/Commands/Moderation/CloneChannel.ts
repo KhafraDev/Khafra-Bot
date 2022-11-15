@@ -69,10 +69,10 @@ export class kCommand extends Command {
       }
     }
 
-    const opts = {
+    const opts: GuildChannelCloneOptions = {
       name: channel.name,
       permissionOverwrites: channel.permissionOverwrites.cache,
-      topic: isText(channel) || isStage(channel) ? channel.topic : undefined,
+      topic: 'topic' in channel ? channel.topic ?? undefined : undefined,
       type: channel.type,
       nsfw: isText(channel) ? channel.nsfw : undefined,
       parent: channel.parent,
@@ -80,7 +80,7 @@ export class kCommand extends Command {
       userLimit: isStage(channel) || isVoice(channel) ? channel.userLimit : undefined,
       rateLimitPerUser: isExplicitText(channel) ? channel.rateLimitPerUser : undefined,
       position: channel.position
-    } as GuildChannelCloneOptions
+    }
 
     const clone = GuildChannel.prototype.clone.bind({
       ...opts,
