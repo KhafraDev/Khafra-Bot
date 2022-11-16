@@ -2,35 +2,61 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { shuffle } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { bold, inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { templates } from '#khaf/utility/Constants/Path.js'
+import { createCanvas, Image } from '@napi-rs/canvas'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import { randomUUID } from 'node:crypto'
+import type { Buffer } from 'node:buffer'
+import { readFile } from 'node:fs/promises'
 
-type Card = [number, typeof suits[number]]
+type Card =
+  | [value: number, suit: typeof suits[number]]
+  | [value: 1 | 15, suit: typeof suits[number], playerAsked?: boolean]
 
-const games = new Set<Snowflake>()
-const suits = ['Heart', 'Diamond', 'Clover', 'Spade'] as const
-
-const makeDeck = (): Card[] => {
-  const cards: Card[] = []
-
-  for (let i = 1; i <= 13; i++) { // 1-13 (ace to king)
-    for (let j = 0; j < 4; j++) { // suits
-      cards.push([i, suits[j]])
-    }
-  }
-
-  return shuffle(cards)
+interface Game {
+  dealer: Card[]
+  sucker: Card[]
 }
 
-// get total card values
-const getTotal = (cards: Card[]): number => cards.reduce((a, b) => a + (b[0] > 9 ? 10 : b[0]), 0)
-const getName = (v: number): string => v > 1 && v <= 10
-  ? `${v}`
-  : { 1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King' }[v]!
+const games = new Set<Snowflake>()
+const suits = ['Hearts', 'Diamond', 'Clubs', 'Spades'] as const
+
+const gameUtil = {
+  getTotalCardValue (cards: Card[]) {
+    return cards.reduce((a, [b,, picked]) => {
+      if (b > 9) { // card is a suit
+        // ace is the only card that has a value > 10
+        return a + (b === 15 ? 11 : 10)
+      } else if (b === 1 && !picked) {
+        return a + 0
+      }
+
+      return a + b
+    }, 0)
+  },
+  deckFactory (): Card[] {
+    const cards: Card[] = []
+
+    for (let i = 1; i <= 13; i++) { // 1-13 (ace to king)
+      for (let j = 0; j < 4; j++) { // suits
+        cards.push([i, suits[j]])
+      }
+    }
+
+    return shuffle(cards)
+  },
+  mapCardsToFileNames (cards: Card[]): string[] {
+    const names: string[] = []
+
+    for (const [idx, suit] of cards) {
+      names.push(templates('cards', `${suit} ${idx === 15 ? 1 : idx}.png`))
+    }
+
+    return names
+  }
+} as const
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -49,43 +75,55 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const id = randomUUID()
-    const rows = [
-      Components.actionRow([
-        Buttons.approve('Hit', `hit-${id}`),
-        Buttons.secondary('Stay', `stay-${id}`)
-      ])
-    ]
+    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+    const turnComponents = (disable = false) => Components.actionRow([
+      Buttons.approve('Hit', `hit-${id}`, { disabled: disable }),
+      Buttons.secondary('Stay', `stay-${id}`, { disabled: disable })
+    ])
+    const pickAceComponents = (disable = false) => Components.actionRow([
+      Buttons.primary('1', `ace-1-${id}`, { disabled: disable }),
+      Buttons.primary('11', `ace-15-${id}`, { disabled: disable })
+    ])
+    /* eslint-enable @typescript-eslint/explicit-function-return-type */
 
-    const deck = makeDeck()
-    const score = {
+    const deck = gameUtil.deckFactory()
+    const score: Game = {
       dealer: deck.splice(0, 2),
       sucker: deck.splice(0, 2)
     }
 
-    const makeEmbed = (desc?: string, hide = true): APIEmbed => {
-      const dealerCards = hide ? score.dealer.slice(1) : score.dealer
-      const dealerTotal = hide ? ':' : ` (${getTotal(score.dealer)}):`
+    const makeOptions = async (disable = false, dealer = false): Promise<
+      Pick<
+        InteractionReplyOptions,
+        'embeds' | 'files' | 'components'
+      >
+    > => {
+      const image = await this.image(score, dealer)
 
-      return Embed.json({
-        color: colors.ok,
-        description: desc,
-        fields: [
-          {
-            name: bold(`Dealer${dealerTotal}`),
-            value: dealerCards.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-          },
-          {
-            name: bold(`Player (${getTotal(score.sucker)}):`),
-            value: score.sucker.map(c => inlineCode(`${getName(c[0])} of ${c[1]}`)).join(', ')
-          }
-        ]
-      })
+      const dealerTotal = dealer ? gameUtil.getTotalCardValue(score.dealer) : '??'
+      const suckerTotal = gameUtil.getTotalCardValue(score.sucker)
+
+      const pickAce = score.sucker.some(
+        ([value, , picked]) => (value === 1 || value === 15) && !picked
+      )
+
+      return {
+        embeds: [
+          Embed.json({
+            color: colors.ok,
+            image: { url: 'attachment://blackjack.png' },
+            description: `Dealer: ${dealerTotal} | Player: ${suckerTotal}`
+          })
+        ],
+        files: [{
+          attachment: image,
+          name: 'blackjack.png'
+        }],
+        components: pickAce ? [pickAceComponents(disable)] : [turnComponents(disable)]
+      }
     }
 
-    const int = await interaction.editReply({
-      embeds: [makeEmbed()],
-      components: rows
-    })
+    const int = await interaction.editReply(await makeOptions())
 
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
@@ -98,43 +136,48 @@ export class kSubCommand extends InteractionSubCommand {
     })
 
     for await (const [i] of collector) {
-      if (i.customId.startsWith('hit')) {
+      if (i.customId.startsWith('ace')) {
+        const [, value] = i.customId.split('-')
+        const cardIdx = score.sucker.findIndex(
+          ([v, , picked]) => (v === 1 || v === 15) && !picked
+        )
+
+        score.sucker[cardIdx][0] = Number(value)
+        score.sucker[cardIdx][2] = true
+
+        await i.update(await makeOptions())
+      } else if (i.customId.startsWith('hit')) {
         const [card, suit] = deck.shift()!
 
         score.sucker.push([card, suit])
-        const total = getTotal(score.sucker)
+        const total = gameUtil.getTotalCardValue(score.sucker)
 
         if (total > 21) { // player lost
           collector.stop()
-          await i.update({
-            embeds: [makeEmbed('You went over 21, you lose!', false)],
-            components: disableAll(int)
-          })
+          await i.update(await makeOptions(true, true))
         } else { // continue playing
-          await i.update({ embeds: [makeEmbed()] })
+          await i.update(await makeOptions())
         }
       } else {
-        const totalPlayer = getTotal(score.sucker)
+        const totalPlayer = gameUtil.getTotalCardValue(score.sucker)
 
-        while (getTotal(score.dealer) < totalPlayer) {
-          score.dealer.push(deck.shift()!)
+        while (gameUtil.getTotalCardValue(score.dealer) < totalPlayer) {
+          const card = deck.shift()!
+
+          if (card[0] === 1) {
+            const total = gameUtil.getTotalCardValue(score.dealer)
+
+            if (total + 11 <= 21) {
+              card[0] = 15
+              card[2] = true
+            }
+          }
+
+          score.dealer.push(card)
         }
 
-        const totalDealer = getTotal(score.dealer)
-
-        if (totalDealer > 21) { // dealer goes over 21
-          collector.stop()
-          await i.update({
-            embeds: [makeEmbed('You win, I went over 21!', false)],
-            components: disableAll(int)
-          })
-        } else if (totalDealer >= totalPlayer) { // dealer wins
-          collector.stop()
-          await i.update({
-            embeds: [makeEmbed('You lose!', false)],
-            components: disableAll(int)
-          })
-        }
+        collector.stop()
+        await i.update(await makeOptions(true, true))
       }
     }
 
@@ -143,5 +186,34 @@ export class kSubCommand extends InteractionSubCommand {
         components: disableAll(int)
       })
     }
+  }
+
+  async image ({ dealer, sucker }: Game, isDealer: boolean): Promise<Buffer> {
+    // each card is 103px wide, 138px tall
+    const canvas = createCanvas(Math.max(dealer.length, sucker.length) * 105, 300)
+    const ctx = canvas.getContext('2d')
+
+    const dealerFilePaths = gameUtil.mapCardsToFileNames(dealer)
+    const suckerFilePaths = gameUtil.mapCardsToFileNames(sucker)
+
+    if (!isDealer) {
+      dealerFilePaths[0] = templates('cards', 'Back Red 1.png')
+    }
+
+    for (let i = 0; i < dealer.length; i++) {
+      const image = new Image()
+      image.src = await readFile(dealerFilePaths[i])
+
+      ctx.drawImage(image, 105 * i, 0)
+    }
+
+    for (let j = 0; j < sucker.length; j++) {
+      const image = new Image()
+      image.src = await readFile(suckerFilePaths[j])
+
+      ctx.drawImage(image, 105 * j, 300 - 138)
+    }
+
+    return canvas.toBuffer('image/png')
   }
 }
