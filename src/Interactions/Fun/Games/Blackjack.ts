@@ -114,19 +114,28 @@ export class kSubCommand extends InteractionSubCommand {
         }
       }
 
-      const dealerTotal = dealer ? gameUtil.getTotalCardValue(score.dealer) : '??'
+      const dealerTotal = gameUtil.getTotalCardValue(score.dealer)
       const suckerTotal = gameUtil.getTotalCardValue(score.sucker)
 
       const pickAce = score.sucker.some(
         ([value, , picked]) => (value === 1 || value === 15) && !picked
       )
 
+      let title: string | undefined
+
+      if (dealerTotal > 21) {
+        title = 'You win!'
+      } else if (dealerTotal >= suckerTotal) {
+        title = 'You lose!'
+      }
+
       return {
         embeds: [
           Embed.json({
             color: colors.ok,
             image: { url: 'attachment://blackjack.png' },
-            description: `Dealer: ${dealerTotal} | Player: ${suckerTotal}`
+            description: `Dealer: ${dealer ? dealerTotal : '??'} | Player: ${suckerTotal}`,
+            title
           })
         ],
         files: [{
