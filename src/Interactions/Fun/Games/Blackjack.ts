@@ -26,11 +26,15 @@ const suits = ['Hearts', 'Diamond', 'Clubs', 'Spades'] as const
 const gameUtil = {
   getTotalCardValue (cards: Card[]) {
     return cards.reduce((a, [b,, picked]) => {
-      if (b > 9) { // card is a suit
+      if (b === 1 || b === 15) {
+        if (!picked) {
+          return a + 0
+        }
+
+        return a + Math.min(b, 11)
+      } else if (b > 9) { // card is a suit
         // ace is the only card that has a value > 10
-        return a + (b === 15 ? 11 : 10)
-      } else if (b === 1 && !picked) {
-        return a + 0
+        return a + 10
       }
 
       return a + b
@@ -99,6 +103,16 @@ export class kSubCommand extends InteractionSubCommand {
       >
     > => {
       const image = await this.image(score, dealer)
+
+      if (dealer) {
+        for (let i = 0; i < score.dealer.length; i++) {
+          const card = score.dealer[i]
+
+          if (card[0] === 1 || card[0] === 15) {
+            score.dealer[i][2] = true
+          }
+        }
+      }
 
       const dealerTotal = dealer ? gameUtil.getTotalCardValue(score.dealer) : '??'
       const suckerTotal = gameUtil.getTotalCardValue(score.sucker)
@@ -169,8 +183,9 @@ export class kSubCommand extends InteractionSubCommand {
 
             if (total + 11 <= 21) {
               card[0] = 15
-              card[2] = true
             }
+
+            card[2] = true // picked value
           }
 
           score.dealer.push(card)
