@@ -6,7 +6,8 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   ignorePatterns: [
-    '**/*.d.ts'
+    '**/*.d.ts',
+    '**/*.js'
   ],
   parserOptions: {
     project: [
