@@ -7,18 +7,18 @@ import { setInterval } from 'node:timers'
 const path = Json('stats.json')
 const config = createFileWatcher<typeof import('../../../assets/JSON/stats.json')>(path)
 
-export class Stats {
-  static messages = 0
-  static session = 0
+export const Stats = {
+  messages: 0,
+  session: 0,
 
-  static get stats(): typeof config {
+  get stats(): typeof config {
     return {
       globalCommandsUsed: config.globalCommandsUsed + Stats.session,
       globalMessages: config.globalMessages + Stats.messages
     }
-  }
+  },
 
-  static write = once(() => {
+  write: once(() => {
     setInterval(() => {
       const {
         globalCommandsUsed,

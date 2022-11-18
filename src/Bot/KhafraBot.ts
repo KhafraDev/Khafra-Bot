@@ -39,8 +39,8 @@ const setInteractionIds = (commands: APIApplicationCommand[]): void => {
 }
 
 export class KhafraClient extends Client {
-  static Commands: Map<string, Command> = new Map()
-  static Events: Map<keyof ClientEvents | keyof RestEvents, Event[]> = new Map()
+  static Commands = new Map<string, Command>()
+  static Events = new Map<keyof ClientEvents | keyof RestEvents, Event[]>()
   static Interactions = {
     Commands: new Map<string, Interactions>(),
     Subcommands: new Map<string, InteractionSubCommand>(),
@@ -277,7 +277,7 @@ export class KhafraClient extends Client {
     )
 
     const importPromise = timers.map(timer =>
-      import(pathToFileURL(timer).href) as Promise<{ [key: string]: new () => Timer }>
+      import(pathToFileURL(timer).href) as Promise<Record<string, new () => Timer>>
     )
     const settled = await Promise.allSettled(importPromise)
     let loadedTimers = 0

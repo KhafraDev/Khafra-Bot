@@ -45,7 +45,7 @@ type HandlerReturn =
   | import('discord-api-types/v10').APIEmbed
   | import('discord.js').Attachment
   | import('discord.js').MessageReplyOptions
-  | void
+  | void // eslint-disable-line @typescript-eslint/no-invalid-void-type
   | null
 
 /** Permissions required to use a command */

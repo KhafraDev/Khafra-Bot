@@ -66,23 +66,23 @@ interface ImgurCache {
   t: string
 }
 
-class Imgur {
-  static ratelimit = {
+const Imgur = {
+  ratelimit: {
     'x-ratelimit-userlimit': -1,
     'x-ratelimit-userremaining': -1,
     'x-ratelimit-userreset': -1
-  }
+  },
 
-  static setRateLimits (headers: Dispatcher.ResponseData['headers']): void {
+  setRateLimits (headers: Dispatcher.ResponseData['headers']): void {
     for (const key of Object.keys(Imgur.ratelimit) as (keyof typeof Imgur.ratelimit)[]) {
       const k = key.toLowerCase() as keyof typeof Imgur.ratelimit
       if (k in headers) {
         Imgur.ratelimit[k] = Number(headers[k])
       }
     }
-  }
+  },
 
-  static async album (hash: string): Promise<ImgurCache | undefined> {
+  async album (hash: string): Promise<ImgurCache | undefined> {
     if (env.IMGUR_CLIENT_ID === undefined) return
 
     if (

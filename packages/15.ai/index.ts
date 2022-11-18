@@ -14,8 +14,8 @@ const schema = s.object({
 
 type Batch = InferType<typeof schema>
 
-export class FifteenDotAI {
-  static async getWav(
+export const FifteenDotAI = {
+  async getWav(
     character: string,
     content: string,
     emotion: string

@@ -44,7 +44,7 @@ export class kCommand extends Command {
     if (!user)
       return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕')
 
-    const reason = cli['reason'] ?? args.slice(1).join(' ')
+    const reason = cli.reason ?? args.slice(1).join(' ')
     const [e] = await dontThrow(message.guild.members.unban(user, reason))
 
     if (e !== null) {

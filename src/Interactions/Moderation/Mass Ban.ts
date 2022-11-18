@@ -68,7 +68,7 @@ export class kInteraction extends Interactions {
             interaction.options.getString('reason') ??
             `Requested by ${interaction.user.tag} (${interaction.user.id})`
 
-    const users: Map<string, ReturnType<GuildMemberManager['ban']>> = new Map()
+    const users = new Map<string, ReturnType<GuildMemberManager['ban']>>()
 
     for (let i = 1; i < 18; i++) {
       const userOption = interaction.options.getUser(`member${i}`)

@@ -247,7 +247,7 @@ export class kSubCommand extends InteractionSubCommand {
         const guess = i.fields.getField(`textInput-${id}`, ComponentType.TextInput).value.toLowerCase()
         const guessed = game.guess(guess)
 
-        if (guessed === false) {
+        if (!guessed) {
           await i.reply({
             content: 'You can\'t guess that again!',
             ephemeral: true

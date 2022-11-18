@@ -105,11 +105,9 @@ export class kSubCommand extends InteractionSubCommand {
       const image = await this.image(score, dealer)
 
       if (dealer) {
-        for (let i = 0; i < score.dealer.length; i++) {
-          const card = score.dealer[i]
-
+        for (const card of score.dealer) {
           if (card[0] === 1 || card[0] === 15) {
-            score.dealer[i][2] = true
+            card[2] = true
           }
         }
       }

@@ -57,8 +57,8 @@ const options = new URLSearchParams({
   developer_data: 'false'
 }).toString()
 
-export class CoinGecko {
-  static list = once(async () => {
+export const CoinGecko = {
+  list: once(async () => {
     const { body } = await client.request({
       path: '/api/v3/coins/list?include_platform=false',
       method: 'GET'
@@ -77,9 +77,9 @@ export class CoinGecko {
     }
 
     return list
-  })
+  }),
 
-  static async get (query: string): Promise<InferType<typeof schema> | null> {
+  async get (query: string): Promise<InferType<typeof schema> | null> {
     const list = await CoinGecko.list() ?? []
 
     let cryptoId = ''

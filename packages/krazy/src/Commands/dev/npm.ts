@@ -40,7 +40,7 @@ export const command: InteractionCommand = {
       }
     }
 
-    const dist = result.versions[result['dist-tags']['latest']]
+    const dist = result.versions[result['dist-tags'].latest]
 
     const maintainers = dist.maintainers
       .slice(0, 10)

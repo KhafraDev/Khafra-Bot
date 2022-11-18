@@ -20,7 +20,7 @@ const { values: args } = parseArgs({
     }
   }
 })
-const isDev = args['dev'] === true
+const isDev = args.dev === true
 
 const perms =
   PermissionFlagsBits.SendMessages |
@@ -39,7 +39,7 @@ export class kUserCommand extends InteractionUserCommand {
     })
   }
 
-  async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const settings = await util.interactionGetGuildSettings(interaction)
 
     if (!settings?.staffChannel) {
@@ -54,13 +54,13 @@ export class kUserCommand extends InteractionUserCommand {
       .catch(() => null)
     const { content, author, id, attachments } = interaction.targetMessage
 
-    if (isDev === false) {
+    if (!isDev) {
       if (author.id === interaction.user.id) {
         return {
           content: '❌ You cannot report your own message.',
           ephemeral: true
         }
-      } else if (author.bot === true) {
+      } else if (author.bot) {
         return {
           content: '❌ You cannot report messages from bots.',
           ephemeral: true

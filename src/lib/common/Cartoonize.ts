@@ -17,8 +17,8 @@ const R = /<div class="image">\s+<img src="(.*?)">/
 /**
  * Cartoonize an image using AI from an unofficial API.
  */
-export class Cartoonize {
-  static async blobFromUrl(url: string): Promise<Blob | null> {
+export const Cartoonize = {
+  async blobFromUrl(url: string): Promise<Blob | null> {
     const u = schema.run(url)
     if (!u.isOk()) return null
 
@@ -32,9 +32,9 @@ export class Cartoonize {
     }
 
     return null
-  }
+  },
 
-  static async cartoonize(attachment: Attachment): Promise<string | null> {
+  async cartoonize(attachment: Attachment): Promise<string | null> {
     const form = new FormData()
     const blob = await Cartoonize.blobFromUrl(attachment.proxyURL)
 

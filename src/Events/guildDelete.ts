@@ -7,7 +7,7 @@ export class kEvent extends Event<typeof Events.GuildDelete> {
   name = Events.GuildDelete as const
 
   async init (guild: Guild): Promise<void> {
-    if (guild.available === false) return
+    if (!guild.available) return
 
     await sql`
       DELETE FROM kbGuild

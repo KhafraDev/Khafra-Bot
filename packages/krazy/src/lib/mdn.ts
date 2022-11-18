@@ -25,12 +25,10 @@ export interface MDNResult {
 }
 
 export interface MDNError {
-  errors: {
-    [key: string]: {
-      message: string
-      code: string
-    }[]
-  }
+  errors: Record<string, {
+    message: string
+    code: string
+  }[]>
 }
 
 const search = 'https://developer.mozilla.org/api/v1/search'

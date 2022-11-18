@@ -105,7 +105,7 @@ export class RSSReader<T> {
       logger.warn(`xml parser: ${this.url} has been disabled as invalid XML has been fetched.`)
       return clearInterval(this.#interval!)
     } else if (r !== undefined && isRedirect(r.statusCode)) {
-      logger.info(r, `xml parser: ${this.url} redirected you to ${r.headers['location']}`)
+      logger.info(r, `xml parser: ${this.url} redirected you to ${r.headers.location}`)
     }
 
     // if the XML is valid, we can clear the old cache

@@ -22,7 +22,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message): Promise<void | APIEmbed> {
+  async init (message: Message): Promise<undefined | APIEmbed> {
     const m = await message.reply({ content: clean })
 
     if (m.editable) {

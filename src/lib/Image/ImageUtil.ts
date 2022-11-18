@@ -1,11 +1,11 @@
 import type { Image, SKRSContext2D } from '@napi-rs/canvas'
 import { extname } from 'node:path'
 
-export class ImageUtil {
+export const ImageUtil = {
   /**
    * Splits text into different lines where each line is < maxWidth.
    */
-  static split (
+  split (
     text: string,
     maxWidth: number,
     ctx: SKRSContext2D
@@ -30,7 +30,7 @@ export class ImageUtil {
       if (i !== text.length) {
         for (
           j = 0;
-          result.indexOf(' ', j) !== -1;
+          result.includes(' ', j);
           j = result.indexOf(' ', j) + 1
         ) {}
       }
@@ -41,12 +41,12 @@ export class ImageUtil {
     }
 
     return lines
-  }
+  },
 
   /**
    * Returns text up to maxWidth. Everything else if cut off.
    */
-  static maxTextLength (
+  maxTextLength (
     text: string,
     maxWidth: number,
     ctx: SKRSContext2D
@@ -59,13 +59,13 @@ export class ImageUtil {
     }
 
     return newText
-  }
+  },
 
   /**
    * Checks if a url is a supported image extension. Currently supports
    * `png`, `jp(e)g`, `avif`, `webp`.
    */
-  static isImage (url: string): boolean {
+  isImage (url: string): boolean {
     const extension = extname(url)
     const imageExts = [
       '.png',
@@ -76,9 +76,9 @@ export class ImageUtil {
     ]
 
     return imageExts.some(ext => extension.startsWith(ext))
-  }
+  },
 
-  static centerImage (
+  centerImage (
     context: SKRSContext2D,
     image: Image,
     x: number,

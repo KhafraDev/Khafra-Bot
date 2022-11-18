@@ -18,12 +18,12 @@ const splitWord = (word: string): { an: string[], p: string[] } => {
     p: [] as string[]
   }
 
-  for (let i = 0; i < word.length; i++) {
-    const letter = word[i].toUpperCase()
-    if (consonants.includes(letter) || vowels.includes(letter) || !Number.isNaN(Number(letter))) {
-      punc.an.push(word[i])
+  for (const letter of word) {
+    const upper = letter.toUpperCase()
+    if (consonants.includes(upper) || vowels.includes(upper) || !Number.isNaN(Number(upper))) {
+      punc.an.push(letter)
     } else {
-      punc.p.push(word[i])
+      punc.p.push(letter)
     }
   }
 
@@ -41,8 +41,8 @@ const toPigLatin = (sentence: string): string => {
         // When words begin with consonant clusters (multiple consonants that form one sound),
         // the whole sound is added to the end when speaking or writing
         let consonantsStart = 0
-        for (let i = 0; i < word.length; i++) {
-          if (consonants.includes(word[i].toUpperCase())) {
+        for (const letter of word.toUpperCase()) {
+          if (consonants.includes(letter)) {
             consonantsStart++
           } else {
             break

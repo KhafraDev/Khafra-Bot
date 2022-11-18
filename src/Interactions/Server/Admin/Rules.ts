@@ -114,7 +114,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
     const channel = interaction.options.getChannel('channel', true) as NewsChannel | TextChannel
 

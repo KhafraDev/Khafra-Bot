@@ -27,7 +27,7 @@ interface IMCOnline {
 		online: number
 		max: number
 		list?: string[]
-		uuid?: { [key: string]: string }
+		uuid?: Record<string, string>
 	}
 	version: string | string[]
 	protocol?: number

@@ -4,7 +4,7 @@ interface Options {
     interval: number
 }
 
-type Generator = AsyncGenerator<number, never, unknown>
+type Generator = AsyncGenerator<number, never>
 
 export abstract class Timer {
   public constructor (public options: Options) {}

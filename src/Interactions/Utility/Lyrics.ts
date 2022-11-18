@@ -71,7 +71,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const artist = interaction.options.getString('artist', true)
     const song = interaction.options.getString('song', true)
 

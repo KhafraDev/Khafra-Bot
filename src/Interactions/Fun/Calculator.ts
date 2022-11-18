@@ -83,7 +83,7 @@ export class kInteraction extends Interactions {
     let equation = ''
 
     for await (const [i] of collector) {
-      const token = i.customId[0] === '-' ? '-' : i.customId.split('-')[0]
+      const token = i.customId.startsWith('-') ? '-' : i.customId.split('-')[0]
 
       if (token === '=') {
         collector.stop('calculate')

@@ -29,15 +29,13 @@ interface EmojiKitchen {
   results: {
     id: string
     title: string
-    media_formats: {
-      [key: string]: {
-        url: string
-        duration: number
-        preview: string
-        dims: number[]
-        size: number
-      }
-    }
+    media_formats: Record<string, {
+      url: string
+      duration: number
+      preview: string
+      dims: number[]
+      size: number
+    }>
     created: number
     content_description: string
     h1_title: string
@@ -89,7 +87,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const subcommand = interaction.options.getSubcommand(true)
 
     if (subcommand === Subcommands.LIST) {

@@ -26,7 +26,7 @@ interface SubcommandOptions {
 type HandlerReturn =
   | import('discord.js').InteractionReplyOptions
   | null
-  | void
+  | void // eslint-disable-line @typescript-eslint/no-invalid-void-type
 
 type InteractionData =
   | RESTPostAPIApplicationCommandsJSONBody

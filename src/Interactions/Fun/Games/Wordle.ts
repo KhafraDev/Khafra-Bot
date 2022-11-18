@@ -53,8 +53,7 @@ const wordleGetShareComponent = (
 ): APIActionRowComponent<APIMessageActionRowComponent> => {
   let board = `Wordle ${guesses.length}/6\n\n`
 
-  for (let guessIdx = 0; guessIdx < guesses.length; guessIdx++) {
-    const guess = guesses[guessIdx]
+  for (const guess of guesses) {
     let line = ''
 
     for (let letters = 0; letters < 5; letters++) {
@@ -91,7 +90,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (games.has(interaction.user.id)) {
       return {
         content: '❌ Finish your other game first!',

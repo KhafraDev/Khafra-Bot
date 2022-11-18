@@ -35,8 +35,8 @@ export class AsyncQueue extends Array<DeferredPromise> {
   public dequeue (): void {
     if (this.length === 0) return undefined
 
-    const promise = this.shift()!
-    void promise.resolve()
+    const promise = this.shift()
+    promise?.resolve()
 
     return undefined
   }

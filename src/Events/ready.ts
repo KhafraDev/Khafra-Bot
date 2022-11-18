@@ -26,7 +26,7 @@ export class kEvent extends Event<typeof Events.ClientReady> {
         embeds: [Embed.ok(s)]
       }).then(() => true, () => false)
 
-      if (sentMessage === false) {
+      if (!sentMessage) {
         logger.warn('Logged in! Could not send message to the bot owner.')
       }
     }

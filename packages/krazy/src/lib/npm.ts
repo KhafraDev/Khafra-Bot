@@ -4,51 +4,49 @@ interface Package {
   name: string
   description: string
   'dist-tags': {
-      latest: string
-      [key: string]: string | undefined
+    latest: string
+    [key: string]: string | undefined
   }
-  versions: {
-    [key: string]: {
-      name: string
-      version: string
-      description: string
-      main?: string
-      scripts: Record<string, string>
-      repository: {
-          type: string
-          url: string
-      }
-      keywords: string[]
-      author: {
-          name: string
-      }
-      license: string
-      bugs: {
-          url: string
-      }
-      homepage: string
-      devDependencies: Record<string, string>
-      dependencies: Record<string, string>
-      gitHead?: string
-      _id: string
-      _shasum?: string
-      _from?: string
-      _npmVersion?: string
-      _npmUser?: {
-          name?: string
-          email?: string
-      }
-      maintainers: {
-          name: string
-          email: string
-      }[]
-      dist?: {
-          shasum: string
-          tarball: string
-      }
-      directories: unknown
+  versions: Record<string, {
+    name: string
+    version: string
+    description: string
+    main?: string
+    scripts: Record<string, string>
+    repository: {
+      type: string
+      url: string
     }
-  }
+    keywords: string[]
+    author: {
+      name: string
+    }
+    license: string
+    bugs: {
+      url: string
+    }
+    homepage: string
+    devDependencies: Record<string, string>
+    dependencies: Record<string, string>
+    gitHead?: string
+    _id: string
+    _shasum?: string
+    _from?: string
+    _npmVersion?: string
+    _npmUser?: {
+      name?: string
+      email?: string
+    }
+    maintainers: {
+      name: string
+      email: string
+    }[]
+    dist?: {
+      shasum: string
+      tarball: string
+    }
+    directories: unknown
+  }>
   readme: string
   maintainers: {
       name: string

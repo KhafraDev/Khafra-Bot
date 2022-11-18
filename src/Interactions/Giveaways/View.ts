@@ -23,7 +23,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (interaction.guild === null) {
       return {
         content: '❌ Unable to use the command.',

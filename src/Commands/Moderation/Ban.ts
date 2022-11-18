@@ -72,8 +72,8 @@ export class kCommand extends Command {
     // days of messages to clear
     let clear = 7, usedMs = false
 
-    if (cli['days'] !== undefined || cli['time'] !== undefined) {
-      const time = Number(cli['days'] ?? cli['time'])
+    if (cli.days !== undefined || cli.time !== undefined) {
+      const time = Number(cli.days ?? cli.time)
 
       if (schema.is(time)) {
         clear = time
@@ -90,8 +90,8 @@ export class kCommand extends Command {
 
     let reason = `Requested by ${message.author.tag} (${message.author.id}).`
 
-    if (cli['reason'] !== undefined) {
-      reason = cli['reason']
+    if (cli.reason !== undefined) {
+      reason = cli.reason
     } else if (usedMs) {
       // ban @user 3d reason here -> reason here
       // ban @user reason here -> reason here
@@ -111,7 +111,7 @@ export class kCommand extends Command {
       }
     }
 
-    if (cli['dry'] !== true) {
+    if (cli.dry !== true) {
       const [err] = await dontThrow(message.guild.members.ban(user, {
         deleteMessageDays: clear,
         reason: reason

@@ -33,7 +33,7 @@ const getItemRespectNSFW = (
   }
 
   lastUsed.set(subreddit, Date.now())
-  return item || null
+  return item ?? null
 }
 
 export const badmeme = async (

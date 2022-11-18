@@ -29,8 +29,8 @@ const { values: processArgs } = parseArgs({
     }
   }
 })
-const disabled = typeof processArgs['disabled'] === 'string'
-  ? processArgs['disabled'].split(',').map(c => c.toLowerCase())
+const disabled = typeof processArgs.disabled === 'string'
+  ? processArgs.disabled.split(',').map(c => c.toLowerCase())
   : []
 
 export class kEvent extends Event<typeof Events.InteractionCreate> {

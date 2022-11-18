@@ -74,13 +74,13 @@ export class kEvent extends Event<typeof Events.InteractionCreate> {
       }
 
       if (action === 'add') {
-        if (had === true) {
+        if (had) {
           opts.embeds.push(Embed.ok('This role can only be added, and you already have it.'))
         } else {
           await add(role)
         }
       } else if (action === 'remove') {
-        if (had === false) {
+        if (!had) {
           opts.embeds.push(Embed.ok('This role can only be removed, and you don\'t have it.'))
         } else {
           await remove(role)

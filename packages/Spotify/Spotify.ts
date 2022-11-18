@@ -55,7 +55,7 @@ class Spotify {
   }
 
   async getTokenHeader (): Promise<{ Authorization: string }> {
-    if (!this.#token || !this.#token.access_token || this.expired) {
+    if (!this.#token?.access_token || this.expired) {
       await this.setToken()
     }
 

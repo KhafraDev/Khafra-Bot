@@ -1,5 +1,7 @@
-const { builtinModules } = require('node:module');
+// eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
+const { builtinModules } = require('node:module')
 
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -16,12 +18,13 @@ module.exports = {
     sourceType: 'module'
   },
   plugins: [
-    '@typescript-eslint',
+    '@typescript-eslint'
   ],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:@typescript-eslint/strict'
   ],
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -78,7 +81,7 @@ module.exports = {
     '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': 'error',
-    '@typescript-eslint/consistent-type-assertions': [ 'error', { assertionStyle: 'as' }],
+    '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'as' }],
     '@typescript-eslint/consistent-type-definitions': 'error',
     '@typescript-eslint/consistent-type-exports': 'error',
     '@typescript-eslint/consistent-type-imports': ['error', { disallowTypeAnnotations: false }],
@@ -111,6 +114,7 @@ module.exports = {
     '@typescript-eslint/prefer-namespace-keyword': 'error',
     '@typescript-eslint/prefer-regexp-exec': 'error',
     '@typescript-eslint/no-unnecessary-condition': 'error',
-    '@typescript-eslint/restrict-template-expressions': 'off'
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/no-base-to-string': 'off'
   }
-};
+}
