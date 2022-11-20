@@ -1,15 +1,89 @@
 import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { parseEmojiList } from '#khaf/utility/Emoji.js'
 import { bold, formatEmoji, time } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
+  InteractionType,
+  type APIEmbed,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
-import { SnowflakeUtil, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
-import { parse, toCodePoints } from 'twemoji-parser'
+import {
+  InteractionCollector,
+  SnowflakeUtil,
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+  type InteractionReplyOptions
+} from 'discord.js'
+import { randomUUID } from 'node:crypto'
+import { parse, toCodePoints, type EmojiEntity } from 'twemoji-parser'
 
-const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
+interface GuildEmoji {
+  animated: boolean
+  name: string
+  id: string
+  index: number
+}
+
+type EmojiUnion =
+  | { type: 'guild', value: GuildEmoji }
+  | { type: 'unicode', value: EmojiEntity }
+
+type InferPromiseResult<T> = T extends Promise<infer U> ? U : never
+
+const makeEmojiEmbed = <T extends EmojiUnion>(
+  { type, value }: T,
+  cache: InferPromiseResult<ReturnType<typeof parseEmojiList>> | null
+): APIEmbed => {
+  if (type === 'guild') {
+    const { animated, id, name } = value
+
+    const url = `https://cdn.discordapp.com/emojis/${id}.webp`
+    const createdAt = new Date(SnowflakeUtil.timestampFrom(id))
+
+    return Embed.json({
+      color: colors.ok,
+      // TODO(@KhafraDev): https://github.com/discordjs/discord.js/issues/8820
+      description: formatEmoji(id, animated as true),
+      title: name,
+      image: { url },
+      url,
+      fields: [
+        { name: bold('ID:'), value: id, inline: true },
+        { name: bold('Name:'), value: name, inline: true },
+        { name: '\u200b', value: '\u200b', inline: true },
+        { name: bold('Animated:'), value: animated ? 'Yes' : 'No', inline: true },
+        { name: bold('Created:'), value: time(createdAt, 'f'), inline: true },
+        { name: '\u200b', value: '\u200b', inline: true }
+      ]
+    })
+  }
+
+  const { text, url } = value
+
+  const codePoints = toCodePoints(text)
+  const unicodeEmoji = cache?.get(codePoints.join(' ').toUpperCase())
+
+  if (!unicodeEmoji) {
+    return Embed.json({
+      color: colors.error,
+      description: '❌ The text provided isn\'t an emoji or is currently unsupported!'
+    })
+  }
+
+  return Embed.json({
+    color: colors.ok,
+    description: text,
+    image: { url },
+    url,
+    fields: [
+      { name: bold('Name:'), value: unicodeEmoji.comment, inline: true },
+      { name: bold('Category:'), value: unicodeEmoji.group, inline: true },
+      { name: bold('Unicode:'), value: unicodeEmoji.codePoints, inline: true }
+    ]
+  })
+}
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -29,84 +103,91 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init (interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
     const emoji = interaction.options.getString('name', true)
+    const parsedList: EmojiUnion[] = []
 
-    if (guildEmojiRegex.test(emoji)) {
-      const { animated, name, id } = guildEmojiRegex.exec(emoji)!.groups as {
-        animated: 'a' | undefined
-        name: string
-        id: string
+    for (const value of parse(emoji, { assetType: 'png' })) {
+      parsedList.push({ type: 'unicode', value })
+    }
+
+    for (const match of emoji.matchAll(/<?(a)?:?(\w{2,32}):(\d{17,19})>?/g)) {
+      const value: GuildEmoji = {
+        animated: match[1] === 'a',
+        name: match[2],
+        id: match[3],
+        index: match.index ?? 0
       }
 
-      const url = `https://cdn.discordapp.com/emojis/${id}.webp`
-      const createdAt = new Date(SnowflakeUtil.timestampFrom(id))
-      const embed = Embed.json({
-        color: colors.ok,
-        // TODO(@KhafraDev): https://github.com/discordjs/discord.js/issues/8820
-        description: formatEmoji(id, (animated === 'a') as false),
-        title: name,
-        image: { url },
-        url,
-        fields: [
-          { name: bold('ID:'), value: id, inline: true },
-          { name: bold('Name:'), value: name, inline: true },
-          { name: '\u200b', value: '\u200b', inline: true },
-          { name: bold('Animated:'), value: animated === 'a' ? 'Yes' : 'No', inline: true },
-          { name: bold('Created:'), value: time(createdAt, 'f'), inline: true },
-          { name: '\u200b', value: '\u200b', inline: true }
-        ]
+      parsedList.push({ type: 'guild', value })
+    }
+
+    if (parsedList.length !== 0) {
+      parsedList.sort((a, b) => {
+        const aIndex = a.type === 'guild' ? a.value.index : a.value.indices[0]
+        const bIndex = b.type === 'guild' ? b.value.index : b.value.indices[0]
+
+        return aIndex - bIndex
       })
-
-      return {
-        embeds: [embed]
-      }
-    }
-
-    const twemoji = parse(emoji, { assetType: 'png' })
-    const cache = await parseEmojiList()
-
-    if (twemoji.length === 0) {
-      return {
-        content: '❌ No emojis were found in your message.',
-        ephemeral: true
-      }
-    } else if (cache === null) {
-      return {
-        content: '❌ Emojis are being cached, please re-run this command in a minute!',
-        ephemeral: true
-      }
-    }
-
-    const codePoints = toCodePoints(twemoji[0].text)
-    const unicodeEmoji = cache.get(codePoints.join(' ').toUpperCase())
-
-    if (!unicodeEmoji) {
+    } else {
       return {
         embeds: [
           Embed.json({
-            color: colors.error,
-            description: '❌ This emoji is invalid or unsupported!'
+            color: colors.ok,
+            description: 'You didn\'t include any emojis!'
           })
         ],
         ephemeral: true
       }
     }
 
-    return {
-      embeds: [
-        Embed.json({
-          color: colors.ok,
-          description: twemoji[0].text,
-          image: { url: twemoji[0].url },
-          url: twemoji[0].url,
-          fields: [
-            { name: bold('Name:'), value: unicodeEmoji.comment, inline: true },
-            { name: bold('Category:'), value: unicodeEmoji.group, inline: true },
-            { name: bold('Unicode:'), value: unicodeEmoji.codePoints, inline: true }
-          ]
-        })
-      ]
+    let page = 0
+    const uuid = randomUUID()
+    const cache = await parseEmojiList()
+    const pages: APIEmbed[] = [
+      makeEmojiEmbed(parsedList[page], cache)
+    ]
+
+    const int = await interaction.reply({
+      embeds: [pages[page]],
+      components: [
+        Components.actionRow([
+          Buttons.approve('Next', `next-${uuid}`),
+          Buttons.primary('Back', `back-${uuid}`),
+          Buttons.deny('Stop', `stop-${uuid}`)
+        ])
+      ],
+      fetchReply: true
+    })
+
+    const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
+      interactionType: InteractionType.MessageComponent,
+      message: int,
+      idle: 60_000,
+      filter: (i) =>
+        interaction.user.id === i.user.id &&
+        int.id === i.message.id &&
+        i.customId.endsWith(uuid)
+    })
+
+    for await (const [i] of collector) {
+      if (i.customId.startsWith('stop')) {
+        collector.stop()
+        await i.update({ components: disableAll(int) })
+        break
+      }
+
+      i.customId.startsWith('next') ? page++ : page--
+      if (page < 0) page = parsedList.length - 1
+      if (page >= parsedList.length) page = 0
+
+      if (!pages.at(page)) {
+        pages.push(makeEmojiEmbed(parsedList[page], cache))
+      }
+
+      await i.update({
+        embeds: [pages[page]]
+      })
     }
   }
 }
