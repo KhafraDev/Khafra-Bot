@@ -17,7 +17,7 @@ declare const schema: import("@sapphire/shapeshift").ObjectValidator<{
     dict_exists: string[][];
 }>>;
 type Batch = InferType<typeof schema>;
-export declare class FifteenDotAI {
-    static getWav(character: string, content: string, emotion: string): Promise<Batch | null>;
-}
+export declare const FifteenDotAI: {
+    getWav(character: string, content: string, emotion: string): Promise<Batch | null>;
+};
 export {};
