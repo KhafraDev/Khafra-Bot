@@ -4,6 +4,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { Stats } from '#khaf/utility/Stats.js'
+import { formatMs } from '#khaf/utility/util.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -17,19 +18,6 @@ import { join } from 'node:path'
 import { memoryUsage, version } from 'node:process'
 
 const pkg = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
-
-const getUptime = (ms: number): string => {
-  return Object.entries({
-    d: Math.floor(ms / 86400000),
-    h: Math.floor(ms / 3600000) % 24,
-    m: Math.floor(ms / 60000) % 60,
-    s: Math.floor(ms / 1000) % 60,
-    ms: Math.floor(ms) % 1000
-  })
-    .filter(f => f[1] > 0)
-    .map(t => `${t[1]}${t[0]}`)
-    .join(' ')
-}
 
 const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]
 const invitePermissions = [
@@ -92,7 +80,7 @@ export class kInteraction extends Interactions {
 
     if (subcommand === 'info') {
       const memoryMB = memoryUsage().heapUsed / 2 ** 20 // same as 1024 * 1024
-      const uptime = getUptime(interaction.client.uptime)
+      const uptime = formatMs(interaction.client.uptime)
 
       const embed = Embed.json({
         color: colors.ok,

@@ -3,6 +3,7 @@ import { searchMovie } from '#khaf/utility/commands/TMDB'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isDM, isText } from '#khaf/utility/Discord.js'
+import { formatMs } from '#khaf/utility/util.js'
 import { bold, hyperlink, time } from '@discordjs/builders'
 import type {
   APIActionRowComponent,
@@ -11,18 +12,6 @@ import type {
 } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-
-const formatMS = (ms: number): string => {
-  return Object.entries({
-    d: Math.floor(ms / 86400000),
-    h: Math.floor(ms / 3600000) % 24,
-    m: Math.floor(ms / 60000) % 60,
-    s: Math.floor(ms / 1000) % 60
-  })
-    .filter(f => f[1] > 0)
-    .map(t => `${t[1]}${t[0]}`)
-    .join(' ')
-}
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -66,7 +55,7 @@ export class kInteraction extends Interactions {
           value: movies.genres.map(g => g.name).join(', '),
           inline: true
         },
-        { name: bold('Runtime:'), value: formatMS(Number(movies.runtime) * 60000), inline: true },
+        { name: bold('Runtime:'), value: formatMs(Number(movies.runtime) * 60000), inline: true },
         { name: bold('Status:'), value: movies.status, inline: true },
         {
           name: bold('Released:'),
