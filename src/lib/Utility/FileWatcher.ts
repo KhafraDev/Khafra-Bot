@@ -14,7 +14,6 @@ export const createFileWatcher = <F extends Watcher>(path: string): F => {
 
   const dir = dirname(path)
   const base = basename(path)
-  const descriptors: PropertyDescriptor = { enumerable: true, configurable: true, writable: true }
 
   const file = JSON.parse(readFileSync(path, 'utf-8')) as F
   const storage = (Array.isArray(file) ? [] : {}) as F
@@ -22,12 +21,7 @@ export const createFileWatcher = <F extends Watcher>(path: string): F => {
   if (Array.isArray(file) && Array.isArray(storage)) {
     storage.push(...file)
   } else {
-    for (const [key, value] of Object.entries(file)) {
-      Object.defineProperty(storage, key, {
-        value,
-        ...descriptors
-      })
-    }
+    Object.assign(storage, file)
   }
 
   watch(path, (event, filename) => {
@@ -35,27 +29,19 @@ export const createFileWatcher = <F extends Watcher>(path: string): F => {
     if (base !== filename) return
     if (!existsSync(join(dir, filename))) return
 
-    let err: Error | null = null, file!: F
+    let file: F
 
     try {
       file = JSON.parse(readFileSync(join(dir, filename), 'utf-8')) as F
-    } catch (e) {
-      err = e as Error
+    } catch {
+      return
     }
 
-    if (err === null) {
-      if (Array.isArray(storage) && Array.isArray(file)) {
-        storage.length = 0
-        storage.push(...file)
-      } else {
-        for (const [key, value] of Object.entries(file)) {
-          Reflect.deleteProperty(storage, key)
-          Object.defineProperty(storage, key, {
-            value,
-            ...descriptors
-          })
-        }
-      }
+    if (Array.isArray(storage) && Array.isArray(file)) {
+      storage.length = 0
+      storage.push(...file)
+    } else {
+      Object.assign(storage, file)
     }
   })
 
