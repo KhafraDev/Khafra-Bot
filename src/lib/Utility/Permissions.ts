@@ -43,16 +43,19 @@ const all = Object.entries(PermissionFlagsBits) as [
     keyof typeof PermissionFlagsBits, bigint
 ][]
 
-export const permResolvableToString = (perms: PermissionResolvable): string[] => {
+export const permResolvableToString = (
+  perms: PermissionResolvable
+): `\`${keyof typeof PermissionFlagsBits}\``[] => {
   const bitfield = PermissionsBitField.resolve(perms)
-  const has: string[] = []
+
+  if ((PermissionFlagsBits.Administrator & bitfield) === PermissionFlagsBits.Administrator) {
+    return [inlineCode('Administrator')]
+  }
+
+  const has: `\`${keyof typeof PermissionFlagsBits}\``[] = []
 
   for (const [name, bit] of all) {
     if ((bit & bitfield) === bit) {
-      if (name === 'Administrator') {
-        return [inlineCode(name)]
-      }
-
       has.push(inlineCode(name))
     }
   }
