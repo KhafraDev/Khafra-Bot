@@ -215,13 +215,15 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
 }
 
 export const formatMs = (ms: number): string => {
-  return Object.entries({
+  const durations: Record<string, number> = {
     d: Math.floor(ms / 86400000),
     h: Math.floor(ms / 3600000) % 24,
     m: Math.floor(ms / 60000) % 60,
     s: Math.floor(ms / 1000) % 60,
     ms: Math.floor(ms) % 1000
-  })
-    .map(t => t[1] > 0 ? `${t[1]}${t[0]}` : '')
+  }
+
+  return Object.keys(durations)
+    .map(k => durations[k] > 0 ? `${k}${durations[k]}` : '')
     .join(' ')
 }

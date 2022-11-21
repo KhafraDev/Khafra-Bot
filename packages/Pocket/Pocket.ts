@@ -36,8 +36,7 @@ export class Pocket {
    * @throws {Error} when status isn't 200
    */
   async requestCode (): Promise<string> {
-    const rateLimited = checkRateLimits()
-    if (rateLimited) {
+    if (isRateLimited()) {
       throw new Error(
         `Rate-limited: 
         * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -78,8 +77,7 @@ export class Pocket {
   }
 
   async accessToken (): Promise<string> {
-    const rateLimited = checkRateLimits()
-    if (rateLimited) {
+    if (isRateLimited()) {
       throw new Error(
         `Rate-limited: 
           * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -112,12 +110,11 @@ export class Pocket {
   }
 
   async getList (): Promise<PocketGetResults> {
-    const rateLimited = checkRateLimits()
-    if (rateLimited) {
+    if (isRateLimited()) {
       throw new Error(
         `Rate-limited: 
-                * ${limits['x-limit-key-reset']} seconds consumer key, 
-                * ${limits['x-limit-user-reset']} seconds for the user.`
+          * ${limits['x-limit-key-reset']} seconds consumer key, 
+          * ${limits['x-limit-user-reset']} seconds for the user.`
       )
     }
 
@@ -146,8 +143,7 @@ export class Pocket {
   }
 
   async add (url: string | import('url').URL, title?: string): Promise<PocketAddResults> {
-    const rateLimited = checkRateLimits()
-    if (rateLimited) {
+    if (isRateLimited()) {
       throw new Error(
         `Rate-limited: 
           * ${limits['x-limit-key-reset']} seconds consumer key, 
@@ -179,7 +175,7 @@ export class Pocket {
     return body.json() as Promise<PocketAddResults>
   }
 
-  encrypt = (text: string): string => {
+  encrypt (text: string): string {
     const iv = crypto.randomBytes(16)
     const cipher = crypto.createCipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, iv)
     const encrypted = Buffer.concat([cipher.update(text), cipher.final()])
@@ -188,7 +184,7 @@ export class Pocket {
 
   }
 
-  decrypt = (hash: string): string => {
+  decrypt (hash: string): string {
     const [iv, content] = hash.split(':')
     const decipher = crypto.createDecipheriv('aes-256-ctr', env.POCKET_SECRET_KEY!, Buffer.from(iv, 'hex'))
     const decrpyted = Buffer.concat([decipher.update(Buffer.from(content, 'hex')), decipher.final()])
@@ -207,14 +203,14 @@ export class Pocket {
 
 const setRateLimits = (headers: Dispatcher.ResponseData['headers']): void => {
   const keys = Object.keys(limits).map(k => k.toLowerCase())
-  for (const [header, value] of Object.entries(headers)) {
-    if (keys.includes(header.toLowerCase())) {
-      limits[header.toLowerCase()] = Number(value)
+  for (const headerName of Object.keys(headers)) {
+    if (keys.includes(headerName.toLowerCase())) {
+      limits[headerName.toLowerCase()] = Number(headers[headerName])
     }
   }
 }
 
-const checkRateLimits = (): boolean => {
+const isRateLimited = (): boolean => {
   if (limits['x-limit-key-remaining'] === 0) {
     return true
   } else if (limits['x-limit-user-remaining'] === 0) {

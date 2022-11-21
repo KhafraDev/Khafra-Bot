@@ -11,12 +11,8 @@ interface Insights {
     k_joined: number
 }
 
-const Chart = async (o: Record<string, string | number>): Promise<ArrayBuffer> => {
-  const query = new URLSearchParams()
-
-  for (const [key, value] of Object.entries(o)) {
-    query.set(key, `${value}`)
-  }
+const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {
+  const query = new URLSearchParams(o)
 
   const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
     headers: {
@@ -142,8 +138,8 @@ export class kSubCommand extends InteractionSubCommand {
 
     const chart = await Chart({
       chart: data,
-      width: 1920,
-      height: 1080,
+      width: '1920',
+      height: '1080',
       backgroundColor: 'rgb(54, 57, 63)'
     }).catch(() => null)
 
