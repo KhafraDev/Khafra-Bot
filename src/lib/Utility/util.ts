@@ -224,6 +224,6 @@ export const formatMs = (ms: number): string => {
   }
 
   return Object.keys(durations)
-    .map(k => durations[k] > 0 ? `${k}${durations[k]}` : '')
+    .map(k => durations[k] > 0 ? `${durations[k]}${k}` : '')
     .join(' ')
 }
