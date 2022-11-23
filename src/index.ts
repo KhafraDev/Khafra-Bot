@@ -1,12 +1,12 @@
+import '#khaf/image/ImageFonts.js'
 import '#khaf/utility/load.env.js'
 import '#khaf/utility/Rejections.js'
-import '#khaf/image/ImageFonts.js'
 
 import { KhafraClient } from '#khaf/Bot'
 import type { Event } from '#khaf/Event'
 import { RESTEvents, type RestEvents } from '@discordjs/rest'
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
-import { type ClientEvents, Partials, Events, Options } from 'discord.js'
+import { Events, Options, Partials, type ClientEvents } from 'discord.js'
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
   name: T
