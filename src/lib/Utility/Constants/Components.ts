@@ -36,7 +36,7 @@ export const Components = {
     options: T extends ComponentType.StringSelect
       ? Omit<SelectMenuReturnType[T], 'type'>
       : SelectMenuReturnType[T],
-    type: keyof SelectMenuReturnType = ComponentType.StringSelect
+    type: T = ComponentType.StringSelect as T
   ): SelectMenuReturnType[T] {
     return {
       type,

@@ -54,6 +54,7 @@ export async function getMentions(
     const mention = mentions[fetchType]
     const guildCache = fetchType === 'users' ? client.users : guild[fetchType]
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return mention?.get(id) ?? await guildCache.fetch(id).catch(() => null)
   }
 

@@ -15,8 +15,8 @@ export declare class Pocket {
     accessToken(): Promise<string>;
     getList(): Promise<PocketGetResults>;
     add(url: string | import('url').URL, title?: string): Promise<PocketAddResults>;
-    encrypt: (text: string) => string;
-    decrypt: (hash: string) => string;
+    encrypt(text: string): string;
+    decrypt(hash: string): string;
     toObject(): {
         request_token: string;
         access_token: string;

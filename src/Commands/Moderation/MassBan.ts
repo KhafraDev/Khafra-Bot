@@ -29,6 +29,7 @@ export class kCommand extends Command {
   async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
     const ids = args.map(id => util.isSnowflake(id)
       ? id
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       : message.mentions.members?.get(id.replace(/[^\d]/g, ''))
     )
 
