@@ -189,6 +189,7 @@ export class kSubCommand extends InteractionSubCommand {
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: 30_000,
       filter: (i) =>
+        (i.isButton() || i.isModalSubmit()) &&
         i.user.id === interaction.user.id &&
         i.customId.endsWith(id)
     })

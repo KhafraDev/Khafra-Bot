@@ -148,6 +148,7 @@ export class kInteraction extends Interactions {
       interactionType: InteractionType.MessageComponent,
       idle: 30_000,
       filter: (i) =>
+        i.isButton() &&
         interaction.user.id === i.user.id &&
         int.interaction?.id === i.message.interaction?.id &&
         i.customId.endsWith(id)
