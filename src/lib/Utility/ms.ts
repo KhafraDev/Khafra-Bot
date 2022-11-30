@@ -21,6 +21,17 @@ const dateRegex = new RegExp(`^(?<m>${monthsUnion})\\s+(?<d>\\d{1,2})(st|th|nd)?
  * @license https://raw.githubusercontent.com/jkroso/parse-duration/7520a9855cdce7ec9219e8153059b566c1c8a426/License MIT
  */
 export const parseStrToMs = (str: string): number => {
+  if (str.startsWith('<t:') && str.endsWith('>')) {
+    const unix = /^<t:(\d{10}):[A-z]{1}>$/.exec(str)?.[1]
+    const timestamp = Number(unix) * 1000
+
+    if (unix?.length !== 10) {
+      return 0
+    }
+
+    return timestamp - Date.now()
+  }
+
   const match = dateRegex.exec(str)
 
   if (match) {
