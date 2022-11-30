@@ -12,7 +12,7 @@ conversions.month = conversions.months = conversions.d * (365.25 / 12)
 conversions.year = conversions.years = conversions.yr = conversions.y = conversions.d * 365.25
 
 const monthsUnion = 'January|February|March|April|May|June|July|August|September|October|November|December'
-const dateRegex = new RegExp(`^(?<m>${monthsUnion})\\s+(?<d>\\d{1,2})(st|th)?,?(\\s+(?<y>\\d{4})?)?$`)
+const dateRegex = new RegExp(`^(?<m>${monthsUnion})\\s+(?<d>\\d{1,2})(st|th|nd)?,?(\\s+(?<y>\\d{4})?)?$`)
 
 /**
  * parse human readable string to ms
