@@ -26,11 +26,6 @@ export class kSubCommand extends InteractionSubCommand {
         content: '❌ The shortest reminder you can set is 1 minute.',
         ephemeral: true
       }
-    } else if (parsedTime > 60 * 1000 * 60 * 24 * 7 * 4) {
-      return {
-        content: '❌ The longest reminder you can set is 4 weeks.',
-        ephemeral: true
-      }
     }
 
     const date = new Date(Date.now() + parsedTime)
@@ -50,13 +45,13 @@ export class kSubCommand extends InteractionSubCommand {
 
     return {
       content: stripIndents`
-            ✅ Set a reminder for you!
-    
-            • Message: ${inlineCode(ellipsis(text, 100))}
-            • Time: ${formatTime(date)}${intervalMessage}
-            • ID: ${inlineCode(rows[0].id)}
-            • Repeat: ${!once}
-            `,
+      ✅ Set a reminder for you!
+
+      • Message: ${inlineCode(ellipsis(text, 100))}
+      • Time: ${formatTime(date)}${intervalMessage}
+      • ID: ${inlineCode(rows[0].id)}
+      • Repeat: ${!once}
+      `,
       ephemeral: true
     }
   }
