@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.String,
               name: 'ends',
-              description: 'How long the giveaway should last (for example: "1h 30m" or "2w 3d 1h").',
+              description: 'When the giveaway ends (for example: "1h 30m" or "2w 3d 1h", "December 3rd").',
               required: true
             },
             {

@@ -1,6 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { parseStrToMs } from '#khaf/utility/ms.js'
+import { minutes, parseStrToMs } from '#khaf/utility/ms.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
@@ -33,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const parsedTime = time ? parseStrToMs(time) : null
 
-    if (parsedTime && parsedTime < 60 * 1000 * 15) {
+    if (parsedTime && parsedTime < minutes(15)) {
       return {
         content: '❌ The shortest reminder you can set is 15 minutes.',
         ephemeral: true
@@ -68,11 +68,11 @@ export class kSubCommand extends InteractionSubCommand {
 
     return {
       content: stripIndents`
-            ✅ Edited a reminder for you!
+      ✅ Edited a reminder for you!
 
-            ID: ${inlineCode(id)}
-            ${updatedFields.join('\n')}
-            `,
+      ID: ${inlineCode(id)}
+      ${updatedFields.join('\n')}
+      `,
       ephemeral: true
     }
   }

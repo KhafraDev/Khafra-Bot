@@ -47,8 +47,8 @@ export class kSubCommand extends InteractionSubCommand {
       }
     } else if (
       interaction.guild === null ||
-            interaction.guild.members.me === null ||
-            !channel.permissionsFor(interaction.guild.members.me).has(perms)
+      interaction.guild.members.me === null ||
+      !channel.permissionsFor(interaction.guild.members.me).has(perms)
     ) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
@@ -61,9 +61,9 @@ export class kSubCommand extends InteractionSubCommand {
       color: colors.ok,
       title: 'A giveaway is starting!',
       description: `
-        ${prize.slice(0, 1950)}
-        
-        ${bold('React with 🎉 to enter!')}`,
+      ${prize.slice(0, 1950)}
+
+      ${bold('React with 🎉 to enter!')}`,
       timestamp: endsDate.toISOString(),
       footer: { text: `${winners} winner${plural(winners)}` }
     })
@@ -72,14 +72,7 @@ export class kSubCommand extends InteractionSubCommand {
       embeds: [embed]
     })
 
-    if (sent instanceof Error) {
-      return {
-        content: `❌ An unexpected error occurred trying to send a message in this channel: ${inlineCode(sent.message)}`,
-        ephemeral: true
-      }
-    } else {
-      await sent.react('🎉').catch(logError)
-    }
+    await sent.react('🎉').catch(logError)
 
     const rows = await sql<GiveawayId[]>`
       INSERT INTO kbGiveaways (

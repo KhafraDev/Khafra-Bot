@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.String,
               name: 'time',
-              description: 'When the bot should remind you (ie. "1h 30m" "2w 3d").',
+              description: 'When the bot should remind you (ie. "1h 30m" "2w 3d", "December 3rd").',
               required: true
             },
             {
