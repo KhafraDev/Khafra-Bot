@@ -11,9 +11,6 @@ conversions.week = conversions.weeks = conversions.wk = conversions.w = conversi
 conversions.month = conversions.months = conversions.d * (365.25 / 12)
 conversions.year = conversions.years = conversions.yr = conversions.y = conversions.d * 365.25
 
-const monthsUnion = 'January|February|March|April|May|June|July|August|September|October|November|December'
-const dateRegex = new RegExp(`^(?<m>${monthsUnion})\\s+(?<d>\\d{1,2})(st|th|nd)?,?(\\s+(?<y>\\d{4})?)?$`)
-
 /**
  * parse human readable string to ms
  *
@@ -30,22 +27,6 @@ export const parseStrToMs = (str: string): number => {
     }
 
     return timestamp - Date.now()
-  }
-
-  const match = dateRegex.exec(str)
-
-  if (match) {
-    const { m, d, y } = match.groups!
-    const year = Number(y || new Date().getFullYear())
-    const date = new Date(`${m} ${d} ${year}`)
-
-    if (!y) {
-      if (date.getTime() - Date.now() < 0) {
-        date.setFullYear(year + 1)
-      }
-    }
-
-    return date.getTime() - Date.now()
   }
 
   const date = new Date(str)

@@ -41,8 +41,8 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.String,
               name: 'ends',
               description:
-                'When to remind you ("1h 30m", "December 3", or timestamp). ' +
-                'https://tiny.one/d6j7f328 for timestamps.',
+                'When the giveaway ends ("1h 30m", "December 3 2022", or timestamp). ' +
+                'tiny.one/d6j7f328 for timestamps',
               required: true
             },
             {

@@ -23,8 +23,8 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.String,
               name: 'time',
               description:
-                'When to remind you ("1h 30m", "December 3", or timestamp). ' +
-                'https://tiny.one/d6j7f328 for timestamps.',
+                'When to remind you ("1h 30m", "December 3 2022", or timestamp). ' +
+                'tiny.one/d6j7f328 for timestamps.',
               required: true
             },
             {
@@ -53,7 +53,9 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.String,
               name: 'time',
-              description: 'When the bot should now remind you (ie. "1h 30m" "2w 3d").'
+              description:
+                'When to remind you ("1h 30m", "December 3 2022", or timestamp). ' +
+                'tiny.one/d6j7f328 for timestamps.'
             },
             {
               type: ApplicationCommandOptionType.Boolean,
