@@ -49,6 +49,9 @@ export class GiveawayTimer extends Timer {
   }
 
   async action (giveaway: Giveaway): Promise<void> {
+    // If the timer is running before the client is logged in.
+    if (!client.user) return
+
     try {
       const guild = await client.guilds.fetch(giveaway.guildid)
       const channel = await guild.channels.fetch(giveaway.channelid)

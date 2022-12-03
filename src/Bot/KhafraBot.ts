@@ -304,10 +304,10 @@ export class KhafraClient extends Client {
     await Promise.all([
       this.loadCommands(),
       this.loadEvents(),
+      this.login(env.TOKEN),
       this.startTimers(),
       this.loadInteractions()
     ])
-    await this.login(env.TOKEN)
     logger.info(`Started in ${((performance.now() - start) / 1000).toFixed(2)} seconds!`)
   })
 }
