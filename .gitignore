@@ -8,6 +8,7 @@ assets/interaction_last_deployed.txt
 assets/Fonts/*
 assets/log*.txt
 package-lock.json
+!test/*.js
 
 # Logs
 logs

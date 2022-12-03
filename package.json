@@ -28,7 +28,6 @@
     "@discordjs/rest": "^1.4.0",
     "@khaf/magik": "^0.0.3",
     "@khaf/qrcode": "^0.0.11",
-    "@khaf/shunting-yard": "^0.0.1",
     "@napi-rs/canvas": "^0.1.30",
     "@sapphire/shapeshift": "^3.7.1",
     "@skyra/gifenc": "^1.0.0",

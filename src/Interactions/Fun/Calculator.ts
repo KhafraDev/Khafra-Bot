@@ -1,5 +1,4 @@
 import { Interactions } from '#khaf/Interaction'
-import { logger } from '#khaf/structures/Logger.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { codeBlock } from '@discordjs/builders'
@@ -8,11 +7,16 @@ import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import { randomUUID } from 'node:crypto'
-import { evaluate } from '@khaf/shunting-yard'
+import { evaluatePostfix, infixToPostfix } from '#khaf/utility/ShuntingYard.js'
 
 const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
+
+const isNumber = (char: string): boolean => {
+  const code = char.charCodeAt(0)
+  return code >= 48 && code <= 57
+}
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -81,7 +85,7 @@ export class kInteraction extends Interactions {
         i.customId.endsWith(id)
     })
 
-    let equation = ''
+    const equation: string[] = []
 
     for await (const [i] of collector) {
       const token = i.customId.startsWith('-') ? '-' : i.customId.split('-')[0]
@@ -91,13 +95,21 @@ export class kInteraction extends Interactions {
         break
       } else {
         if (token === 'clear') {
-          equation = ''
+          equation.length = 0
+        } else if (isNumber(token)) {
+          if (equation.length === 0) {
+            equation.push(token)
+          } else if (isNumber(equation[equation.length - 1])) {
+            equation[equation.length - 1] += token
+          } else {
+            equation.push(token)
+          }
         } else {
-          equation += token
+          equation.push(token)
         }
 
         await i.update({
-          embeds: [makeEmbed(equation)]
+          embeds: [makeEmbed(equation.join(' '))]
         })
       }
     }
@@ -108,22 +120,17 @@ export class kInteraction extends Interactions {
       if (i.replied) return
 
       if (collector.endReason === 'calculate') {
-        let eq: number | 'Invalid input!' = 'Invalid input!'
+        const postfix = infixToPostfix(equation.join(' '))
+        const value = evaluatePostfix(postfix)
 
-        try {
-          eq = evaluate(equation)
-        } catch (e) {
-          logger.error(e, 'calculator parsing error')
-        }
-
-        if (eq === 'Invalid input!') {
+        if (Number.isNaN(value)) {
           await i.update({
-            embeds: [makeEmbed(eq)],
+            embeds: [makeEmbed('Invalid input!')],
             components: disableAll({ components: rows })
           })
         } else {
           await i.update({
-            embeds: [makeEmbed(`${equation} = ${eq}`)],
+            embeds: [makeEmbed(`${equation.join(' ')} = ${value}`)],
             components: disableAll({ components: rows })
           })
         }

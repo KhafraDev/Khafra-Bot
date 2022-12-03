@@ -58,7 +58,6 @@ export class GiveawayTimer extends Timer {
 
       if (!hasPerms(channel, guild.members.me, PermissionFlagsBits.ReadMessageHistory)) return
       if (!isText(channel)) return
-      if (!client.user) return
 
       const message = await channel.messages.fetch(giveaway.messageid)
       const reactions = message.reactions.cache
