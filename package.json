@@ -59,7 +59,8 @@
     "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --disable-proto=throw build/src/index",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "npm run dev:build && node --test"
   },
   "repository": {
     "type": "git",
