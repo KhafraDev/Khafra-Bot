@@ -18,8 +18,19 @@ export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
 
   async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
     // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
-    const premiumRole = oldMember.roles.premiumSubscriberRole
-    if (!premiumRole) return
+    let premiumRole =
+      oldMember.roles.premiumSubscriberRole ??
+      newMember.roles.premiumSubscriberRole
+
+    if (!premiumRole) {
+      const roles = await newMember.guild.roles.fetch(undefined, { force: true })
+
+      premiumRole = roles.find((role) => role.tags?.premiumSubscriberRole) ?? null
+
+      if (!premiumRole) {
+        return
+      }
+    }
 
     const oldHas = oldMember.roles.cache.has(premiumRole.id)
     const newHas = newMember.roles.cache.has(premiumRole.id)
