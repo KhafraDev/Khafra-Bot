@@ -1,4 +1,4 @@
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Events, type Message } from 'discord.js'
 import { env } from 'node:process'
@@ -114,7 +114,7 @@ const Imgur = {
 
 const albumRegex = /https?:\/\/(www\.)?imgur.com\/a\/(?<hash>[A-z0-9]{1,})/
 
-export class kEvent extends Event<typeof Events.MessageCreate> {
+export class kEvent implements Event {
   name = Events.MessageCreate as const
 
   async init (message: Message): Promise<void> {

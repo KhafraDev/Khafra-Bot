@@ -7,9 +7,7 @@ type EventArguments<T> = T extends keyof ClientEvents
     ? RestEvents[T]
     : never
 
-export abstract class Event<
-  T extends keyof ClientEvents | keyof RestEvents = keyof ClientEvents | keyof RestEvents
-> {
-  abstract name: `${T}`
-  abstract init (...args: EventArguments<T>): Promise<void> | void
+export interface Event<T = keyof ClientEvents | keyof RestEvents> {
+  name: T
+  init (...args: EventArguments<T>): Promise<void> | void
 }

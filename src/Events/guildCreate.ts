@@ -1,9 +1,9 @@
 import { sql } from '#khaf/database/Postgres.js'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { loggerUtility } from '#khaf/structures/Logger.js'
 import { Events, type Guild } from 'discord.js'
 
-export class kEvent extends Event<typeof Events.GuildCreate> {
+export class kEvent implements Event {
   name = Events.GuildCreate as const
 
   async init (guild: Guild): Promise<void> {

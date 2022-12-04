@@ -1,5 +1,5 @@
 import { sql } from '#khaf/database/Postgres.js'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
@@ -24,7 +24,7 @@ const perms =
   PermissionFlagsBits.SendMessages |
   PermissionFlagsBits.EmbedLinks
 
-export class kEvent extends Event<typeof Events.GuildBanRemove> {
+export class kEvent implements Event {
   name = Events.GuildBanRemove as const
 
   async init ({ guild, user }: GuildBan): Promise<void> {

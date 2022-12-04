@@ -1,4 +1,4 @@
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { logger } from '#khaf/structures/Logger.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
@@ -9,7 +9,7 @@ import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
-export class kEvent extends Event<typeof Events.ClientReady> {
+export class kEvent implements Event {
   name = Events.ClientReady as const
 
   async init (client: Client<true>): Promise<void> {

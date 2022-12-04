@@ -1,6 +1,6 @@
 import { KhafraClient } from '#khaf/Bot'
 import { Command } from '#khaf/Command'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
@@ -33,7 +33,7 @@ const disabled = typeof processArgs.disabled === 'string'
   ? processArgs.disabled.split(',').map(c => c.toLowerCase())
   : []
 
-export class kEvent extends Event<typeof Events.InteractionCreate> {
+export class kEvent implements Event {
   name = Events.InteractionCreate as const
 
   async init (interaction: Interaction): Promise<void> {

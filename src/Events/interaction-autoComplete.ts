@@ -1,8 +1,8 @@
 import { KhafraClient } from '#khaf/Bot'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { Events, InteractionType, type Interaction } from 'discord.js'
 
-export class kEvent extends Event<typeof Events.InteractionCreate> {
+export class kEvent implements Event {
   name = Events.InteractionCreate as const
 
   async init (interaction: Interaction): Promise<void> {

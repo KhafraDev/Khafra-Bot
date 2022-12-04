@@ -1,7 +1,7 @@
 import { KhafraClient } from '#khaf/Bot'
 import { Command, type Arguments } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
@@ -22,7 +22,7 @@ const defaultSettings = {
   welcome_channel: null
 }
 
-export class kEvent extends Event<typeof Events.MessageCreate> {
+export class kEvent implements Event {
   name = Events.MessageCreate as const
 
   async init (message: Message): Promise<void> {

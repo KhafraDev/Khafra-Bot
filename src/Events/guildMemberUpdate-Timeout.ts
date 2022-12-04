@@ -1,5 +1,5 @@
 import { sql } from '#khaf/database/Postgres.js'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
@@ -23,7 +23,7 @@ const basic =
   PermissionFlagsBits.SendMessages |
   PermissionFlagsBits.EmbedLinks
 
-export class kEvent extends Event<typeof Events.GuildMemberUpdate> {
+export class kEvent implements Event {
   name = Events.GuildMemberUpdate as const
 
   async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {

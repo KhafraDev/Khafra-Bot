@@ -3,7 +3,7 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
 import { sql } from '#khaf/database/Postgres.js'
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
@@ -40,7 +40,7 @@ const disabled = typeof processArgs.disabled === 'string'
   ? processArgs.disabled.split(',').map(c => c.toLowerCase())
   : []
 
-export class kEvent extends Event<typeof Events.MessageCreate> {
+export class kEvent implements Event {
   name = Events.MessageCreate as const
 
   async init (message: Message): Promise<void> {

@@ -1,4 +1,4 @@
-import { Event } from '#khaf/Event'
+import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
@@ -6,7 +6,7 @@ import { hierarchy } from '#khaf/utility/Permissions.js'
 import { InteractionType, type APIEmbed } from 'discord-api-types/v10'
 import { Events, type Interaction, type Role } from 'discord.js'
 
-export class kEvent extends Event<typeof Events.InteractionCreate> {
+export class kEvent implements Event {
   name = Events.InteractionCreate as const
 
   async init (interaction: Interaction): Promise<void> {
