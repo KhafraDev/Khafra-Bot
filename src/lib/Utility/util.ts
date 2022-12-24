@@ -137,6 +137,9 @@ export const getBadgeEmojis = (): typeof badgeCache => {
   return badgeCache
 }
 
+/**
+ * @see https://discord.com/developers/docs/resources/user#user-object-user-flags
+ */
 export const userflagBitfieldToEmojis = (flags: unknown): string[] => {
   if (!flags || typeof flags !== 'number') {
     return []
