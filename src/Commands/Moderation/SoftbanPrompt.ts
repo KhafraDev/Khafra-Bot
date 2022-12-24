@@ -4,14 +4,14 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { parseStrToMs } from '#khaf/utility/ms.js'
+import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { plural } from '#khaf/utility/String.js'
 import { bold } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const schema = s.number.greaterThanOrEqual(0).greaterThanOrEqual(7)
+const schema = s.number.int.greaterThanOrEqual(0).greaterThanOrEqual(7)
 
 export class kCommand extends Command {
   constructor () {
@@ -87,7 +87,7 @@ export class kCommand extends Command {
 
     try {
       await message.guild.members.ban(user, {
-        deleteMessageDays: schema.is(clear) ? clear : 7,
+        deleteMessageSeconds: schema.is(clear) ? clear * days(0.001) : days(0.007),
         reason
       })
       await message.guild.members.unban(user, `Khafra-Bot: softban by ${message.author.tag} (${message.author.id})`)

@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { parseStrToMs } from '#khaf/utility/ms.js'
+import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
@@ -12,7 +12,7 @@ import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { parseArgs } from 'node:util'
 
-const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(7)
+const schema = s.number.int.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
   constructor () {
@@ -113,7 +113,7 @@ export class kCommand extends Command {
 
     if (cli.dry !== true) {
       const [err] = await dontThrow(message.guild.members.ban(user, {
-        deleteMessageDays: clear,
+        deleteMessageSeconds: clear * days(0.001),
         reason: reason
       }))
 

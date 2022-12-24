@@ -4,14 +4,14 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { parseStrToMs } from '#khaf/utility/ms.js'
+import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(7)
+const schema = s.number.int.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
   constructor () {
@@ -79,7 +79,7 @@ export class kCommand extends Command {
     await button.deferUpdate()
 
     const [banError] = await dontThrow(message.guild.members.ban(user, {
-      deleteMessageDays: schema.is(clear) ? clear : 7,
+      deleteMessageSeconds: schema.is(clear) ? clear * days(0.001) : days(0.007),
       reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
     }))
 

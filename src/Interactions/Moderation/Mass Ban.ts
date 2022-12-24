@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
+import { days } from '#khaf/utility/ms.js'
 import { toString } from '#khaf/utility/Permissions.js'
 import type {
   APIApplicationCommandOption,
@@ -12,6 +13,7 @@ import type { ChatInputCommandInteraction, GuildMemberManager, InteractionReplyO
 import { setTimeout } from 'node:timers/promises'
 
 const perms = PermissionFlagsBits.BanMembers
+const deleteMessageSeconds = days(0.007) // 7 days in seconds
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -22,18 +24,11 @@ export class kInteraction extends Interactions {
       dm_permission: false,
       options: [
         {
-          type: ApplicationCommandOptionType.Integer,
-          name: 'days',
-          description: 'Days of messages to clear (default is 7).',
-          min_value: 0,
-          max_value: 7
-        },
-        {
           type: ApplicationCommandOptionType.String,
           name: 'reason',
           description: 'The reason you are banning the members for.'
         },
-        ...Array.from({ length: 18 }, (_, i): APIApplicationCommandOption => ({
+        ...Array.from({ length: 19 }, (_, i): APIApplicationCommandOption => ({
           type: ApplicationCommandOptionType.User,
           name: `member${i + 1}`,
           description: 'Member to ban.'
@@ -54,8 +49,8 @@ export class kInteraction extends Interactions {
       }
     } else if (
       interaction.guild === null ||
-            !interaction.guild.members.me ||
-            !interaction.guild.members.me.permissions.has(perms)
+      !interaction.guild.members.me ||
+      !interaction.guild.members.me.permissions.has(perms)
     ) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
@@ -63,10 +58,9 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const deleteMessageDays = interaction.options.getInteger('days') ?? 7
     const reason =
-            interaction.options.getString('reason') ??
-            `Requested by ${interaction.user.tag} (${interaction.user.id})`
+      interaction.options.getString('reason') ??
+      `Requested by ${interaction.user.tag} (${interaction.user.id})`
 
     const users = new Map<string, ReturnType<GuildMemberManager['ban']>>()
 
@@ -90,7 +84,12 @@ export class kInteraction extends Interactions {
           }
         }
 
-        users.set(userOption.id, interaction.guild.members.ban(userOption, { reason, deleteMessageDays }))
+        users.set(
+          userOption.id,
+          interaction.guild.members.ban(userOption, {
+            reason, deleteMessageSeconds
+          })
+        )
       }
     }
 
@@ -102,9 +101,9 @@ export class kInteraction extends Interactions {
     for (const [id, user] of users.entries()) {
       try {
         const r = await user
-        description += `• - Successfully banned ${r}\n`
+        description += `• Successfully banned ${r}\n`
       } catch (e) {
-        description += `⨯ - Failed to ban ${id}\n`
+        description += `⨯ Failed to ban ${id}\n`
       } finally {
         // The less users there are, the less delay
         // we need as there's less chance of a ratelimit.
