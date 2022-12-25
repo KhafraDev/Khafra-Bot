@@ -2,14 +2,19 @@ import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes } from '#khaf/utility/ms.js'
-import { formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.js'
-import { bold, inlineCode, italic, time } from '@discordjs/builders'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { formatApplicationPresence, formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.js'
+import { bold, inlineCode, italic, quote, time } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   InteractionType,
+  type APIApplication,
+  type APIEmbed,
+  type APIEmbedField,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
+  ApplicationFlagsBitField,
   GuildMember,
   InteractionCollector, Role,
   SnowflakeUtil,
@@ -106,26 +111,73 @@ export class kInteraction extends Interactions {
         footer: { text: 'For general user info mention a user!' }
       })
 
-      const id = randomUUID()
-      const makeOptions = (): InteractionReplyOptions & { fetchReply: true } => ({
-        embeds: [
-          currentPage === 'user' ? userEmbed : (memberEmbed ?? userEmbed)
-        ],
-        components: [
-          Components.actionRow([
-            Buttons.primary(
-              currentPage === 'user' ? 'Member Info' : 'User Info',
-              id,
-              {
-                disabled: currentPage === 'user' && member === null
-              }
-            )
-          ])
-        ],
-        fetchReply: true
-      })
+      let rpcInfo: APIApplication
+      const uuid = randomUUID()
+      const disabled = currentPage === 'user' && member === null
 
-      const message = await interaction.reply(makeOptions())
+      const makeOptions = (isInfo: boolean): InteractionReplyOptions & { fetchReply: true } => {
+        const components = Components.actionRow([
+          Buttons.primary(
+            currentPage === 'user' ? 'Member Info' : 'User Info',
+            `info-${uuid}`,
+            { disabled }
+          )
+        ])
+
+        if (user.bot) {
+          components.components.push(
+            Buttons.approve('Extended Bot Info', `extended-${uuid}`)
+          )
+        }
+
+        const embeds: APIEmbed[] = []
+
+        if (isInfo) {
+          embeds.push(currentPage === 'user' ? userEmbed : (memberEmbed ?? userEmbed))
+        } else {
+          const flags = new ApplicationFlagsBitField(rpcInfo.flags).toArray()
+            .map(flag => `• Bot ${formatApplicationPresence(flag)}`)
+            .join('\n')
+
+          embeds.push(
+            Embed.json({
+              color: colors.ok,
+              author: {
+                name: rpcInfo.name,
+                icon_url: user.displayAvatarURL()
+              },
+              thumbnail: rpcInfo.icon
+                ? {
+                  url: `https://cdn.discordapp.com/app-icons/${rpcInfo.id}/${rpcInfo.icon}.png`
+                }
+                : undefined,
+              description: stripIndents`
+                ${quote(rpcInfo.description)}
+
+                • Bot is ${bold(rpcInfo.bot_public ? 'public' : 'private')}
+                • Bot does${bold(rpcInfo.bot_require_code_grant ? '' : ' not')} require OAuth2 grant
+                ${flags}
+              `,
+              fields: [
+                rpcInfo.privacy_policy_url
+                  ? { name: bold('Privacy Policy'), value: rpcInfo.privacy_policy_url, inline: true }
+                  : undefined,
+                rpcInfo.terms_of_service_url
+                  ? { name: bold('Terms of Service'), value: rpcInfo.terms_of_service_url, inline: true }
+                  : undefined
+              ].filter((f) => f !== undefined) as APIEmbedField[]
+            })
+          )
+        }
+
+        return {
+          embeds,
+          components: [components],
+          fetchReply: true
+        }
+      }
+
+      const message = await interaction.reply(makeOptions(true))
 
       const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
         interactionType: InteractionType.MessageComponent,
@@ -135,13 +187,21 @@ export class kInteraction extends Interactions {
         filter: (i) =>
           interaction.user.id === i.user.id &&
           message.id === i.message.id &&
-          i.customId === id
+          i.customId.endsWith(uuid)
       })
 
       for await (const [i] of collector) {
-        currentPage = currentPage === 'user' && memberEmbed ? 'member' : 'user'
+        const isInfo = i.customId.startsWith('info')
 
-        const { embeds, components } = makeOptions()
+        if (isInfo) {
+          currentPage = currentPage === 'user' && memberEmbed ? 'member' : 'user'
+        } else {
+          rpcInfo ??= await interaction.client.rest.get(
+            `/applications/${user.id}/rpc`
+          ) as APIApplication
+        }
+
+        const { embeds, components } = makeOptions(isInfo)
         await i.update({ embeds, components })
       }
 

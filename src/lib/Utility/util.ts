@@ -11,6 +11,7 @@ import {
   MessageType,
   PermissionFlagsBits,
   type APIEmbed,
+  type ApplicationFlags,
   type Snowflake
 } from 'discord-api-types/v10'
 import {
@@ -229,4 +230,29 @@ export const formatMs = (ms: number): string => {
   return Object.keys(durations)
     .map(k => durations[k] > 0 ? `${durations[k]}${k}` : '')
     .join(' ')
+}
+
+export const formatApplicationPresence = (key: keyof typeof ApplicationFlags): string => {
+  switch (key) {
+    case 'GatewayPresence':
+      return 'has Presence Intent'
+    case 'GatewayPresenceLimited':
+      return 'has Presence Intent (limited)'
+    case 'GatewayGuildMembers':
+      return 'has Guild Member Intent'
+    case 'GatewayGuildMembersLimited':
+      return 'has Guild Member Intent (limited)'
+    case 'VerificationPendingGuildLimit':
+      return 'is Pending Verification'
+    case 'Embedded':
+      return 'is Embedded'
+    case 'GatewayMessageContent':
+      return 'has Message Content Intent'
+    case 'GatewayMessageContentLimited':
+      return 'has Message Content Intent (limited)'
+    case 'ApplicationCommandBadge':
+      return 'has Application Command Badge'
+  }
+
+  return 'OK TYPESCRIPT'
 }
