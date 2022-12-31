@@ -92,9 +92,6 @@ export const padEmbedFields = (embed: APIEmbed): APIEmbed => {
 
 export const EmbedUtil = {
   isAPIEmbed (embed: unknown): embed is APIEmbed {
-    return (
-      embed != null &&
-      (embed as { [kIsJSONEmbed]?: boolean })[kIsJSONEmbed] === true
-    )
+    return embed != null && Object.hasOwn(embed, kIsJSONEmbed)
   }
 }
