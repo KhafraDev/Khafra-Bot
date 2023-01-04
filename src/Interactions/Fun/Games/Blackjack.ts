@@ -1,5 +1,4 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { shuffle } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { templates } from '#khaf/utility/Constants/Path.js'
@@ -49,7 +48,7 @@ const gameUtil = {
       }
     }
 
-    return shuffle(cards)
+    return cards.sort(() => 0.5 - Math.random())
   },
   mapCardsToFileNames (cards: Card[]): string[] {
     const names: string[] = []
