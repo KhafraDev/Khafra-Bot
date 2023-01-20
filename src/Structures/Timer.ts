@@ -1,27 +1,28 @@
 import { setTimeout } from 'node:timers/promises'
 
 interface Options {
-    interval: number
+  interval: number
 }
-
-type Generator = AsyncGenerator<number, never>
 
 export abstract class Timer {
   public constructor (public options: Options) {}
 
-    public abstract setInterval (): Promise<unknown>
+  public abstract setInterval (): Promise<unknown>
 
-    public abstract action (...items: unknown[]): Promise<void>
+  public abstract action (...items: unknown[]): Promise<void>
 
-    public yieldEvery (ms: number): { [Symbol.asyncIterator](): Generator } {
-    	let i = 0
-    	return {
-    		async * [Symbol.asyncIterator](): Generator {
-    			while (true) { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
-    				yield i++
-    				await setTimeout(ms)
-    			}
-    		}
-    	}
+  public yieldEvery (ms: number, max = Infinity): {
+    runs: number
+    [Symbol.asyncIterator](): AsyncGenerator<number, void>
+  } {
+    return {
+      runs: 0,
+      async * [Symbol.asyncIterator](): AsyncGenerator<number, void> {
+        while (this.runs < max) {
+          yield this.runs++
+          await setTimeout(ms)
+        }
+      }
     }
+  }
 }
