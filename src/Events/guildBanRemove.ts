@@ -57,7 +57,8 @@ export class kEvent implements Event {
                 type: 'unban',
                 targetId: user.id,
                 reason: entry.reason!,
-                staffId: entry.executor.id
+                staffId: entry.executor.id,
+                guildId: guild.id
               } satisfies Case
 
               await sql`

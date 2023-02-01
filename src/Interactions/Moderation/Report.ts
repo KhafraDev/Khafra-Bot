@@ -244,9 +244,9 @@ export class kInteraction extends Interactions {
       } satisfies Omit<Report, 'id'>
 
       const [{ id }] = await sql<{ id: number }[]>`
-        INSERT INTO "kbReport" ${
-  sql(report as Record<string, unknown>, ...Object.keys(report))
-} RETURNING "kbReport".id
+        INSERT INTO "kbReport"
+        ${sql(report as Record<string, unknown>, ...Object.keys(report))}
+        RETURNING "kbReport".id
       `
 
       sqlId = id
@@ -269,7 +269,7 @@ export class kInteraction extends Interactions {
           color: colors.ok,
           description: stripIndents`
           ${bold('Reason:')} ${reason}
-          
+
           ${bold('Attachments:')}
           ${attachments.join('\n')}
           `,

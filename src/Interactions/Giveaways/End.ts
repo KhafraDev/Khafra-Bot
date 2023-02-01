@@ -39,7 +39,7 @@ export class kSubCommand extends InteractionSubCommand {
           kbGiveaways."didEnd" = FALSE
         LIMIT 1
       )
-    
+
       UPDATE kbGiveaways SET
         "didEnd" = TRUE
       FROM giveaway

@@ -27,6 +27,7 @@ export interface Case {
   reason: string
   staffId: string
   associatedTime?: Date | null
+  guildId: string
 }
 
 export const handleReport = async (interaction: ButtonInteraction<'raw' | 'cached'>): Promise<void> => {
