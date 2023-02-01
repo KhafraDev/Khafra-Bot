@@ -1,12 +1,13 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
+import type { Case } from '#khaf/functions/case/reports.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits, type APIEmbedAuthor } from 'discord-api-types/v10'
-import { Events, SnowflakeUtil, type GuildBan, type User } from 'discord.js'
+import { Events, type GuildBan, type User } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
 type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
@@ -48,9 +49,23 @@ export class kEvent implements Event {
         })
 
         for (const entry of logs.entries.values()) {
-          const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
+          const diff = Math.abs(start - entry.createdTimestamp)
 
           if (diff < threshold) {
+            if (entry.executor && entry.executor.id !== guild.client.user.id) {
+              const _case = {
+                type: 'ban',
+                targetId: user.id,
+                reason: entry.reason!,
+                staffId: entry.executor.id
+              } satisfies Case
+
+              await sql`
+                INSERT INTO "kbCases"
+                ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
+              `
+            }
+
             staff = entry.executor
             reason = entry.reason
             break

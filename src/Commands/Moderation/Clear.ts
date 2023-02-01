@@ -47,7 +47,7 @@ export class kCommand extends Command {
         PermissionFlagsBits.ManageMessages
       )
     } else if (message.deletable) {
-      await dontThrow(message.delete())
+      await message.delete()
     }
 
     const [err] = await dontThrow(channel.bulkDelete(toDelete, true))

@@ -14,8 +14,9 @@ import { once } from '#khaf/utility/Memoize.js'
 import type { RestEvents } from '@discordjs/rest'
 import { Routes, type APIApplicationCommand } from 'discord-api-types/v10'
 import { Client, type ClientEvents } from 'discord.js'
+import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, type Dirent } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { env } from 'node:process'
@@ -40,7 +41,7 @@ const setInteractionIds = (commands: APIApplicationCommand[]): void => {
 
 export class KhafraClient extends Client {
   static Commands = new Map<string, Command>()
-  static Events = new Map<keyof ClientEvents | keyof RestEvents, Event[]>()
+  static Events = new Map<keyof ClientEvents | keyof RestEvents, Event>()
   static Interactions = {
     Commands: new Map<string, Interactions>(),
     Subcommands: new Map<string, InteractionSubCommand>(),
@@ -50,22 +51,23 @@ export class KhafraClient extends Client {
   static Timers = new Map<string, Timer>()
 
   /**
-   * Walk up a directory tree and return the path for every file in the directory and sub-directories.
+   * Walk up a directory and return the path for every file in the directory and sub-directories.
    */
   static walk (dir: string, fn: (path: string) => boolean): string[] {
-    const ini = new Set<string>(readdirSync(dir))
+    const ini = new Set<Dirent>(readdirSync(dir, { withFileTypes: true }))
     const files = new Set<string>()
 
     while (ini.size !== 0) {
       for (const d of ini) {
-        const path = resolve(dir, d)
+        const path = resolve(dir, d.name)
         ini.delete(d) // remove from set
-        const stats = statSync(path)
 
-        if (stats.isDirectory()) {
-          for (const f of readdirSync(path))
-            ini.add(resolve(path, f))
-        } else if (stats.isFile() && fn(d)) {
+        if (d.isDirectory()) {
+          for (const f of readdirSync(path, { withFileTypes: true })) {
+            f.name = resolve(path, f.name)
+            ini.add(f)
+          }
+        } else if (d.isFile() && fn(d.name)) {
           files.add(path)
         }
       }
@@ -104,9 +106,9 @@ export class KhafraClient extends Client {
         throw fileImport.reason
       } else {
         const kEvent = new fileImport.value.kEvent()
-        const old = KhafraClient.Events.get(kEvent.name) ?? []
+        assert(!KhafraClient.Events.has(kEvent.name))
 
-        KhafraClient.Events.set(kEvent.name, [...old, kEvent])
+        KhafraClient.Events.set(kEvent.name, kEvent)
       }
     }
 

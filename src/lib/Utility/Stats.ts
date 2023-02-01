@@ -36,4 +36,4 @@ export const Stats = {
   })
 }
 
-void Stats.write()
+Stats.write()

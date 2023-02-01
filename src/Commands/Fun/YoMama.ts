@@ -8,8 +8,8 @@ import type { Message } from 'discord.js'
 import { readFileSync } from 'node:fs'
 
 // "jokes"
-const file = readFileSync(assets('yomama.txt'), 'utf-8')
-const jokes = file.split(/\r?\n/g).slice(0, -1) // last line will be empty
+let file: string
+let jokes: string[] | undefined
 
 export class kCommand extends Command {
   constructor () {
@@ -26,6 +26,9 @@ export class kCommand extends Command {
   }
 
   init (message: Message): APIEmbed {
+    file ??= readFileSync(assets('yomama.txt'), 'utf-8')
+    jokes ??= file.split(/\r?\n/g).slice(0, -1)
+
     if (isText(message.channel) && !message.channel.nsfw)
       return Embed.error('🔞 This command only works in NSFW channels.')
 

@@ -39,12 +39,6 @@ export class kInteraction extends Interactions {
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (stickers.length === 0) {
       const res = await mw()
-      if (res === null) {
-        return {
-          content: '❌ The stickers are already loading, please try again in a moment.',
-          ephemeral: true
-        }
-      }
 
       const allStickers = [...res.values()].flatMap(p => [...p.stickers.values()])
       stickers.push(...allStickers)

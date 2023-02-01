@@ -1,5 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
+import type { Case } from '#khaf/functions/case/reports.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
@@ -51,6 +52,20 @@ export class kEvent implements Event {
           const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
 
           if (diff < threshold) {
+            if (entry.executor && entry.executor.id !== guild.client.user.id) {
+              const _case = {
+                type: 'unban',
+                targetId: user.id,
+                reason: entry.reason!,
+                staffId: entry.executor.id
+              } satisfies Case
+
+              await sql`
+                INSERT INTO "kbCases"
+                ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
+              `
+            }
+
             staff = entry.executor
             reason = entry.reason
             break

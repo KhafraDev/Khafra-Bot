@@ -23,7 +23,7 @@ export const ImageUtil = {
         i = text.length;
         ctx.measureText(text.substring(0, i)).width > maxWidth;
         i--
-      ) {}
+      );
 
       result = text.substring(0, i)
 
@@ -32,7 +32,7 @@ export const ImageUtil = {
           j = 0;
           result.includes(' ', j);
           j = result.indexOf(' ', j) + 1
-        ) {}
+        );
       }
 
       lines.push(result.substring(0, j || result.length))
@@ -41,24 +41,6 @@ export const ImageUtil = {
     }
 
     return lines
-  },
-
-  /**
-   * Returns text up to maxWidth. Everything else if cut off.
-   */
-  maxTextLength (
-    text: string,
-    maxWidth: number,
-    ctx: SKRSContext2D
-  ): string {
-    const split = [...text]
-    let newText = ''
-
-    while (ctx.measureText(newText + split[0]).width < maxWidth && split.length !== 0) {
-      newText += split.shift()
-    }
-
-    return newText
   },
 
   /**

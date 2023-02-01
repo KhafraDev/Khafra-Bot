@@ -3,7 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { type Giveaway } from '#khaf/types/KhafraBot.js'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { days, parseStrToMs, seconds } from '#khaf/utility/ms.js'
+import { parseStrToMs, seconds, weeks } from '#khaf/utility/ms.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
@@ -14,12 +14,12 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel,
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
-const schema = s.number.greaterThanOrEqual(seconds(60)).lessThanOrEqual(days(30))
+const schema = s.number.greaterThanOrEqual(seconds(60)).lessThanOrEqual(weeks(52))
 
 const perms =
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.EmbedLinks
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {

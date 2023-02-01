@@ -1,8 +1,8 @@
-import { existsSync, readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { cwd, env } from 'node:process'
+const { existsSync, readFileSync } = require('node:fs')
+const { join } = require('node:path')
+const { cwd, env } = require('node:process')
 
-const propertyDescriptors: PropertyDescriptor = {
+const propertyDescriptors = {
   writable: true,
   configurable: true,
   enumerable: true

@@ -47,11 +47,7 @@ export class kCommand extends Command {
   }
 
   async init (): Promise<APIEmbed> {
-    const state = await cache()
-
-    if (state === null) {
-      return Embed.error('Try again in a minute!')
-    }
+    await cache()
 
     if (rss.results.size === 0) {
       return Embed.error('An unexpected error occurred!')

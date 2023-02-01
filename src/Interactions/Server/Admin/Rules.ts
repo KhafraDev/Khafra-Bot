@@ -125,8 +125,8 @@ export class kInteraction extends Interactions {
       }
     } else if (
       interaction.guild === null ||
-            !interaction.guild.members.me ||
-            !interaction.guild.members.me.permissions.has(basic)
+      !interaction.guild.members.me ||
+      !interaction.guild.members.me.permissions.has(basic)
     ) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite me with normal permissions!',

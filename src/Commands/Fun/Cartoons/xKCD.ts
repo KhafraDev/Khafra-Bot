@@ -14,7 +14,7 @@ interface IxKCD {
 }
 
 const rss = new RSSReader<IxKCD>()
-const cache = once(async () => rss.cache('https://xkcd.com/rss.xml'))
+const cache = once(() => rss.cache('https://xkcd.com/rss.xml'))
 
 export class kCommand extends Command {
   constructor () {
@@ -32,11 +32,7 @@ export class kCommand extends Command {
   }
 
   async init (): Promise<APIEmbed> {
-    const state = await cache()
-
-    if (state === null) {
-      return Embed.error('Try again in a minute!')
-    }
+    await cache()
 
     const values = Array.from(rss.results)
     const comic = values[Math.floor(Math.random() * values.length)]

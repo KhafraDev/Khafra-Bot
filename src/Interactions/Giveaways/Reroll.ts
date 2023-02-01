@@ -54,7 +54,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     if (
       channel === null ||
-            !DiscordUtil.isTextBased(channel)
+      !DiscordUtil.isTextBased(channel)
     ) {
       return {
         content: '❌ I couldn\'t find the channel.',
@@ -68,11 +68,11 @@ export class kSubCommand extends InteractionSubCommand {
 
     return {
       content: stripIndents`
-            ✅ Re-rolled the giveaway in ${channel} if it was possible.
+      ✅ Re-rolled the giveaway in ${channel} if it was possible.
 
-            • ${winners} winner${plural(winners)}
-            • Ends ${time(enddate)}
-            • ID ${inlineCode(id)}`
+      • ${winners} winner${plural(winners)}
+      • Ends ${time(enddate)}
+      • ID ${inlineCode(id)}`
     }
   }
 }

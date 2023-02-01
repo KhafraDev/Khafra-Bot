@@ -48,10 +48,6 @@ export class kCommand extends Command {
     const cache = await parseEmojiList()
     const unicodeEmoji = parse(content, { assetType: 'png' })
 
-    if (cache === null) {
-      return Embed.error('❌ Emojis are currently being cached, please wait a minute!')
-    }
-
     if (unicodeEmoji.length !== 0) {
       const codePoints = toCodePoints(unicodeEmoji[0].text)
       const key = codePoints.join(' ').toUpperCase()

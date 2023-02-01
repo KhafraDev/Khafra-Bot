@@ -47,8 +47,8 @@ export class kInteraction extends Interactions {
       }
     } else if (
       interaction.guild === null ||
-            !interaction.guild.members.me ||
-            !interaction.guild.members.me.permissions.has(perms)
+      !interaction.guild.members.me ||
+      !interaction.guild.members.me.permissions.has(perms)
     ) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
@@ -58,31 +58,36 @@ export class kInteraction extends Interactions {
 
     await interaction.deferReply()
 
-    let banned = ''
+    let banned = 0
     const username = interaction.options.getString('username', true)
     const members = await interaction.guild.members.fetch({
       query: username,
       limit: 250
     })
 
+    const embed = Embed.json({
+      color: colors.ok,
+      description: ''
+    })
+
     for (const member of members.values()) {
       if (member.bannable) {
         await member.ban()
-        banned += `${member} (${member.user.tag})\n`
+        embed.description += `${member} (${member.user.tag})\n`
+        banned++
+      }
+    }
+
+    embed.title = `Purged ${username} (${banned} member(s))`
+
+    if (members.size > 250) {
+      embed.footer = {
+        text: 'There may be more members with this username, it is recommended to run it again.'
       }
     }
 
     return {
-      embeds: [
-        Embed.json({
-          color: colors.ok,
-          description: banned,
-          title: `Purged ${username} (${banned.split('\n').length} members)`,
-          footer: {
-            text: 'There may more more members with this username, it is recommended to run it again.'
-          }
-        })
-      ]
+      embeds: [embed]
     }
   }
 }

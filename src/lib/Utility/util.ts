@@ -256,3 +256,19 @@ export const formatApplicationPresence = (key: keyof typeof ApplicationFlags): s
 
   return 'OK TYPESCRIPT'
 }
+
+export const createDeferredPromise = <T>(): {
+  promise: Promise<T>
+  resolve: (v: T) => void
+  reject: (error?: Error) => void
+} => {
+  let resolve!: (v: T) => void
+  let reject!: (error?: Error) => void
+
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+
+  return { promise, resolve, reject }
+}

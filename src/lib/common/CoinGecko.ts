@@ -80,7 +80,7 @@ export const CoinGecko = {
   }),
 
   async get (query: string): Promise<InferType<typeof schema> | null> {
-    const list = await CoinGecko.list() ?? []
+    const list = await CoinGecko.list()
 
     let cryptoId = ''
     const q = query.toLowerCase()

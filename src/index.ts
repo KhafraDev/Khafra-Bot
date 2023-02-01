@@ -1,9 +1,9 @@
 import '#khaf/image/ImageFonts.js'
-import '#khaf/utility/load.env.js'
 import '#khaf/utility/Rejections.js'
 
 import { KhafraClient } from '#khaf/Bot'
 import type { Event } from '#khaf/Event'
+import { logger } from '#khaf/Logger'
 import { RESTEvents, type RestEvents } from '@discordjs/rest'
 import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
 import { Events, Options, Partials, type ClientEvents } from 'discord.js'
@@ -11,13 +11,15 @@ import { Events, Options, Partials, type ClientEvents } from 'discord.js'
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
   name: T
 ): (...args: Parameters<Event['init']>) => void => {
-  let events: Event[]
+  let events: Event
 
-  return (...args: Parameters<typeof events[number]['init']>): void => {
-    events ??= KhafraClient.Events.get(name) ?? []
+  return async (...args: Parameters<typeof events['init']>): Promise<void> => {
+    events ??= KhafraClient.Events.get(name)!
 
-    for (const event of events) {
-      void event.init(...args)
+    try {
+      await events.init(...args)
+    } catch (e) {
+      logger.error(e, `error in ${name} event`)
     }
   }
 }

@@ -20,7 +20,8 @@
     "#khaf/Timer": "./src/Structures/Timer.js",
     "#khaf/Images": "./src/Images/*",
     "#khaf/structures/*": "./src/Structures/*",
-    "#khaf/image/*": "./src/lib/Image/*"
+    "#khaf/image/*": "./src/lib/Image/*",
+    "#khaf/functions/*": "./src/functions/*"
   },
   "dependencies": {
     "@discordjs/builders": "^1.4.0",
@@ -54,8 +55,8 @@
     "dev:watch": "npx -p typescript tsc --watch",
     "dev:build": "node scripts/build && npx tsc",
     "prod:build": "npx tsc",
-    "dev:run": "node --enable-source-maps --disable-proto=throw build/src/index --dev",
-    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --disable-proto=throw build/src/index",
+    "dev:run": "node --enable-source-maps --disable-proto=throw -r ./scripts/env.cjs build/src/index --dev",
+    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --disable-proto=throw -r ./scripts/env.cjs build/src/index",
     "lint": "npx eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",

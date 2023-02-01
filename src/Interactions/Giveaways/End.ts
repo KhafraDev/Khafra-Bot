@@ -17,7 +17,7 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    if (interaction.guild === null) {
+    if (!interaction.inGuild()) {
       return {
         content: '❌ Unable to use the command.',
         ephemeral: true
@@ -30,13 +30,21 @@ export class kSubCommand extends InteractionSubCommand {
       : sql`kbGiveaways.prize LIKE ${`%${idOrText}%`}`
 
     const [giveaway] = await sql<[Giveaway?]>`
-      SELECT * FROM kbGiveaways
-      WHERE
+      WITH giveaway AS (
+        SELECT kbGiveaways.id FROM kbGiveaways
+        WHERE
           ${where} AND
-          kbGiveaways.guildid = ${interaction.guild.id}::text AND
+          kbGiveaways.guildid = ${interaction.guildId}::text AND
           kbGiveaways.initiator = ${interaction.user.id}::text AND
           kbGiveaways."didEnd" = FALSE
-      LIMIT 1;
+        LIMIT 1
+      )
+    
+      UPDATE kbGiveaways SET
+        "didEnd" = TRUE
+      FROM giveaway
+      WHERE kbGiveaways.id = giveaway.id
+      RETURNING *;
     `
 
     if (!giveaway) {
@@ -47,12 +55,6 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const { channelid, guildid, messageid, id } = giveaway
-
-    await sql`
-			UPDATE kbGiveaways SET
-				"didEnd" = TRUE
-			WHERE kbGiveaways.id = ${id}::uuid
-		`
 
     const timer = KhafraClient.Timers.get('GiveawayTimer')!
     await timer.action(giveaway) // run giveaway

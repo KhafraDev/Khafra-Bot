@@ -34,7 +34,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Channel,
           name: 'channel',
-          description: 'The channel to delete the messages from (defaults to current channel).',
+          description: 'The channel to delete the messages from (defaults to the current channel).',
           channel_types: [
             ChannelType.GuildText,
             ChannelType.GuildAnnouncement,
@@ -59,8 +59,8 @@ export class kInteraction extends Interactions {
       }
     } else if (
       interaction.guild === null ||
-            !interaction.guild.members.me ||
-            !interaction.guild.members.me.permissions.has(defaultPerms)
+      !interaction.guild.members.me ||
+      !interaction.guild.members.me.permissions.has(defaultPerms)
     ) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',

@@ -61,8 +61,8 @@ export class kInteraction extends Interactions {
       }
     } else if (
       interaction.guild === null ||
-            !interaction.guild.members.me ||
-            !interaction.guild.members.me.permissions.has(defaultPerms)
+      !interaction.guild.members.me ||
+      !interaction.guild.members.me.permissions.has(defaultPerms)
     ) {
       return {
         content:

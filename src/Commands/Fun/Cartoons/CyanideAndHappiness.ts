@@ -19,7 +19,7 @@ interface ICyanideAndHappiness {
 const rss = new RSSReader<ICyanideAndHappiness>()
 // https://github.com/daniellowtw/explosm-rss
 // does the scraping for us, so might as well use until it's no longer available
-const cache = once(async () => rss.cache('https://explosm-1311.appspot.com/'))
+const cache = once(() => rss.cache('https://explosm-1311.appspot.com/'))
 
 export class kCommand extends Command {
   constructor () {
@@ -38,11 +38,7 @@ export class kCommand extends Command {
   }
 
   async init (message: Message): Promise<APIEmbed> {
-    const state = await cache()
-
-    if (state === null) {
-      return Embed.error('Try again in a minute!')
-    }
+    await cache()
 
     if (isText(message.channel) && !message.channel.nsfw) {
       return Embed.error('Channel isn\'t marked as NSFW!')
@@ -50,12 +46,13 @@ export class kCommand extends Command {
 
     const values = Array.from(rss.results)
     const comic = values[Math.floor(Math.random() * values.length)]
+    const image = /src="(.*?)"/.exec(comic.description)![1]
 
     return Embed.json({
       color: colors.ok,
       title: decodeXML(comic.title),
       url: comic.link,
-      image: { url: `https:${/src="(.*?)"/.exec(comic.description)?.[1]}` }
+      image: { url: image.startsWith('http') ? image : `https://${image}` }
     })
   }
 }

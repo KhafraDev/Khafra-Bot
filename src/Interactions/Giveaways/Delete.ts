@@ -2,7 +2,8 @@ import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Giveaway } from '#khaf/types/KhafraBot.js'
 import { inlineCode } from '@discordjs/builders'
-import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { ChannelType } from 'discord-api-types/v10'
 
 type GiveawayRow = Pick<Giveaway, 'messageid' | 'channelid' | 'id'>
 
@@ -49,26 +50,25 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const [{ channelid, messageid, id: uuid }] = rows
+    const channel = await interaction.guild.channels.fetch(channelid)
 
-    try {
-      const channel = await interaction.guild.channels.fetch(channelid) as TextChannel | null
-
-      if (channel === null) {
-        return {
-          content: '❌ Channel has been deleted or I do not have permission to see it.',
-          ephemeral: true
-        }
+    if (channel?.type !== ChannelType.GuildText) {
+      return {
+        content: '❌ Channel has been deleted or I do not have permission to see it.',
+        ephemeral: true
       }
+    }
 
-      const giveawayMessage = await channel.messages.fetch(messageid)
+    const giveawayMessage = await channel.messages.fetch(messageid)
 
-      await giveawayMessage.delete()
-    } catch {
+    if (!giveawayMessage.deletable) {
       return {
         content: '✅ The giveaway has been stopped, but I could not delete the giveaway message!',
         ephemeral: true
       }
     }
+
+    await giveawayMessage.delete()
 
     return {
       content: `✅ Giveaway ${inlineCode(uuid)} has been deleted!`,

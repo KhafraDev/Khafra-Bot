@@ -96,24 +96,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'view',
-          description: 'View all, ended, or active giveaways.',
-          options: [
-            {
-              type: ApplicationCommandOptionType.Boolean,
-              name: 'all',
-              description: 'View all your giveaways.'
-            },
-            {
-              type: ApplicationCommandOptionType.Boolean,
-              name: 'active',
-              description: 'View all of your ongoing giveaways.'
-            },
-            {
-              type: ApplicationCommandOptionType.Boolean,
-              name: 'ended',
-              description: 'View all of your giveaways that have already ended.'
-            }
-          ]
+          description: 'View all, ended, or active giveaways.'
         }
       ]
     }

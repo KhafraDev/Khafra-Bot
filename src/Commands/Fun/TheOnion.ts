@@ -64,7 +64,7 @@ interface ITheOnion {
 }
 
 const rss = new RSSReader<ITheOnion>()
-const cache = once(async () => rss.cache('https://www.theonion.com/rss'))
+const cache = once(() => rss.cache('https://www.theonion.com/rss'))
 
 export class kCommand extends Command {
   constructor () {
@@ -83,11 +83,7 @@ export class kCommand extends Command {
   }
 
   async init (): Promise<APIEmbed> {
-    const state = await cache()
-
-    if (state === null) {
-      return Embed.error('Try again in a minute!')
-    }
+    await cache()
 
     const i = Math.floor(Math.random() * rss.results.size)
     const id = [...rss.results][i].guid
