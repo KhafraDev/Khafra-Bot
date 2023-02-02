@@ -23,6 +23,20 @@ export class kInteraction extends Interactions {
               required: true
             }
           ]
+        },
+        {
+          type: ApplicationCommandOptionType.Subcommand,
+          name: 'view-id',
+          description: 'View a report or case given an id.',
+          options: [
+            {
+              type: ApplicationCommandOptionType.Integer,
+              name: 'id',
+              description: 'the id of the case or report.',
+              required: true,
+              min_value: 0
+            }
+          ]
         }
       ]
     }
