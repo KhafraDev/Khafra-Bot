@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const link = `https://www.themoviedb.org/tv/${tv.id})`
+    const link = `https://www.themoviedb.org/tv/${tv.id}`
     const embed = Embed.json({
       color: colors.ok,
       title: tv.name,

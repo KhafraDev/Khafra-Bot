@@ -1,7 +1,7 @@
 import { hours } from '#khaf/utility/ms.js'
 import { s } from '@sapphire/shapeshift'
 import { env } from 'node:process'
-import { URLSearchParams } from 'node:url'
+import { stringify } from 'node:querystring'
 import { request } from 'undici'
 
 const schema = s.object({
@@ -31,10 +31,7 @@ const ratelimit = {
 export const cache: NASACache[] = []
 
 export const NASAGetRandom = async (): Promise<NASACache | null> => {
-  const params = new URLSearchParams({
-    count: '25',
-    api_key: env.NASA
-  })
+  const params = stringify({ count: '25', api_key: env.NASA })
 
   // ratelimited or cached results
   if (ratelimit.remaining === 0 && Date.now() - ratelimit.firstRequest < hour || cache.length >= 5)

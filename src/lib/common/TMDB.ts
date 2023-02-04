@@ -1,5 +1,6 @@
 import { env } from 'node:process'
-import { URL, URLSearchParams } from 'node:url'
+import { stringify } from 'node:querystring'
+import { URL } from 'node:url'
 import { request } from 'undici'
 
 interface ITMDBSearch {
@@ -172,10 +173,7 @@ export const searchMovie = async (
   query: string,
   include_adult = false
 ): Promise<ITMDBDetails | null> => {
-  const params = new URLSearchParams({
-    query,
-    include_adult: `${include_adult}`
-  }).toString().replace(/\+/g, '%20')
+  const params = stringify({ query, include_adult })
   // if the question mark is appended to the base url, it's stripped by new URL(...)
   const { body } = await request(new URL(`?${params}`, base.search), { headers })
   const search = await body.json() as ITMDBSearch
@@ -193,10 +191,7 @@ export const searchTV = async (
   query: string,
   include_adult = false
 ): Promise<TVDetails | null> => {
-  const params = new URLSearchParams({
-    query,
-    include_adult: `${include_adult}`
-  }).toString().replace(/\+/g, '%20')
+  const params = stringify({ query, include_adult })
 
   const { body } = await request(new URL(`?${params}`, base.tv), { headers })
   const tv = await body.json() as TV

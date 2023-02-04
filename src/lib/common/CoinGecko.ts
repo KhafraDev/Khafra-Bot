@@ -1,6 +1,6 @@
 import { once } from '#khaf/utility/Memoize.js'
 import { s, type InferType } from '@sapphire/shapeshift'
-import { URLSearchParams } from 'node:url'
+import { stringify } from 'node:querystring'
 import { Client } from 'undici'
 
 const schema = s.object({
@@ -51,11 +51,11 @@ const schema = s.object({
 }).ignore
 
 const client = new Client('https://api.coingecko.com')
-const options = new URLSearchParams({
+const options = stringify({
   tickers: 'false',
   community_data: 'false',
   developer_data: 'false'
-}).toString()
+})
 
 export const CoinGecko = {
   list: once(async () => {

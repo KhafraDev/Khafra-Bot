@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { URLSearchParams } from 'node:url'
+import { stringify } from 'node:querystring'
 import { request } from 'undici'
 
 interface Insights {
@@ -12,7 +12,7 @@ interface Insights {
 }
 
 const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {
-  const query = new URLSearchParams(o)
+  const query = stringify(o)
 
   const { body } = await request(`https://image-charts.com/chart.js/2.8.0?${query}`, {
     headers: {

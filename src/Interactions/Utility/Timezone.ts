@@ -5,8 +5,8 @@ import { s } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { env } from 'node:process'
+import { stringify } from 'node:querystring'
 import { setTimeout } from 'node:timers/promises'
-import { URLSearchParams } from 'node:url'
 import { request, type Dispatcher } from 'undici'
 
 const queue = new AsyncQueue()
@@ -14,10 +14,11 @@ const queue2 = new AsyncQueue()
 
 const nominatimSchema = s.object({
   place_id: s.number,
-  license: s.string,
+  licence: s.string.optional,
+  license: s.string.optional,
   osm_type: s.string,
-  osm_id: s.string,
-  boundingbox: s.number.array,
+  osm_id: s.string.or(s.number),
+  boundingbox: s.union(s.number.array, s.string.array),
   lat: s.string,
   lon: s.string,
   display_name: s.string,
@@ -25,7 +26,7 @@ const nominatimSchema = s.object({
   category: s.string,
   type: s.string,
   importance: s.number
-}).array.lengthEqual(1)
+}).ignore.array.lengthEqual(1)
 
 const timezoneSchema = s.object({
   status: s.string,
@@ -38,7 +39,7 @@ const timezoneSchema = s.object({
   abbreviation: s.string,
   gmtOffset: s.number,
   dst: s.string,
-  zoneStar: s.number,
+  zoneStart: s.number,
   zoneEnd: s.number,
   nextAbbreviation: s.string,
   timestamp: s.number,
@@ -75,10 +76,7 @@ export class kInteraction extends Interactions {
     await queue.wait()
 
     let resNom: Dispatcher.ResponseData | undefined
-    const queryNom = new URLSearchParams()
-    queryNom.set('format', 'jsonv2')
-    queryNom.set('limit', '1')
-    queryNom.set('q', location)
+    const queryNom = stringify({ format: 'jsonv2', limit: '1', q: location })
 
     try {
       resNom = await request(
@@ -99,7 +97,6 @@ export class kInteraction extends Interactions {
     }
 
     const jNom: unknown = await resNom.body.json()
-    await queue2.wait()
 
     if (!nominatimSchema.is(jNom)) {
       return {
@@ -108,13 +105,16 @@ export class kInteraction extends Interactions {
       }
     }
 
+    await queue2.wait()
+
     let resTDB: Dispatcher.ResponseData | undefined
-    const queryTDB = new URLSearchParams()
-    queryTDB.set('key', env.TIMEZONEDB)
-    queryTDB.set('format', 'json')
-    queryTDB.set('by', 'position')
-    queryTDB.set('lat', jNom[0].lat)
-    queryTDB.set('lng', jNom[0].lon)
+    const queryTDB = stringify({
+      key: env.TIMEZONEDB,
+      format: 'json',
+      by: 'position',
+      lat: jNom[0].lat,
+      lng: jNom[0].lon
+    })
 
     try {
       resTDB = await request(`https://api.timezonedb.com/v2.1/get-time-zone?${queryTDB}`)
@@ -138,7 +138,9 @@ export class kInteraction extends Interactions {
         'en-US',
         {
           timeZone: jTDB.zoneName,
-          hour12
+          hour12,
+          dateStyle: 'long',
+          timeStyle: 'long'
         }
       )
     }
