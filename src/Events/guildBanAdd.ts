@@ -44,7 +44,7 @@ export class kEvent implements Event {
 
     if (me?.permissions.has(auditLogPerms)) {
       auditLog: {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 5; i++, i !== 4 && await setTimeout(seconds(2))) {
           const logs = await guild.fetchAuditLogs({
             type: AuditLogEvent.MemberBanAdd,
             limit: 5
@@ -73,10 +73,6 @@ export class kEvent implements Event {
               reason = entry.reason
               break auditLog
             }
-          }
-
-          if (i !== 4) {
-            await setTimeout(seconds(2))
           }
         }
       }

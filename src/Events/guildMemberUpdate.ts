@@ -96,7 +96,7 @@ export class kEvent implements Event {
       const start = Date.now()
 
       auditLog: {
-        for (let i = 0; i < 5; await setTimeout(2000), i++) {
+        for (let i = 0; i < 5; i++, i !== 4 && await setTimeout(2000)) {
           const logs = await oldMember.guild.fetchAuditLogs({
             type: AuditLogEvent.MemberUpdate,
             limit: 5
