@@ -29,7 +29,7 @@ export const Stats = {
       void writeFile(path, JSON.stringify({
         globalCommandsUsed: globalCommandsUsed + Stats.session,
         globalMessages: globalMessages + Stats.messages
-      } as typeof config))
+      } satisfies typeof config))
 
       Stats.messages = 0
       Stats.session = 0

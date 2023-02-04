@@ -62,7 +62,7 @@ export class kCommand extends Command {
       } else if (i.customId === 'deny') {
         return Embed.error('Command was canceled, permissions will not be disabled!')
       } else {
-        void i.update({ components: disableAll(m) })
+        await i.update({ components: disableAll(m) })
       }
     }
 

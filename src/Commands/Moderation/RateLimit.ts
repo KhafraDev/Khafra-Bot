@@ -69,7 +69,7 @@ export class kCommand extends Command {
 
     await guildChannel.setRateLimitPerUser(secs, `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`)
 
-    void message.reply({
+    await message.reply({
       embeds: [Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
     })
 
