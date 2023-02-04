@@ -2,6 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
@@ -128,7 +129,7 @@ export class kInteraction extends Interactions {
       const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
         interactionType: InteractionType.MessageComponent,
         message: i,
-        idle: 30_000,
+        idle: seconds(30),
         filter: (i) =>
           i.user.id === interaction.user.id &&
           i.customId === `${uuid}-next` ||

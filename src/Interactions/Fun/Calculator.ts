@@ -1,13 +1,14 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { seconds } from '#khaf/utility/ms.js'
+import { evaluatePostfix, infixToPostfix } from '#khaf/utility/ShuntingYard.js'
 import { codeBlock } from '@discordjs/builders'
 import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import { randomUUID } from 'node:crypto'
-import { evaluatePostfix, infixToPostfix } from '#khaf/utility/ShuntingYard.js'
 
 const squiggles =
     '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
@@ -77,7 +78,7 @@ export class kInteraction extends Interactions {
 
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
-      idle: 30_000,
+      idle: seconds(30),
       filter: (i) =>
         i.isButton() &&
         interaction.user.id === i.user.id &&

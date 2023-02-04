@@ -9,6 +9,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
@@ -116,7 +117,7 @@ export class kEvent implements Event {
 
       const cooldownInfo = command.rateLimit.get(message.author.id)!
       const rateLimitSeconds = command.rateLimit.rateLimitSeconds
-      const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / 1_000)
+      const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / seconds(1))
 
       return void message.reply({
         content:

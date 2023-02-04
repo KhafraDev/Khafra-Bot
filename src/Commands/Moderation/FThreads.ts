@@ -2,6 +2,7 @@ import { Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { bold, inlineCode, italic } from '@discordjs/builders'
 import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { GuildChannel, Message, NonThreadGuildBasedChannel } from 'discord.js'
@@ -54,7 +55,7 @@ export class kCommand extends Command {
           ['approve', 'deny'].includes(interaction.customId) &&
           interaction.user.id === message.author.id &&
           interaction.message.id === m.id,
-        time: 60_000
+        time: minutes(1)
       }).catch(() => null)
 
       if (i === null) {

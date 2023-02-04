@@ -5,6 +5,7 @@ import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { createDeferredPromise, interactionGetGuildSettings } from '#khaf/utility/util.js'
 import { bold, hyperlink } from '@discordjs/builders'
@@ -131,7 +132,7 @@ export class kInteraction extends Interactions {
 
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
-      time: 120_000,
+      time: minutes(2),
       max: 1,
       message: confirm,
       filter: (i) =>

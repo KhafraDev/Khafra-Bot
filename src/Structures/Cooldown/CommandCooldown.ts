@@ -1,3 +1,4 @@
+import { seconds } from '#khaf/utility/ms.js'
 import type { Snowflake } from 'discord.js'
 import { setInterval } from 'node:timers'
 
@@ -16,7 +17,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
    */
   constructor (maxAge: number) {
     super()
-    this.#maxAge = maxAge * 1_000
+    this.#maxAge = seconds(maxAge)
     this.#createClearInterval()
   }
 
@@ -30,7 +31,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
           this.delete(id)
         }
       }
-    }, 30_000)
+    }, seconds(30))
   }
 
   isRateLimited(id: Snowflake): boolean {

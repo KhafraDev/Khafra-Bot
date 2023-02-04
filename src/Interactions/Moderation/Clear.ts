@@ -1,8 +1,9 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText, isThread } from '#khaf/utility/Discord.js'
-import * as util from '#khaf/utility/util.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
+import * as util from '#khaf/utility/util.js'
 import { bold, time } from '@discordjs/builders'
 import type {
   RESTPostAPIApplicationCommandsJSONBody
@@ -87,7 +88,7 @@ export class kInteraction extends Interactions {
       content: `✅ Deleting ${amount} messages in ${channel} in a few seconds!`,
       ephemeral: true
     })
-    await setTimeout(5_000)
+    await setTimeout(seconds(5))
     await interaction.deleteReply()
     await channel.bulkDelete(amount)
 

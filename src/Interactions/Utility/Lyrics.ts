@@ -1,6 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { s } from '@sapphire/shapeshift'
 import type {
   APIEmbed
@@ -146,7 +147,7 @@ export class kInteraction extends Interactions {
 
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
-      idle: 30_000,
+      idle: minutes(5),
       filter: (i) =>
         i.isButton() &&
         interaction.user.id === i.user.id &&
@@ -173,7 +174,7 @@ export class kInteraction extends Interactions {
 
     if (
       collector.collected.size !== 0 &&
-            last?.replied === false
+      last?.replied === false
     ) {
       return void await last.update({
         components: disableAll(int)

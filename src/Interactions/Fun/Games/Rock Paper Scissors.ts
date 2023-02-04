@@ -1,10 +1,11 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { randomUUID } from 'node:crypto'
+import { seconds } from '#khaf/utility/ms.js'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 type Keys = keyof typeof emojis
 
@@ -40,7 +41,7 @@ export class kSubCommand extends InteractionSubCommand {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      time: 15_000,
+      time: seconds(15),
       max: 1,
       filter: (i) =>
         interaction.user.id === i.user.id &&

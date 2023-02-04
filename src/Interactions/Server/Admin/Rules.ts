@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { seconds } from '#khaf/utility/ms.js'
+import { minutes, seconds } from '#khaf/utility/ms.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { ellipsis, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
@@ -154,7 +154,7 @@ export class kInteraction extends Interactions {
 
     const rules: string[] = []
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
-      idle: 300_000,
+      idle: minutes(5),
       filter: (i) =>
         (i.isButton() || i.isModalSubmit()) &&
         i.user.id === interaction.user.id &&

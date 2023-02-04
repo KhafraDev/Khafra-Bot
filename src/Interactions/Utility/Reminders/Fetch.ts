@@ -4,6 +4,7 @@ import type { kReminder } from '#khaf/types/KhafraBot.js'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { inlineCode, time } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
@@ -81,7 +82,7 @@ export class kSubCommand extends InteractionSubCommand {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      idle: 30_000,
+      idle: seconds(30),
       max: 10,
       filter: (i) =>
         interaction.user.id === i.user.id &&

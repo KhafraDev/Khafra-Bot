@@ -2,12 +2,13 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { templates } from '#khaf/utility/Constants/Path.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
-import { randomUUID } from 'node:crypto'
 import type { Buffer } from 'node:buffer'
+import { randomUUID } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 
 type Card =
@@ -148,7 +149,7 @@ export class kSubCommand extends InteractionSubCommand {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      idle: 30_000,
+      idle: seconds(30),
       filter: (i) =>
         interaction.user.id === i.user.id &&
         int.id === i.message.id &&

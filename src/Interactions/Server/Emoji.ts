@@ -2,6 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { parseEmojiList } from '#khaf/utility/Emoji.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { bold, formatEmoji, time } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -163,7 +164,7 @@ export class kInteraction extends Interactions {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      idle: 60_000,
+      idle: minutes(1),
       filter: (i) =>
         interaction.user.id === i.user.id &&
         int.id === i.message.id &&

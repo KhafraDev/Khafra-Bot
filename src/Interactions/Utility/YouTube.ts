@@ -1,5 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { s } from '@sapphire/shapeshift'
 import {
   ApplicationCommandOptionType,
@@ -77,7 +78,7 @@ export class kInteraction extends Interactions {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      idle: 120_000,
+      idle: minutes(2),
       filter: (i) =>
         i.message.id === int.id &&
         i.user.id === interaction.user.id &&

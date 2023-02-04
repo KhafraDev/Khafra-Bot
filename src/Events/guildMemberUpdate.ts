@@ -4,6 +4,7 @@ import type { Case } from '#khaf/functions/case/reports'
 import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
@@ -106,7 +107,7 @@ export class kEvent implements Event {
               for (const c of entry.changes) {
                 if (c.key === 'communication_disabled_until') {
                   // If the change is older than the one we want.
-                  if (Math.abs(start - entry.createdTimestamp) >= 10_000) {
+                  if (Math.abs(start - entry.createdTimestamp) >= seconds(10)) {
                     continue
                   }
 

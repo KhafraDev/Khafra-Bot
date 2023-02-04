@@ -2,6 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { assets } from '#khaf/utility/Constants/Path.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { plural } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
 import { ComponentType, TextInputStyle, type Snowflake } from 'discord-api-types/v10'
@@ -187,7 +188,7 @@ export class kSubCommand extends InteractionSubCommand {
     const m = await interaction.editReply(game.toJSON())
 
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
-      idle: 30_000,
+      idle: seconds(30),
       filter: (i) =>
         (i.isButton() || i.isModalSubmit()) &&
         i.user.id === interaction.user.id &&

@@ -3,7 +3,7 @@ import { Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { days, parseStrToMs } from '#khaf/utility/ms.js'
+import { days, minutes, parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
@@ -59,7 +59,7 @@ export class kCommand extends Command {
         ['approve', 'deny'].includes(interaction.customId) &&
         interaction.user.id === message.author.id &&
         interaction.message.id === msg.id,
-      time: 60_000
+      time: minutes(1)
     }).catch(() => null)
 
     if (button === null) {

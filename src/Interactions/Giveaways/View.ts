@@ -4,6 +4,7 @@ import type { Giveaway } from '#khaf/types/KhafraBot'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
@@ -129,7 +130,7 @@ export class kSubCommand extends InteractionSubCommand {
       ButtonInteraction | StringSelectMenuInteraction
     >(interaction.client, {
       message,
-      time: 300_000,
+      time: minutes(5),
       filter: (i) =>
         interaction.user.id === i.user.id &&
         i.customId.endsWith(id)

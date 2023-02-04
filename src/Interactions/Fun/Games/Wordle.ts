@@ -2,6 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Json } from '#khaf/utility/Constants/Path.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { inlineCode } from '@discordjs/builders'
 import { createCanvas } from '@napi-rs/canvas'
 import {
@@ -160,7 +161,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
 
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
-      idle: 300_000,
+      idle: minutes(5),
       filter: (i) =>
         (i.isButton() || i.isModalSubmit()) &&
         i.user.id === interaction.user.id &&

@@ -3,6 +3,7 @@ import { Command, type Arguments } from '#khaf/Command'
 import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
   APIActionRowComponent,
@@ -91,7 +92,7 @@ export class kCommand extends Command {
       ComponentType.Button |
       ComponentType.StringSelect
     >({
-      idle: 60_000,
+      idle: minutes(1),
       max: 10,
       filter: (i) =>
         i.user.id === message.author.id &&

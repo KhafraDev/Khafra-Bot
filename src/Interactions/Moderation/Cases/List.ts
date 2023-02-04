@@ -2,6 +2,7 @@ import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { minutes } from '#khaf/utility/ms.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
   hyperlink,
@@ -184,7 +185,7 @@ export class kSubCommand extends InteractionSubCommand {
       ButtonInteraction | StringSelectMenuInteraction
     >(interaction.client, {
       message,
-      time: 300_000,
+      time: minutes(5),
       filter: (i) =>
         interaction.user.id === i.user.id &&
         i.customId.endsWith(id)

@@ -1,14 +1,15 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { chunkSafe } from '#khaf/utility/Array.js'
-import { TicTacToe, type Turn, type Difficulty } from '#khaf/utility/commands/TicTacToe'
+import { TicTacToe, type Difficulty, type Turn } from '#khaf/utility/commands/TicTacToe'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
-import { randomUUID } from 'node:crypto'
+import { minutes, seconds } from '#khaf/utility/ms.js'
 import {
   InteractionType,
   type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
 } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
   const rows: APIButtonComponent[] = []
@@ -51,8 +52,8 @@ export class kSubCommand extends InteractionSubCommand {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: int,
-      time: 120_000,
-      idle: 15_000,
+      time: minutes(2),
+      idle: seconds(30),
       max: 5,
       filter: (i) =>
         i.message.id === int.id &&

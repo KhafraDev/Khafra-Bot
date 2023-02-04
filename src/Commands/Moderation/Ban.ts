@@ -79,7 +79,7 @@ export class kCommand extends Command {
       }
     } else if (typeof args[1] === 'string') {
       const ms = parseStrToMs(args[1])
-      const time = Math.ceil(ms / 86_400_000) // ms -> days
+      const time = Math.ceil(ms / days(1)) // ms -> days
 
       if (ms && schema.is(time)) {
         clear = time

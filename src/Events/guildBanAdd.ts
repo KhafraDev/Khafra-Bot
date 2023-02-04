@@ -4,6 +4,7 @@ import type { Case } from '#khaf/functions/case/reports.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { ellipsis } from '#khaf/utility/String.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits, type APIEmbedAuthor } from 'discord-api-types/v10'
@@ -18,7 +19,7 @@ type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
  * in +/- 10 seconds from the event, it is more likely to be the
  * correct event.
  */
-const threshold = 10_000
+const threshold = seconds(10)
 const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const perms =
   PermissionFlagsBits.ViewChannel |
@@ -75,7 +76,7 @@ export class kEvent implements Event {
           }
 
           if (i !== 4) {
-            await setTimeout(2_000)
+            await setTimeout(seconds(2))
           }
         }
       }

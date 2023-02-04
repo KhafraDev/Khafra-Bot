@@ -1,17 +1,18 @@
 import { Interactions } from '#khaf/Interaction'
 import { Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { minutes, seconds } from '#khaf/utility/ms.js'
 import { ellipsis, plural } from '#khaf/utility/String.js'
 import { hideLinkEmbed } from '@discordjs/builders'
 import { getArticleById, search } from '@khaf/wikipedia'
-import { randomUUID } from 'node:crypto'
 import {
   ApplicationCommandOptionType,
   InteractionType,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
-import type { SelectMenuInteraction} from 'discord.js'
+import type { SelectMenuInteraction } from 'discord.js'
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { randomUUID } from 'node:crypto'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -66,8 +67,8 @@ export class kInteraction extends Interactions {
     const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: m,
-      time: 120_000,
-      idle: 30_000,
+      time: minutes(2),
+      idle: seconds(30),
       max: wiki.pages.length,
       filter: (i) =>
         i.user.id === interaction.user.id &&
