@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import {
   ApplicationCommandOptionType,
   ChannelType,
@@ -20,7 +20,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'settings',
       description: 'Manage the bot\'s settings in your guild!',
-      default_member_permissions: toString([PermissionFlagsBits.Administrator]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.Administrator]),
       dm_permission: false,
       options: [
         {

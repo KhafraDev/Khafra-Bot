@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import {
   ApplicationCommandOptionType,
   ChannelType,
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'lock-thread',
       description: 'Easier way of archiving a thread.',
-      default_member_permissions: toString([PermissionFlagsBits.ManageThreads]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ManageThreads]),
       dm_permission: false,
       options: [
         {

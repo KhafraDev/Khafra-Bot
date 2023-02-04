@@ -3,8 +3,7 @@ import { sql } from '#khaf/database/Postgres.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -31,7 +30,9 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>): Promise<APIEmbed> {
-    if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+
+    if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.Administrator)) {
       return Embed.perms(
         message.channel,
         message.member,
@@ -40,11 +41,12 @@ export class kCommand extends Command {
     }
 
     const channel = await getMentions(message, 'channels')
+    const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
     if (!isText(channel)) {
       return Embed.error(`${channel} is not a text channel!`)
-    } else if (!hasPerms(channel, message.guild.members.me, basic)) {
-      return Embed.perms(channel, message.guild.members.me, basic)
+    } else if (!channel.permissionsFor(me).has(basic)) {
+      return Embed.perms(channel, me, basic)
     }
 
     await sql`

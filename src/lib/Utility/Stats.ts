@@ -1,6 +1,7 @@
 import { Json } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { once } from '#khaf/utility/Memoize.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { writeFile } from 'node:fs/promises'
 import { setInterval } from 'node:timers'
 
@@ -32,7 +33,7 @@ export const Stats = {
 
       Stats.messages = 0
       Stats.session = 0
-    }, 60 * 1000)
+    }, seconds(60))
   })
 }
 

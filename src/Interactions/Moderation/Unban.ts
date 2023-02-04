@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import * as util from '#khaf/utility/util.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -16,7 +16,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'unban',
       description: 'Unban a member!',
-      default_member_permissions: toString([perms]),
+      default_member_permissions: bitfieldToString([perms]),
       dm_permission: false,
       options: [
         {

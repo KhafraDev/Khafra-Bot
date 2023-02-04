@@ -2,7 +2,6 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
@@ -55,15 +54,15 @@ export class kCommand extends Command {
       components: [row]
     })
 
-    const [pressedError, button] = await dontThrow(msg.awaitMessageComponent<ComponentType.Button>({
+    const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
         ['approve', 'deny'].includes(interaction.customId) &&
         interaction.user.id === message.author.id &&
         interaction.message.id === msg.id,
-      time: 20_000
-    }))
+      time: 60_000
+    }).catch(() => null)
 
-    if (pressedError !== null) {
+    if (button === null) {
       return void msg.edit({
         embeds: [Embed.error(`Didn't get confirmation to ban ${user}!`)],
         components: []
@@ -78,12 +77,12 @@ export class kCommand extends Command {
 
     await button.deferUpdate()
 
-    const [banError] = await dontThrow(message.guild.members.ban(user, {
-      deleteMessageSeconds: schema.is(clear) ? clear * days(0.001) : days(0.007),
-      reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
-    }))
-
-    if (banError !== null) {
+    try {
+      await message.guild.members.ban(user, {
+        deleteMessageSeconds: schema.is(clear) ? clear * days(0.001) : days(0.007),
+        reason: reason.length > 0 ? reason : `Requested by ${message.author.id}`
+      })
+    } catch {
       return void button.editReply({
         embeds: [Embed.error(`${user} isn't bannable!`)],
         components: []

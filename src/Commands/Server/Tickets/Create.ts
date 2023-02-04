@@ -1,10 +1,8 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isExplicitText } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { inlineCode } from '@discordjs/builders'
 import {
   ChannelType,
   GuildPremiumTier,
@@ -13,10 +11,9 @@ import {
   ThreadAutoArchiveDuration,
   type APIEmbed
 } from 'discord-api-types/v10'
-import type { CategoryChannel, Message, TextChannel } from 'discord.js'
+import type { Message } from 'discord.js'
+import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
-
-type TicketChannelTypes = TextChannel | CategoryChannel
 
 export class kCommand extends Command {
   constructor () {
@@ -45,55 +42,59 @@ export class kCommand extends Command {
 
     /** guild can use private threads */
     const privateThreads =
-            message.guild.premiumTier !== GuildPremiumTier.None &&
-            message.guild.premiumTier !== GuildPremiumTier.Tier1
+      message.guild.premiumTier !== GuildPremiumTier.None &&
+      message.guild.premiumTier !== GuildPremiumTier.Tier1
 
-    const ret = message.guild.channels.cache.has(settings.ticketchannel)
-      ? message.guild.channels.cache.get(settings.ticketchannel)!
-      : await dontThrow(message.guild.channels.fetch(settings.ticketchannel))
-
-    let channel!: TicketChannelTypes
-    if (Array.isArray(ret)) {
-      const [err, chan] = ret
-      if (err !== null) {
-        return Embed.error('An error occurred trying to fetch this channel. Maybe set a new ticket channel?')
-      } else {
-        // validation is done in the ticketchannel command
-        channel = chan as TicketChannelTypes
-      }
-    } else {
-      channel = ret as TicketChannelTypes
-    }
+    const channel = message.guild.channels.cache.has(settings.ticketchannel)
+      ? message.guild.channels.cache.get(settings.ticketchannel)
+      : await message.guild.channels.fetch(settings.ticketchannel)
 
     if (isExplicitText(channel) && !privateThreads) {
       return Embed.error(
         'This guild is no longer tier 2 or above, and cannot use private threads. ' +
-                'Use the `ticketchannel` command to re-set the ticket channel!'
+        'Use the `ticketchannel` command to re-set the ticket channel!'
       )
     }
 
+    assert(channel?.type === ChannelType.GuildText || channel?.type === ChannelType.GuildCategory)
+
     const uuid = randomUUID()
     const name = `Ticket-${uuid.slice(0, uuid.indexOf('-'))}`
+    const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
     if (isExplicitText(channel)) {
-      const [err, thread] = await dontThrow(channel.threads.create({
+      if (!channel.permissionsFor(me).has(PermissionFlagsBits.CreatePrivateThreads)) {
+        return Embed.json({
+          color: colors.error,
+          description: `Sorry ${message.member ?? message.author}, I can't create a thread.`
+        })
+      }
+
+      const thread = await channel.threads.create({
         type: ChannelType.PrivateThread,
         name: name,
         autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
         reason: `${message.author.tag} (${message.author.id}) created a support ticket.`
-      }))
+      })
 
-      if (err !== null) {
-        return Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`)
+      // https://discord.com/developers/docs/resources/channel#add-thread-member
+      // "Requires the ability to send messages in the thread"
+      if (thread.permissionsFor(me).has(PermissionFlagsBits.SendMessages)) {
+        await thread.members.add(message.author)
+        await thread.send(`${message.author}: ${args.join(' ')}`)
       }
-
-      await dontThrow(thread.members.add(message.author))
-      void dontThrow(thread.send(`${message.author}: ${args.join(' ')}`))
 
       return Embed.ok(`Successfully created a ticket: ${thread}!`)
     } else {
+      if (!message.channel.permissionsFor(me).has(PermissionFlagsBits.ManageChannels)) {
+        return Embed.json({
+          color: colors.error,
+          description: `Sorry ${message.member ?? message.author}, I can't create a channel.`
+        })
+      }
+
       // create normal text channel with permissions for message.author
-      const [err, ticketChannel] = await dontThrow(message.guild.channels.create({
+      const ticketChannel = await message.guild.channels.create({
         name,
         type: ChannelType.GuildText,
         parent: channel,
@@ -113,13 +114,9 @@ export class kCommand extends Command {
             ]
           }
         ]
-      }))
+      })
 
-      if (err !== null) {
-        return Embed.error(`Failed to create a ticket: ${inlineCode(err.message)}.`)
-      }
-
-      void dontThrow(ticketChannel.send({ content: `${message.author}: ${args.join(' ')}` }))
+      await ticketChannel.send({ content: `${message.author}: ${args.join(' ')}` })
 
       return Embed.ok(`Successfully created a ticket: ${ticketChannel}!`)
     }

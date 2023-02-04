@@ -1,20 +1,19 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { hasPerms, hierarchy } from '#khaf/utility/Permissions.js'
-import { bold, inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import { hierarchy } from '#khaf/utility/Permissions.js'
+import { bold } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const perms =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages |
+  PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
   constructor () {
@@ -47,20 +46,15 @@ export class kCommand extends Command {
       return Embed.error(`${member} is too high up in the hierarchy for me to kick.`)
     }
 
-    const [kickError] = await dontThrow(
-      member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`)
-    )
-
-    if (kickError !== null) {
-      return Embed.error(`An unexpected error occurred: ${inlineCode(kickError.message)}`)
-    }
+    await member.kick(`Khafra-Bot: req. by ${message.author.tag} (${message.author.id}).`)
 
     await message.reply({ embeds: [Embed.error(`Kicked ${member} from the server!`)] })
 
     if (settings.mod_log_channel !== null) {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
+      const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
-      if (!isText(channel) || !hasPerms(channel, message.guild.members.me, perms))
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
         return
 
       const reason = args.slice(1).join(' ')

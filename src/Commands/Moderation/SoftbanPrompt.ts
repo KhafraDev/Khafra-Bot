@@ -2,7 +2,6 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { plural } from '#khaf/utility/String.js'
@@ -62,22 +61,20 @@ export class kCommand extends Command {
       components: [row]
     })
 
-    const [buttonError, button] = await dontThrow(msg.awaitMessageComponent<ComponentType.Button>({
+    const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
         ['approve', 'deny'].includes(interaction.customId) &&
         interaction.user.id === message.author.id &&
         interaction.message.id === msg.id,
       time: 20_000
-    }))
+    }).catch(() => null)
 
-    if (buttonError !== null) {
+    if (button === null) {
       return void msg.edit({
         embeds: [Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
         components: []
       })
-    }
-
-    if (button.customId === 'deny')
+    } else if (button.customId === 'deny')
       return void button.update({
         embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
         components: []

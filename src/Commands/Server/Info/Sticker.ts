@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js'
 import { bold, inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { StickerFormatType } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 

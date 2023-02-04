@@ -4,13 +4,13 @@ import { logger } from '#khaf/structures/Logger.js'
 import { Timer } from '#khaf/Timer'
 import type { Giveaway } from '#khaf/types/KhafraBot.js'
 import { isText } from '#khaf/utility/Discord.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { User } from 'discord.js'
 
 export class GiveawayTimer extends Timer {
   constructor () {
-    super({ interval: 30 * 1000 })
+    super({ interval: seconds(30) })
   }
 
   async setInterval (): Promise<void> {
@@ -55,9 +55,10 @@ export class GiveawayTimer extends Timer {
     try {
       const guild = await client.guilds.fetch(giveaway.guildid)
       const channel = await guild.channels.fetch(giveaway.channelid)
+      const me = guild.members.me ?? await guild.members.fetchMe()
 
-      if (!hasPerms(channel, guild.members.me, PermissionFlagsBits.ReadMessageHistory)) return
       if (!isText(channel)) return
+      if (!channel.permissionsFor(me).has(PermissionFlagsBits.ReadMessageHistory)) return
 
       const message = await channel.messages.fetch(giveaway.messageid)
       const reactions = message.reactions.cache

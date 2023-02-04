@@ -1,3 +1,4 @@
+import { hours } from '#khaf/utility/ms.js'
 import { s } from '@sapphire/shapeshift'
 import { env } from 'node:process'
 import { URLSearchParams } from 'node:url'
@@ -20,7 +21,7 @@ interface NASACache {
     title: string
 }
 
-const hour = 60 * 1000 * 60
+const hour = hours(1)
 
 const ratelimit = {
   remaining: -1,

@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import type {
   RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
@@ -13,7 +13,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'warns',
       description: 'Handle warnings in this guild.',
-      default_member_permissions: toString([PermissionFlagsBits.KickMembers]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.KickMembers]),
       dm_permission: false,
       options: [
         {

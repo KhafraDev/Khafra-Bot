@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'activity',
       description: 'Play a game in VC!',
-      default_member_permissions: toString([
+      default_member_permissions: bitfieldToString([
         PermissionFlagsBits.CreateInstantInvite,
         PermissionFlagsBits.UseEmbeddedActivities
       ]),

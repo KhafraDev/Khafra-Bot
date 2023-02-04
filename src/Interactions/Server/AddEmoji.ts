@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type {
@@ -17,7 +17,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'addemoji',
       description: 'Adds an emoji to the server!',
-      default_member_permissions: toString([PermissionFlagsBits.ManageEmojisAndStickers]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ManageEmojisAndStickers]),
       dm_permission: false,
       options: [
         {

@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import type {
   RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
@@ -17,7 +17,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'ban-by-name',
       description: 'Purge members with a given username.',
-      default_member_permissions: toString([perms]),
+      default_member_permissions: bitfieldToString([perms]),
       dm_permission: false,
       options: [
         {

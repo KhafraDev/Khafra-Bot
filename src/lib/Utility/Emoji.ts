@@ -40,7 +40,7 @@ const typedRegexMatchAll = <
 
 // # (sub)group: face-neutral-skeptical
 //	   ^	^--- is group   ^
-//	   └-- is sub group     └-- group name
+//	   └-- is sub group   └-- group name
 // 1F910                                                  ; fully-qualified     # 🤐 E1.0 zipper-mouth face
 //   ^ codepoint(s)                                              ^ identifier                ^ comment
 const matchFn = typedRegexMatchAll(

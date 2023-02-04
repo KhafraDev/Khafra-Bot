@@ -1,7 +1,6 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { s } from '@sapphire/shapeshift'
 import type { Message } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
@@ -47,6 +46,8 @@ export class kCommand extends Command {
       title: `Generated ${btc.toLocaleString()} BTC!`
     })
 
-    return void dontThrow(msg.edit({ embeds: [embed2] }))
+    if (msg.editable) {
+      return void msg.edit({ embeds: [embed2] })
+    }
   }
 }

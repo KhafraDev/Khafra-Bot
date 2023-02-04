@@ -3,8 +3,7 @@ import { sql } from '#khaf/database/Postgres.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -29,7 +28,9 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>): Promise<APIEmbed> {
-    if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator)) {
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+
+    if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.Administrator)) {
       return Embed.perms(
         message.channel,
         message.member,

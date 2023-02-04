@@ -1,12 +1,13 @@
 import { Interactions } from '#khaf/Interaction'
 import { AsyncQueue } from '#khaf/structures/AsyncQueue.js'
+import { seconds } from '#khaf/utility/ms.js'
+import { s } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { env } from 'node:process'
 import { setTimeout } from 'node:timers/promises'
 import { URLSearchParams } from 'node:url'
 import { request, type Dispatcher } from 'undici'
-import { s } from '@sapphire/shapeshift'
 
 const queue = new AsyncQueue()
 const queue2 = new AsyncQueue()
@@ -133,7 +134,7 @@ export class kInteraction extends Interactions {
     }
 
     return {
-      content: new Date((jTDB.timestamp - jTDB.gmtOffset) * 1000).toLocaleString(
+      content: new Date(seconds(jTDB.timestamp - jTDB.gmtOffset)).toLocaleString(
         'en-US',
         {
           timeZone: jTDB.zoneName,

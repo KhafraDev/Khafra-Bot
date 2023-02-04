@@ -1,10 +1,8 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { inlineCode } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { parseArgs } from 'node:util'
@@ -45,10 +43,14 @@ export class kCommand extends Command {
       return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕')
 
     const reason = cli.reason ?? args.slice(1).join(' ')
-    const [e] = await dontThrow(message.guild.members.unban(user, reason))
 
-    if (e !== null) {
-      return Embed.error(`Couldn't unban ${user}, try again?\n${inlineCode(`${e}`)}`)
+    try {
+      await message.guild.members.unban(user, reason)
+    } catch {
+      return Embed.json({
+        color: colors.error,
+        description: `Sorry ${message.member ?? message.author}, I couldn't unban ${user}.`
+      })
     }
 
     return Embed.ok(`${user} is now unbanned!`)

@@ -2,8 +2,6 @@ import { Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { bold, inlineCode, italic } from '@discordjs/builders'
 import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
 import type { GuildChannel, Message, NonThreadGuildBasedChannel } from 'discord.js'
@@ -36,7 +34,7 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>): Promise<undefined | APIEmbed> {
-    const [e, m] = await dontThrow(message.reply({
+    const m = await message.reply({
       embeds: [
         Embed.ok(`
         Are you sure you want to disable these permissions for everyone? This cannot be reverted by the bot!
@@ -48,19 +46,18 @@ export class kCommand extends Command {
           Buttons.deny('No', 'deny')
         ])
       ]
-    }))
-
-    if (e !== null) return
+    })
 
     {
-      const [e, i] = await dontThrow(m.awaitMessageComponent<ComponentType.Button>({
+      const i = await m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
           ['approve', 'deny'].includes(interaction.customId) &&
-          interaction.user.id === message.author.id,
+          interaction.user.id === message.author.id &&
+          interaction.message.id === m.id,
         time: 60_000
-      }))
+      }).catch(() => null)
 
-      if (e !== null) {
+      if (i === null) {
         return Embed.error('No response, command was canceled!')
       } else if (i.customId === 'deny') {
         return Embed.error('Command was canceled, permissions will not be disabled!')
@@ -69,24 +66,23 @@ export class kCommand extends Command {
       }
     }
 
-    const [fetchErr, allChannels] = await dontThrow(message.guild.channels.fetch())
-
-    if (fetchErr !== null) {
-      return Embed.error(`An unexpected error occurred: ${inlineCode(fetchErr.message)}.`)
-    }
+    const allChannels = await message.guild.channels.fetch()
 
     const channels = allChannels.filter((c): c is NonThreadGuildBasedChannel =>
       c !== null && !isStage(c) && !isThread(c) && !isVoice(c) && !c.permissionsLocked
     )
 
     const pr: Promise<GuildChannel>[] = []
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+    const me = message.guild.members.me ?? await message.guild.members.fetchMe()
+
     for (const channel of channels.values()) {
       const overwrites = channel.permissionOverwrites.cache.get(message.guild.roles.everyone.id)
       const denied = overwrites?.deny.has(threadPerms)
 
       if (!denied) {
-        if (!hasPerms(channel, message.guild.members.me, PermissionFlagsBits.ManageChannels)) continue
-        if (!hasPerms(channel, message.member, PermissionFlagsBits.ManageChannels)) continue
+        if (!channel.permissionsFor(me).has(PermissionFlagsBits.ManageChannels)) continue
+        if (!channel.permissionsFor(member).has(PermissionFlagsBits.ManageChannels)) continue
 
         pr.push(channel.permissionOverwrites.edit(
           message.guild.roles.everyone,

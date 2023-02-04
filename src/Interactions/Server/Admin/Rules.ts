@@ -3,7 +3,7 @@ import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { seconds } from '#khaf/utility/ms.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { ellipsis, upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
 import {
@@ -95,7 +95,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'rules',
       description: 'Create, modify, and post an official-looking set of rules!',
-      default_member_permissions: toString([PermissionFlagsBits.Administrator]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.Administrator]),
       dm_permission: false,
       options: [
         {

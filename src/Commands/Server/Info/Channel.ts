@@ -1,11 +1,10 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.js'
 import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { bold, codeBlock, time } from '@discordjs/builders'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -28,12 +27,13 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
     const channel =
-            await getMentions(message, 'channels') ??
-            message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
-            message.channel
+      await getMentions(message, 'channels') ??
+      message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
+      message.channel
 
-    if (!hasPerms(channel, message.member, PermissionFlagsBits.ViewChannel)) {
+    if (!channel.permissionsFor(member).has(PermissionFlagsBits.ViewChannel)) {
       return Embed.error('No channel with that name was found!')
     }
 

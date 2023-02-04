@@ -4,11 +4,12 @@ import { logger } from '#khaf/structures/Logger.js'
 import { Timer } from '#khaf/Timer'
 import type { kReminder } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { seconds } from '#khaf/utility/ms.js'
 import { time } from '@discordjs/builders'
 
 export class RemindersTimer extends Timer {
   constructor () {
-    super({ interval: 30 * 1000 })
+    super({ interval: seconds(30) })
   }
 
   async setInterval (): Promise<void> {

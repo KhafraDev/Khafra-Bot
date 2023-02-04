@@ -1,8 +1,7 @@
 import { Command } from '#khaf/Command'
 import { Kongregate } from '#khaf/utility/commands/SynergismStats'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import { bold, inlineCode } from '@discordjs/builders'
+import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { request } from 'undici'
 
@@ -23,12 +22,10 @@ export class kCommand extends Command {
 
   async init (): Promise<APIEmbed> {
     const stats = await Kongregate()
-    const [err, quarkBonus] = await dontThrow(request('https://synergism-quarks.khafra.workers.dev/'))
+    const quarkBonus = await request('https://synergism-quarks.khafra.workers.dev/')
 
     if (stats === null) {
       return Embed.error('Failed to fetch the stats!')
-    } else if (err !== null) {
-      return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`)
     }
 
     const quarks = await quarkBonus.body.json() as { bonus: number }

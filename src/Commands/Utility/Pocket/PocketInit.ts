@@ -2,7 +2,6 @@ import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import { Pocket } from '@khaf/pocket'
 import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
@@ -55,40 +54,44 @@ export class kCommand extends Command {
       components: [row]
     })
 
-    const [buttonErr, button] = await dontThrow(msg.awaitMessageComponent<ComponentType.Button>({
+    const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
         ['approve', 'deny'].includes(interaction.customId) &&
         interaction.user.id === message.author.id &&
         interaction.message.id === msg.id,
       time: 120_000
-    }))
+    }).catch(() => null)
 
-    if (buttonErr !== null) {
-      return void msg.edit({
-        embeds: [Embed.error('Canceled the command, took over 2 minutes.')],
-        components: []
-      })
+    if (button === null) {
+      if (msg.editable) {
+        await msg.edit({
+          embeds: [Embed.error('Canceled the command, took over 2 minutes.')],
+          components: []
+        })
+      }
+
+      return
     }
 
     await button.deferUpdate()
 
     if (button.customId === 'approve') {
-      const [authError] = await dontThrow(pocket.accessToken())
+      const token = await pocket.accessToken().catch(() => null)
 
-      if (authError !== null) {
-        return void dontThrow(button.editReply({
+      if (token == null) {
+        return void await button.editReply({
           embeds: [Embed.error('Khafra-Bot wasn\'t authorized.')],
           components: []
-        }))
+        })
       }
 
       const { access_token, request_token, username } = pocket.toObject()
 
       if (!access_token || !request_token || !username) {
-        return void dontThrow(button.editReply({
+        return void await button.editReply({
           embeds: [Embed.error('An unexpected issue occurred.')],
           components: []
-        }))
+        })
       }
 
       // Insert into the table, if username or user_id is already in,

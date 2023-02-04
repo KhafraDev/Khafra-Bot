@@ -1,25 +1,6 @@
-import { isText, isThread, isVoice } from '#khaf/utility/Discord.js'
 import { inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { GuildMember, PermissionsBitField, Role, type PermissionResolvable } from 'discord.js'
-
-/**
- * Check if a user or role has permissions in a channel.
- */
-export const hasPerms = (
-  channel: unknown,
-  memberOrRole: unknown,
-  perms: PermissionResolvable
-): boolean => {
-  if (channel === undefined || channel === null)
-    return false
-  if (!isText(channel) && !isVoice(channel) && !isThread(channel))
-    return true
-  if (!(memberOrRole instanceof GuildMember) && !(memberOrRole instanceof Role))
-    return false
-
-  return channel.permissionsFor(memberOrRole).has(perms)
-}
+import { PermissionsBitField, type GuildMember, type PermissionResolvable } from 'discord.js'
 
 /**
  * Compares 2 guildmembers and checks if @see {a} is higher in the hierarchy than @see {b}
@@ -43,7 +24,7 @@ const all = Object.entries(PermissionFlagsBits) as [
     keyof typeof PermissionFlagsBits, bigint
 ][]
 
-export const permResolvableToString = (
+export const permResolvableToReadable = (
   perms: PermissionResolvable
 ): `\`${keyof typeof PermissionFlagsBits}\``[] => {
   const bitfield = PermissionsBitField.resolve(perms)
@@ -63,8 +44,6 @@ export const permResolvableToString = (
   return has
 }
 
-export const toString = (perms: bigint[]): string => {
-  return perms.reduce(
-    (a, b) => a | b, 0n
-  ).toString()
+export const bitfieldToString = (perms: bigint[]): `${bigint}` => {
+  return perms.reduce((a, b) => a | b, 0n).toString() as `${bigint}`
 }

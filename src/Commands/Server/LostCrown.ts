@@ -1,7 +1,6 @@
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -33,8 +32,8 @@ export class kCommand extends Command {
 
     for (const role of message.guild.roles.cache.values()) {
       if (
-        hasPerms(message.channel, role, PermissionFlagsBits.Administrator) &&
-                role.hoist
+        role.hoist &&
+        message.channel.permissionsFor(role).has(PermissionFlagsBits.Administrator)
       ) {
         const line = `${role}\n`
         if (desc.length + next.length + line.length > 2048) break

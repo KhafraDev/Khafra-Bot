@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { days } from '#khaf/utility/ms.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import type {
   APIApplicationCommandOption,
   RESTPostAPIApplicationCommandsJSONBody
@@ -20,7 +20,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'massban',
       description: 'Ban someone!',
-      default_member_permissions: toString([perms]),
+      default_member_permissions: bitfieldToString([perms]),
       dm_permission: false,
       options: [
         {

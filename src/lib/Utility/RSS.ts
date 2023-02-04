@@ -2,6 +2,7 @@ import { logger } from '#khaf/structures/Logger.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isRedirect } from '#khaf/utility/FetchUtils.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { hours, minutes } from '#khaf/utility/ms.js'
 import { s } from '@sapphire/shapeshift'
 import { XMLParser, XMLValidator, type X2jOptionsOptional } from 'fast-xml-parser'
 import { join } from 'node:path'
@@ -52,7 +53,7 @@ export class RSSReader<T> {
   #parser: XMLParser
 
   public readonly results = new Set<T>()
-  public timeout = 60 * 1000 * 60
+  public timeout = hours(1)
   public save = 10
   public url = 'https://google.com/'
 
@@ -122,8 +123,8 @@ export class RSSReader<T> {
     if ('rss' in j) {
       if (typeof j.rss.channel?.ttl === 'number') {
         clearInterval(this.#interval!)
-        this.timeout = 60 * 1000 * j.rss.channel.ttl
-        if (this.timeout <= 0) this.timeout = 60 * 1000 * 60
+        this.timeout = minutes(j.rss.channel.ttl)
+        if (this.timeout <= 0) this.timeout = hours(1)
 
         this.#interval = setInterval(
           () => void this.parse(),

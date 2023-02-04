@@ -6,7 +6,7 @@ import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
+import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { logError } from '#khaf/utility/Rejections.js'
@@ -15,11 +15,11 @@ import { plural, upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { Sanitize } from '#khaf/utility/util.js'
 import { inlineCode } from '@discordjs/builders'
-import { Attachment, DiscordAPIError, Events, Message, type MessageReplyOptions } from 'discord.js'
+import { ChannelType } from 'discord-api-types/v10'
+import { Attachment, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
-import { ChannelType } from 'discord-api-types/v10'
 
 const config = createFileWatcher<typeof import('../../config.json')>(
   join(cwd, 'config.json')
@@ -201,19 +201,13 @@ export class kEvent implements Event {
     } catch (e) {
       logger.error(e, 'message event error')
 
-      if (!(e instanceof Error)) {
-        return
-      } else if (e instanceof DiscordAPIError) {
-        // if there's an error sending a message, we should probably
-        // not send another message. in the future try figuring out
-        // the error code and basing this check off of that.
-        return
-      }
-
-      const error = 'An unexpected error has occurred!'
-
-      return void message.reply({
-        embeds: [Embed.error(error)],
+      return void await message.reply({
+        embeds: [
+          Embed.json({
+            color: colors.error,
+            description: `Sorry ${message.member}, there was an issue running this command.`
+          })
+        ],
         failIfNotExists: false
       })
     } finally {
@@ -287,17 +281,13 @@ export class kEvent implements Event {
         ...loggerUtility.formatters.message(message)
       }, 'DM error')
 
-      if (!(e instanceof Error)) {
-        return
-      } else if (e instanceof DiscordAPIError) {
-        // if there's an error sending a message, we should probably
-        // not send another message. in the future try figuring out
-        // the error code and basing this check off of that.
-        return
-      }
-
       return void await message.reply({
-        embeds: [Embed.error('An unexpected error has occurred!')],
+        embeds: [
+          Embed.json({
+            color: colors.error,
+            description: `Sorry ${message.member}, there was an issue running this command.`
+          })
+        ],
         failIfNotExists: false
       })
     } finally {

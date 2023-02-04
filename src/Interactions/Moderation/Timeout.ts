@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { days, hours, minutes, weeks } from '#khaf/utility/ms.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import {
   ApplicationCommandOptionType,
   PermissionFlagsBits,
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'timeout',
       description: 'Timeout a member from the guild.',
-      default_member_permissions: toString([PermissionFlagsBits.ModerateMembers]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ModerateMembers]),
       dm_permission: false,
       options: [
         {

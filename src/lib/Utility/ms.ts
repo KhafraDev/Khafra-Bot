@@ -20,7 +20,7 @@ conversions.year = conversions.years = conversions.yr = conversions.y = conversi
 export const parseStrToMs = (str: string): number => {
   if (str.startsWith('<t:') && str.endsWith('>')) {
     const unix = /^<t:(\d{10}):[A-z]{1}>$/.exec(str)?.[1]
-    const timestamp = Number(unix) * 1000
+    const timestamp = seconds(Number(unix))
 
     if (unix?.length !== 10) {
       return 0

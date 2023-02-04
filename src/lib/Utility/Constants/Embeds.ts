@@ -1,6 +1,6 @@
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
-import { permResolvableToString } from '#khaf/utility/Permissions.js'
+import { permResolvableToReadable } from '#khaf/utility/Permissions.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type {
   Channel,
@@ -51,7 +51,7 @@ export const Embed = {
     userOrRole: GuildMember | Role | null,
     permissions: PermissionResolvable
   ): APIEmbed {
-    const perms = permResolvableToString(permissions)
+    const perms = permResolvableToReadable(permissions)
     const checkType = userOrRole && 'color' in userOrRole
       ? `The role ${userOrRole}`
       : userOrRole

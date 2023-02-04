@@ -2,11 +2,9 @@ import { Command } from '#khaf/Command'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
-import type { GuildBasedChannel, GuildChannelCloneOptions, Message } from 'discord.js'
+import type { GuildChannelCloneOptions, Message } from 'discord.js'
 import { GuildChannel } from 'discord.js'
 
 export class kCommand extends Command {
@@ -38,7 +36,13 @@ export class kCommand extends Command {
       return Embed.error(`I cannot clone a ${channel.type} channel!`)
     }
 
-    const [e, m] = await dontThrow(message.reply({
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+
+    if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.SendMessages)) {
+      return
+    }
+
+    const m = await message.reply({
       embeds: [
         Embed.ok(`
         Are you sure you want to clone ${channel}? The channel will be deleted and re-created; all pins will be lost.
@@ -50,19 +54,18 @@ export class kCommand extends Command {
           Buttons.deny('No', 'deny')
         ])
       ]
-    }))
-
-    if (e !== null) return
+    })
 
     {
-      const [e, i] = await dontThrow(m.awaitMessageComponent<ComponentType.Button>({
+      const i = await m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
+          interaction.message.id === m.id &&
           ['approve', 'deny'].includes(interaction.customId) &&
           interaction.user.id === message.author.id,
         time: 60_000
-      }))
+      }).catch(() => null)
 
-      if (e !== null) {
+      if (i === null) {
         return Embed.error('No response, command was canceled!')
       } else if (i.customId === 'deny') {
         return Embed.error(`Command was canceled, ${channel} will not be cloned.`)
@@ -88,27 +91,29 @@ export class kCommand extends Command {
       permissionOverwrites: channel.permissionOverwrites
     })
 
-    {
-      const [err] = await dontThrow<GuildBasedChannel>(channel.delete())
-      if (err !== null) {
-        return Embed.error(`Failed to delete the channel: ${inlineCode(err.message)}.`)
-      }
+    if (!channel.deletable) {
+      return Embed.error(`Sorry ${member}, I couldn't delete ${channel}.`)
     }
 
-    const [err, cloned] = await dontThrow(clone(opts))
+    await channel.delete()
+    let cloned: GuildChannel
 
-    if (err !== null) {
-      return void dontThrow(message.author.send({
-        embeds: [Embed.error(`An error prevented me from cloning the channel: ${inlineCode(err.message)}.`)]
-      }))
+    try {
+      cloned = await clone(opts)
+    } catch {
+      return void await message.author.send({
+        embeds: [
+          Embed.error(`Sorry ${member}, I couldn't recreate ${channel.name} after it was deleted.`)
+        ]
+      }).catch(() => null)
     }
 
     const embed = Embed.ok(`Cloned channel #${opts.name} -> ${cloned}!`)
 
     if (isText(cloned)) {
-      return void dontThrow(cloned.send({ embeds: [embed] }))
+      return void await cloned.send({ embeds: [embed] })
     } else {
-      return void dontThrow(message.author.send({ embeds: [embed] }))
+      return void await message.author.send({ embeds: [embed] }).catch(() => null)
     }
   }
 }

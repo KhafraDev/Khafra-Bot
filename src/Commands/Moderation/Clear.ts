@@ -1,11 +1,8 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
-import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
@@ -39,8 +36,9 @@ export class kCommand extends Command {
     }
 
     const channel = await getMentions(message, 'channels') ?? message.channel
+    const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
-    if (!isText(channel) || !hasPerms(channel, message.guild.members.me, [PermissionFlagsBits.ManageMessages])) {
+    if (!isText(channel) || !channel.permissionsFor(me).has(PermissionFlagsBits.ManageMessages)) {
       return Embed.perms(
         channel,
         message.guild.members.me,
@@ -50,10 +48,15 @@ export class kCommand extends Command {
       await message.delete()
     }
 
-    const [err] = await dontThrow(channel.bulkDelete(toDelete, true))
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
 
-    if (err !== null) {
-      return Embed.error(`An unexpected error occurred: ${inlineCode(err.message)}.`)
+    if (!channel.permissionsFor(member).has(PermissionFlagsBits.ManageMessages)) {
+      return Embed.json({
+        color: colors.ok,
+        description: `Sorry ${member}, you can't delete messages in this channel!`
+      })
     }
+
+    await channel.bulkDelete(toDelete, true)
   }
 }

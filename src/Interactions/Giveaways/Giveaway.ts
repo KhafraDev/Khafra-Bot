@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import type {
   RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
@@ -14,7 +14,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'giveaway',
       description: 'Giveaway settings.',
-      default_member_permissions: toString([PermissionFlagsBits.ManageEvents]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ManageEvents]),
       dm_permission: false,
       options: [
         {

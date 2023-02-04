@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import * as util from '#khaf/utility/util.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import {
@@ -31,7 +31,7 @@ export class kInteraction extends Interactions {
       name: 'clone-channel',
       description: 'Clones a channel.',
       // https://discord.com/developers/docs/resources/guild#create-guild-channel
-      default_member_permissions: toString([PermissionFlagsBits.ManageChannels]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ManageChannels]),
       dm_permission: false,
       options: [
         {

@@ -2,7 +2,6 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
@@ -32,15 +31,17 @@ export class kCommand extends Command {
 
   async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
     const newAmount = Number(args[0]!)
+    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
 
-    if (!hasPerms(message.channel, message.member, PermissionFlagsBits.Administrator))
+    if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.Administrator)) {
       return Embed.perms(
         message.channel,
         message.member,
         PermissionFlagsBits.Administrator
       )
-    else if (!schema.is(newAmount))
+    } else if (!schema.is(newAmount)) {
       return Embed.error('An invalid number of points was provided, try with a positive whole number instead!')
+    }
 
     await sql`
       UPDATE kbGuild

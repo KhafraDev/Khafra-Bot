@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { toString } from '#khaf/utility/Permissions.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'react-role',
       description: 'Add a button that gives members a specified role when clicked on!',
-      default_member_permissions: toString([PermissionFlagsBits.ManageRoles]),
+      default_member_permissions: bitfieldToString([PermissionFlagsBits.ManageRoles]),
       dm_permission: false,
       options: [
         {

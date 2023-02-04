@@ -1,7 +1,6 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { days, parseStrToMs } from '#khaf/utility/ms.js'
 import { hierarchy } from '#khaf/utility/Permissions.js'
@@ -112,12 +111,12 @@ export class kCommand extends Command {
     }
 
     if (cli.dry !== true) {
-      const [err] = await dontThrow(message.guild.members.ban(user, {
-        deleteMessageSeconds: clear * days(0.001),
-        reason: reason
-      }))
-
-      if (err !== null) {
+      try {
+        await message.guild.members.ban(user, {
+          deleteMessageSeconds: clear * days(0.001),
+          reason: reason
+        })
+      } catch {
         return Embed.error(`${member ?? user} is not bannable!`)
       }
     }

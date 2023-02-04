@@ -1,20 +1,16 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
-import type { APIEmbed} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { CategoryChannel, Message, NewsChannel, TextChannel, ThreadChannel } from 'discord.js'
-
-type TicketChannelTypes = TextChannel | CategoryChannel
-type DeletedChannelTypes = TextChannel | NewsChannel | ThreadChannel
+import type { Message } from 'discord.js'
 
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i
 const memberPermsExpected =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages
+  PermissionFlagsBits.ViewChannel |
+  PermissionFlagsBits.SendMessages
 
 export class kCommand extends Command {
   constructor () {
@@ -63,33 +59,20 @@ export class kCommand extends Command {
       }
     }
 
-    const ret = message.guild.channels.cache.has(settings.ticketchannel)
-      ? message.guild.channels.cache.get(settings.ticketchannel)!
-      : await dontThrow(message.guild.channels.fetch(settings.ticketchannel))
-
-    let channel!: TicketChannelTypes
-    if (Array.isArray(ret)) {
-      const [err, chan] = ret
-      if (err !== null) {
-        return Embed.error('An error occurred trying to fetch this channel. Maybe set a new ticket channel?')
-      } else {
-        // validation is done in the ticketchannel command
-        channel = chan as TicketChannelTypes
-      }
-    } else {
-      channel = ret as TicketChannelTypes
-    }
+    const channel = message.guild.channels.cache.has(settings.ticketchannel)
+      ? message.guild.channels.cache.get(settings.ticketchannel)
+      : await message.guild.channels.fetch(settings.ticketchannel)
 
     if (isExplicitText(channel) && !isThread(message.channel)) {
       return Embed.error(`Expected thread, got ${message.channel.type}.`)
+    } else if (isExplicitText(channel) && isThread(message.channel) && message.channel.manageable) {
+      await message.channel.setArchived(true, `requested by ${message.author.id}`)
+    } else if (message.channel.manageable) {
+      await message.channel.delete()
     }
 
-    if (isExplicitText(channel)) {
-      await dontThrow((message.channel as ThreadChannel).setArchived(true, `requested by ${message.author.id}`))
-    } else {
-      await dontThrow(message.channel.delete() as Promise<DeletedChannelTypes>)
-    }
-
-    return void dontThrow(message.author.send({ content: 'Ticket was archived/deleted.' }))
+    return void await message.author.send({
+      content: 'Ticket was archived/deleted.'
+    }).catch(() => null)
   }
 }

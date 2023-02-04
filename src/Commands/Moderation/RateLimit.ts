@@ -3,12 +3,10 @@ import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isExplicitText, isText } from '#khaf/utility/Discord.js'
-import { dontThrow } from '#khaf/utility/Don\'tThrow.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { parseStrToMs } from '#khaf/utility/ms.js'
-import { hasPerms } from '#khaf/utility/Permissions.js'
 import { plural } from '#khaf/utility/String.js'
-import { bold, inlineCode } from '@discordjs/builders'
+import { bold } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
@@ -60,16 +58,16 @@ export class kCommand extends Command {
 
     // although there are docs for NewsChannel#setRateLimitPerUser, news channels
     // do not have this function. (https://discord.js.org/#/docs/main/master/class/NewsChannel?scrollTo=setRateLimitPerUser)
-    if (!isExplicitText(guildChannel))
+    if (!isExplicitText(guildChannel)) {
       return Embed.error('Rate-limits can only be set in text channels!')
-
-    const [rlError] = await dontThrow(guildChannel.setRateLimitPerUser(secs,
-      `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`
-    ))
-
-    if (rlError !== null) {
-      return Embed.error(`An unexpected error has occurred: ${inlineCode(rlError.message)}`)
+    } else if (!guildChannel.manageable) {
+      return Embed.json({
+        color: colors.error,
+        description: `Sorry ${message.member ?? message.author}, I can't set the ratelimit in this channel.`
+      })
     }
+
+    await guildChannel.setRateLimitPerUser(secs, `Khafra-Bot, req: ${message.author.tag} (${message.author.id})`)
 
     void message.reply({
       embeds: [Embed.ok(`Slow-mode set in ${guildChannel} for ${secs} second${plural(secs)}!`)]
@@ -77,8 +75,9 @@ export class kCommand extends Command {
 
     if (settings.mod_log_channel !== null) {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
+      const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
-      if (!isText(channel) || !hasPerms(channel, message.guild.members.me, perms))
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
         return
 
       return void channel.send({
