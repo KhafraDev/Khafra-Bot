@@ -42,39 +42,41 @@ export class kEvent implements Event {
     let reason: string | null = null
 
     if (me?.permissions.has(auditLogPerms)) {
-      for (let i = 0; i < 5; i++) {
-        const logs = await guild.fetchAuditLogs({
-          type: AuditLogEvent.MemberBanRemove,
-          limit: 5
-        })
+      auditLog: {
+        for (let i = 0; i < 5; i++) {
+          const logs = await guild.fetchAuditLogs({
+            type: AuditLogEvent.MemberBanRemove,
+            limit: 5
+          })
 
-        for (const entry of logs.entries.values()) {
-          const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
+          for (const entry of logs.entries.values()) {
+            const diff = Math.abs(start - SnowflakeUtil.timestampFrom(entry.id))
 
-          if (diff < threshold) {
-            if (entry.executor && entry.executor.id !== guild.client.user.id) {
-              const _case = {
-                type: 'unban',
-                targetId: user.id,
-                reason: entry.reason!,
-                staffId: entry.executor.id,
-                guildId: guild.id
-              } satisfies Case
+            if (diff < threshold) {
+              if (entry.executor && entry.executor.id !== guild.client.user.id) {
+                const _case = {
+                  type: 'unban',
+                  targetId: user.id,
+                  reason: entry.reason!,
+                  staffId: entry.executor.id,
+                  guildId: guild.id
+                } satisfies Case
 
-              await sql`
-                INSERT INTO "kbCases"
-                ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
-              `
+                await sql`
+                  INSERT INTO "kbCases"
+                  ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
+                `
+              }
+
+              staff = entry.executor
+              reason = entry.reason
+              break auditLog
             }
-
-            staff = entry.executor
-            reason = entry.reason
-            break
           }
-        }
 
-        if (i !== 4) {
-          await setTimeout(2_000)
+          if (i !== 4) {
+            await setTimeout(2_000)
+          }
         }
       }
     }
