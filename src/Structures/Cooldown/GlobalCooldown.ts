@@ -1,3 +1,4 @@
+import { minutes } from '#khaf/utility/ms.js'
 import { setInterval } from 'node:timers'
 
 /**
@@ -13,7 +14,7 @@ import { setInterval } from 'node:timers'
 export const cooldown = (max: number, ms: number): (id: string) => boolean => {
   const m = new Map<string, number[]>()
   setInterval(() => { // clear out old entries
-    m.forEach((v, k) => {
+    for (const [k, v] of m) {
       const now = Date.now()
       const f = v.filter(d => now - d < ms)
       if (f.length === 0) {
@@ -21,8 +22,8 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
       } else {
         m.set(k, f)
       }
-    })
-  }, 1000 * 60 * 10).unref() // 10 minutes
+    }
+  }, minutes(10)).unref()
 
   return (id: string): boolean => {
     const now = Date.now()

@@ -1,10 +1,10 @@
+import { Twitter } from '#khaf/functions/twitter/details.js'
 import { Interactions } from '#khaf/Interaction'
-import { getTwitterMediaURL } from '#khaf/utility/commands/Twitter'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
-import { Embed } from '#khaf/utility/Constants/Embeds.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { s } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { hyperlink, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 import { URL } from 'node:url'
 
 const schema = s.string.url({
@@ -13,10 +13,13 @@ const schema = s.string.url({
 }).transform((value) => {
   const url = new URL(value)
   url.search = ''
+  url.hash = ''
   return url
 })
 
 export class kInteraction extends Interactions {
+  #twitter = new Twitter()
+
   constructor () {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'twitter',
@@ -57,7 +60,7 @@ export class kInteraction extends Interactions {
     }
 
     const id = /\/(\d+)$/.exec(pathname)![1]
-    const media = await getTwitterMediaURL(id)
+    const media = await this.#twitter.getGraphTweet(id)
 
     if (!media) {
       return {
@@ -66,8 +69,19 @@ export class kInteraction extends Interactions {
       }
     }
 
+    const link = hyperlink(
+      'twitter!',
+      'https://twittercommunity.com/t/twitter-api-v2-not-returning-all-mixed-media-with-a-quoted-tweet/180687/5'
+    )
+
     return {
-      embeds: [Embed.ok(media)],
+      content: `If the tweet has multiple attachments, only the first one is shown. Blame ${link}`,
+      embeds: [
+        Embed.json({
+          color: colors.ok,
+          description: media.join('\n')
+        })
+      ],
       components: [
         Components.actionRow([
           Buttons.link('Go to Twitter', twitterURL.value.toString())
