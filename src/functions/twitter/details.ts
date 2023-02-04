@@ -77,7 +77,10 @@ export class Twitter {
       .legacy
       .extended_entities
       ?.media // no media in tweet
-      .map((media: { media_url_https: string }) => media.media_url_https)
+      .map((media: any) => media.type !== 'animated_gif'
+        ? media.media_url_https
+        : media.video_info.variants[0].url
+      )
     /* eslint-enable */
 
     return media ?? null
