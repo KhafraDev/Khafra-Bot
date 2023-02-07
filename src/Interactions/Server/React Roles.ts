@@ -112,7 +112,7 @@ export class kInteraction extends Interactions {
         text = `Press the button below to remove ${role} from yourself.`
       } else {
         text = `Press the button below to get the ${role} role!
-                        
+
                 Clicking the button again will take the role away!`
       }
     }

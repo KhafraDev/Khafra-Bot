@@ -4,6 +4,7 @@ import { once } from '#khaf/utility/Memoize.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
+import { hours } from '#khaf/utility/ms.js'
 
 const settings = {
   rss: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
@@ -26,8 +27,8 @@ interface INYTimes {
     'media:description': string
 }
 
-const rss = new RSSReader<INYTimes>()
-const cache = once(async () => rss.cache(settings.rss))
+const rss = new RSSReader<INYTimes>(settings.rss)
+const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
   constructor () {
@@ -57,7 +58,7 @@ export class kCommand extends Command {
       description: posts
         .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
-        .slice(0, 2048),
+        .slice(0, 4096),
       author: settings.author
     })
   }

@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { once } from '#khaf/utility/Memoize.js'
+import { hours } from '#khaf/utility/ms.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
@@ -63,8 +64,8 @@ interface ITheOnion {
     'dc:creator': string
 }
 
-const rss = new RSSReader<ITheOnion>()
-const cache = once(() => rss.cache('https://www.theonion.com/rss'))
+const rss = new RSSReader<ITheOnion>('https://www.theonion.com/rss')
+const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
   constructor () {

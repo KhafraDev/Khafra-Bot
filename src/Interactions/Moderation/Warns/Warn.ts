@@ -126,14 +126,14 @@ export class kSubCommand extends InteractionSubCommand {
 
       await interaction.editReply({
         content:
-                    `${member} was automatically kicked from the server for having ` +
-                    `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
+          `${member} was automatically kicked from the server for having ` +
+          `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
       })
     } else {
       await interaction.editReply({
         content:
-                    `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` +
-                    ` Member has ${totalPoints.toLocaleString()} points total.`
+          `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` +
+          ` Member has ${totalPoints.toLocaleString()} points total.`
       })
     }
 

@@ -2,6 +2,7 @@ import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { once } from '#khaf/utility/Memoize.js'
+import { hours } from '#khaf/utility/ms.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
@@ -16,10 +17,10 @@ interface ICyanideAndHappiness {
     pubDate: string
 }
 
-const rss = new RSSReader<ICyanideAndHappiness>()
+const rss = new RSSReader<ICyanideAndHappiness>('https://explosm-1311.appspot.com/')
 // https://github.com/daniellowtw/explosm-rss
 // does the scraping for us, so might as well use until it's no longer available
-const cache = once(() => rss.cache('https://explosm-1311.appspot.com/'))
+const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
   constructor () {

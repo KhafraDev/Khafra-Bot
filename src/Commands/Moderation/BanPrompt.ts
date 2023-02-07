@@ -93,7 +93,7 @@ export class kCommand extends Command {
       embeds: [
         Embed.ok(
           `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` +
-                    ' days worth of messages have been removed.'
+          ' days worth of messages have been removed.'
         )
       ],
       components: disableAll(msg)

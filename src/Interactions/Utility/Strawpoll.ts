@@ -79,10 +79,10 @@ export class kInteraction extends Interactions {
         },
         // TODO: add date option once the api is updated
         /*{
-                    type: ApplicationCommandOptionType.String,
-                    name: 'date',
-                    description: 'If the poll should be private, defaults to true.'
-                },*/
+            type: ApplicationCommandOptionType.String,
+            name: 'date',
+            description: 'If the poll should be private, defaults to true.'
+        },*/
         {
           type: ApplicationCommandOptionType.Boolean,
           name: 'only-registered',

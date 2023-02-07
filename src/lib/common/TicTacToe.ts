@@ -50,8 +50,8 @@ export class TicTacToe {
         // If two spots in the same row are empty, ignore it.
         if (
           atA === null && atB === null ||
-                    atA === null && atC === null ||
-                    atB === null && atC === null
+          atA === null && atC === null ||
+          atB === null && atC === null
         ) {
           continue
         }

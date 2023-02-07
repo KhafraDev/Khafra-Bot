@@ -206,9 +206,9 @@ export class kInteraction extends Interactions {
 
           if (
             Number.isNaN(ruleNumber) ||
-                        !Number.isInteger(ruleNumber) ||
-                        ruleNumber > rules.length ||
-                        ruleNumber <= 0
+            !Number.isInteger(ruleNumber) ||
+            ruleNumber > rules.length ||
+            ruleNumber <= 0
           ) {
             embed.title = `Invalid rule #${ruleNumber} - max is #${rules.length}.`
           } else if (action === 'edit') {

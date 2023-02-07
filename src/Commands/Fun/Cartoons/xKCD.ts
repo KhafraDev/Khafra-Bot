@@ -1,6 +1,7 @@
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { once } from '#khaf/utility/Memoize.js'
+import { hours } from '#khaf/utility/ms.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
@@ -13,8 +14,8 @@ interface IxKCD {
     guid: string
 }
 
-const rss = new RSSReader<IxKCD>()
-const cache = once(() => rss.cache('https://xkcd.com/rss.xml'))
+const rss = new RSSReader<IxKCD>('https://xkcd.com/rss.xml')
+const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
   constructor () {
