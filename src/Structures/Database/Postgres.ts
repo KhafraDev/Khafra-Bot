@@ -16,6 +16,4 @@ export const sql = postgres({
   onnotice: () => {}
 })
 
-await Promise.all(
-  sqlFiles.map(file => sql.file<unknown[]>(file))
-)
+await Promise.all(sqlFiles.map(file => sql.file(file)))

@@ -3,15 +3,15 @@ import type { APIApplicationCommandOptionChoice } from 'discord-api-types/v10'
 import type { AutocompleteInteraction } from 'discord.js'
 import { request } from 'undici'
 
-const { body } = await request(
-  'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.19/items.json'
-)
-const json = await body.json() as {
-    id: number
-    name: string
-    displayName: string
-    stackSize: number
-}[]
+interface MinecraftItem {
+  id: number
+  name: string
+  displayName: string
+  stackSize: number
+}
+
+const items = 'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.19/items.json'
+let json: MinecraftItem[]
 
 export class kAutocomplete extends InteractionAutocomplete {
   constructor () {
@@ -22,6 +22,8 @@ export class kAutocomplete extends InteractionAutocomplete {
   }
 
   async handle (interaction: AutocompleteInteraction): Promise<undefined> {
+    json ??= await (await request(items)).body.json() as MinecraftItem[]
+
     const option = interaction.options.getFocused(true)
 
     if (option.name !== 'item') return
