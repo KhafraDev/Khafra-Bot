@@ -1,33 +1,10 @@
-interface DeferredPromise {
-    resolve: () => void
-    reject: () => void
-    promise: Promise<void>
-}
+import { createDeferredPromise } from '#khaf/utility/util.js'
 
-export class AsyncQueue extends Array<DeferredPromise> {
-  /**
-   * Creates a deferred promise.
-   */
-  public createDeferredPromise (): DeferredPromise {
-    let resolve: DeferredPromise['resolve'] | undefined,
-      reject: DeferredPromise['reject'] | undefined
-
-    const promise = new Promise<void>((res, rej) => {
-      resolve = res
-      reject = rej
-    })
-
-    return {
-      resolve: resolve!,
-      reject: reject!,
-      promise
-    }
-  }
-
-  public wait (): Promise<void> {
+export class AsyncQueue extends Array<ReturnType<typeof createDeferredPromise>> {
+  public wait (): Promise<unknown> {
     const next = this.length !== 0 ? this.at(-1)!.promise : Promise.resolve()
 
-    this.push(this.createDeferredPromise())
+    this.push(createDeferredPromise())
 
     return next
   }
@@ -36,7 +13,7 @@ export class AsyncQueue extends Array<DeferredPromise> {
     if (this.length === 0) return undefined
 
     const promise = this.shift()
-    promise?.resolve()
+    promise?.resolve(undefined)
 
     return undefined
   }

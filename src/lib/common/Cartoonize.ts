@@ -1,7 +1,7 @@
-import { logError } from '#khaf/utility/Rejections.js'
 import { s } from '@sapphire/shapeshift'
 import type { Attachment } from 'discord.js'
 import { decodeXML } from 'entities'
+import assert from 'node:assert'
 import { type Blob } from 'node:buffer'
 import { basename } from 'node:path'
 import { FormData, request } from 'undici'
@@ -18,28 +18,22 @@ const R = /<div class="image">\s+<img src="(.*?)">/
  * Cartoonize an image using AI from an unofficial API.
  */
 export const Cartoonize = {
-  async blobFromUrl(url: string): Promise<Blob | null> {
-    const u = schema.run(url)
-    if (!u.isOk()) return null
+  async blobFromUrl (url: string): Promise<Blob> {
+    assert(schema.is(url))
 
-    const res = await request(u.value).catch((err: Error) => {
-      logError(err)
-      return null
-    })
+    const res = await request(url)
 
-    if (res !== null) {
-      return res.body.blob()
-    }
-
-    return null
+    return res.body.blob()
   },
 
-  async cartoonize(attachment: Attachment): Promise<string | null> {
+  async cartoonize (attachment: Attachment): Promise<string | null> {
     const form = new FormData()
-    const blob = await Cartoonize.blobFromUrl(attachment.proxyURL)
 
-    if (blob === null) return null
-    form.append('image', blob, basename(attachment.proxyURL))
+    form.append(
+      'image',
+      await Cartoonize.blobFromUrl(attachment.proxyURL),
+      basename(attachment.proxyURL)
+    )
 
     const { body } = await request('https://cartoonize-lkqov62dia-de.a.run.app/cartoonize', {
       method: 'POST',

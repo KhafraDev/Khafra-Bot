@@ -3,8 +3,6 @@ import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { seconds } from '#khaf/utility/ms.js'
-import { logError } from '#khaf/utility/Rejections.js'
-import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -93,16 +91,8 @@ export class kInteraction extends Interactions {
 
     if (subcommand === Subcommands.LIST) {
       if (list.length === 0) {
-        const res = await request(supportedListURL).catch(logError)
-
-        if (res instanceof Error) {
-          return {
-            content: `❌ An unexpected error occurred: ${inlineCode(res.message)}`,
-            ephemeral: true
-          }
-        }
-
-        const listJoined = await res.body.text()
+        const { body } = await request(supportedListURL)
+        const listJoined = await body.text()
         const emojis = parse(listJoined)
 
         list.push(...emojis.map(e => e.text))
@@ -197,16 +187,8 @@ export class kInteraction extends Interactions {
     api.searchParams.append('country', 'US')
     api.searchParams.append('q', query)
 
-    const res = await request(api).catch(logError)
-
-    if (res instanceof Error) {
-      return {
-        content: `❌ An unexpected error occurred: ${inlineCode(res.message)}`,
-        ephemeral: true
-      }
-    }
-
-    const j = await res.body.json() as EmojiKitchen
+    const { body } = await request(api)
+    const j = await body.json() as EmojiKitchen
 
     if (j.results.length === 0) {
       return {

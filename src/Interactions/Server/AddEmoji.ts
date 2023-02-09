@@ -1,6 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
-import { logError } from '#khaf/utility/Rejections.js'
 import { inlineCode } from '@discordjs/builders'
 import type {
   APIRole,
@@ -113,14 +112,7 @@ export class kInteraction extends Interactions {
       reason,
       attachment: attachment.proxyURL,
       roles: roles.map(role => role.id)
-    }).catch(logError)
-
-    if (emoji instanceof Error) {
-      return {
-        content: `❌ An unexpected error has occurred: ${inlineCode(emoji.message)}`,
-        ephemeral: true
-      }
-    }
+    })
 
     return {
       content: `${emoji} is now a guild emoji!`

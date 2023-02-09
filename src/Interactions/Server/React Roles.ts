@@ -3,8 +3,6 @@ import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
-import { logError } from '#khaf/utility/Rejections.js'
-import { inlineCode } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -203,14 +201,7 @@ export class kInteraction extends Interactions {
       components: [
         Components.actionRow([component])
       ]
-    }).catch(logError)
-
-    if (message instanceof Error) {
-      return {
-        content: `❌ An unexpected error occurred: ${inlineCode(message.message)}`,
-        ephemeral: true
-      }
-    }
+    })
 
     return {
       embeds: [

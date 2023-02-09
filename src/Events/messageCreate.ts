@@ -10,7 +10,6 @@ import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { seconds } from '#khaf/utility/ms.js'
-import { logError } from '#khaf/utility/Rejections.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
@@ -93,7 +92,7 @@ export class kEvent implements Event {
           Hey ${message.member ?? message.author}, use the slash command version instead!
           ${commandMention}
           `
-      }).catch(logError)
+      })
     }
 
     let guild: kGuild | undefined

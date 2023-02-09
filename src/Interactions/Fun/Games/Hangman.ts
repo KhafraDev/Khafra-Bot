@@ -4,6 +4,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { assets } from '#khaf/utility/Constants/Path.js'
 import { seconds } from '#khaf/utility/ms.js'
 import { plural } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode } from '@discordjs/builders'
 import { ComponentType, TextInputStyle, type Snowflake } from 'discord-api-types/v10'
 import {
@@ -207,7 +208,11 @@ export class kSubCommand extends InteractionSubCommand {
           c.stop()
 
           await i.reply({
-            content: 'OK, play again soon! ❤️',
+            content: stripIndents`
+            OK, play again soon! ❤️
+
+            By the way, the word was ${inlineCode(word)}.
+            `,
             ephemeral: true
           })
 

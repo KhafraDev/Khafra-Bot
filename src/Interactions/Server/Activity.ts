@@ -1,7 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
-import { logError } from '#khaf/utility/Rejections.js'
-import { hideLinkEmbed, hyperlink, inlineCode } from '@discordjs/builders'
+import { hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import type {
   APIInvite, RESTPostAPIApplicationCommandsJSONBody,
   RESTPostAPIChannelInviteJSONBody
@@ -91,16 +90,10 @@ export class kInteraction extends Interactions {
           target_application_id: activityId
         } as RESTPostAPIChannelInviteJSONBody
       }
-    ).catch(logError) as APIInvite | ReturnType<typeof logError>
-
-    if (invite instanceof Error) {
-      return {
-        content: `❌ An unexpected error occurred: ${inlineCode(invite.message)}`,
-        ephemeral: true
-      }
-    }
+    ) as APIInvite
 
     const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`))
+
     return {
       content: `${hl} to open ${invite.target_application!.name} in ${channel}!`
     }

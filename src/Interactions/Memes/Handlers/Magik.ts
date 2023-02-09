@@ -1,6 +1,5 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { logError } from '#khaf/utility/Rejections.js'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { magik } from '@khaf/magik'
 import { s } from '@sapphire/shapeshift'
@@ -25,37 +24,26 @@ export class kSubCommand extends InteractionSubCommand {
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
 			interaction.user.displayAvatarURL(options)
 
-    try {
-      const buffer = await this.image(option)
+    const buffer = await this.image(option)
 
-      if (typeof buffer === 'string') {
-        return { content: buffer, ephemeral: true }
-      }
+    if (typeof buffer === 'string') {
+      return { content: buffer, ephemeral: true }
+    }
 
-      return {
-        files: [
-          {
-            attachment: Buffer.from(buffer, buffer.byteOffset, buffer.byteLength),
-            name: 'magik.png'
-          }
-        ]
-      }
-    } catch (e) {
-      if (e instanceof Error) {
-        logError(e)
-      }
-
-      return {
-        content: '❌ An unexpected error occurred',
-        ephemeral: true
-      }
+    return {
+      files: [
+        {
+          attachment: Buffer.from(buffer, buffer.byteOffset, buffer.byteLength),
+          name: 'magik.png'
+        }
+      ]
     }
   }
 
   async image (avatarURL: string | Attachment): Promise<Uint8ClampedArray | string> {
     if (typeof avatarURL === 'string') {
       if (!ImageUtil.isImage(avatarURL)) {
-            	return '❌ This file type is not supported.'
+        return '❌ This file type is not supported.'
       }
     } else {
       const { width, height, proxyURL } = avatarURL

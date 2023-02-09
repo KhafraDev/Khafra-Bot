@@ -3,6 +3,7 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Json } from '#khaf/utility/Constants/Path.js'
 import { minutes } from '#khaf/utility/ms.js'
+import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode } from '@discordjs/builders'
 import { createCanvas } from '@napi-rs/canvas'
 import {
@@ -178,7 +179,11 @@ export class kSubCommand extends InteractionSubCommand {
           c.stop('user quit')
 
           await i.reply({
-            content: 'OK, play again soon! ❤️',
+            content: stripIndents`
+            OK, play again soon! ❤️
+            
+            By the way, the word was ${inlineCode(word)}
+            `,
             ephemeral: true
           })
 

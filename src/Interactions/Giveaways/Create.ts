@@ -4,7 +4,6 @@ import { type Giveaway } from '#khaf/types/KhafraBot.js'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { parseStrToMs, seconds, weeks } from '#khaf/utility/ms.js'
-import { logError } from '#khaf/utility/Rejections.js'
 import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
@@ -72,7 +71,7 @@ export class kSubCommand extends InteractionSubCommand {
       embeds: [embed]
     })
 
-    await sent.react('🎉').catch(logError)
+    await sent.react('🎉').catch(() => {})
 
     const rows = await sql<GiveawayId[]>`
       INSERT INTO kbGiveaways (

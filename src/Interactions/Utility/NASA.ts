@@ -1,10 +1,8 @@
 import { Interactions } from '#khaf/Interaction'
-import { inlineCode } from '@discordjs/builders'
 import { NASAGetRandom } from '#khaf/utility/commands/NASA'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions } from 'discord.js'
-import { logError } from '#khaf/utility/Rejections.js'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -17,14 +15,9 @@ export class kInteraction extends Interactions {
   }
 
   async init (): Promise<InteractionReplyOptions> {
-    const result = await NASAGetRandom().catch(logError)
+    const result = await NASAGetRandom()
 
-    if (result instanceof Error) {
-      return {
-        content: `❌ An unexpected error occurred: ${inlineCode(result.message)}`,
-        ephemeral: true
-      }
-    } else if (result === null) {
+    if (result === null) {
       return {
         content: '❌ No images were fetched, try again?',
         ephemeral: true

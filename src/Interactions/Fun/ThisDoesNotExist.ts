@@ -4,7 +4,6 @@ import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist'
 import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { logError } from '#khaf/utility/Rejections.js'
 import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
@@ -39,17 +38,7 @@ export class kInteraction extends Interactions {
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const type = interaction.options.getString('type', true)
     if (type === 'tdne_fuhomer') {
-      const homer = await thisSimpsonDoesNotExist().catch((err: Error) => {
-        logError(err)
-        return null
-      })
-
-      if (homer === null) {
-        return {
-          content: '❌ An unexpected error occurred getting a Homer!',
-          ephemeral: true
-        }
-      }
+      const homer = await thisSimpsonDoesNotExist()
 
       return {
         embeds: [
@@ -60,10 +49,7 @@ export class kInteraction extends Interactions {
         ]
       }
     } else if (type === 'tdne_word') {
-      const word = await thisWordDoesNotExist().catch((err: Error) => {
-        logError(err)
-        return null
-      })
+      const word = await thisWordDoesNotExist()
 
       if (word === null) {
         return {
@@ -83,17 +69,7 @@ export class kInteraction extends Interactions {
 
       return { embeds: [embed] }
     } else {
-      const image = await thisDoesNotExist(type.split('_')[1] as DNE).catch((err: Error) => {
-        logError(err)
-        return null
-      })
-
-      if (image === null) {
-        return {
-          content: '❌ Not yet implemented or an error occurred!',
-          ephemeral: true
-        }
-      }
+      const image = await thisDoesNotExist(type.split('_')[1] as DNE)
 
       return image as InteractionReplyOptions
     }

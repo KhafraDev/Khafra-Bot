@@ -20,9 +20,3 @@ process.on('SIGTERM', (signal) => void cleanup(signal))
 process.on('SIGINT', (signal) => void cleanup(signal))
 process.on('uncaughtException', (error) => void cleanup('uncaughtException', error))
 process.on('unhandledRejection', (error: unknown) => void cleanup('unhandledRejection', error))
-
-export const logError = (err: Error): Error => {
-  Error.captureStackTrace(err, logError)
-  logger.error(err)
-  return err
-}
