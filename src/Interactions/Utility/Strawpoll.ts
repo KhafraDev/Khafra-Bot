@@ -7,19 +7,19 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import { request } from 'undici'
 
 interface StrawpollBody {
-    poll: Partial<{
-        title: string
-        answers: string[]
-        priv: boolean
-        co: boolean
-        ma: boolean
-        mip: boolean
-        enter_name: boolean
-        deadline: Date | undefined
-        only_reg: boolean
-        vpn: boolean
-        captcha: boolean
-    }>
+  poll: Partial<{
+    title: string
+    answers: string[]
+    priv: boolean
+    co: boolean
+    ma: boolean
+    mip: boolean
+    enter_name: boolean
+    deadline: Date | undefined
+    only_reg: boolean
+    vpn: boolean
+    captcha: boolean
+  }>
 }
 
 const schema = s.object({
@@ -122,7 +122,7 @@ export class kInteraction extends Interactions {
 
     const poll: StrawpollBody['poll'] = {
       title: interaction.options.getString('title', true),
-      answers: answers,
+      answers,
       priv: interaction.options.getBoolean('private') ?? true,
       co: interaction.options.getBoolean('allow-comments') ?? false,
       ma: interaction.options.getBoolean('multiple-answers') ?? false,

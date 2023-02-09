@@ -72,7 +72,7 @@ export class kCommand extends Command {
 
       const thread = await channel.threads.create({
         type: ChannelType.PrivateThread,
-        name: name,
+        name,
         autoArchiveDuration: ThreadAutoArchiveDuration.OneDay,
         reason: `${message.author.tag} (${message.author.id}) created a support ticket.`
       })

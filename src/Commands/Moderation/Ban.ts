@@ -114,7 +114,7 @@ export class kCommand extends Command {
       try {
         await message.guild.members.ban(user, {
           deleteMessageSeconds: clear * days(0.001),
-          reason: reason
+          reason
         })
       } catch {
         return Embed.error(`${member ?? user} is not bannable!`)

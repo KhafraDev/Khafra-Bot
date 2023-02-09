@@ -153,7 +153,7 @@ export class kSubCommand extends InteractionSubCommand {
     const game = {
       interaction,
       guesses: [] as string[],
-      word: word
+      word
     } as const
 
     const reply = await interaction.editReply({
