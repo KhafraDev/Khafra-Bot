@@ -31,14 +31,6 @@ export class kInteraction extends Interactions {
     const image = interaction.options.getAttachment('image', true)
     const cartoon = await Cartoonize.cartoonize(image)
 
-    if (!cartoon) {
-      return {
-        embeds: [
-          Embed.error('Failed to extract the image from the HTML. 😕')
-        ]
-      }
-    }
-
     const { body } = await request(cartoon)
     const imageBuffer = arrayBufferToBuffer(await body.arrayBuffer())
 

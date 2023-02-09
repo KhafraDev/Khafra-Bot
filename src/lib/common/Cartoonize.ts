@@ -26,7 +26,7 @@ export const Cartoonize = {
     return res.body.blob()
   },
 
-  async cartoonize (attachment: Attachment): Promise<string | null> {
+  async cartoonize (attachment: Attachment): Promise<string> {
     const form = new FormData()
 
     form.append(
