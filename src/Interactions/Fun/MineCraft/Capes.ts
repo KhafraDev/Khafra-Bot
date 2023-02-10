@@ -1,10 +1,12 @@
+import { capes as getCapes } from '#khaf/functions/minecraft/textures.js'
+import { usernameToUUID } from '#khaf/functions/minecraft/username-to-uuid.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { bold } from '@discordjs/builders'
-import { getCapes, UUID } from '@khaf/minecraft'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import type { AssertionError } from 'node:assert'
 import type { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
@@ -13,6 +15,8 @@ import { request } from 'undici'
 // Mom - minecon 2016
 // LabyMod - labymod cape (surprising)
 // PopoSlayer6969 - labymod cape
+
+// TODO(@KhafraDev): the image generation needs to be completely redone.
 
 const dashUUID = (uuid: string): string => {
   // 3a440181e05746aead7979873f03ddbe -> 3a440181-e057-46ae-ad79-79873f03ddbe
@@ -33,13 +37,15 @@ export class kSubCommand extends InteractionSubCommand {
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const username = interaction.options.getString('username', true)
+    let capes: string[]
+    let uuid
 
-    const uuid = await UUID(username)
-    const capes = uuid !== null ? await getCapes(uuid.id) : []
-
-    if (uuid === null) {
+    try {
+      uuid = await usernameToUUID(username)
+      capes = await getCapes(uuid.id)
+    } catch (e) {
       return {
-        content: '❌ Player could not be found!',
+        content: (e as AssertionError).message || 'No player with that name could be found.',
         ephemeral: true
       }
     }

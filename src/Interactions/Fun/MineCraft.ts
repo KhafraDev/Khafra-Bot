@@ -48,19 +48,6 @@ export class kInteraction extends Interactions {
         },
         {
           type: ApplicationCommandOptionType.Subcommand,
-          name: 'name-history',
-          description: 'Get a player\'s previous name history!',
-          options: [
-            {
-              type: ApplicationCommandOptionType.String,
-              name: 'username',
-              description: 'MineCraft username to get the name history of.',
-              required: true
-            }
-          ]
-        },
-        {
-          type: ApplicationCommandOptionType.Subcommand,
           name: 'recipe',
           description: 'Get a crafting recipe for an item.',
           options: [

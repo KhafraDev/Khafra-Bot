@@ -1,11 +1,13 @@
+import { skin as getSkin } from '#khaf/functions/minecraft/textures.js'
+import { usernameToUUID } from '#khaf/functions/minecraft/username-to-uuid.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { bold } from '@discordjs/builders'
-import { getSkin, UUID } from '@khaf/minecraft'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import type { AssertionError } from 'node:assert'
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -18,21 +20,25 @@ export class kSubCommand extends InteractionSubCommand {
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const username = interaction.options.getString('username', true)
     const type = interaction.options.getString('type') ?? 'frontfull'
-    const uuid = await UUID(username)
+    let uuid
 
-    const description = `
-		● ${bold('Username:')} ${uuid?.name}
-		● ${bold('ID:')} ${uuid?.id}
-		`
-
-    if (uuid === null) {
+    try {
+      uuid = await usernameToUUID(username)
+    } catch (e) {
       return {
-        content: '❌ Player could not be found!',
+        content: (e as AssertionError).message || 'No player with that name could be found.',
         ephemeral: true
       }
-    } else if (type === 'skin') {
-      const skin = (await getSkin(uuid.id))[0]
-      const { body } = await request(skin)
+    }
+
+    const description = `
+		● ${bold('Username:')} ${uuid.name}
+		● ${bold('ID:')} ${uuid.id}
+		`
+
+    if (type === 'skin') {
+      const skin = await getSkin(uuid.id)
+      const { body } = await request(skin[0])
       const b = arrayBufferToBuffer(await body.arrayBuffer())
 
       return {
