@@ -15,7 +15,11 @@ export async function profile (uuid: string, modifier: keyof typeof textures): P
 export async function profile (uuid: string, modifier?: keyof typeof textures): Promise<Profile | string[]> {
   const url = new URL(uuid, routes.profile)
   const { body, statusCode } = await request(url)
-  assert(statusCode === 200)
+
+  if (statusCode !== 200) {
+    await body.dump()
+    assert(false, 'An unknown error occurred, sorry.')
+  }
 
   const j: unknown = await body.json()
   assert(profileSchema.is(j), 'Incorrect response from Mojang.')

@@ -28,6 +28,8 @@ export class kSubCommand extends InteractionSubCommand {
     const { body, statusCode } = await request('https://api.bunnies.io/v2/loop/random/?media=gif')
 
     if (statusCode !== 200) {
+      await body.dump()
+
       return {
         content: '🐰 Couldn\'t get a picture of a random bunny!',
         ephemeral: true

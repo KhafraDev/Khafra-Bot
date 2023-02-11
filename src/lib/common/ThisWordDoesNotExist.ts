@@ -19,6 +19,8 @@ export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> =>
   const { body, statusCode } = await request('https://www.thisworddoesnotexist.com/api/random_word.json')
 
   if (statusCode !== 200) {
+    await body.dump()
+
     return null
   }
 

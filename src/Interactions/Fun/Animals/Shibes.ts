@@ -22,6 +22,8 @@ export class kSubCommand extends InteractionSubCommand {
       const { body, statusCode } = await request('https://shibe.online/api/shibes?count=100&urls=true&httpsUrls=true')
 
       if (statusCode !== 200) {
+        await body.dump()
+
         return {
           content: '🐶 Couldn\'t get a picture of a random shibe!',
           ephemeral: true

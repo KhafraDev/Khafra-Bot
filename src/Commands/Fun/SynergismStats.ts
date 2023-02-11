@@ -25,6 +25,7 @@ export class kCommand extends Command {
     const quarkBonus = await request('https://synergism-quarks.khafra.workers.dev/')
 
     if (stats === null) {
+      await quarkBonus.body.dump()
       return Embed.error('Failed to fetch the stats!')
     }
 

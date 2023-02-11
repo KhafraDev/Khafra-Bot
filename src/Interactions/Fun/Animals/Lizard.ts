@@ -19,6 +19,8 @@ export class kSubCommand extends InteractionSubCommand {
     const { body, statusCode } = await request('https://nekos.life/api/v2/img/lizard')
 
     if (statusCode !== 200) {
+      await body.dump()
+
       return {
         content: '🦎 Couldn\'t get a picture of a random lizard!',
         ephemeral: true

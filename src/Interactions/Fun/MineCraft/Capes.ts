@@ -89,12 +89,12 @@ export class kSubCommand extends InteractionSubCommand {
       const { statusCode, body } = await request(url)
 
       if (type === 'mojang') {
+        await body.dump()
         assert(statusCode === 200)
-      } else {
-        // The player doesn't have an Optifine cape.
-        if (statusCode !== 200) {
-          continue
-        }
+      } else if (statusCode !== 200) {
+        // The player doesn't have an Optifine/Labymod/etc. cape.
+        await body.dump()
+        continue
       }
 
       const buffer = arrayBufferToBuffer(await body.arrayBuffer())

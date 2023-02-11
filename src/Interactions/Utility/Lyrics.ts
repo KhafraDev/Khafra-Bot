@@ -82,6 +82,8 @@ export class kInteraction extends Interactions {
     } = await request(getLyricsURL(artist, song))
 
     if (lyricStatus !== 200) {
+      await lyricBody.dump()
+
       return {
         content: '❌ An error occurred getting these lyrics.'
       }

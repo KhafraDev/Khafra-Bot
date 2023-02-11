@@ -22,6 +22,8 @@ export class kSubCommand extends InteractionSubCommand {
     const { body, statusCode } = await request('https://dog.ceo/api/breeds/image/random')
 
     if (statusCode !== 200) {
+      await body.dump()
+
       return {
         content: '🐶 Couldn\'t get a picture of a random dog!',
         ephemeral: true

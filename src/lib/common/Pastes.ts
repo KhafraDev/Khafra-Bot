@@ -51,6 +51,8 @@ const hatebin = async (text: string): Promise<string | undefined> => {
   if (statusCode === 200) {
     return `https://hatebin.com/${(await body.text()).trim()}`
   }
+
+  await body.dump()
 }
 
 /**
@@ -69,6 +71,8 @@ const sourcebin = async (text: string): Promise<string | undefined> => {
     const j = await body.json() as ISourcebin
     return `https://sourceb.in/${j.key}`
   }
+
+  await body.dump()
 }
 
 /**
@@ -85,6 +89,8 @@ const nomsy = async (text: string): Promise<string | undefined> => {
     const j = await body.json() as HasteServer
     return `https://paste.nomsy.net/${j.key}`
   }
+
+  await body.dump()
 }
 
 /**
@@ -105,6 +111,8 @@ const pastegg = async (text: string): Promise<string | undefined> => {
     const j = await body.json() as PasteGGError | PasteGGSuccess
     if (j.status === 'success')
       return `https://paste.gg/anonymous/${j.result.id}`
+  } else {
+    await body.dump()
   }
 }
 

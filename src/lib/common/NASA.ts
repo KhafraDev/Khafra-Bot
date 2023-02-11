@@ -54,6 +54,8 @@ export const NASAGetRandom = async (): Promise<NASACache | null> => {
   }
 
   if (statusCode !== 200) {
+    await body.dump()
+
     return cache.shift() ?? null
   }
 

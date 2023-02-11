@@ -12,6 +12,7 @@ export const usernameToUUID = async (username: string): Promise<InferType<typeof
   const { statusCode, body } = await request(url)
 
   if (statusCode === 204) {
+    await body.dump()
     assert(false, 'Username doesn\'t exist.')
   }
 
