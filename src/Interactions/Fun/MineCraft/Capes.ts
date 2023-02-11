@@ -88,12 +88,14 @@ export class kSubCommand extends InteractionSubCommand {
       const { type, url } = capes[i]
       const { statusCode, body } = await request(url)
 
-      if (type === 'mojang') {
-        await body.dump()
-        assert(statusCode === 200)
-      } else if (statusCode !== 200) {
+      if (statusCode !== 200) {
         // The player doesn't have an Optifine/Labymod/etc. cape.
         await body.dump()
+
+        if (type === 'mojang') {
+          assert(false, 'Unable to resolve cape image.')
+        }
+
         continue
       }
 
