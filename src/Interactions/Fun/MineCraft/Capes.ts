@@ -4,9 +4,11 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { bold } from '@discordjs/builders'
-import { createCanvas, Image } from '@napi-rs/canvas'
+import { createCanvas } from '@napi-rs/canvas'
+import { ResizeFilterType, ResizeFit, Transformer } from '@napi-rs/image'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { AssertionError } from 'node:assert'
+import assert from 'node:assert'
 import type { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
@@ -16,7 +18,10 @@ import { request } from 'undici'
 // LabyMod - labymod cape (surprising)
 // PopoSlayer6969 - labymod cape
 
-// TODO(@KhafraDev): the image generation needs to be completely redone.
+interface Cape {
+  url: string
+  type: 'mojang' | 'optifine' | 'labymod'
+}
 
 const dashUUID = (uuid: string): string => {
   // 3a440181e05746aead7979873f03ddbe -> 3a440181-e057-46ae-ad79-79873f03ddbe
@@ -24,8 +29,7 @@ const dashUUID = (uuid: string): string => {
 }
 
 const missingCapeWarning =
-	'⚠️ This account may have more capes than shown! ' +
-	'Mojang only shows the active cape! ⚠️'
+	'⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -51,14 +55,10 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const buffer = await this.image([
-      ...capes,
-      `http://s.optifine.net/capes/${uuid.name}.png`,
-      `https://dl.labymod.net/capes/${dashUUID(uuid.id)}`
+      ...capes.map<Cape>(cape => ({ url: cape, type: 'mojang' })),
+      { url: `http://s.optifine.net/capes/${uuid.name}.png`, type: 'optifine' },
+      { url: `https://dl.labymod.net/capes/${dashUUID(uuid.id)}`, type: 'labymod' }
     ])
-
-    if (typeof buffer === 'string') {
-      return { content: buffer, ephemeral: true }
-    }
 
     return {
       embeds: [
@@ -79,67 +79,55 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (urls: string[]): Promise<Buffer | string> {
-    const buffers: { url: string, b: Buffer }[] = []
+  async image (capes: Cape[]): Promise<Buffer> {
+    // Note: this includes capes that a user might not have (such as Optifine).
+    const canvas = createCanvas((44 * capes.length) + 5 * (capes.length - 1), 64)
+    const empty = new Transformer(canvas.toBuffer('image/png'))
 
-    for (const url of urls) {
-      const { body, statusCode } = await request(url)
+    for (let i = 0; i < capes.length; i++) {
+      const { type, url } = capes[i]
+      const { statusCode, body } = await request(url)
 
-      if (statusCode !== 200) {
-        if (urls.length === 1) {
-          return '❌ Player has no capes, or an error occurred rendering them!'
+      if (type === 'mojang') {
+        assert(statusCode === 200)
+      } else {
+        // The player doesn't have an Optifine cape.
+        if (statusCode !== 200) {
+          continue
         }
-
-        continue // so we don't get an invalid body (ie. user doesn't have optifine cape)
       }
 
-      buffers.push({ url, b: arrayBufferToBuffer(await body.arrayBuffer()) })
-    }
+      const buffer = arrayBufferToBuffer(await body.arrayBuffer())
+      const transformer = new Transformer(buffer)
+      let b: Buffer
 
-    if (buffers.length === 0) {
-      return '❌ Player has no capes, or an error occurred rendering them!'
-    }
+      if (type === 'mojang') {
+        b = await transformer
+          .resize(92, 44, ResizeFilterType.Nearest, ResizeFit.Fill)
+          .crop(0, 0, 17, 23)
+          .png()
+      } else if (type === 'optifine') {
+        const { width } = await transformer.metadata()
+        const args: [number, number, number, number] = width === 46
+          ? [0, 0, 12, 17]
+          : [2, 2, 20, 32]
 
-    const canvas = createCanvas(
-      (120 * buffers.length) + (5 * (buffers.length === 1 ? 0 : buffers.length)),
-      170
-    ) // 12x17 w/ scale 10 (5 pixels between each cape, unless there is only 1 cape)
-    const ctx = canvas.getContext('2d')
+        b = await transformer.crop(...args).png()
+      } else if (type === 'labymod') { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+        const { width, height } = await transformer.metadata()
 
-    for (const capes of buffers) {
-      const { url, b } = capes
-
-      const idx = buffers.indexOf(capes)
-      const xOffset = (120 * idx) + (5 * idx)
-      const cape = new Image()
-      cape.src = b
-
-      if (url.startsWith('https://dl.labymod.net/capes/')) {
-        // sw (195) and sh (250) were chosen by bruteforce.
-        ctx.drawImage(cape, 0, 0, 195, 250, xOffset, 0, 120, 170)
-        continue
+        b = await transformer.crop(0, 0, width / 2, height).png()
+      } else {
+        assert(false, 'Not implemented')
       }
 
-      const tmpCanvas = createCanvas(12, 17)
-      const tmpCtx = tmpCanvas.getContext('2d')
-      tmpCtx.drawImage(cape, 0, 0)
+      const c = await new Transformer(b)
+        .resize(45, 64, ResizeFilterType.Nearest, ResizeFit.Fill)
+        .png()
 
-      const data = tmpCtx.getImageData(0, 0, 12, 17)
-
-      for (let i = 0; i < data.data.length; i += 4) {
-        const x = (i / 4 % tmpCanvas.width)
-        const y = (i / 4 - x) / tmpCanvas.width
-
-        const [r, g, b, a] = data.data.slice(i, i + 4)
-
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`
-        ctx.fillRect(x * 10 + xOffset, y * 10, 10, 10)
-      }
-
-      ctx.clearRect(xOffset, 0, 10, 10) // remove top left corner
-      ctx.clearRect(xOffset + 110, 0, 10, 10) // remove top right corner
+      empty.overlay(c, 40 * i + 8 * i, 0)
     }
 
-    return canvas.toBuffer('image/png')
+    return await empty.png()
   }
 }
