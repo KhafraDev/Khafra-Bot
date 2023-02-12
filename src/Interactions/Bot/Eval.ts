@@ -5,7 +5,9 @@ import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { inspect } from 'node:util'
-import { createContext, runInContext } from 'node:vm'
+
+// eslint-disable-next-line
+const AsyncFunction = (async function () {}.constructor) as new (...args: unknown[]) => Function
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -15,8 +17,8 @@ export class kInteraction extends Interactions {
       options: [
         {
           type: ApplicationCommandOptionType.String,
-          name: 'string',
-          description: 'Text to evaluate!',
+          name: 'code',
+          description: 'Code to run.',
           required: true
         }
       ]
@@ -28,20 +30,20 @@ export class kInteraction extends Interactions {
     })
   }
 
-  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
-    const text = interaction.options.getString('string', true)
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const text = interaction.options.getString('code', true)
 
-    const context = createContext({ interaction })
     let ret: unknown
+    const fn = new AsyncFunction('interaction', text)
 
     try {
-      ret = runInContext(text, context)
+      ret = await fn(interaction)
     } catch (e) {
       ret = e
     }
 
     const inspected = inspect(ret, true, 1, false)
-    const embed = Embed.ok(`${codeBlock('js', inspected.slice(0, 2004).trim())}`)
+    const embed = Embed.ok(codeBlock('js', inspected.slice(0, 4096 - 8).trim()))
 
     return {
       ephemeral: true,
