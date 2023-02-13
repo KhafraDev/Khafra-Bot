@@ -4,7 +4,7 @@ import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { s } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { hyperlink, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { URL } from 'node:url'
 
 const schema = s.string.url({
@@ -69,13 +69,7 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const link = hyperlink(
-      'twitter!',
-      'https://twittercommunity.com/t/twitter-api-v2-not-returning-all-mixed-media-with-a-quoted-tweet/180687/5'
-    )
-
     return {
-      content: `If the tweet has multiple attachments, only the first one is shown. Blame ${link}`,
       embeds: [
         Embed.json({
           color: colors.ok,

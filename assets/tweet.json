@@ -1,0 +1,858 @@
+{
+  "errors": [
+    {
+      "message": "Authorization: Denied by access control: unspecified reason",
+      "locations": [
+        {
+          "line": 1095,
+          "column": 3
+        }
+      ],
+      "path": [
+        "threaded_conversation_with_injections_v2",
+        "instructions",
+        0,
+        "entries",
+        0,
+        "content",
+        "itemContent",
+        "tweet_results",
+        "result",
+        "core",
+        "user_results",
+        "result",
+        "has_graduated_access"
+      ],
+      "extensions": {
+        "name": "AuthorizationError",
+        "source": "Client",
+        "code": 37,
+        "kind": "Permissions",
+        "tracing": {
+          "trace_id": "3dc48c94ab830e5f"
+        }
+      },
+      "code": 37,
+      "kind": "Permissions",
+      "name": "AuthorizationError",
+      "source": "Client",
+      "tracing": {
+        "trace_id": "3dc48c94ab830e5f"
+      }
+    },
+    {
+      "message": "Authorization: Denied by access control: unspecified reason",
+      "locations": [
+        {
+          "line": 1095,
+          "column": 3
+        }
+      ],
+      "path": [
+        "threaded_conversation_with_injections_v2",
+        "instructions",
+        0,
+        "entries",
+        1,
+        "content",
+        "itemContent",
+        "tweet_results",
+        "result",
+        "core",
+        "user_results",
+        "result",
+        "has_graduated_access"
+      ],
+      "extensions": {
+        "name": "AuthorizationError",
+        "source": "Client",
+        "code": 37,
+        "kind": "Permissions",
+        "tracing": {
+          "trace_id": "3dc48c94ab830e5f"
+        }
+      },
+      "code": 37,
+      "kind": "Permissions",
+      "name": "AuthorizationError",
+      "source": "Client",
+      "tracing": {
+        "trace_id": "3dc48c94ab830e5f"
+      }
+    }
+  ],
+  "data": {
+    "threaded_conversation_with_injections_v2": {
+      "instructions": [
+        {
+          "type": "TimelineAddEntries",
+          "entries": [
+            {
+              "entryId": "tweet-1625171654098751494",
+              "sortIndex": "7598200382756024313",
+              "content": {
+                "entryType": "TimelineTimelineItem",
+                "__typename": "TimelineTimelineItem",
+                "itemContent": {
+                  "itemType": "TimelineTweet",
+                  "__typename": "TimelineTweet",
+                  "tweet_results": {
+                    "result": {
+                      "__typename": "Tweet",
+                      "rest_id": "1625171654098751494",
+                      "core": {
+                        "user_results": {
+                          "result": {
+                            "__typename": "User",
+                            "id": "VXNlcjoxMTcxNzU1MDYw",
+                            "rest_id": "1171755060",
+                            "affiliates_highlighted_label": {},
+                            "has_nft_avatar": false,
+                            "legacy": {
+                              "created_at": "Tue Feb 12 12:03:46 +0000 2013",
+                              "default_profile": false,
+                              "default_profile_image": false,
+                              "description": "The official Twitter account for CD PROJEKT RED - the developer of critically acclaimed RPGs, The Witcher franchise and Cyberpunk 2077.",
+                              "entities": {
+                                "description": {
+                                  "urls": []
+                                },
+                                "url": {
+                                  "urls": [
+                                    {
+                                      "display_url": "en.cdprojektred.com",
+                                      "expanded_url": "http://en.cdprojektred.com/",
+                                      "url": "https://t.co/mKYyGvKnbQ",
+                                      "indices": [
+                                        0,
+                                        23
+                                      ]
+                                    }
+                                  ]
+                                }
+                              },
+                              "fast_followers_count": 0,
+                              "favourites_count": 1268,
+                              "followers_count": 1251262,
+                              "friends_count": 55,
+                              "has_custom_timelines": false,
+                              "is_translator": false,
+                              "listed_count": 3790,
+                              "location": "",
+                              "media_count": 900,
+                              "name": "CD PROJEKT RED",
+                              "normal_followers_count": 1251262,
+                              "pinned_tweet_ids_str": [],
+                              "possibly_sensitive": false,
+                              "profile_banner_extensions": {
+                                "mediaColor": {
+                                  "r": {
+                                    "ok": {
+                                      "palette": [
+                                        {
+                                          "percentage": 44.11,
+                                          "rgb": {
+                                            "blue": 37,
+                                            "green": 37,
+                                            "red": 45
+                                          }
+                                        },
+                                        {
+                                          "percentage": 11.36,
+                                          "rgb": {
+                                            "blue": 241,
+                                            "green": 242,
+                                            "red": 240
+                                          }
+                                        },
+                                        {
+                                          "percentage": 7.94,
+                                          "rgb": {
+                                            "blue": 1,
+                                            "green": 236,
+                                            "red": 245
+                                          }
+                                        },
+                                        {
+                                          "percentage": 7.54,
+                                          "rgb": {
+                                            "blue": 173,
+                                            "green": 202,
+                                            "red": 135
+                                          }
+                                        },
+                                        {
+                                          "percentage": 3.82,
+                                          "rgb": {
+                                            "blue": 31,
+                                            "green": 36,
+                                            "red": 85
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "profile_banner_url": "https://pbs.twimg.com/profile_banners/1171755060/1606393932",
+                              "profile_image_extensions": {
+                                "mediaColor": {
+                                  "r": {
+                                    "ok": {
+                                      "palette": [
+                                        {
+                                          "percentage": 79.99,
+                                          "rgb": {
+                                            "blue": 0,
+                                            "green": 0,
+                                            "red": 0
+                                          }
+                                        },
+                                        {
+                                          "percentage": 16.76,
+                                          "rgb": {
+                                            "blue": 20,
+                                            "green": 13,
+                                            "red": 218
+                                          }
+                                        },
+                                        {
+                                          "percentage": 1.91,
+                                          "rgb": {
+                                            "blue": 11,
+                                            "green": 9,
+                                            "red": 74
+                                          }
+                                        },
+                                        {
+                                          "percentage": 1.28,
+                                          "rgb": {
+                                            "blue": 18,
+                                            "green": 13,
+                                            "red": 125
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "profile_image_url_https": "https://pbs.twimg.com/profile_images/1610949060835287041/Z_s_2r2N_normal.jpg",
+                              "profile_interstitial_type": "",
+                              "protected": false,
+                              "screen_name": "CDPROJEKTRED",
+                              "statuses_count": 2933,
+                              "translator_type": "none",
+                              "url": "https://t.co/mKYyGvKnbQ",
+                              "verified": true,
+                              "verified_type": "Business",
+                              "withheld_in_countries": []
+                            }
+                          }
+                        }
+                      },
+                      "unmention_info": {},
+                      "source": "<a href=\"https://studio.twitter.com\" rel=\"nofollow\">Twitter Media Studio</a>",
+                      "legacy": {
+                        "created_at": "Mon Feb 13 16:34:51 +0000 2023",
+                        "conversation_id_str": "1625171654098751494",
+                        "display_text_range": [
+                          0,
+                          219
+                        ],
+                        "entities": {
+                          "media": [
+                            {
+                              "display_url": "pic.twitter.com/CfwlFs1C6m",
+                              "expanded_url": "https://twitter.com/CDPROJEKTRED/status/1625171654098751494/video/1",
+                              "id_str": "1625170527328559110",
+                              "indices": [
+                                220,
+                                243
+                              ],
+                              "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1625170527328559110/img/CPh90D_k_wHze8qW.jpg",
+                              "type": "photo",
+                              "url": "https://t.co/CfwlFs1C6m",
+                              "features": {},
+                              "sizes": {
+                                "large": {
+                                  "h": 720,
+                                  "w": 1280,
+                                  "resize": "fit"
+                                },
+                                "medium": {
+                                  "h": 675,
+                                  "w": 1200,
+                                  "resize": "fit"
+                                },
+                                "small": {
+                                  "h": 383,
+                                  "w": 680,
+                                  "resize": "fit"
+                                },
+                                "thumb": {
+                                  "h": 150,
+                                  "w": 150,
+                                  "resize": "crop"
+                                }
+                              },
+                              "original_info": {
+                                "height": 720,
+                                "width": 1280
+                              }
+                            }
+                          ],
+                          "user_mentions": [
+                            {
+                              "id_str": "16744475",
+                              "name": "🔜 GDC (March 20-24)",
+                              "screen_name": "Official_GDC",
+                              "indices": [
+                                10,
+                                23
+                              ]
+                            },
+                            {
+                              "id_str": "3152101881",
+                              "name": "Miles Tost",
+                              "screen_name": "tostspender",
+                              "indices": [
+                                98,
+                                110
+                              ]
+                            }
+                          ],
+                          "urls": [],
+                          "hashtags": [],
+                          "symbols": []
+                        },
+                        "extended_entities": {
+                          "media": [
+                            {
+                              "display_url": "pic.twitter.com/CfwlFs1C6m",
+                              "expanded_url": "https://twitter.com/CDPROJEKTRED/status/1625171654098751494/video/1",
+                              "id_str": "1625170527328559110",
+                              "indices": [
+                                220,
+                                243
+                              ],
+                              "media_key": "13_1625170527328559110",
+                              "media_url_https": "https://pbs.twimg.com/amplify_video_thumb/1625170527328559110/img/CPh90D_k_wHze8qW.jpg",
+                              "type": "video",
+                              "url": "https://t.co/CfwlFs1C6m",
+                              "additional_media_info": {
+                                "title": "",
+                                "description": "",
+                                "embeddable": true,
+                                "monetizable": false
+                              },
+                              "ext_media_color": {
+                                "palette": [
+                                  {
+                                    "percentage": 68.36,
+                                    "rgb": {
+                                      "blue": 219,
+                                      "green": 220,
+                                      "red": 218
+                                    }
+                                  },
+                                  {
+                                    "percentage": 17.26,
+                                    "rgb": {
+                                      "blue": 43,
+                                      "green": 46,
+                                      "red": 51
+                                    }
+                                  },
+                                  {
+                                    "percentage": 11.69,
+                                    "rgb": {
+                                      "blue": 107,
+                                      "green": 107,
+                                      "red": 107
+                                    }
+                                  },
+                                  {
+                                    "percentage": 4.45,
+                                    "rgb": {
+                                      "blue": 94,
+                                      "green": 111,
+                                      "red": 152
+                                    }
+                                  },
+                                  {
+                                    "percentage": 0.21,
+                                    "rgb": {
+                                      "blue": 59,
+                                      "green": 35,
+                                      "red": 194
+                                    }
+                                  }
+                                ]
+                              },
+                              "mediaStats": {
+                                "viewCount": 17426
+                              },
+                              "ext_media_availability": {
+                                "status": "Available"
+                              },
+                              "features": {},
+                              "sizes": {
+                                "large": {
+                                  "h": 720,
+                                  "w": 1280,
+                                  "resize": "fit"
+                                },
+                                "medium": {
+                                  "h": 675,
+                                  "w": 1200,
+                                  "resize": "fit"
+                                },
+                                "small": {
+                                  "h": 383,
+                                  "w": 680,
+                                  "resize": "fit"
+                                },
+                                "thumb": {
+                                  "h": 150,
+                                  "w": 150,
+                                  "resize": "crop"
+                                }
+                              },
+                              "original_info": {
+                                "height": 720,
+                                "width": 1280
+                              },
+                              "video_info": {
+                                "aspect_ratio": [
+                                  16,
+                                  9
+                                ],
+                                "duration_millis": 52458,
+                                "variants": [
+                                  {
+                                    "content_type": "application/x-mpegURL",
+                                    "url": "https://video.twimg.com/amplify_video/1625170527328559110/pl/s5mJPOJx1wk1mXLq.m3u8?tag=14&container=fmp4"
+                                  },
+                                  {
+                                    "bitrate": 2176000,
+                                    "content_type": "video/mp4",
+                                    "url": "https://video.twimg.com/amplify_video/1625170527328559110/vid/1280x720/h-lpsmfqPoBlgi_R.mp4?tag=14"
+                                  },
+                                  {
+                                    "bitrate": 832000,
+                                    "content_type": "video/mp4",
+                                    "url": "https://video.twimg.com/amplify_video/1625170527328559110/vid/640x360/9YQmU3NxKoCv1xAE.mp4?tag=14"
+                                  },
+                                  {
+                                    "bitrate": 288000,
+                                    "content_type": "video/mp4",
+                                    "url": "https://video.twimg.com/amplify_video/1625170527328559110/vid/480x270/8OVOuXrZNnX3gEDX.mp4?tag=14"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "favorite_count": 293,
+                        "favorited": false,
+                        "full_text": "Attending @Official_GDC 2023?\nDon’t miss a presentation from our Lead Level Designer Miles Tost - @tostspender\n\nCheck out the sneak peek below to find out what topics Miles will discuss during his talk.\n\nSee you at GDC! https://t.co/CfwlFs1C6m",
+                        "is_quote_status": false,
+                        "lang": "en",
+                        "possibly_sensitive": false,
+                        "possibly_sensitive_editable": true,
+                        "quote_count": 1,
+                        "reply_count": 10,
+                        "retweet_count": 16,
+                        "retweeted": false,
+                        "user_id_str": "1171755060",
+                        "id_str": "1625171654098751494"
+                      }
+                    }
+                  },
+                  "tweetDisplayType": "Tweet",
+                  "hasModeratedReplies": false
+                }
+              }
+            },
+            {
+              "entryId": "tweet-1625182487348494344",
+              "sortIndex": "7598189549506281463",
+              "content": {
+                "entryType": "TimelineTimelineItem",
+                "__typename": "TimelineTimelineItem",
+                "itemContent": {
+                  "itemType": "TimelineTweet",
+                  "__typename": "TimelineTweet",
+                  "tweet_results": {
+                    "result": {
+                      "__typename": "Tweet",
+                      "rest_id": "1625182487348494344",
+                      "core": {
+                        "user_results": {
+                          "result": {
+                            "__typename": "User",
+                            "id": "VXNlcjoxMzA1OTA1NDE1MzE4ODM1MjA2",
+                            "rest_id": "1305905415318835206",
+                            "affiliates_highlighted_label": {},
+                            "has_nft_avatar": false,
+                            "legacy": {
+                              "created_at": "Tue Sep 15 16:26:00 +0000 2020",
+                              "default_profile": true,
+                              "default_profile_image": false,
+                              "description": "Passionate video games and game console collector🥰\nCyberpunk 2077 addicted😍",
+                              "entities": {
+                                "description": {
+                                  "urls": []
+                                }
+                              },
+                              "fast_followers_count": 0,
+                              "favourites_count": 39280,
+                              "followers_count": 471,
+                              "friends_count": 486,
+                              "has_custom_timelines": true,
+                              "is_translator": false,
+                              "listed_count": 2,
+                              "location": "Deutschland",
+                              "media_count": 4003,
+                              "name": "The Rettsch",
+                              "normal_followers_count": 471,
+                              "pinned_tweet_ids_str": [
+                                "1601487286579126272"
+                              ],
+                              "possibly_sensitive": false,
+                              "profile_banner_extensions": {
+                                "mediaColor": {
+                                  "r": {
+                                    "ok": {
+                                      "palette": [
+                                        {
+                                          "percentage": 36.19,
+                                          "rgb": {
+                                            "blue": 11,
+                                            "green": 14,
+                                            "red": 22
+                                          }
+                                        },
+                                        {
+                                          "percentage": 16.26,
+                                          "rgb": {
+                                            "blue": 72,
+                                            "green": 201,
+                                            "red": 239
+                                          }
+                                        },
+                                        {
+                                          "percentage": 13.41,
+                                          "rgb": {
+                                            "blue": 219,
+                                            "green": 221,
+                                            "red": 241
+                                          }
+                                        },
+                                        {
+                                          "percentage": 8.85,
+                                          "rgb": {
+                                            "blue": 33,
+                                            "green": 82,
+                                            "red": 96
+                                          }
+                                        },
+                                        {
+                                          "percentage": 3.78,
+                                          "rgb": {
+                                            "blue": 75,
+                                            "green": 49,
+                                            "red": 41
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "profile_banner_url": "https://pbs.twimg.com/profile_banners/1305905415318835206/1674830968",
+                              "profile_image_extensions": {
+                                "mediaColor": {
+                                  "r": {
+                                    "ok": {
+                                      "palette": [
+                                        {
+                                          "percentage": 39.44,
+                                          "rgb": {
+                                            "blue": 20,
+                                            "green": 18,
+                                            "red": 18
+                                          }
+                                        },
+                                        {
+                                          "percentage": 26.7,
+                                          "rgb": {
+                                            "blue": 208,
+                                            "green": 213,
+                                            "red": 219
+                                          }
+                                        },
+                                        {
+                                          "percentage": 7.84,
+                                          "rgb": {
+                                            "blue": 138,
+                                            "green": 171,
+                                            "red": 204
+                                          }
+                                        },
+                                        {
+                                          "percentage": 5.3,
+                                          "rgb": {
+                                            "blue": 4,
+                                            "green": 7,
+                                            "red": 72
+                                          }
+                                        },
+                                        {
+                                          "percentage": 4.41,
+                                          "rgb": {
+                                            "blue": 79,
+                                            "green": 106,
+                                            "red": 126
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              },
+                              "profile_image_url_https": "https://pbs.twimg.com/profile_images/1556592009565143040/a6s-LAxW_normal.jpg",
+                              "profile_interstitial_type": "",
+                              "protected": false,
+                              "screen_name": "TRettsch",
+                              "statuses_count": 6533,
+                              "translator_type": "none",
+                              "verified": false,
+                              "withheld_in_countries": []
+                            }
+                          }
+                        }
+                      },
+                      "unmention_info": {},
+                      "source": "<a href=\"http://twitter.com/download/android\" rel=\"nofollow\">Twitter for Android</a>",
+                      "legacy": {
+                        "created_at": "Mon Feb 13 17:17:54 +0000 2023",
+                        "conversation_id_str": "1625171654098751494",
+                        "display_text_range": [
+                          40,
+                          40
+                        ],
+                        "entities": {
+                          "media": [
+                            {
+                              "display_url": "pic.twitter.com/lSspvbyoga",
+                              "expanded_url": "https://twitter.com/TRettsch/status/1625182487348494344/photo/1",
+                              "id_str": "1625182474698473474",
+                              "indices": [
+                                41,
+                                64
+                              ],
+                              "media_url_https": "https://pbs.twimg.com/tweet_video_thumb/Fo3O2aOXwAIoKxI.jpg",
+                              "type": "photo",
+                              "url": "https://t.co/lSspvbyoga",
+                              "features": {},
+                              "sizes": {
+                                "large": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "medium": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "small": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "thumb": {
+                                  "h": 150,
+                                  "w": 150,
+                                  "resize": "crop"
+                                }
+                              },
+                              "original_info": {
+                                "height": 498,
+                                "width": 498
+                              }
+                            }
+                          ],
+                          "user_mentions": [
+                            {
+                              "id_str": "1171755060",
+                              "name": "CD PROJEKT RED",
+                              "screen_name": "CDPROJEKTRED",
+                              "indices": [
+                                0,
+                                13
+                              ]
+                            },
+                            {
+                              "id_str": "16744475",
+                              "name": "🔜 GDC (March 20-24)",
+                              "screen_name": "Official_GDC",
+                              "indices": [
+                                14,
+                                27
+                              ]
+                            },
+                            {
+                              "id_str": "3152101881",
+                              "name": "Miles Tost",
+                              "screen_name": "tostspender",
+                              "indices": [
+                                28,
+                                40
+                              ]
+                            }
+                          ],
+                          "urls": [],
+                          "hashtags": [],
+                          "symbols": []
+                        },
+                        "extended_entities": {
+                          "media": [
+                            {
+                              "display_url": "pic.twitter.com/lSspvbyoga",
+                              "expanded_url": "https://twitter.com/TRettsch/status/1625182487348494344/photo/1",
+                              "ext_alt_text": "Hi Miles Penguin GIF",
+                              "id_str": "1625182474698473474",
+                              "indices": [
+                                41,
+                                64
+                              ],
+                              "media_key": "16_1625182474698473474",
+                              "media_url_https": "https://pbs.twimg.com/tweet_video_thumb/Fo3O2aOXwAIoKxI.jpg",
+                              "type": "animated_gif",
+                              "url": "https://t.co/lSspvbyoga",
+                              "ext_media_color": {
+                                "palette": [
+                                  {
+                                    "percentage": 37.01,
+                                    "rgb": {
+                                      "blue": 96,
+                                      "green": 84,
+                                      "red": 77
+                                    }
+                                  },
+                                  {
+                                    "percentage": 31.99,
+                                    "rgb": {
+                                      "blue": 148,
+                                      "green": 195,
+                                      "red": 230
+                                    }
+                                  },
+                                  {
+                                    "percentage": 11.41,
+                                    "rgb": {
+                                      "blue": 144,
+                                      "green": 160,
+                                      "red": 177
+                                    }
+                                  },
+                                  {
+                                    "percentage": 5.29,
+                                    "rgb": {
+                                      "blue": 54,
+                                      "green": 91,
+                                      "red": 122
+                                    }
+                                  },
+                                  {
+                                    "percentage": 2.62,
+                                    "rgb": {
+                                      "blue": 24,
+                                      "green": 27,
+                                      "red": 32
+                                    }
+                                  }
+                                ]
+                              },
+                              "ext_media_availability": {
+                                "status": "Available"
+                              },
+                              "features": {},
+                              "sizes": {
+                                "large": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "medium": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "small": {
+                                  "h": 498,
+                                  "w": 498,
+                                  "resize": "fit"
+                                },
+                                "thumb": {
+                                  "h": 150,
+                                  "w": 150,
+                                  "resize": "crop"
+                                }
+                              },
+                              "original_info": {
+                                "height": 498,
+                                "width": 498
+                              },
+                              "video_info": {
+                                "aspect_ratio": [
+                                  1,
+                                  1
+                                ],
+                                "variants": [
+                                  {
+                                    "bitrate": 0,
+                                    "content_type": "video/mp4",
+                                    "url": "https://video.twimg.com/tweet_video/Fo3O2aOXwAIoKxI.mp4"
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "favorite_count": 2,
+                        "favorited": false,
+                        "full_text": "@CDPROJEKTRED @Official_GDC @tostspender https://t.co/lSspvbyoga",
+                        "in_reply_to_screen_name": "CDPROJEKTRED",
+                        "in_reply_to_status_id_str": "1625171654098751494",
+                        "in_reply_to_user_id_str": "1171755060",
+                        "is_quote_status": false,
+                        "lang": "qme",
+                        "possibly_sensitive": false,
+                        "possibly_sensitive_editable": true,
+                        "quote_count": 0,
+                        "reply_count": 0,
+                        "retweet_count": 0,
+                        "retweeted": false,
+                        "user_id_str": "1305905415318835206",
+                        "id_str": "1625182487348494344"
+                      }
+                    }
+                  },
+                  "tweetDisplayType": "Tweet"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "TimelineTerminateTimeline",
+          "direction": "Top"
+        }
+      ]
+    }
+  }
+}

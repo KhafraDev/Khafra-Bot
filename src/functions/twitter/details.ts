@@ -63,26 +63,37 @@ export class Twitter {
       }
     })
 
-    /* eslint-disable */
-    const json = await result.json() as any
-    const media: string[] | undefined = json
-      .data
-      ?.threaded_conversation_with_injections_v2 // error (guest token, etc.)
-      .instructions[0]
-      .entries[0]
-      .content
-      .itemContent
-      .tweet_results
-      .result
-      .legacy
-      .extended_entities
-      ?.media // no media in tweet
-      .map((media: any) => media.type !== 'animated_gif'
-        ? media.media_url_https
-        : media.video_info.variants[0].url
-      )
-    /* eslint-enable */
+    // The result might not be entirely correct, but is much better than using `any`.
+    const json = await result.json() as typeof import('../../../assets/tweet.json')
+    const { entries } = json.data.threaded_conversation_with_injections_v2.instructions[0]
 
-    return media ?? null
+    if (!entries) {
+      return null
+    }
+
+    const links: string[] = []
+
+    for (const entry of entries) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const media = entry.content.itemContent?.tweet_results.result.legacy.extended_entities?.media
+
+      if (typeof media === 'undefined') {
+        continue // no media in tweet
+      }
+
+      for (const item of media) {
+        if (item.type === 'animated_gif' || item.type === 'video') {
+          const mp4 = item.video_info.variants.find(
+            (v) => v.content_type === 'video/mp4'
+          ) ?? item.video_info.variants[0]
+
+          links.push(mp4.url)
+        } else {
+          links.push(item.media_url_https)
+        }
+      }
+    }
+
+    return links
   }
 }
