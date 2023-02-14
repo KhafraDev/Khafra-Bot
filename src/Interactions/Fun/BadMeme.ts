@@ -1,6 +1,6 @@
+import { badmeme, cache, SortBy, Timeframe } from '#khaf/functions/reddit/BadMeme.js'
 import { Interactions } from '#khaf/Interaction'
 import { inlineCode } from '@discordjs/builders'
-import { badmeme, cache, SortBy, Timeframe } from '@khaf/badmeme'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel } from 'discord.js'
