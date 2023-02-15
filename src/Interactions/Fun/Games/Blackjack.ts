@@ -3,13 +3,13 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { templates } from '#khaf/utility/Constants/Path.js'
 import { seconds } from '#khaf/utility/ms.js'
-import { createCanvas, Image } from '@napi-rs/canvas'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { randomUUID } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
+import { Transformer } from '@napi-rs/image'
 
 type Card =
   | [value: number, suit: typeof suits[number]]
@@ -212,8 +212,15 @@ export class kSubCommand extends InteractionSubCommand {
 
   async image ({ dealer, sucker }: Game, isDealer: boolean): Promise<Buffer> {
     // each card is 103px wide, 138px tall
-    const canvas = createCanvas(Math.max(dealer.length, sucker.length) * 105, 300)
-    const ctx = canvas.getContext('2d')
+    const cardWidth = 105
+    const height = 300
+    const width = Math.max(dealer.length, sucker.length) * cardWidth
+
+    const transformer = Transformer.fromRgbaPixels(
+      new Uint8Array(width * height * 4) as Buffer,
+      width,
+      height
+    )
 
     const dealerFilePaths = gameUtil.mapCardsToFileNames(dealer)
     const suckerFilePaths = gameUtil.mapCardsToFileNames(sucker)
@@ -223,19 +230,13 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     for (let i = 0; i < dealer.length; i++) {
-      const image = new Image()
-      image.src = await readFile(dealerFilePaths[i])
-
-      ctx.drawImage(image, 105 * i, 0)
+      transformer.overlay(await readFile(dealerFilePaths[i]), cardWidth * i, 0)
     }
 
     for (let j = 0; j < sucker.length; j++) {
-      const image = new Image()
-      image.src = await readFile(suckerFilePaths[j])
-
-      ctx.drawImage(image, 105 * j, 300 - 138)
+      transformer.overlay(await readFile(suckerFilePaths[j]), cardWidth * j, height - 138)
     }
 
-    return canvas.toBuffer('image/png')
+    return await transformer.png()
   }
 }

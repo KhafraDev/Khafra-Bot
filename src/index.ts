@@ -34,7 +34,7 @@ export const client = new KhafraClient({
   intents: [
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildBans,
+    GatewayIntentBits.GuildModeration,
     GatewayIntentBits.GuildEmojisAndStickers,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,

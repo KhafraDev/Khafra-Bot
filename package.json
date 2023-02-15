@@ -26,7 +26,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.4.0",
     "@discordjs/rest": "^1.4.0",
-    "@khaf/magik": "^0.0.3",
+    "@khaf/magik": "^0.0.5",
     "@khaf/qrcode": "^0.0.11",
     "@napi-rs/canvas": "^0.1.30",
     "@napi-rs/image": "^1.5.1",

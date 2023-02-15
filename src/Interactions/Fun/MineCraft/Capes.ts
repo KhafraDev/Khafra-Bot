@@ -4,7 +4,6 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { bold } from '@discordjs/builders'
-import { createCanvas } from '@napi-rs/canvas'
 import { ResizeFilterType, ResizeFit, Transformer } from '@napi-rs/image'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { AssertionError } from 'node:assert'
@@ -81,8 +80,11 @@ export class kSubCommand extends InteractionSubCommand {
 
   async image (capes: Cape[]): Promise<Buffer> {
     // Note: this includes capes that a user might not have (such as Optifine).
-    const canvas = createCanvas((44 * capes.length) + 5 * (capes.length - 1), 64)
-    const empty = new Transformer(canvas.toBuffer('image/png'))
+    const empty = Transformer.fromRgbaPixels(
+      new Uint8Array(((44 * capes.length) + 5 * (capes.length - 1)) * 64 * 4) as Buffer,
+      (44 * capes.length) + 5 * (capes.length - 1),
+      64
+    )
 
     for (let i = 0; i < capes.length; i++) {
       const { type, url } = capes[i]

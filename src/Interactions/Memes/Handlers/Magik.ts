@@ -3,11 +3,10 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { seconds } from '#khaf/utility/ms.js'
 import type { ImageURLOptions } from '@discordjs/rest'
+import { Magik } from '@khaf/magik'
 import { Transformer } from '@napi-rs/image'
 import type { Attachment, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { Buffer } from 'node:buffer'
-import { once } from 'node:events'
-import { Worker } from 'node:worker_threads'
 import { request } from 'undici'
 
 const options: ImageURLOptions = { extension: 'png', size: 256 }
@@ -66,23 +65,11 @@ export class kSubCommand extends InteractionSubCommand {
 
     const ac = new AbortController()
     const timeout = setTimeout(() => ac.abort(), seconds(60))
-
-    const worker = new Worker(`
-      const { parentPort, workerData } = require('node:worker_threads')
-      const { magik } = require('@khaf/magik')
-
-      parentPort.postMessage(magik(workerData))
-    `, {
-      eval: true,
-      workerData: await transformer.png()
-    })
-
-    const [magiked] = await once(worker, 'message', {
-      signal: ac.signal
-    }) as [Uint8ClampedArray]
+    const magik = new Magik(await transformer.png())
+    const image = await magik.magikify(ac.signal)
 
     clearTimeout(timeout)
 
-    return magiked
+    return image
   }
 }
