@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { bold } from '@discordjs/builders'
-import { createCanvas } from '@napi-rs/canvas'
+import { Transformer } from '@napi-rs/image'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -38,15 +38,15 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const hex = interaction.options.getString('hex-color')
-    const isHex = hex && /^#+([A-F0-9]{6}|[A-F0-9]{3})$/i.test(hex)
+    const isHex = !!hex && /^#+([A-F0-9]{6}|[A-F0-9]{3})$/i.test(hex)
 
     const rgb = isHex ? hexToRgb(hex) : randomRGB()
     const hexColor = isHex ? hex : rgbToHex(rgb)
     const isRandom = hex === hexColor ? 'Random Color' : ''
 
-    const buffer = this.image(hexColor)
+    const buffer = await this.image(rgb)
 
     return {
       embeds: [
@@ -66,13 +66,19 @@ export class kInteraction extends Interactions {
     }
   }
 
-  image (hex: string): Buffer {
-    const canvas = createCanvas(128, 128)
-    const ctx = canvas.getContext('2d')
+  async image ([r, g, b]: RGB): Promise<Buffer> {
+    const dimension = 256
+    const uint8 = new Uint8Array(dimension * dimension * 4)
 
-    ctx.fillStyle = hex
-    ctx.fillRect(0, 0, 128, 128)
+    for (let i = 0; i < uint8.length; i += 4) {
+      uint8[i] = r
+      uint8[i + 1] = g
+      uint8[i + 2] = b
+      uint8[i + 3] = 255
+    }
 
-    return canvas.toBuffer('image/png')
+    return await Transformer
+      .fromRgbaPixels(uint8 as Buffer, dimension, dimension)
+      .png()
   }
 }
