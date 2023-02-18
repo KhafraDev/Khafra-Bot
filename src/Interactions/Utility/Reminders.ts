@@ -66,17 +66,8 @@ export class kInteraction extends Interactions {
         },
         {
           type: ApplicationCommandOptionType.Subcommand,
-          name: 'fetch',
-          description: 'Fetches a list of your current reminders.',
-          options: [
-            {
-              type: ApplicationCommandOptionType.Integer,
-              name: 'amount',
-              description: 'Number of reminders to fetch.',
-              max_value: 100,
-              min_value: 1
-            }
-          ]
+          name: 'view',
+          description: 'Fetches a list of your current reminders.'
         },
         {
           type: ApplicationCommandOptionType.Subcommand,
@@ -94,6 +85,8 @@ export class kInteraction extends Interactions {
       ]
     }
 
-    super(sc)
+    super(sc, {
+      defer: true
+    })
   }
 }

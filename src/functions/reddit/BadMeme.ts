@@ -146,11 +146,11 @@ export const Timeframe = {
 
 setInterval(() => {
   const now = Date.now()
-  lastUsed.forEach((time, subreddit) => {
+  for (const [subreddit, time] of lastUsed.entries()) {
     if (now - time >= 60 * 1000 * 10) { // 10 mins
       lastUsed.delete(subreddit)
       cache.delete(subreddit)
       after.delete(subreddit)
     }
-  })
+  }
 }, 60 * 1000 * 10).unref()

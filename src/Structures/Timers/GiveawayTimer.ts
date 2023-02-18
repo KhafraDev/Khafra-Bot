@@ -41,7 +41,7 @@ export class GiveawayTimer extends Timer {
 
         await sql`
           UPDATE kbGiveaways SET
-              "didEnd" = true
+            "didEnd" = true
           WHERE id IN ${sql(ids)}
         `
       }

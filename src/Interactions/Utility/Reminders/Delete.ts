@@ -31,8 +31,8 @@ export class kSubCommand extends InteractionSubCommand {
     const rows = await sql`
       DELETE FROM "kbReminders"
       WHERE 
-          "id" = ANY(ARRAY[${sql.array(idList)}]::uuid[]) AND
-          "userId" = ${interaction.user.id}::text
+        "id" = ANY(ARRAY[${sql.array(idList)}]::uuid[]) AND
+        "userId" = ${interaction.user.id}::text
       RETURNING "id";
     `
 

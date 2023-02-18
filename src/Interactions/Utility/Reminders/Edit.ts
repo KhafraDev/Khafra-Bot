@@ -44,12 +44,13 @@ export class kSubCommand extends InteractionSubCommand {
 
     const rows = await sql<{ id: string }[]>`
       UPDATE "kbReminders" SET
-          "message" = COALESCE(NULLIF(${text}::text, NULL), "kbReminders"."message"),
-          "time" = COALESCE(NULLIF(${date}::timestamp, NULL), "kbReminders"."time"),
-          "once" = COALESCE(NULLIF(${typeof once === 'boolean' ? !once : null}::boolean, NULL), "kbReminders"."once") 
+        "message" = COALESCE(NULLIF(${text}::text, NULL), "kbReminders"."message"),
+        "time" = COALESCE(NULLIF(${date}::timestamp, NULL), "kbReminders"."time"),
+        "once" = COALESCE(NULLIF(${typeof once === 'boolean' ? !once : null}::boolean, NULL), "kbReminders"."once") 
       WHERE
-          "id" = ${id}::uuid AND
-          "userId" = ${interaction.user.id}::text
+        "id" = ${id}::uuid AND
+        "userId" = ${interaction.user.id}::text AND
+        "didEnd" = FALSE
       ;
     `
 

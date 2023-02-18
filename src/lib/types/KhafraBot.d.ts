@@ -59,4 +59,5 @@ export interface kReminder {
   time: Date
   once: boolean
   interval: string
+  didEnd: boolean
 }

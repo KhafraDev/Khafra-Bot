@@ -15,26 +15,13 @@ export class RemindersTimer extends Timer {
   async setInterval (): Promise<void> {
     for await (const _ of this.yieldEvery(this.options.interval)) {
       const rows = await sql<kReminder[]>`
-        WITH deleted AS (
-            DELETE FROM "kbReminders"
-            WHERE 
-              "time" < CURRENT_TIMESTAMP AND
-              "once" = TRUE
-            RETURNING *
-        ), updated AS (
-            UPDATE "kbReminders"
-            SET "time" = "time" + "kbReminders"."interval"
-            WHERE
-              "time" < CURRENT_TIMESTAMP AND
-              "once" = FALSE
-            RETURNING *
-        )
-    
-        SELECT * FROM deleted
-    
-        UNION ALL
-    
-        SELECT * FROM updated;
+        UPDATE "kbReminders" SET
+          "time" = "time" + "kbReminders"."interval",
+          "didEnd" = TRUE
+        WHERE
+          "time" < CURRENT_TIMESTAMP AND
+          "didEnd" = FALSE
+        RETURNING *
       `
 
       for (const row of rows) {
