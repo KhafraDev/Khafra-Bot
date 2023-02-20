@@ -1,7 +1,7 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
 import { seconds } from '#khaf/utility/ms.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { Magik } from '@khaf/magik'
 import { Transformer } from '@napi-rs/image'

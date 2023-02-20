@@ -1,9 +1,9 @@
 import { KhafraClient } from '#khaf/Bot'
 import { Command, type Arguments } from '#khaf/Command'
-import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes } from '#khaf/utility/ms.js'
+import { chunkSafe } from '#khaf/utility/util.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
   APIActionRowComponent,

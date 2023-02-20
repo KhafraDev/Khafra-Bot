@@ -1,6 +1,6 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { stringify } from 'node:querystring'
 import { request } from 'undici'

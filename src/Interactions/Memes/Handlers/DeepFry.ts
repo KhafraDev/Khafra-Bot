@@ -1,6 +1,6 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'

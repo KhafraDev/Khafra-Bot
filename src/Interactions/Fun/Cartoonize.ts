@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'

@@ -1,12 +1,12 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { templates } from '#khaf/utility/Constants/Path.js'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
+import { Transformer } from '@napi-rs/image'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
-import { request } from 'undici'
-import { Transformer } from '@napi-rs/image'
 import { readFile } from 'node:fs/promises'
+import { request } from 'undici'
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {

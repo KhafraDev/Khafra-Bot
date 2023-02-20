@@ -1,10 +1,10 @@
 import { Interactions } from '#khaf/Interaction'
-import { chunkSafe } from '#khaf/utility/Array.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes, seconds } from '#khaf/utility/ms.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { ellipsis, upperCase } from '#khaf/utility/String.js'
+import { chunkSafe } from '#khaf/utility/util.js'
 import { inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,

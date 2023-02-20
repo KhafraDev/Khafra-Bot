@@ -1,8 +1,8 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { chunkSafe } from '#khaf/utility/Array.js'
 import { TicTacToe, type Difficulty, type Turn } from '#khaf/utility/commands/TicTacToe'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { minutes, seconds } from '#khaf/utility/ms.js'
+import { chunkSafe } from '#khaf/utility/util.js'
 import {
   InteractionType,
   type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent

@@ -80,6 +80,11 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'slots',
           description: 'Play a game of slots!'
+        },
+        {
+          type: ApplicationCommandOptionType.Subcommand,
+          name: 'worldle',
+          description: 'Wordle but with countries instead of words. 🌎'
         }
       ]
     }

@@ -3,11 +3,11 @@ import { usernameToUUID } from '#khaf/functions/minecraft/username-to-uuid.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import { bold } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { request } from 'undici'
 import type { AssertionError } from 'node:assert'
+import { request } from 'undici'
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {

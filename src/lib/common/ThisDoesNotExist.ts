@@ -1,5 +1,5 @@
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { MessageReplyOptions } from 'discord.js'
 import { request } from 'undici'
 

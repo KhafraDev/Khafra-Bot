@@ -5,7 +5,7 @@ import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 
-const recipeImages = readdirSync(assets('MineCraft/recipes'))
+let recipeImages: string[]
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -16,6 +16,8 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    recipeImages ??= readdirSync(assets('MineCraft/recipes'))
+
     const itemName = interaction.options.getString('item', true)
     const item = recipeImages.find((fileName) => fileName.startsWith(itemName))
 

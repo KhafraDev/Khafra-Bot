@@ -1,6 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { templates } from '#khaf/utility/Constants/Path.js'
-import { arrayBufferToBuffer } from '#khaf/utility/FetchUtils.js'
+import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import { GifEncoder } from '@skyra/gifenc'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
