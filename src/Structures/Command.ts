@@ -5,7 +5,6 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import {
   PermissionsBitField,
-  type ApplicationCommand,
   type Message,
   type PermissionResolvable,
   type Snowflake
@@ -36,7 +35,6 @@ interface ICommand {
     readonly aliases?: string[]
     readonly guildOnly?: boolean
     readonly ownerOnly?: boolean
-    readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
   }
 }
 
@@ -60,8 +58,6 @@ export abstract class Command implements ICommand {
 
   public readonly rateLimit: Cooldown
 
-  public readonly appSuggestion?: (command: ApplicationCommand, args: Arguments) => `</${string}>`
-
   public constructor (
     public readonly help: string[],
     public readonly settings: ICommand['settings']
@@ -71,8 +67,6 @@ export abstract class Command implements ICommand {
     if (this.settings.permissions) {
       this.#perms = PermissionsBitField.resolve(this.settings.permissions)
     }
-
-    this.appSuggestion = settings.appSuggestion
   }
 
   public abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):

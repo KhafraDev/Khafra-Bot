@@ -14,7 +14,7 @@ import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { Sanitize } from '#khaf/utility/util.js'
-import { inlineCode } from '@discordjs/builders'
+import { chatInputApplicationCommandMention, inlineCode } from '@discordjs/builders'
 import { ChannelType } from 'discord-api-types/v10'
 import { Attachment, Events, Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
@@ -57,93 +57,94 @@ export class kEvent implements Event {
   }
 
   async guild (message: Message<true>): Promise<void> {
-    const [mention, name = '', ...args] = message.content.split(/\s+/g)
+    const { client, content: messageContent, member, author, guildId, channel, guild } = message
+
+    const [mention, name = '', ...args] = messageContent.split(/\s+/g)
     const commandName = name.toLowerCase()
+    const botManagedRole = guild.roles.botRoleFor(message.client.user)
 
     if (
       mention !== `<@!${config.botId}>` &&
-      mention !== `<@&${config.botId}>` &&
-      mention !== `<@${config.botId}>`
+      mention !== `<@${config.botId}>` &&
+      (botManagedRole && mention !== botManagedRole.toString())
     ) {
-      return
-    } else if (!KhafraClient.Commands.has(commandName)) {
       return
     }
 
-    const command = KhafraClient.Commands.get(commandName)!
     // @PseudoBot say hello world -> hello world
-    const content = message.content.slice(mention.length + name.length + 2)
+    const content = messageContent.slice(mention.length + name.length + 2)
 
-    const interactionCache = message.client.application.commands.cache
-    const appCommand = interactionCache.find(({ name }) => {
-      return name === command.settings.name || !!command.settings.aliases?.includes(name)
-    })
+    const interactionCache = client.application.commands.cache
+    const appCommand = interactionCache.find(({ name }) => name === commandName)
 
     if (appCommand !== undefined) {
-      // TODO: use `chatInputApplicationCommandMention` from @discordjs/builders
-      // once a new version (past v1.2.0) has been released.
-      // https://github.com/discord/discord-api-docs/pull/5186/files
-      const commandMention: `</${string}>` = command.appSuggestion
-        ? command.appSuggestion(appCommand, { args, content, commandName })
-        : `</${appCommand.name}:${appCommand.id}>`
+      const commandMention = chatInputApplicationCommandMention(appCommand.name, appCommand.id)
 
       return void message.reply({
         content: stripIndents`
-          Hey ${message.member ?? message.author}, use the slash command version instead!
+          Hey ${member ?? author}, use the slash command version instead!
           ${commandMention}
           `
       })
     }
 
-    let guild: kGuild | undefined
+    if (!KhafraClient.Commands.has(commandName)) {
+      return
+    }
+
+    const command = KhafraClient.Commands.get(commandName)!
+    const { settings, rateLimit, help, permissions } = command
+
+    let guildSettings: kGuild | undefined
 
     if (command.init.length === 3) {
       const rows = await sql<[kGuild?]>`
         SELECT * 
         FROM kbGuild
-        WHERE guild_id = ${message.guildId}::text
+        WHERE guild_id = ${guildId}::text
         LIMIT 1;
       `
 
-      guild = rows[0]
+      guildSettings = rows[0]
     }
 
     // command cooldowns are based around the commands name, not aliases
-    const limited = command.rateLimit.isRateLimited(message.author.id)
+    const limited = rateLimit.isRateLimited(author.id)
 
     if (limited) {
-      if (command.rateLimit.isNotified(message.author.id)) return
+      if (rateLimit.isNotified(author.id)) return
 
-      const cooldownInfo = command.rateLimit.get(message.author.id)!
-      const rateLimitSeconds = command.rateLimit.rateLimitSeconds
+      const cooldownInfo = rateLimit.get(author.id)!
+      const rateLimitSeconds = rateLimit.rateLimitSeconds
       const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / seconds(1))
 
       return void message.reply({
         content:
-          `${upperCase(command.settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
+          `${upperCase(settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
           `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
       })
-    } else if (disabled.includes(command.settings.name) || command.settings.aliases?.some(c => disabled.includes(c))) {
+    } else if (disabled.includes(settings.name) || settings.aliases?.some(c => disabled.includes(c))) {
       return void message.reply({
         content: `${inlineCode(name)} is temporarily disabled!`
       })
     } else {
-      command.rateLimit.rateLimitUser(message.author.id)
+      rateLimit.rateLimitUser(author.id)
     }
 
-    if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
+    if (settings.ownerOnly && !Command.isBotOwner(author.id)) {
       return void message.reply({
         embeds: [
-          Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
+          Embed.error(`\`${settings.name}\` is only available to the bot owner!`)
         ]
       })
     }
 
-    const [min, max = Infinity] = command.settings.args
+    const [min, max = Infinity] = settings.args
+
     if (min > args.length || args.length > max) {
-      const help = command.help.length < 2
-        ? [...command.help, ...Array<string>(2 - command.help.length).fill('')]
-        : command.help
+      const helpMessage = help.length < 2
+        ? [...help, ...Array<string>(2 - help.length).fill('')]
+        : help
 
       return void message.reply({
         embeds: [
@@ -152,23 +153,23 @@ export class kEvent implements Event {
 
           The command requires ${min} minimum arguments and ${max} max.
           Example(s):
-          ${help.slice(1).map(c => inlineCode(`${command.settings.name} ${c || '\u200B'}`.trim())).join('\n')}
+          ${helpMessage.slice(1).map(c => inlineCode(`${settings.name} ${c || '\u200B'}`.trim())).join('\n')}
           `)
         ]
       })
     }
 
-    if (!_cooldownUsers(message.author.id)) {
+    if (!_cooldownUsers(author.id)) {
       return void message.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] })
-    } else if (!_cooldownGuild(message.guild.id)) {
+    } else if (!_cooldownGuild(guildId)) {
       return void message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
     } else if (
-      message.member === null ||
-      !message.channel.permissionsFor(message.member).has(command.permissions)
+      member === null ||
+      !channel.permissionsFor(member).has(permissions)
     ) {
       return void message.reply({
         embeds: [
-          Embed.perms(message.channel, message.member, command.permissions)
+          Embed.perms(channel, member, permissions)
         ]
       })
     }
@@ -177,7 +178,7 @@ export class kEvent implements Event {
 
     try {
       const options: Arguments = { args, commandName, content }
-      const returnValue = await command.init(message, options, guild)
+      const returnValue = await command.init(message, options, guildSettings)
       if (!returnValue || returnValue instanceof Message)
         return
 
@@ -205,13 +206,13 @@ export class kEvent implements Event {
         embeds: [
           Embed.json({
             color: colors.error,
-            description: `Sorry ${message.member}, there was an issue running this command.`
+            description: `Sorry ${member}, there was an issue running this command.`
           })
         ],
         failIfNotExists: false
       })
     } finally {
-      logger.info(loggerUtility.formatters.message(message), `message command ${command.settings.name}`)
+      logger.info(loggerUtility.formatters.message(message), `message command ${settings.name}`)
     }
   }
 
@@ -285,7 +286,7 @@ export class kEvent implements Event {
         embeds: [
           Embed.json({
             color: colors.error,
-            description: `Sorry ${message.member}, there was an issue running this command.`
+            description: `Sorry ${message.author}, there was an issue running this command.`
           })
         ],
         failIfNotExists: false
