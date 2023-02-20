@@ -45,8 +45,7 @@ const makeEmojiEmbed = <T extends EmojiUnion>(
 
     return Embed.json({
       color: colors.ok,
-      // TODO(@KhafraDev): https://github.com/discordjs/discord.js/issues/8820
-      description: formatEmoji(id, animated as true),
+      description: formatEmoji(id, animated),
       title: name,
       image: { url },
       url,

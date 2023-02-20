@@ -171,7 +171,7 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
       case ActivityType.Custom: {
         if (activity.emoji) {
           desc += activity.emoji.id
-            ? formatEmoji(activity.emoji.id, !!activity.emoji.animated as true)
+            ? formatEmoji(activity.emoji.id, !!activity.emoji.animated)
             : activity.emoji.name
         }
         desc += `${inlineCode(activity.state ?? 'N/A')}\n`
