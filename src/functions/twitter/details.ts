@@ -50,6 +50,7 @@ export class Twitter {
       features: tweetFeatures
     })
 
+    // Note: undici.request does not work in this case.
     const result = await fetch(url, {
       headers: {
         authorization: auth,
@@ -75,7 +76,7 @@ export class Twitter {
 
     for (const entry of entries) {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const media = entry.content.itemContent?.tweet_results.result.legacy.extended_entities?.media
+      const media = entry.content.itemContent?.tweet_results?.result?.legacy?.extended_entities?.media
 
       if (typeof media === 'undefined') {
         continue // no media in tweet

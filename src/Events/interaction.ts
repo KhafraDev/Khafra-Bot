@@ -126,6 +126,18 @@ export class kEvent implements Event {
       return void await interaction.reply(param)
     } catch (e) {
       logger.error(e, `interaction error (${interaction.commandName})`)
+
+      if (!interaction.replied) {
+        const options = {
+          content: 'Something unexpected happened, the problem will be fixed soon. 😦',
+          ephemeral: true
+        } as const
+
+        if (interaction.deferred)
+          return void await interaction.editReply(options)
+
+        return void await interaction.reply(options)
+      }
     } finally {
       loggerUtility.logInteraction(interaction, command.data.name)
     }
