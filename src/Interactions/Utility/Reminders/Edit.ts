@@ -46,11 +46,11 @@ export class kSubCommand extends InteractionSubCommand {
       UPDATE "kbReminders" SET
         "message" = COALESCE(NULLIF(${text}::text, NULL), "kbReminders"."message"),
         "time" = COALESCE(NULLIF(${date}::timestamp, NULL), "kbReminders"."time"),
-        "once" = COALESCE(NULLIF(${typeof once === 'boolean' ? !once : null}::boolean, NULL), "kbReminders"."once") 
+        "once" = COALESCE(NULLIF(${typeof once === 'boolean' ? !once : null}::boolean, NULL), "kbReminders"."once"),
+        "didEnd" = FALSE
       WHERE
         "id" = ${id}::uuid AND
-        "userId" = ${interaction.user.id}::text AND
-        "didEnd" = FALSE
+        "userId" = ${interaction.user.id}::text
       ;
     `
 
