@@ -295,3 +295,15 @@ export const chunkSafe = <T>(arr: T[], step: number): T[][] => {
 
   return res
 }
+
+export const splitEvery = (text: string, step: number): string[] => {
+  const split: string[] = []
+
+  while (text.length) {
+    const sliced = text.slice(0, step)
+    split.push(sliced)
+    text = text.slice(step)
+  }
+
+  return split
+}

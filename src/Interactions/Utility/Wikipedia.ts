@@ -1,18 +1,31 @@
+import { search } from '#khaf/functions/wikipedia/search.js'
+import { extractArticleText } from '#khaf/functions/wikipedia/source.js'
 import { Interactions } from '#khaf/Interaction'
-import { Components, disableAll } from '#khaf/utility/Constants/Components.js'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { minutes, seconds } from '#khaf/utility/ms.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { ellipsis, plural } from '#khaf/utility/String.js'
+import { splitEvery } from '#khaf/utility/util.js'
 import { hideLinkEmbed } from '@discordjs/builders'
-import { getArticleById, search } from '@khaf/wikipedia'
 import {
   ApplicationCommandOptionType,
   InteractionType,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
-import type { SelectMenuInteraction } from 'discord.js'
+import type { ButtonInteraction, InteractionEditReplyOptions, StringSelectMenuInteraction } from 'discord.js'
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
+
+interface WikiCache {
+  text: string[]
+  article: {
+    pageid: number
+    ns: number
+    title: string
+    extract: string
+  }
+}
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -23,7 +36,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'article',
-          description: 'Article name to get a summary for.',
+          description: 'the article\'s title',
           required: true
         }
       ]
@@ -44,82 +57,113 @@ export class kInteraction extends Interactions {
       }
     }
 
+    const components = {
+      selectMenu: Components.actionRow([
+        Components.selectMenu({
+          custom_id: `wikipedia-${id}`,
+          placeholder: 'Which article summary would you like to get?',
+          options: wiki.pages.map(w => ({
+            label: ellipsis(w.title, 25),
+            description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
+            value: `${w.id}`
+          }))
+        })
+      ]),
+      buttons: Components.actionRow([
+        Buttons.approve('Next', `next-${id}`),
+        Buttons.primary('Back', `back-${id}`)
+      ]),
+      get all () {
+        return [
+          this.buttons,
+          this.selectMenu
+        ]
+      }
+    } as const
+
     const m = await interaction.editReply({
       content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
       embeds: [
         Embed.ok('Choose an article from the dropdown below!')
       ],
-      components: [
-        Components.actionRow([
-          Components.selectMenu({
-            custom_id: `wikipedia-${id}`,
-            placeholder: 'Which article summary would you like to get?',
-            options: wiki.pages.map(w => ({
-              label: ellipsis(w.title, 25),
-              description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
-              value: `${w.id}`
-            }))
-          })
-        ])
-      ]
+      components: [components.selectMenu]
     })
 
-    const c = new InteractionCollector<SelectMenuInteraction>(interaction.client, {
+    let page = 0
+    const cache = new Map<string, WikiCache>()
+
+    const c = new InteractionCollector<
+      StringSelectMenuInteraction | ButtonInteraction
+    >(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: m,
-      time: minutes(2),
-      idle: seconds(30),
-      max: wiki.pages.length,
+      time: minutes(10),
       filter: (i) =>
         i.user.id === interaction.user.id &&
         i.message.id === m.id &&
         i.customId.endsWith(id)
     })
 
+    let article!: WikiCache
+
     for await (const [i] of c) {
-      await i.deferUpdate()
+      if (i.isStringSelectMenu()) {
+        const id = i.values[0]
 
-      const article = wiki.pages.find(p => i.values.includes(`${p.id}`))!
-      const summaryRes = await getArticleById(article.id)
-      const summary = summaryRes.query?.pages[`${article.id}`]
+        if (!cache.has(id)) {
+          await i.deferUpdate()
 
-      if (summary === undefined) {
-        await i.editReply({
-          content: '❌ Invalid response from Wikipedia!',
-          components: disableAll(m)
-        })
+          const result = await extractArticleText(id)
+          const article = result.query.pages?.[id]
+          assert(article)
+          const text = article.extract.split(/\n{3,}/g)
+          const parts: string[] = []
 
-        continue
+          for (const part of text.map(p => splitEvery(p, 4096)).flat()) {
+            if (parts.length === 0) {
+              parts.push(part)
+              continue
+            }
+
+            const last = parts.at(-1)!
+
+            if (part.length + last.length > 4096) {
+              parts.push(part)
+            } else {
+              parts[parts.length - 1] = `${last} ${part}`
+            }
+          }
+
+          cache.set(id, { text: parts, article })
+        }
+
+        article = cache.get(id)!
+        page = 0
+      } else {
+        i.customId.startsWith('next') ? page++ : page--
+        if (page < 0) page = article.text.length - 1
+        if (page >= article.text.length) page = 0
       }
 
-      const embed = Embed.json({
-        color: colors.ok,
-        description: ellipsis(summary.extract, 2048),
-        title: summary.title,
-        url: `https://en.wikipedia.org/wiki/${article.key}`
-      })
+      const rows = article.text.length > 1 ? components.all : undefined
+      const options = {
+        content: hideLinkEmbed(`https://en.wikipedia.org/wiki/${encodeURIComponent(article.article.title)}`),
+        embeds: [
+          Embed.json({
+            color: colors.ok,
+            description: article.text[page],
+            title: article.article.title,
+            url: `https://en.wikipedia.org/wiki/${encodeURIComponent(article.article.title)}`
+          })
+        ],
+        components: rows
+      } satisfies InteractionEditReplyOptions
 
-      if (article.thumbnail) {
-        const image = article.thumbnail.url.startsWith('http')
-          ? article.thumbnail.url
-          : `https:${article.thumbnail.url}`
-
-        embed.thumbnail = { url: image }
+      if (i.deferred) {
+        await i.editReply(options)
+      } else {
+        await i.update(options)
       }
-
-      await i.editReply({
-        content: hideLinkEmbed(`https://en.wikipedia.org/wiki/${article.key}`),
-        embeds: [embed]
-      })
-    }
-
-    // Prevent making an extra API call if the menu is already disabled
-    const raw = m.components[0].components[0].toJSON()
-
-    if (raw.disabled !== true) {
-      await interaction.editReply({
-        components: disableAll(m)
-      })
     }
   }
 }

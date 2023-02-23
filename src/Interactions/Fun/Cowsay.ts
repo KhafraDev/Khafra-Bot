@@ -1,6 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { assets } from '#khaf/utility/Constants/Path.js'
+import { splitEvery } from '#khaf/utility/util.js'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { codeBlock, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 import { readdirSync } from 'node:fs'
@@ -10,18 +11,6 @@ import { basename, extname } from 'node:path'
 const cache = new Map<string, string>()
 const maxLength = 38
 
-const splitEvery = (text: string): string[] => {
-  const split: string[] = []
-
-  while (text.length) {
-    const sliced = text.slice(0, 38)
-    split.push(sliced)
-    text = text.slice(38)
-  }
-
-  return split
-}
-
 const calculateMaxLineLength = (lines: string[]): string[] => {
   const f: string[] = []
 
@@ -30,7 +19,7 @@ const calculateMaxLineLength = (lines: string[]): string[] => {
 
     if (last.length >= maxLength || last.length + word.length > maxLength) {
       if (word.length > maxLength) {
-        f.push(...splitEvery(word))
+        f.push(...splitEvery(word, maxLength))
       } else {
         f.push(word)
       }
