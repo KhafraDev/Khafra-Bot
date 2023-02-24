@@ -1,5 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { owlbotio } from '#khaf/utility/commands/OwlBotIO'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { bold, italic } from '@discordjs/builders'
@@ -39,7 +40,7 @@ export class kInteraction extends Interactions {
     const definitions = word.definitions
       .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
       .join('\n')
-      .slice(0, 2048 - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
+      .slice(0, maxDescriptionLength - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
 
     return {
       content: stripIndents`

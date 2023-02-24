@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes, seconds } from '#khaf/utility/ms.js'
@@ -221,7 +222,7 @@ export class kInteraction extends Interactions {
         }
 
         embed.description = rules.map(
-          (rule, idx) => `#${idx + 1}: ${inlineCode(ellipsis(rule, 2048 / rules.length - 5))}`
+          (rule, idx) => `#${idx + 1}: ${inlineCode(ellipsis(rule, maxDescriptionLength / rules.length - 5))}`
         ).join('\n')
 
         await i.reply({

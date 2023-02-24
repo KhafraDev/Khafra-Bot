@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes } from '#khaf/utility/ms.js'
@@ -116,7 +117,7 @@ export class kInteraction extends Interactions {
       }
     })
 
-    if (Lyric.length <= 2048) {
+    if (Lyric.length <= maxDescriptionLength) {
       return {
         embeds: [basicEmbed()],
         components: [
@@ -129,7 +130,7 @@ export class kInteraction extends Interactions {
 
     let currentPage = 0
     const id = randomUUID()
-    const pages = paginateText(Lyric, 2048).map((page) => {
+    const pages = paginateText(Lyric, maxDescriptionLength).map((page) => {
       const embed = basicEmbed()
       embed.description = page
       return embed

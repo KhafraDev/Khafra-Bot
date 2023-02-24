@@ -1,5 +1,6 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
@@ -90,6 +91,6 @@ export class kCommand extends Command {
 
   init (_message: Message, { content }: Arguments): APIEmbed {
     const pig = toPigLatin(content)
-    return Embed.ok(pig.slice(0, 2048))
+    return Embed.ok(pig.slice(0, maxDescriptionLength))
   }
 }

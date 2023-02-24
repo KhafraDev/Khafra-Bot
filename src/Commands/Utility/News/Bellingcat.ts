@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { once } from '#khaf/utility/Memoize.js'
 import { RSSReader } from '#khaf/utility/RSS.js'
@@ -52,7 +53,7 @@ export class kCommand extends Command {
       description: posts
         .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
-        .slice(0, 4096),
+        .slice(0, maxDescriptionLength),
       author: settings.author
     })
   }

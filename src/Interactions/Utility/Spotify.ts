@@ -1,11 +1,12 @@
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { GuildMember } from 'discord.js'
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { hyperlink, inlineCode } from '@discordjs/builders'
 import { spotify } from '@khaf/spotify'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { GuildMember } from 'discord.js'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -69,7 +70,7 @@ export class kInteraction extends Interactions {
 
       const line = `[${track.name}](${track.external_urls.spotify}) by ${inlineCode(artistNames)}\n`
 
-      if (desc.length + line.length > 2048) break
+      if (desc.length + line.length > maxDescriptionLength) break
 
       desc += line
     }

@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js'
@@ -108,23 +109,23 @@ export class kCommand extends Command {
     if (success.length > 0)
       description += `${bold('Success:')}\n`
 
-    while (success.length !== 0 && description.length < 2048) {
+    while (success.length !== 0 && description.length < maxDescriptionLength) {
       const { value } = success.shift()!
       const line = isCategory(value)
         ? `Category ${inlineCode(value.name)}\n`
         : `${value}\n`
-      if (description.length + line.length > 2048) break
+      if (description.length + line.length > maxDescriptionLength) break
 
       description += line
     }
 
-    if (rejected.length > 0 && description.length + `\n\n${bold('Rejected!')}\n`.length <= 2048)
+    if (rejected.length > 0 && description.length + `\n\n${bold('Rejected!')}\n`.length <= maxDescriptionLength)
       description += `\n${bold('Rejected!')}\n`
 
-    while (rejected.length !== 0 && description.length < 2048) {
+    while (rejected.length !== 0 && description.length < maxDescriptionLength) {
       const { reason } = rejected.shift()! as { reason: Error }
       const line = `${inlineCode(reason.message)}\n`
-      if (description.length + line.length > 2048) break
+      if (description.length + line.length > maxDescriptionLength) break
       description += line
     }
 

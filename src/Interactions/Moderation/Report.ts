@@ -21,6 +21,7 @@ import {
 } from 'discord.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -45,7 +46,7 @@ export class kInteraction extends Interactions {
               name: 'reason',
               description: 'the reason you are reporting this user',
               required: true,
-              max_length: 2048,
+              max_length: maxDescriptionLength - 256,
               min_length: 10
             },
             {
@@ -71,7 +72,7 @@ export class kInteraction extends Interactions {
               name: 'reason',
               description: 'the reason you are reporting this message',
               required: true,
-              max_length: 2048,
+              max_length: maxDescriptionLength - 256,
               min_length: 10
             }
           ]

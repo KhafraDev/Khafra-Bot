@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
@@ -36,7 +37,7 @@ export class kCommand extends Command {
         message.channel.permissionsFor(role).has(PermissionFlagsBits.Administrator)
       ) {
         const line = `${role}\n`
-        if (desc.length + next.length + line.length > 2048) break
+        if (desc.length + next.length + line.length > maxDescriptionLength) break
         desc += line
         amount++
       }

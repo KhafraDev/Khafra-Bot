@@ -1,4 +1,5 @@
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { once } from '#khaf/utility/Memoize.js'
 import { hours } from '#khaf/utility/ms.js'
@@ -8,60 +9,60 @@ import { decodeXML } from 'entities'
 import { request } from 'undici'
 
 interface ITheOnionAPI {
-    data: {
-        id: number
-        permalinkRedirect: null
-        parentId: unknown
-        parentAuthorId: unknown
-        parentAuthorIds: unknown
-        starterId: number
-        publishTimeMillis: number
-        lastUpdateTimeMillis: number
-        timezone: string
-        sharedUrl: unknown
-        salesAvatar: unknown
-        sponsored: boolean
-        adSettings: unknown
-        status: string
-        authorId: string
-        authorIds: string[]
-        allowReplies: boolean
-        showAuthorBio: boolean
-        byline: string
-        showByline: boolean
-        categorization: {channelId: string, sectionId: string}
-        storyTypeId: unknown
-        categoryId: unknown
-        subcategoryId: unknown
-        properties:string
-        template: unknown
-        isFeatured: boolean
-        isVideo: boolean
-        isRoundup: boolean
-        relatedModule: unknown
-        defaultBlogId: number
-        approved: boolean
-        headline:string
-        headlineSfw:string
-        subhead: unknown[]
-        body: unknown[]
-        lightbox: boolean
-        imageRights: string
-        hideCredit: boolean
-        type: string
-        permalink: string
-        plaintext: string
-    }[]
+  data: {
+    id: number
+    permalinkRedirect: null
+    parentId: unknown
+    parentAuthorId: unknown
+    parentAuthorIds: unknown
+    starterId: number
+    publishTimeMillis: number
+    lastUpdateTimeMillis: number
+    timezone: string
+    sharedUrl: unknown
+    salesAvatar: unknown
+    sponsored: boolean
+    adSettings: unknown
+    status: string
+    authorId: string
+    authorIds: string[]
+    allowReplies: boolean
+    showAuthorBio: boolean
+    byline: string
+    showByline: boolean
+    categorization: {channelId: string, sectionId: string}
+    storyTypeId: unknown
+    categoryId: unknown
+    subcategoryId: unknown
+    properties:string
+    template: unknown
+    isFeatured: boolean
+    isVideo: boolean
+    isRoundup: boolean
+    relatedModule: unknown
+    defaultBlogId: number
+    approved: boolean
+    headline:string
+    headlineSfw:string
+    subhead: unknown[]
+    body: unknown[]
+    lightbox: boolean
+    imageRights: string
+    hideCredit: boolean
+    type: string
+    permalink: string
+    plaintext: string
+  }[]
 }
 
 interface ITheOnion {
-    title: string
-    link: string
-    description: string
-    category: string[]
-    pubDate: string
-    guid: number
-    'dc:creator': string
+  title: string
+  link: string
+  description: string
+  category: string[]
+  pubDate: string
+  guid: number
+  'dc:creator': string
 }
 
 const rss = new RSSReader<ITheOnion>('https://www.theonion.com/rss')
@@ -106,7 +107,7 @@ export class kCommand extends Command {
         url: j.data[0].permalink
       },
       timestamp: new Date(j.data[0].publishTimeMillis).toISOString(),
-      description: j.data[0].plaintext.slice(0, 2048)
+      description: j.data[0].plaintext.slice(0, maxDescriptionLength)
     })
   }
 }

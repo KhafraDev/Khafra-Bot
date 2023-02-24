@@ -1,5 +1,6 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { inlineCode } from '@discordjs/builders'
@@ -188,7 +189,7 @@ export class kCommand extends Command {
         .map(Number) // Not NaN because the regex checks for numbers
 
       // prevent >10 verses from being sent at a time
-      // not only to prevent abuse, but because of the 2048 character limit
+      // not only to prevent abuse, but because of the character limit
       const versesDiff = verses[1] - verses[0] > 10
         ? [verses[0], verses[0] + 9] // sql between is inclusive
         : verses
@@ -213,7 +214,7 @@ export class kCommand extends Command {
       const embed = Embed.json({
         color: colors.ok,
         title: `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`,
-        description: `${rows.map(v => v.content).join('\n')}`.slice(0, 2048)
+        description: `${rows.map(v => v.content).join('\n')}`.slice(0, maxDescriptionLength)
       })
 
       return embed

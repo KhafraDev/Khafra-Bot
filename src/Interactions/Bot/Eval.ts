@@ -1,4 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { codeBlock } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
@@ -43,7 +44,7 @@ export class kInteraction extends Interactions {
     }
 
     const inspected = inspect(ret, true, 1, false)
-    const embed = Embed.ok(codeBlock('js', inspected.slice(0, 4096 - 8).trim()))
+    const embed = Embed.ok(codeBlock('js', inspected.slice(0, maxDescriptionLength - 8).trim()))
 
     return {
       ephemeral: true,

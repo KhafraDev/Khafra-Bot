@@ -16,6 +16,7 @@ import type { ButtonInteraction, InteractionEditReplyOptions, StringSelectMenuIn
 import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 
 interface WikiCache {
   text: string[]
@@ -119,7 +120,7 @@ export class kInteraction extends Interactions {
           const text = article.extract.split(/\n{3,}/g)
           const parts: string[] = []
 
-          for (const part of text.map(p => splitEvery(p, 4096)).flat()) {
+          for (const part of text.map(p => splitEvery(p, maxDescriptionLength)).flat()) {
             if (parts.length === 0) {
               parts.push(part)
               continue
@@ -127,7 +128,7 @@ export class kInteraction extends Interactions {
 
             const last = parts.at(-1)!
 
-            if (part.length + last.length > 4096) {
+            if (part.length + last.length > maxDescriptionLength) {
               parts.push(part)
             } else {
               parts[parts.length - 1] = `${last} ${part}`

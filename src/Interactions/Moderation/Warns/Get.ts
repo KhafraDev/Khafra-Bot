@@ -4,12 +4,13 @@ import type { Warning } from '#khaf/types/KhafraBot.js'
 import { plural } from '#khaf/utility/String.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { maxDescriptionLength } from '#khaf/utility/constants.js'
 
 interface Total {
-    total_points: string
-    dates: Warning['k_ts'][]
-    ids: Warning['id'][]
-    points: Warning['k_points'][]
+  total_points: string
+  dates: Warning['k_ts'][]
+  ids: Warning['id'][]
+  points: Warning['k_points'][]
 }
 
 type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never
@@ -26,8 +27,8 @@ export class kSubCommand extends InteractionSubCommand {
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const member =
-            interaction.options.getMember('member') ??
-            interaction.options.getUser('member', true)
+      interaction.options.getMember('member') ??
+      interaction.options.getUser('member', true)
 
     const id = 'id' in member ? member.id : null
 
@@ -40,14 +41,14 @@ export class kSubCommand extends InteractionSubCommand {
 
     const rows = await sql<[Total] | []>`
       SELECT 
-          SUM(k_points) AS total_points,
-          ARRAY_AGG(k_ts) dates,
-          ARRAY_AGG(id) ids,
-          ARRAY_AGG(k_points) points
+        SUM(k_points) AS total_points,
+        ARRAY_AGG(k_ts) dates,
+        ARRAY_AGG(id) ids,
+        ARRAY_AGG(k_points) points
       FROM kbWarns
       WHERE
-          kbWarns.k_guild_id = ${interaction.guildId}::text AND
-          kbWarns.k_user_id = ${id}::text
+        kbWarns.k_guild_id = ${interaction.guildId}::text AND
+        kbWarns.k_user_id = ${id}::text
       LIMIT 1;
     `
 
@@ -61,15 +62,15 @@ export class kSubCommand extends InteractionSubCommand {
     const { dates, ids, points, total_points } = rows[0]
     const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]])
     let content =
-            `✅ ${member} has ${ids.length.toLocaleString()} warnings ` +
-            `with ${Number(total_points).toLocaleString()} warning points total.\n`
+      `✅ ${member} has ${ids.length.toLocaleString()} warnings ` +
+      `with ${Number(total_points).toLocaleString()} warning points total.\n`
 
     // embeds can have a maximum of 25 fields
     for (const [id, date, p] of mapped) {
       const points = p.toLocaleString(interaction.guild?.preferredLocale ?? 'en-US')
       const line = `${bold(time(date))}: ${inlineCode(id)}: ${points} point${plural(p)}.\n`
 
-      if (content.length + line.length > 2048) break
+      if (content.length + line.length > maxDescriptionLength) break
 
       content += line
     }
