@@ -41,8 +41,9 @@ export const Cartoonize = {
     })
 
     const j = await body.text()
-    const url = R.exec(j)![1]
+    const url = R.exec(j)?.[1]
 
+    assert(url)
     return decodeXML(url)
   }
 }

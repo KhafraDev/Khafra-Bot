@@ -1,3 +1,4 @@
+import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { inlineCode } from '@discordjs/builders'
@@ -90,6 +91,13 @@ export class kInteraction extends Interactions {
     const name = interaction.options.getString('name', true)
     const reason = interaction.options.getString('reason') ?? undefined
     const roles: (Role | APIRole)[] = []
+
+    if (!ImageUtil.isImage(attachment.proxyURL, attachment.contentType)) {
+      return {
+        content: 'What am I supposed to do with that? That\'s not an image!',
+        ephemeral: true
+      }
+    }
 
     for (let i = 1; i <= 5; i++) {
       const role = interaction.options.getRole(`role${i}`)

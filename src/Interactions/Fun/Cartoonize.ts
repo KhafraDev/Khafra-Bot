@@ -1,3 +1,4 @@
+import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { Interactions } from '#khaf/Interaction'
 import { Cartoonize } from '#khaf/utility/commands/Cartoonize'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'
@@ -29,8 +30,15 @@ export class kInteraction extends Interactions {
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const image = interaction.options.getAttachment('image', true)
-    const cartoon = await Cartoonize.cartoonize(image)
 
+    if (!ImageUtil.isImage(image.proxyURL, image.contentType)) {
+      return {
+        content: 'What am I supposed to do with that? That\'s not an image!',
+        ephemeral: true
+      }
+    }
+
+    const cartoon = await Cartoonize.cartoonize(image)
     const { body } = await request(cartoon)
     const imageBuffer = arrayBufferToBuffer(await body.arrayBuffer())
 

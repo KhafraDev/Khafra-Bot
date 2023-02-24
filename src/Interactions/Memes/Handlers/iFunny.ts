@@ -36,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
   async image (interaction: ChatInputCommandInteraction): Promise<Buffer | string> {
     const attachment = interaction.options.getAttachment('image', true)
 
-    if (!ImageUtil.isImage(attachment.proxyURL)) {
+    if (!ImageUtil.isImage(attachment.proxyURL, attachment.contentType)) {
       return '❌ This file type is not supported.'
     }
 

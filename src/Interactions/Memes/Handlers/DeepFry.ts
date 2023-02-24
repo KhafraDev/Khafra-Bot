@@ -52,10 +52,18 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const attachment = interaction.options.getAttachment('image')
     const option =
-			interaction.options.getAttachment('image')?.proxyURL ??
+			attachment?.proxyURL ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
 			interaction.user.displayAvatarURL(options)
+
+    if (!ImageUtil.isImage(option, attachment?.contentType)) {
+      return {
+        content: 'What am I supposed to do with that? That\'s not an image!',
+        ephemeral: true
+      }
+    }
 
     const buffer = await this.image(option)
 
@@ -74,10 +82,6 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async image (avatarURL: string): Promise<Buffer | string> {
-    if (!ImageUtil.isImage(avatarURL)) {
-      return '❌ This file type is not supported.'
-    }
-
     const { body } = await request(avatarURL)
 
     const image = new Image()

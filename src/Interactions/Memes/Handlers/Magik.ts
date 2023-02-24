@@ -5,7 +5,7 @@ import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { Magik } from '@khaf/magik'
 import { Transformer } from '@napi-rs/image'
-import type { Attachment, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { request } from 'undici'
 
@@ -20,10 +20,18 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const attachment = interaction.options.getAttachment('image')
     const option =
-			interaction.options.getAttachment('image') ??
+			attachment?.proxyURL ??
 			interaction.options.getUser('person')?.displayAvatarURL(options) ??
 			interaction.user.displayAvatarURL(options)
+
+    if (!ImageUtil.isImage(option, attachment?.contentType)) {
+      return {
+        content: 'What am I supposed to do with that? That\'s not an image!',
+        ephemeral: true
+      }
+    }
 
     const buffer = await this.image(option)
 
@@ -41,16 +49,8 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (avatarURL: string | Attachment): Promise<Uint8ClampedArray | string> {
-    if (typeof avatarURL === 'string') {
-      if (!ImageUtil.isImage(avatarURL)) {
-        return '❌ This file type is not supported.'
-      }
-    } else if (!ImageUtil.isImage(avatarURL.proxyURL)) {
-      return '❌ This file type is not supported.'
-    }
-
-    const { body } = await request(typeof avatarURL === 'string' ? avatarURL : avatarURL.proxyURL)
+  async image (avatarURL: string): Promise<Uint8ClampedArray | string> {
+    const { body } = await request(avatarURL)
     const buffer = arrayBufferToBuffer(await body.arrayBuffer())
 
     const transformer = new Transformer(buffer)

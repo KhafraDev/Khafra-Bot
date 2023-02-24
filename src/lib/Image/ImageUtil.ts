@@ -47,7 +47,11 @@ export const ImageUtil = {
    * Checks if a url is a supported image extension. Currently supports
    * `png`, `jp(e)g`, `avif`, `webp`.
    */
-  isImage (url: string): boolean {
+  isImage (url: string, mimeType?: string | null): boolean {
+    if (mimeType) {
+      return mimeType.startsWith('image/')
+    }
+
     const extension = extname(url)
     const imageExts = [
       '.png',
