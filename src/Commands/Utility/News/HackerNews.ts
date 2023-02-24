@@ -3,10 +3,11 @@ import { Embed } from '#khaf/utility/Constants/Embeds.js'
 import { minutes } from '#khaf/utility/ms.js'
 import { s, type InferType } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
+import { format } from 'node:util'
 import { request } from 'undici'
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json'
-const art = 'https://hacker-news.firebaseio.com/v0/item/{id}.json'
+const art = 'https://hacker-news.firebaseio.com/v0/item/%d.json'
 const cache: InferType<typeof schema>[] = []
 let lastFetched: number
 
@@ -38,7 +39,7 @@ const fetchEntries = async (): Promise<InferType<typeof schema>[]> => {
   cache.length = 0
 
   for (const id of ids) {
-    const { body } = await request(art.replace('{id}', `${id}`))
+    const { body } = await request(format(art, id))
     const j: unknown = await body.json()
 
     if (schema.is(j)) {
