@@ -19,8 +19,8 @@ export abstract class Timer {
       runs: 0,
       async * [Symbol.asyncIterator](): AsyncGenerator<number, void> {
         while (this.runs < max) {
-          yield this.runs++
           await setTimeout(ms)
+          yield this.runs++
         }
       }
     }
