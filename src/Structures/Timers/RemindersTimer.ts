@@ -13,7 +13,7 @@ export class RemindersTimer extends Timer {
   }
 
   async setInterval (): Promise<void> {
-    for await (const _ of this.yieldEvery(this.options.interval)) {
+    for await (const _ of this.yieldEvery()) {
       const rows = await sql<kReminder[]>`
         UPDATE "kbReminders" SET
           "time" = "time" + "kbReminders"."interval",

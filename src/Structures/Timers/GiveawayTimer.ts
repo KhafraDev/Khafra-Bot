@@ -14,7 +14,7 @@ export class GiveawayTimer extends Timer {
   }
 
   async setInterval (): Promise<void> {
-    for await (const _ of this.yieldEvery(this.options.interval)) {
+    for await (const _ of this.yieldEvery()) {
       // Delete all ended giveaways that are older than a week old.
       // This gives users a week to re-roll.
       await sql`
