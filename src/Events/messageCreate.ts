@@ -8,6 +8,7 @@ import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
 import { seconds } from '#khaf/utility/ms.js'
 import { Stats } from '#khaf/utility/Stats.js'
@@ -196,6 +197,10 @@ export class kEvent implements Event {
         } else {
           Object.assign(param, returnValue)
         }
+      }
+
+      if (settings.send && isGuildTextBased(message.channel)) {
+        return void await message.channel.send(param)
       }
 
       return void await message.reply(param)

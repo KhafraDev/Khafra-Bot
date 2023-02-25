@@ -35,6 +35,7 @@ interface ICommand {
     readonly aliases?: string[]
     readonly guildOnly?: boolean
     readonly ownerOnly?: boolean
+    readonly send?: boolean
   }
 }
 

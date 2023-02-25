@@ -50,7 +50,7 @@ export class GiveawayTimer extends Timer {
 
   async action (giveaway: Giveaway): Promise<void> {
     // If the timer is running before the client is logged in.
-    if (!client.user) return
+    if (!client.isReady()) return
 
     try {
       const guild = await client.guilds.fetch(giveaway.guildid)
@@ -93,7 +93,7 @@ export class GiveawayTimer extends Timer {
             content: 'No one entered the giveaway!'
           })
         } else {
-          return void message.channel.send({
+          return void channel.send({
             content: 'No one entered the giveaway!'
           })
         }
@@ -106,12 +106,12 @@ export class GiveawayTimer extends Timer {
 
       if (!message.editable) {
         if (giveaway.winners !== 1 && winners.length > 1) {
-          return void message.channel.send({
+          return void channel.send({
             content: `Giveaway ended! The winners are ${winners.join(', ')}! 🎉`
           })
         } else {
-          return void message.channel.send({
-            content: `Giveaway ended! The winner is ${winners}! 🎉`
+          return void channel.send({
+            content: `Giveaway ended! The winner is ${winners[0]}! 🎉`
           })
         }
       } else {
@@ -121,7 +121,7 @@ export class GiveawayTimer extends Timer {
           })
         } else {
           return void message.edit({
-            content: `Giveaway has ended, the winner is ${winners}! 🎉`
+            content: `Giveaway has ended, the winner is ${winners[0]}! 🎉`
           })
         }
       }

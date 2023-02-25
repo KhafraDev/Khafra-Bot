@@ -2,6 +2,7 @@ import { KhafraClient } from '#khaf/Bot'
 import { Command, type Arguments } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { minutes } from '#khaf/utility/ms.js'
 import { chunkSafe } from '#khaf/utility/util.js'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
@@ -61,6 +62,13 @@ export class kCommand extends Command {
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
         ]
+      })
+    }
+
+    if (!isGuildTextBased(message.channel)) {
+      return Embed.json({
+        color: colors.error,
+        description: 'Sorry, this command isn\'t available in this channel.'
       })
     }
 
