@@ -1,10 +1,10 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { getMentions } from '#khaf/utility/Mentions.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
-import type { Message} from 'discord.js'
+import type { Message } from 'discord.js'
 import { Role } from 'discord.js'
 
 export class kCommand extends Command {

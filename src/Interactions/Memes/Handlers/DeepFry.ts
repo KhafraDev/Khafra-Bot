@@ -95,7 +95,7 @@ export class kSubCommand extends InteractionSubCommand {
     contrast(ctx, canvas.width, canvas.height)
 
     // pick random emojis to draw
-    const emojis = ['😂','💯', '👌', '🔥'].filter(() => Math.random() < .75)
+    const emojis = ['😂', '💯', '👌', '🔥'].filter(() => Math.random() < .75)
     const width = Math.round(canvas.width / 5)
 
     ctx.textAlign = 'center'

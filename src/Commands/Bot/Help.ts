@@ -60,7 +60,7 @@ export class kCommand extends Command {
         fields: [
           { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
-          { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true}
+          { name: bold('Rate-Limit:'), value: `${rateLimit.rateLimitSeconds} seconds`, inline: true }
         ]
       })
     }

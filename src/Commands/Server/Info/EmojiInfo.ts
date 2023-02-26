@@ -1,11 +1,11 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { parseEmojiList } from '#khaf/utility/Emoji.js'
 import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { parse, toCodePoints } from 'twemoji-parser'
-import { parseEmojiList } from '#khaf/utility/Emoji.js'
 
 const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?/
 

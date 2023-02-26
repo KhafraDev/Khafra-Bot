@@ -89,7 +89,7 @@ export class kCommand extends Command {
 
     const stories = [...cache.values()]
     const list = stories
-      .map((s,i) => `[${i+1}]: [${s.title}](${s.url})`)
+      .map((s, i) => `[${i+1}]: [${s.title}](${s.url})`)
       .join('\n')
 
     return Embed.ok(list)

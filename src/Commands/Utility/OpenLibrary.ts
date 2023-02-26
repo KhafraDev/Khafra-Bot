@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { openLibrary } from '#khaf/utility/commands/Openlibrary'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'

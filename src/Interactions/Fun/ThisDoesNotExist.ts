@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson'
-import type { DNE} from '#khaf/utility/commands/ThisDoesNotExist'
+import type { DNE } from '#khaf/utility/commands/ThisDoesNotExist'
 import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
 import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'

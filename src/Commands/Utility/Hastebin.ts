@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { pasteAliases } from '#khaf/utility/commands/Pastes'
 import { Embed } from '#khaf/utility/Constants/Embeds.js'

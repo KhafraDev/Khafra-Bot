@@ -1,4 +1,4 @@
-import type { Arguments} from '#khaf/Command'
+import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode } from '@discordjs/builders'

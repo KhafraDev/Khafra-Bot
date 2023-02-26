@@ -38,7 +38,7 @@ export async function getMentions(
   /** matches all Discord mention types */
   const mentionMatcher = /<?(@!?|@&|#)?(\d{17,19})>?/g
 
-  const { mentions, content: messageContent, guild, client} = message as Message<true>
+  const { mentions, content: messageContent, guild, client } = message as Message<true>
   const content = typeof text === 'string' ? text : messageContent
 
   for (const [, type, id] of content.matchAll(mentionMatcher)) {
