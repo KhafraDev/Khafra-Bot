@@ -1,8 +1,9 @@
+import { apiSchema, type Reddit } from '#khaf/functions/reddit/schema.js'
+import { minutes } from '#khaf/utility/ms.js'
 import { decodeXML } from 'entities'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
-import { apiSchema, type Reddit } from './Schema.js'
 
 export { type Reddit, apiSchema }
 
@@ -147,10 +148,10 @@ export const Timeframe = {
 setInterval(() => {
   const now = Date.now()
   for (const [subreddit, time] of lastUsed.entries()) {
-    if (now - time >= 60 * 1000 * 10) { // 10 mins
+    if (now - time >= minutes(10)) {
       lastUsed.delete(subreddit)
       cache.delete(subreddit)
       after.delete(subreddit)
     }
   }
-}, 60 * 1000 * 10).unref()
+}, minutes(10)).unref()

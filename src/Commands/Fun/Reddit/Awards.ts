@@ -1,6 +1,6 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
-import { apiSchema } from '#khaf/functions/reddit/Schema.js'
+import { apiSchema } from '#khaf/functions/reddit/schema.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'

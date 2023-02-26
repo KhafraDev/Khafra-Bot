@@ -2,7 +2,7 @@ import { Interactions } from '#khaf/Interaction'
 import { maxDescriptionLength } from '#khaf/utility/constants.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { hyperlink, inlineCode } from '@discordjs/builders'
-import { spotify } from '@khaf/spotify'
+import { spotify } from '#khaf/functions/spotify/spotify.js'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -19,6 +19,12 @@ export class kInteraction extends Interactions {
           name: 'song',
           description: 'The song\'s name to search for.',
           required: true
+        },
+        {
+          type: ApplicationCommandOptionType.String,
+          name: 'artist',
+          description: 'band or person',
+          required: true
         }
       ]
     }
@@ -28,6 +34,8 @@ export class kInteraction extends Interactions {
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     let search = interaction.options.getString('song')
+    const artist = interaction.options.getString('artist')
+
     if (!search && interaction.member instanceof GuildMember) {
       const p = interaction.member.presence?.activities.find(
         a => a.type === ActivityType.Listening && a.name === 'Spotify'
@@ -38,14 +46,14 @@ export class kInteraction extends Interactions {
       }
     }
 
-    if (typeof search !== 'string') {
+    if (!search) {
       return {
         content: '❌ If you are not listening to any songs, a search query must be provided!',
         ephemeral: true
       }
     }
 
-    const res = await spotify.search(search)
+    const res = await spotify.search(search, artist)
 
     if (res.tracks.items.length === 0) {
       return {
@@ -54,15 +62,15 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const image = res.tracks.items[0].album.images.reduce((a, b) => {
-      return a.height > b.height ? a : b
-    }, { height: 0, width: 0, url: '' })
+    // Sort tracks most -> least popular
+    const tracks = res.tracks.items.sort((a, b) => b.popularity - a.popularity)
+    const image = tracks[0].album.images.sort((a, b) => a.height - b.height)[0]
 
-    let desc = res.tracks.items[0].preview_url
-      ? `${hyperlink('Song Preview', res.tracks.items[0].preview_url)}\n`
+    let desc = tracks[0].preview_url
+      ? `${hyperlink('Song Preview', tracks[0].preview_url)}\n`
       : ''
 
-    for (const track of res.tracks.items) {
+    for (const track of tracks) {
       const artistNames = track.artists
         .map(a => a.name)
         .join(' and ')
@@ -78,7 +86,9 @@ export class kInteraction extends Interactions {
     const embed = Embed.json({
       color: colors.ok,
       description: desc,
-      url: image.url
+      thumbnail: {
+        url: image.url
+      }
     })
 
     return {
