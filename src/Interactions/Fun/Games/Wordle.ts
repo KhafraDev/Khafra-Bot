@@ -19,7 +19,7 @@ import {
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
-  type WebhookEditMessageOptions
+  type WebhookMessageEditOptions
 } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { randomUUID } from 'node:crypto'
@@ -117,7 +117,7 @@ export class kSubCommand extends InteractionSubCommand {
       ? wordleChoose()
       : WordList[Math.floor(Math.random() * WordList.length)]
 
-    const attachGame = (content: string | undefined): WebhookEditMessageOptions => {
+    const attachGame = (content: string | undefined): WebhookMessageEditOptions => {
       const buffer = this.image(game.interaction, game.guesses, game.word)
       const embed = Embed.json({
         color: colors.ok,

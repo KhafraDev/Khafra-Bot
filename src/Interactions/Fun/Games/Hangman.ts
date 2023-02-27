@@ -13,7 +13,7 @@ import {
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
-  type WebhookEditMessageOptions
+  type WebhookMessageEditOptions
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
@@ -92,9 +92,9 @@ class Hangman {
     return str
   }
 
-  toJSON (title = 'Hangman'): WebhookEditMessageOptions {
+  toJSON (title = 'Hangman'): WebhookMessageEditOptions {
     return {
-      content: null,
+      content: undefined,
       embeds: [
         Embed.json({
           color: colors.ok,
@@ -262,7 +262,7 @@ export class kSubCommand extends InteractionSubCommand {
           continue
         }
 
-        let json: WebhookEditMessageOptions | undefined = undefined
+        let json: WebhookMessageEditOptions | undefined = undefined
         if (game.winner) {
           json = game.toJSON('You guessed the word!')
           c.stop()

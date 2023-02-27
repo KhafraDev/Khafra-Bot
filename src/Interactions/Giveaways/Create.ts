@@ -8,8 +8,8 @@ import { plural } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions, NewsChannel, TextChannel } from 'discord.js'
+import { PermissionFlagsBits, ChannelType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
@@ -29,7 +29,10 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    const channel = interaction.options.getChannel('channel', true) as TextChannel | NewsChannel
+    const channel = interaction.options.getChannel('channel', true, [
+      ChannelType.GuildText,
+      ChannelType.GuildAnnouncement
+    ])
     const prize = interaction.options.getString('prize', true)
     const ends = parseStrToMs(interaction.options.getString('ends', true))
     const winners = interaction.options.getInteger('winners') ?? 1

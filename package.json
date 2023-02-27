@@ -33,7 +33,7 @@
     "@sapphire/shapeshift": "^3.7.1",
     "@skyra/gifenc": "^1.0.0",
     "discord-api-types": "^0.37.20",
-    "discord.js": "^14.7.0",
+    "discord.js": "^14.8.0-dev.1677456632-ffdb197.0",
     "entities": "^4.4.0",
     "fast-xml-parser": "^4.0.12",
     "pino": "^8.6.1",

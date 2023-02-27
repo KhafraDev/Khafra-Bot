@@ -60,6 +60,7 @@ export const client = new KhafraClient({
   .on(Events.GuildMemberAdd,      emitted(Events.GuildMemberAdd))
   .on(Events.GuildMemberRemove,   emitted(Events.GuildMemberRemove))
   .on(Events.GuildMemberUpdate,   emitted(Events.GuildMemberUpdate))
+  .on(Events.GuildAuditLogEntryCreate, emitted(Events.GuildAuditLogEntryCreate))
 
 client.rest.on(RESTEvents.RateLimited, emitted(RESTEvents.RateLimited))
 

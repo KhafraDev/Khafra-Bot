@@ -9,7 +9,7 @@ import {
   ApplicationCommandOptionType, ChannelType,
   InviteTargetType, PermissionFlagsBits, Routes
 } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions, VoiceChannel } from 'discord.js'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const Activities = {
   'Poker': '755827207812677713',
@@ -78,7 +78,7 @@ export class kInteraction extends Interactions {
     }
 
     const activityId = interaction.options.getString('game', true)
-    const channel = interaction.options.getChannel('channel', true) as VoiceChannel
+    const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildVoice])
 
     const invite = await interaction.client.rest.post(
       Routes.channelInvites(channel.id),

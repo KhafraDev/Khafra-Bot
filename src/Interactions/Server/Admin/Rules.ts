@@ -22,9 +22,7 @@ import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
-  type ModalSubmitInteraction,
-  type NewsChannel,
-  type TextChannel
+  type ModalSubmitInteraction
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 import { setTimeout } from 'node:timers/promises'
@@ -117,7 +115,10 @@ export class kInteraction extends Interactions {
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
-    const channel = interaction.options.getChannel('channel', true) as NewsChannel | TextChannel
+    const channel = interaction.options.getChannel('channel', true, [
+      ChannelType.GuildText,
+      ChannelType.GuildAnnouncement
+    ])
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
       return {
