@@ -1,25 +1,16 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
-import type { Case } from '#khaf/functions/case/reports'
 import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
-import { seconds } from '#khaf/utility/ms.js'
-import { ellipsis } from '#khaf/utility/String.js'
-import { bold, inlineCode, time } from '@discordjs/builders'
-import { AuditLogEvent, type APIEmbedAuthor } from 'discord-api-types/v10'
-import {
-  Events,
-  PermissionFlagsBits,
-  type GuildAuditLogsEntry,
-  type GuildMember
-} from 'discord.js'
-import { setTimeout } from 'node:timers/promises'
+import { upperCase } from '#khaf/utility/String.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { bold, time } from '@discordjs/builders'
+import { Events, PermissionFlagsBits, type GuildMember } from 'discord.js'
 
 type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
 type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 
-const auditLogPerms = PermissionFlagsBits.ViewAuditLog
 const basic =
   PermissionFlagsBits.ViewChannel |
   PermissionFlagsBits.SendMessages |
@@ -60,13 +51,20 @@ export class kEvent implements Event {
   }
 
   async timeout (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
-    const current = newMember.communicationDisabledUntil
+    const me = await oldMember.guild.members.fetchMe()
+
+    // If we can view the audit log, use the much more useful guildAuditLogEntryCreate event.
+    if (me.permissions.has(PermissionFlagsBits.ViewAuditLog)) {
+      return
+    }
+
+    const old = oldMember.communicationDisabledUntil
+    const now = newMember.communicationDisabledUntil
+
+    const action = (!old && now) || Date.parse(`${old}`) < Date.now() ? 'mute' : 'unmute'
 
     const [item] = await sql<[kGuildModChannel?]>`
-      SELECT
-        mod_log_channel, max_warning_points,
-        welcome_channel, ticketChannel, "staffChannel"
-      FROM kbGuild
+      SELECT mod_log_channel FROM kbGuild
       WHERE guild_id = ${oldMember.guild.id}::text
       LIMIT 1;
     `
@@ -75,119 +73,36 @@ export class kEvent implements Event {
       return
     }
 
-    const logChannel = item.mod_log_channel
-    const me = oldMember.guild.members.me
-
-    let muted: GuildAuditLogsEntry<AuditLogEvent.MemberUpdate, 'Update', 'User'> | undefined
-    let action!: 'mute' | 'unmute'
-
-    const channel = await oldMember.guild.channels.fetch(logChannel)
+    const channel = await oldMember.guild.channels.fetch(item.mod_log_channel)
 
     if (
       channel === null ||
-      me === null ||
       !isTextBased(channel) ||
       !channel.permissionsFor(me).has(basic)
     ) {
       return
     }
 
-    if (me.permissions.has(auditLogPerms)) {
-      const start = Date.now()
-
-      auditLog: {
-        for (let i = 0; i < 5; i++, i !== 4 && await setTimeout(2000)) {
-          const logs = await oldMember.guild.fetchAuditLogs({
-            type: AuditLogEvent.MemberUpdate,
-            limit: 5
-          })
-
-          for (const entry of logs.entries.values()) {
-            if (entry.target?.id === oldMember.id) {
-              for (const c of entry.changes) {
-                if (c.key === 'communication_disabled_until') {
-                  // If the change is older than the one we want.
-                  if (Math.abs(start - entry.createdTimestamp) >= seconds(10)) {
-                    continue
-                  }
-
-                  muted = entry
-
-                  if (
-                    (c.old === undefined && c.new !== undefined) ||
-                    (Date.parse(`${c.old}`) < Date.now())
-                  ) {
-                    const _case = {
-                      type: 'mute',
-                      targetId: entry.target.id,
-                      reason: entry.reason!,
-                      staffId: entry.executor!.id,
-                      associatedTime: new Date(`${c.new}`),
-                      guildId: oldMember.guild.id,
-                      contextAttachments: null,
-                      targetAttachments: null
-                    } satisfies Case
-
-                    await sql`
-                      INSERT INTO "kbCases"
-                      ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
-                    `
-
-                    action = 'mute'
-                  } else {
-                    action = 'unmute'
-                  }
-
-                  break auditLog
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    if (muted === undefined) {
-      return
-    }
-
-    const author: APIEmbedAuthor | undefined = muted.executor
-      ? {
-        name: `${muted.executor.tag} (${muted.executor.id})`,
-        icon_url: muted.executor.displayAvatarURL()
-      }
-      : undefined
-
-    let description = `${bold('User:')} ${inlineCode(oldMember.user.tag)} (${oldMember.user.id})`
-    description += `\n${bold('Action:')} ${action}`
-
-    if (muted.executor !== null) {
-      description += `\n${bold('Staff:')} ${muted.executor}`
-    }
-
-    if (action === 'mute' && current !== null) {
-      description += `\n${bold('Until:')} ${time(current, 'F')}`
-    }
-
-    if (muted.reason) {
-      description += `\n${bold('Reason:')} ${inlineCode(ellipsis(muted.reason, 1500))}`
-    }
-
-    return void channel.send({
+    await channel.send({
       embeds: [
         Embed.json({
           color: colors.ok,
-          description,
-          author
+          description: stripIndents`
+          ${bold('User:')} ${newMember} (${newMember.user.tag} / ${newMember.user.id})
+          ${bold('Action:')} ${upperCase(action)}
+          ${action === 'mute' && now ? `${bold('Until:')} ${time(new Date(`${now}`), 'F')}` : ''}
+          `,
+          footer: {
+            text: 'For more detailed logs, I need permission to view the audit log!'
+          }
         })
       ]
-    }).catch(() => null)
+    })
   }
 
   async booster (oldMember: GuildMember, newMember: GuildMember, lost: boolean): Promise<void> {
     const [item] = await sql<[kGuildWelcomeChannel?]>`
-      SELECT welcome_channel
-      FROM kbGuild
+      SELECT welcome_channel FROM kbGuild
       WHERE guild_id = ${oldMember.guild.id}::text
       LIMIT 1;
     `

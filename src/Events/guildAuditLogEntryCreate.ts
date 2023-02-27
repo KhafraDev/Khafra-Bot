@@ -6,7 +6,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
-import { bold } from '@discordjs/builders'
+import { bold, time } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type Guild, type GuildAuditLogsEntry } from 'discord.js'
 import assert from 'node:assert'
@@ -27,9 +27,9 @@ export class kEvent implements Event {
       entry.action === AuditLogEvent.MemberBanRemove
     ) {
       return await this.banUnban(entry, guild)
+    } else if (entry.action === AuditLogEvent.MemberUpdate) {
+      return await this.timeout(entry, guild)
     }
-
-    // TODO: memberUpdate auditlog for mutes
   }
 
   async kicked (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
@@ -148,6 +148,80 @@ export class kEvent implements Event {
           ${bold('Action:')} ${upperCase(action)}
           ${bold('Staff:')} ${staff}
           ${entry.reason ? `${bold('Reason:')} ${entry.reason}` : ''}
+          `,
+          author: {
+            name: `${staff.user.tag} (${staff.id})`,
+            icon_url: staff.displayAvatarURL()
+          }
+        })
+      ]
+    })
+  }
+
+  async timeout (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
+    if (entry.actionType !== 'Update' || entry.targetType !== 'User') {
+      return
+    }
+
+    const change = entry.changes.find(change => change.key === 'communication_disabled_until')
+
+    if (!change) {
+      return
+    }
+
+    assert(entry.executorId && entry.targetId)
+    const action = (!change.old && !!change.new) || Date.parse(`${change.old}`) < Date.now() ? 'mute' : 'unmute'
+
+    const _case = {
+      type: action,
+      targetId: entry.targetId,
+      reason: entry.reason ?? '',
+      staffId: entry.executorId,
+      guildId: guild.id,
+      contextAttachments: null,
+      targetAttachments: null,
+      associatedTime: null
+    } satisfies Case
+
+    await sql`
+      INSERT INTO "kbCases"
+      ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
+    `
+
+    const [item] = await sql<[Pick<kGuild, 'mod_log_channel'>?]>`
+      SELECT mod_log_channel FROM kbGuild
+      WHERE guild_id = ${guild.id}::text
+      LIMIT 1;
+    `
+
+    if (!item?.mod_log_channel) {
+      return
+    }
+
+    const me = await guild.members.fetchMe()
+    const channel = await guild.channels.fetch(item.mod_log_channel)
+
+    if (
+      channel === null ||
+      !isGuildTextBased(channel) ||
+      !channel.permissionsFor(me).has(perms)
+    ) {
+      return
+    }
+
+    const staff = await guild.members.fetch(entry.executorId)
+    const targetUser = await guild.client.users.fetch(entry.targetId)
+
+    await channel.send({
+      embeds: [
+        Embed.json({
+          color: colors.ok,
+          description: stripIndents`
+          ${bold('User:')} ${targetUser} (${targetUser.tag} / ${targetUser.id})
+          ${bold('Action:')} ${upperCase(action)}
+          ${bold('Staff:')} ${staff}
+          ${entry.reason ? `${bold('Reason:')} ${entry.reason}` : ''}
+          ${action === 'mute' && change.new ? `${bold('Until:')} ${time(new Date(`${change.new}`), 'F')}` : ''}
           `,
           author: {
             name: `${staff.user.tag} (${staff.id})`,

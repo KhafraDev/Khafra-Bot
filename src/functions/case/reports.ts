@@ -20,7 +20,7 @@ export interface Report {
 
 export interface Case {
   case?: number
-  type: 'ban' | 'kick' | 'softban' | 'unban' | 'mute'
+  type: 'ban' | 'kick' | 'softban' | 'unban' | 'mute' | 'unmute'
   targetId: string
   targetAttachments: string[] | null
   contextAttachments: string | null
