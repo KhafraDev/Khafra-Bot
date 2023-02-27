@@ -213,6 +213,7 @@ export class kInteraction extends Interactions {
 
       const report = {
         targetAttachments: attachments,
+        contextAttachments: null,
         guildId: interaction.guildId,
         messageChannelId: message.channelId,
         reason,
@@ -228,7 +229,7 @@ export class kInteraction extends Interactions {
         RETURNING "kbReport".id
       `
 
-      sqlId = id
+      sqlId = id!
     } else {
       const attachment = interaction.options.getAttachment('attachment')?.url
 
@@ -240,10 +241,13 @@ export class kInteraction extends Interactions {
         reason,
         targetId: user!.id,
         reporterId: interaction.user.id,
-        contextAttachments: attachment,
+        contextAttachments: attachment ?? null,
+        targetAttachments: null,
         guildId: interaction.guildId,
-        status: 'unresolved'
-      } satisfies Omit<Report, 'id'>
+        status: 'unresolved',
+        messageChannelId: null,
+        messageId: null
+      } satisfies Report
 
       const [{ id }] = await sql<{ id: number }[]>`
         INSERT INTO "kbReport"

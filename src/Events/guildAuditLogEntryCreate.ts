@@ -28,6 +28,8 @@ export class kEvent implements Event {
     ) {
       return await this.banUnban(entry, guild)
     }
+
+    // TODO: memberUpdate auditlog for mutes
   }
 
   async kicked (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
@@ -38,7 +40,10 @@ export class kEvent implements Event {
       targetId: entry.targetId,
       reason: entry.reason ?? '',
       staffId: entry.executorId,
-      guildId: guild.id
+      guildId: guild.id,
+      contextAttachments: null,
+      targetAttachments: null,
+      associatedTime: null
     } satisfies Case
 
     await sql`
@@ -99,7 +104,10 @@ export class kEvent implements Event {
       targetId: entry.targetId,
       reason: entry.reason ?? '',
       staffId: entry.executorId,
-      guildId: guild.id
+      guildId: guild.id,
+      contextAttachments: null,
+      targetAttachments: null,
+      associatedTime: null
     } satisfies Case
 
     await sql`

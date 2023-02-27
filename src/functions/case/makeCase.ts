@@ -38,7 +38,8 @@ export const makeCase = async (report: CreateCase): Promise<void> => {
     contextAttachments: rest.contextAttachments,
     reason: rest.reason,
     staffId: interaction.user.id,
-    guildId: guild.id
+    guildId: guild.id,
+    associatedTime: null
   } satisfies Case
 
   await sql`

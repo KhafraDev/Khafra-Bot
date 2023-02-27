@@ -6,14 +6,14 @@ import assert from 'node:assert'
 const reportv1 = /^report::(ban|kick|ignore|softban|mute)::(\d+)$/
 
 export interface Report {
-  id: number
+  id?: number
   reason: string
   reporterId: string
   targetId: string
-  targetAttachments?: string[] | null
-  contextAttachments?: string | null
-  messageId?: string | null
-  messageChannelId?: string | null
+  targetAttachments: string[] | null
+  contextAttachments: string | null
+  messageId: string | null
+  messageChannelId: string | null
   guildId: string
   status: string
 }
@@ -22,11 +22,11 @@ export interface Case {
   case?: number
   type: 'ban' | 'kick' | 'softban' | 'unban' | 'mute'
   targetId: string
-  targetAttachments?: string[] | null
-  contextAttachments?: string | null
+  targetAttachments: string[] | null
+  contextAttachments: string | null
   reason: string
   staffId: string
-  associatedTime?: Date | null
+  associatedTime: Date | null
   guildId: string
 }
 

@@ -123,7 +123,9 @@ export class kEvent implements Event {
                       reason: entry.reason!,
                       staffId: entry.executor!.id,
                       associatedTime: new Date(`${c.new}`),
-                      guildId: oldMember.guild.id
+                      guildId: oldMember.guild.id,
+                      contextAttachments: null,
+                      targetAttachments: null
                     } satisfies Case
 
                     await sql`
