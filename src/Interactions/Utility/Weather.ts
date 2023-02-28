@@ -47,20 +47,11 @@ const resizeText = (ctx: SKRSContext2D, text: string, maxWidth: number, fontSize
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const monthF = new Intl.DateTimeFormat('en-US', { month: 'long' }).format
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const weekdayF = new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format
+const month = new Intl.DateTimeFormat('en-US', { month: 'long' })
+const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
 
-const sunrise = new Image()
-sunrise.width = 44
-sunrise.height = 22
-sunrise.src = readFileSync(weather('sunrise.png'))
-
-const sunset = new Image()
-sunset.width = 44
-sunset.height = 22
-sunset.src = readFileSync(weather('sunset.png'))
+let sunrise: Image
+let sunset: Image
 
 const cache = new Map<string, Image>()
 
@@ -101,6 +92,16 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    if (typeof sunrise === 'undefined') {
+      sunrise = new Image(44, 22)
+      sunrise.src = readFileSync(weather('sunrise.png'))
+    }
+
+    if (typeof sunset === 'undefined') {
+      sunset = new Image(44, 22)
+      sunset.src = readFileSync(weather('sunset.png'))
+    }
+
     const location = interaction.options.getString('location', true)
     const results = await wttrin(location)
     const buffer = this.image(results)
@@ -176,10 +177,10 @@ export class kInteraction extends Interactions {
     ctx.fillText(location, leftOffset, height)
 
     // write time the weather was updated at
-    const weekday = weekdayF(utcTime)
-    const month = monthF(utcTime)
+    const weekdayName = weekday.format(utcTime)
+    const monthName = month.format(utcTime)
     const hour12 = utcTime.toLocaleString('en-US', { hour: 'numeric', hour12: true })
-    const time = `${weekday}, ${utcTime.getDate()} ${month} // ${hour12}`
+    const time = `${weekdayName}, ${utcTime.getDate()} ${monthName} // ${hour12}`
 
     ctx.font = '16px Arial'
     ctx.fillText(time, leftOffset, (height += 25))

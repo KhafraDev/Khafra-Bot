@@ -7,8 +7,8 @@ import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { inspect } from 'node:util'
 
-// eslint-disable-next-line
-const AsyncFunction = (async function () {}.constructor) as new (...args: unknown[]) => Function
+const AsyncFunction = (async function (): Promise<void> {}.constructor) as
+  new (...args: unknown[]) => (interaction: ChatInputCommandInteraction) => Promise<unknown>
 
 export class kInteraction extends Interactions {
   constructor () {
