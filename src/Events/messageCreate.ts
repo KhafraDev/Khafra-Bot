@@ -66,7 +66,7 @@ export class kEvent implements Event {
     if (
       mention !== `<@!${config.botId}>` &&
       mention !== `<@${config.botId}>` &&
-      (botManagedRole && mention !== botManagedRole.toString())
+      (!botManagedRole || mention !== botManagedRole.toString())
     ) {
       return
     }
