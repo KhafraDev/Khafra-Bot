@@ -38,6 +38,9 @@ type FromKeys<K extends keyof kGuild | undefined> = K extends keyof kGuild
 // https://stackoverflow.com/a/50375286/15299271
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
 
+// https://stackoverflow.com/a/63542565/15299271
+type MagicType<U> = UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
+
 /**
  * Check message for required criteria.
  * @param message
@@ -75,7 +78,7 @@ export const Sanitize = (message: Message): message is Message<true> => {
 export const guildSettings = async <K extends keyof kGuild>(
   guildId: string,
   keys?: undefined | K[]
-): Promise<UnionToIntersection<FromKeys<K>> | null> => {
+): Promise<MagicType<FromKeys<K>> | null> => {
   const key = keys?.length ? sql(keys as string[]) : sql.unsafe('*')
 
   const [settings = null] = await sql<[kGuild?]>`
@@ -84,7 +87,7 @@ export const guildSettings = async <K extends keyof kGuild>(
     LIMIT 1;
   `
 
-  return settings as UnionToIntersection<FromKeys<K>>
+  return settings as MagicType<FromKeys<K>> | null
 }
 
 export const postToModLog = async (
