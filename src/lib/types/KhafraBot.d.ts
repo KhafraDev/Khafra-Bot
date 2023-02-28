@@ -4,7 +4,6 @@ declare global {
   namespace NodeJS {
     interface ProcessEnv {
       HERE_WEATHER: string
-      IMGUR_CLIENT_ID: string | undefined
       NASA: string
       OWLBOTIO: string | undefined
       POCKET_CONSUMER_KEY: string
@@ -13,8 +12,6 @@ declare global {
       TIMEZONEDB: string
       TMDB: string
       TOKEN: string
-      TWITTER_API: string
-      TWITTER_API_SECRET: string
       [key: string]: never
     }
   }
