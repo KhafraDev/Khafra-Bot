@@ -33,7 +33,7 @@ const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd
 
 type FromKeys<K extends keyof kGuild | undefined> = K extends keyof kGuild
   ? { [Key in keyof kGuild as Key extends K ? Key : never]: kGuild[Key] }
-  : never
+  : kGuild
 
 // https://stackoverflow.com/a/50375286/15299271
 type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never

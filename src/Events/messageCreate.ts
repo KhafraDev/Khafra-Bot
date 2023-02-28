@@ -100,7 +100,7 @@ export class kEvent implements Event {
     if (command.init.length === 3) {
       const item = await getGuildSettings(guildId)
 
-      guildSettings = item as kGuild
+      guildSettings = item ?? undefined
     }
 
     // command cooldowns are based around the commands name, not aliases
