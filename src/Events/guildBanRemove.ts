@@ -1,9 +1,8 @@
-import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
 import { stripIndents } from '#khaf/utility/Template.js'
+import { guildSettings } from '#khaf/utility/util.js'
 import { bold } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type GuildBan } from 'discord.js'
@@ -24,11 +23,7 @@ export class kEvent implements Event {
       return
     }
 
-    const [item] = await sql<[Pick<kGuild, 'mod_log_channel'>?]>`
-      SELECT mod_log_channel FROM kbGuild
-      WHERE guild_id = ${unban.guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(unban.guild.id, ['mod_log_channel'])
 
     if (!item?.mod_log_channel) {
       return

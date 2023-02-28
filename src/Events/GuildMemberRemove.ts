@@ -1,16 +1,14 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { cwd } from '#khaf/utility/Constants/Path.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.js'
+import { guildSettings } from '#khaf/utility/util.js'
 import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type GuildMember } from 'discord.js'
 import { join } from 'node:path'
-
-type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
@@ -37,13 +35,7 @@ export class kEvent implements Event {
           WHERE kbInsights.k_guild_id = ${member.guild.id}::text;
     `
 
-    const [item] = await sql<[kGuildWelcomeChannel?]>`
-      SELECT welcome_channel
-      FROM kbGuild
-      WHERE guild_id = ${member.guild.id}::text
-      LIMIT 1;
-    `
-
+    const item = await guildSettings(member.guild.id, ['welcome_channel'])
 
     if (!item?.welcome_channel) {
       return

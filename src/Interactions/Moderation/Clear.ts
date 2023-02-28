@@ -108,7 +108,7 @@ export class kInteraction extends Interactions {
         title: 'Channel Messages Cleared'
       })
 
-      return void util.postToModLog(interaction, [embed])
+      return util.postToModLog(interaction, [embed])
     }
   }
 }

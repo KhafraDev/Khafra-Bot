@@ -140,7 +140,7 @@ export class kInteraction extends Interactions {
             title: 'Channel Cloned'
           })
 
-          return void util.postToModLog(interaction, [embed])
+          return util.postToModLog(interaction, [embed])
         }
   }
 }

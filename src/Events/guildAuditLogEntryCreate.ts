@@ -1,11 +1,11 @@
 import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
 import type { Case } from '#khaf/functions/case/reports'
-import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
+import { guildSettings } from '#khaf/utility/util.js'
 import { bold, time } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type Guild, type GuildAuditLogsEntry } from 'discord.js'
@@ -51,11 +51,7 @@ export class kEvent implements Event {
       ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
     `
 
-    const [item] = await sql<[Pick<kGuild, 'mod_log_channel'>?]>`
-      SELECT mod_log_channel FROM kbGuild
-      WHERE guild_id = ${guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(guild.id, ['mod_log_channel'])
 
     if (!item?.mod_log_channel) {
       return
@@ -115,11 +111,7 @@ export class kEvent implements Event {
       ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
     `
 
-    const [item] = await sql<[Pick<kGuild, 'mod_log_channel'>?]>`
-      SELECT mod_log_channel FROM kbGuild
-      WHERE guild_id = ${guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(guild.id, ['mod_log_channel'])
 
     if (!item?.mod_log_channel) {
       return
@@ -188,11 +180,7 @@ export class kEvent implements Event {
       ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
     `
 
-    const [item] = await sql<[Pick<kGuild, 'mod_log_channel'>?]>`
-      SELECT mod_log_channel FROM kbGuild
-      WHERE guild_id = ${guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(guild.id, ['mod_log_channel'])
 
     if (!item?.mod_log_channel) {
       return

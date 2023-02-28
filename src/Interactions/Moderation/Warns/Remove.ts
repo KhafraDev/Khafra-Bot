@@ -69,6 +69,6 @@ export class kSubCommand extends InteractionSubCommand {
       title: 'Warning Removed'
     })
 
-    return void util.postToModLog(interaction, [embed])
+    return util.postToModLog(interaction, [embed])
   }
 }

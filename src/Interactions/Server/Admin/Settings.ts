@@ -1,10 +1,10 @@
 import { sql } from '#khaf/database/Postgres.js'
 import { Interactions } from '#khaf/Interaction'
-import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
 import { stripIndents } from '#khaf/utility/Template.js'
+import { guildSettings } from '#khaf/utility/util.js'
 import { bold, inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -69,7 +69,7 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    if (interaction.guild === null) {
+    if (interaction.guild === null || interaction.guildId === null) {
       return {
         content: '❌ The bot is not in the guild, re-invite with the proper perms to change these settings!',
         ephemeral: true
@@ -88,11 +88,8 @@ export class kInteraction extends Interactions {
     const keys = Object.keys(settings).filter(k => settings[k] != null)
 
     if (keys.length === 0) {
-      const [guild] = await sql<kGuild[]>`
-        SELECT * FROM kbGuild
-        WHERE guild_id = ${interaction.guildId}::text
-        LIMIT 1;
-      `
+      const guild = await guildSettings(interaction.guildId)
+      assert(guild)
 
       const unset = ifNot('N/A (unset)')
 

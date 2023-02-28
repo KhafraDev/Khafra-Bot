@@ -98,7 +98,7 @@ export class kSubCommand extends InteractionSubCommand {
     const totalPoints = rows.reduce((a, b) => a + b.insertedpoints, 0)
     const k_id = rows[0].insertedid
 
-    const settings = await util.interactionGetGuildSettings(interaction)
+    const settings = await util.guildSettings(interaction.guildId, ['max_warning_points'])
 
     if (settings && settings.max_warning_points <= totalPoints) {
       let kicked: boolean
@@ -150,6 +150,6 @@ export class kSubCommand extends InteractionSubCommand {
       title: 'Member Warned'
     })
 
-    return void util.postToModLog(interaction, [embed], settings)
+    return util.postToModLog(interaction, [embed])
   }
 }

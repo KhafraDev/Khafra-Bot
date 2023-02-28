@@ -1,15 +1,11 @@
-import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
-import type { kGuild } from '#khaf/types/KhafraBot'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { isTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
+import { guildSettings } from '#khaf/utility/util.js'
 import { bold, time } from '@discordjs/builders'
 import { Events, PermissionFlagsBits, type GuildMember } from 'discord.js'
-
-type kGuildModChannel = Pick<kGuild, 'mod_log_channel'>
-type kGuildWelcomeChannel = Pick<kGuild, 'welcome_channel'>
 
 const basic =
   PermissionFlagsBits.ViewChannel |
@@ -63,11 +59,7 @@ export class kEvent implements Event {
 
     const action = (!old && now) || Date.parse(`${old}`) < Date.now() ? 'mute' : 'unmute'
 
-    const [item] = await sql<[kGuildModChannel?]>`
-      SELECT mod_log_channel FROM kbGuild
-      WHERE guild_id = ${oldMember.guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(oldMember.guild.id, ['mod_log_channel'])
 
     if (!item?.mod_log_channel) {
       return
@@ -101,11 +93,7 @@ export class kEvent implements Event {
   }
 
   async booster (oldMember: GuildMember, newMember: GuildMember, lost: boolean): Promise<void> {
-    const [item] = await sql<[kGuildWelcomeChannel?]>`
-      SELECT welcome_channel FROM kbGuild
-      WHERE guild_id = ${oldMember.guild.id}::text
-      LIMIT 1;
-    `
+    const item = await guildSettings(oldMember.guild.id, ['welcome_channel'])
 
     if (!item?.welcome_channel) {
       return

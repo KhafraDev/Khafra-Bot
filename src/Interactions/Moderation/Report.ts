@@ -7,7 +7,7 @@ import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { validSnowflake } from '#khaf/utility/Mentions.js'
 import { minutes } from '#khaf/utility/ms.js'
 import { stripIndents } from '#khaf/utility/Template.js'
-import { createDeferredPromise, interactionGetGuildSettings } from '#khaf/utility/util.js'
+import { createDeferredPromise, guildSettings } from '#khaf/utility/util.js'
 import { bold, hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
@@ -93,7 +93,7 @@ export class kInteraction extends Interactions {
 
     await interaction.deferReply({ ephemeral: true })
 
-    const settings = await interactionGetGuildSettings(interaction)
+    const settings = await guildSettings(interaction.guildId, ['staffChannel'])
 
     if (!settings?.staffChannel) {
       return {

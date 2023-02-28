@@ -40,7 +40,7 @@ export class kUserCommand extends InteractionUserCommand {
   }
 
   async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-    const settings = await util.interactionGetGuildSettings(interaction)
+    const settings = interaction.inGuild() ? await util.guildSettings(interaction.guildId) : null
 
     if (!settings?.staffChannel) {
       return {

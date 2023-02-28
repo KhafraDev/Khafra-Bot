@@ -19,8 +19,6 @@ import {
   type Activity,
   type ChatInputCommandInteraction,
   type Message,
-  type MessageContextMenuCommandInteraction,
-  type UserContextMenuCommandInteraction,
   type UserFlagsString
 } from 'discord.js'
 import { Buffer } from 'node:buffer'
@@ -33,10 +31,12 @@ const perms =
 
 const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 
-type Interactions =
-  | ChatInputCommandInteraction
-  | UserContextMenuCommandInteraction
-  | MessageContextMenuCommandInteraction
+type FromKeys<K extends keyof kGuild | undefined> = K extends keyof kGuild
+  ? { [Key in keyof kGuild as Key extends K ? Key : never]: kGuild[Key] }
+  : never
+
+// https://stackoverflow.com/a/50375286/15299271
+type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
 
 /**
  * Check message for required criteria.
@@ -70,44 +70,44 @@ export const Sanitize = (message: Message): message is Message<true> => {
 }
 
 /**
- * Fetches the guild settings given a ChatInputCommandInteraction, or
- * null if the command is not in a guild or an error occurs.
+ * Fetches the guild settings
  */
-export const interactionGetGuildSettings = async (interaction: Interactions): Promise<kGuild | null> => {
-  if (!interaction.inGuild()) return null
+export const guildSettings = async <K extends keyof kGuild>(
+  guildId: string,
+  keys?: undefined | K[]
+): Promise<UnionToIntersection<FromKeys<K>> | null> => {
+  const key = keys?.length ? sql(keys as string[]) : sql.unsafe('*')
 
   const [settings = null] = await sql<[kGuild?]>`
-    SELECT * 
-    FROM kbGuild
-    WHERE guild_id = ${interaction.guildId}::text
+    SELECT ${key} FROM kbGuild
+    WHERE guild_id = ${guildId}::text
     LIMIT 1;
   `
 
-  return settings
+  return settings as UnionToIntersection<FromKeys<K>>
 }
 
 export const postToModLog = async (
   interaction: ChatInputCommandInteraction,
-  embeds: APIEmbed[],
-  guildSettings?: kGuild | null
+  embeds: APIEmbed[]
 ): Promise<undefined> => {
-  const settings = guildSettings ?? await interactionGetGuildSettings(interaction)
+  if (!interaction.inCachedGuild()) {
+    return
+  }
+
+  const settings = await guildSettings(interaction.guildId, ['mod_log_channel'])
 
   if (settings?.mod_log_channel) {
-    const self = interaction.guild?.members.me
-    const channel = await (interaction.guild ?? interaction.client).channels
-      .fetch(settings.mod_log_channel)
-      .catch(() => null)
+    const self = await interaction.guild.members.fetchMe()
+    const channel = await interaction.guild.channels.fetch(settings.mod_log_channel)
 
-    if (channel === null || self === null || self === undefined) {
-      return
-    } else if (!isGuildTextBased(channel)) {
+    if (!channel || !isGuildTextBased(channel)) {
       return
     } else if (!channel.permissionsFor(self).has(perms)) {
       return
     }
 
-    return void channel.send({ embeds })
+    await channel.send({ embeds })
   }
 }
 

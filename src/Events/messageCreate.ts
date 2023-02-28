@@ -2,7 +2,6 @@ import { KhafraClient } from '#khaf/Bot'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { cooldown } from '#khaf/cooldown/GlobalCooldown.js'
-import { sql } from '#khaf/database/Postgres.js'
 import type { Event } from '#khaf/Event'
 import { logger, loggerUtility } from '#khaf/structures/Logger.js'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
@@ -14,7 +13,7 @@ import { seconds } from '#khaf/utility/ms.js'
 import { Stats } from '#khaf/utility/Stats.js'
 import { plural, upperCase } from '#khaf/utility/String.js'
 import { stripIndents } from '#khaf/utility/Template.js'
-import { Sanitize } from '#khaf/utility/util.js'
+import { guildSettings as getGuildSettings, Sanitize } from '#khaf/utility/util.js'
 import { chatInputApplicationCommandMention, inlineCode } from '@discordjs/builders'
 import { ChannelType } from 'discord-api-types/v10'
 import { Attachment, Events, Message, type MessageReplyOptions } from 'discord.js'
@@ -99,14 +98,9 @@ export class kEvent implements Event {
     let guildSettings: kGuild | undefined
 
     if (command.init.length === 3) {
-      const rows = await sql<[kGuild?]>`
-        SELECT * 
-        FROM kbGuild
-        WHERE guild_id = ${guildId}::text
-        LIMIT 1;
-      `
+      const item = await getGuildSettings(guildId)
 
-      guildSettings = rows[0]
+      guildSettings = item as kGuild
     }
 
     // command cooldowns are based around the commands name, not aliases
