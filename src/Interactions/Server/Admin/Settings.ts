@@ -1,5 +1,11 @@
+import { sql } from '#khaf/database/Postgres.js'
 import { Interactions } from '#khaf/Interaction'
+import type { kGuild } from '#khaf/types/KhafraBot'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { isText } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.js'
+import { stripIndents } from '#khaf/utility/Template.js'
+import { bold, inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   ChannelType,
@@ -7,10 +13,7 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { sql } from '#khaf/database/Postgres.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { bold, inlineCode } from '@discordjs/builders'
-import type { kGuild } from '#khaf/types/KhafraBot'
+import assert from 'node:assert'
 
 const ifNot = (label: string): (value: unknown) => string =>
   (value: unknown): string => inlineCode(`${value ?? label}`)
@@ -75,11 +78,11 @@ export class kInteraction extends Interactions {
 
     // The type needs to be downcasted on purpose. Expanding the
     // type causes the postgres types to error.
-    const settings: Record<string, string | number | null | undefined> = {
+    const settings: Record<string, unknown> = {
       'max_warning_points': interaction.options.getInteger('max-warning-points'),
-      'mod_log_channel': interaction.options.getChannel('mod-logs-channel')?.id,
-      'welcome_channel': interaction.options.getChannel('welcome-channel')?.id,
-      'staffChannel': interaction.options.getChannel('staff-channel')?.id
+      'mod_log_channel': interaction.options.getChannel('mod-logs-channel'),
+      'welcome_channel': interaction.options.getChannel('welcome-channel'),
+      'staffChannel': interaction.options.getChannel('staff-channel')
     }
 
     const keys = Object.keys(settings).filter(k => settings[k] != null)
@@ -87,7 +90,7 @@ export class kInteraction extends Interactions {
     if (keys.length === 0) {
       const [guild] = await sql<kGuild[]>`
         SELECT * FROM kbGuild
-        WHERE guild_id = ${interaction.guild.id}::text
+        WHERE guild_id = ${interaction.guildId}::text
         LIMIT 1;
       `
 
@@ -110,21 +113,65 @@ export class kInteraction extends Interactions {
       }
     }
 
-    // https://github.com/porsager/postgres#dynamic-columns-in-updates
-    await sql`
-      UPDATE kbGuild SET
-      ${sql(settings, ...keys)}
-      WHERE guild_id = ${interaction.guildId}::text;
-    `
+    const me = await interaction.guild.members.fetchMe()
+    const changed = new Map<string, string | number>()
+    const warnings: string[] = []
+
+    for (const key of keys) {
+      const value = settings[key]
+
+      if (typeof value === 'number') {
+        changed.set(key, value)
+        continue
+      }
+
+      assert(isText(value))
+
+      if (!value.permissionsFor(me).has(PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages)) {
+        warnings.push(`I don't have permission to view or send messages in ${value}.`)
+        continue
+      }
+
+      changed.set(key, value.id)
+    }
+
+    if (changed.size) {
+      // https://github.com/porsager/postgres#dynamic-columns-in-updates
+      await sql`
+        UPDATE kbGuild SET
+        ${sql(Object.fromEntries(changed), ...keys)}
+        WHERE guild_id = ${interaction.guildId}::text;
+      `
+
+      const text = keys
+        .map(k => `- ${inlineCode(k.replace(/_/g, ' '))}: ${settings[k]}`)
+        .join('\n')
+
+      return {
+        embeds: [
+          Embed.json({
+            color: colors.ok,
+            title: '✅ Updated settings!',
+            description: stripIndents`
+            ${text}
+
+            ${warnings.join('\n')}
+            `
+          })
+        ]
+      }
+    }
 
     return {
       embeds: [
         Embed.json({
           color: colors.ok,
-          title: `✅ Updated ${keys.length} rows!`,
-          description: keys
-            .map(k => `- ${inlineCode(k)}: ${settings[k]}`)
-            .join('\n')
+          title: 'No settings updated',
+          description: stripIndents`
+          No settings needed to be updated. 🤷
+
+          ${warnings.join('\n')}
+          `
         })
       ]
     }
