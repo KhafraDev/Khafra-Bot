@@ -1,5 +1,6 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { templates } from '#khaf/utility/Constants/Path.js'
+import { once } from '#khaf/utility/Memoize.js'
 import { arrayBufferToBuffer } from '#khaf/utility/util.js'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import { GifEncoder } from '@skyra/gifenc'
@@ -15,7 +16,6 @@ const Dims = {
   Template: 40
 } as const
 
-let image: Image | undefined
 const coords =  [
   [0, 0],
   [-5, -5],
@@ -23,6 +23,13 @@ const coords =  [
   [-20, -15],
   [-15, 0]
 ] as const
+
+const lazyImage = once(() => {
+  const image = new Image(Dims.Width, Dims.Template)
+  image.src = readFileSync(templates('triggered.png'))
+
+  return image
+})
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -49,13 +56,6 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async image (avatarURL: string): Promise<Buffer> {
-    if (!image) {
-      image = new Image()
-      image.width = Dims.Width
-      image.height = Dims.Template
-      image.src = readFileSync(templates('triggered.png'))
-    }
-
     const { body } = await request(avatarURL)
     const b = arrayBufferToBuffer(await body.arrayBuffer())
 
@@ -74,6 +74,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const canvas = createCanvas(Dims.Width, Dims.Height + Dims.Template)
     const ctx = canvas.getContext('2d')
+    const image = lazyImage()
 
     for (const [x, y] of coords) {
       // We need to draw the image larger than it actually is,

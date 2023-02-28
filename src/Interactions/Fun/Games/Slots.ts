@@ -2,6 +2,7 @@ import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { templates } from '#khaf/utility/Constants/Path.js'
+import { once } from '#khaf/utility/Memoize.js'
 import { chunkSafe } from '#khaf/utility/util.js'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import type { InteractionReplyOptions } from 'discord.js'
@@ -13,9 +14,6 @@ const Dims = {
   Height: 720
 } as const
 
-let image: Image | undefined
-let bar: Image | undefined
-
 const possible = [
   '🍎', '🍇', '🍑',
   '🍓', '🍋', '🍒',
@@ -25,6 +23,16 @@ const possible = [
   '🍌', '🍊', '🍉',
   'BAR', 'BARBAR', 'BARBARBAR'
 ]
+
+const lazyImages = once(() => {
+  const image = new Image(Dims.Width, Dims.Height)
+  image.src = readFileSync(templates('slots-background.png'))
+
+  const bar = new Image()
+  bar.src = readFileSync(templates('slots-bar.png'))
+
+  return { image, bar }
+})
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -60,15 +68,7 @@ export class kSubCommand extends InteractionSubCommand {
     const canvas = createCanvas(Dims.Width, Dims.Height)
     const ctx = canvas.getContext('2d')
 
-    if (!image || !bar) {
-      image = new Image()
-      image.width = Dims.Width
-      image.height = Dims.Height
-      image.src = readFileSync(templates('slots-background.png'))
-
-      bar = new Image()
-      bar.src = readFileSync(templates('slots-bar.png'))
-    }
+    const { image, bar } = lazyImages()
 
     ctx.drawImage(image, 0, 0, Dims.Width, Dims.Height)
     ctx.textAlign = 'center'

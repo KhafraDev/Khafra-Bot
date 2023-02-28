@@ -5,8 +5,14 @@ import { createCanvas, Image } from '@napi-rs/canvas'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
+import { once } from '#khaf/utility/Memoize.js'
 
-let image: Image | undefined
+const lazyImage = once(() => {
+  const image = new Image()
+  image.src = readFileSync(templates('megamind.png'))
+
+  return image
+})
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -30,11 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   image (interaction: ChatInputCommandInteraction): Buffer {
-    if (!image) {
-      image = new Image()
-      image.src = readFileSync(templates('megamind.png'))
-    }
-
+    const image = lazyImage()
     const canvas = createCanvas(image.width, image.height)
     const ctx = canvas.getContext('2d')
 

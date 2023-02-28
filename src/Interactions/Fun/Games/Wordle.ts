@@ -2,6 +2,7 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
 import { Json } from '#khaf/utility/Constants/Path.js'
+import { once } from '#khaf/utility/Memoize.js'
 import { minutes } from '#khaf/utility/ms.js'
 import { stripIndents } from '#khaf/utility/Template.js'
 import { inlineCode } from '@discordjs/builders'
@@ -36,13 +37,9 @@ const Dims = {
 // provided in the article was used (nor did it work).
 
 const games = new Set<string>()
-/* Words that cannot be chosen, but are valid guesses */
-const guessWords: string[] = []
-/* Words that can be chosen */
-const WordList: string[] = []
 const WordleEpoch = new Date(2021, 5, 19, 0, 0, 0, 0).getTime()
 
-const wordleChoose = (): string => {
+const wordleChoose = (WordList: string[]): string => {
   const t = new Date().setHours(0, 0, 0, 0) - WordleEpoch
 
   return WordList[Math.round(t / 864e5) % WordList.length]
@@ -84,6 +81,21 @@ const wordleGetShareComponent = (
   ])
 }
 
+const lazyWords = once(() => {
+  /* Words that cannot be chosen, but are valid guesses */
+  const guessWords: string[] = []
+  /* Words that can be chosen */
+  const WordList: string[] = []
+
+  const wordleGuesses = readFileSync(Json('Wordle-Guesses.json'), 'utf-8')
+  guessWords.push(...JSON.parse(wordleGuesses) as string[])
+
+  const wordleWords = readFileSync(Json('Wordle-Answers.json'), 'utf-8')
+  WordList.push(...JSON.parse(wordleWords) as string[])
+
+  return { guessWords, WordList }
+})
+
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
     super({
@@ -102,19 +114,10 @@ export class kSubCommand extends InteractionSubCommand {
 
     const highContrast = interaction.options.getBoolean('official-word') ?? false
     const useOfficialWord = interaction.options.getBoolean('official-word') ?? false
-
-    if (guessWords.length === 0) {
-      const wordleGuesses = readFileSync(Json('Wordle-Guesses.json'), 'utf-8')
-      guessWords.push(...JSON.parse(wordleGuesses) as string[])
-    }
-
-    if (WordList.length === 0) {
-      const wordleWords = readFileSync(Json('Wordle-Answers.json'), 'utf-8')
-      WordList.push(...JSON.parse(wordleWords) as string[])
-    }
+    const { WordList, guessWords } = lazyWords()
 
     const word = useOfficialWord
-      ? wordleChoose()
+      ? wordleChoose(WordList)
       : WordList[Math.floor(Math.random() * WordList.length)]
 
     const attachGame = (content: string | undefined): WebhookMessageEditOptions => {

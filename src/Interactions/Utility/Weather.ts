@@ -1,13 +1,14 @@
+import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
+import { weather } from '#khaf/utility/Constants/Path.js'
+import { once } from '#khaf/utility/Memoize.js'
 import { wttrin, type WttrInResult } from '@khaf/weather'
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
-import { weather } from '#khaf/utility/Constants/Path.js'
 import { existsSync, readFileSync } from 'node:fs'
-import { ImageUtil } from '#khaf/image/ImageUtil.js'
 
 const imageColors = {
   darkBlue: '#1c2a4f',
@@ -49,10 +50,6 @@ const resizeText = (ctx: SKRSContext2D, text: string, maxWidth: number, fontSize
 
 const month = new Intl.DateTimeFormat('en-US', { month: 'long' })
 const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
-
-let sunrise: Image
-let sunset: Image
-
 const cache = new Map<string, Image>()
 
 const iconFromDesc = (desc: string): Image => {
@@ -73,6 +70,16 @@ const iconFromDesc = (desc: string): Image => {
   return image
 }
 
+const lazyImages = once(() => {
+  const sunrise = new Image(44, 22)
+  sunrise.src = readFileSync(weather('sunrise.png'))
+
+  const sunset = new Image(44, 22)
+  sunset.src = readFileSync(weather('sunset.png'))
+
+  return { sunrise, sunset }
+})
+
 export class kInteraction extends Interactions {
   constructor () {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
@@ -92,16 +99,6 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    if (typeof sunrise === 'undefined') {
-      sunrise = new Image(44, 22)
-      sunrise.src = readFileSync(weather('sunrise.png'))
-    }
-
-    if (typeof sunset === 'undefined') {
-      sunset = new Image(44, 22)
-      sunset.src = readFileSync(weather('sunset.png'))
-    }
-
     const location = interaction.options.getString('location', true)
     const results = await wttrin(location)
     const buffer = this.image(results)
@@ -227,6 +224,8 @@ export class kInteraction extends Interactions {
     // sunset & sunrise
     // (width * .6 - width(time) - 44)
     const x = (canvas.width * .6) - ctx.measureText('00:00 pm').width
+
+    const { sunrise, sunset } = lazyImages()
 
     ctx.drawImage(sunrise, x - 50, height - 32.5, 44, 22)
     ctx.fillText(astronomy.sunrise.slice(1), x, height - 15)
