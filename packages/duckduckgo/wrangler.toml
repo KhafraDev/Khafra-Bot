@@ -1,8 +1,5 @@
 name = "duckduckgo"
-type = "javascript"
-route = ''
-zone_id = ''
-usage_model = ''
+usage_model = 'bundled'
 compatibility_flags = []
 workers_dev = true
 compatibility_date = "2022-09-28"
@@ -13,5 +10,3 @@ local_protocol = "http"
 [build]
 command = "npm run build"
 
-[build.upload]
-format = "service-worker"
