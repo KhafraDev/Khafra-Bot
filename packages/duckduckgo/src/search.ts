@@ -1,25 +1,24 @@
 export const search = async (query: string): Promise<Response> => {
-  query += 'site:youtube.com'
+  query += '+site:youtube.com'
+  query = query.replaceAll(/\s/g, '+')
 
   const urls: string[] = []
-  const encoded = encodeURIComponent(query.replaceAll(/\s/g, '+'))
-  const response = await fetch(`https://html.duckduckgo.com/html/?q=${encoded}`, {
+  const response = await fetch('https://html.duckduckgo.com/html/', {
     headers: {
-      'user-agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)'
-    }
+      'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)',
+      'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: `q=${query}&b=&kl=&df=`,
+    method: 'POST'
   })
 
   const rewriter = new HTMLRewriter().on('a', {
     element (element) {
       const classList = element.getAttribute('class')
-      if (classList === 'result_a' || classList === 'result__snippet') {
-        const href = element.getAttribute('href')
-        const url = new URL(href!, 'https://duckduckgo.com')
-        const uddg = url.searchParams.get('uddg')
+      if (classList === 'result__url') {
+        const href = element.getAttribute('href')!
 
-        if (uddg !== null) {
-          urls.push(uddg)
-        }
+        urls.push(href)
       }
     }
   })
