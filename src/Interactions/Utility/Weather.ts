@@ -1,10 +1,12 @@
+import type { weatherSchema } from '#khaf/functions/wttr/schema.js'
+import { weather } from '#khaf/functions/wttr/weather.js'
 import { ImageUtil } from '#khaf/image/ImageUtil.js'
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.js'
-import { weather } from '#khaf/utility/Constants/Path.js'
+import { weather as weatherPath } from '#khaf/utility/Constants/Path.js'
 import { once } from '#khaf/utility/Memoize.js'
-import { wttrin, type WttrInResult } from '@khaf/weather'
 import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas'
+import type { InferType } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
@@ -59,12 +61,12 @@ const iconFromDesc = (desc: string): Image => {
     return imageCached
   }
 
-  const path = weather(`${desc.replace(/\s/g, '-')}.png`)
+  const path = weatherPath(`${desc.replace(/\s/g, '-')}.png`)
   const image = new Image()
   image.width = image.height = 150
   image.src = existsSync(path)
     ? readFileSync(path)
-    : readFileSync(weather('partly-cloudy.png'))
+    : readFileSync(weatherPath('partly-cloudy.png'))
 
   cache.set(desc, image)
   return image
@@ -72,10 +74,10 @@ const iconFromDesc = (desc: string): Image => {
 
 const lazyImages = once(() => {
   const sunrise = new Image(44, 22)
-  sunrise.src = readFileSync(weather('sunrise.png'))
+  sunrise.src = readFileSync(weatherPath('sunrise.png'))
 
   const sunset = new Image(44, 22)
-  sunset.src = readFileSync(weather('sunset.png'))
+  sunset.src = readFileSync(weatherPath('sunset.png'))
 
   return { sunrise, sunset }
 })
@@ -100,7 +102,7 @@ export class kInteraction extends Interactions {
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const location = interaction.options.getString('location', true)
-    const results = await wttrin(location)
+    const results = await weather(location)
     const buffer = this.image(results)
 
     return {
@@ -117,7 +119,7 @@ export class kInteraction extends Interactions {
     }
   }
 
-  image (weather: WttrInResult): Buffer {
+  image (weather: InferType<typeof weatherSchema>): Buffer {
     const canvas = createCanvas(520, 320)
     const ctx = canvas.getContext('2d')
 
