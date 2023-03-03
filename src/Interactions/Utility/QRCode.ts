@@ -1,5 +1,5 @@
 import { Interactions } from '#khaf/Interaction'
-import { qrcodeImage } from '@khaf/qrcode'
+import { QrCode } from '@khaf/qrcode'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
@@ -23,10 +23,10 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     try {
       const text = interaction.options.getString('input', true)
-      const qrcode = Buffer.from(qrcodeImage(text), text.length)
+      const qrcode = Buffer.from(await new QrCode(text).asyncImage())
 
       return {
         files: [{
