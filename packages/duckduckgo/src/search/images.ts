@@ -1,19 +1,10 @@
 import { decodeXML } from 'entities'
+import { getVQD } from '../utility'
+import { routes } from '../constants'
+import { images } from '../schema'
 
 // duck-duck-scrape. MIT License. Copyright (c) 2018-2021 suushii & Snazzah
 // duck-duck-scrape. MIT License. Copyright (c) 2021-present Snazzah
-
-interface ImageResults {
-  height: number
-  width: number
-  image: string
-  image_token: string
-  source: string
-  thumbnail: string
-  thumbnail_token: string
-  title: string
-  url: string
-}
 
 interface Options {
   safeSearch: `${typeof SafeSearchType[keyof typeof SafeSearchType]}`
@@ -26,18 +17,6 @@ const SafeSearchType = {
   MODERATE: -1,
   OFF: -2
 } as const
-
-const getVQD = async (query: string): Promise<string | undefined> => {
-  const search = new URLSearchParams({ q: query, ia: 'web' })
-  const response = await fetch(`https://duckduckgo.com/?${search}`, {
-    headers: {
-      accept: '*/*',
-      host: 'duckduckgo.com'
-    }
-  })
-
-  return /vqd='(\d+-\d+(?:-\d+)?)'/.exec(await response.text())?.[1]
-}
 
 export const searchImages = async (query: string, params: URLSearchParams): Promise<Response> => {
   const safeSearch = params.get('safeSearch') ?? `${SafeSearchType.STRICT}`
@@ -54,7 +33,7 @@ export const searchImages = async (query: string, params: URLSearchParams): Prom
     offset: 0
   }
 
-  const token = await getVQD(query)
+  const token = await getVQD(query, 'web')
 
   if (!token) {
     return Response.json({ error: 'no token found' }, {
@@ -62,7 +41,7 @@ export const searchImages = async (query: string, params: URLSearchParams): Prom
     })
   }
 
-  const queryObject = {
+  const queryObject = new URLSearchParams({
     l: options.locale,
     o: 'json',
     q: query,
@@ -70,9 +49,9 @@ export const searchImages = async (query: string, params: URLSearchParams): Prom
     p: Number(options.safeSearch) === SafeSearchType.STRICT ? '1' : '-1',
     f: ',,,,',
     s: options.offset.toString()
-  }
+  }).toString()
 
-  const response = await fetch(`https://duckduckgo.com/i.js?${new URLSearchParams(queryObject).toString()}`)
+  const response = await fetch(`${routes.images}?${queryObject}`)
 
   if (response.status !== 200) {
     return Response.json({
@@ -81,11 +60,17 @@ export const searchImages = async (query: string, params: URLSearchParams): Prom
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const imagesResult = await response.json() as { results: ImageResults[] }
+  const imagesResult = await response.json()
+
+  if (!images.is(imagesResult)) {
+    return Response.json({
+      error: 'unknown response from server',
+      text: JSON.stringify(imagesResult, null, 2)
+    }, { status: 400 })
+  }
 
   return Response.json({
-    vqd: queryObject.vqd,
+    vqd: token,
     results: imagesResult.results.map((image) => ({
       ...image,
       title: decodeXML(image.title)

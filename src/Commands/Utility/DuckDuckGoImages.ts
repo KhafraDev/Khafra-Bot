@@ -104,6 +104,12 @@ export class kCommand extends Command {
     const images: unknown = await body.json()
     assert(imageSchema.is(images))
 
+    if (images.results.length === 0) {
+      return {
+        content: 'No images found, sorry.'
+      }
+    }
+
     let page = 0
     const id = randomUUID()
     const reply = await message.reply(getOptions(images, page, id))

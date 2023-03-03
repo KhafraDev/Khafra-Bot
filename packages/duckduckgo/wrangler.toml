@@ -3,6 +3,7 @@ usage_model = 'bundled'
 compatibility_flags = []
 workers_dev = true
 compatibility_date = "2022-09-28"
+node_compat = true
 
 [dev]
 local_protocol = "http"
