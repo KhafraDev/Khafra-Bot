@@ -3,6 +3,16 @@ import { createDeferredPromise } from '#khaf/utility/util.js'
 type SyncFn = (...args: unknown[]) => unknown
 type AsyncFn = (...args: unknown[]) => Promise<unknown>
 
+type Thenable = Pick<Promise<unknown>, 'then'> & Pick<Promise<unknown>, 'catch'>
+
+function isThenable (value: unknown): value is Thenable {
+  return (
+    !!value &&
+    typeof (value as { then?: unknown }).then === 'function' &&
+    typeof (value as { catch?: unknown }).catch === 'function'
+  )
+}
+
 /**
  * Memoize a function.
  */
@@ -30,7 +40,7 @@ export function once(fn: SyncFn | AsyncFn, expires?: number): typeof fn {
 
     res = fn()
 
-    if (typeof (res as { then: unknown } | undefined)?.then === 'function' && res instanceof Promise) {
+    if (isThenable(res)) {
       deferred = createDeferredPromise()
       isRunning = true
 

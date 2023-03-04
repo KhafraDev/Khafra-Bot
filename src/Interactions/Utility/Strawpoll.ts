@@ -135,7 +135,7 @@ export class kInteraction extends Interactions {
 
     const { body } = await request('https://strawpoll.com/api/poll', {
       method: 'POST',
-      body: JSON.stringify({ poll } as StrawpollBody)
+      body: JSON.stringify({ poll } satisfies StrawpollBody)
     })
 
     const j: unknown = await body.json()
