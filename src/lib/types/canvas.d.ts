@@ -1,4 +1,4 @@
-import * as Canvas from '@napi-rs/canvas';
+import * as Canvas from '@napi-rs/canvas'
 
 declare module '@napi-rs/canvas' {
   interface TextMetrics {

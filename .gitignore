@@ -1,14 +1,12 @@
 # Khafra
 build
-*.js
-!scripts/*.js
+*.mjs
 !packages/krazy/scripts/*.js
 assets/interaction_last_deployed.txt
 *.rdb
 assets/Fonts/*
 assets/log*.txt
 package-lock.json
-!test/**/*.js
 
 # Logs
 logs
