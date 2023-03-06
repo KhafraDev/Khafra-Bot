@@ -31,7 +31,7 @@ export const command: InteractionCommand = {
     ]
   },
 
-  async run (interaction, _, { options }) {
+  async run (interaction, { options }) {
     const search = options.getString('search', true)
     const locale = options.getString('locale')
     const max = options.getInteger('limit') ?? 10

@@ -24,20 +24,19 @@ const PUBLIC_KEY = crypto.subtle.importKey(
 
 const encoder = new TextEncoder()
 
-export const verify = async (request: Request): Promise<boolean> => {
+export const verify = async (request: Request, body: string): Promise<boolean> => {
   if (request.method !== 'POST') {
     return false
   }
 
   const signature = hex2bin(request.headers.get('X-Signature-Ed25519')!)
   const timestamp = request.headers.get('X-Signature-Timestamp')
-  const unknown = await request.clone().text()
 
   const verified = await crypto.subtle.verify(
     'NODE-ED25519',
     await PUBLIC_KEY,
     signature,
-    encoder.encode(`${timestamp}${unknown}`)
+    encoder.encode(`${timestamp}${body}`)
   )
 
   return verified

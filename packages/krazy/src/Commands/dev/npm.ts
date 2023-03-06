@@ -18,7 +18,7 @@ export const command: InteractionCommand = {
     ]
   },
 
-  async run (_, __, { options }) {
+  async run (_, { options }) {
     const search = options.getString('package-name', true)
     const result = await npm(search)
 

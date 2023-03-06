@@ -18,7 +18,6 @@ export interface InteractionCommand {
 	data: RESTPostAPIApplicationCommandsJSONBody
   run (
     interaction: APIApplicationCommandInteraction,
-    response: Request,
     options: Options
   ): Promise<APIInteractionResponse> | APIInteractionResponse
 }

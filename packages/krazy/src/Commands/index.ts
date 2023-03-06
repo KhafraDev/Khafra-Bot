@@ -11,20 +11,19 @@ import { command as NPMCommand } from './dev/npm.js'
 import { command as CratesIOCommand } from './dev/cratesio.js'
 
 export const handleCommand = async (
-  interaction: APIApplicationCommandInteraction,
-  request: Request
+  interaction: APIApplicationCommandInteraction
 ): Promise<APIInteractionResponse> => {
   const options = new InteractionOptions(interaction.data)
 
   switch (interaction.data.name) {
     case 'invite':
-      return InviteCommand.run(interaction, request, { options })
+      return InviteCommand.run(interaction, { options })
     case 'mdn':
-      return MDNCommand.run(interaction, request, { options })
+      return MDNCommand.run(interaction, { options })
     case 'npm':
-      return NPMCommand.run(interaction, request, { options })
+      return NPMCommand.run(interaction, { options })
     case 'crates':
-      return CratesIOCommand.run(interaction, request, { options })
+      return CratesIOCommand.run(interaction, { options })
     default:
       return {
         type: InteractionResponseType.ChannelMessageWithSource,

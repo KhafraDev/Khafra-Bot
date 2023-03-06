@@ -3,8 +3,7 @@ import { handleCommand } from './Commands/index.js'
 import {
   InteractionType,
   InteractionResponseType,
-  type APIApplicationCommandInteraction,
-  type APIPingInteraction
+  APIInteraction
 } from 'discord-api-types/v10'
 
 export const handleRequest = async (request: Request): Promise<Response> => {
@@ -15,19 +14,25 @@ export const handleRequest = async (request: Request): Promise<Response> => {
     return Response.json({ error: 'Invalid request' }, {
       status: 400
     })
-  } else if (!await verify(request)) {
+  }
+  
+  const body = await request.text()
+
+  if (!await verify(request, body)) {
     return Response.json({ error: 'Invalid request' }, {
       status: 401
     })
   }
 
-  const interaction = await request.json<APIApplicationCommandInteraction | APIPingInteraction>()
+  const interaction = JSON.parse(body) as APIInteraction
 
   if (interaction.type === InteractionType.Ping) {
-    return Response.json({
-      type: InteractionResponseType.Pong
-    })
+    return Response.json({ type: InteractionResponseType.Pong })
+  } else if (interaction.type === InteractionType.ApplicationCommand) {
+    return Response.json(await handleCommand(interaction))
   }
 
-  return Response.json(await handleCommand(interaction, request))
+  return Response.json({ error: 'Unknown interaction type' }, {
+    status: 401
+  })
 }

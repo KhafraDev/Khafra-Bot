@@ -20,7 +20,7 @@ export const command: InteractionCommand = {
     ]
   },
 
-  async run (interaction, _, { options }) {
+  async run (interaction, { options }) {
     const search = options.getString('package-name', true)
     const result = await cratesio(search)
 
