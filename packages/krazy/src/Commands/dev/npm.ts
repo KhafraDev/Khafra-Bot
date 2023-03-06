@@ -54,9 +54,9 @@ export const command: InteractionCommand = {
           {
             color: colors.ok,
             author: {
-              name: `NPM - https://npmjs.com/package/${dist.name}`,
+              name: `NPM - https://npm.im/${dist.name}`,
               icon_url: 'https://avatars0.githubusercontent.com/u/6078720?v=3&s=400',
-              url: `https://npmjs.com/package/${dist.name}`
+              url: `https://npm.im/${dist.name}`
             },
             description: result.description.slice(0, 4096),
             fields: [
