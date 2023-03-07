@@ -1,7 +1,8 @@
 import type {
   APIApplicationCommandInteraction,
   APIInteractionResponse,
-  RESTPostAPIApplicationCommandsJSONBody
+  RESTPostAPIApplicationCommandsJSONBody,
+  APIInteraction
 } from 'discord-api-types/v10'
 import type { InteractionOptions } from './lib/core/InteractionOptions.js'
 
@@ -19,5 +20,9 @@ export interface InteractionCommand {
   run (
     interaction: APIApplicationCommandInteraction,
     options: Options
-  ): Promise<APIInteractionResponse> | APIInteractionResponse
+  ): Promise<APIInteractionResponse>
+}
+
+export interface InteractionHandler<T extends APIInteraction> {
+  run (interaction: T): Promise<APIInteractionResponse | void>
 }

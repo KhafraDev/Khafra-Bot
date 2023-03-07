@@ -1,12 +1,15 @@
 import { verify } from './verify.js'
-import { handleCommand } from './Commands/index.js'
+import { handleCommand } from './Interactions/Commands/index.js'
+import { handleSelectMenu } from './Interactions/SelectMenu/index.js'
 import {
   InteractionType,
   InteractionResponseType,
   APIInteraction
 } from 'discord-api-types/v10'
 
-export const handleRequest = async (request: Request): Promise<Response> => {
+export const handleRequest = async (event: FetchEvent): Promise<Response> => {
+  const { request } = event
+
   if (
     !request.headers.get('X-Signature-Ed25519') ||
     !request.headers.get('X-Signature-Timestamp')
@@ -30,6 +33,11 @@ export const handleRequest = async (request: Request): Promise<Response> => {
     return Response.json({ type: InteractionResponseType.Pong })
   } else if (interaction.type === InteractionType.ApplicationCommand) {
     return Response.json(await handleCommand(interaction))
+  } else if (interaction.type === InteractionType.MessageComponent) {
+    const promise = handleSelectMenu(interaction)
+    event.waitUntil(promise)
+
+    return Response.json(await promise)
   }
 
   return Response.json({ error: 'Unknown interaction type' }, {

@@ -3,7 +3,7 @@ import {
   type APIInteractionResponse,
   InteractionResponseType
 } from 'discord-api-types/v10'
-import { InteractionOptions } from '../lib/core/InteractionOptions.js'
+import { InteractionOptions } from '../../lib/core/InteractionOptions.js'
 
 import { command as InviteCommand } from './general/Invite.js'
 import { command as MDNCommand } from './dev/MDN.js'

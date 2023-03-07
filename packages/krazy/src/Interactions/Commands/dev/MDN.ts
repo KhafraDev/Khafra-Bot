@@ -1,7 +1,7 @@
-import { ApplicationCommandOptionType, InteractionResponseType } from 'discord-api-types/v10'
-import type { InteractionCommand } from '../../types'
-import { fetchMDN } from '../../lib/mdn.js'
-import { colors } from '../../lib/constants.js'
+import { ApplicationCommandOptionType, ComponentType, InteractionResponseType } from 'discord-api-types/v10'
+import type { InteractionCommand } from '../../../types'
+import { fetchMDN } from '../../../lib/mdn.js'
+import { colors } from '../../../lib/constants.js'
 
 const logo = 'https://i.imgur.com/4YsLw0J.png'
 
@@ -86,6 +86,24 @@ export const command: InteractionCommand = {
             ).join('\n'),
             footer: interaction.user ? { text: `Requested by ${interaction.user.username}` } : undefined,
             timestamp: new Date().toISOString()
+          }
+        ],
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            components: [
+              {
+                type: ComponentType.StringSelect,
+                custom_id: JSON.stringify({
+                  id: interaction.user?.id ?? interaction.channel_id,
+                  name: 'mdn'
+                }),
+                options: results.map(result => ({
+                  label: result.title,
+                  value: result.mdn_url
+                }))
+              }
+            ]
           }
         ]
       }
