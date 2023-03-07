@@ -1,7 +1,7 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed, padEmbedFields } from '#khaf/utility/Constants/Embeds.mjs'
-import { isExplicitText, isText, isVoice } from '#khaf/types/Discord.js.js'
+import { isExplicitText, isText, isVoice } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { bold, codeBlock, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'

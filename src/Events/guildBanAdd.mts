@@ -1,6 +1,6 @@
 import type { Event } from '#khaf/Event'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import * as DiscordUtil from '#khaf/types/Discord.js.js'
+import * as DiscordUtil from '#khaf/utility/Discord.js'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
 import { bold } from '@discordjs/builders'

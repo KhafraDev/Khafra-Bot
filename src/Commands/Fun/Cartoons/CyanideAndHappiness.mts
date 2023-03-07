@@ -1,6 +1,6 @@
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/types/Discord.js.js'
+import { isText } from '#khaf/utility/Discord.js'
 import { once } from '#khaf/utility/Memoize.mjs'
 import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'

@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { assets } from '#khaf/utility/Constants/Path.mjs'
-import { isText } from '#khaf/types/Discord.js.js'
+import { isText } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'

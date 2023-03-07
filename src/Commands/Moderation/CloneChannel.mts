@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/types/Discord.js.js'
+import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'

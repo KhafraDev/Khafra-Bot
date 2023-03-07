@@ -1,6 +1,6 @@
 import type { Event } from '#khaf/Event'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isTextBased } from '#khaf/types/Discord.js.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'

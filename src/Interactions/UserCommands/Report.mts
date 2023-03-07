@@ -1,6 +1,6 @@
 import { InteractionUserCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/types/Discord.js.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import * as util from '#khaf/utility/util.mjs'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import {

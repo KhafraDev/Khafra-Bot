@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText, isThread } from '#khaf/types/Discord.js.js'
+import { isText, isThread } from '#khaf/utility/Discord.js'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import * as util from '#khaf/utility/util.mjs'

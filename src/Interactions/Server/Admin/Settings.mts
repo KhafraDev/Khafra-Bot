@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/types/Discord.js.js'
+import { isText } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'

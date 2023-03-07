@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isCategory, isExplicitText } from '#khaf/types/Discord.js.js'
+import { isCategory, isExplicitText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'

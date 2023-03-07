@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/types/Discord.js.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'

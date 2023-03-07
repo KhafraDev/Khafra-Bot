@@ -2,7 +2,7 @@ import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isExplicitText } from '#khaf/types/Discord.js.js'
+import { isExplicitText } from '#khaf/utility/Discord.js'
 import {
   ChannelType,
   GuildPremiumTier,

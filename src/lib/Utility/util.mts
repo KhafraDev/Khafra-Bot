@@ -2,7 +2,7 @@ import { sql } from '#khaf/database/Postgres.mjs'
 import { logger } from '#khaf/Logger'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
-import { isGuildTextBased } from '#khaf/types/Discord.js.js'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { bold, inlineCode, italic } from '@discordjs/builders'
 import {

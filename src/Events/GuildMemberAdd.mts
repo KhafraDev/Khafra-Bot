@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import type { Event } from '#khaf/Event'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isTextBased } from '#khaf/types/Discord.js.js'
+import { isTextBased } from '#khaf/utility/Discord.js'
 import { guildSettings } from '#khaf/utility/util.mjs'
 import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'

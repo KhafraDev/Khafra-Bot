@@ -1,7 +1,7 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/types/Discord.js.js'
+import { isText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
