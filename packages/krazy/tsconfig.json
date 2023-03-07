@@ -8,6 +8,6 @@
     "types": ["@cloudflare/workers-types"]
   },
   "include": [
-    "src/*.ts"
+    "src/**/*.mts"
   ]
 }

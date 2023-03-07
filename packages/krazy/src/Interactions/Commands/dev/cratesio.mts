@@ -1,8 +1,8 @@
 import { type APIEmbedField, ApplicationCommandOptionType, InteractionResponseType } from 'discord-api-types/v10'
 import type { InteractionCommand } from '../../../types'
-import { time } from '../../../lib/util.js'
-import { cratesio } from '../../../lib/cratesio.js'
-import { colors } from '../../../lib/constants.js'
+import { time } from '../../../lib/util.mjs'
+import { cratesio } from '../../../lib/cratesio.mjs'
+import { colors } from '../../../lib/constants.mjs'
 
 const logo = 'https://crates.io/assets/Cargo-Logo-Small.png'
 

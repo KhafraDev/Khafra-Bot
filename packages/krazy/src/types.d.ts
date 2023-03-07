@@ -4,7 +4,7 @@ import type {
   RESTPostAPIApplicationCommandsJSONBody,
   APIInteraction
 } from 'discord-api-types/v10'
-import type { InteractionOptions } from './lib/core/InteractionOptions.js'
+import type { InteractionOptions } from './lib/core/InteractionOptions.mjs'
 
 /** wrangler secret put publicKey */
 declare global {

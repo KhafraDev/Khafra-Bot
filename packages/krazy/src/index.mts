@@ -1,3 +1,3 @@
-import { handleRequest } from './bot.js'
+import { handleRequest } from './bot.mjs'
 
 addEventListener('fetch', (event) => event.respondWith(handleRequest(event)))

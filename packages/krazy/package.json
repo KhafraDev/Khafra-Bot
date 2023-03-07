@@ -2,13 +2,12 @@
   "name": "krazy",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
   "scripts": {
     "deploy": "wrangler publish",
     "dev": "wrangler dev",
     "build": "tsc"
   },
   "author": "Khafra",
-  "license": "MIT",
-  "type": "module"
+  "license": "MIT"
 }

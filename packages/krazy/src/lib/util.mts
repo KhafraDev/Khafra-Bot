@@ -1,5 +1,11 @@
-import { APIInteraction, APIMessage, InteractionResponseType, RESTPatchAPIWebhookWithTokenMessageJSONBody, Routes } from 'discord-api-types/v10'
-import { routes } from './constants'
+import {
+  InteractionResponseType,
+  Routes,
+  type APIInteraction,
+  type APIMessage,
+  type RESTPatchAPIWebhookWithTokenMessageJSONBody
+} from 'discord-api-types/v10'
+import { routes } from './constants.mjs'
 
 export const time = (unix: Date, format: string): string =>
   `<t:${Math.floor(unix.getTime() / 1000)}:${format}>`
@@ -11,7 +17,7 @@ export function assert (condition: unknown): asserts condition {
 }
 
 // https://discord.com/developers/docs/interactions/receiving-and-responding#create-interaction-response
-export const deferInteraction = async (interaction: APIInteraction) => {
+export const deferInteraction = async (interaction: APIInteraction): Promise<boolean> => {
   const path = Routes.interactionCallback(interaction.id, interaction.token)
   const response = await fetch(`${routes.discord}${path}`, {
     method: 'POST',

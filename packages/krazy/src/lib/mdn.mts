@@ -1,7 +1,7 @@
 import type { InferType } from '@sapphire/shapeshift'
 import { decode } from 'entities'
-import { routes } from './constants'
-import type { mdnIndexSchema } from './schema'
+import { routes } from './constants.mjs'
+import type { mdnIndexSchema } from './schema.mjs'
 
 export interface MDNSearchResult {
   mdn_url: string
@@ -79,7 +79,7 @@ export const htmlToMarkdown = async (body: InferType<typeof mdnIndexSchema>): Pr
 
   const base = new URL(body.doc.mdn_url, routes.mdn).toString()
   const handler = {
-    element (element) {
+    element (element): void {
       element.removeAndKeepContent()
     }
   } satisfies HTMLRewriterElementContentHandlers

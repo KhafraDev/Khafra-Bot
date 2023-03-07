@@ -3,12 +3,12 @@ import {
   type APIInteractionResponse,
   InteractionResponseType
 } from 'discord-api-types/v10'
-import { InteractionOptions } from '../../lib/core/InteractionOptions.js'
+import { InteractionOptions } from '../../lib/core/InteractionOptions.mjs'
 
-import { command as InviteCommand } from './general/Invite.js'
-import { command as MDNCommand } from './dev/MDN.js'
-import { command as NPMCommand } from './dev/npm.js'
-import { command as CratesIOCommand } from './dev/cratesio.js'
+import { command as InviteCommand } from './general/Invite.mjs'
+import { command as MDNCommand } from './dev/MDN.mjs'
+import { command as NPMCommand } from './dev/npm.mjs'
+import { command as CratesIOCommand } from './dev/cratesio.mjs'
 
 export const handleCommand = async (
   interaction: APIApplicationCommandInteraction

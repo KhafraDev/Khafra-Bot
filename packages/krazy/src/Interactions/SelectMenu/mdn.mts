@@ -1,9 +1,14 @@
-import { APIMessageComponentInteraction, ComponentType, InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
-import { colors, maxContentLength, routes } from '../../lib/constants.js'
-import { htmlToMarkdown, randomSplit } from '../../lib/mdn'
-import { mdnIndexSchema } from '../../lib/schema.js'
-import { assert } from '../../lib/util.js'
-import { InteractionHandler } from '../../types'
+import {
+  ComponentType,
+  InteractionResponseType,
+  MessageFlags,
+  type APIMessageComponentInteraction
+} from 'discord-api-types/v10'
+import { colors, maxContentLength, routes } from '../../lib/constants.mjs'
+import { htmlToMarkdown, randomSplit } from '../../lib/mdn.mjs'
+import { mdnIndexSchema } from '../../lib/schema.mjs'
+import { assert } from '../../lib/util.mjs'
+import type { InteractionHandler } from '../../types'
 
 export const mdnSelectMenu: InteractionHandler<APIMessageComponentInteraction> = {
   async run (interaction) {
@@ -48,6 +53,6 @@ export const mdnSelectMenu: InteractionHandler<APIMessageComponentInteraction> =
         ],
         flags: MessageFlags.Ephemeral
       }
-    }   
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities'
-import { getVQD } from '../utility'
-import { routes } from '../constants'
-import { images } from '../schema'
+import { getVQD } from '../utility.mjs'
+import { routes } from '../constants.mjs'
+import { images } from '../schema.mjs'
 
 // duck-duck-scrape. MIT License. Copyright (c) 2018-2021 suushii & Snazzah
 // duck-duck-scrape. MIT License. Copyright (c) 2021-present Snazzah

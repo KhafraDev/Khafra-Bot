@@ -1,6 +1,6 @@
-import { getVQD } from '../utility'
-import { routes } from '../constants'
-import { stockQuote, stockIntraday } from '../schema'
+import { getVQD } from '../utility.mjs'
+import { routes } from '../constants.mjs'
+import { stockQuote, stockIntraday } from '../schema.mjs'
 
 export const getStockInfo = async (query: string): Promise<Response> => {
   const token = await getVQD(query, 'stock')

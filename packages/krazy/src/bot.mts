@@ -1,11 +1,11 @@
-import { verify } from './verify.js'
-import { handleCommand } from './Interactions/Commands/index.js'
-import { handleSelectMenu } from './Interactions/SelectMenu/index.js'
 import {
-  InteractionType,
   InteractionResponseType,
-  APIInteraction
+  InteractionType,
+  type APIInteraction
 } from 'discord-api-types/v10'
+import { handleCommand } from './Interactions/Commands/index.js'
+import { handleSelectMenu } from './Interactions/SelectMenu/index.mjs'
+import { verify } from './verify.mjs'
 
 export const handleRequest = async (event: FetchEvent): Promise<Response> => {
   const { request } = event
@@ -18,7 +18,7 @@ export const handleRequest = async (event: FetchEvent): Promise<Response> => {
       status: 400
     })
   }
-  
+
   const body = await request.text()
 
   if (!await verify(request, body)) {

@@ -1,6 +1,6 @@
-import { searchImages } from './search/images'
-import { search } from './search/search'
-import { getStockInfo } from './search/stocks'
+import { searchImages } from './search/images.mjs'
+import { search } from './search/search.mjs'
+import { getStockInfo } from './search/stocks.mjs'
 
 const handleEvent = async (request: Request): Promise<Response> => {
   const { searchParams, pathname } = new URL(request.url)
