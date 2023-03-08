@@ -1,12 +1,12 @@
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
+import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
-import { Pocket } from '@khaf/pocket'
 import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
-import type { Message } from 'discord.js'
+import { channelLink, type Message } from 'discord.js'
 
 export class kCommand extends Command {
   constructor () {
@@ -29,7 +29,7 @@ export class kCommand extends Command {
 
   async init (message: Message): Promise<undefined> {
     const pocket = new Pocket()
-    pocket.redirect_uri = `https://discord.com/channels/${message.guild!.id}/${message.channel.id}`
+    pocket.redirect_uri = channelLink(message.channel.id)
 
     await pocket.requestCode()
 
@@ -66,7 +66,9 @@ export class kCommand extends Command {
     if (button === null) {
       if (msg.editable) {
         await msg.edit({
-          embeds: [Embed.error('Canceled the command, took over 2 minutes.')],
+          embeds: [
+            Embed.error('Canceled the command, took over 2 minutes. This is a limit set by Pocket, not by me.')
+          ],
           components: []
         })
       }
@@ -77,18 +79,18 @@ export class kCommand extends Command {
     await button.deferUpdate()
 
     if (button.customId === 'approve') {
-      const token = await pocket.accessToken().catch(() => null)
+      const token = await pocket.getAccessToken().catch(() => null)
 
-      if (token == null) {
+      if (token === null) {
         return void await button.editReply({
           embeds: [Embed.error('Khafra-Bot wasn\'t authorized.')],
           components: []
         })
       }
 
-      const { access_token, request_token, username } = pocket.toObject()
+      const { accessToken, requestToken, username } = pocket
 
-      if (!access_token || !request_token || !username) {
+      if (!accessToken || !requestToken || !username) {
         return void await button.editReply({
           embeds: [Embed.error('An unexpected issue occurred.')],
           components: []
@@ -99,17 +101,17 @@ export class kCommand extends Command {
       // we will update the values. Useful if user unauthorized Khafra-Bot.
       await sql`
         INSERT INTO kbPocket (
-            user_id, access_token, request_token, username
+          user_id, access_token, request_token, username
         ) VALUES (
-            ${message.author.id}::text,
-            ${access_token}::text,
-            ${request_token}::text,
-            ${username}::text
+          ${message.author.id}::text,
+          ${accessToken}::text,
+          ${requestToken}::text,
+          ${username}::text
         ) ON CONFLICT (user_id, username) DO UPDATE SET 
-            user_id = ${message.author.id}::text, 
-            access_token = ${access_token}::text, 
-            request_token = ${request_token}::text, 
-            username = ${username}::text
+          user_id = ${message.author.id}::text, 
+          access_token = ${accessToken}::text, 
+          request_token = ${requestToken}::text, 
+          username = ${username}::text
         ;
       `
 

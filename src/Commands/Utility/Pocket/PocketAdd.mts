@@ -1,9 +1,9 @@
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
+import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { codeBlock, inlineCode } from '@discordjs/builders'
-import { Pocket } from '@khaf/pocket'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
@@ -18,9 +18,9 @@ const schema = s.string.url({
 })
 
 interface PocketUser {
-    access_token: string
-    request_token: string
-    username: string
+  access_token: string
+  request_token: string
+  username: string
 }
 
 export class kCommand extends Command {
@@ -65,7 +65,7 @@ export class kCommand extends Command {
       title: added.item.title,
       author: {
         name: added.item.domain_metadata?.name ?? message.author.username,
-        url: added.item.domain_metadata?.logo,
+        url: added.item.domain_metadata?.logo ?? undefined,
         icon_url: added.item.resolved_normal_url
       },
       description: `

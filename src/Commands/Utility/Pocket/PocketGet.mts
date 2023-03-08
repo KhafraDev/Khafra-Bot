@@ -1,15 +1,15 @@
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
+import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { inlineCode } from '@discordjs/builders'
-import { Pocket } from '@khaf/pocket'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 interface PocketUser {
-    access_token: string
-    request_token: string
-    username: string
+  access_token: string
+  request_token: string
+  username: string
 }
 
 export class kCommand extends Command {

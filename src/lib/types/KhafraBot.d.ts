@@ -7,6 +7,7 @@ declare global {
       NASA: string
       OWLBOTIO: string | undefined
       POCKET_CONSUMER_KEY: string
+      POCKET_SECRET_KEY: string
       POSTGRES_USER: string | undefined
       POSTGRES_PASS: string | undefined
       TIMEZONEDB: string
