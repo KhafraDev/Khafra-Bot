@@ -4,12 +4,10 @@
  * that removes the token entirely.
  */
 
-import { decompressBody } from '#khaf/utility/util.mjs'
 import { s } from '@sapphire/shapeshift'
 import assert from 'node:assert'
-import { json } from 'node:stream/consumers'
 import { URL, URLSearchParams } from 'node:url'
-import { request } from 'undici'
+import { fetch } from 'undici'
 
 interface Opts {
   to?: string
@@ -74,17 +72,14 @@ export const translate = async (opts: Opts): Promise<string> => {
   params.append('tl', to)
   params.append('q', query)
 
-  const response = await request(new URL(`?${params}`, url), {
+  const response = await fetch(new URL(`?${params}`, url), {
     headers: {
       'Accept-Encoding': 'gzip, deflate, br',
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0'
     }
   })
 
-  const text = decompressBody(response)
-
-  // setting real types for this is a waste of time
-  const j: unknown = await json(text)
+  const j = await response.json()
 
   assert(Array.isArray(j) && Array.isArray(j[0]))
 
