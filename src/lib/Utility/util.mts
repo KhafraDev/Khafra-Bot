@@ -23,6 +23,9 @@ import {
 } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { join } from 'node:path'
+import { pipeline, type Readable } from 'node:stream'
+import zlib from 'node:zlib'
+import type { Dispatcher } from 'undici'
 
 const perms =
   PermissionFlagsBits.ViewChannel |
@@ -282,6 +285,8 @@ export const createDeferredPromise = <T extends unknown>(): {
 // https://fetch.spec.whatwg.org/#redirect-status
 const redirectStatuses = [301, 302, 303, 307, 308]
 
+const nullBodyStatus = [101, 204, 205, 304]
+
 export const isRedirect = (statusCode: number): boolean =>
   redirectStatuses.includes(statusCode)
 
@@ -291,6 +296,45 @@ export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   }
 
   return Buffer.from(buffer, buffer.byteLength)
+}
+
+/*! undici. MIT License. https://github.com/nodejs/undici/blob/3606c3556aa637005c8123036bdebc9ffc4b77ec/lib/fetch/index.js#L1992-L2012 */
+export const decompressBody = (response: Dispatcher.ResponseData): Readable => {
+  const decoders = []
+  const encoding = response.headers['content-encoding']
+
+  if (typeof encoding !== 'string') {
+    return response.body
+  }
+
+  const codings = encoding.split(',').map((x) => x.trim())
+  const willFollow = response.headers.location && isRedirect(response.statusCode)
+
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
+  if (!nullBodyStatus.includes(response.statusCode) && !willFollow) {
+    for (const coding of codings) {
+      if (/(x-)?gzip/.test(coding)) {
+        decoders.push(zlib.createGunzip())
+      } else if (/(x-)?deflate/.test(coding)) {
+        decoders.push(zlib.createInflate())
+      } else if (coding === 'br') {
+        decoders.push(zlib.createBrotliDecompress())
+      } else {
+        decoders.length = 0
+        break
+      }
+    }
+  }
+
+  if (decoders.length) {
+    return pipeline(
+      response.body as never,
+      ...decoders as never[],
+      () => {}
+    ) as unknown as Readable
+  }
+
+  return response.body
 }
 
 // https://github.com/typescript-eslint/typescript-eslint/issues/5449

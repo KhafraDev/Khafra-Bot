@@ -1,11 +1,9 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import {
-  GoogleLanguages, GoogleTranslate, LibreTranslate,
-  LibreTranslateGetLanguages
-} from '@khaf/translate'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { translate as libreTranslate } from '#khaf/functions/translate/libretranslate.mjs'
+import { translate as googleTranslate } from '#khaf/functions/translate/google.mjs'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -45,10 +43,10 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-    const to = interaction.options.getString('to')
-    const from = interaction.options.getString('from')
-    const text = interaction.options.getString('text', true)
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const to = interaction.options.getString('to')?.toLowerCase()
+    const from = interaction.options.getString('from')?.toLowerCase()
+    const query = interaction.options.getString('text', true)
     const engine = interaction.options.getString('engine') ?? 'googletranslate'
 
     const embed = Embed.json({
@@ -60,47 +58,13 @@ export class kInteraction extends Interactions {
     })
 
     if (engine === 'googletranslate') {
-      const translated = await GoogleTranslate(
-        text,
-        {
-          to: to && GoogleLanguages.includes(to.toLowerCase())
-            ? to.toLowerCase()
-            : 'en',
-          from: from && GoogleLanguages.includes(from.toLowerCase())
-            ? from.toLowerCase()
-            : 'auto'
-        }
-      )
-
-      embed.description = translated
-
-      return {
-        embeds: [embed]
-      }
+      embed.description = await googleTranslate({ query, to, from })
     } else if (engine === 'libretranslate') {
-      const supported = await LibreTranslateGetLanguages()
-      const translated = await LibreTranslate({
-        query: text,
-        to: to && supported.includes(to.toLowerCase())
-          ? to.toLowerCase()
-          : 'es',
-        from: from && supported.includes(from.toLowerCase())
-          ? from.toLowerCase()
-          : 'en'
-      })
+      embed.description = await libreTranslate({ query, to, from }) ?? undefined
+    }
 
-      if (translated === null) {
-        return {
-          content: '❌ An error occurred using LibreTranslate, try another service!',
-          ephemeral: true
-        }
-      }
-
-      embed.description = translated.translatedText
-
-      return {
-        embeds: [embed]
-      }
+    return {
+      embeds: [embed]
     }
   }
 }
