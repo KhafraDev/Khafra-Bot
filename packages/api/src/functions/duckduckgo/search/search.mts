@@ -1,4 +1,10 @@
-export const search = async (query: string): Promise<Response> => {
+export const search = async (params: URLSearchParams): Promise<Response> => {
+  let query = params.get('q')
+
+  if (!query) {
+    return Response.json({ error: 'no q' }, { status: 400 })
+  }
+
   query += '+site:youtube.com'
   query = query.replaceAll(/\s/g, '+')
 

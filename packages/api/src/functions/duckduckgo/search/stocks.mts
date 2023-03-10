@@ -1,8 +1,14 @@
-import { getVQD } from '../functions/duckduckgo/utility.mjs'
-import { routes } from '../functions/duckduckgo/constants.mjs'
-import { stockQuote, stockIntraday } from '../functions/duckduckgo/schema.mjs'
+import { getVQD } from '../utility.mjs'
+import { routes } from '../constants.mjs'
+import { stockQuote, stockIntraday } from '../schema.mjs'
 
-export const getStockInfo = async (query: string): Promise<Response> => {
+export const getStockInfo = async (params: URLSearchParams): Promise<Response> => {
+  const query = params.get('q')
+
+  if (!query) {
+    return Response.json({ error: 'no q' }, { status: 400 })
+  }
+
   const token = await getVQD(query, 'stock')
 
   if (!token) {
@@ -11,14 +17,14 @@ export const getStockInfo = async (query: string): Promise<Response> => {
     })
   }
 
-  const params = {
+  const search = {
     symbol: query,
     query,
     vqd: token
   } as const
 
-  const quote = new URLSearchParams({ action: 'quote', ...params }).toString()
-  const intraday = new URLSearchParams({ action: 'intraday', ...params }).toString()
+  const quote = new URLSearchParams({ action: 'quote', ...search }).toString()
+  const intraday = new URLSearchParams({ action: 'intraday', ...search }).toString()
 
   const [response1, response2] = await Promise.all([
     fetch(`${routes.stocks}?${quote}`).then(r => r.json()),

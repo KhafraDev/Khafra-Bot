@@ -1,23 +1,19 @@
-import { searchImages } from './search/images.mjs'
-import { search } from './search/search.mjs'
-import { getStockInfo } from './search/stocks.mjs'
+import { cartoonize } from './functions/cartoonize/cartoonize.mjs'
+import { searchImages } from './functions/duckduckgo/search/images.mjs'
+import { search } from './functions/duckduckgo/search/search.mjs'
+import { getStockInfo } from './functions/duckduckgo/search/stocks.mjs'
 
 const handleEvent = async (request: Request): Promise<Response> => {
   const { searchParams, pathname } = new URL(request.url)
-  const query = searchParams.get('q')
-
-  if (!query) {
-    return Response.json({
-      error: 'no q'
-    }, { status: 400 })
-  }
 
   if (pathname === '/ddg/image/') {
-    return await searchImages(query, searchParams)
+    return await searchImages(searchParams)
   } else if (pathname === '/ddg/stocks/') {
-    return await getStockInfo(query)
+    return await getStockInfo(searchParams)
   } else if (pathname === '/ddg/search/') {
-    return await search(query)
+    return await search(searchParams)
+  } else if (pathname === '/cartoonize/') {
+    return await cartoonize(request)
   }
 
   return Response.json({ error: `Unknown route ${pathname}` }, { status: 404 })

@@ -1,7 +1,7 @@
 import { decodeXML } from 'entities'
-import { getVQD } from '../functions/duckduckgo/utility.mjs'
-import { routes } from '../functions/duckduckgo/constants.mjs'
-import { images } from '../functions/duckduckgo/schema.mjs'
+import { getVQD } from '../utility.mjs'
+import { routes } from '../constants.mjs'
+import { images } from '../schema.mjs'
 
 // duck-duck-scrape. MIT License. Copyright (c) 2018-2021 suushii & Snazzah
 // duck-duck-scrape. MIT License. Copyright (c) 2021-present Snazzah
@@ -18,10 +18,13 @@ const SafeSearchType = {
   OFF: -2
 } as const
 
-export const searchImages = async (query: string, params: URLSearchParams): Promise<Response> => {
+export const searchImages = async (params: URLSearchParams): Promise<Response> => {
+  const query = params.get('q')
   const safeSearch = params.get('safeSearch') ?? `${SafeSearchType.STRICT}`
 
-  if (!Object.values(SafeSearchType).includes(Number(safeSearch) as 0)) {
+  if (!query) {
+    return Response.json({ error: 'no q' }, { status: 400 })
+  } else if (!Object.values(SafeSearchType).includes(Number(safeSearch) as 0)) {
     return Response.json({
       error: 'invalid safeSearch'
     }, { status: 400 })

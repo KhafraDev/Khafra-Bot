@@ -1,11 +1,11 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
 import { Interactions } from '#khaf/Interaction'
-import { Cartoonize } from '#khaf/utility/commands/Cartoonize'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { env } from 'node:process'
 import { request } from 'undici'
 
 export class kInteraction extends Interactions {
@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
     const image = interaction.options.getAttachment('image', true)
 
     if (!ImageUtil.isImage(image.proxyURL, image.contentType)) {
@@ -38,21 +38,34 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const cartoon = await Cartoonize.cartoonize(image)
-    const { body } = await request(cartoon)
-    const imageBuffer = arrayBufferToBuffer(await body.arrayBuffer())
+    const { body: stream } = await request(image.proxyURL)
+    const url = new URL('/cartoonize/', env.WORKER_API_BASE)
 
-    return {
-      embeds: [
-        Embed.json({
-          description: `[Click Here](${cartoon}) to download (link is only valid for a few minutes)!`,
-          image: { url: 'attachment://cartoonized.jpeg' }
-        })
-      ],
+    const { body: imageBody } = await request(url, {
+      method: 'POST',
+      headers: {
+        'content-type': image.contentType ?? 'image/jpg'
+      },
+      body: stream
+    })
+
+    const embed = Embed.json({
+      image: { url: 'attachment://cartoonized.jpeg' }
+    })
+
+    const reply = await interaction.editReply({
+      embeds: [embed],
       files: [{
-        attachment: imageBuffer,
+        attachment: arrayBufferToBuffer(await imageBody.arrayBuffer()),
         name: 'cartoonized.jpeg'
       }]
-    }
+    })
+
+    const link = reply.embeds[0].image?.proxyURL ?? reply.embeds[0].image?.url
+    embed.description = `[Click Here](${link}) to download!`
+
+    await reply.edit({
+      embeds: [embed]
+    })
   }
 }
