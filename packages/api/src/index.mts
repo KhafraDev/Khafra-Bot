@@ -12,13 +12,15 @@ const handleEvent = async (request: Request): Promise<Response> => {
     }, { status: 400 })
   }
 
-  if (pathname === '/image/') {
+  if (pathname === '/ddg/image/') {
     return await searchImages(query, searchParams)
-  } else if (pathname === '/stocks/') {
+  } else if (pathname === '/ddg/stocks/') {
     return await getStockInfo(query)
+  } else if (pathname === '/ddg/search/') {
+    return await search(query)
   }
 
-  return await search(query)
+  return Response.json({ error: `Unknown route ${pathname}` }, { status: 404 })
 }
 
 addEventListener('fetch', (event) => {

@@ -9,6 +9,7 @@ import { GuildNSFWLevel } from 'discord-api-types/v10'
 import { InteractionCollector, type ButtonInteraction, type Message, type MessageReplyOptions } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
+import { env } from 'node:process'
 import { stringify } from 'node:querystring'
 import { request } from 'undici'
 
@@ -28,7 +29,6 @@ const imageSchema = s.object({
   }).array
 })
 
-const base = 'https://duckduckgo.khafra.workers.dev/image/'
 const SafeSearchType = {
   STRICT: 0,
   MODERATE: -1,
@@ -90,7 +90,7 @@ export class kCommand extends Command {
     }
 
     const params = stringify({ q: content, safeSearch })
-    const url = new URL(`?${params}`, base)
+    const url = new URL(`/ddg/image/?${params}`, env.WORKER_API_BASE)
     const { body, statusCode } = await request(url)
 
     if (statusCode !== 200) {

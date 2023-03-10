@@ -1,8 +1,8 @@
-name = "duckduckgo"
+name = "khafrabot-api"
 usage_model = 'bundled'
 compatibility_flags = []
 workers_dev = true
-compatibility_date = "2022-09-28"
+compatibility_date = "2022-11-30"
 node_compat = true
 
 [dev]

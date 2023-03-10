@@ -13,6 +13,7 @@ declare global {
       TIMEZONEDB: string
       TMDB: string
       TOKEN: string
+      WORKER_API_BASE: string | undefined
       [key: string]: never
     }
   }

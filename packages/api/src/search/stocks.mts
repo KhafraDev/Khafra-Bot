@@ -1,6 +1,6 @@
-import { getVQD } from '../utility.mjs'
-import { routes } from '../constants.mjs'
-import { stockQuote, stockIntraday } from '../schema.mjs'
+import { getVQD } from '../functions/duckduckgo/utility.mjs'
+import { routes } from '../functions/duckduckgo/constants.mjs'
+import { stockQuote, stockIntraday } from '../functions/duckduckgo/schema.mjs'
 
 export const getStockInfo = async (query: string): Promise<Response> => {
   const token = await getVQD(query, 'stock')

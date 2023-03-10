@@ -14,10 +14,11 @@ import {
   type InteractionReplyOptions
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
+import { env } from 'node:process'
+import { stringify } from 'node:querystring'
 import { URL } from 'node:url'
 import { request } from 'undici'
 
-const base = 'https://duckduckgo.khafra.workers.dev'
 const schema = s.string.array.lengthGreaterThan(0)
 
 export class kInteraction extends Interactions {
@@ -42,8 +43,8 @@ export class kInteraction extends Interactions {
     const query = interaction.options.getString('search', true)
       .replaceAll(':', '-')
 
-    const url = new URL(base)
-    url.searchParams.set('q', query)
+    const params = stringify({ q: query })
+    const url = new URL(`/ddg/search/?${params}`, env.WORKER_API_BASE)
 
     const { body } = await request(url)
     const result: unknown = await body.json()

@@ -1,7 +1,7 @@
 {
-  "name": "@khaf/workers-duckduckgo",
+  "name": "@khaf/api",
   "version": "1.0.0",
-  "description": "A duckduckgo scraper.",
+  "description": "API routes used by Khafra-Bot.",
   "main": "dist/index.mjs",
   "scripts": {
     "deploy": "wrangler publish",

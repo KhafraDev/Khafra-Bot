@@ -9,19 +9,17 @@ A multi-purpose bot that enhances Discord.
 2. Install pm2 globally using ``npm i -g pm2``.
 3. Create a ``.env`` file in the root directory and fill in the required values.
 ```
-TOKEN=""
-SPOTIFY_ID=""
-SPOTIFY_SECRET=""
-POCKET_CONSUMER_KEY=""
-POCKET_SECRET_KEY=""
-HERE_WEATHER=""
-OWLBOTIO=""
-NASA=""
-POSTGRES_USER=""
-POSTGRES_PASS=""
-TMDB=""
-IMGUR_CLIENT_ID=""
-TIMEZONEDB=""
+HERE_WEATHER: string
+NASA: string
+OWLBOTIO: string | undefined
+POCKET_CONSUMER_KEY: string
+POCKET_SECRET_KEY: string
+POSTGRES_USER: string | undefined
+POSTGRES_PASS: string | undefined
+TIMEZONEDB: string
+TMDB: string
+TOKEN: string
+WORKER_API_BASE: string | undefined
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
