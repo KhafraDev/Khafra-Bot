@@ -35,11 +35,8 @@ const SafeSearchType = {
   OFF: -2
 } as const
 
-const getOptions = (
-  images: InferType<typeof imageSchema>,
-  page: number,
-  id: string
-): MessageReplyOptions => {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+const getOptions = (images: InferType<typeof imageSchema>, page: number, id: string) => {
   const image = images.results[page]
 
   return {
@@ -48,10 +45,11 @@ const getOptions = (
       Components.actionRow([
         Buttons.approve('Next', `next-${id}`),
         Buttons.secondary('Previous', `back-${id}`),
-        Buttons.deny('Stop', `stop-${id}`)
+        Buttons.deny('Stop', `stop-${id}`),
+        Buttons.primary('Save', `save-${id}`)
       ])
     ]
-  }
+  } satisfies MessageReplyOptions
 }
 
 export class kCommand extends Command {
@@ -132,13 +130,19 @@ export class kCommand extends Command {
         })
 
         break
+      } else if (action !== 'save') {
+        action === 'next' ? page++ : page--
+        if (page < 0) page = images.results.length - 1
+        if (page >= images.results.length) page = 0
       }
 
-      action === 'next' ? page++ : page--
-      if (page < 0) page = images.results.length - 1
-      if (page >= images.results.length) page = 0
+      const options = getOptions(images, page, id)
 
-      await i.update(getOptions(images, page, id))
+      await i.update(options)
+
+      if (action === 'save') {
+        await i.followUp({ content: options.content })
+      }
     }
 
     if (collector.endReason === 'time' || collector.endReason === 'idle' && reply.editable) {
