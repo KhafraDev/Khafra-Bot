@@ -74,8 +74,5 @@
   "homepage": "https://github.com/khafradev/khafra-bot#readme",
   "engines": {
     "node": ">=18.3.0"
-  },
-  "workspaces": [
-    "packages/**"
-  ]
+  }
 }
