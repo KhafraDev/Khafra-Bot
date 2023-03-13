@@ -1,3 +1,4 @@
+import { routes } from '#/lib/constants.mjs'
 import {
   InteractionResponseType,
   Routes,
@@ -5,7 +6,6 @@ import {
   type APIMessage,
   type RESTPatchAPIWebhookWithTokenMessageJSONBody
 } from 'discord-api-types/v10'
-import { routes } from './constants.mjs'
 
 export const time = (unix: Date, format: string): string =>
   `<t:${Math.floor(unix.getTime() / 1000)}:${format}>`

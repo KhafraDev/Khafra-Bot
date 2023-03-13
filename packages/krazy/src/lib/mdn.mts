@@ -1,7 +1,7 @@
+import { routes } from '#/lib/constants.mjs'
+import type { mdnIndexSchema } from '#/lib/schema.mjs'
 import type { InferType } from '@sapphire/shapeshift'
 import { decode } from 'entities'
-import { routes } from './constants.mjs'
-import type { mdnIndexSchema } from './schema.mjs'
 
 export interface MDNSearchResult {
   mdn_url: string

@@ -1,6 +1,6 @@
-import { getVQD } from '../utility.mjs'
-import { routes } from '../constants.mjs'
-import { stockQuote, stockIntraday } from '../schema.mjs'
+import { routes } from '#/functions/duckduckgo/constants.mjs'
+import { stockIntraday, stockQuote } from '#/functions/duckduckgo/schema.mjs'
+import { getVQD } from '#/functions/duckduckgo/utility.mjs'
 
 export const getStockInfo = async (params: URLSearchParams): Promise<Response> => {
   const query = params.get('q')

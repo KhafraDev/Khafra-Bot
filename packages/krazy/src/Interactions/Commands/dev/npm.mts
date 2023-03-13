@@ -1,8 +1,8 @@
+import { colors } from '#/lib/constants.mjs'
+import { npm } from '#/lib/npm.mjs'
+import { time } from '#/lib/util.mjs'
+import type { InteractionCommand } from '#/types'
 import { ApplicationCommandOptionType, InteractionResponseType, MessageFlags } from 'discord-api-types/v10'
-import type { InteractionCommand } from '../../../types'
-import { time } from '../../../lib/util.mjs'
-import { npm } from '../../../lib/npm.mjs'
-import { colors } from '../../../lib/constants.mjs'
 
 export const command: InteractionCommand = {
   data: {

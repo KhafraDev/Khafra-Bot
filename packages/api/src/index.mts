@@ -1,7 +1,7 @@
-import { cartoonize } from './functions/cartoonize/cartoonize.mjs'
-import { searchImages } from './functions/duckduckgo/search/images.mjs'
-import { search } from './functions/duckduckgo/search/search.mjs'
-import { getStockInfo } from './functions/duckduckgo/search/stocks.mjs'
+import { cartoonize } from '#/functions/cartoonize/cartoonize.mjs'
+import { searchImages } from '#/functions/duckduckgo/search/images.mjs'
+import { search } from '#/functions/duckduckgo/search/search.mjs'
+import { getStockInfo } from '#/functions/duckduckgo/search/stocks.mjs'
 
 const handleEvent = async (request: Request): Promise<Response> => {
   const { searchParams, pathname } = new URL(request.url)

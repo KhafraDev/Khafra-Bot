@@ -9,5 +9,8 @@
     "build": "tsc"
   },
   "author": "KhafraDev",
-  "license": "MIT"
+  "license": "MIT",
+  "imports": {
+    "#/functions/*": "./src/functions/*"
+  }
 }

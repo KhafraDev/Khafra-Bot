@@ -1,11 +1,11 @@
+import { handleCommand } from '#/commands/Commands/index.mjs'
+import { handleSelectMenu } from '#/commands/SelectMenu/index.mjs'
+import { verify } from '#/verify.mjs'
 import {
   InteractionResponseType,
   InteractionType,
   type APIInteraction
 } from 'discord-api-types/v10'
-import { handleCommand } from './Interactions/Commands/index.js'
-import { handleSelectMenu } from './Interactions/SelectMenu/index.mjs'
-import { verify } from './verify.mjs'
 
 export const handleRequest = async (event: FetchEvent): Promise<Response> => {
   const { request } = event

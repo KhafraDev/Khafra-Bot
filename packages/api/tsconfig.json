@@ -1,11 +1,15 @@
 {
-    "extends": "../tsconfig.base.json",
-    "compilerOptions": {
-        "outDir": "./dist",
-        "declaration": false,
-		"types": ["@cloudflare/workers-types"]
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": false,
+    "types": ["@cloudflare/workers-types"],
+    "paths": {
+      "#/functions/*": ["./src/functions/*"],
     },
-    "include": [
-        "src/**/*.mts"
-    ]
+    "rootDir": "."
+  },
+  "include": [
+    "src/**/*.mts"
+  ]
 }

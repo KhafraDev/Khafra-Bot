@@ -1,10 +1,10 @@
+import { mdnSelectMenu } from '#/commands/SelectMenu/mdn.mjs'
 import {
   InteractionResponseType,
   MessageFlags,
   type APIInteractionResponse,
   type APIMessageComponentInteraction
 } from 'discord-api-types/v10'
-import { mdnSelectMenu } from './mdn.mjs'
 
 export const handleSelectMenu = async (
   interaction: APIMessageComponentInteraction

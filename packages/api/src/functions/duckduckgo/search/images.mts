@@ -1,7 +1,7 @@
+import { routes } from '#/functions/duckduckgo/constants.mjs'
+import { images } from '#/functions/duckduckgo/schema.mjs'
+import { getVQD } from '#/functions/duckduckgo/utility.mjs'
 import { decodeXML } from 'entities'
-import { getVQD } from '../utility.mjs'
-import { routes } from '../constants.mjs'
-import { images } from '../schema.mjs'
 
 // duck-duck-scrape. MIT License. Copyright (c) 2018-2021 suushii & Snazzah
 // duck-duck-scrape. MIT License. Copyright (c) 2021-present Snazzah

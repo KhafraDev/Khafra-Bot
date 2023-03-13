@@ -1,7 +1,7 @@
+import { colors } from '#/lib/constants.mjs'
+import { fetchMDN } from '#/lib/mdn.mjs'
+import type { InteractionCommand } from '#/types'
 import { ApplicationCommandOptionType, ComponentType, InteractionResponseType } from 'discord-api-types/v10'
-import type { InteractionCommand } from '../../../types'
-import { fetchMDN } from '../../../lib/mdn.mjs'
-import { colors } from '../../../lib/constants.mjs'
 
 const logo = 'https://i.imgur.com/4YsLw0J.png'
 

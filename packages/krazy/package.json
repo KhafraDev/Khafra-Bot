@@ -9,5 +9,11 @@
     "build": "tsc"
   },
   "author": "Khafra",
-  "license": "MIT"
+  "license": "MIT",
+  "imports": {
+    "#/lib/*": "./src/lib/*",
+    "#/core/*": "./src/lib/core/*",
+    "#/commands/*": "./src/Interactions/*",
+    "#/*.mts": "./src/*.mjs"
+  }
 }

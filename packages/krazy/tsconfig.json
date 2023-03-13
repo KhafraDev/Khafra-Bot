@@ -5,7 +5,14 @@
     "lib": ["ES2022"],
     "outDir": "./dist",
     "declaration": false,
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "paths": {
+      "#/lib/*": ["./src/lib/*"],
+      "#/core/*": ["./src/lib/core/*"],
+      "#/commands/*": ["./src/Interactions/*"],
+      "#/*": ["./src/*"]
+    },
+    "rootDir": "."
   },
   "include": [
     "src/**/*.mts"
