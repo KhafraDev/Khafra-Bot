@@ -1,5 +1,5 @@
-import pino from 'pino'
 import type { Guild, Interaction, Message, Role, User } from 'discord.js'
+import { pino } from 'pino'
 
 export const logger = pino({
   base: null
