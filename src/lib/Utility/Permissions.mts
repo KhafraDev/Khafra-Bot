@@ -44,6 +44,8 @@ export const permResolvableToReadable = (
   return has
 }
 
-export const bitfieldToString = (perms: bigint[]): `${bigint}` => {
-  return perms.reduce((a, b) => a | b, 0n).toString() as `${bigint}`
+export const bitfieldToString = (perms: bigint[]): string | undefined => {
+  const bitfield = perms.reduce((a, b) => a | b, 0n)
+
+  return bitfield === 0n ? undefined : bitfield.toString()
 }
