@@ -2,6 +2,7 @@ import { cartoonize } from '#/functions/cartoonize/cartoonize.mjs'
 import { searchImages } from '#/functions/duckduckgo/search/images.mjs'
 import { search } from '#/functions/duckduckgo/search/search.mjs'
 import { getStockInfo } from '#/functions/duckduckgo/search/stocks.mjs'
+import { apod } from '#/functions/nasa/apod.mjs'
 
 const handleEvent = async (request: Request): Promise<Response> => {
   const { searchParams, pathname } = new URL(request.url)
@@ -14,6 +15,8 @@ const handleEvent = async (request: Request): Promise<Response> => {
     return await search(searchParams)
   } else if (pathname === '/cartoonize/') {
     return await cartoonize(request)
+  } else if (pathname === '/nasa/apod/') {
+    return await apod(searchParams)
   }
 
   return Response.json({ error: `Unknown route ${pathname}` }, { status: 404 })
