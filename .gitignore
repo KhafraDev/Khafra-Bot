@@ -1,7 +1,7 @@
 # Khafra
 build
 *.mjs
-!packages/krazy/scripts/*.js
+!test/**/*.mjs
 assets/interaction_last_deployed.txt
 *.rdb
 assets/Fonts/*
