@@ -15,7 +15,6 @@
     "#khaf/Interaction": "./src/Structures/Interaction.mjs",
     "#khaf/Logger": "./src/Structures/Logger.mjs",
     "#khaf/Bot": "./src/Bot/KhafraBot.mjs",
-    "#khaf/Client": "./src/index.mjs",
     "#khaf/Timer": "./src/Structures/Timer.mjs",
     "#khaf/Images": "./src/Images/*",
     "#khaf/structures/*": "./src/Structures/*",
