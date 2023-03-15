@@ -1,6 +1,8 @@
+import type { Client } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
 interface Options {
+  client: Client
   interval: number
   maxRuns?: number
 }
@@ -10,6 +12,9 @@ export abstract class Timer {
 
   public abstract setInterval (): Promise<unknown>
 
+  /**
+   * Run once a timer has ended for an item. This ***MUST NOT*** throw an error.
+   */
   public abstract action (...items: unknown[]): Promise<void>
 
   public yieldEvery (): {

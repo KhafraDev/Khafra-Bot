@@ -5,6 +5,7 @@ import { codeBlock } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Buffer } from 'node:buffer'
 import { inspect } from 'node:util'
 
 const AsyncFunction = (async function (): Promise<void> {}.constructor) as
@@ -44,11 +45,18 @@ export class kInteraction extends Interactions {
     }
 
     const inspected = inspect(ret, true, 1, false)
-    const embed = Embed.ok(codeBlock('js', inspected.slice(0, maxDescriptionLength - 8).trim()))
+    const empty = codeBlock('js', '').length
+    const embed = Embed.ok(codeBlock('js', inspected.slice(0, maxDescriptionLength - empty).trim()))
 
     return {
       ephemeral: true,
-      embeds: [embed]
+      embeds: [embed],
+      files: [
+        {
+          attachment: Buffer.from(inspected),
+          name: 'eval.txt'
+        }
+      ]
     }
   }
 }

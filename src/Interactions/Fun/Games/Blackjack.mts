@@ -217,7 +217,7 @@ export class kSubCommand extends InteractionSubCommand {
     const width = Math.max(dealer.length, sucker.length) * cardWidth
 
     const transformer = Transformer.fromRgbaPixels(
-      new Uint8Array(width * height * 4) as Buffer,
+      new Uint8Array(width * height * 4),
       width,
       height
     )

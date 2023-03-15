@@ -1,4 +1,3 @@
-import { client } from '#khaf/Client'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { logger } from '#khaf/structures/Logger.mjs'
 import { Timer } from '#khaf/Timer'
@@ -6,11 +5,11 @@ import type { Giveaway } from '#khaf/types/KhafraBot.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { User } from 'discord.js'
+import type { Client, User } from 'discord.js'
 
 export class GiveawayTimer extends Timer {
-  constructor () {
-    super({ interval: seconds(30) })
+  constructor (client: Client) {
+    super({ interval: seconds(30), client })
   }
 
   async setInterval (): Promise<void> {
@@ -49,6 +48,8 @@ export class GiveawayTimer extends Timer {
   }
 
   async action (giveaway: Giveaway): Promise<void> {
+    const { client } = this.options
+
     // If the timer is running before the client is logged in.
     if (!client.isReady()) return
 

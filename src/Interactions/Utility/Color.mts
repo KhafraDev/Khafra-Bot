@@ -78,7 +78,7 @@ export class kInteraction extends Interactions {
     }
 
     return await Transformer
-      .fromRgbaPixels(uint8 as Buffer, dimension, dimension)
+      .fromRgbaPixels(uint8, dimension, dimension)
       .png()
   }
 }

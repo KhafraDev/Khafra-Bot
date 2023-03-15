@@ -24,7 +24,7 @@ const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
   }
 }
 
-export const client = new KhafraClient({
+const client = new KhafraClient({
   allowedMentions: {
     parse: [AllowedMentionsTypes.Role, AllowedMentionsTypes.User],
     repliedUser: true

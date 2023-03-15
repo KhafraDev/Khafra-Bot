@@ -160,7 +160,7 @@ export class KhafraClient extends Client {
       const loadedCommands = loaded.map(command => command.data)
 
       // https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
-      // Slash commands that have already been deployed.
+      // Global slash commands that have already been deployed.
       // We do not have to POST/PUT these, but PATCH them
       // if they have been updated.
       const existingSlashCommands = await this.rest.get(
@@ -220,6 +220,18 @@ export class KhafraClient extends Client {
           const command = KhafraClient.Interactions.Commands.get(current.name)
 
           if (command?.options.deploy === false) {
+            // If the command was already deployed, and then marked as 'should not deploy'.
+            const deployedAlready = existingSlashCommands.find(c => c.name === current.name)
+
+            if (deployedAlready) {
+              const { name, id } = deployedAlready
+
+              logger.info(`Deleting ${name} - this command was deployed, but marked as "shouldn't deploy"!`)
+
+              await this.rest.delete(Routes.applicationCommand(config.botId, id))
+            }
+
+
             logger.info(`Skipping ${current.name} :)`)
             continue
           }
@@ -279,7 +291,7 @@ export class KhafraClient extends Client {
     )
 
     const importPromise = timers.map(timer =>
-      import(pathToFileURL(timer).href) as Promise<Record<string, new () => Timer>>
+      import(pathToFileURL(timer).href) as Promise<Record<string, new (client: Client) => Timer>>
     )
     const settled = await Promise.allSettled(importPromise)
     let loadedTimers = 0
@@ -287,7 +299,7 @@ export class KhafraClient extends Client {
     for (const imported of settled) {
       if (imported.status === 'fulfilled') {
         const key = Object.keys(imported.value)[0]
-        const timer = new imported.value[key]()
+        const timer = new imported.value[key](this)
 
         loadedTimers++
         void timer.setInterval()

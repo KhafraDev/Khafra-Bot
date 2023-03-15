@@ -81,7 +81,7 @@ export class kSubCommand extends InteractionSubCommand {
   async image (capes: Cape[]): Promise<Buffer> {
     // Note: this includes capes that a user might not have (such as Optifine).
     const empty = Transformer.fromRgbaPixels(
-      new Uint8Array(((44 * capes.length) + 5 * (capes.length - 1)) * 64 * 4) as Buffer,
+      new Uint8Array(((44 * capes.length) + 5 * (capes.length - 1)) * 64 * 4),
       (44 * capes.length) + 5 * (capes.length - 1),
       64
     )

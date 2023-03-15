@@ -1,11 +1,7 @@
 import { createDeferredPromise } from '#khaf/utility/util.mjs'
+import assert from 'node:assert'
 
-type SyncFn = (...args: unknown[]) => unknown
-type AsyncFn = (...args: unknown[]) => Promise<unknown>
-
-type Thenable = Pick<Promise<unknown>, 'then'> & Pick<Promise<unknown>, 'catch'>
-
-function isThenable (value: unknown): value is Thenable {
+function isThenable (value: unknown): value is Pick<Promise<unknown>, 'then' | 'catch'> {
   return (
     !!value &&
     typeof (value as { then?: unknown }).then === 'function' &&
@@ -13,39 +9,34 @@ function isThenable (value: unknown): value is Thenable {
   )
 }
 
-/**
- * Memoize a function.
- */
-export function once<T extends SyncFn>(fn: T, expires?: number): typeof fn
-export function once<T extends AsyncFn>(fn: T, expires?: number): typeof fn
-export function once(fn: SyncFn | AsyncFn, expires?: number): typeof fn {
-  if (typeof fn !== 'function')
-    throw new TypeError(`fn must be a function, received ${Object.prototype.toString.call(fn)}`)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function once<T extends (...args: any[]) => any>(fn: T, expires?: number): T {
+  assert(typeof fn === 'function')
 
-  let res: ReturnType<typeof fn> // sync return value
+  let res: ReturnType<T> | Promise<ReturnType<T>> // sync return value
   let ran = false // set once sync fn runs
   let isRunning = false // if async fn is running
   let deferred: ReturnType<typeof createDeferredPromise>
 
   function expire (): void {
-    res = undefined
+    res = undefined!
     ran = false
     isRunning = false
     deferred = undefined!
   }
 
-  return () => {
-    if (ran) return res
+  return ((...args: Parameters<T>) => {
+    if (ran) return res // eslint-disable-line @typescript-eslint/no-unsafe-return
     if (isRunning) return deferred.promise
 
-    res = fn()
+    res = fn(...args) as ReturnType<T> | Promise<ReturnType<T>>
 
     if (isThenable(res)) {
       deferred = createDeferredPromise()
       isRunning = true
 
       res
-        .then((v) => {
+        .then((v: unknown) => {
           if (typeof expires === 'number') {
             setTimeout(expire, expires)
           }
@@ -62,6 +53,6 @@ export function once(fn: SyncFn | AsyncFn, expires?: number): typeof fn {
     }
 
     ran = true
-    return res
-  }
+    return res // eslint-disable-line @typescript-eslint/no-unsafe-return
+  }) as T
 }

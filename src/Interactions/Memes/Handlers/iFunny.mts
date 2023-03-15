@@ -55,7 +55,7 @@ export class kSubCommand extends InteractionSubCommand {
       .png()
 
     return await Transformer.fromRgbaPixels(
-      new Uint8Array(width * height * 4) as Buffer,
+      new Uint8Array(width * height * 4),
       width,
       height
     )

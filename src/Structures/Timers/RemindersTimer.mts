@@ -1,4 +1,3 @@
-import { client } from '#khaf/Client'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { logger } from '#khaf/structures/Logger.mjs'
 import { Timer } from '#khaf/Timer'
@@ -6,10 +5,11 @@ import type { kReminder } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { time } from '@discordjs/builders'
+import type { Client } from 'discord.js'
 
 export class RemindersTimer extends Timer {
-  constructor () {
-    super({ interval: seconds(30) })
+  constructor (client: Client) {
+    super({ interval: seconds(30), client })
   }
 
   async setInterval (): Promise<void> {
@@ -32,7 +32,7 @@ export class RemindersTimer extends Timer {
 
   async action (reminder: kReminder): Promise<void> {
     try {
-      const user = await client.users.fetch(reminder.userId)
+      const user = await this.options.client.users.fetch(reminder.userId)
 
       const willRemind = reminder.once ? '' : `\n\nWill repeat at ${time(reminder.time)}!`
       const remind = Embed.json({
