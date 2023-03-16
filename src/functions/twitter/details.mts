@@ -19,7 +19,7 @@ import { stringify } from 'node:querystring'
 import { fetch } from 'undici'
 
 export class Twitter {
-  #guestToken!: Token
+  #guestToken = new Token()
 
   getDetailsVariables (id: string): string {
     return JSON.stringify({
@@ -37,7 +37,6 @@ export class Twitter {
   }
 
   async getGraphTweet (id: string): Promise<string[] | null> {
-    this.#guestToken ??= new Token()
     const token = await this.#guestToken.token
 
     if (token === null) {

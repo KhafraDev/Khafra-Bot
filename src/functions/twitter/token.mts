@@ -29,11 +29,7 @@ export class Token {
   #init = Date.now()
   #lastUse = Date.now()
 
-  #token: string | null
-
-  constructor () {
-    this.#token = null
-  }
+  #token: string | null = null
 
   get expired (): boolean {
     const time = Date.now()

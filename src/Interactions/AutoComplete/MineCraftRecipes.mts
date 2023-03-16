@@ -11,7 +11,7 @@ interface MinecraftItem {
 }
 
 const items = 'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/master/data/pc/1.19/items.json'
-let json: MinecraftItem[]
+let json: MinecraftItem[] | undefined
 
 export class kAutocomplete extends InteractionAutocomplete {
   constructor () {

@@ -15,15 +15,17 @@ import {
   type InteractionReplyOptions,
   type ModalSubmitInteraction
 } from 'discord.js'
+import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { basename } from 'node:path'
 
-type CompareCoordsFn<T> = (x: typeof countries[number], y: typeof countries[number]) => T
+type CountryJson = typeof import('../../../../assets/worldle/countries.json')
+type CompareCoordsFn<T> = (x: CountryJson[number], y: CountryJson[number]) => T
 
-let countries: typeof import('../../../../assets/worldle/countries.json')
-let codes: Map<string, string>
+let countries: CountryJson | undefined
+let codes: Map<string, string> | undefined
 const currentGames = new Set<string>()
 
 // https://www.movable-type.co.uk/scripts/latlong.html
@@ -79,8 +81,8 @@ const compareTwoStrings = (X: string, Y: string): number => {
 
 const replyOptions = async (
   id: string,
-  guesses: typeof countries[number][],
-  country: typeof countries[number]
+  guesses: CountryJson[number][],
+  country: CountryJson[number]
 ): Promise<InteractionEditReplyOptions> => {
   const image = await readFile(assets('worldle', `${country.code.toLowerCase()}.png`))
   let description = ''
@@ -145,10 +147,13 @@ export class kSubCommand extends InteractionSubCommand {
         .map(filePath => [basename(filePath, '.png'), filePath])
     )
 
+    // For typescript
+    assert(countries)
+
     const id = randomUUID()
     const countryCode = [...codes.keys()][Math.floor(Math.random() * codes.size)]
     const country = countries.find(({ code }) => code.toLowerCase() === countryCode)!
-    const guesses: typeof countries[number][] = []
+    const guesses: CountryJson[number][] = []
 
     const reply = await interaction.editReply(await replyOptions(id, guesses, country))
 

@@ -23,6 +23,7 @@ import {
   type ChatInputCommandInteraction,
   type InteractionReplyOptions
 } from 'discord.js'
+import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
 
 export class kInteraction extends Interactions {
@@ -111,7 +112,7 @@ export class kInteraction extends Interactions {
         footer: { text: 'For general user info mention a user!' }
       })
 
-      let rpcInfo: APIApplication
+      let rpcInfo: APIApplication | undefined
       const uuid = randomUUID()
       const disabled = currentPage === 'user' && member === null
 
@@ -135,6 +136,8 @@ export class kInteraction extends Interactions {
         if (isInfo) {
           embeds.push(currentPage === 'user' ? userEmbed : (memberEmbed ?? userEmbed))
         } else {
+          assert(rpcInfo)
+
           const flags = new ApplicationFlagsBitField(rpcInfo.flags).toArray()
             .map(flag => `• Bot ${formatApplicationPresence(flag)}`)
             .join('\n')

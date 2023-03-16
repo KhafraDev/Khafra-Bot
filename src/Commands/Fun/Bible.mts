@@ -10,11 +10,11 @@ import { URL } from 'node:url'
 import { request } from 'undici'
 
 interface IBibleVerse {
-    idx: null
-    book: string
-    chapter: number
-    verse: number
-    content: string
+  idx: null
+  book: string
+  chapter: number
+  verse: number
+  content: string
 }
 
 const base = 'https://khafrabot-bible.fly.dev'

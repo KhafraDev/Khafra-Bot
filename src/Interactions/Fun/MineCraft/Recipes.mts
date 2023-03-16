@@ -5,7 +5,7 @@ import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 
-let recipeImages: string[]
+let recipeImages: string[] | undefined
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {

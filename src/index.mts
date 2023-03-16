@@ -11,9 +11,9 @@ import { Events, Options, Partials, type ClientEvents } from 'discord.js'
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
   name: T
 ): (...args: Parameters<Event['init']>) => void => {
-  let events: Event
+  let events: Event | undefined
 
-  return async (...args: Parameters<typeof events['init']>): Promise<void> => {
+  return async (...args: Parameters<Event['init']>): Promise<void> => {
     events ??= KhafraClient.Events.get(name)!
 
     try {
