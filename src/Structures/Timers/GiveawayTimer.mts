@@ -64,7 +64,7 @@ export class GiveawayTimer extends Timer {
       const message = await channel.messages.fetch(giveaway.messageid)
       const reactions = message.reactions.cache
 
-      if (message.author.id !== client.user.id) return
+      if (message.author.id !== client.user!.id) return
       if (!reactions.has('🎉')) {
         const emoji = message.reactions.resolve('🎉')
 
@@ -88,7 +88,7 @@ export class GiveawayTimer extends Timer {
 
           winners.push(random)
         }
-      } else if (count === 1 && users.cache.first()!.id === client.user.id) { // no one entered
+      } else if (count === 1 && users.cache.first()!.id === client.user!.id) { // no one entered
         if (message.editable) {
           return void message.edit({
             content: 'No one entered the giveaway!'

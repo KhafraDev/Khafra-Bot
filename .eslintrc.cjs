@@ -12,8 +12,8 @@ module.exports = {
   parserOptions: {
     project: [
       './tsconfig.json',
-      './packages/*/tsconfig.json',
-      './packages/tsconfig.base.json'
+      './apps/*/tsconfig.json',
+      './apps/tsconfig.base.json'
     ],
     ecmaVersion: 99,
     sourceType: 'module'
