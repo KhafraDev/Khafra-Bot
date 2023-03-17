@@ -6,11 +6,6 @@ import type {
   RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 
-/** wrangler secret put publicKey */
-declare global {
-  const publicKey: string
-}
-
 interface Options {
   options: InteractionOptions
 }

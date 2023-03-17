@@ -11,20 +11,10 @@ function hex2bin (hex: string): Uint8Array {
   return buf
 }
 
-const PUBLIC_KEY = crypto.subtle.importKey(
-  'raw',
-  hex2bin(publicKey),
-  {
-    name: 'NODE-ED25519',
-    namedCurve: 'NODE-ED25519'
-  },
-  true,
-  ['verify']
-)
-
+let keyObject: Promise<CryptoKey> | undefined
 const encoder = new TextEncoder()
 
-export const verify = async (request: Request, body: string): Promise<boolean> => {
+export const verify = async (request: Request, body: string, publicKey: string): Promise<boolean> => {
   if (request.method !== 'POST') {
     return false
   }
@@ -32,9 +22,20 @@ export const verify = async (request: Request, body: string): Promise<boolean> =
   const signature = hex2bin(request.headers.get('X-Signature-Ed25519')!)
   const timestamp = request.headers.get('X-Signature-Timestamp')
 
+  keyObject ??= crypto.subtle.importKey(
+    'raw',
+    hex2bin(publicKey),
+    {
+      name: 'NODE-ED25519',
+      namedCurve: 'NODE-ED25519'
+    },
+    true,
+    ['verify']
+  )
+
   const verified = await crypto.subtle.verify(
     'NODE-ED25519',
-    await PUBLIC_KEY,
+    await keyObject,
     signature,
     encoder.encode(`${timestamp}${body}`)
   )
