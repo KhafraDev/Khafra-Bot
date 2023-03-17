@@ -1,0 +1,9 @@
+{
+  "name": "khafrabot-bible",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wrangler dev",
+    "deploy": "wrangler publish"
+  }
+}

@@ -14,6 +14,7 @@ declare global {
       TMDB: string
       TOKEN: string
       WORKER_API_BASE: string | undefined
+      WORKER_BIBLE_BASE: string | undefined
       [key: string]: never
     }
   }

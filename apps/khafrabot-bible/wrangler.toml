@@ -1,0 +1,9 @@
+name = "khafrabot-bible"
+main = "src/index.mts"
+compatibility_date = "2023-03-16"
+node_compat = true
+
+[[ d1_databases ]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "bible"
+database_id = "712e95b8-5e5d-4418-9837-86657ba88b9a"

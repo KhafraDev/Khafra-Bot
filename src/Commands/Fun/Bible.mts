@@ -6,18 +6,16 @@ import { upperCase } from '#khaf/utility/String.mjs'
 import { inlineCode } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { env } from 'node:process'
 import { URL } from 'node:url'
 import { request } from 'undici'
 
 interface IBibleVerse {
-  idx: null
   book: string
   chapter: number
   verse: number
   content: string
 }
-
-const base = 'https://khafrabot-bible.fly.dev'
 
 const titles = {
   'Genesis': 'gen',
@@ -142,7 +140,7 @@ export class kCommand extends Command {
   async init (_message: Message, { args, content }: Arguments): Promise<undefined | APIEmbed> {
     // no arguments provided, get a random entry
     if (args.length === 0) {
-      const url = new URL('/bible/random', base)
+      const url = new URL('/bible/random', env.WORKER_BIBLE_BASE)
       const { body } = await request(url)
       const row = await body.json() as IBibleVerse
 
@@ -197,20 +195,16 @@ export class kCommand extends Command {
       const book = upperCase(bookAcronym.pop()!)
       const url = new URL(
         `/bible/between?book=${book}&chapter=${chapter}&verse1=${versesDiff[0]}&verse2=${versesDiff[1]}`,
-        base
+        env.WORKER_BIBLE_BASE
       )
       const { body } = await request(url)
-      const rows = await body.json() as IBibleVerse[] | { error: string }
+      const rows = await body.json() as IBibleVerse[]
 
-      if ('error' in rows) {
-        return Embed.error(rows.error)
-      } else if (rows.length === 0) {
-        return Embed.error(`
-        No verses found in ${bookAcronym.pop()} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕
-        `)
+      if (rows.length === 0) {
+        return Embed.error(`No verses found in ${bookAcronym[1]} ${chapter}:${versesDiff[0]}-${versesDiff[1]}! 😕`)
       }
 
-      const [first, last] = [rows.at(0)!, rows.at(-1)!]
+      const [first, last] = rows.slice(0, 2)
       const embed = Embed.json({
         color: colors.ok,
         title: `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`,
@@ -228,13 +222,16 @@ export class kCommand extends Command {
 
       const url = new URL(
         `/bible/verse?book=${upperCase(bookAcronym[1])}&chapter=${chapter}&verse=${verse}`,
-        base
+        env.WORKER_BIBLE_BASE
       )
       const { body } = await request(url)
-      const row = await body.json() as IBibleVerse | { error: string }
+      const row = await body.json() as IBibleVerse | null
 
-      if ('error' in row) {
-        return Embed.error(row.error)
+      if (!row) {
+        return Embed.json({
+          color: colors.error,
+          description: 'No verse found.'
+        })
       }
 
       const embed = Embed.json({

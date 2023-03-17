@@ -20,6 +20,7 @@ TIMEZONEDB: string
 TMDB: string
 TOKEN: string
 WORKER_API_BASE: string | undefined
+WORKER_BIBLE_BASE: string | undefined
 ```
 All values are required, as there is no guarantee that there is error handling for missing credentials. 
 
