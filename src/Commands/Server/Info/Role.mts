@@ -5,7 +5,6 @@ import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { Role } from 'discord.js'
 
 export class kCommand extends Command {
   constructor () {
@@ -27,19 +26,20 @@ export class kCommand extends Command {
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
     const role =
-            await getMentions(message, 'roles') ??
-            message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase())
+      await getMentions(message, 'roles') ??
+      message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase())
 
-    if (!(role instanceof Role)) {
+    if (!role) {
       return Embed.error('No role found!')
     }
 
     return Embed.json({
       color: colors.ok,
-      description: `${role}
-            
-            Permissions: 
-            ${inlineCode(role.permissions.toArray().join(', '))}`,
+      description: `
+      ${role}
+
+      Permissions:
+      ${inlineCode(role.permissions.toArray().join(', '))}`,
       fields: [
         { name: bold('Name:'), value: role.name, inline: true },
         { name: bold('Color:'), value: role.hexColor, inline: true },

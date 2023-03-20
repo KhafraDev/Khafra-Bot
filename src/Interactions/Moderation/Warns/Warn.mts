@@ -35,13 +35,13 @@ export class kSubCommand extends InteractionSubCommand {
     const points = interaction.options.getInteger('points', true)
     const reason = interaction.options.getString('reason') ?? undefined
     const member =
-            interaction.options.getMember('member') ??
-            interaction.options.getUser('member', true)
+      interaction.options.getMember('member') ??
+      interaction.options.getUser('member', true)
 
     if (member instanceof GuildMember) {
       if (
         member.permissions.has(PermissionFlagsBits.KickMembers) ||
-                member.permissions.has(PermissionFlagsBits.Administrator)
+        member.permissions.has(PermissionFlagsBits.Administrator)
       ) {
         return {
           content: '❌ This member cannot be warned!',

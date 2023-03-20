@@ -6,9 +6,8 @@ import { minutes } from '#khaf/utility/ms.mjs'
 import { ellipsis } from '#khaf/utility/String.mjs'
 import { hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ActivityType, ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import {
-  GuildMember,
   InteractionCollector,
   type ChatInputCommandInteraction,
   type InteractionReplyOptions,
@@ -42,18 +41,8 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
-    let search = interaction.options.getString('song')
-    const artist = interaction.options.getString('artist')
-
-    if (!search && interaction.member instanceof GuildMember) {
-      const p = interaction.member.presence?.activities.find(
-        a => a.type === ActivityType.Listening && a.name === 'Spotify'
-      )
-
-      if (p) {
-        search = `${p.details}${p.state ? ` - ${p.state}` : ''}`
-      }
-    }
+    const search = interaction.options.getString('song', true)
+    const artist = interaction.options.getString('artist', true)
 
     if (!search) {
       return {

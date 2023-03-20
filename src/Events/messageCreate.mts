@@ -16,7 +16,7 @@ import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings as getGuildSettings, Sanitize } from '#khaf/utility/util.mjs'
 import { chatInputApplicationCommandMention, inlineCode } from '@discordjs/builders'
 import { ChannelType } from 'discord-api-types/v10'
-import { Attachment, Events, Message, type MessageReplyOptions } from 'discord.js'
+import { Events, type Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
 import { argv } from 'node:process'
 import { parseArgs } from 'node:util'
@@ -174,8 +174,10 @@ export class kEvent implements Event {
     try {
       const options: Arguments = { args, commandName, content }
       const returnValue = await command.init(message, options, guildSettings)
-      if (!returnValue || returnValue instanceof Message)
+
+      if (!returnValue) {
         return
+      }
 
       const param: MessageReplyOptions = {
         failIfNotExists: false
@@ -183,14 +185,10 @@ export class kEvent implements Event {
 
       if (typeof returnValue === 'string') {
         param.content = returnValue
-      } else if (returnValue instanceof Attachment) {
-        param.files = [returnValue]
-      } else if (typeof returnValue === 'object') { // MessageOptions
-        if (EmbedUtil.isAPIEmbed(returnValue)) {
-          param.embeds = [returnValue]
-        } else {
-          Object.assign(param, returnValue)
-        }
+      } else if (EmbedUtil.isAPIEmbed(returnValue)) {
+        param.embeds = [returnValue]
+      } else {
+        Object.assign(param, returnValue)
       }
 
       if (settings.send && isGuildTextBased(message.channel)) {
@@ -254,7 +252,7 @@ export class kEvent implements Event {
     try {
       const returnValue = await command.init(message, options, {})
 
-      if (!returnValue || returnValue instanceof Message) {
+      if (!returnValue) {
         return
       }
 
@@ -264,14 +262,10 @@ export class kEvent implements Event {
 
       if (typeof returnValue === 'string') {
         param.content = returnValue
-      } else if (returnValue instanceof Attachment) {
-        param.files = [returnValue]
-      } else if (typeof returnValue === 'object') { // MessageOptions
-        if (EmbedUtil.isAPIEmbed(returnValue)) {
-          param.embeds = [returnValue]
-        } else {
-          Object.assign(param, returnValue)
-        }
+      } else if (EmbedUtil.isAPIEmbed(returnValue)) {
+        param.embeds = [returnValue]
+      } else {
+        Object.assign(param, returnValue)
       }
 
       return void await message.reply(param)
