@@ -67,11 +67,8 @@ export const Embed = {
   json (data?: Partial<APIEmbed>): APIEmbed {
     const embed: APIEmbed & { [kIsJSONEmbed]: true } = {
       fields: [],
-      [kIsJSONEmbed]: true
-    }
-
-    if (data !== undefined) {
-      Object.assign(embed, data)
+      [kIsJSONEmbed]: true,
+      ...data
     }
 
     return embed

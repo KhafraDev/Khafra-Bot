@@ -18,8 +18,6 @@ import { chatInputApplicationCommandMention, inlineCode } from '@discordjs/build
 import { ChannelType } from 'discord-api-types/v10'
 import { Events, type Message, type MessageReplyOptions } from 'discord.js'
 import { join } from 'node:path'
-import { argv } from 'node:process'
-import { parseArgs } from 'node:util'
 
 const config = createFileWatcher<typeof import('../../config.json')>(
   join(cwd, 'config.json')
@@ -27,19 +25,6 @@ const config = createFileWatcher<typeof import('../../config.json')>(
 
 const _cooldownGuild = cooldown(30, 60000)
 const _cooldownUsers = cooldown(10, 60000)
-
-const { values: processArgs } = parseArgs({
-  args: argv.slice(2),
-  strict: false,
-  options: {
-    disabled: {
-      type: 'string'
-    }
-  }
-})
-const disabled = typeof processArgs.disabled === 'string'
-  ? processArgs.disabled.split(',').map(c => c.toLowerCase())
-  : []
 
 export class kEvent implements Event {
   name = Events.MessageCreate as const
@@ -117,10 +102,6 @@ export class kEvent implements Event {
         content:
           `${upperCase(settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
           `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
-      })
-    } else if (disabled.includes(settings.name) || settings.aliases?.some(c => disabled.includes(c))) {
-      return void message.reply({
-        content: `${inlineCode(name)} is temporarily disabled!`
       })
     } else {
       rateLimit.rateLimitUser(author.id)

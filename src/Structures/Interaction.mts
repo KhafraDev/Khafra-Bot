@@ -3,7 +3,6 @@ import type { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } fr
 import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
-  InteractionReplyOptions,
   MessageContextMenuCommandInteraction,
   UserContextMenuCommandInteraction
 } from 'discord.js'
@@ -15,7 +14,6 @@ interface InteractionOptions {
 	 * If the command should not be deployed automatically.
 	 */
 	deploy?: boolean
-  replyOpts?: InteractionReplyOptions
 }
 
 interface SubcommandOptions {

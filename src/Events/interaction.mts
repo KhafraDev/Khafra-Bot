@@ -21,26 +21,11 @@ import {
   type UserContextMenuCommandInteraction
 } from 'discord.js'
 import assert from 'node:assert'
-import { argv } from 'node:process'
-import { parseArgs } from 'node:util'
 
 type Interactions =
   ChatInputCommandInteraction &
   MessageContextMenuCommandInteraction &
   UserContextMenuCommandInteraction
-
-const { values: processArgs } = parseArgs({
-  args: argv.slice(2),
-  strict: false,
-  options: {
-    disabled: {
-      type: 'string'
-    }
-  }
-})
-const disabled = typeof processArgs.disabled === 'string'
-  ? processArgs.disabled.split(',').map(c => c.toLowerCase())
-  : []
 
 export class kEvent implements Event {
   name = Events.InteractionCreate as const
@@ -94,10 +79,6 @@ export class kEvent implements Event {
       return void interaction.reply({
         content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
       })
-    } else if (disabled.includes(interaction.commandName)) {
-      return void interaction.reply({
-        content: `${inlineCode(interaction.commandName)} is temporarily disabled!`
-      })
     }
 
     try {
@@ -105,7 +86,7 @@ export class kEvent implements Event {
         await interaction.deferReply()
 
       const result = await command.init(interaction as Interactions)
-      const param: InteractionReplyOptions = {}
+      const param: InteractionReplyOptions = result ?? {}
 
       if (interaction.replied) {
         return
@@ -113,12 +94,7 @@ export class kEvent implements Event {
         const type = Object.prototype.toString.call(result)
         param.content = `❓ Received an invalid type from this response: ${inlineCode(type)}`
         param.ephemeral = true
-      } else {
-        Object.assign(param, result)
       }
-
-      if (command.options.replyOpts)
-        Object.assign(param, command.options.replyOpts)
 
       if (interaction.deferred)
         return void await interaction.editReply(param)

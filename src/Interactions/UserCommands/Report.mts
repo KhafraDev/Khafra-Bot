@@ -9,18 +9,6 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
-import { argv } from 'node:process'
-import { parseArgs } from 'node:util'
-
-const { values: args } = parseArgs({
-  args: argv.slice(2),
-  options: {
-    dev: {
-      type: 'boolean'
-    }
-  }
-})
-const isDev = args.dev === true
 
 const perms =
   PermissionFlagsBits.SendMessages |
@@ -54,17 +42,15 @@ export class kUserCommand extends InteractionUserCommand {
       .catch(() => null)
     const { content, author, id, attachments } = interaction.targetMessage
 
-    if (!isDev) {
-      if (author.id === interaction.user.id) {
-        return {
-          content: '❌ You cannot report your own message.',
-          ephemeral: true
-        }
-      } else if (author.bot) {
-        return {
-          content: '❌ You cannot report messages from bots.',
-          ephemeral: true
-        }
+    if (author.id === interaction.user.id) {
+      return {
+        content: '❌ You cannot report your own message.',
+        ephemeral: true
+      }
+    } else if (author.bot) {
+      return {
+        content: '❌ You cannot report messages from bots.',
+        ephemeral: true
       }
     }
 
