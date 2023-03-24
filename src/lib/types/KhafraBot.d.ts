@@ -10,7 +10,6 @@ declare global {
       POCKET_SECRET_KEY: string
       POSTGRES_USER: string | undefined
       POSTGRES_PASS: string | undefined
-      TIMEZONEDB: string
       TMDB: string
       TOKEN: string
       WORKER_API_BASE: string | undefined
