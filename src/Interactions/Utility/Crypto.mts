@@ -6,10 +6,10 @@ import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'disc
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-const f = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
-const g = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
+let f: Intl.NumberFormat | undefined
+let g: Intl.NumberFormat | undefined
 
-const field = (name: string, value: number | string, formatter = f): APIEmbedField => ({
+const field = (name: string, value: number | string, formatter = f!): APIEmbedField => ({
   name: bold(name),
   value: typeof value === 'string' ? value : formatter.format(value),
   inline: true
@@ -34,6 +34,9 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    f ??= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+    g ??= new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
+
     const currency = await CoinGecko.get(interaction.options.getString('search', true))
 
     if (currency === null) {
