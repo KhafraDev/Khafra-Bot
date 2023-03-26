@@ -48,8 +48,7 @@ export class kSubCommand extends InteractionSubCommand {
         ephemeral: true
       }
     } else if (
-      interaction.guild === null ||
-      interaction.guild.members.me === null ||
+      !interaction.guild?.members.me ||
       !channel.permissionsFor(interaction.guild.members.me).has(perms)
     ) {
       return {

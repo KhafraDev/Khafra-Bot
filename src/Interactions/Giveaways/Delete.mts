@@ -26,7 +26,7 @@ export class kSubCommand extends InteractionSubCommand {
         content: '❌ That id is invalid, try again!',
         ephemeral: true
       }
-    } else if (interaction.guild === null) {
+    } else if (!interaction.inGuild()) {
       return {
         content: '❌ No guild id provided in the command, re-invite the bot with the correct permissions.',
         ephemeral: true
@@ -36,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
     const rows = await sql<GiveawayRow[]>`
       DELETE FROM kbGiveaways
       WHERE
-          kbGiveaways.guildId = ${interaction.guild.id}::text AND
+          kbGiveaways.guildId = ${interaction.guildId}::text AND
           kbGiveaways.id = ${id}::uuid AND
           kbGiveaways.initiator = ${interaction.user.id}::text
       RETURNING messageId, channelId, id;
@@ -50,7 +50,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const [{ channelid, messageid, id: uuid }] = rows
-    const channel = await interaction.guild.channels.fetch(channelid)
+    const channel = await interaction.guild?.channels.fetch(channelid)
 
     if (channel?.type !== ChannelType.GuildText) {
       return {

@@ -20,7 +20,11 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Channel,
           name: 'thread',
-          description: 'The thread to lock.'
+          description: 'The thread to lock.',
+          channel_types: [
+            ChannelType.PublicThread,
+            ChannelType.PrivateThread
+          ]
         },
         {
           type: ApplicationCommandOptionType.String,
@@ -41,11 +45,7 @@ export class kInteraction extends Interactions {
         content: '❌ You do not have permission to use this command!',
         ephemeral: true
       }
-    } else if (
-      interaction.guild === null ||
-      !interaction.guild.members.me ||
-      !interaction.guild.members.me.permissions.has(defaultPerms)
-    ) {
+    } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
@@ -56,7 +56,7 @@ export class kInteraction extends Interactions {
 
     if (
       thread?.type !== ChannelType.PublicThread &&
-            thread?.type !== ChannelType.PrivateThread
+      thread?.type !== ChannelType.PrivateThread
     ) {
       const message = thread === null
         ? '❌ I\'m unsure what channel you are in, try putting it as an option instead.'
@@ -69,8 +69,8 @@ export class kInteraction extends Interactions {
     }
 
     const reason =
-            interaction.options.getString('reason') ??
-            `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
+      interaction.options.getString('reason') ??
+      `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
 
     const body: RESTPatchAPIChannelJSONBody = {
       locked: true,

@@ -20,7 +20,7 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    if (interaction.guild === null) {
+    if (!interaction.inGuild()) {
       return {
         content: '❌ Unable to use the command.',
         ephemeral: true
@@ -36,7 +36,7 @@ export class kSubCommand extends InteractionSubCommand {
       SELECT * FROM kbGiveaways
       WHERE
           ${where} AND
-          kbGiveaways.guildid = ${interaction.guild.id}::text AND
+          kbGiveaways.guildid = ${interaction.guildId}::text AND
           kbGiveaways.initiator = ${interaction.user.id}::text AND
           kbGiveaways."didEnd" = TRUE::boolean
       LIMIT 1;
@@ -50,12 +50,9 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const { channelid, winners, enddate, id } = giveaway
-    const channel = await interaction.guild.channels.fetch(channelid)
+    const channel = await interaction.guild?.channels.fetch(channelid)
 
-    if (
-      channel === null ||
-      !DiscordUtil.isTextBased(channel)
-    ) {
+    if (!DiscordUtil.isTextBased(channel)) {
       return {
         content: '❌ I couldn\'t find the channel.',
         ephemeral: true

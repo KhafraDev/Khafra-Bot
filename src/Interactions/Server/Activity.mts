@@ -66,11 +66,7 @@ export class kInteraction extends Interactions {
         content: '❌ You do not have permission to use this command!',
         ephemeral: true
       }
-    } else if (
-      interaction.guild === null ||
-      !interaction.guild.members.me ||
-      !interaction.guild.members.me.permissions.has(defaultPerms)
-    ) {
+    } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
         content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
