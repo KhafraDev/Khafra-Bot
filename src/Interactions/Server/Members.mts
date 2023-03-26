@@ -1,7 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { bold } from '@discordjs/builders'
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, Guild, InteractionReplyOptions } from 'discord.js'
+import { Routes, type APIGuildPreview, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -14,26 +14,24 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    let guild!: Guild | null
-
-    if (!interaction.guild) {
-      if (interaction.guildId) {
-        guild = await interaction.client.guilds.fetch(interaction.guildId)
-          .catch(() => null)
+    if (!interaction.inGuild()) {
+      return {
+        content: 'Come on really? It\'s just you and me... (2)',
+        ephemeral: true
       }
-
-      if (guild === null) {
-        return {
-          content: '❌ The guild could not be fetched. Reinvite the bot with full permissions to use this command!',
-          ephemeral: true
-        }
-      }
-    } else {
-      guild = interaction.guild
     }
 
+    // The bot can fetch a guild preview even if the bot isn't in the server.
+    const guild =
+      interaction.guild ??
+      await interaction.client.guilds.fetch(interaction.guildId).catch(() => null) ??
+      await interaction.client.rest.get(Routes.guildPreview(interaction.guildId)) as APIGuildPreview
+
+    const count = 'memberCount' in guild ? guild.memberCount : guild.approximate_member_count
+    const note = 'memberCount' in guild ? '' : ' [Approximate]'
+
     return {
-      content: `✅ There are ${bold(guild.memberCount.toLocaleString())} members in ${guild.name}!`,
+      content: `✅ There are ${bold(count.toLocaleString())}${note} members in ${guild.name}!`,
       ephemeral: true
     }
   }
