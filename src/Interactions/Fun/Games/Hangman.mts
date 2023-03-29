@@ -33,17 +33,17 @@ const images = [
 ]
 
 class Hangman {
-  private guessed: string[] = []
-  private word: string
-  private wrong = 0
-  private id: string
+  #guessed: string[] = []
+  #word: string
+  #wrong = 0
+  #id: string
 
   private usedHint = false
   public lastGuessWasWrong = false
 
   constructor (word: string, id: string) {
-    this.word = word.toLowerCase()
-    this.id = id
+    this.#word = word.toLowerCase()
+    this.#id = id
   }
 
   /**
@@ -53,20 +53,20 @@ class Hangman {
   guess (phraseOrChar: string): boolean {
     const guess = phraseOrChar.toLowerCase()
 
-    if (this.guessed.includes(guess)) {
+    if (this.#guessed.includes(guess)) {
       return false
     } else {
       if (
-        (guess.length === 1 && !this.word.includes(guess)) ||
-                (guess.length > 1 && guess !== this.word)
+        (guess.length === 1 && !this.#word.includes(guess)) ||
+        (guess.length > 1 && guess !== this.#word)
       ) {
         this.lastGuessWasWrong = true
-        ++this.wrong
+        ++this.#wrong
       } else {
         this.lastGuessWasWrong = false
       }
 
-      this.guessed.push(guess)
+      this.#guessed.push(guess)
       return true
     }
   }
@@ -77,12 +77,12 @@ class Hangman {
   hide (): string {
     let str = ''
 
-    if (this.guessed.includes(this.word)) {
-      return this.word
+    if (this.#guessed.includes(this.#word)) {
+      return this.#word
     }
 
-    for (const char of this.word) {
-      if (this.guessed.includes(char) || char === ' ') {
+    for (const char of this.#word) {
+      if (this.#guessed.includes(char) || char === ' ') {
         str += char
       } else {
         str += '☐'
@@ -100,20 +100,20 @@ class Hangman {
           color: colors.ok,
           description: `
             ${this.hide()}
-            ${this.wrong} wrong guess${plural(this.wrong, 'es')}.
-            Guessed: ${this.guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
-          image: { url: images[this.wrong] },
+            ${this.#wrong} wrong guess${plural(this.#wrong, 'es')}.
+            Guessed: ${this.#guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
+          image: { url: images[this.#wrong] },
           title
         })
       ],
       components: [
         Components.actionRow([
-          Buttons.approve('Guess', `showModal-${this.id}`),
-          Buttons.primary('Hint', `hint-${this.id}`, {
+          Buttons.approve('Guess', `showModal-${this.#id}`),
+          Buttons.primary('Hint', `hint-${this.#id}`, {
             disabled: this.usedHint,
             emoji: { name: '❓' }
           }),
-          Buttons.deny('Quit', `quit-${this.id}`)
+          Buttons.deny('Quit', `quit-${this.#id}`)
         ])
       ]
     }
@@ -122,27 +122,27 @@ class Hangman {
   hint (): string | null {
     if (!this.canUseHint) return null
 
-    while (!this.guess(this.word[Math.floor(Math.random() * this.word.length)]));
+    while (!this.guess(this.#word[Math.floor(Math.random() * this.#word.length)]));
 
     this.usedHint = true
-    this.wrong++
+    this.#wrong++
 
-    return this.guessed[this.guessed.length - 1]
+    return this.#guessed[this.#guessed.length - 1]
   }
 
   get canUseHint(): boolean {
-    return this.wrong + 1 < 6 && !this.usedHint
+    return this.#wrong + 1 < 6 && !this.usedHint
   }
 
   get lost(): boolean {
-    return this.wrong >= 6
+    return this.#wrong >= 6
   }
 
   get winner(): boolean {
-    const lessThan6Wrong = this.wrong < 6
-    const guessedEntireWord = this.guessed.includes(this.word)
-    const gussedEveryChar = [...this.word].every(
-      c => c === ' ' || this.guessed.includes(c.toLowerCase())
+    const lessThan6Wrong = this.#wrong < 6
+    const guessedEntireWord = this.#guessed.includes(this.#word)
+    const gussedEveryChar = [...this.#word].every(
+      c => c === ' ' || this.#guessed.includes(c.toLowerCase())
     )
 
     return lessThan6Wrong && (guessedEntireWord || gussedEveryChar)
