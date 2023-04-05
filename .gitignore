@@ -1,6 +1,7 @@
 # Khafra
 build
 *.mjs
+!scripts/**/*.mjs
 !test/**/*.mjs
 assets/interaction_last_deployed.txt
 *.rdb
