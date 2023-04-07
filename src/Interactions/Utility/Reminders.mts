@@ -31,6 +31,11 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.Boolean,
               name: 'repeat',
               description: 'If this reminder should be repeatedly sent to you on an interval (default is false).'
+            },
+            {
+              type: ApplicationCommandOptionType.String,
+              name: 'interval',
+              description: 'Interval when to re-remind you after the first reminder.'
             }
           ]
         },

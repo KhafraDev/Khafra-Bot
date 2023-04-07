@@ -14,10 +14,12 @@ export class RemindersTimer extends Timer {
 
   async setInterval (): Promise<void> {
     for await (const _ of this.yieldEvery()) {
+      // We only want to set didEnd when the reminder is not set to repeat.
+      // But we also want to select all reminders that haven't ended.
       const rows = await sql<kReminder[]>`
         UPDATE "kbReminders" SET
           "time" = "time" + "kbReminders"."interval",
-          "didEnd" = TRUE
+          "didEnd" = CASE WHEN "once" = TRUE THEN TRUE ELSE FALSE END
         WHERE
           "time" < CURRENT_TIMESTAMP AND
           "didEnd" = FALSE

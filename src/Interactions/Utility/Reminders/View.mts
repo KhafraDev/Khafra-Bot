@@ -17,7 +17,7 @@ import {
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
 
-const embedFromGiveaway = (
+const embedFromReminder = (
   row: kReminder | undefined,
   interaction: ChatInputCommandInteraction<'cached' | 'raw'>,
   total: number,
@@ -89,7 +89,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const message = await interaction.editReply({
       embeds: [
-        embedFromGiveaway(reminders[page], interaction, reminders.length, page + 1)
+        embedFromReminder(reminders[page], interaction, reminders.length, page + 1)
       ],
       components: [
         Components.actionRow([
@@ -152,7 +152,7 @@ export class kSubCommand extends InteractionSubCommand {
 
       await i.update({
         embeds: [
-          embedFromGiveaway(
+          embedFromReminder(
             (filter ?? reminders)[page],
             interaction,
             (filter ?? reminders).length,

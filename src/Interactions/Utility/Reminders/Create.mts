@@ -18,12 +18,19 @@ export class kSubCommand extends InteractionSubCommand {
     const text = interaction.options.getString('message', true)
     const time = interaction.options.getString('time', true)
     const once = !interaction.options.getBoolean('repeat')
+    const interval = interaction.options.getString('interval')
 
     const parsedTime = parseStrToMs(time)
+    const parsedInterval = interval ? parseStrToMs(interval) : parsedTime
 
     if (parsedTime < minutes(1)) {
       return {
         content: '❌ The shortest reminder you can set is 1 minute.',
+        ephemeral: true
+      }
+    } else if (parsedInterval < minutes(1)) {
+      return {
+        content: '❌ The shortest interval is 1 minute.',
         ephemeral: true
       }
     }
@@ -31,13 +38,13 @@ export class kSubCommand extends InteractionSubCommand {
     const date = new Date(Date.now() + parsedTime)
     const rows = await sql<{ id: string }[]>`
       INSERT INTO "kbReminders" (
-          "userId", "message", "time", "once", "interval"
+        "userId", "message", "time", "once", "interval"
       ) VALUES (
-          ${interaction.user.id}::text,
-          ${text},
-          ${date}::timestamp,
-          ${once}::boolean,
-          ${parsedTime} * '1 millisecond'::interval
+        ${interaction.user.id}::text,
+        ${text},
+        ${date}::timestamp,
+        ${once}::boolean,
+        ${parsedInterval || parsedTime} * '1 millisecond'::interval
       ) RETURNING id;
     `
 
