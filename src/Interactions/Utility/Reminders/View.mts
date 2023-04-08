@@ -38,6 +38,7 @@ const embedFromReminder = (
   📑 Description: ${row.message}
   👤 Reminding: ${interaction.user}
   ❗ Repeats: ${row.once ? 'no' : 'yes'}
+  ⏸️ Paused: ${row.paused ? 'yes' : 'no'}
   ⏱️ Interval: ${row.interval}
   ⏰ ${endVerb}: ${time(row.time, 'R')} (${time(row.time, 'f')})
   `
@@ -77,15 +78,17 @@ export class kSubCommand extends InteractionSubCommand {
       LIMIT 50
     `
 
-    const { active, inactive } = reminders.reduce((prev, curr) => {
-      if (curr.didEnd) {
+    const { active, inactive, paused } = reminders.reduce((prev, curr) => {
+      if (curr.paused) {
+        prev.paused.push(curr)
+      } else if (curr.didEnd) {
         prev.inactive.push(curr)
       } else {
         prev.active.push(curr)
       }
 
       return prev
-    }, { active: [] as kReminder[], inactive: [] as kReminder[] })
+    }, { active: [] as kReminder[], inactive: [] as kReminder[], paused: [] as kReminder[] })
 
     const message = await interaction.editReply({
       embeds: [
@@ -104,6 +107,7 @@ export class kSubCommand extends InteractionSubCommand {
             options: [
               { label: 'Active reminders', value: `selectactive-${id}` },
               { label: 'Inactive reminders', value: `selectinactive-${id}` },
+              { label: 'Paused reminders', value: `selectpaused-${id}` },
               { label: 'All reminders', value: `selectall-${id}` }
             ]
           })
@@ -130,6 +134,8 @@ export class kSubCommand extends InteractionSubCommand {
 
         if (name === 'selectactive' || name === 'selectinactive') {
           filter = name === 'selectactive' ? active : inactive
+        } else if (name === 'selectpaused') {
+          filter = paused
         } else {
           assert(name === 'selectall')
           filter = undefined

@@ -59,4 +59,5 @@ export interface kReminder {
   once: boolean
   interval: string
   didEnd: boolean
+  paused: boolean
 }

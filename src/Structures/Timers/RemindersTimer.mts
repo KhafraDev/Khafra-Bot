@@ -16,13 +16,20 @@ export class RemindersTimer extends Timer {
     for await (const _ of this.yieldEvery()) {
       // We only want to set didEnd when the reminder is not set to repeat.
       // But we also want to select all reminders that haven't ended.
+      // If time + interval < current_timestamp, set time to
+      // current_timestamp + interval. Otherwise the user will get reminders
+      // whenever this runs. This can happen when the bot is offline.
       const rows = await sql<kReminder[]>`
         UPDATE "kbReminders" SET
-          "time" = "time" + "kbReminders"."interval",
+          "time" = CASE WHEN "time" + "kbReminders"."interval" < CURRENT_TIMESTAMP
+            THEN CURRENT_TIMESTAMP + "kbReminders"."interval"
+            ELSE "time" + "kbReminders"."interval"
+          END,
           "didEnd" = CASE WHEN "once" = TRUE THEN TRUE ELSE FALSE END
         WHERE
           "time" < CURRENT_TIMESTAMP AND
-          "didEnd" = FALSE
+          "didEnd" = FALSE AND
+          "paused" = FALSE
         RETURNING *
       `
 

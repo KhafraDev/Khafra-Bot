@@ -91,6 +91,19 @@ export class kInteraction extends Interactions {
               required: true
             }
           ]
+        },
+        {
+          type: ApplicationCommandOptionType.Subcommand,
+          name: 'pause',
+          description: 'Pause a reminder if one is active, or unpauses it if paused.',
+          options: [
+            {
+              type: ApplicationCommandOptionType.String,
+              name: 'id',
+              description: 'The ID of the reminder.',
+              required: true
+            }
+          ]
         }
       ]
     }
