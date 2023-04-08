@@ -3,6 +3,7 @@ import { InteractionSubCommand } from '#khaf/Interaction'
 import { minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
 import { ellipsis } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
+import { formatMs } from '#khaf/utility/util.mjs'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
@@ -48,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
       ) RETURNING id;
     `
 
-    const intervalMessage = once ? '' : ` (Interval ${formatTime(Math.floor(parsedTime / 1000), 'R')})`
+    const intervalMessage = once ? '' : ` (Interval ${formatMs(Math.floor(parsedTime / 1000))})`
 
     return {
       content: stripIndents`
