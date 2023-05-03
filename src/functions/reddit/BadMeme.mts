@@ -4,6 +4,7 @@ import { decodeXML } from 'entities'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
+import { platform } from 'node:os'
 
 export { type Reddit, apiSchema }
 
@@ -63,8 +64,16 @@ export const badmeme = async (
     o.set('t', timeframe)
   }
 
+  // https://github.com/reddit-archive/reddit/wiki/API#rules
   // https://www.reddit.com/dev/api#GET_new
-  const { body, statusCode } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`)
+  const { body, statusCode } = await request(
+    `https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`,
+    {
+      headers: {
+        'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy, https://github.com/KhafraDev/Khafra-Bot)`
+      }
+    }
+  )
 
   // When a subreddit doesn't exist, reddit automatically redirects to a search API URL.
   if (statusCode !== 200) {
