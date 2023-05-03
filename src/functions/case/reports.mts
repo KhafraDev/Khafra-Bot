@@ -1,6 +1,7 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import { makeCase } from '#khaf/functions/case/makeCase.mjs'
-import type { ButtonInteraction } from 'discord.js'
+import { RESTJSONErrorCodes } from 'discord-api-types/v10'
+import { DiscordAPIError, type ButtonInteraction } from 'discord.js'
 import assert from 'node:assert'
 
 const reportv1 = /^report::(ban|kick|ignore|softban|mute)::(\d+)$/
@@ -24,7 +25,8 @@ export interface Case {
   targetId: string
   targetAttachments: string[] | null
   contextAttachments: string | null
-  reason: string
+  staffReason: string | null
+  userReason: string | null
   staffId: string
   associatedTime: Date | null
   guildId: string
@@ -63,9 +65,21 @@ export const handleReport = async (interaction: ButtonInteraction<'raw' | 'cache
     })
   }
 
-  await makeCase({ ...report, type: action as Case['type'], interaction })
+  let message: string
 
-  const message = `The report was handled by ${interaction.user}, action was taken against ${user} (a ${action}).`
+  try {
+    await makeCase({ ...report, type: action as Case['type'], interaction })
+
+    message = `The report was handled by ${interaction.user}, action was taken against ${user} (a ${action}).`
+  } catch (e) {
+    assert(e instanceof DiscordAPIError)
+
+    if (e.code === RESTJSONErrorCodes.MissingPermissions) {
+      message = `${interaction.user} I don't have permission to ${action} ${user}, sorry.`
+    } else {
+      message = `${interaction.user} An error occurred attempting to ${action} ${user} (${e.code}).`
+    }
+  }
 
   if (interaction.message.editable) {
     await interaction.message.edit({

@@ -6,9 +6,9 @@ import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
-import { bold, time } from '@discordjs/builders'
+import { bold, time, spoiler } from '@discordjs/builders'
 import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10'
-import { Events, type Guild, type GuildAuditLogsEntry } from 'discord.js'
+import { Events, type Guild, type GuildAuditLogsEntry, cleanContent } from 'discord.js'
 import assert from 'node:assert'
 
 const perms =
@@ -38,7 +38,8 @@ export class kEvent implements Event {
     const _case = {
       type: 'kick',
       targetId: entry.targetId,
-      reason: entry.reason ?? '',
+      staffReason: entry.reason ?? '',
+      userReason: null,
       staffId: entry.executorId,
       guildId: guild.id,
       contextAttachments: null,
@@ -70,6 +71,9 @@ export class kEvent implements Event {
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
+    const cleaned = entry.reason
+      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
+      : ''
 
     await channel.send({
       embeds: [
@@ -79,7 +83,7 @@ export class kEvent implements Event {
           ${bold('User:')} ${targetUser} (${targetUser.tag} / ${targetUser.id})
           ${bold('Action:')} Kick
           ${bold('Staff:')} ${staff}
-          ${entry.reason ? `${bold('Reason:')} ${entry.reason}` : ''}
+          ${cleaned}
           `,
           author: {
             name: `${staff.user.tag} (${staff.id})`,
@@ -98,7 +102,8 @@ export class kEvent implements Event {
     const _case = {
       type: action,
       targetId: entry.targetId,
-      reason: entry.reason ?? '',
+      staffReason: entry.reason ?? '',
+      userReason: null,
       staffId: entry.executorId,
       guildId: guild.id,
       contextAttachments: null,
@@ -130,6 +135,9 @@ export class kEvent implements Event {
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
+    const cleaned = entry.reason
+      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
+      : ''
 
     await channel.send({
       embeds: [
@@ -139,7 +147,7 @@ export class kEvent implements Event {
           ${bold('User:')} ${targetUser} (${targetUser.tag} / ${targetUser.id})
           ${bold('Action:')} ${upperCase(action)}
           ${bold('Staff:')} ${staff}
-          ${entry.reason ? `${bold('Reason:')} ${entry.reason}` : ''}
+          ${cleaned}
           `,
           author: {
             name: `${staff.user.tag} (${staff.id})`,
@@ -167,7 +175,8 @@ export class kEvent implements Event {
     const _case = {
       type: action,
       targetId: entry.targetId,
-      reason: entry.reason ?? '',
+      staffReason: entry.reason ?? '',
+      userReason: null,
       staffId: entry.executorId,
       guildId: guild.id,
       contextAttachments: null,
@@ -199,6 +208,9 @@ export class kEvent implements Event {
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
+    const cleaned = entry.reason
+      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
+      : ''
 
     await channel.send({
       embeds: [
@@ -208,7 +220,7 @@ export class kEvent implements Event {
           ${bold('User:')} ${targetUser} (${targetUser.tag} / ${targetUser.id})
           ${bold('Action:')} ${upperCase(action)}
           ${bold('Staff:')} ${staff}
-          ${entry.reason ? `${bold('Reason:')} ${entry.reason}` : ''}
+          ${cleaned}
           ${action === 'mute' && change.new ? `${bold('Until:')} ${time(new Date(`${change.new}`), 'F')}` : ''}
           `,
           author: {

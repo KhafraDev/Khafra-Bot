@@ -32,7 +32,8 @@ interface Report {
 
 interface Case {
   t: 'case'
-  reason: string | null
+  staffReason: string | null
+  userReason: string | null
   type: string
   status: null
   targetAttachments: string[] | null
@@ -59,8 +60,8 @@ const embedFromCase = (
     return cache.get(page - 1)!
   }
 
-  if (row.reason)
-    embed.description += `📑 Reason: ${row.reason}\n`
+  if ('staffReason' in row && row.staffReason)
+    embed.description += `📑 Reason: ${row.staffReason}\n`
 
   if (row.t === 'case') {
     embed.description += `👤 Handled by: ${userMention(row.contextUser)}\n`
@@ -115,6 +116,8 @@ export class kSubCommand extends InteractionSubCommand {
       SELECT
         'report' AS t,
         reason,
+        null as "staffReason",
+        null as "userReason",
         null as type,
         status,
         "targetAttachments",
@@ -132,7 +135,9 @@ export class kSubCommand extends InteractionSubCommand {
 
       SELECT
         'case' AS t,
-        reason,
+        null as reason,
+        "staffReason",
+        "userReason",
         type,
         null as status,
         "targetAttachments",

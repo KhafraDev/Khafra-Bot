@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS "kbCases" (
     "targetId" TEXT NOT NULL,
     "targetAttachments" TEXT[] DEFAULT NULL,
     "contextAttachments" TEXT DEFAULT NULL,
-    "reason" TEXT DEFAULT '',
+    "staffReason" TEXT DEFAULT '',
+    "userReason" TEXT DEFAULT '',
     "staffId" TEXT DEFAULT '',
     "associatedTime" TIMESTAMP DEFAULT NULL,
     "guildId" TEXT NOT NULL

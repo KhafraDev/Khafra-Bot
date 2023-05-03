@@ -39,8 +39,8 @@ export class kSubCommand extends InteractionSubCommand {
 
     const embed = Embed.json({ color: colors.ok, description: '' })
 
-    if (row.reason)
-      embed.description += `📑 Reason: ${row.reason}\n`
+    if (row.staffReason)
+      embed.description += `📑 Reason: ${row.staffReason}\n`
 
     embed.description += `👤 Handled by: ${userMention(row.staffId)}\n`
     embed.description += `🗃️ Type: ${row.type}\n`

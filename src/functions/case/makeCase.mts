@@ -13,18 +13,19 @@ export const makeCase = async (report: CreateCase): Promise<void> => {
 
   const guild = interaction.guild ?? await interaction.client.guilds.fetch(report.guildId)
 
+  // TODO: allow for staff to add reasons
   switch (type) {
     case 'ban': {
-      await guild.members.ban(rest.targetId, { reason: rest.reason })
+      await guild.members.ban(rest.targetId)
       break
     }
     case 'kick': {
-      await guild.members.kick(rest.targetId, rest.reason)
+      await guild.members.kick(rest.targetId)
       break
     }
     case 'softban': {
-      await guild.members.ban(rest.targetId, { reason: rest.reason })
-      await guild.members.unban(rest.targetId, rest.reason)
+      await guild.members.ban(rest.targetId)
+      await guild.members.unban(rest.targetId)
       break
     }
     default:
@@ -36,7 +37,8 @@ export const makeCase = async (report: CreateCase): Promise<void> => {
     targetId: rest.targetId,
     targetAttachments: rest.targetAttachments,
     contextAttachments: rest.contextAttachments,
-    reason: rest.reason,
+    userReason: rest.reason,
+    staffReason: null,
     staffId: interaction.user.id,
     guildId: guild.id,
     associatedTime: null

@@ -3,9 +3,9 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import * as DiscordUtil from '#khaf/utility/Discord.js'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
-import { bold } from '@discordjs/builders'
+import { bold, spoiler } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { Events, type GuildBan } from 'discord.js'
+import { cleanContent, Events, type GuildBan } from 'discord.js'
 
 const perms =
   PermissionFlagsBits.ViewChannel |
@@ -43,6 +43,10 @@ export class kEvent implements Event {
       await ban.fetch().catch(() => {})
     }
 
+    const cleaned = ban.reason
+      ? `${bold('Reason:')} ${spoiler(cleanContent(ban.reason, channel))}`
+      : ''
+
     await channel.send({
       embeds: [
         Embed.json({
@@ -50,7 +54,7 @@ export class kEvent implements Event {
           description: stripIndents`
           ${bold('User:')} ${ban.user} (${ban.user.tag} / ${ban.user.id})
           ${bold('Action:')} Ban
-          ${ban.reason ? `${bold('Reason:')} ${ban.reason}` : ''}
+          ${cleaned}
           `,
           footer: {
             text: 'For more detailed logs, I need permission to view the audit log!'
