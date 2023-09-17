@@ -1,4 +1,4 @@
-import { Twitter } from '#khaf/functions/twitter/details.mjs'
+import { TwitterScraper } from '#khaf/functions/twitter/scraper.mjs'
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
@@ -18,7 +18,7 @@ const schema = s.string.url({
 })
 
 export class kInteraction extends Interactions {
-  #twitter = new Twitter()
+  #scraper = new TwitterScraper()
 
   constructor () {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
@@ -59,15 +59,33 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const id = /\/(\d+)$/.exec(pathname)![1]
-    const media = await this.#twitter.getGraphTweet(id)
+    /* eslint-disable */
 
-    if (!media) {
+    const id = /\/(\d+)$/.exec(pathname)![1]
+    const api = await this.#scraper.getTweetAPILink(id)
+    const body: any = JSON.parse((await api.bodyPromise).toString('utf-8'))
+    const media: string[] = []
+
+    if (body.__typename !== 'Tweet' || !Array.isArray(body.mediaDetails)) {
       return {
-        content: '❌ No media found in Tweet!',
+        content: 'Not a tweet or there\'s no media, sorry.',
         ephemeral: true
       }
     }
+
+    for (const mediaItem of body.mediaDetails) {
+      if (mediaItem.type === 'animated_gif' || mediaItem.type === 'video') {
+        const mp4 = mediaItem.video_info.variants.find(
+          (v: any) => v.content_type === 'video/mp4'
+        ) ?? mediaItem.video_info.variants[0]
+
+        media.push(mp4.url)
+      } else {
+        media.push(mediaItem.media_url_https)
+      }
+    }
+
+    /* eslint-enable */
 
     return {
       embeds: [
