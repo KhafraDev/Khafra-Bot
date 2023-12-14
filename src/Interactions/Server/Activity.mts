@@ -1,18 +1,22 @@
-import { Interactions } from '#khaf/Interaction'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import type {
-  APIInvite, RESTPostAPIApplicationCommandsJSONBody,
+  APIInvite,
+  RESTPostAPIApplicationCommandsJSONBody,
   RESTPostAPIChannelInviteJSONBody
 } from 'discord-api-types/v10'
 import {
-  ApplicationCommandOptionType, ChannelType,
-  InviteTargetType, PermissionFlagsBits, Routes
+  ApplicationCommandOptionType,
+  ChannelType,
+  InviteTargetType,
+  PermissionFlagsBits,
+  Routes
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 
 const Activities = {
-  'Poker': '755827207812677713',
+  Poker: '755827207812677713',
   'Betrayal.io': '773336526917861400',
   'YouTube Together': '755600276941176913',
   'Fishington.io': '814288819477020702',
@@ -20,15 +24,15 @@ const Activities = {
   'Doodle Crew': '878067389634314250',
   'Word Snacks': '879863976006127627',
   'Letter Tile': '879863686565621790',
-  'Awkword': '879863881349087252',
+  Awkword: '879863881349087252',
   'Spell Cast': '852509694341283871',
-  'Checkers': '832013003968348200',
+  Checkers: '832013003968348200',
   // 'Sketchy Artist': '879864070101172255',
   'Putt Party': '832012854282158180'
 } as const
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'activity',
       description: 'Play a game in VC!',
@@ -58,7 +62,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
@@ -68,7 +72,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -76,17 +81,14 @@ export class kInteraction extends Interactions {
     const activityId = interaction.options.getString('game', true)
     const channel = interaction.options.getChannel('channel', true, [ChannelType.GuildVoice])
 
-    const invite = await interaction.client.rest.post(
-      Routes.channelInvites(channel.id),
-      {
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          max_age: 86400,
-          target_type: InviteTargetType.EmbeddedApplication,
-          target_application_id: activityId
-        } as RESTPostAPIChannelInviteJSONBody
-      }
-    ) as APIInvite
+    const invite = (await interaction.client.rest.post(Routes.channelInvites(channel.id), {
+      headers: { 'Content-Type': 'application/json' },
+      body: {
+        max_age: 86400,
+        target_type: InviteTargetType.EmbeddedApplication,
+        target_application_id: activityId
+      } as RESTPostAPIChannelInviteJSONBody
+    })) as APIInvite
 
     const hl = hyperlink('Click Here', hideLinkEmbed(`https://discord.gg/${invite.code}`))
 

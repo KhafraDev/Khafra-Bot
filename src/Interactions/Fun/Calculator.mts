@@ -1,18 +1,18 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { evaluatePostfix, infixToPostfix } from '#khaf/utility/ShuntingYard.mjs'
+import { randomUUID } from 'node:crypto'
 import { codeBlock } from '@discordjs/builders'
 import type { APIEmbed, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
-import { randomUUID } from 'node:crypto'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { evaluatePostfix, infixToPostfix } from '#khaf/utility/ShuntingYard.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
 
 const squiggles =
-    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
-    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
+  '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
+  '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
 
 const isNumber = (char: string): boolean => {
   const code = char.charCodeAt(0)
@@ -20,7 +20,7 @@ const isNumber = (char: string): boolean => {
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'calculator',
       description: 'Calculator in Discord!'
@@ -29,7 +29,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void> {
+  async init(interaction: ChatInputCommandInteraction): Promise<void> {
     const id = randomUUID()
     const rows = [
       Components.actionRow([

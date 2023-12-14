@@ -1,27 +1,29 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { apiSchema } from '#khaf/functions/reddit/schema.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { URL } from 'node:url'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { URL } from 'node:url'
 import { request } from 'undici'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { apiSchema } from '#khaf/functions/reddit/schema.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 const PER_COIN = 1.99 / 500
 const isArray = (arr: unknown): arr is unknown[] => Array.isArray(arr)
-const schema = s.string.url({
-  allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
-  allowedProtocols: ['http:', 'https:']
-}).transform((value) => {
-  const url = new URL(value)
-  url.search = ''
-  return url
-})
+const schema = s.string
+  .url({
+    allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
+    allowedProtocols: ['http:', 'https:']
+  })
+  .transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    return url
+  })
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Calculate how much people have spent on Reddit awards for a post.',
@@ -37,7 +39,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
+  async init(_message: Message, { args }: Arguments): Promise<APIEmbed> {
     if (!schema.is(args[0])) {
       return Embed.error('Invalid Reddit post!')
     }
@@ -45,7 +47,7 @@ export class kCommand extends Command {
     const url = schema.parse(args[0])
 
     if (
-    // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
+      // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
       !/^\/r\/[A-z0-9_]{3,21}/.test(url.pathname)
     ) {
       return Embed.error('Not a valid reddit URL!')
@@ -61,19 +63,15 @@ export class kCommand extends Command {
     }
 
     const post = json[0].data.children[0].data
-    const coins = post.all_awardings.reduce(
-      (p, c) => p + c.coin_price * c.count, 0
-    )
-    const price = (coins * PER_COIN).toLocaleString('en-US',
-      { style: 'currency', currency: 'USD' }
-    )
+    const coins = post.all_awardings.reduce((p, c) => p + c.coin_price * c.count, 0)
+    const price = (coins * PER_COIN).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
     const count = post.all_awardings.reduce((p, c) => p + c.count, 0)
 
     return Embed.json({
       color: colors.ok,
       description:
-                `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
-                `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`,
+        `Post has been awarded ${inlineCode(count.toLocaleString())} times, ` +
+        `estimating around ${inlineCode(price)} USD (at a rate of $1.99 per 500 coins).`,
       footer: { text: 'Free awards are counted in the cost!' }
     })
   }

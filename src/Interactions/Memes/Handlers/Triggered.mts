@@ -1,14 +1,14 @@
+import type { Buffer } from 'node:buffer'
+import { readFileSync } from 'node:fs'
+import { buffer } from 'node:stream/consumers'
+import { Image, createCanvas } from '@napi-rs/canvas'
+import { GifEncoder } from '@skyra/gifenc'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { request } from 'undici'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { templates } from '#khaf/utility/Constants/Path.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
 import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
-import { createCanvas, Image } from '@napi-rs/canvas'
-import { GifEncoder } from '@skyra/gifenc'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import type { Buffer } from 'node:buffer'
-import { readFileSync } from 'node:fs'
-import { buffer } from 'node:stream/consumers'
-import { request } from 'undici'
 
 const Dims = {
   Width: 256,
@@ -16,7 +16,7 @@ const Dims = {
   Template: 40
 } as const
 
-const coords =  [
+const coords = [
   [0, 0],
   [-5, -5],
   [-10, -5],
@@ -32,14 +32,14 @@ const lazyImage = once(() => {
 })
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'memes',
       name: 'triggered'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const user = interaction.options.getUser('person', true)
     const avatarURL = user.displayAvatarURL({ extension: 'png', size: 256 })
 
@@ -55,7 +55,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (avatarURL: string): Promise<Buffer> {
+  async image(avatarURL: string): Promise<Buffer> {
     const { body } = await request(avatarURL)
     const b = arrayBufferToBuffer(await body.arrayBuffer())
 
@@ -64,10 +64,7 @@ export class kSubCommand extends InteractionSubCommand {
     avatar.height = Dims.Height
     avatar.src = b
 
-    const encoder = new GifEncoder(Dims.Width, Dims.Height + Dims.Template)
-      .setRepeat(0)
-      .setDelay(50)
-      .setQuality(100)
+    const encoder = new GifEncoder(Dims.Width, Dims.Height + Dims.Template).setRepeat(0).setDelay(50).setQuality(100)
 
     const stream = encoder.createReadStream()
     encoder.start()
@@ -81,13 +78,7 @@ export class kSubCommand extends InteractionSubCommand {
       // and larger than the template, to prevent parts of the gif
       // from being empty.
       ctx.drawImage(avatar, x, y, 300, 300)
-      ctx.drawImage(
-        image,
-        0,
-        Dims.Width,
-        Dims.Height,
-        Dims.Template
-      )
+      ctx.drawImage(image, 0, Dims.Width, Dims.Height, Dims.Template)
       ctx.fillStyle = 'rgba(255, 100, 0, 0.35)'
       ctx.fillRect(0, 0, Dims.Width, Dims.Height)
       const bytes = ctx.getImageData(0, 0, Dims.Width, Dims.Height + Dims.Template).data

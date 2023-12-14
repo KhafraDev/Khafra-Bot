@@ -1,21 +1,21 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { kReminder } from '#khaf/types/KhafraBot.js'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type StringSelectMenuInteraction
 } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { kReminder } from '#khaf/types/KhafraBot.js'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 const embedFromReminder = (
   row: kReminder | undefined,
@@ -30,9 +30,7 @@ const embedFromReminder = (
     return embed
   }
 
-  const endVerb = row.time.getTime() <= Date.now()
-    ? 'Ended'
-    : 'Ends in'
+  const endVerb = row.time.getTime() <= Date.now() ? 'Ended' : 'Ends in'
 
   embed.description = stripIndents`
   📑 Description: ${row.message}
@@ -51,14 +49,14 @@ const embedFromReminder = (
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'reminders',
       name: 'view'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (!interaction.inGuild()) {
       return {
         content: '❌ Unable to use the command.',
@@ -78,22 +76,23 @@ export class kSubCommand extends InteractionSubCommand {
       LIMIT 50
     `
 
-    const { active, inactive, paused } = reminders.reduce((prev, curr) => {
-      if (curr.paused) {
-        prev.paused.push(curr)
-      } else if (curr.didEnd) {
-        prev.inactive.push(curr)
-      } else {
-        prev.active.push(curr)
-      }
+    const { active, inactive, paused } = reminders.reduce(
+      (prev, curr) => {
+        if (curr.paused) {
+          prev.paused.push(curr)
+        } else if (curr.didEnd) {
+          prev.inactive.push(curr)
+        } else {
+          prev.active.push(curr)
+        }
 
-      return prev
-    }, { active: [] as kReminder[], inactive: [] as kReminder[], paused: [] as kReminder[] })
+        return prev
+      },
+      { active: [] as kReminder[], inactive: [] as kReminder[], paused: [] as kReminder[] }
+    )
 
     const message = await interaction.editReply({
-      embeds: [
-        embedFromReminder(reminders[page], interaction, reminders.length, page + 1)
-      ],
+      embeds: [embedFromReminder(reminders[page], interaction, reminders.length, page + 1)],
       components: [
         Components.actionRow([
           Buttons.primary('⏩', `fastforward-${id}`),
@@ -115,14 +114,10 @@ export class kSubCommand extends InteractionSubCommand {
       ]
     })
 
-    const collector = new InteractionCollector<
-      ButtonInteraction | StringSelectMenuInteraction
-    >(interaction.client, {
+    const collector = new InteractionCollector<ButtonInteraction | StringSelectMenuInteraction>(interaction.client, {
       message,
       time: minutes(5),
-      filter: (i) =>
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
@@ -157,14 +152,7 @@ export class kSubCommand extends InteractionSubCommand {
       }
 
       await i.update({
-        embeds: [
-          embedFromReminder(
-            (filter ?? reminders)[page],
-            interaction,
-            (filter ?? reminders).length,
-            page + 1
-          )
-        ]
+        embeds: [embedFromReminder((filter ?? reminders)[page], interaction, (filter ?? reminders).length, page + 1)]
       })
     }
 

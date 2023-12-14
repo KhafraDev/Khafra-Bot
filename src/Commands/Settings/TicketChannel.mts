@@ -1,18 +1,18 @@
+import type { APIEmbed } from 'discord-api-types/v10'
+import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isCategory, isExplicitText } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { GuildPremiumTier, PermissionFlagsBits } from 'discord-api-types/v10'
-import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Select a channel to create private ticket threads on (if the server has enough boosts), ' +
-                'or a category channel to create ticket channels in.',
+          'or a category channel to create ticket channels in.',
         '866022233330810930 [channel id]',
         '#general [channel mention]'
       ],
@@ -27,21 +27,16 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>): Promise<APIEmbed> {
-    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+  async init(message: Message<true>): Promise<APIEmbed> {
+    const member = message.member ?? (await message.guild.members.fetch({ user: message.author }))
 
     if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.Administrator)) {
-      return Embed.perms(
-        message.channel,
-        message.member,
-        PermissionFlagsBits.Administrator
-      )
+      return Embed.perms(message.channel, message.member, PermissionFlagsBits.Administrator)
     }
 
     /** guild can use private threads */
     const privateThreads =
-      message.guild.premiumTier !== GuildPremiumTier.None &&
-      message.guild.premiumTier !== GuildPremiumTier.Tier1
+      message.guild.premiumTier !== GuildPremiumTier.None && message.guild.premiumTier !== GuildPremiumTier.Tier1
 
     const ticketChannel = await getMentions(message, 'channels')
 

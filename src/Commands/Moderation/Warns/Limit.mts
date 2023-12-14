@@ -1,24 +1,19 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { sql } from '#khaf/database/Postgres.mjs'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 
 const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(32767)
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
-      [
-        'Set the amount of warning points it requires before a member is kicked. Max = 32,767.',
-        '100',
-        '20',
-        '32767'
-      ],
+      ['Set the amount of warning points it requires before a member is kicked. Max = 32,767.', '100', '20', '32767'],
       {
         name: 'warnlimit',
         aliases: ['limit', 'setwarn'],
@@ -29,16 +24,12 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
+  async init(message: Message<true>, { args }: Arguments): Promise<APIEmbed> {
     const newAmount = Number(args[0]!)
-    const member = message.member ?? await message.guild.members.fetch({ user: message.author })
+    const member = message.member ?? (await message.guild.members.fetch({ user: message.author }))
 
     if (!message.channel.permissionsFor(member).has(PermissionFlagsBits.Administrator)) {
-      return Embed.perms(
-        message.channel,
-        message.member,
-        PermissionFlagsBits.Administrator
-      )
+      return Embed.perms(message.channel, message.member, PermissionFlagsBits.Administrator)
     } else if (!schema.is(newAmount)) {
       return Embed.error('An invalid number of points was provided, try with a positive whole number instead!')
     }

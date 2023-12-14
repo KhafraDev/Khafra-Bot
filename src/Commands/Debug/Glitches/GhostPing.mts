@@ -1,14 +1,14 @@
-import { Command } from '#khaf/Command'
 import type { Message, MessageReplyOptions } from 'discord.js'
+import { Command } from '#khaf/Command'
 
 const base = `Ghost Pinged! ${'||**⃣**||'.repeat(218)}`
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Ghost ping yourself! Bug [here](https://bugs.discord.com/T812#28651); ' +
-        'message [here](https://paste.ee/p/4IcZq).'
+          'message [here](https://paste.ee/p/4IcZq).'
       ],
       {
         name: 'hacks:ghostping',
@@ -21,7 +21,7 @@ export class kCommand extends Command {
     )
   }
 
-  init (message: Message): MessageReplyOptions {
+  init(message: Message): MessageReplyOptions {
     return { content: `${base} ${message.member}` }
   }
 }

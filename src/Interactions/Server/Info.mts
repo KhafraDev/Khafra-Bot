@@ -1,33 +1,34 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { formatApplicationPresence, formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { bold, inlineCode, italic, quote, time } from '@discordjs/builders'
 import {
-  ApplicationCommandOptionType,
-  InteractionType,
   type APIApplication,
   type APIEmbed,
   type APIEmbedField,
+  ApplicationCommandOptionType,
+  InteractionType,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
   ApplicationFlagsBitField,
-  GuildMember,
-  InteractionCollector, Role,
-  SnowflakeUtil,
-  User,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
-  type InteractionReplyOptions
+  GuildMember,
+  InteractionCollector,
+  type InteractionReplyOptions,
+  Role,
+  SnowflakeUtil,
+  User
 } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
+import { formatApplicationPresence, formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'info',
       description: 'Gets info about a user, guild member, channel, or role.',
@@ -44,19 +45,18 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const option = interaction.options.getMentionable('user-role-or-member', true)
-    const createdAt = 'joined_at' in option
-      ? new Date(option.joined_at)
-      : new Date(SnowflakeUtil.timestampFrom(option.id))
+    const createdAt =
+      'joined_at' in option ? new Date(option.joined_at) : new Date(SnowflakeUtil.timestampFrom(option.id))
 
     if (option instanceof GuildMember || option instanceof User) {
       const isGuildMember = option instanceof GuildMember
 
       const user = 'user' in option ? option.user : option
-      const member = isGuildMember ?
-        option
-        : await interaction.guild?.members.fetch(option.id).catch(() => null) ?? null
+      const member = isGuildMember
+        ? option
+        : (await interaction.guild?.members.fetch(option.id).catch(() => null)) ?? null
 
       let currentPage: 'user' | 'member' = isGuildMember ? 'member' : 'user'
       const flags = user.flags?.bitfield
@@ -83,34 +83,36 @@ export class kInteraction extends Interactions {
         ]
       })
 
-      const memberEmbed = !member ? null : Embed.json({
-        color: colors.ok,
-        author: {
-          name: member.displayName,
-          icon_url: user.displayAvatarURL()
-        },
-        description: `
+      const memberEmbed = !member
+        ? null
+        : Embed.json({
+            color: colors.ok,
+            author: {
+              name: member.displayName,
+              icon_url: user.displayAvatarURL()
+            },
+            description: `
           ${option} on ${italic(member.guild.name)}.
           ${formatPresence(member.presence?.activities)}
           
           Roles:
-          ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
+          ${[...member.roles.cache.filter((r) => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
           `,
-        thumbnail: { url: user.displayAvatarURL() },
-        fields: [
-          { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
-          { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: true },
-          { name: '\u200b', value: '\u200b', inline: true },
-          {
-            name: bold('Boosting Since:'),
-            value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
-            inline: true
-          },
-          { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true },
-          { name: '\u200b', value: '\u200b', inline: true }
-        ],
-        footer: { text: 'For general user info mention a user!' }
-      })
+            thumbnail: { url: user.displayAvatarURL() },
+            fields: [
+              { name: bold('Role Color:'), value: member.displayHexColor, inline: true },
+              { name: bold('Joined Guild:'), value: time(member.joinedAt ?? new Date()), inline: true },
+              { name: '\u200b', value: '\u200b', inline: true },
+              {
+                name: bold('Boosting Since:'),
+                value: member.premiumSince ? time(member.premiumSince) : 'Not boosting',
+                inline: true
+              },
+              { name: bold('Account Created:'), value: time(createdAt, 'f'), inline: true },
+              { name: '\u200b', value: '\u200b', inline: true }
+            ],
+            footer: { text: 'For general user info mention a user!' }
+          })
 
       let rpcInfo: APIApplication | undefined
       const uuid = randomUUID()
@@ -118,28 +120,23 @@ export class kInteraction extends Interactions {
 
       const makeOptions = (isInfo: boolean): InteractionReplyOptions & { fetchReply: true } => {
         const components = Components.actionRow([
-          Buttons.primary(
-            currentPage === 'user' ? 'Member Info' : 'User Info',
-            `info-${uuid}`,
-            { disabled }
-          )
+          Buttons.primary(currentPage === 'user' ? 'Member Info' : 'User Info', `info-${uuid}`, { disabled })
         ])
 
         if (user.bot) {
-          components.components.push(
-            Buttons.approve('Extended Bot Info', `extended-${uuid}`)
-          )
+          components.components.push(Buttons.approve('Extended Bot Info', `extended-${uuid}`))
         }
 
         const embeds: APIEmbed[] = []
 
         if (isInfo) {
-          embeds.push(currentPage === 'user' ? userEmbed : (memberEmbed ?? userEmbed))
+          embeds.push(currentPage === 'user' ? userEmbed : memberEmbed ?? userEmbed)
         } else {
           assert(rpcInfo)
 
-          const flags = new ApplicationFlagsBitField(rpcInfo.flags).toArray()
-            .map(flag => `• Bot ${formatApplicationPresence(flag)}`)
+          const flags = new ApplicationFlagsBitField(rpcInfo.flags)
+            .toArray()
+            .map((flag) => `• Bot ${formatApplicationPresence(flag)}`)
             .join('\n')
 
           embeds.push(
@@ -151,8 +148,8 @@ export class kInteraction extends Interactions {
               },
               thumbnail: rpcInfo.icon
                 ? {
-                  url: `https://cdn.discordapp.com/app-icons/${rpcInfo.id}/${rpcInfo.icon}.png`
-                }
+                    url: `https://cdn.discordapp.com/app-icons/${rpcInfo.id}/${rpcInfo.icon}.png`
+                  }
                 : undefined,
               description: stripIndents`
                 ${quote(rpcInfo.description)}
@@ -187,10 +184,7 @@ export class kInteraction extends Interactions {
         message,
         time: minutes(2),
         max: 10,
-        filter: (i) =>
-          interaction.user.id === i.user.id &&
-          message.id === i.message.id &&
-          i.customId.endsWith(uuid)
+        filter: (i) => interaction.user.id === i.user.id && message.id === i.message.id && i.customId.endsWith(uuid)
       })
 
       for await (const [i] of collector) {
@@ -199,9 +193,7 @@ export class kInteraction extends Interactions {
         if (isInfo) {
           currentPage = currentPage === 'user' && memberEmbed ? 'member' : 'user'
         } else {
-          rpcInfo ??= await interaction.client.rest.get(
-            `/applications/${user.id}/rpc`
-          ) as APIApplication
+          rpcInfo ??= (await interaction.client.rest.get(`/applications/${user.id}/rpc`)) as APIApplication
         }
 
         const { embeds, components } = makeOptions(isInfo)

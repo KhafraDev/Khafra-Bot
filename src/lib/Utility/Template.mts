@@ -4,7 +4,5 @@
 export const stripIndents = (raw: TemplateStringsArray, ...args: unknown[]): string => {
   const r = String.raw({ raw }, ...args)
 
-  return r
-    .replace(/^[^\S\r\n]+/gm, '')
-    .trim()
+  return r.replace(/^[^\S\r\n]+/gm, '').trim()
 }

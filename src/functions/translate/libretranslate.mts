@@ -1,7 +1,7 @@
-import { languageSchema, translatedSchema } from '#khaf/functions/translate/schema.mjs'
-import { once } from '#khaf/utility/Memoize.mjs'
 import { s } from '@sapphire/shapeshift'
 import { FormData, request } from 'undici'
+import { languageSchema, translatedSchema } from '#khaf/functions/translate/schema.mjs'
+import { once } from '#khaf/utility/Memoize.mjs'
 
 interface Options {
   to?: string
@@ -9,16 +9,12 @@ interface Options {
   query: string
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const optionSchema = (langs: Set<string>) => s.object({
-  to: s.string.optional.default('en').transform(
-    (value) => langs.has(value) ? value : 'en'
-  ),
-  from: s.string.optional.default('auto').transform(
-    (value) => langs.has(value) ? value : 'auto'
-  ),
-  query: s.string
-})
+const optionSchema = (langs: Set<string>) =>
+  s.object({
+    to: s.string.optional.default('en').transform((value) => (langs.has(value) ? value : 'en')),
+    from: s.string.optional.default('auto').transform((value) => (langs.has(value) ? value : 'auto')),
+    query: s.string
+  })
 
 export const getLanguages = once(async () => {
   const { body } = await request('https://libretranslate.com/languages')
@@ -28,7 +24,7 @@ export const getLanguages = once(async () => {
     return new Set<string>()
   }
 
-  return new Set(j.map(l => l.code))
+  return new Set(j.map((l) => l.code))
 })
 
 export const translate = async (opts: Options): Promise<string | null> => {
@@ -48,7 +44,7 @@ export const translate = async (opts: Options): Promise<string | null> => {
     headers: {
       'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)',
       // https://github.com/LibreTranslate/LibreTranslate/blob/ffc0c1dcda7ffc6870b3767f83624c32b8525609/app/app.py#L180
-      'Origin': 'https://libretranslate.com'
+      Origin: 'https://libretranslate.com'
     }
   })
 

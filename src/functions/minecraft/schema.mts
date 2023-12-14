@@ -8,10 +8,12 @@ export const nameToUUIDSchema = s.object({
 export const profileSchema = s.object({
   id: s.string,
   name: s.string,
-  properties: s.array(s.object({
-    name: s.string,
-    value: s.string
-  })),
+  properties: s.array(
+    s.object({
+      name: s.string,
+      value: s.string
+    })
+  ),
   legacy: s.boolean.true.optional
 }).ignore
 

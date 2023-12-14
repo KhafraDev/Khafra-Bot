@@ -1,7 +1,7 @@
-import { InteractionAutocomplete } from '#khaf/Interaction'
 import type { APIApplicationCommandOptionChoice } from 'discord-api-types/v10'
 import type { AutocompleteInteraction } from 'discord.js'
 import { request } from 'undici'
+import { InteractionAutocomplete } from '#khaf/Interaction'
 
 interface MinecraftItem {
   id: number
@@ -14,15 +14,15 @@ const items = 'https://raw.githubusercontent.com/PrismarineJS/minecraft-data/mas
 let json: MinecraftItem[] | undefined
 
 export class kAutocomplete extends InteractionAutocomplete {
-  constructor () {
+  constructor() {
     super({
       name: 'item',
       references: 'minecraft'
     })
   }
 
-  async handle (interaction: AutocompleteInteraction): Promise<undefined> {
-    json ??= await (await request(items)).body.json() as MinecraftItem[]
+  async handle(interaction: AutocompleteInteraction): Promise<undefined> {
+    json ??= (await (await request(items)).body.json()) as MinecraftItem[]
 
     const option = interaction.options.getFocused(true)
 

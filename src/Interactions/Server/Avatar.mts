@@ -1,18 +1,18 @@
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { hyperlink } from '@discordjs/builders'
 import type { ImageExtension, ImageSize } from '@discordjs/rest'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 const sizes: ImageSize[] = [16, 32, 64, 128, 256, 512, 1024, 2048, 4096]
 const formats: ImageExtension[] = ['webp', 'png', 'jpg', 'jpeg', 'gif']
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'avatar',
-      description: 'Get someone\'s avatar!',
+      description: "Get someone's avatar!",
       options: [
         {
           type: ApplicationCommandOptionType.User,
@@ -24,13 +24,13 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.String,
           name: 'size',
           description: 'Set the size of the avatar image.',
-          choices: sizes.map(s => ({ name: `${s}`, value: `${s}` }))
+          choices: sizes.map((s) => ({ name: `${s}`, value: `${s}` }))
         },
         {
           type: ApplicationCommandOptionType.String,
           name: 'format',
           description: 'Set the image type of the avatar.',
-          choices: formats.map(f => ({ name: f, value: f }))
+          choices: formats.map((f) => ({ name: f, value: f }))
         }
       ]
     }
@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  init (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+  init(interaction: ChatInputCommandInteraction): InteractionReplyOptions {
     const user = interaction.options.getUser('user', true)
     const size = interaction.options.getString('size') ?? '256'
     const format = interaction.options.getString('format') ?? 'webp'

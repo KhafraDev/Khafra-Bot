@@ -1,16 +1,16 @@
-import type { weatherSchema } from '#khaf/functions/wttr/schema.mjs'
-import { weather } from '#khaf/functions/wttr/weather.mjs'
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { weather as weatherPath } from '#khaf/utility/Constants/Path.mjs'
-import { once } from '#khaf/utility/Memoize.mjs'
-import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas'
+import type { Buffer } from 'node:buffer'
+import { existsSync, readFileSync } from 'node:fs'
+import { Image, type SKRSContext2D, createCanvas } from '@napi-rs/canvas'
 import type { InferType } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import type { Buffer } from 'node:buffer'
-import { existsSync, readFileSync } from 'node:fs'
+import { Interactions } from '#khaf/Interaction'
+import type { weatherSchema } from '#khaf/functions/wttr/schema.mjs'
+import { weather } from '#khaf/functions/wttr/weather.mjs'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { weather as weatherPath } from '#khaf/utility/Constants/Path.mjs'
+import { once } from '#khaf/utility/Memoize.mjs'
 
 const imageColors = {
   darkBlue: '#1c2a4f',
@@ -64,9 +64,7 @@ const iconFromDesc = (desc: string): Image => {
   const path = weatherPath(`${desc.replace(/\s/g, '-')}.png`)
   const image = new Image()
   image.width = image.height = 150
-  image.src = existsSync(path)
-    ? readFileSync(path)
-    : readFileSync(weatherPath('partly-cloudy.png'))
+  image.src = existsSync(path) ? readFileSync(path) : readFileSync(weatherPath('partly-cloudy.png'))
 
   cache.set(desc, image)
   return image
@@ -83,7 +81,7 @@ const lazyImages = once(() => {
 })
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'weather',
       description: 'Gets the weather of a provided location!',
@@ -100,7 +98,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const location = interaction.options.getString('location', true)
     const results = await weather(location)
     const buffer = this.image(results)
@@ -112,50 +110,54 @@ export class kInteraction extends Interactions {
           image: { url: 'attachment://weather.png' }
         })
       ],
-      files: [{
-        attachment: buffer,
-        name: 'weather.png'
-      }]
+      files: [
+        {
+          attachment: buffer,
+          name: 'weather.png'
+        }
+      ]
     }
   }
 
-  image (weather: InferType<typeof weatherSchema>): Buffer {
+  image(weather: InferType<typeof weatherSchema>): Buffer {
     const canvas = createCanvas(520, 320)
     const ctx = canvas.getContext('2d')
 
-    const leftOffset = canvas.width * .05
-    let height = canvas.height * .2
+    const leftOffset = canvas.width * 0.05
+    let height = canvas.height * 0.2
 
     const writeHorizontalDiv = (): void => {
+      height += 12
       ctx.fillStyle = imageColors.horizontalDiv
-      ctx.fillRect(canvas.height * .05, (height += 12), canvas.width * .6, 2)
+      ctx.fillRect(canvas.height * 0.05, height, canvas.width * 0.6, 2)
     }
 
     const writeMiscInfo = (text: string, addHeight: number): void => {
-      ctx.fillText(text, leftOffset, (height += addHeight))
+      height += addHeight
+      ctx.fillText(text, leftOffset, height)
     }
 
     // draw right side background
     ctx.fillStyle = imageColors.darkBlue
-    ctx.fillRect(canvas.width * .66, 0, canvas.width * .34, canvas.height)
+    ctx.fillRect(canvas.width * 0.66, 0, canvas.width * 0.34, canvas.height)
 
     // draw left side background
     ctx.fillStyle = imageColors.navyBlue
-    ctx.fillRect(0, 0, canvas.width * .66, canvas.height)
+    ctx.fillRect(0, 0, canvas.width * 0.66, canvas.height)
 
     const utcTime = new Date(weather.current_condition[0].localObsDateTime)
     const nearest = weather.nearest_area[0]
     const current = weather.current_condition[0]
     const forecast = weather.weather[0]
     const astronomy = forecast.astronomy[0]
-    const hourly = forecast.hourly[(utcTime.getHours() / 3) - 1] ?? forecast.hourly.at(-1)!
+    const hourly = forecast.hourly[utcTime.getHours() / 3 - 1] ?? forecast.hourly.at(-1)!
 
     // draw image on right side
     const image = iconFromDesc(hourly.weatherDesc[0].value.toLowerCase())
     ImageUtil.centerImage(
       ctx,
       image,
-      canvas.width * (.66 + .17), // 2/3rds + half of 1/3rd
+      canvas.width * (0.66 + 0.17), // 2/3rds + half of 1/3rd
       canvas.height / 2,
       image.width,
       image.height
@@ -168,11 +170,9 @@ export class kInteraction extends Interactions {
 
     // "Berlin, Germany"
     // "Albany, New York"
-    const location = country === 'United States of America'
-      ? `${city}, ${state}`
-      : `${city}, ${country}`
+    const location = country === 'United States of America' ? `${city}, ${state}` : `${city}, ${country}`
     ctx.fillStyle = '#fff'
-    ctx.font = `${resizeText(ctx, location, (canvas.width * .56), 50)} Arial`
+    ctx.font = `${resizeText(ctx, location, canvas.width * 0.56, 50)} Arial`
     ctx.fillText(location, leftOffset, height)
 
     // write time the weather was updated at
@@ -181,17 +181,19 @@ export class kInteraction extends Interactions {
     const hour12 = utcTime.toLocaleString('en-US', { hour: 'numeric', hour12: true })
     const time = `${weekdayName}, ${utcTime.getDate()} ${monthName} // ${hour12}`
 
+    height += 25
     ctx.font = '16px Arial'
-    ctx.fillText(time, leftOffset, (height += 25))
+    ctx.fillText(time, leftOffset, height)
 
     // horizontal divider
     writeHorizontalDiv()
 
     // temperature
     const temp = `${Math.round(Number(current.temp_F))}°F`
+    height += 45
     ctx.fillStyle = '#fff'
     ctx.font = '44px Arial'
-    ctx.fillText(temp, leftOffset, (height += 45))
+    ctx.fillText(temp, leftOffset, height)
 
     // feels like
     const feelsLike = `Feels Like: ${Math.round(Number(current.FeelsLikeF))}°F`
@@ -202,16 +204,14 @@ export class kInteraction extends Interactions {
     // high/low
     const low = Math.round(Number(forecast.mintempF))
     const high = Math.round(Number(forecast.maxtempF))
+    height += 25
     ctx.font = '16px Arial'
-    ctx.fillText(`${low}°F / ${high}°F`, leftOffset, (height += 25))
+    ctx.fillText(`${low}°F / ${high}°F`, leftOffset, height)
 
     // description
+    height += 25
     ctx.font = `italic ${ctx.font}`
-    ctx.fillText(
-      hourly.weatherDesc.map(v => v.value).join(', '),
-      leftOffset,
-      (height += 25)
-    )
+    ctx.fillText(hourly.weatherDesc.map((v) => v.value).join(', '), leftOffset, height)
 
     // divider
     writeHorizontalDiv()
@@ -225,7 +225,7 @@ export class kInteraction extends Interactions {
 
     // sunset & sunrise
     // (width * .6 - width(time) - 44)
-    const x = (canvas.width * .6) - ctx.measureText('00:00 pm').width
+    const x = canvas.width * 0.6 - ctx.measureText('00:00 pm').width
 
     const { sunrise, sunset } = lazyImages()
 

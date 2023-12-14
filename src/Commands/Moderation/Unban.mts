@@ -1,14 +1,14 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
+import { parseArgs } from 'node:util'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { parseArgs } from 'node:util'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Unban a user from the guild.',
@@ -26,7 +26,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
+  async init(message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
     const user = await getMentions(message, 'users', content)
     const { values: cli } = parseArgs({
       args,
@@ -39,8 +39,7 @@ export class kCommand extends Command {
       }
     })
 
-    if (!user)
-      return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕')
+    if (!user) return Embed.error("Invalid ID or the user couldn't be fetched, sorry! 😕")
 
     const reason = cli.reason ?? args.slice(1).join(' ')
 

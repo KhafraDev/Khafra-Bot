@@ -1,12 +1,12 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import type { Event } from '#khaf/Event'
-import { loggerUtility } from '#khaf/structures/Logger.mjs'
 import { Events, type Guild } from 'discord.js'
+import type { Event } from '#khaf/Event'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { loggerUtility } from '#khaf/structures/Logger.mjs'
 
 export class kEvent implements Event {
   name = Events.GuildDelete as const
 
-  async init (guild: Guild): Promise<void> {
+  async init(guild: Guild): Promise<void> {
     if (!guild.available) return
 
     await sql`

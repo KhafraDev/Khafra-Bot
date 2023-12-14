@@ -1,26 +1,21 @@
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold, hyperlink, inlineCode, italic, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Get info about the server!'
-      ],
-      {
-        name: 'server',
-        folder: 'Server',
-        aliases: ['serverinfo', 'guildinfo', 'guild'],
-        args: [0, 0],
-        guildOnly: true
-      }
-    )
+  constructor() {
+    super(['Get info about the server!'], {
+      name: 'server',
+      folder: 'Server',
+      aliases: ['serverinfo', 'guildinfo', 'guild'],
+      args: [0, 0],
+      guildOnly: true
+    })
   }
 
-  init (message: Message<true>): APIEmbed {
+  init(message: Message<true>): APIEmbed {
     const locale = message.guild.preferredLocale
 
     return Embed.json({

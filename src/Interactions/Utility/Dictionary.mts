@@ -1,15 +1,15 @@
-import { Interactions } from '#khaf/Interaction'
-import { owlbotio } from '#khaf/utility/commands/OwlBotIO'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
 import { bold, italic } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { owlbotio } from '#khaf/utility/commands/OwlBotIO'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'dictionary',
       description: 'Gets the definition of a word or phrase!',
@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const phrase = interaction.options.getString('word', true)
     const word = await owlbotio(phrase)
 
@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     }
 
     const definitions = word.definitions
-      .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
+      .map((w) => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
       .join('\n')
       .slice(0, maxDescriptionLength - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
 
@@ -48,10 +48,7 @@ export class kInteraction extends Interactions {
             ${definitions}`,
       components: [
         Components.actionRow([
-          Buttons.link(
-            'Go to Dictionary',
-            `https://www.dictionary.com/browse/${encodeURIComponent(phrase)}`
-          )
+          Buttons.link('Go to Dictionary', `https://www.dictionary.com/browse/${encodeURIComponent(phrase)}`)
         ])
       ]
     }

@@ -1,15 +1,10 @@
+import { join } from 'node:path'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import { type Message, type PermissionResolvable, PermissionsBitField, type Snowflake } from 'discord.js'
 import { Cooldown } from '#khaf/cooldown/CommandCooldown.mjs'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
-import {
-  PermissionsBitField,
-  type Message,
-  type PermissionResolvable,
-  type Snowflake
-} from 'discord.js'
-import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
@@ -43,25 +38,19 @@ type HandlerReturn =
   | string
   | import('discord-api-types/v10').APIEmbed
   | import('discord.js').MessageReplyOptions
+  // biome-ignore lint/suspicious/noConfusingVoidType:
   | void
   | null
 
 /** Permissions required to use a command */
-const defaultPerms = [
-  PermissionFlagsBits.ViewChannel,
-  PermissionFlagsBits.SendMessages,
-  PermissionFlagsBits.EmbedLinks
-]
+const defaultPerms = [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks]
 
 export abstract class Command implements ICommand {
   #perms = PermissionsBitField.Default
 
   public readonly rateLimit: Cooldown
 
-  public constructor (
-    public readonly help: string[],
-    public readonly settings: ICommand['settings']
-  ) {
+  public constructor(public readonly help: string[], public readonly settings: ICommand['settings']) {
     this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
 
     if (this.settings.permissions) {
@@ -69,16 +58,17 @@ export abstract class Command implements ICommand {
     }
   }
 
-  public abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
-    Promise<HandlerReturn> | HandlerReturn
+  public abstract init(
+    message?: Message,
+    args?: Arguments,
+    settings?: kGuild | Partial<kGuild>
+  ): Promise<HandlerReturn> | HandlerReturn
 
-  public get permissions (): bigint[] {
+  public get permissions(): bigint[] {
     return [...defaultPerms, this.#perms]
   }
 
-  public static isBotOwner (id: Snowflake): boolean {
-    return Array.isArray(config.botOwner)
-      ? config.botOwner.includes(id)
-      : config.botOwner === id
+  public static isBotOwner(id: Snowflake): boolean {
+    return Array.isArray(config.botOwner) ? config.botOwner.includes(id) : config.botOwner === id
   }
 }

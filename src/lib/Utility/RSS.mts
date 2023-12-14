@@ -1,38 +1,38 @@
+import { join } from 'node:path'
+import { setTimeout as delay } from 'node:timers/promises'
+import { type X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser'
+import { type Dispatcher, request } from 'undici'
 import { logger } from '#khaf/structures/Logger.mjs'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { isRedirect } from '#khaf/utility/util.mjs'
-import { XMLParser, XMLValidator, type X2jOptionsOptional } from 'fast-xml-parser'
-import { join } from 'node:path'
-import { setTimeout as delay } from 'node:timers/promises'
-import { request, type Dispatcher } from 'undici'
 
 const config = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
 interface RSSJSON<T> {
-    rss: {
-        channel?: {
-            title: string
-            link: string
-            description: string
-            ttl?: number
-            'sy:updatePeriod': number
-            'sy:updateFrequency': 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly'
-            item: T[] | T
-            [key: string]: unknown
-        }
+  rss: {
+    channel?: {
+      title: string
+      link: string
+      description: string
+      ttl?: number
+      'sy:updatePeriod': number
+      'sy:updateFrequency': 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+      item: T[] | T
+      [key: string]: unknown
     }
+  }
 }
 
 interface AtomJSON<T> {
-    feed: {
-        id: string
-        title: string
-        updated: string
-        entry: T[] | T
-        [key: string]: unknown
-    }
+  feed: {
+    id: string
+    title: string
+    updated: string
+    entry: T[] | T
+    [key: string]: unknown
+  }
 }
 
 export class RSSReader<T> {
@@ -47,7 +47,7 @@ export class RSSReader<T> {
    * @param loadFunction function to run after RSS feed has been fetched and parsed.
    * @param options RSS reader options
    */
-  constructor (url: string, options: X2jOptionsOptional = {}) {
+  constructor(url: string, options: X2jOptionsOptional = {}) {
     this.#url = url
     this.#parser = new XMLParser(options)
     this.#options = options
@@ -57,7 +57,7 @@ export class RSSReader<T> {
    * Very rarely, a network/server side error will occur. This function retries requests
    * up to 10 times before giving up.
    */
-  async forceFetch (): Promise<Dispatcher.ResponseData | undefined> {
+  async forceFetch(): Promise<Dispatcher.ResponseData | undefined> {
     for (let i = 0; i < 10; i++) {
       let ac: AbortController | undefined = new AbortController()
       const timeout = setTimeout(() => ac?.abort(), seconds(15)).unref()
@@ -82,7 +82,7 @@ export class RSSReader<T> {
     }
   }
 
-  async parse (): Promise<void> {
+  async parse(): Promise<void> {
     const r = await this.forceFetch()
     const xml = await r?.body.text()
 
@@ -109,9 +109,10 @@ export class RSSReader<T> {
     // https://www.rssboard.org/rss-draft-1#element-channel-ttl
     // https://web.resource.org/rss/1.0/modules/syndication/
 
-    const i = 'rss' in j
-      ? j.rss.channel?.item // RSS feed
-      : j.feed.entry      // Atom feed
+    const i =
+      'rss' in j
+        ? j.rss.channel?.item // RSS feed
+        : j.feed.entry // Atom feed
 
     if (Array.isArray(i)) {
       for (const item of i.slice(0, this.save)) {

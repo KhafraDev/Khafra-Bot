@@ -1,16 +1,16 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { chunkSafe } from '#khaf/utility/util.mjs'
+import { randomUUID } from 'node:crypto'
+import { URL } from 'node:url'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
-import { randomUUID } from 'node:crypto'
-import { URL } from 'node:url'
 import { parse } from 'twemoji-parser'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
+import { chunkSafe } from '#khaf/utility/util.mjs'
 
 const Subcommands = {
   LIST: 'list',
@@ -28,13 +28,16 @@ interface EmojiKitchen {
   results: {
     id: string
     title: string
-    media_formats: Record<string, {
-      url: string
-      duration: number
-      preview: string
-      dims: number[]
-      size: number
-    }>
+    media_formats: Record<
+      string,
+      {
+        url: string
+        duration: number
+        preview: string
+        dims: number[]
+        size: number
+      }
+    >
     created: number
     content_description: string
     h1_title: string
@@ -51,7 +54,7 @@ const supportedListURL = 'https://raw.githubusercontent.com/UCYT5040/Google-Stic
 const list: string[] = []
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'emojimix',
       description: 'Mix two emojis together!',
@@ -86,7 +89,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const subcommand = interaction.options.getSubcommand(true)
 
     if (subcommand === Subcommands.LIST) {
@@ -95,14 +98,12 @@ export class kInteraction extends Interactions {
         const listJoined = await body.text()
         const emojis = parse(listJoined)
 
-        list.push(...emojis.map(e => e.text))
+        list.push(...emojis.map((e) => e.text))
       }
 
       let page = 0
       const uuid = randomUUID()
-      const pages = chunkSafe(list, 195).map(
-        items => Embed.ok(items.join(' '))
-      )
+      const pages = chunkSafe(list, 195).map((items) => Embed.ok(items.join(' ')))
 
       const i = await interaction.reply({
         embeds: [pages[page]],
@@ -121,8 +122,7 @@ export class kInteraction extends Interactions {
         message: i,
         idle: seconds(30),
         filter: (i) =>
-          i.user.id === interaction.user.id &&
-          i.customId === `${uuid}-next` ||
+          (i.user.id === interaction.user.id && i.customId === `${uuid}-next`) ||
           i.customId === `${uuid}-prev` ||
           i.customId === `${uuid}-trash`
       })
@@ -142,17 +142,14 @@ export class kInteraction extends Interactions {
 
       const last = collector.collected.last()
 
-      if (
-        collector.collected.size !== 0 &&
-        last?.replied === false
-      ) {
-        return void await last.update({
+      if (collector.collected.size !== 0 && last?.replied === false) {
+        return void (await last.update({
           components: disableAll(i)
-        })
+        }))
       } else {
-        return void await interaction.editReply({
+        return void (await interaction.editReply({
           components: disableAll(i)
-        })
+        }))
       }
     }
 
@@ -163,12 +160,12 @@ export class kInteraction extends Interactions {
     const oneParsed = parse(emojiOne)
     const twoParsed = parse(emojiTwo)
 
-    if (oneParsed.map(p => p.text).join('') !== emojiOne) {
+    if (oneParsed.map((p) => p.text).join('') !== emojiOne) {
       return {
         content: '❌ First emoji could not be parsed correctly!',
         ephemeral: true
       }
-    } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
+    } else if (twoParsed.map((p) => p.text).join('') !== emojiTwo) {
       return {
         content: '❌ Second emoji could not be parsed correctly!',
         ephemeral: true
@@ -188,7 +185,7 @@ export class kInteraction extends Interactions {
     api.searchParams.append('q', query)
 
     const { body } = await request(api)
-    const j = await body.json() as EmojiKitchen
+    const j = (await body.json()) as EmojiKitchen
 
     if (j.results.length === 0) {
       return {

@@ -1,18 +1,18 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { logger } from '#khaf/structures/Logger.mjs'
-import { Timer } from '#khaf/Timer'
-import type { kReminder } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { seconds } from '#khaf/utility/ms.mjs'
 import { time } from '@discordjs/builders'
 import type { Client } from 'discord.js'
+import { Timer } from '#khaf/Timer'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { logger } from '#khaf/structures/Logger.mjs'
+import type { kReminder } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
 
 export class RemindersTimer extends Timer {
-  constructor (client: Client) {
+  constructor(client: Client) {
     super({ interval: seconds(30), client })
   }
 
-  async setInterval (): Promise<void> {
+  async setInterval(): Promise<void> {
     for await (const _ of this.yieldEvery()) {
       // We only want to set didEnd when the reminder is not set to repeat.
       // But we also want to select all reminders that haven't ended.
@@ -39,7 +39,7 @@ export class RemindersTimer extends Timer {
     }
   }
 
-  async action (reminder: kReminder): Promise<void> {
+  async action(reminder: kReminder): Promise<void> {
     try {
       const user = await this.options.client.users.fetch(reminder.userId)
 

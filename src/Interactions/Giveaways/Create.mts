@@ -1,34 +1,31 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { type Giveaway } from '#khaf/types/KhafraBot.js'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { parseStrToMs, seconds, weeks } from '#khaf/utility/ms.mjs'
-import { plural } from '#khaf/utility/String.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
-import { PermissionFlagsBits, ChannelType } from 'discord-api-types/v10'
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { type Giveaway } from '#khaf/types/KhafraBot.js'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { plural } from '#khaf/utility/String.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { parseStrToMs, seconds, weeks } from '#khaf/utility/ms.mjs'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
 const schema = s.number.greaterThanOrEqual(seconds(60)).lessThanOrEqual(weeks(52))
 
-const perms =
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.SendMessages | PermissionFlagsBits.ViewChannel | PermissionFlagsBits.EmbedLinks
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'giveaway',
       name: 'create'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const channel = interaction.options.getChannel('channel', true, [
       ChannelType.GuildText,
       ChannelType.GuildAnnouncement
@@ -47,12 +44,10 @@ export class kSubCommand extends InteractionSubCommand {
         content: '❌ You do not have permission to use this command!',
         ephemeral: true
       }
-    } else if (
-      !interaction.guild?.members.me ||
-      !channel.permissionsFor(interaction.guild.members.me).has(perms)
-    ) {
+    } else if (!interaction.guild?.members.me || !channel.permissionsFor(interaction.guild.members.me).has(perms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -103,11 +98,7 @@ export class kSubCommand extends InteractionSubCommand {
         • ${winners} winner${plural(winners)}
         • Ends ${time(endsDate)}
         • ID ${inlineCode(rows[0].id)}`,
-      components: [
-        Components.actionRow([
-          Buttons.link('Message Link', sent.url)
-        ])
-      ]
+      components: [Components.actionRow([Buttons.link('Message Link', sent.url)])]
     }
   }
 }

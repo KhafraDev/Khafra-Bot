@@ -1,20 +1,20 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
-import { days, parseStrToMs } from '#khaf/utility/ms.mjs'
-import { hierarchy } from '#khaf/utility/Permissions.mjs'
+import { parseArgs } from 'node:util'
 import { inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { parseArgs } from 'node:util'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
+import { hierarchy } from '#khaf/utility/Permissions.mjs'
+import { days, parseStrToMs } from '#khaf/utility/ms.mjs'
 
 const schema = s.number.int.greaterThanOrEqual(0).lessThanOrEqual(7)
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Ban a member from the guild.',
@@ -36,7 +36,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
+  async init(message: Message<true>, { args, content }: Arguments): Promise<APIEmbed> {
     // the user might not be in the guild, but we still need to ban them
     // so we fetch their user object rather than a possibly non-existent member
     const user = await getMentions(message, 'users', content)
@@ -69,7 +69,8 @@ export class kCommand extends Command {
     })
 
     // days of messages to clear
-    let clear = 7, usedMs = false
+    let clear = 7
+    let usedMs = false
 
     if (cli.days !== undefined || cli.time !== undefined) {
       const time = Number(cli.days ?? cli.time)
@@ -96,7 +97,7 @@ export class kCommand extends Command {
       // ban @user reason here -> reason here
       reason = args.slice(2).join(' ')
     } else {
-      const idx = args.findIndex(a => a.startsWith('--time') || a.startsWith('--days'))
+      const idx = args.findIndex((a) => a.startsWith('--time') || a.startsWith('--days'))
       let r = ''
 
       if (args.slice(idx + 2).length === 0 && idx !== -1) {

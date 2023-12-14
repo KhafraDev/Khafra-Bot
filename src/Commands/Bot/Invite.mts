@@ -1,8 +1,8 @@
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold } from '@discordjs/builders'
-import { OAuth2Scopes, PermissionFlagsBits, type APIEmbed } from 'discord-api-types/v10'
+import { type APIEmbed, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]
 const permissions = [
@@ -23,10 +23,8 @@ const permissions = [
 ]
 
 export class kCommand extends Command {
-  constructor () {
-    super([
-      'Get the invite links for the bot! :)'
-    ], {
+  constructor() {
+    super(['Get the invite links for the bot! :)'], {
       name: 'invite',
       folder: 'Bot',
       args: [0, 0],
@@ -35,7 +33,7 @@ export class kCommand extends Command {
     })
   }
 
-  init (message: Message): APIEmbed {
+  init(message: Message): APIEmbed {
     const everything = message.client.generateInvite({ scopes, permissions })
     const slashCommands = message.client.generateInvite({ scopes, permissions: 0n })
 

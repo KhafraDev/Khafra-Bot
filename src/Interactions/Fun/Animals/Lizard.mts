@@ -1,19 +1,19 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
 import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
 
 const schema = s.object({ url: s.string })
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'animal',
       name: 'lizard'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     await interaction.deferReply()
 
     const { body, statusCode } = await request('https://nekos.life/api/v2/img/lizard')
@@ -22,7 +22,7 @@ export class kSubCommand extends InteractionSubCommand {
       await body.dump()
 
       return {
-        content: '🦎 Couldn\'t get a picture of a random lizard!',
+        content: "🦎 Couldn't get a picture of a random lizard!",
         ephemeral: true
       }
     }
@@ -31,7 +31,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     if (!schema.is(j)) {
       return {
-        content: '🦎 Couldn\'t get a picture of a random lizard!',
+        content: "🦎 Couldn't get a picture of a random lizard!",
         ephemeral: true
       }
     }

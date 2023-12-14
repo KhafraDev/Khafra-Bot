@@ -1,11 +1,5 @@
-import { search } from '#khaf/functions/wikipedia/search.mjs'
-import { extractArticleText } from '#khaf/functions/wikipedia/source.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { ellipsis, plural } from '#khaf/utility/String.mjs'
-import { splitEvery } from '#khaf/utility/util.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { hideLinkEmbed } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -13,10 +7,16 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ButtonInteraction, InteractionEditReplyOptions, StringSelectMenuInteraction } from 'discord.js'
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import { type ChatInputCommandInteraction, InteractionCollector, type InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { search } from '#khaf/functions/wikipedia/search.mjs'
+import { extractArticleText } from '#khaf/functions/wikipedia/source.mjs'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { ellipsis, plural } from '#khaf/utility/String.mjs'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
+import { splitEvery } from '#khaf/utility/util.mjs'
 
 interface WikiCache {
   text: string[]
@@ -29,7 +29,7 @@ interface WikiCache {
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'wikipedia',
       description: 'Retrieves the content of a Wikipedia article.',
@@ -37,7 +37,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'article',
-          description: 'the article\'s title',
+          description: "the article's title",
           required: true
         }
       ]
@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const content = interaction.options.getString('article', true)
     const wiki = await search(content)
     const id = randomUUID()
@@ -63,46 +63,33 @@ export class kInteraction extends Interactions {
         Components.selectMenu({
           custom_id: `wikipedia-${id}`,
           placeholder: 'Which article summary would you like to get?',
-          options: wiki.pages.map(w => ({
+          options: wiki.pages.map((w) => ({
             label: ellipsis(w.title, 25),
             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
             value: `${w.id}`
           }))
         })
       ]),
-      buttons: Components.actionRow([
-        Buttons.approve('Next', `next-${id}`),
-        Buttons.primary('Back', `back-${id}`)
-      ]),
-      get all () {
-        return [
-          this.buttons,
-          this.selectMenu
-        ]
+      buttons: Components.actionRow([Buttons.approve('Next', `next-${id}`), Buttons.primary('Back', `back-${id}`)]),
+      get all() {
+        return [this.buttons, this.selectMenu]
       }
     } as const
 
     const m = await interaction.editReply({
       content: `${wiki.pages.length} result${plural(wiki.pages.length)} found!`,
-      embeds: [
-        Embed.ok('Choose an article from the dropdown below!')
-      ],
+      embeds: [Embed.ok('Choose an article from the dropdown below!')],
       components: [components.selectMenu]
     })
 
     let page = 0
     const cache = new Map<string, WikiCache>()
 
-    const c = new InteractionCollector<
-      StringSelectMenuInteraction | ButtonInteraction
-    >(interaction.client, {
+    const c = new InteractionCollector<StringSelectMenuInteraction | ButtonInteraction>(interaction.client, {
       interactionType: InteractionType.MessageComponent,
       message: m,
       time: minutes(10),
-      filter: (i) =>
-        i.user.id === interaction.user.id &&
-        i.message.id === m.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.user.id === interaction.user.id && i.message.id === m.id && i.customId.endsWith(id)
     })
 
     let article!: WikiCache
@@ -120,7 +107,7 @@ export class kInteraction extends Interactions {
           const text = article.extract.split(/\n{3,}/g)
           const parts: string[] = []
 
-          for (const part of text.map(p => splitEvery(p, maxDescriptionLength)).flat()) {
+          for (const part of text.flatMap((p) => splitEvery(p, maxDescriptionLength))) {
             if (parts.length === 0) {
               parts.push(part)
               continue

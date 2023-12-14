@@ -1,7 +1,7 @@
-import { once } from '#khaf/utility/Memoize.mjs'
-import { s, type InferType } from '@sapphire/shapeshift'
 import { stringify } from 'node:querystring'
+import { type InferType, s } from '@sapphire/shapeshift'
 import { Client } from 'undici'
+import { once } from '#khaf/utility/Memoize.mjs'
 
 const schema = s.object({
   id: s.string,
@@ -79,7 +79,7 @@ export const CoinGecko = {
     return list
   }),
 
-  async get (query: string): Promise<InferType<typeof schema> | null> {
+  async get(query: string): Promise<InferType<typeof schema> | null> {
     const list = await CoinGecko.list()
 
     let cryptoId = ''

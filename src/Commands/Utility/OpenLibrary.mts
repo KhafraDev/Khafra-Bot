@@ -1,17 +1,17 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { openLibrary } from '#khaf/utility/commands/Openlibrary'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold, hyperlink, inlineCode, italic } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { openLibrary } from '#khaf/utility/commands/Openlibrary'
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Open Library is an open, editable library catalog, building towards a web page for ' +
-        'every book ever published.\n\nhttps://openlibrary.org/about',
+          'every book ever published.\n\nhttps://openlibrary.org/about',
         'The Great Gatsby'
       ],
       {
@@ -23,7 +23,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
+  async init(_message: Message, { args }: Arguments): Promise<APIEmbed> {
     const books = await openLibrary(args.join(' '))
 
     if (books.numFound === 0 || books.docs.length === 0) {

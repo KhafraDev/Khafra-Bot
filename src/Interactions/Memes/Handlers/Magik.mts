@@ -1,34 +1,34 @@
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
+import { Buffer } from 'node:buffer'
 import type { ImageURLOptions } from '@discordjs/rest'
 import { Magik } from '@khaf/magik'
 import { Transformer } from '@napi-rs/image'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { Buffer } from 'node:buffer'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 const options: ImageURLOptions = { extension: 'png', size: 256 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'memes',
       name: 'magik'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const attachment = interaction.options.getAttachment('image')
     const option =
-			attachment?.proxyURL ??
-			interaction.options.getUser('person')?.displayAvatarURL(options) ??
-			interaction.user.displayAvatarURL(options)
+      attachment?.proxyURL ??
+      interaction.options.getUser('person')?.displayAvatarURL(options) ??
+      interaction.user.displayAvatarURL(options)
 
     if (!ImageUtil.isImage(option, attachment?.contentType)) {
       return {
-        content: 'What am I supposed to do with that? That\'s not an image!',
+        content: "What am I supposed to do with that? That's not an image!",
         ephemeral: true
       }
     }
@@ -49,7 +49,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (avatarURL: string): Promise<Uint8ClampedArray | string> {
+  async image(avatarURL: string): Promise<Uint8ClampedArray | string> {
     const { body } = await request(avatarURL)
     const buffer = arrayBufferToBuffer(await body.arrayBuffer())
 

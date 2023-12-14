@@ -1,24 +1,24 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { plural } from '#khaf/utility/String.mjs'
 import { time } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { plural } from '#khaf/utility/String.mjs'
 
 interface Insights {
-    k_left: number
-    k_joined: number
+  k_left: number
+  k_joined: number
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'insights',
       name: 'today'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const id = interaction.guildId ?? interaction.guild?.id
 
     if (!id) {
@@ -42,9 +42,7 @@ export class kSubCommand extends InteractionSubCommand {
       ;
     `
 
-    const { k_joined = 0, k_left = 0 } = rows.length !== 0
-      ? rows[0]
-      : {}
+    const { k_joined = 0, k_left = 0 } = rows.length !== 0 ? rows[0] : {}
     const locale = interaction.guild?.preferredLocale ?? 'en-US'
     const embed = Embed.ok(`
     ✅ Here are the insights for today, as of ${time(new Date(), 'f')}!

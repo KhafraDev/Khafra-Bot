@@ -1,23 +1,23 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { Giveaway } from '#khaf/types/KhafraBot.js'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
-  channelMention,
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
-  type StringSelectMenuInteraction
+  type StringSelectMenuInteraction,
+  channelMention
 } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { Giveaway } from '#khaf/types/KhafraBot.js'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 type GiveawayRow = Pick<Giveaway, 'id' | 'enddate' | 'prize' | 'winners' | 'didEnd' | 'channelid' | 'messageid'>
 
@@ -63,14 +63,14 @@ const embedFromGiveaway = async (
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'giveaway',
       name: 'view'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (!interaction.inGuild()) {
       return {
         content: '❌ Unable to use the command.',
@@ -92,20 +92,21 @@ export class kSubCommand extends InteractionSubCommand {
       LIMIT 50
     `
 
-    const { active, inactive } = giveaways.reduce((prev, curr) => {
-      if (curr.didEnd) {
-        prev.inactive.push(curr)
-      } else {
-        prev.active.push(curr)
-      }
+    const { active, inactive } = giveaways.reduce(
+      (prev, curr) => {
+        if (curr.didEnd) {
+          prev.inactive.push(curr)
+        } else {
+          prev.active.push(curr)
+        }
 
-      return prev
-    }, { active: [] as GiveawayRow[], inactive: [] as GiveawayRow[] })
+        return prev
+      },
+      { active: [] as GiveawayRow[], inactive: [] as GiveawayRow[] }
+    )
 
     const message = await interaction.editReply({
-      embeds: [
-        await embedFromGiveaway(giveaways[page], interaction, giveaways.length, page + 1, cache)
-      ],
+      embeds: [await embedFromGiveaway(giveaways[page], interaction, giveaways.length, page + 1, cache)],
       components: [
         Components.actionRow([
           Buttons.primary('⏩', `fastforward-${id}`),
@@ -126,14 +127,10 @@ export class kSubCommand extends InteractionSubCommand {
       ]
     })
 
-    const collector = new InteractionCollector<
-      ButtonInteraction | StringSelectMenuInteraction
-    >(interaction.client, {
+    const collector = new InteractionCollector<ButtonInteraction | StringSelectMenuInteraction>(interaction.client, {
       message,
       time: minutes(5),
-      filter: (i) =>
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

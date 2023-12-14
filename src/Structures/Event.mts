@@ -9,5 +9,5 @@ type EventArguments<T> = T extends keyof ClientEvents
 
 export interface Event<T = keyof ClientEvents | keyof RestEvents> {
   name: T
-  init (...args: EventArguments<T>): Promise<void>
+  init(...args: EventArguments<T>): Promise<void>
 }

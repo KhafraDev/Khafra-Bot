@@ -1,10 +1,10 @@
+import { format } from 'node:util'
+import { type InferType, s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
+import { request } from 'undici'
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
-import { s, type InferType } from '@sapphire/shapeshift'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { format } from 'node:util'
-import { request } from 'undici'
 
 const top = 'https://hacker-news.firebaseio.com/v0/topstories.json'
 const art = 'https://hacker-news.firebaseio.com/v0/item/%d.json'
@@ -66,21 +66,16 @@ export const fetchHN = async (): Promise<typeof cache> => {
 }
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Fetch top articles from https://news.ycombinator.com/'
-      ],
-      {
-        name: 'hackernews',
-        folder: 'News',
-        args: [0, 0],
-        aliases: ['hn']
-      }
-    )
+  constructor() {
+    super(['Fetch top articles from https://news.ycombinator.com/'], {
+      name: 'hackernews',
+      folder: 'News',
+      args: [0, 0],
+      aliases: ['hn']
+    })
   }
 
-  async init (): Promise<APIEmbed> {
+  async init(): Promise<APIEmbed> {
     await fetchHN()
 
     if (cache.length === 0) {
@@ -88,9 +83,7 @@ export class kCommand extends Command {
     }
 
     const stories = [...cache.values()]
-    const list = stories
-      .map((s, i) => `[${i+1}]: [${s.title}](${s.url})`)
-      .join('\n')
+    const list = stories.map((s, i) => `[${i + 1}]: [${s.title}](${s.url})`).join('\n')
 
     return Embed.ok(list)
   }

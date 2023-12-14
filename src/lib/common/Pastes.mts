@@ -3,37 +3,37 @@ import { request } from 'undici'
 export type PasteFn = (text: string) => Promise<string | undefined>
 
 export interface HasteServer {
-    key: string
+  key: string
 }
 
 export interface ISourcebin {
-    key: string
-    languages: string[]
+  key: string
+  languages: string[]
 }
 
 export interface PasteGGSuccess {
-    status: 'success'
-    result: {
-        id: string
-        name: string
-        description: string
-        visibility: string
-        created_at: string
-        updated_at: string
-        expires?: string
-        files: {
-            highlight_language: string | null
-            id: string
-            name: string
-        }[]
-        deletion_key?: string
-    }
+  status: 'success'
+  result: {
+    id: string
+    name: string
+    description: string
+    visibility: string
+    created_at: string
+    updated_at: string
+    expires?: string
+    files: {
+      highlight_language: string | null
+      id: string
+      name: string
+    }[]
+    deletion_key?: string
+  }
 }
 
 export interface PasteGGError {
-    status: 'error'
-    error: string
-    message?: string
+  status: 'error'
+  error: string
+  message?: string
 }
 
 /**
@@ -68,7 +68,7 @@ const sourcebin = async (text: string): Promise<string | undefined> => {
   })
 
   if (statusCode === 200) {
-    const j = await body.json() as ISourcebin
+    const j = (await body.json()) as ISourcebin
     return `https://sourceb.in/${j.key}`
   }
 
@@ -86,7 +86,7 @@ const nomsy = async (text: string): Promise<string | undefined> => {
   })
 
   if (statusCode === 200) {
-    const j = await body.json() as HasteServer
+    const j = (await body.json()) as HasteServer
     return `https://paste.nomsy.net/${j.key}`
   }
 
@@ -108,9 +108,8 @@ const pastegg = async (text: string): Promise<string | undefined> => {
   })
 
   if (statusCode === 200) {
-    const j = await body.json() as PasteGGError | PasteGGSuccess
-    if (j.status === 'success')
-      return `https://paste.gg/anonymous/${j.result.id}`
+    const j = (await body.json()) as PasteGGError | PasteGGSuccess
+    if (j.status === 'success') return `https://paste.gg/anonymous/${j.result.id}`
   } else {
     await body.dump()
   }

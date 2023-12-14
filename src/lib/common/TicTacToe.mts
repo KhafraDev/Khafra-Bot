@@ -9,20 +9,18 @@ export class TicTacToe {
   public board: Turn[] = Array<null>(9).fill(null)
   public turn: Turn = 'X'
 
-  public constructor (difficulty: Difficulty) {
+  public constructor(difficulty: Difficulty) {
     this.#difficulty = difficulty
   }
 
   /** Go at a given position (0-8) */
   public go(at: number): true | Turn {
-    if (this.winner())
-      return this.turn
+    if (this.winner()) return this.turn
 
     this.board[at] = this.turn
     this.#turns++
 
-    if (this.winner())
-      return this.turn
+    if (this.winner()) return this.turn
 
     this.setTurn()
     return true
@@ -32,11 +30,16 @@ export class TicTacToe {
   public botGo(): true | undefined | Turn {
     const lines = [
       // horizontal
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
       // vertical
-      [0, 3, 6], [4, 7, 1], [2, 5, 8],
+      [0, 3, 6],
+      [4, 7, 1],
+      [2, 5, 8],
       // diagonal
-      [0, 4, 8], [2, 4, 6]
+      [0, 4, 8],
+      [2, 4, 6]
     ]
 
     if (this.#difficulty !== 'easy') {
@@ -48,11 +51,7 @@ export class TicTacToe {
         const atC = this.board[c]
 
         // If two spots in the same row are empty, ignore it.
-        if (
-          atA === null && atB === null ||
-          atA === null && atC === null ||
-          atB === null && atC === null
-        ) {
+        if ((atA === null && atB === null) || (atA === null && atC === null) || (atB === null && atC === null)) {
           continue
         }
 
@@ -94,7 +93,8 @@ export class TicTacToe {
 
     while (!this.isFull()) {
       const random = Math.floor(Math.random() * 9) // [0, 8]
-      if (this.board[random] === null) { // is an empty space
+      if (this.board[random] === null) {
+        // is an empty space
         return this.go(random) // go at empty space
       }
     }
@@ -102,7 +102,8 @@ export class TicTacToe {
 
   /** Utility method to change turns */
   public setTurn(): 'X' | 'O' {
-    return this.turn = this.turn === 'X' ? 'O' : 'X'
+    this.turn = this.turn === 'X' ? 'O' : 'X'
+    return this.turn
   }
 
   /** Detect if the board is full */
@@ -126,8 +127,8 @@ export class TicTacToe {
     for (const [a, b, c] of lines) {
       if (
         this.board[a] !== null && // make sure it's not an empty box
-                this.board[a] === this.board[b] &&
-                this.board[a] === this.board[c]
+        this.board[a] === this.board[b] &&
+        this.board[a] === this.board[c]
       ) {
         return true
       }

@@ -1,10 +1,10 @@
-import { Interactions } from '#khaf/Interaction'
-import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold, time } from '@discordjs/builders'
 import type { APIEmbedField, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { CoinGecko } from '#khaf/utility/commands/CoinGecko'
 
 let f: Intl.NumberFormat | undefined
 let g: Intl.NumberFormat | undefined
@@ -16,7 +16,7 @@ const field = (name: string, value: number | string, formatter = f!): APIEmbedFi
 })
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'crypto',
       description: 'Gets information about a cryptocurrency. Kill the environment!',
@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'search',
-          description: 'The cryptocurrency\'s name.',
+          description: "The cryptocurrency's name.",
           required: true
         }
       ]
@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     f ??= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
     g ??= new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 
@@ -61,16 +61,11 @@ export class kInteraction extends Interactions {
         field('Circulating:', currency.market_data.circulating_supply, g),
 
         field('All Time High:', currency.market_data.ath.usd),
-        field(
-          'All Time High Change:',
-          `${g.format(currency.market_data.ath_change_percentage.usd)}%`),
+        field('All Time High Change:', `${g.format(currency.market_data.ath_change_percentage.usd)}%`),
         field('All Time High Date:', time(new Date(currency.market_data.ath_date.usd))),
 
         field('All Time Low:', currency.market_data.atl.usd),
-        field(
-          'All Time Low Change:',
-          `${g.format(currency.market_data.atl_change_percentage.usd)}%`
-        ),
+        field('All Time Low Change:', `${g.format(currency.market_data.atl_change_percentage.usd)}%`),
         field('All Time Low Date:', time(new Date(currency.market_data.atl_date.usd)))
       ]
     })

@@ -1,39 +1,39 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import type { Report } from '#khaf/functions/case/reports.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { validSnowflake } from '#khaf/utility/Mentions.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { createDeferredPromise, guildSettings } from '#khaf/utility/util.mjs'
+import assert from 'node:assert/strict'
+import { randomUUID } from 'node:crypto'
 import { bold, hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type GuildBasedChannel,
+  InteractionCollector,
   type InteractionReplyOptions,
   type Message
 } from 'discord.js'
-import assert from 'node:assert/strict'
-import { randomUUID } from 'node:crypto'
+import { Interactions } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { Report } from '#khaf/functions/case/reports.mjs'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import { validSnowflake } from '#khaf/utility/Mentions.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
+import { createDeferredPromise, guildSettings } from '#khaf/utility/util.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'report',
-      description: 'report a message or user to the server\'s moderators',
+      description: "report a message or user to the server's moderators",
       dm_permission: false,
       options: [
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'user',
-          description: 'Reports a user to the server\'s moderators.',
+          description: "Reports a user to the server's moderators.",
           options: [
             {
               type: ApplicationCommandOptionType.User,
@@ -59,7 +59,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'message',
-          description: 'Reports a message to the server\'s moderators.',
+          description: "Reports a message to the server's moderators.",
           options: [
             {
               type: ApplicationCommandOptionType.String,
@@ -83,7 +83,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void | InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
     if (!interaction.inGuild()) {
       return {
         content: 'Cannot use the command here.',
@@ -108,9 +108,8 @@ export class kInteraction extends Interactions {
     const messageLink = !user ? interaction.options.getString('message', true) : null
 
     const id = randomUUID()
-    const display = subcommand === 'user'
-      ? `${user} - ${user!.tag} (${user!.id})`
-      : `this ${hyperlink('message', messageLink!)}`
+    const display =
+      subcommand === 'user' ? `${user} - ${user!.tag} (${user!.id})` : `this ${hyperlink('message', messageLink!)}`
 
     const confirm = await interaction.editReply({
       content: stripIndents`
@@ -136,16 +135,13 @@ export class kInteraction extends Interactions {
       time: minutes(2),
       max: 1,
       message: confirm,
-      filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.isButton() && interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     collector.once('collect', (i) => p.resolve(i.customId.startsWith('create-')))
     collector.once('end', () => p.resolve(false))
 
-    if (!await p.promise) {
+    if (!(await p.promise)) {
       await collector.collected.first()?.update({
         content: 'No response received, the report was cancelled.',
         embeds: [
@@ -159,10 +155,10 @@ export class kInteraction extends Interactions {
         ]
       })
 
-      return void await interaction.editReply({
+      return void (await interaction.editReply({
         content: 'Cancelled the report.',
         components: []
-      })
+      }))
     } else {
       await collector.collected.first()?.update({
         content: 'Creating the report. Please wait for a staff member to resolve it.',
@@ -188,14 +184,10 @@ export class kInteraction extends Interactions {
               '"Copy Message Link" to get the link!',
             ephemeral: true
           }
-        } else if (
-          empty !== '' ||
-          channels !== 'channels' ||
-          rest.some((part) => !validSnowflake(part))
-        ) {
+        } else if (empty !== '' || channels !== 'channels' || rest.some((part) => !validSnowflake(part))) {
           return {
             content:
-              '❌ This link doesn\'t lead to a message. Right click on a message and select ' +
+              "❌ This link doesn't lead to a message. Right click on a message and select " +
               '"Copy Message Link" to get the link!',
             ephemeral: true
           }
@@ -209,7 +201,7 @@ export class kInteraction extends Interactions {
         }
       }
 
-      attachments.push(...[...message.attachments.values()].map(a => a.url))
+      attachments.push(...[...message.attachments.values()].map((a) => a.url))
 
       const report = {
         targetAttachments: attachments,
@@ -260,7 +252,8 @@ export class kInteraction extends Interactions {
 
     const channel = await this.getChannel(interaction, settings.staffChannel)
 
-    if (!isGuildTextBased(channel)) { // must be text based already, this checks for null
+    if (!isGuildTextBased(channel)) {
+      // must be text based already, this checks for null
       return {
         content: 'The staff channel is not available.',
         ephemeral: true
@@ -301,7 +294,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async getMessage (
+  async getMessage(
     { guild, guildId, client }: ChatInputCommandInteraction,
     fallback: string[]
   ): Promise<Message<true>> {
@@ -313,7 +306,7 @@ export class kInteraction extends Interactions {
     return await channel.messages.fetch(messageId)
   }
 
-  async getChannel (
+  async getChannel(
     { guild, client, guildId }: ChatInputCommandInteraction,
     channelId: string
   ): Promise<GuildBasedChannel | null> {

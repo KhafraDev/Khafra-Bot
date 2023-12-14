@@ -1,7 +1,7 @@
-import { Interactions } from '#khaf/Interaction'
 import { codeBlock } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
 
 const boomer1984 = (): string =>
   `⠀⠀⠀⠀⠀⠀⠀⣠⡀⠀⠀⠀⠀⠀⠀⠀⠀⢰⠤⠤⣄⣀⡀⠀⠀⠀⠀⠀⠀⠀ 
@@ -19,16 +19,16 @@ const boomer1984 = (): string =>
 `
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: '1984',
-      description: 'It\'s literally 1984!'
+      description: "It's literally 1984!"
     }
 
     super(sc)
   }
 
-  init (): InteractionReplyOptions {
+  init(): InteractionReplyOptions {
     return {
       content: codeBlock(boomer1984())
     }

@@ -1,9 +1,9 @@
-import { Interactions } from '#khaf/Interaction'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { Interactions } from '#khaf/Interaction'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'interaction',
       description: 'Interaction handler for the bot owner.',

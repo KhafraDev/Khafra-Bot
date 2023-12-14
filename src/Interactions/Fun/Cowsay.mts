@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { assets } from '#khaf/utility/Constants/Path.mjs'
-import { splitEvery } from '#khaf/utility/util.mjs'
-import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { codeBlock, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
 import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { basename, extname } from 'node:path'
+import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { type ChatInputCommandInteraction, type InteractionReplyOptions, codeBlock } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { assets } from '#khaf/utility/Constants/Path.mjs'
+import { splitEvery } from '#khaf/utility/util.mjs'
 
 const cache = new Map<string, string>()
 const maxLength = 38
@@ -24,7 +24,7 @@ const calculateMaxLineLength = (lines: string[]): string[] => {
         f.push(word)
       }
     } else {
-      f[Math.max(f.length - 1, 0)] = (last + ' ' + word).trim()
+      f[Math.max(f.length - 1, 0)] = `${last} ${word}`.trim()
     }
   }
 
@@ -32,7 +32,7 @@ const calculateMaxLineLength = (lines: string[]): string[] => {
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'cowsay',
       description: 'The cowsay CLI (https://en.wikipedia.org/wiki/Cowsay) in Discord',
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.String,
           name: 'format',
           description: 'The cowfile to use.',
-          choices: readdirSync((assets('Cowsay')))
+          choices: readdirSync(assets('Cowsay'))
             .filter((_, i) => i % 2 === 0) // include cowsay.txt & tux.txt, thanks Discord
             .slice(0, 25) // Thanks Discord. I'm sure 25 choices is enough!!!
             .map((name) => ({ name: basename(name, extname(name)), value: name }))
@@ -58,7 +58,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const message = interaction.options.getString('message', true)
     const format = interaction.options.getString('format') ?? 'cowsay.txt'
 
@@ -68,7 +68,7 @@ export class kInteraction extends Interactions {
 
     const cow = cache.get(format)! // what is this, rust?
     const lines = calculateMaxLineLength(message.split(/\s+/g))
-    const max = lines.reduce((a, b) => b.length > a ? b.length : a, 0)
+    const max = lines.reduce((a, b) => (b.length > a ? b.length : a), 0)
 
     const header = ` ${'_'.repeat(max + 2)}\n`
     const footer = ` ${'-'.repeat(max + 2)}\n`

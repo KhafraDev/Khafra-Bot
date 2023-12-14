@@ -1,30 +1,30 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { Json } from '#khaf/utility/Constants/Path.mjs'
-import { once } from '#khaf/utility/Memoize.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
+import type { Buffer } from 'node:buffer'
+import { randomUUID } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import { inlineCode } from '@discordjs/builders'
 import { createCanvas } from '@napi-rs/canvas'
 import {
-  ComponentType,
-  TextInputStyle,
   type APIActionRowComponent,
   type APIEmbed,
-  type APIMessageActionRowComponent
+  type APIMessageActionRowComponent,
+  ComponentType,
+  TextInputStyle
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
   type WebhookMessageEditOptions
 } from 'discord.js'
-import type { Buffer } from 'node:buffer'
-import { randomUUID } from 'node:crypto'
-import { readFileSync } from 'node:fs'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { Json } from '#khaf/utility/Constants/Path.mjs'
+import { once } from '#khaf/utility/Memoize.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 const Dims = {
   Width: 330,
@@ -47,7 +47,7 @@ const wordleChoose = (WordList: string[]): string => {
 
 const wordleGetShareComponent = (
   c: APIActionRowComponent<APIMessageActionRowComponent>[],
-  { word, guesses }: { word: string, guesses: string[] },
+  { word, guesses }: { word: string; guesses: string[] },
   highContrast: boolean
 ): APIActionRowComponent<APIMessageActionRowComponent> => {
   let board = `Wordle ${guesses.length}/6\n\n`
@@ -70,15 +70,9 @@ const wordleGetShareComponent = (
 
   board += '\nBy @KhafraDev!'
 
-  const link = Buttons.link(
-    'Share on Twitter',
-    `https://twitter.com/compose/tweet?text=${encodeURIComponent(board)}`
-  )
+  const link = Buttons.link('Share on Twitter', `https://twitter.com/compose/tweet?text=${encodeURIComponent(board)}`)
 
-  return Components.actionRow([
-    ...c[0].components,
-    link
-  ])
+  return Components.actionRow([...c[0].components, link])
 }
 
 const lazyWords = once(() => {
@@ -88,23 +82,23 @@ const lazyWords = once(() => {
   const WordList: string[] = []
 
   const wordleGuesses = readFileSync(Json('Wordle-Guesses.json'), 'utf-8')
-  guessWords.push(...JSON.parse(wordleGuesses) as string[])
+  guessWords.push(...(JSON.parse(wordleGuesses) as string[]))
 
   const wordleWords = readFileSync(Json('Wordle-Answers.json'), 'utf-8')
-  WordList.push(...JSON.parse(wordleWords) as string[])
+  WordList.push(...(JSON.parse(wordleWords) as string[]))
 
   return { guessWords, WordList }
 })
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'games',
       name: 'wordle'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (games.has(interaction.user.id)) {
       return {
         content: '❌ Finish your other game first!',
@@ -116,9 +110,7 @@ export class kSubCommand extends InteractionSubCommand {
     const useOfficialWord = interaction.options.getBoolean('official-word') ?? false
     const { WordList, guessWords } = lazyWords()
 
-    const word = useOfficialWord
-      ? wordleChoose(WordList)
-      : WordList[Math.floor(Math.random() * WordList.length)]
+    const word = useOfficialWord ? wordleChoose(WordList) : WordList[Math.floor(Math.random() * WordList.length)]
 
     const attachGame = (content: string | undefined): WebhookMessageEditOptions => {
       const buffer = this.image(game.interaction, game.guesses, game.word)
@@ -137,20 +129,19 @@ export class kSubCommand extends InteractionSubCommand {
 
       return {
         embeds: [embed],
-        files: [{
-          attachment: buffer,
-          name: 'wordle.png'
-        }],
+        files: [
+          {
+            attachment: buffer,
+            name: 'wordle.png'
+          }
+        ],
         content
       }
     }
 
     const id = randomUUID()
     const playComponents = [
-      Components.actionRow([
-        Buttons.approve('Guess', `showModal-${id}`),
-        Buttons.deny('Quit', `quit-${id}`)
-      ])
+      Components.actionRow([Buttons.approve('Guess', `showModal-${id}`), Buttons.deny('Quit', `quit-${id}`)])
     ]
 
     const game = {
@@ -166,10 +157,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: minutes(5),
-      filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => (i.isButton() || i.isModalSubmit()) && i.user.id === interaction.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -217,7 +205,7 @@ export class kSubCommand extends InteractionSubCommand {
         if (guessWords.includes(answer) || WordList.includes(answer)) {
           game.guesses.push(answer.toLowerCase())
         } else {
-          content = 'That word isn\'t in my list, try another word!'
+          content = "That word isn't in my list, try another word!"
         }
 
         const editOptions = attachGame(content)
@@ -259,11 +247,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  image (
-    interaction: ChatInputCommandInteraction,
-    guesses: string[],
-    word: string
-  ): Buffer {
+  image(interaction: ChatInputCommandInteraction, guesses: string[], word: string): Buffer {
     const highContrast = interaction.options.getBoolean('highcontrast') ?? false
 
     const canvas = createCanvas(Dims.Width + 60 + 5, Dims.Box * 6 + 6 * 4)
@@ -281,33 +265,26 @@ export class kSubCommand extends InteractionSubCommand {
       for (let letters = 0; letters < 5; letters++) {
         const letter = guess ? guess[letters] : ' '
 
-        if (word[letters] === letter) { // correct guess
-          ctx.fillStyle = highContrast
-            ? '#f5793a'
-            : '#538d4e'
+        if (word[letters] === letter) {
+          // correct guess
+          ctx.fillStyle = highContrast ? '#f5793a' : '#538d4e'
           lettersCorrect.add(letter.toUpperCase())
-        } else if (word.includes(letter)) { // incorrect spot but in word
-          ctx.fillStyle = highContrast
-            ? '#85c0f9'
-            : '#b59f3b'
+        } else if (word.includes(letter)) {
+          // incorrect spot but in word
+          ctx.fillStyle = highContrast ? '#85c0f9' : '#b59f3b'
           lettersCorrect.add(letter.toUpperCase())
         } else {
           ctx.fillStyle = '#3a3a3c'
           lettersGuessed.add(letter.toUpperCase())
         }
 
-        ctx.fillRect(
-          letters * Dims.Box + letters * 5,
-          guessIdx * Dims.Box + guessIdx * 5,
-          Dims.Box,
-          Dims.Box
-        )
+        ctx.fillRect(letters * Dims.Box + letters * 5, guessIdx * Dims.Box + guessIdx * 5, Dims.Box, Dims.Box)
 
         ctx.fillStyle = '#ffffff'
         ctx.fillText(
           letter.toUpperCase(),
-          letters * Dims.Box + letters * 5 + (Dims.Box / 2),
-          guessIdx * Dims.Box + guessIdx * 5 + (Dims.Box / 2)
+          letters * Dims.Box + letters * 5 + Dims.Box / 2,
+          guessIdx * Dims.Box + guessIdx * 5 + Dims.Box / 2
         )
       }
     }
@@ -327,19 +304,10 @@ export class kSubCommand extends InteractionSubCommand {
         ctx.fillStyle = '#818384'
       }
 
-      ctx.fillRect(
-        Dims.Width + xOffset + 5,
-        30 * yOffset + 4,
-        Dims.GuessWidth,
-        Dims.GuessWidth
-      )
+      ctx.fillRect(Dims.Width + xOffset + 5, 30 * yOffset + 4, Dims.GuessWidth, Dims.GuessWidth)
 
       ctx.fillStyle = '#ffffff'
-      ctx.fillText(
-        char,
-        Dims.Width + xOffset + 5 + (Dims.GuessWidth / 2),
-        30 * yOffset + 4 + (Dims.GuessWidth / 2)
-      )
+      ctx.fillText(char, Dims.Width + xOffset + 5 + Dims.GuessWidth / 2, 30 * yOffset + 4 + Dims.GuessWidth / 2)
     }
 
     return canvas.toBuffer('image/png')

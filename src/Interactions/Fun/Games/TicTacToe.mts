@@ -1,15 +1,17 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { TicTacToe, type Difficulty, type Turn } from '#khaf/utility/commands/TicTacToe'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { minutes, seconds } from '#khaf/utility/ms.mjs'
-import { chunkSafe } from '#khaf/utility/util.mjs'
+import { randomUUID } from 'node:crypto'
 import {
-  InteractionType,
-  type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
+  type APIActionRowComponent,
+  type APIButtonComponent,
+  type APIMessageActionRowComponent,
+  InteractionType
 } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
-import { randomUUID } from 'node:crypto'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { type Difficulty, TicTacToe, type Turn } from '#khaf/utility/commands/TicTacToe'
+import { minutes, seconds } from '#khaf/utility/ms.mjs'
+import { chunkSafe } from '#khaf/utility/util.mjs'
 
 const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowComponent<APIMessageActionRowComponent>[] => {
   const rows: APIButtonComponent[] = []
@@ -29,18 +31,18 @@ const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowCompone
     }
   }
 
-  return chunkSafe(rows, 3).map(r => Components.actionRow(r))
+  return chunkSafe(rows, 3).map((r) => Components.actionRow(r))
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'games',
       name: 'tictactoe'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<void> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<void> {
     const id = randomUUID()
     const difficulty = interaction.options.getString('difficulty') ?? 'easy'
     const game = new TicTacToe(difficulty as Difficulty)
@@ -55,10 +57,7 @@ export class kSubCommand extends InteractionSubCommand {
       time: minutes(2),
       idle: seconds(30),
       max: 5,
-      filter: (i) =>
-        i.message.id === int.id &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.message.id === int.id && i.user.id === interaction.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
@@ -74,7 +73,7 @@ export class kSubCommand extends InteractionSubCommand {
         reason = `Game over - ${game.turn} won!`
       } else if (game.isFull()) {
         collector.stop('tie')
-        reason = 'Looks like it\'s a tie!'
+        reason = "Looks like it's a tie!"
       }
 
       await i.update({

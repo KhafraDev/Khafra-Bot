@@ -1,15 +1,15 @@
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
+import { env } from 'node:process'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { env } from 'node:process'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'cartoonize',
       description: 'Use AI to cartoonize an image.',
@@ -28,12 +28,12 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const image = interaction.options.getAttachment('image', true)
 
     if (!ImageUtil.isImage(image.proxyURL, image.contentType)) {
       return {
-        content: 'What am I supposed to do with that? That\'s not an image!',
+        content: "What am I supposed to do with that? That's not an image!",
         ephemeral: true
       }
     }
@@ -55,10 +55,12 @@ export class kInteraction extends Interactions {
 
     const reply = await interaction.editReply({
       embeds: [embed],
-      files: [{
-        attachment: arrayBufferToBuffer(await imageBody.arrayBuffer()),
-        name: 'cartoonized.jpeg'
-      }]
+      files: [
+        {
+          attachment: arrayBufferToBuffer(await imageBody.arrayBuffer()),
+          name: 'cartoonized.jpeg'
+        }
+      ]
     })
 
     const link = reply.embeds[0].image?.proxyURL ?? reply.embeds[0].image?.url

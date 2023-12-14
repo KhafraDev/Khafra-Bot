@@ -1,21 +1,21 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
 import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
 
 const birds: string[] = []
 
 const schema = s.string.array
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'animal',
       name: 'bird'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (birds.length === 0) {
       await interaction.deferReply()
 
@@ -25,7 +25,7 @@ export class kSubCommand extends InteractionSubCommand {
         await body.dump()
 
         return {
-          content: '🐦 Couldn\'t get a picture of a random bird!',
+          content: "🐦 Couldn't get a picture of a random bird!",
           ephemeral: true
         }
       }

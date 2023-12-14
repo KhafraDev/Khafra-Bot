@@ -1,18 +1,19 @@
-import { Interactions } from '#khaf/Interaction'
-import * as util from '#khaf/utility/util.mjs'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   PermissionFlagsBits,
-  RESTJSONErrorCodes, type RESTPostAPIApplicationCommandsJSONBody
+  RESTJSONErrorCodes,
+  type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import * as util from '#khaf/utility/util.mjs'
 
 const perms = PermissionFlagsBits.BanMembers
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'unban',
       description: 'Unban a member!',
@@ -31,7 +32,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.memberPermissions?.has(perms)) {
       return {
         content: '❌ You do not have permission to use this command!',
@@ -71,10 +72,9 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const unban = await interaction.guild.bans.remove(
-      id,
-      `Unban requested by ${interaction.user.id} (${interaction.user.tag}).`
-    ).catch(() => null)
+    const unban = await interaction.guild.bans
+      .remove(id, `Unban requested by ${interaction.user.id} (${interaction.user.tag}).`)
+      .catch(() => null)
 
     if (unban === null) {
       return {

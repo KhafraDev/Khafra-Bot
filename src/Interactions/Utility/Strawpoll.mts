@@ -1,10 +1,10 @@
-import { Interactions } from '#khaf/Interaction'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { s } from '@sapphire/shapeshift'
 import type { APIApplicationCommandOption, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 
 interface StrawpollBody {
   poll: Partial<{
@@ -29,7 +29,7 @@ const schema = s.object({
 })
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'strawpoll',
       description: 'Create a poll on strawpoll.com!',
@@ -37,7 +37,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'title',
-          description: 'The poll\'s title.',
+          description: "The poll's title.",
           required: true
         },
         {
@@ -98,18 +98,21 @@ export class kInteraction extends Interactions {
           name: 'captcha',
           description: 'If the poll requires a captcha to vote, defaults to true.'
         },
-        ...Array.from({ length: 14 }, (_, i): APIApplicationCommandOption => ({
-          type: ApplicationCommandOptionType.String,
-          name: `choice-${i + 3}`,
-          description: `Optional choice #${i + 3} to add to the poll.`
-        }))
+        ...Array.from(
+          { length: 14 },
+          (_, i): APIApplicationCommandOption => ({
+            type: ApplicationCommandOptionType.String,
+            name: `choice-${i + 3}`,
+            description: `Optional choice #${i + 3} to add to the poll.`
+          })
+        )
       ]
     }
 
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const answers: string[] = []
 
     for (let i = 1; i <= 16; i++) {

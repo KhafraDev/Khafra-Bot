@@ -1,23 +1,17 @@
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText, isThread } from '#khaf/utility/Discord.js'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import * as util from '#khaf/utility/util.mjs'
-import { bold, time } from '@discordjs/builders'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  ChannelType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
+import { bold, time } from '@discordjs/builders'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isText, isThread } from '#khaf/utility/Discord.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
+import * as util from '#khaf/utility/util.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'clear',
       description: 'Bulk deletes messages from a channel.',
@@ -50,7 +44,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
@@ -60,7 +54,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

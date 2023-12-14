@@ -1,39 +1,29 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/utility/Discord.js'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
-import { hierarchy } from '#khaf/utility/Permissions.mjs'
 import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isText } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
+import { hierarchy } from '#khaf/utility/Permissions.mjs'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Kick a member from the server.',
-        '@user for trolling',
-        '1234567891234567'
-      ],
-      {
-        name: 'kick',
-        folder: 'Moderation',
-        args: [1],
-        guildOnly: true,
-        permissions: [PermissionFlagsBits.KickMembers]
-      }
-    )
+  constructor() {
+    super(['Kick a member from the server.', '@user for trolling', '1234567891234567'], {
+      name: 'kick',
+      folder: 'Moderation',
+      args: [1],
+      guildOnly: true,
+      permissions: [PermissionFlagsBits.KickMembers]
+    })
   }
 
-  async init (message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
+  async init(message: Message<true>, { args, content }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
     const member = await getMentions(message, 'members', content)
 
     if (!hierarchy(message.member, member)) {
@@ -52,10 +42,9 @@ export class kCommand extends Command {
 
     if (settings.mod_log_channel !== null) {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
-      const me = message.guild.members.me ?? await message.guild.members.fetchMe()
+      const me = message.guild.members.me ?? (await message.guild.members.fetchMe())
 
-      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
-        return
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms)) return
 
       const reason = args.slice(1).join(' ')
       return void channel.send({

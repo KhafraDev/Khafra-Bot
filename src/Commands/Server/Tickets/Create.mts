@@ -1,49 +1,42 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isExplicitText } from '#khaf/utility/Discord.js'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import {
+  type APIEmbed,
   ChannelType,
   GuildPremiumTier,
   OverwriteType,
   PermissionFlagsBits,
-  ThreadAutoArchiveDuration,
-  type APIEmbed
+  ThreadAutoArchiveDuration
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isExplicitText } from '#khaf/utility/Discord.js'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Create a ticket!',
-        'This is the reason that the ticket is being created'
-      ],
-      {
-        name: 'ticket:create',
-        folder: 'Server',
-        aliases: ['tickets:create'],
-        args: [0],
-        ratelimit: 30,
-        guildOnly: true
-      }
-    )
+  constructor() {
+    super(['Create a ticket!', 'This is the reason that the ticket is being created'], {
+      name: 'ticket:create',
+      folder: 'Server',
+      aliases: ['tickets:create'],
+      args: [0],
+      ratelimit: 30,
+      guildOnly: true
+    })
   }
 
-  async init (message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<APIEmbed> {
+  async init(message: Message<true>, { args, commandName }: Arguments, settings: kGuild): Promise<APIEmbed> {
     if (settings.ticketchannel === null) {
-      return Embed.error('This guild doesn\'t have a ticket channel! Ask a moderator to use `ticketchanel [channel]`!')
+      return Embed.error("This guild doesn't have a ticket channel! Ask a moderator to use `ticketchanel [channel]`!")
     } else if (commandName === 'ticket' || commandName === 'tickets') {
       args.shift()
     }
 
     /** guild can use private threads */
     const privateThreads =
-      message.guild.premiumTier !== GuildPremiumTier.None &&
-      message.guild.premiumTier !== GuildPremiumTier.Tier1
+      message.guild.premiumTier !== GuildPremiumTier.None && message.guild.premiumTier !== GuildPremiumTier.Tier1
 
     const channel = message.guild.channels.cache.has(settings.ticketchannel)
       ? message.guild.channels.cache.get(settings.ticketchannel)
@@ -52,7 +45,7 @@ export class kCommand extends Command {
     if (isExplicitText(channel) && !privateThreads) {
       return Embed.error(
         'This guild is no longer tier 2 or above, and cannot use private threads. ' +
-        'Use the `ticketchannel` command to re-set the ticket channel!'
+          'Use the `ticketchannel` command to re-set the ticket channel!'
       )
     }
 
@@ -60,7 +53,7 @@ export class kCommand extends Command {
 
     const uuid = randomUUID()
     const name = `Ticket-${uuid.slice(0, uuid.indexOf('-'))}`
-    const me = message.guild.members.me ?? await message.guild.members.fetchMe()
+    const me = message.guild.members.me ?? (await message.guild.members.fetchMe())
 
     if (isExplicitText(channel)) {
       if (!channel.permissionsFor(me).has(PermissionFlagsBits.CreatePrivateThreads)) {

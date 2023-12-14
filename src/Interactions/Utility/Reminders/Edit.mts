@@ -1,24 +1,24 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
-import { ellipsis } from '#khaf/utility/String.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { formatMs } from '#khaf/utility/util.mjs'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { ellipsis } from '#khaf/utility/String.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
+import { formatMs } from '#khaf/utility/util.mjs'
 
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'reminders',
       name: 'edit'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const id = interaction.options.getString('id', true)
 
     if (!uuidRegex.test(id)) {

@@ -1,17 +1,36 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 const consonants = [
-  'B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N',
-  'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'
+  'B',
+  'C',
+  'D',
+  'F',
+  'G',
+  'H',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
 ]
 const vowels = ['A', 'E', 'I', 'O', 'U']
 
-const splitWord = (word: string): { an: string[], p: string[] } => {
+const splitWord = (word: string): { an: string[]; p: string[] } => {
   const punc = {
     // alphanumeric
     an: [] as string[],
@@ -74,12 +93,9 @@ const toPigLatin = (sentence: string): string => {
 }
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
-      [
-        'Convert English to Pig Latin!',
-        'To make pure ice, you freeze water. Oak is strong and also gives shade.'
-      ],
+      ['Convert English to Pig Latin!', 'To make pure ice, you freeze water. Oak is strong and also gives shade.'],
       {
         name: 'piglatin',
         folder: 'Fun',
@@ -89,7 +105,7 @@ export class kCommand extends Command {
     )
   }
 
-  init (_message: Message, { content }: Arguments): APIEmbed {
+  init(_message: Message, { content }: Arguments): APIEmbed {
     const pig = toPigLatin(content)
     return Embed.ok(pig.slice(0, maxDescriptionLength))
   }

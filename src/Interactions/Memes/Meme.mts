@@ -1,9 +1,9 @@
-import { Interactions } from '#khaf/Interaction'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { Interactions } from '#khaf/Interaction'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'memes',
       description: 'The base command for the PseudoBot meme creator!',
@@ -29,7 +29,7 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.User,
               name: 'person',
-              description: 'The person who\'s triggered!',
+              description: "The person who's triggered!",
               required: true
             }
           ]
@@ -74,12 +74,12 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'deep-fry',
-          description: 'Deep-fry someone\'s avatar or image!',
+          description: "Deep-fry someone's avatar or image!",
           options: [
             {
               type: ApplicationCommandOptionType.User,
               name: 'person',
-              description: 'Person\'s avatar to deep fry.'
+              description: "Person's avatar to deep fry."
             },
             {
               type: ApplicationCommandOptionType.Attachment,
@@ -96,7 +96,7 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.User,
               name: 'person',
-              description: 'Person\'s avatar to magik-ify.'
+              description: "Person's avatar to magik-ify."
             },
             {
               type: ApplicationCommandOptionType.Attachment,

@@ -58,35 +58,37 @@ export const addSchema = s.object({
  * @see https://getpocket.com/developer/docs/v3/retrieve
  */
 export const retrieveSchema = s.object({
-  list: s.record(s.object({
-    item_id: s.string,
-    resolved_id: s.string,
-    given_url: s.string,
-    given_title: s.string,
-    favorite: s.string,
-    status: s.string,
-    time_added: s.string,
-    time_updated: s.string,
-    time_read: s.string,
-    time_favorited: s.string,
-    sort_id: s.number,
-    resolved_title: s.string,
-    resolved_url: s.string,
-    excerpt: s.string,
-    is_article: s.string,
-    is_index: s.string,
-    has_video: s.string,
-    has_image: s.string,
-    word_count: s.string,
-    lang: s.string,
-    time_to_read: s.number,
-    top_image_url: s.string,
-    domain_metadata: s.object({
-      name: s.string.nullable.optional,
-      logo: s.string.nullable.optional,
-      greyscale_logo: s.string.nullable.optional
-    }).nullable.optional,
-    listen_duration_estimate: s.number
-  })),
+  list: s.record(
+    s.object({
+      item_id: s.string,
+      resolved_id: s.string,
+      given_url: s.string,
+      given_title: s.string,
+      favorite: s.string,
+      status: s.string,
+      time_added: s.string,
+      time_updated: s.string,
+      time_read: s.string,
+      time_favorited: s.string,
+      sort_id: s.number,
+      resolved_title: s.string,
+      resolved_url: s.string,
+      excerpt: s.string,
+      is_article: s.string,
+      is_index: s.string,
+      has_video: s.string,
+      has_image: s.string,
+      word_count: s.string,
+      lang: s.string,
+      time_to_read: s.number,
+      top_image_url: s.string,
+      domain_metadata: s.object({
+        name: s.string.nullable.optional,
+        logo: s.string.nullable.optional,
+        greyscale_logo: s.string.nullable.optional
+      }).nullable.optional,
+      listen_duration_estimate: s.number
+    })
+  ),
   status: s.number
 })

@@ -1,17 +1,13 @@
 import { inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { PermissionsBitField, type GuildMember, type PermissionResolvable } from 'discord.js'
+import { type GuildMember, type PermissionResolvable, PermissionsBitField } from 'discord.js'
 
 /**
  * Compares 2 guildmembers and checks if @see {a} is higher in the hierarchy than @see {b}
  * @see https://discord.js.org/#/docs/main/stable/class/Role?scrollTo=comparePositionTo
  * @see https://discord.js.org/#/docs/main/stable/class/GuildMember?scrollTo=manageable
  */
-export const hierarchy = (
-  a: GuildMember | null,
-  b: GuildMember | null,
-  strict = true
-): boolean => {
+export const hierarchy = (a: GuildMember | null, b: GuildMember | null, strict = true): boolean => {
   if (!a || !b) return false
   if (a.guild.ownerId === a.id) return true
 
@@ -20,13 +16,9 @@ export const hierarchy = (
     : a.roles.highest.comparePositionTo(b.roles.highest) >= 0
 }
 
-const all = Object.entries(PermissionFlagsBits) as [
-    keyof typeof PermissionFlagsBits, bigint
-][]
+const all = Object.entries(PermissionFlagsBits) as [keyof typeof PermissionFlagsBits, bigint][]
 
-export const permResolvableToReadable = (
-  perms: PermissionResolvable
-): `\`${keyof typeof PermissionFlagsBits}\``[] => {
+export const permResolvableToReadable = (perms: PermissionResolvable): `\`${keyof typeof PermissionFlagsBits}\``[] => {
   const bitfield = PermissionsBitField.resolve(perms)
 
   if ((PermissionFlagsBits.Administrator & bitfield) === PermissionFlagsBits.Administrator) {

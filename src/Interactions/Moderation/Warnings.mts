@@ -1,15 +1,10 @@
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'warns',
       description: 'Handle warnings in this guild.',

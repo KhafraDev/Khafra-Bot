@@ -1,37 +1,30 @@
+import type { APIEmbed } from 'discord-api-types/v10'
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Message } from 'discord.js'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isDM, isExplicitText, isThread } from '#khaf/utility/Discord.js'
-import type { APIEmbed } from 'discord-api-types/v10'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { Message } from 'discord.js'
 
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i
-const memberPermsExpected =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages
+const memberPermsExpected = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Archives or deletes a ticket!'
-      ],
-      {
-        name: 'ticket:archive',
-        folder: 'Server',
-        aliases: ['tickets:archive', 'tickets:delete', 'tickets:delete'],
-        args: [0, 0],
-        ratelimit: 30,
-        guildOnly: true
-      }
-    )
+  constructor() {
+    super(['Archives or deletes a ticket!'], {
+      name: 'ticket:archive',
+      folder: 'Server',
+      aliases: ['tickets:archive', 'tickets:delete', 'tickets:delete'],
+      args: [0, 0],
+      ratelimit: 30,
+      guildOnly: true
+    })
   }
 
-  async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
+  async init(message: Message<true>, _args: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
     if (settings.ticketchannel === null) {
-      return Embed.error('Could not archive for you, the guild\'s ticket channel is unset.')
+      return Embed.error("Could not archive for you, the guild's ticket channel is unset.")
     } else if (!isDM(message.channel) && !channelTicketName.test(message.channel.name)) {
       return Embed.error('This is not a ticket channel.')
     }
@@ -71,8 +64,10 @@ export class kCommand extends Command {
       await message.channel.delete()
     }
 
-    return void await message.author.send({
-      content: 'Ticket was archived/deleted.'
-    }).catch(() => null)
+    return void (await message.author
+      .send({
+        content: 'Ticket was archived/deleted.'
+      })
+      .catch(() => null))
   }
 }

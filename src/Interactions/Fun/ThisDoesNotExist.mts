@@ -1,19 +1,19 @@
-import { Interactions } from '#khaf/Interaction'
-import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson'
-import type { DNE } from '#khaf/utility/commands/ThisDoesNotExist'
-import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
-import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold, hyperlink, inlineCode, italic, underscore } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { thisSimpsonDoesNotExist } from '#khaf/utility/commands/Simpson'
+import type { DNE } from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisDoesNotExist } from '#khaf/utility/commands/ThisDoesNotExist'
+import { thisWordDoesNotExist } from '#khaf/utility/commands/ThisWordDoesNotExist'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'thisdoesnotexist',
-      description: 'Get an AI generated picture of a person or item that doesn\'t exist!',
+      description: "Get an AI generated picture of a person or item that doesn't exist!",
       options: [
         {
           type: ApplicationCommandOptionType.String,
@@ -35,7 +35,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const type = interaction.options.getString('type', true)
     if (type === 'tdne_fuhomer') {
       const homer = await thisSimpsonDoesNotExist()

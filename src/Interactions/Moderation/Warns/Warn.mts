@@ -1,30 +1,30 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { Warning } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import * as util from '#khaf/utility/util.mjs'
-import { hierarchy } from '#khaf/utility/Permissions.mjs'
-import { plural } from '#khaf/utility/String.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { GuildMember } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { Warning } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { hierarchy } from '#khaf/utility/Permissions.mjs'
+import { plural } from '#khaf/utility/String.mjs'
+import * as util from '#khaf/utility/util.mjs'
 
 interface WarnInsert {
-    insertedid: Warning['id']
-    insertedpoints: Warning['k_points']
-    k_ts: Warning['k_ts']
+  insertedid: Warning['id']
+  insertedpoints: Warning['k_points']
+  k_ts: Warning['k_ts']
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'warns',
       name: 'warn'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (!interaction.inCachedGuild()) {
       return {
         content: '❌ The bot must be re-invited with all permissions to use this command.',
@@ -34,9 +34,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const points = interaction.options.getInteger('points', true)
     const reason = interaction.options.getString('reason') ?? undefined
-    const member =
-      interaction.options.getMember('member') ??
-      interaction.options.getUser('member', true)
+    const member = interaction.options.getMember('member') ?? interaction.options.getUser('member', true)
 
     if (member instanceof GuildMember) {
       if (
@@ -90,7 +88,7 @@ export class kSubCommand extends InteractionSubCommand {
     // something really bad has gone wrong...
     if (rows.length === 0) {
       return {
-        content: '❌ Yeah, I\'m not really sure what happened. 🤯',
+        content: "❌ Yeah, I'm not really sure what happened. 🤯",
         ephemeral: true
       }
     }
@@ -106,16 +104,20 @@ export class kSubCommand extends InteractionSubCommand {
       if (member instanceof GuildMember) {
         if (!member.kickable) {
           return {
-            content: '✅ Member was warned but I don\'t have permission to kick them.'
+            content: "✅ Member was warned but I don't have permission to kick them."
           }
         }
 
-        kicked = await member.kick(reason).then(() => true, () => false)
+        kicked = await member.kick(reason).then(
+          () => true,
+          () => false
+        )
       } else {
-        kicked = await interaction.guild.members.kick(member)
-          .then(() => true, () => false)
+        kicked = await interaction.guild.members.kick(member).then(
+          () => true,
+          () => false
+        )
       }
-
 
       if (!kicked) {
         return {

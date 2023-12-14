@@ -1,21 +1,21 @@
-import { Interactions } from '#khaf/Interaction'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { s } from '@sapphire/shapeshift'
-import type {
-  APIEmbed
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import type { ButtonInteraction } from 'discord.js'
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
-import { XMLParser } from 'fast-xml-parser'
 import { randomUUID } from 'node:crypto'
 import { URL } from 'node:url'
+import { s } from '@sapphire/shapeshift'
+import type { APIEmbed } from 'discord-api-types/v10'
+import {
+  ApplicationCommandOptionType,
+  InteractionType,
+  type RESTPostAPIApplicationCommandsJSONBody
+} from 'discord-api-types/v10'
+import type { ButtonInteraction } from 'discord.js'
+import { type ChatInputCommandInteraction, InteractionCollector, type InteractionReplyOptions } from 'discord.js'
+import { XMLParser } from 'fast-xml-parser'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 const base = 'http://api.chartlyrics.com/'
 
@@ -48,7 +48,7 @@ const paginateText = (text: string, max: number): string[] => {
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'lyrics',
       description: 'Get lyrics to a song! Defaults to your currently playing song.',
@@ -56,7 +56,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'artist',
-          description: 'Band or singer\'s name.',
+          description: "Band or singer's name.",
           required: true
         },
         {
@@ -73,14 +73,11 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const artist = interaction.options.getString('artist', true)
     const song = interaction.options.getString('song', true)
 
-    const {
-      body: lyricBody,
-      statusCode: lyricStatus
-    } = await request(getLyricsURL(artist, song))
+    const { body: lyricBody, statusCode: lyricStatus } = await request(getLyricsURL(artist, song))
 
     if (lyricStatus !== 200) {
       await lyricBody.dump()
@@ -107,24 +104,21 @@ export class kInteraction extends Interactions {
       LyricSong
     } = lyricXML.GetLyricResult
 
-    const basicEmbed = (): APIEmbed => Embed.json({
-      color: colors.ok,
-      title: `${LyricArtist} - ${LyricSong}`,
-      description: Lyric,
-      url: LyricUrl,
-      thumbnail: {
-        url: LyricCovertArtUrl
-      }
-    })
+    const basicEmbed = (): APIEmbed =>
+      Embed.json({
+        color: colors.ok,
+        title: `${LyricArtist} - ${LyricSong}`,
+        description: Lyric,
+        url: LyricUrl,
+        thumbnail: {
+          url: LyricCovertArtUrl
+        }
+      })
 
     if (Lyric.length <= maxDescriptionLength) {
       return {
         embeds: [basicEmbed()],
-        components: [
-          Components.actionRow([
-            Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)
-          ])
-        ]
+        components: [Components.actionRow([Buttons.link('Incorrect Lyrics?', LyricCorrectUrl)])]
       }
     }
 
@@ -175,17 +169,14 @@ export class kInteraction extends Interactions {
 
     const last = collector.collected.last()
 
-    if (
-      collector.collected.size !== 0 &&
-      last?.replied === false
-    ) {
-      return void await last.update({
+    if (collector.collected.size !== 0 && last?.replied === false) {
+      return void (await last.update({
         components: disableAll(int)
-      })
+      }))
     }
 
-    return void await interaction.editReply({
+    return void (await interaction.editReply({
       components: disableAll(int)
-    })
+    }))
   }
 }

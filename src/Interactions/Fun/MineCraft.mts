@@ -1,9 +1,9 @@
-import { Interactions } from '#khaf/Interaction'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { Interactions } from '#khaf/Interaction'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'minecraft',
       description: 'MineCraft commands!',
@@ -11,7 +11,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'capes',
-          description: 'Get a player\'s capes!',
+          description: "Get a player's capes!",
           options: [
             {
               type: ApplicationCommandOptionType.String,
@@ -24,7 +24,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'skin',
-          description: 'Get a render of a player\'s current skin!',
+          description: "Get a render of a player's current skin!",
           options: [
             {
               type: ApplicationCommandOptionType.String,

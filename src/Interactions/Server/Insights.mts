@@ -1,10 +1,10 @@
-import { Interactions } from '#khaf/Interaction'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
+import { Interactions } from '#khaf/Interaction'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'insights',
       description: 'Guild insight settings.',

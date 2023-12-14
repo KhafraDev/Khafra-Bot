@@ -1,10 +1,10 @@
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { templates } from '#khaf/utility/Constants/Path.mjs'
-import { createCanvas, Image } from '@napi-rs/canvas'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
+import { Image, createCanvas } from '@napi-rs/canvas'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { templates } from '#khaf/utility/Constants/Path.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
 
 const lazyImage = once(() => {
@@ -15,14 +15,14 @@ const lazyImage = once(() => {
 })
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'memes',
       name: 'megamind'
     })
   }
 
-  handle (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+  handle(interaction: ChatInputCommandInteraction): InteractionReplyOptions {
     const buffer = this.image(interaction)
 
     return {
@@ -35,7 +35,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  image (interaction: ChatInputCommandInteraction): Buffer {
+  image(interaction: ChatInputCommandInteraction): Buffer {
     const image = lazyImage()
     const canvas = createCanvas(image.width, image.height)
     const ctx = canvas.getContext('2d')
@@ -50,12 +50,7 @@ export class kSubCommand extends InteractionSubCommand {
     const lines = ImageUtil.split(text, image.width, ctx)
 
     for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
-      ctx.fillText(
-        lines[lineIdx],
-        canvas.width / 2,
-        35 + (50 * lineIdx),
-        canvas.width
-      )
+      ctx.fillText(lines[lineIdx], canvas.width / 2, 35 + 50 * lineIdx, canvas.width)
     }
 
     return canvas.toBuffer('image/png')

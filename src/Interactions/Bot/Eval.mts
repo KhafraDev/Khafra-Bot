@@ -1,18 +1,19 @@
-import { Interactions } from '#khaf/Interaction'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { Buffer } from 'node:buffer'
+import { inspect } from 'node:util'
 import { codeBlock } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { Buffer } from 'node:buffer'
-import { inspect } from 'node:util'
+import { Interactions } from '#khaf/Interaction'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
-const AsyncFunction = (async function (): Promise<void> {}.constructor) as
-  new (...args: unknown[]) => (interaction: ChatInputCommandInteraction) => Promise<unknown>
+const AsyncFunction = (async (): Promise<void> => {}).constructor as new (
+  ...args: unknown[]
+) => (interaction: ChatInputCommandInteraction) => Promise<unknown>
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'eval',
       description: 'Eval some javascript - this is only available to a bot owner.',
@@ -32,7 +33,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const text = interaction.options.getString('code', true)
 
     let ret: unknown

@@ -1,16 +1,10 @@
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  ChannelType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'giveaway',
       description: 'Giveaway settings.',
@@ -27,9 +21,7 @@ export class kInteraction extends Interactions {
               name: 'channel',
               description: 'Channel to create the giveaway in.',
               required: true,
-              channel_types: [
-                ChannelType.GuildAnnouncement, ChannelType.GuildText
-              ]
+              channel_types: [ChannelType.GuildAnnouncement, ChannelType.GuildText]
             },
             {
               type: ApplicationCommandOptionType.String,

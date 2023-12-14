@@ -1,21 +1,21 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { assets } from '#khaf/utility/Constants/Path.mjs'
 import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { assets } from '#khaf/utility/Constants/Path.mjs'
 
 let recipeImages: string[] | undefined
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'minecraft',
       name: 'recipe'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     recipeImages ??= readdirSync(assets('MineCraft/recipes'))
 
     const itemName = interaction.options.getString('item', true)
@@ -37,10 +37,12 @@ export class kSubCommand extends InteractionSubCommand {
           image: { url: 'attachment://recipe.png' }
         })
       ],
-      files: [{
-        attachment: image,
-        name: 'recipe.png'
-      }]
+      files: [
+        {
+          attachment: image,
+          name: 'recipe.png'
+        }
+      ]
     }
   }
 }

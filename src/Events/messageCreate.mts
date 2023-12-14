@@ -1,27 +1,25 @@
-import { KhafraClient } from '#khaf/Bot'
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { cooldown } from '#khaf/cooldown/GlobalCooldown.mjs'
-import type { Event } from '#khaf/Event'
-import { logger, loggerUtility } from '#khaf/structures/Logger.mjs'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { colors, Embed, EmbedUtil } from '#khaf/utility/Constants/Embeds.mjs'
-import { cwd } from '#khaf/utility/Constants/Path.mjs'
-import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { Stats } from '#khaf/utility/Stats.mjs'
-import { plural, upperCase } from '#khaf/utility/String.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { guildSettings as getGuildSettings, Sanitize } from '#khaf/utility/util.mjs'
+import { join } from 'node:path'
 import { chatInputApplicationCommandMention, inlineCode } from '@discordjs/builders'
 import { ChannelType } from 'discord-api-types/v10'
 import { Events, type Message, type MessageReplyOptions } from 'discord.js'
-import { join } from 'node:path'
+import { KhafraClient } from '#khaf/Bot'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { Event } from '#khaf/Event'
+import { cooldown } from '#khaf/cooldown/GlobalCooldown.mjs'
+import { logger, loggerUtility } from '#khaf/structures/Logger.mjs'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, EmbedUtil, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { cwd } from '#khaf/utility/Constants/Path.mjs'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
+import { Stats } from '#khaf/utility/Stats.mjs'
+import { plural, upperCase } from '#khaf/utility/String.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
+import { Sanitize, guildSettings as getGuildSettings } from '#khaf/utility/util.mjs'
 
-const config = createFileWatcher<typeof import('../../config.json')>(
-  join(cwd, 'config.json')
-)
+const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 
 const _cooldownGuild = cooldown(30, 60000)
 const _cooldownUsers = cooldown(10, 60000)
@@ -29,7 +27,7 @@ const _cooldownUsers = cooldown(10, 60000)
 export class kEvent implements Event {
   name = Events.MessageCreate as const
 
-  async init (message: Message): Promise<void> {
+  async init(message: Message): Promise<void> {
     Stats.messages++
 
     if (message.channel.type === ChannelType.DM) {
@@ -41,7 +39,7 @@ export class kEvent implements Event {
     }
   }
 
-  async guild (message: Message<true>): Promise<void> {
+  async guild(message: Message<true>): Promise<void> {
     const { client, content: messageContent, member, author, guildId, channel, guild } = message
 
     const [mention, name = '', ...args] = messageContent.split(/\s+/g)
@@ -96,7 +94,7 @@ export class kEvent implements Event {
 
       const cooldownInfo = rateLimit.get(author.id)!
       const rateLimitSeconds = rateLimit.rateLimitSeconds
-      const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / seconds(1))
+      const delay = rateLimitSeconds - (Date.now() - cooldownInfo.added) / seconds(1)
 
       return void message.reply({
         content:
@@ -109,18 +107,14 @@ export class kEvent implements Event {
 
     if (settings.ownerOnly && !Command.isBotOwner(author.id)) {
       return void message.reply({
-        embeds: [
-          Embed.error(`\`${settings.name}\` is only available to the bot owner!`)
-        ]
+        embeds: [Embed.error(`\`${settings.name}\` is only available to the bot owner!`)]
       })
     }
 
     const [min, max = Infinity] = settings.args
 
     if (min > args.length || args.length > max) {
-      const helpMessage = help.length < 2
-        ? [...help, ...Array<string>(2 - help.length).fill('')]
-        : help
+      const helpMessage = help.length < 2 ? [...help, ...Array<string>(2 - help.length).fill('')] : help
 
       return void message.reply({
         embeds: [
@@ -129,7 +123,10 @@ export class kEvent implements Event {
 
           The command requires ${min} minimum arguments and ${max} max.
           Example(s):
-          ${helpMessage.slice(1).map(c => inlineCode(`${settings.name} ${c || '\u200B'}`.trim())).join('\n')}
+          ${helpMessage
+            .slice(1)
+            .map((c) => inlineCode(`${settings.name} ${c || '\u200B'}`.trim()))
+            .join('\n')}
           `)
         ]
       })
@@ -139,14 +136,9 @@ export class kEvent implements Event {
       return void message.reply({ embeds: [Embed.error('Users are limited to 10 commands a minute.')] })
     } else if (!_cooldownGuild(guildId)) {
       return void message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
-    } else if (
-      member === null ||
-      !channel.permissionsFor(member).has(permissions)
-    ) {
+    } else if (member === null || !channel.permissionsFor(member).has(permissions)) {
       return void message.reply({
-        embeds: [
-          Embed.perms(channel, member, permissions)
-        ]
+        embeds: [Embed.perms(channel, member, permissions)]
       })
     }
 
@@ -173,14 +165,14 @@ export class kEvent implements Event {
       }
 
       if (settings.send && isGuildTextBased(message.channel)) {
-        return void await message.channel.send(param)
+        return void (await message.channel.send(param))
       }
 
-      return void await message.reply(param)
+      return void (await message.reply(param))
     } catch (e) {
       logger.error(e, 'message event error')
 
-      return void await message.reply({
+      return void (await message.reply({
         embeds: [
           Embed.json({
             color: colors.error,
@@ -188,13 +180,13 @@ export class kEvent implements Event {
           })
         ],
         failIfNotExists: false
-      })
+      }))
     } finally {
       logger.info(loggerUtility.formatters.message(message), `message command ${settings.name}`)
     }
   }
 
-  async dm (message: Message): Promise<void> {
+  async dm(message: Message): Promise<void> {
     const [mention, name, ...args] = message.content.split(/\s+/g)
 
     if (mention !== `<@!${config.botId}>` && mention !== `<@${config.botId}>`) {
@@ -207,24 +199,19 @@ export class kEvent implements Event {
     const content = message.content.slice(mention.length + name.length + 2)
     const command = KhafraClient.Commands.get(name.toLowerCase())!
 
-    if (!_cooldownUsers(message.author.id)) { // user is rate limited
-      return void await message.reply({
-        embeds: [
-          Embed.error('Users are limited to 10 commands a minute.')
-        ]
-      })
+    if (!_cooldownUsers(message.author.id)) {
+      // user is rate limited
+      return void (await message.reply({
+        embeds: [Embed.error('Users are limited to 10 commands a minute.')]
+      }))
     } else if (command.settings.ownerOnly && !Command.isBotOwner(message.author.id)) {
-      return void await message.reply({
-        embeds: [
-          Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)
-        ]
-      })
+      return void (await message.reply({
+        embeds: [Embed.error(`\`${command.settings.name}\` is only available to the bot owner!`)]
+      }))
     } else if (command.settings.guildOnly) {
-      return void await message.reply({
-        embeds: [
-          Embed.error('This command is only available in guilds!')
-        ]
-      })
+      return void (await message.reply({
+        embeds: [Embed.error('This command is only available in guilds!')]
+      }))
     }
 
     const options: Arguments = { args, commandName: name.toLowerCase(), content }
@@ -249,14 +236,17 @@ export class kEvent implements Event {
         Object.assign(param, returnValue)
       }
 
-      return void await message.reply(param)
+      return void (await message.reply(param))
     } catch (e) {
-      logger.error({
-        error: e,
-        ...loggerUtility.formatters.message(message)
-      }, 'DM error')
+      logger.error(
+        {
+          error: e,
+          ...loggerUtility.formatters.message(message)
+        },
+        'DM error'
+      )
 
-      return void await message.reply({
+      return void (await message.reply({
         embeds: [
           Embed.json({
             color: colors.error,
@@ -264,7 +254,7 @@ export class kEvent implements Event {
           })
         ],
         failIfNotExists: false
-      })
+      }))
     } finally {
       logger.info({ message }, `handled DM (${command.settings.name})`)
     }

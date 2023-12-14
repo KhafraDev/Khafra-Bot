@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction'
+import { Buffer } from 'node:buffer'
 import { QrCode } from '@khaf/qrcode'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { Buffer } from 'node:buffer'
+import { Interactions } from '#khaf/Interaction'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'qr',
       description: 'Gets the QR code for some text.',
@@ -23,17 +23,19 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     try {
       const text = interaction.options.getString('input', true)
       const qrcode = Buffer.from(await new QrCode(text).asyncImage())
 
       return {
-        files: [{
-          attachment: qrcode,
-          name: 'qr.png',
-          description: 'A QR Code!'
-        }]
+        files: [
+          {
+            attachment: qrcode,
+            name: 'qr.png',
+            description: 'A QR Code!'
+          }
+        ]
       }
     } catch {
       return {

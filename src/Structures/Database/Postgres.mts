@@ -1,12 +1,9 @@
-import { KhafraClient } from '#khaf/Bot'
-import { assets } from '#khaf/utility/Constants/Path.mjs'
 import { env } from 'node:process'
 import postgres from 'postgres'
+import { KhafraClient } from '#khaf/Bot'
+import { assets } from '#khaf/utility/Constants/Path.mjs'
 
-const sqlFiles = KhafraClient.walk(
-  assets('SQL/Postgres'),
-  p => p.endsWith('.sql')
-)
+const sqlFiles = KhafraClient.walk(assets('SQL/Postgres'), (p) => p.endsWith('.sql'))
 
 export const sql = postgres({
   user: env.POSTGRES_USER,
@@ -16,4 +13,4 @@ export const sql = postgres({
   onnotice: () => {}
 })
 
-await Promise.all(sqlFiles.map(file => sql.file(file)))
+await Promise.all(sqlFiles.map((file) => sql.file(file)))

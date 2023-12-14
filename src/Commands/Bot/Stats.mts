@@ -1,15 +1,13 @@
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { Stats } from '#khaf/utility/Stats.mjs'
 import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { Stats } from '#khaf/utility/Stats.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super([
-      'Get global stats for the bot!'
-    ], {
+  constructor() {
+    super(['Get global stats for the bot!'], {
       name: 'stats',
       folder: 'Bot',
       args: [0, 0],
@@ -17,14 +15,12 @@ export class kCommand extends Command {
     })
   }
 
-  init (message: Message): APIEmbed {
+  init(message: Message): APIEmbed {
     const guilds = message.client.guilds.cache
-    const {
-      globalCommandsUsed,
-      globalMessages
-    } = Stats.stats
+    const { globalCommandsUsed, globalMessages } = Stats.stats
 
-    const totalMembers = guilds.map(g => g.memberCount)
+    const totalMembers = guilds
+      .map((g) => g.memberCount)
       .reduce((a, b) => a + b, 0)
       .toLocaleString()
     const totalGuilds = guilds.size.toLocaleString()

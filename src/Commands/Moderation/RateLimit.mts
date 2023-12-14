@@ -1,51 +1,37 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isExplicitText, isText } from '#khaf/utility/Discord.js'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
-import { parseStrToMs } from '#khaf/utility/ms.mjs'
-import { plural } from '#khaf/utility/String.mjs'
 import { bold } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isExplicitText, isText } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
+import { plural } from '#khaf/utility/String.mjs'
+import { parseStrToMs } from '#khaf/utility/ms.mjs'
 
 const MAX_SECS = parseStrToMs('6h') / 1000
 const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(MAX_SECS)
-const perms =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Sets ratelimit in seconds.',
-        '#general 6h',
-        '543940496683434014 15s',
-        '#general 0',
-        '5s'
-      ],
-      {
-        name: 'ratelimit',
-        folder: 'Moderation',
-        aliases: ['slowmode', 'slow-mode', 'rl'],
-        args: [1, 2],
-        guildOnly: true,
-        permissions: [PermissionFlagsBits.ManageChannels]
-      }
-    )
+  constructor() {
+    super(['Sets ratelimit in seconds.', '#general 6h', '543940496683434014 15s', '#general 0', '5s'], {
+      name: 'ratelimit',
+      folder: 'Moderation',
+      aliases: ['slowmode', 'slow-mode', 'rl'],
+      args: [1, 2],
+      guildOnly: true,
+      permissions: [PermissionFlagsBits.ManageChannels]
+    })
   }
 
-  async init (message: Message<true>, { args }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
+  async init(message: Message<true>, { args }: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
     // if the channel is mentioned as the first argument
     const channelFirst = /(<#)?(\d{17,19})>?/g.test(args[0])
-    const guildChannel = channelFirst
-      ? (await getMentions(message, 'channels') ?? message.channel)
-      : message.channel
+    const guildChannel = channelFirst ? (await getMentions(message, 'channels')) ?? message.channel : message.channel
 
     // if a channel is mentioned in the first argument,
     // seconds must be the second argument + vice versa.
@@ -75,10 +61,9 @@ export class kCommand extends Command {
 
     if (settings.mod_log_channel !== null) {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
-      const me = message.guild.members.me ?? await message.guild.members.fetchMe()
+      const me = message.guild.members.me ?? (await message.guild.members.fetchMe())
 
-      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
-        return
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms)) return
 
       return void channel.send({
         embeds: [

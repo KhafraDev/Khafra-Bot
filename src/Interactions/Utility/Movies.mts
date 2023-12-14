@@ -1,9 +1,3 @@
-import { Interactions } from '#khaf/Interaction'
-import { searchMovie } from '#khaf/utility/commands/TMDB'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isDM, isText } from '#khaf/utility/Discord.js'
-import { formatMs } from '#khaf/utility/util.mjs'
 import { bold, hyperlink, time } from '@discordjs/builders'
 import type {
   APIActionRowComponent,
@@ -12,9 +6,15 @@ import type {
 } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { searchMovie } from '#khaf/utility/commands/TMDB'
+import { formatMs } from '#khaf/utility/util.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'movie',
       description: 'Gets information about a movie!',
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'name',
-          description: 'The movie\'s name.',
+          description: "The movie's name.",
           required: true
         }
       ]
@@ -31,7 +31,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const movies = await searchMovie(
       interaction.options.getString('name', true),
       isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
@@ -52,7 +52,7 @@ export class kInteraction extends Interactions {
       fields: [
         {
           name: bold('Genres:'),
-          value: movies.genres.map(g => g.name).join(', '),
+          value: movies.genres.map((g) => g.name).join(', '),
           inline: true
         },
         { name: bold('Runtime:'), value: formatMs(Number(movies.runtime) * 60000), inline: true },
@@ -79,11 +79,7 @@ export class kInteraction extends Interactions {
       const link = `https://www.imdb.com/title/${movies.imdb_id}/`
       embed.fields?.push({ name: bold('IMDB:'), value: hyperlink('IMDB', link), inline: true })
 
-      components.push(
-        Components.actionRow([
-          Buttons.link('Go to IMDB', link)
-        ])
-      )
+      components.push(Components.actionRow([Buttons.link('Go to IMDB', link)]))
     }
 
     if (movies.poster_path) {

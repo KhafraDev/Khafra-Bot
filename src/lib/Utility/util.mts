@@ -1,33 +1,30 @@
-import { sql } from '#khaf/database/Postgres.mjs'
+import { Buffer } from 'node:buffer'
+import { join } from 'node:path'
+import { bold, inlineCode, italic } from '@discordjs/builders'
+import {
+  type APIEmbed,
+  ActivityType,
+  type ApplicationFlags,
+  ChannelType,
+  MessageType,
+  PermissionFlagsBits,
+  type Snowflake
+} from 'discord-api-types/v10'
+import {
+  type Activity,
+  type ChatInputCommandInteraction,
+  type Message,
+  type UserFlagsString,
+  formatEmoji
+} from 'discord.js'
 import { logger } from '#khaf/Logger'
+import { sql } from '#khaf/database/Postgres.mjs'
 import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
-import { bold, inlineCode, italic } from '@discordjs/builders'
-import {
-  ActivityType,
-  ChannelType,
-  MessageType,
-  PermissionFlagsBits,
-  type APIEmbed,
-  type ApplicationFlags,
-  type Snowflake
-} from 'discord-api-types/v10'
-import {
-  formatEmoji,
-  type Activity,
-  type ChatInputCommandInteraction,
-  type Message,
-  type UserFlagsString
-} from 'discord.js'
-import { Buffer } from 'node:buffer'
-import { join } from 'node:path'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 
@@ -36,7 +33,7 @@ type FromKeys<K extends keyof kGuild | undefined> = K extends keyof kGuild
   : kGuild
 
 // https://stackoverflow.com/a/50375286/15299271
-type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never
+type UnionToIntersection<U> = (U extends unknown ? (k: U) => void : never) extends (k: infer I) => void ? I : never
 
 // https://stackoverflow.com/a/63542565/15299271
 type MagicType<U> = UnionToIntersection<U> extends infer O ? { [K in keyof O]: O[K] } : never
@@ -121,7 +118,8 @@ export const isSnowflake = (id: string): boolean => {
 
   for (let i = 0; i < id.length; i++) {
     const char = id.charCodeAt(i)
-    if (char < 48 || char > 57) { // 0 - 9
+    if (char < 48 || char > 57) {
+      // 0 - 9
       return false
     }
   }
@@ -173,9 +171,7 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
     switch (activity.type) {
       case ActivityType.Custom: {
         if (activity.emoji) {
-          desc += activity.emoji.id
-            ? formatEmoji(activity.emoji.id, !!activity.emoji.animated)
-            : activity.emoji.name
+          desc += activity.emoji.id ? formatEmoji(activity.emoji.id, !!activity.emoji.animated) : activity.emoji.name
         }
         desc += `${inlineCode(activity.state ?? 'N/A')}\n`
         break
@@ -232,7 +228,7 @@ export const formatMs = (ms: number): string => {
   }
 
   return Object.keys(durations)
-    .map(k => durations[k] > 0 ? `${durations[k]}${k}` : '')
+    .map((k) => (durations[k] > 0 ? `${durations[k]}${k}` : ''))
     .join(' ')
 }
 
@@ -261,9 +257,7 @@ export const formatApplicationPresence = (key: keyof typeof ApplicationFlags): s
   return 'OK TYPESCRIPT'
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-export const createDeferredPromise = <T extends unknown>(): {
+export const createDeferredPromise = <T,>(): {
   promise: Promise<T>
   resolve: (v: T) => void
   reject: (error?: Error) => void
@@ -282,8 +276,7 @@ export const createDeferredPromise = <T extends unknown>(): {
 // https://fetch.spec.whatwg.org/#redirect-status
 const redirectStatuses = [301, 302, 303, 307, 308]
 
-export const isRedirect = (statusCode: number): boolean =>
-  redirectStatuses.includes(statusCode)
+export const isRedirect = (statusCode: number): boolean => redirectStatuses.includes(statusCode)
 
 export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   if (ArrayBuffer.isView(buffer)) {
@@ -293,12 +286,9 @@ export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   return Buffer.from(buffer, buffer.byteLength)
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-export const chunkSafe = <T extends unknown>(arr: T[], step: number): T[][] => {
+export const chunkSafe = <T,>(arr: T[], step: number): T[][] => {
   const res: T[][] = []
-  for (let i = 0; i < arr.length; i += step)
-    res.push(arr.slice(i, i + step))
+  for (let i = 0; i < arr.length; i += step) res.push(arr.slice(i, i + step))
 
   return res
 }

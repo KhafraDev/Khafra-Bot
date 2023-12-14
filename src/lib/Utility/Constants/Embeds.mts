@@ -1,18 +1,11 @@
+import { join } from 'node:path'
+import type { APIEmbed } from 'discord-api-types/v10'
+import type { Channel, GuildMember, PermissionResolvable, Role } from 'discord.js'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { permResolvableToReadable } from '#khaf/utility/Permissions.mjs'
-import type { APIEmbed } from 'discord-api-types/v10'
-import type {
-  Channel,
-  GuildMember,
-  PermissionResolvable,
-  Role
-} from 'discord.js'
-import { join } from 'node:path'
 
-const config = createFileWatcher<typeof import('../../../../config.json')>(
-  join(cwd, 'config.json')
-)
+const config = createFileWatcher<typeof import('../../../../config.json')>(join(cwd, 'config.json'))
 
 const kIsJSONEmbed = Symbol('api embed')
 
@@ -23,7 +16,7 @@ export const colors = {
 } as const
 
 export const Embed = {
-  error (reason?: string): APIEmbed {
+  error(reason?: string): APIEmbed {
     const Embed = this.json({ color: colors.error })
 
     if (reason) {
@@ -36,7 +29,7 @@ export const Embed = {
   /**
    * An embed for a command being successfully executed!
    */
-  ok (reason?: string): APIEmbed {
+  ok(reason?: string): APIEmbed {
     const Embed = this.json({ color: colors.ok })
 
     if (reason) {
@@ -46,17 +39,10 @@ export const Embed = {
     return Embed
   },
 
-  perms (
-    inChannel: Channel,
-    userOrRole: GuildMember | Role | null,
-    permissions: PermissionResolvable
-  ): APIEmbed {
+  perms(inChannel: Channel, userOrRole: GuildMember | Role | null, permissions: PermissionResolvable): APIEmbed {
     const perms = permResolvableToReadable(permissions)
-    const checkType = userOrRole && 'color' in userOrRole
-      ? `The role ${userOrRole}`
-      : userOrRole
-        ? `User ${userOrRole}`
-        : 'The user'
+    const checkType =
+      userOrRole && 'color' in userOrRole ? `The role ${userOrRole}` : userOrRole ? `User ${userOrRole}` : 'The user'
     const amountMissing = perms.length === 1 ? 'this permission' : 'these permissions'
 
     return this.json({
@@ -64,7 +50,7 @@ export const Embed = {
     })
   },
 
-  json (data?: Partial<APIEmbed>): APIEmbed {
+  json(data?: Partial<APIEmbed>): APIEmbed {
     const embed: APIEmbed & { [kIsJSONEmbed]: true } = {
       fields: [],
       [kIsJSONEmbed]: true,
@@ -88,7 +74,7 @@ export const padEmbedFields = (embed: APIEmbed): APIEmbed => {
 }
 
 export const EmbedUtil = {
-  isAPIEmbed (embed: unknown): embed is APIEmbed {
+  isAPIEmbed(embed: unknown): embed is APIEmbed {
     return embed != null && Object.hasOwn(embed, kIsJSONEmbed)
   }
 }

@@ -1,16 +1,17 @@
-import { Interactions } from '#khaf/Interaction'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import {
   ApplicationCommandOptionType,
   ChannelType,
-  PermissionFlagsBits, Routes,
+  PermissionFlagsBits,
   type RESTPatchAPIChannelJSONBody,
-  type RESTPostAPIApplicationCommandsJSONBody
+  type RESTPostAPIApplicationCommandsJSONBody,
+  Routes
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'lock-thread',
       description: 'Easier way of archiving a thread.',
@@ -21,10 +22,7 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.Channel,
           name: 'thread',
           description: 'The thread to lock.',
-          channel_types: [
-            ChannelType.PublicThread,
-            ChannelType.PrivateThread
-          ]
+          channel_types: [ChannelType.PublicThread, ChannelType.PrivateThread]
         },
         {
           type: ApplicationCommandOptionType.String,
@@ -37,7 +35,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
@@ -47,20 +45,19 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
 
     const thread = interaction.options.getChannel('thread') ?? interaction.channel
 
-    if (
-      thread?.type !== ChannelType.PublicThread &&
-      thread?.type !== ChannelType.PrivateThread
-    ) {
-      const message = thread === null
-        ? '❌ I\'m unsure what channel you are in, try putting it as an option instead.'
-        : `❌ ${thread} is not a forum channel.`
+    if (thread?.type !== ChannelType.PublicThread && thread?.type !== ChannelType.PrivateThread) {
+      const message =
+        thread === null
+          ? "❌ I'm unsure what channel you are in, try putting it as an option instead."
+          : `❌ ${thread} is not a forum channel.`
 
       return {
         content: message,
@@ -69,8 +66,7 @@ export class kInteraction extends Interactions {
     }
 
     const reason =
-      interaction.options.getString('reason') ??
-      `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
+      interaction.options.getString('reason') ?? `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
 
     const body: RESTPatchAPIChannelJSONBody = {
       locked: true,
@@ -83,13 +79,12 @@ export class kInteraction extends Interactions {
       content: `Locking ${message}...`
     })
 
-    const response = await interaction.client.rest.patch(
-      Routes.channel(thread.id),
-      {
+    const response = await interaction.client.rest
+      .patch(Routes.channel(thread.id), {
         body,
         headers: { 'X-Audit-Log-Reason': reason }
-      }
-    ).catch(() => null)
+      })
+      .catch(() => null)
 
     if (response === null) {
       await interaction.editReply({

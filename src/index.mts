@@ -1,16 +1,16 @@
 import '#khaf/image/ImageFonts.mjs'
 import '#khaf/utility/Rejections.mjs'
 
+import { RESTEvents, type RestEvents } from '@discordjs/rest'
+import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
+import { type ClientEvents, Events, Options, Partials } from 'discord.js'
 import { KhafraClient } from '#khaf/Bot'
 import type { Event } from '#khaf/Event'
 import { logger } from '#khaf/Logger'
-import { RESTEvents, type RestEvents } from '@discordjs/rest'
-import { AllowedMentionsTypes, GatewayIntentBits, PresenceUpdateStatus } from 'discord-api-types/v10'
-import { Events, Options, Partials, type ClientEvents } from 'discord.js'
 
 const emitted = <T extends keyof ClientEvents | keyof RestEvents>(
   name: T
-): (...args: Parameters<Event['init']>) => void => {
+): ((...args: Parameters<Event['init']>) => void) => {
   let events: Event | undefined
 
   return async (...args: Parameters<Event['init']>): Promise<void> => {
@@ -50,16 +50,16 @@ const client = new KhafraClient({
     VoiceStateManager: 0
   })
 })
-  .on(Events.ClientReady,         emitted(Events.ClientReady))
-  .on(Events.MessageCreate,       emitted(Events.MessageCreate))
-  .on(Events.GuildBanAdd,         emitted(Events.GuildBanAdd))
-  .on(Events.GuildBanRemove,      emitted(Events.GuildBanRemove))
-  .on(Events.GuildCreate,         emitted(Events.GuildCreate))
-  .on(Events.GuildDelete,         emitted(Events.GuildDelete))
-  .on(Events.InteractionCreate,   emitted(Events.InteractionCreate))
-  .on(Events.GuildMemberAdd,      emitted(Events.GuildMemberAdd))
-  .on(Events.GuildMemberRemove,   emitted(Events.GuildMemberRemove))
-  .on(Events.GuildMemberUpdate,   emitted(Events.GuildMemberUpdate))
+  .on(Events.ClientReady, emitted(Events.ClientReady))
+  .on(Events.MessageCreate, emitted(Events.MessageCreate))
+  .on(Events.GuildBanAdd, emitted(Events.GuildBanAdd))
+  .on(Events.GuildBanRemove, emitted(Events.GuildBanRemove))
+  .on(Events.GuildCreate, emitted(Events.GuildCreate))
+  .on(Events.GuildDelete, emitted(Events.GuildDelete))
+  .on(Events.InteractionCreate, emitted(Events.InteractionCreate))
+  .on(Events.GuildMemberAdd, emitted(Events.GuildMemberAdd))
+  .on(Events.GuildMemberRemove, emitted(Events.GuildMemberRemove))
+  .on(Events.GuildMemberUpdate, emitted(Events.GuildMemberUpdate))
   .on(Events.GuildAuditLogEntryCreate, emitted(Events.GuildAuditLogEntryCreate))
 
 client.rest.on(RESTEvents.RateLimited, emitted(RESTEvents.RateLimited))

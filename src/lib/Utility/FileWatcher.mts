@@ -1,4 +1,4 @@
-import { readFileSync, watch, existsSync } from 'node:fs'
+import { existsSync, readFileSync, watch } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 
 type Watcher = Record<string, unknown> | unknown[]

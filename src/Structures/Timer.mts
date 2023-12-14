@@ -1,5 +1,5 @@
-import type { Client } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
+import type { Client } from 'discord.js'
 
 interface Options {
   client: Client
@@ -8,24 +8,24 @@ interface Options {
 }
 
 export abstract class Timer {
-  public constructor (public options: Options) {}
+  public constructor(public options: Options) {}
 
-  public abstract setInterval (): Promise<unknown>
+  public abstract setInterval(): Promise<unknown>
 
   /**
    * Run once a timer has ended for an item. This ***MUST NOT*** throw an error.
    */
-  public abstract action (...items: unknown[]): Promise<void>
+  public abstract action(...items: unknown[]): Promise<void>
 
-  public yieldEvery (): {
+  public yieldEvery(): {
     runs: number
     [Symbol.asyncIterator](): AsyncGenerator<number, void>
-  } { // eslint-disable-line indent
+  } {
     const { interval, maxRuns = Infinity } = this.options
 
     return {
       runs: 0,
-      async * [Symbol.asyncIterator](): AsyncGenerator<number, void> {
+      async *[Symbol.asyncIterator](): AsyncGenerator<number, void> {
         while (this.runs < maxRuns) {
           await setTimeout(interval)
           yield this.runs++

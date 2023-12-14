@@ -1,38 +1,32 @@
-import { sql } from '#khaf/database/Postgres.mjs'
+import assert from 'node:assert'
+import { bold, spoiler, time } from '@discordjs/builders'
+import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10'
+import { Events, type Guild, type GuildAuditLogsEntry, cleanContent } from 'discord.js'
 import type { Event } from '#khaf/Event'
+import { sql } from '#khaf/database/Postgres.mjs'
 import type { Case } from '#khaf/functions/case/reports.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
-import { bold, time, spoiler } from '@discordjs/builders'
-import { AuditLogEvent, PermissionFlagsBits } from 'discord-api-types/v10'
-import { Events, type Guild, type GuildAuditLogsEntry, cleanContent } from 'discord.js'
-import assert from 'node:assert'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildAuditLogEntryCreate as const
 
-  async init (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
+  async init(entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
     if (entry.action === AuditLogEvent.MemberKick) {
       return await this.kicked(entry, guild)
-    } else if (
-      entry.action === AuditLogEvent.MemberBanAdd ||
-      entry.action === AuditLogEvent.MemberBanRemove
-    ) {
+    } else if (entry.action === AuditLogEvent.MemberBanAdd || entry.action === AuditLogEvent.MemberBanRemove) {
       return await this.banUnban(entry, guild)
     } else if (entry.action === AuditLogEvent.MemberUpdate) {
       return await this.timeout(entry, guild)
     }
   }
 
-  async kicked (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
+  async kicked(entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
     assert(entry.targetId && entry.executorId)
 
     const _case = {
@@ -61,19 +55,13 @@ export class kEvent implements Event {
     const channel = await guild.channels.fetch(item.mod_log_channel)
     const me = await guild.members.fetchMe()
 
-    if (
-      channel === null ||
-      !isGuildTextBased(channel) ||
-      !channel.permissionsFor(me).has(perms)
-    ) {
+    if (channel === null || !isGuildTextBased(channel) || !channel.permissionsFor(me).has(perms)) {
       return
     }
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
-    const cleaned = entry.reason
-      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
-      : ''
+    const cleaned = entry.reason ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}` : ''
 
     await channel.send({
       embeds: [
@@ -94,7 +82,7 @@ export class kEvent implements Event {
     })
   }
 
-  async banUnban (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
+  async banUnban(entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
     assert(entry.targetId && entry.executorId)
 
     const action = entry.action === AuditLogEvent.MemberBanAdd ? 'ban' : 'unban'
@@ -125,19 +113,13 @@ export class kEvent implements Event {
     const me = await guild.members.fetchMe()
     const channel = await guild.channels.fetch(item.mod_log_channel)
 
-    if (
-      channel === null ||
-      !isGuildTextBased(channel) ||
-      !channel.permissionsFor(me).has(perms)
-    ) {
+    if (channel === null || !isGuildTextBased(channel) || !channel.permissionsFor(me).has(perms)) {
       return
     }
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
-    const cleaned = entry.reason
-      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
-      : ''
+    const cleaned = entry.reason ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}` : ''
 
     await channel.send({
       embeds: [
@@ -158,12 +140,12 @@ export class kEvent implements Event {
     })
   }
 
-  async timeout (entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
+  async timeout(entry: GuildAuditLogsEntry, guild: Guild): Promise<void> {
     if (entry.actionType !== 'Update' || entry.targetType !== 'User') {
       return
     }
 
-    const change = entry.changes.find(change => change.key === 'communication_disabled_until')
+    const change = entry.changes.find((change) => change.key === 'communication_disabled_until')
 
     if (!change) {
       return
@@ -198,19 +180,13 @@ export class kEvent implements Event {
     const me = await guild.members.fetchMe()
     const channel = await guild.channels.fetch(item.mod_log_channel)
 
-    if (
-      channel === null ||
-      !isGuildTextBased(channel) ||
-      !channel.permissionsFor(me).has(perms)
-    ) {
+    if (channel === null || !isGuildTextBased(channel) || !channel.permissionsFor(me).has(perms)) {
       return
     }
 
     const staff = await guild.members.fetch(entry.executorId)
     const targetUser = await guild.client.users.fetch(entry.targetId)
-    const cleaned = entry.reason
-      ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}`
-      : ''
+    const cleaned = entry.reason ? `${bold('Reason:')} ${spoiler(cleanContent(entry.reason, channel))}` : ''
 
     await channel.send({
       embeds: [

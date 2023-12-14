@@ -1,25 +1,20 @@
-import { Command } from '#khaf/Command'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { italic } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
+import { Command } from '#khaf/Command'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'See reviews for the worst ISP in the U.S.'
-      ],
-      {
-        name: 'optimum',
-        folder: 'Fun',
-        aliases: ['altice'],
-        args: [0, 0],
-        ratelimit: 3
-      }
-    )
+  constructor() {
+    super(['See reviews for the worst ISP in the U.S.'], {
+      name: 'optimum',
+      folder: 'Fun',
+      aliases: ['altice'],
+      args: [0, 0],
+      ratelimit: 3
+    })
   }
 
-  init (): APIEmbed {
+  init(): APIEmbed {
     return Embed.json({
       title: 'Optimum by Altice',
       description: `

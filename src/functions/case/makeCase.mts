@@ -1,7 +1,7 @@
+import assert from 'node:assert'
+import type { ButtonInteraction } from 'discord.js'
 import { sql } from '#khaf/database/Postgres.mjs'
 import type { Case, Report } from '#khaf/functions/case/reports.mjs'
-import type { ButtonInteraction } from 'discord.js'
-import assert from 'node:assert'
 
 type CreateCase = Omit<Report, 'id'> & {
   type: Case['type']
@@ -11,7 +11,7 @@ type CreateCase = Omit<Report, 'id'> & {
 export const makeCase = async (report: CreateCase): Promise<void> => {
   const { type, interaction, ...rest } = report
 
-  const guild = interaction.guild ?? await interaction.client.guilds.fetch(report.guildId)
+  const guild = interaction.guild ?? (await interaction.client.guilds.fetch(report.guildId))
 
   // TODO: allow for staff to add reasons
   switch (type) {

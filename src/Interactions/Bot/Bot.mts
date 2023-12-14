@@ -1,10 +1,5 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { cwd } from '#khaf/utility/Constants/Path.mjs'
-import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
-import { Stats } from '#khaf/utility/Stats.mjs'
-import { formatMs } from '#khaf/utility/util.mjs'
+import { join } from 'node:path'
+import { memoryUsage, version } from 'node:process'
 import { bold, inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -14,8 +9,13 @@ import {
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { version as DJSVersion } from 'discord.js'
-import { join } from 'node:path'
-import { memoryUsage, version } from 'node:process'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { cwd } from '#khaf/utility/Constants/Path.mjs'
+import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
+import { Stats } from '#khaf/utility/Stats.mjs'
+import { formatMs } from '#khaf/utility/util.mjs'
 
 const pkg = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
@@ -38,7 +38,7 @@ const invitePermissions = [
 ]
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'bot',
       description: 'Bot commands',
@@ -51,7 +51,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.Subcommand,
           name: 'ping',
-          description: 'See the bot\'s ping. Who\'s lagging?'
+          description: "See the bot's ping. Who's lagging?"
         },
         {
           type: ApplicationCommandOptionType.Subcommand,
@@ -74,7 +74,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const was = Date.now()
     const subcommand = interaction.options.getSubcommand(true)
 
@@ -86,7 +86,9 @@ export class kInteraction extends Interactions {
         color: colors.ok,
         description: `
           ${bold('Dependencies')}
-          ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npm.im/${k})`).join(', ')}`,
+          ${Object.keys(pkg.dependencies)
+            .map((k) => `[${k}](https://npm.im/${k})`)
+            .join(', ')}`,
         fields: [
           { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
           { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },
@@ -119,12 +121,10 @@ export class kInteraction extends Interactions {
       })
     } else if (subcommand === 'stats') {
       const guilds = interaction.client.guilds.cache
-      const {
-        globalCommandsUsed,
-        globalMessages
-      } = Stats.stats
+      const { globalCommandsUsed, globalMessages } = Stats.stats
 
-      const totalMembers = guilds.map(g => g.memberCount)
+      const totalMembers = guilds
+        .map((g) => g.memberCount)
         .reduce((a, b) => a + b, 0)
         .toLocaleString()
       const totalGuilds = guilds.size.toLocaleString()
@@ -148,11 +148,7 @@ export class kInteraction extends Interactions {
     } else if (subcommand === 'github') {
       return {
         content: 'https://github.com/KhafraDev/Khafra-Bot',
-        components: [
-          Components.actionRow([
-            Buttons.link('GitHub', 'https://github.com/KhafraDev/Khafra-Bot')
-          ])
-        ]
+        components: [Components.actionRow([Buttons.link('GitHub', 'https://github.com/KhafraDev/Khafra-Bot')])]
       }
     } else if (subcommand === 'invite') {
       const everything = interaction.client.generateInvite({ scopes, permissions: invitePermissions })

@@ -1,13 +1,13 @@
+import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { GuildMember, GuildMemberRoleManager, Role, resolveColor } from 'discord.js'
+import { parse } from 'twemoji-parser'
 import { Interactions } from '#khaf/Interaction'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type { RESTPostAPIApplicationCommandsJSONBody, Snowflake } from 'discord-api-types/v10'
-import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { GuildMember, GuildMemberRoleManager, resolveColor, Role } from 'discord.js'
-import { parse } from 'twemoji-parser'
 
 interface GuildMatchGroups {
   animated: undefined | 'a'
@@ -19,7 +19,7 @@ const guildEmojiRegex = /<?(?<animated>a)?:?(?<name>\w{2,32}):(?<id>\d{17,19})>?
 const perms = PermissionFlagsBits.SendMessages
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'react-role',
       description: 'Add a button that gives members a specified role when clicked on!',
@@ -73,7 +73,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
@@ -81,12 +81,10 @@ export class kInteraction extends Interactions {
         content: '❌ You do not have permission to use this command!',
         ephemeral: true
       }
-    } else if (
-      !interaction.member ||
-      !interaction.guild?.members.me?.permissions.has(defaultPerms)
-    ) {
+    } else if (!interaction.member || !interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -113,9 +111,10 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const memberPermissions = typeof interaction.member.permissions === 'string'
-      ? BigInt(interaction.member.permissions)
-      : interaction.member.permissions.bitfield
+    const memberPermissions =
+      typeof interaction.member.permissions === 'string'
+        ? BigInt(interaction.member.permissions)
+        : interaction.member.permissions.bitfield
 
     if (!isGuildTextBased(channel)) {
       return {
@@ -136,7 +135,7 @@ export class kInteraction extends Interactions {
       }
     } else if (role.managed) {
       return {
-        content: '❌ I can\'t give members a managed role.',
+        content: "❌ I can't give members a managed role.",
         ephemeral: true
       }
     } else if (
@@ -161,7 +160,7 @@ export class kInteraction extends Interactions {
       }
     } else if (
       role.id === interaction.member.roles.highest.id ||
-            role.comparePositionTo(interaction.member.roles.highest) > 0
+      role.comparePositionTo(interaction.member.roles.highest) > 0
     ) {
       return {
         content: '❌ You cannot give this role out to others!',
@@ -196,15 +195,11 @@ export class kInteraction extends Interactions {
           description: text
         })
       ],
-      components: [
-        Components.actionRow([component])
-      ]
+      components: [Components.actionRow([component])]
     })
 
     return {
-      embeds: [
-        Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`)
-      ]
+      embeds: [Embed.ok(`Ok! Click [the button here](${message.url}) to get the ${role} role!`)]
     }
   }
 }

@@ -1,21 +1,18 @@
+import { bold, time } from '@discordjs/builders'
+import { Events, type GuildMember, PermissionFlagsBits } from 'discord.js'
 import type { Event } from '#khaf/Event'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 import { isTextBased } from '#khaf/utility/Discord.js'
 import { upperCase } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
-import { bold, time } from '@discordjs/builders'
-import { Events, PermissionFlagsBits, type GuildMember } from 'discord.js'
 
-const basic =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const basic = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildMemberUpdate as const
 
-  async init (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
+  async init(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
     const { communicationDisabledUntilTimestamp: old } = oldMember
     const { communicationDisabledUntilTimestamp: current } = newMember
 
@@ -27,9 +24,7 @@ export class kEvent implements Event {
     const premiumRole =
       oldMember.roles.premiumSubscriberRole ??
       newMember.roles.premiumSubscriberRole ??
-      (await newMember.guild.roles.fetch(undefined, { force: true })).find(
-        (role) => role.tags?.premiumSubscriberRole
-      )
+      (await newMember.guild.roles.fetch(undefined, { force: true })).find((role) => role.tags?.premiumSubscriberRole)
 
     if (!premiumRole) {
       return
@@ -46,7 +41,7 @@ export class kEvent implements Event {
     return this.booster(oldMember, newMember, oldHas && !newHas)
   }
 
-  async timeout (oldMember: GuildMember, newMember: GuildMember): Promise<void> {
+  async timeout(oldMember: GuildMember, newMember: GuildMember): Promise<void> {
     const me = await oldMember.guild.members.fetchMe()
 
     // If we can view the audit log, use the much more useful guildAuditLogEntryCreate event.
@@ -67,11 +62,7 @@ export class kEvent implements Event {
 
     const channel = await oldMember.guild.channels.fetch(item.mod_log_channel)
 
-    if (
-      channel === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
-    ) {
+    if (channel === null || !isTextBased(channel) || !channel.permissionsFor(me).has(basic)) {
       return
     }
 
@@ -92,7 +83,7 @@ export class kEvent implements Event {
     })
   }
 
-  async booster (oldMember: GuildMember, newMember: GuildMember, lost: boolean): Promise<void> {
+  async booster(oldMember: GuildMember, newMember: GuildMember, lost: boolean): Promise<void> {
     const item = await guildSettings(oldMember.guild.id, ['welcome_channel'])
 
     if (!item?.welcome_channel) {
@@ -102,12 +93,7 @@ export class kEvent implements Event {
     const channel = await oldMember.guild.channels.fetch(item.welcome_channel)
     const me = oldMember.guild.members.me
 
-    if (
-      channel === null ||
-      me === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
-    ) {
+    if (channel === null || me === null || !isTextBased(channel) || !channel.permissionsFor(me).has(basic)) {
       return
     }
 
@@ -122,7 +108,8 @@ export class kEvent implements Event {
       })
 
       await channel.send({ embeds: [embed] })
-    } else { // gained role
+    } else {
+      // gained role
       const embed = Embed.json({
         color: colors.boost,
         description: `${newMember} just boosted the server! 🥳`,

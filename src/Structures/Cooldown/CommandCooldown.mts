@@ -1,10 +1,10 @@
-import { seconds } from '#khaf/utility/ms.mjs'
-import type { Snowflake } from 'discord.js'
 import { setInterval } from 'node:timers'
+import type { Snowflake } from 'discord.js'
+import { seconds } from '#khaf/utility/ms.mjs'
 
 interface UserCooldown {
-    added: number
-    notified?: boolean
+  added: number
+  notified?: boolean
 }
 
 export class Cooldown extends Map<Snowflake, UserCooldown> {
@@ -15,7 +15,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
    * Max age of an item in seconds
    * @param {number} maxAge
    */
-  constructor (maxAge: number) {
+  constructor(maxAge: number) {
     super()
     this.#maxAge = seconds(maxAge)
     this.#createClearInterval()
@@ -27,7 +27,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
       const now = Date.now()
 
       for (const [id, { added }] of this.entries()) {
-        if ((now - added) >= maxAgeMs) {
+        if (now - added >= maxAgeMs) {
           this.delete(id)
         }
       }
@@ -40,7 +40,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
 
     if (!info) return false // not cached
 
-    if ((Date.now() - info.added) >= maxAgeMs) {
+    if (Date.now() - info.added >= maxAgeMs) {
       this.delete(id)
       return false
     }

@@ -1,26 +1,21 @@
-import { Command } from '#khaf/Command'
-import { Kongregate } from '#khaf/utility/commands/SynergismStats'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { request } from 'undici'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { Kongregate } from '#khaf/utility/commands/SynergismStats'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Get play stats about Synergism!'
-      ],
-      {
-        name: 'synergismstats',
-        folder: 'Fun',
-        args: [0, 0],
-        aliases: ['synergismstat']
-      }
-    )
+  constructor() {
+    super(['Get play stats about Synergism!'], {
+      name: 'synergismstats',
+      folder: 'Fun',
+      args: [0, 0],
+      aliases: ['synergismstat']
+    })
   }
 
-  async init (): Promise<APIEmbed> {
+  async init(): Promise<APIEmbed> {
     const stats = await Kongregate()
     const quarkBonus = await request('https://synergism-quarks.khafra.workers.dev/')
 
@@ -29,8 +24,8 @@ export class kCommand extends Command {
       return Embed.error('Failed to fetch the stats!')
     }
 
-    const quarks = await quarkBonus.body.json() as { bonus: number }
-    const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g)
+    const quarks = (await quarkBonus.body.json()) as { bonus: number }
+    const [, average, , ratings] = stats.average_rating_with_count.split(/\s+/g)
 
     return Embed.json({
       color: colors.ok,

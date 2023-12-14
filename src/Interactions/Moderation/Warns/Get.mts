@@ -1,9 +1,9 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { Warning } from '#khaf/types/KhafraBot.js'
-import { plural } from '#khaf/utility/String.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { Warning } from '#khaf/types/KhafraBot.js'
+import { plural } from '#khaf/utility/String.mjs'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 interface Total {
@@ -18,17 +18,15 @@ type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never
 type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>]
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'warns',
       name: 'get'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    const member =
-      interaction.options.getMember('member') ??
-      interaction.options.getUser('member', true)
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+    const member = interaction.options.getMember('member') ?? interaction.options.getUser('member', true)
 
     const id = 'id' in member ? member.id : null
 

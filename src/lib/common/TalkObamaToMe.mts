@@ -8,7 +8,7 @@ export const talkObamaToMe = async (q: string): Promise<string> => {
     method: 'POST',
     body: `input_text=${q}`,
     headers: {
-      'Referer': 'http://talkobamato.me/',
+      Referer: 'http://talkobamato.me/',
       'Content-Type': 'application/x-www-form-urlencoded'
     },
     // https://github.com/nodejs/undici/pull/769

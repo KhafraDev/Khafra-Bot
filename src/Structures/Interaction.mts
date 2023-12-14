@@ -1,4 +1,3 @@
-import { KhafraClient } from '#khaf/Bot'
 import type { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type {
   AutocompleteInteraction,
@@ -6,14 +5,15 @@ import type {
   MessageContextMenuCommandInteraction,
   UserContextMenuCommandInteraction
 } from 'discord.js'
+import { KhafraClient } from '#khaf/Bot'
 
 interface InteractionOptions {
   defer?: boolean
   ownerOnly?: boolean
-	/**
-	 * If the command should not be deployed automatically.
-	 */
-	deploy?: boolean
+  /**
+   * If the command should not be deployed automatically.
+   */
+  deploy?: boolean
 }
 
 interface SubcommandOptions {
@@ -21,26 +21,18 @@ interface SubcommandOptions {
   name: string
 }
 
-type HandlerReturn =
-  | import('discord.js').InteractionReplyOptions
-  | null
-  | void
+// biome-ignore lint/suspicious/noConfusingVoidType:
+type HandlerReturn = import('discord.js').InteractionReplyOptions | null | void
 
-type InteractionData =
-  | RESTPostAPIApplicationCommandsJSONBody
+type InteractionData = RESTPostAPIApplicationCommandsJSONBody
 
 export class Interactions {
   #id: APIApplicationCommand['id'] | undefined
 
-  constructor (
-    public data: InteractionData,
-    public options: InteractionOptions = {}
-  ) {}
+  constructor(public data: InteractionData, public options: InteractionOptions = {}) {}
 
-  init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn {
-    const subcommand =
-      interaction.options.getSubcommandGroup(false) ??
-      interaction.options.getSubcommand()
+  init(interaction: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn {
+    const subcommand = interaction.options.getSubcommandGroup(false) ?? interaction.options.getSubcommand()
     const subcommandName = `${this.data.name}-${subcommand}`
 
     if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
@@ -62,41 +54,38 @@ export class Interactions {
     return option.handle(interaction)
   }
 
-  public set id (body: APIApplicationCommand['id']) {
+  public set id(body: APIApplicationCommand['id']) {
     this.#id = body
   }
 
-  public get id (): string {
+  public get id(): string {
     return this.#id!
   }
 }
 
 export abstract class InteractionSubCommand {
-  public constructor (public data: SubcommandOptions) {}
+  public constructor(public data: SubcommandOptions) {}
 
-  public get references (): Interactions {
+  public get references(): Interactions {
     return KhafraClient.Interactions.Commands.get(this.data.references)!
   }
 
-  abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn
+  abstract handle(arg: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn
 }
 
 export abstract class InteractionAutocomplete {
-  public constructor (public data: SubcommandOptions) {}
+  public constructor(public data: SubcommandOptions) {}
 
-  abstract handle (arg: AutocompleteInteraction): Promise<void> | void
+  abstract handle(arg: AutocompleteInteraction): Promise<void> | void
 }
 
 /**
  * @link {https://discord.com/developers/docs/interactions/application-commands#user-commands}
  */
 export abstract class InteractionUserCommand {
-  constructor (
-    public data: InteractionData,
-    public options: InteractionOptions = {}
-  ) {}
+  constructor(public data: InteractionData, public options: InteractionOptions = {}) {}
 
-  abstract init (
+  abstract init(
     interaction: UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction
   ): Promise<HandlerReturn>
 }

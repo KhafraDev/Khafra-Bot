@@ -1,31 +1,25 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
-import { formatPresence } from '#khaf/utility/util.mjs'
 import { bold, italic, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
+import { formatPresence } from '#khaf/utility/util.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Get info about a guild member.',
-        '@Khafra#0001', '267774648622645249'
-      ],
-      {
-        name: 'member',
-        folder: 'Server',
-        aliases: ['memberinfo', 'whois'],
-        args: [0, 1],
-        guildOnly: true
-      }
-    )
+  constructor() {
+    super(['Get info about a guild member.', '@Khafra#0001', '267774648622645249'], {
+      name: 'member',
+      folder: 'Server',
+      aliases: ['memberinfo', 'whois'],
+      args: [0, 1],
+      guildOnly: true
+    })
   }
 
-  async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
-    const member = await getMentions(message, 'members', content) ?? message.member
+  async init(message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
+    const member = (await getMentions(message, 'members', content)) ?? message.member
 
     if (!member) {
       return Embed.error('No guild member mentioned.')
@@ -39,7 +33,7 @@ export class kCommand extends Command {
             ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`,
+            ${[...member.roles.cache.filter((r) => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`,
       thumbnail: { url: member.user.displayAvatarURL() },
       fields: [
         { name: bold('Role Color:'), value: member.displayHexColor, inline: true },

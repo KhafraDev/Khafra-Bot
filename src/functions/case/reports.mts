@@ -1,8 +1,8 @@
+import assert from 'node:assert'
+import { RESTJSONErrorCodes } from 'discord-api-types/v10'
+import { type ButtonInteraction, DiscordAPIError } from 'discord.js'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { makeCase } from '#khaf/functions/case/makeCase.mjs'
-import { RESTJSONErrorCodes } from 'discord-api-types/v10'
-import { DiscordAPIError, type ButtonInteraction } from 'discord.js'
-import assert from 'node:assert'
 
 const reportv1 = /^report::(ban|kick|ignore|softban|mute)::(\d+)$/
 
@@ -50,8 +50,7 @@ export const handleReport = async (interaction: ButtonInteraction<'raw' | 'cache
   const user = await interaction.client.users.fetch(report.targetId)
 
   if (action === 'ignore') {
-    const message =
-      `The report was handled by ${interaction.user}, who decided that no action was to be taken against ${user}.`
+    const message = `The report was handled by ${interaction.user}, who decided that no action was to be taken against ${user}.`
 
     if (interaction.message.editable) {
       await interaction.message.edit({
@@ -60,9 +59,9 @@ export const handleReport = async (interaction: ButtonInteraction<'raw' | 'cache
       })
     }
 
-    return void await interaction.editReply({
+    return void (await interaction.editReply({
       content: message
-    })
+    }))
   }
 
   let message: string

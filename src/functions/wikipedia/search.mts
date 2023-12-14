@@ -1,9 +1,9 @@
-import { defaultRequestOptions, routes } from '#khaf/functions/wikipedia/constants.mjs'
-import { wikiSearchSchema } from '#khaf/functions/wikipedia/schema.mjs'
-import type { InferType } from '@sapphire/shapeshift'
 import assert from 'node:assert'
 import { stringify } from 'node:querystring'
+import type { InferType } from '@sapphire/shapeshift'
 import { request } from 'undici'
+import { defaultRequestOptions, routes } from '#khaf/functions/wikipedia/constants.mjs'
+import { wikiSearchSchema } from '#khaf/functions/wikipedia/schema.mjs'
 
 /**
  * Search wikipedia using a given query. Returns an empty { pages: [...] } array if no results were found

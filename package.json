@@ -41,12 +41,10 @@
     "undici": "^5.13.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.4.1",
     "@cloudflare/workers-types": "^3.16.0",
     "@types/node": "^18.11.10",
     "@types/twemoji-parser": "^13.1.1",
-    "@typescript-eslint/eslint-plugin": "^5.45.0",
-    "@typescript-eslint/parser": "^5.45.0",
-    "eslint": "^8.28.0",
     "husky": "^8.0.2",
     "typescript": "^5.0.2"
   },
@@ -57,8 +55,8 @@
     "prod:build": "npx tsc",
     "dev:run": "node --enable-source-maps --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs --dev",
     "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs",
-    "lint": "npx eslint . --ext .mts",
-    "lint:fix": "npm run lint -- --fix",
+    "lint": "npx @biomejs/biome check --apply ./src",
+    "lint:fix": "npx @biomejs/biome check --apply-unsafe ./src",
     "prepare": "husky install",
     "test": "npm run dev:build && node --test"
   },

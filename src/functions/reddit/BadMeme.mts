@@ -1,10 +1,10 @@
-import { apiSchema, type Reddit } from '#khaf/functions/reddit/schema.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { decodeXML } from 'entities'
+import { platform } from 'node:os'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
+import { decodeXML } from 'entities'
 import { request } from 'undici'
-import { platform } from 'node:os'
+import { type Reddit, apiSchema } from '#khaf/functions/reddit/schema.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 export { type Reddit, apiSchema }
 
@@ -26,12 +26,10 @@ const getItemRespectNSFW = (
     return null
   }
 
-  const item = [...cachedItems].find(p => allowNSFW || !p.nsfw)
+  const item = [...cachedItems].find((p) => allowNSFW || !p.nsfw)
   if (item) {
     cachedItems.delete(item)
-    cachedItems.size === 0
-      ? cache.delete(subreddit)
-      : cache.set(subreddit, cachedItems)
+    cachedItems.size === 0 ? cache.delete(subreddit) : cache.set(subreddit, cachedItems)
   }
 
   lastUsed.set(subreddit, Date.now())
@@ -41,13 +39,9 @@ const getItemRespectNSFW = (
 export const badmeme = async (
   subreddit = 'dankmemes',
   nsfw = false,
-  modifier: typeof SortBy[keyof typeof SortBy] = SortBy.NEW,
-  timeframe: typeof Timeframe[keyof typeof Timeframe] = Timeframe.MONTH
-): Promise<
-    IBadMemeCache |
-    { message: string, error: number, reason?: string } |
-    null
-> => {
+  modifier: (typeof SortBy)[keyof typeof SortBy] = SortBy.NEW,
+  timeframe: (typeof Timeframe)[keyof typeof Timeframe] = Timeframe.MONTH
+): Promise<IBadMemeCache | { message: string; error: number; reason?: string } | null> => {
   subreddit = subreddit.toLowerCase()
 
   if (cache.has(subreddit)) {
@@ -66,14 +60,11 @@ export const badmeme = async (
 
   // https://github.com/reddit-archive/reddit/wiki/API#rules
   // https://www.reddit.com/dev/api#GET_new
-  const { body, statusCode } = await request(
-    `https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`,
-    {
-      headers: {
-        'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy, https://github.com/KhafraDev/Khafra-Bot)`
-      }
+  const { body, statusCode } = await request(`https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`, {
+    headers: {
+      'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy, https://github.com/KhafraDev/Khafra-Bot)`
     }
-  )
+  })
 
   // When a subreddit doesn't exist, reddit automatically redirects to a search API URL.
   if (statusCode !== 200) {
@@ -102,7 +93,8 @@ export const badmeme = async (
   const urls: IBadMemeCache[] = []
 
   for (const { data } of j.data.children) {
-    if (data.is_self || 'crosspost_parent' in data) { // text posts
+    if (data.is_self || 'crosspost_parent' in data) {
+      // text posts
       continue
     }
 

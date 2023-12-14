@@ -1,6 +1,7 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
+import { randomUUID } from 'node:crypto'
+import { env } from 'node:process'
+import { stringify } from 'node:querystring'
+import { URL } from 'node:url'
 import { s } from '@sapphire/shapeshift'
 import {
   ApplicationCommandOptionType,
@@ -8,21 +9,20 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions
 } from 'discord.js'
-import { randomUUID } from 'node:crypto'
-import { env } from 'node:process'
-import { stringify } from 'node:querystring'
-import { URL } from 'node:url'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 const schema = s.string.array.lengthGreaterThan(0)
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'youtube',
       description: 'Gets YouTube videos matching your search.',
@@ -39,9 +39,8 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
-    const query = interaction.options.getString('search', true)
-      .replaceAll(':', '-')
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+    const query = interaction.options.getString('search', true).replaceAll(':', '-')
 
     const params = stringify({ q: query })
     const url = new URL(`/ddg/search/?${params}`, env.WORKER_API_BASE)
@@ -80,10 +79,7 @@ export class kInteraction extends Interactions {
       interactionType: InteractionType.MessageComponent,
       message: int,
       idle: minutes(2),
-      filter: (i) =>
-        i.message.id === int.id &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.message.id === int.id && i.user.id === interaction.user.id && i.customId.endsWith(id)
     })
 
     for await (const [collected] of collector) {
@@ -102,17 +98,14 @@ export class kInteraction extends Interactions {
 
     const last = collector.collected.last()
 
-    if (
-      collector.collected.size !== 0 &&
-            last?.replied === false
-    ) {
-      return void await last.update({
+    if (collector.collected.size !== 0 && last?.replied === false) {
+      return void (await last.update({
         components: disableAll(int)
-      })
+      }))
     }
 
-    return void await interaction.editReply({
+    return void (await interaction.editReply({
       components: disableAll(int)
-    })
+    }))
   }
 }

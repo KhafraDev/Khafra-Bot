@@ -1,37 +1,33 @@
-import { Interactions } from '#khaf/Interaction'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes, seconds } from '#khaf/utility/ms.mjs'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import { ellipsis, upperCase } from '#khaf/utility/String.mjs'
-import { chunkSafe } from '#khaf/utility/util.mjs'
+import { randomUUID } from 'node:crypto'
+import { setTimeout } from 'node:timers/promises'
 import { inlineCode } from '@discordjs/builders'
 import {
+  type APIActionRowComponent,
+  type APITextInputComponent,
   ApplicationCommandOptionType,
   ChannelType,
   ComponentType,
   PermissionFlagsBits,
-  TextInputStyle,
-  type APIActionRowComponent,
-  type APITextInputComponent,
-  type RESTPostAPIApplicationCommandsJSONBody
+  type RESTPostAPIApplicationCommandsJSONBody,
+  TextInputStyle
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction
 } from 'discord.js'
-import { randomUUID } from 'node:crypto'
-import { setTimeout } from 'node:timers/promises'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import { ellipsis, upperCase } from '#khaf/utility/String.mjs'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
+import { minutes, seconds } from '#khaf/utility/ms.mjs'
+import { chunkSafe } from '#khaf/utility/util.mjs'
 
-const basic = [
-  PermissionFlagsBits.SendMessages,
-  PermissionFlagsBits.EmbedLinks,
-  PermissionFlagsBits.ViewChannel
-]
+const basic = [PermissionFlagsBits.SendMessages, PermissionFlagsBits.EmbedLinks, PermissionFlagsBits.ViewChannel]
 
 const addInput = (action: string, id: string): APIActionRowComponent<APITextInputComponent>[] => {
   const inputs: APIActionRowComponent<APITextInputComponent>[] = []
@@ -90,7 +86,7 @@ const getTextField = (i: ModalSubmitInteraction, name: string): string =>
   i.fields.getField(name, ComponentType.TextInput).value
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'rules',
       description: 'Create, modify, and post an official-looking set of rules!',
@@ -102,10 +98,7 @@ export class kInteraction extends Interactions {
           name: 'channel',
           description: 'The channel to post the rules to.',
           required: true,
-          channel_types: [
-            ChannelType.GuildText,
-            ChannelType.GuildAnnouncement
-          ]
+          channel_types: [ChannelType.GuildText, ChannelType.GuildAnnouncement]
         }
       ]
     }
@@ -113,7 +106,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
     const channel = interaction.options.getChannel('channel', true, [
       ChannelType.GuildText,
@@ -153,10 +146,7 @@ export class kInteraction extends Interactions {
     const rules: string[] = []
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: minutes(5),
-      filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => (i.isButton() || i.isModalSubmit()) && i.user.id === interaction.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -218,9 +208,9 @@ export class kInteraction extends Interactions {
           }
         }
 
-        embed.description = rules.map(
-          (rule, idx) => `#${idx + 1}: ${inlineCode(ellipsis(rule, maxDescriptionLength / rules.length - 5))}`
-        ).join('\n')
+        embed.description = rules
+          .map((rule, idx) => `#${idx + 1}: ${inlineCode(ellipsis(rule, maxDescriptionLength / rules.length - 5))}`)
+          .join('\n')
 
         await i.reply({
           embeds: [embed],
@@ -238,8 +228,8 @@ export class kInteraction extends Interactions {
     }
 
     const embeds = chunkSafe(
-      rules.map(
-        (rule, idx) => Embed.json({
+      rules.map((rule, idx) =>
+        Embed.json({
           color: colors.ok,
           title: `Rule ${idx + 1}`,
           description: rule

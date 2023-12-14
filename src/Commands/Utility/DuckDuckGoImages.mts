@@ -1,17 +1,17 @@
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
+import { env } from 'node:process'
+import { stringify } from 'node:querystring'
+import { hideLinkEmbed } from '@discordjs/builders'
+import { type InferType, s } from '@sapphire/shapeshift'
+import { GuildNSFWLevel } from 'discord-api-types/v10'
+import { type ButtonInteraction, InteractionCollector, type Message, type MessageReplyOptions } from 'discord.js'
+import { request } from 'undici'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { logger } from '#khaf/Logger'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
-import { hideLinkEmbed } from '@discordjs/builders'
-import { s, type InferType } from '@sapphire/shapeshift'
-import { GuildNSFWLevel } from 'discord-api-types/v10'
-import { InteractionCollector, type ButtonInteraction, type Message, type MessageReplyOptions } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
-import { env } from 'node:process'
-import { stringify } from 'node:querystring'
-import { request } from 'undici'
 
 const errorSchema = s.object({ error: s.string, text: s.string.optional })
 const imageSchema = s.object({
@@ -35,7 +35,6 @@ const SafeSearchType = {
   OFF: -2
 } as const
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getOptions = (images: InferType<typeof imageSchema>, page: number, id: string) => {
   const image = images.results[page]
 
@@ -53,22 +52,17 @@ const getOptions = (images: InferType<typeof imageSchema>, page: number, id: str
 }
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Search DuckDuckGo images.'
-      ],
-      {
-        name: 'duckduckgoimages',
-        aliases: ['duckduckgoimage'],
-        folder: 'Utility',
-        args: [1]
-      }
-    )
+  constructor() {
+    super(['Search DuckDuckGo images.'], {
+      name: 'duckduckgoimages',
+      aliases: ['duckduckgoimage'],
+      folder: 'Utility',
+      args: [1]
+    })
   }
 
-  async init (message: Message, { content }: Arguments): Promise<MessageReplyOptions | void> {
-    let safeSearch: typeof SafeSearchType[keyof typeof SafeSearchType]
+  async init(message: Message, { content }: Arguments): Promise<MessageReplyOptions | undefined> {
+    let safeSearch: (typeof SafeSearchType)[keyof typeof SafeSearchType]
 
     if (message.guild) {
       switch (message.guild.nsfwLevel) {
@@ -115,10 +109,7 @@ export class kCommand extends Command {
     const collector = new InteractionCollector<ButtonInteraction>(message.client, {
       idle: minutes(30),
       message: reply,
-      filter: (i) =>
-        i.isButton() &&
-        message.author.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.isButton() && message.author.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
@@ -145,7 +136,7 @@ export class kCommand extends Command {
       }
     }
 
-    if (collector.endReason === 'time' || collector.endReason === 'idle' && reply.editable) {
+    if (collector.endReason === 'time' || (collector.endReason === 'idle' && reply.editable)) {
       await reply.edit({
         components: disableAll(reply)
       })

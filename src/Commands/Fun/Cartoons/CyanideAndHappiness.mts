@@ -1,20 +1,20 @@
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/utility/Discord.js'
-import { once } from '#khaf/utility/Memoize.mjs'
-import { hours } from '#khaf/utility/ms.mjs'
-import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { decodeXML } from 'entities'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isText } from '#khaf/utility/Discord.js'
+import { once } from '#khaf/utility/Memoize.mjs'
+import { RSSReader } from '#khaf/utility/RSS.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 
 interface ICyanideAndHappiness {
-    title: string
-    link: string
-    description: string
-    category: string
-    guid: string
-    pubDate: string
+  title: string
+  link: string
+  description: string
+  category: string
+  guid: string
+  pubDate: string
 }
 
 const rss = new RSSReader<ICyanideAndHappiness>('https://explosm-1311.appspot.com/')
@@ -23,26 +23,21 @@ const rss = new RSSReader<ICyanideAndHappiness>('https://explosm-1311.appspot.co
 const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'
-      ],
-      {
-        name: 'cyanideandhappiness',
-        folder: 'Games',
-        args: [0, 0],
-        ratelimit: 5,
-        aliases: ['cah']
-      }
-    )
+  constructor() {
+    super(['Get a random comic from Cyanide and Happiness! Possibly NSFW (18+).'], {
+      name: 'cyanideandhappiness',
+      folder: 'Games',
+      args: [0, 0],
+      ratelimit: 5,
+      aliases: ['cah']
+    })
   }
 
-  async init (message: Message): Promise<APIEmbed> {
+  async init(message: Message): Promise<APIEmbed> {
     await cache()
 
     if (isText(message.channel) && !message.channel.nsfw) {
-      return Embed.error('Channel isn\'t marked as NSFW!')
+      return Embed.error("Channel isn't marked as NSFW!")
     }
 
     const values = Array.from(rss.results)

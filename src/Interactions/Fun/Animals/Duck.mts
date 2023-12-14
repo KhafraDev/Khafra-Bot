@@ -1,7 +1,7 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
 import { s } from '@sapphire/shapeshift'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
 
 const schema = s.object({
   message: s.string,
@@ -9,14 +9,14 @@ const schema = s.object({
 })
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'animal',
       name: 'duck'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     await interaction.deferReply()
 
     const { body, statusCode } = await request('https://random-d.uk/api/v1/random')
@@ -25,7 +25,7 @@ export class kSubCommand extends InteractionSubCommand {
       await body.dump()
 
       return {
-        content: '🦆 Couldn\'t get a picture of a random duck!',
+        content: "🦆 Couldn't get a picture of a random duck!",
         ephemeral: true
       }
     }
@@ -34,7 +34,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     if (!schema.is(j)) {
       return {
-        content: '🦆 Couldn\'t get a picture of a random duck!',
+        content: "🦆 Couldn't get a picture of a random duck!",
         ephemeral: true
       }
     }

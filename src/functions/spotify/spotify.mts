@@ -1,24 +1,24 @@
+import assert from 'node:assert'
+import { stringify } from 'node:querystring'
+import type { InferType } from '@sapphire/shapeshift'
+import { request } from 'undici'
 import { requestOptions, routes } from '#khaf/functions/spotify/constants.mjs'
 import { searchSchema, tokenSchema } from '#khaf/functions/spotify/schema.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
-import type { InferType } from '@sapphire/shapeshift'
-import assert from 'node:assert'
-import { stringify } from 'node:querystring'
-import { request } from 'undici'
 
-export const spotify = new class Spotify {
+export const spotify = new (class Spotify {
   #token: string | null = null
   #expires = 0
 
   /**
    * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/search
    */
-  async search (query: string, artist: string | null): Promise<InferType<typeof searchSchema>> {
-    const params = '?' + stringify({
+  async search(query: string, artist: string | null): Promise<InferType<typeof searchSchema>> {
+    const params = `?${stringify({
       type: 'track',
       limit: '10',
       q: encodeURIComponent((`track:${query} ` + (artist ? `artist:${artist}` : '')).trim())
-    })
+    })}`
 
     const { body } = await request(new URL(params, routes.search), {
       headers: {
@@ -35,7 +35,7 @@ export const spotify = new class Spotify {
   /**
    * @see https://developer.spotify.com/documentation/general/guides/authorization/client-credentials/#request-authorization
    */
-  async refreshToken (): Promise<string> {
+  async refreshToken(): Promise<string> {
     if (Date.now() < this.#expires) {
       assert(this.#token)
       return this.#token
@@ -50,4 +50,4 @@ export const spotify = new class Spotify {
 
     return this.#token
   }
-}
+})()

@@ -1,19 +1,19 @@
+import assert from 'node:assert'
+import { type ChatInputCommandInteraction, type InteractionReplyOptions, time, userMention } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
 import { sql } from '#khaf/database/Postgres.mjs'
 import type { Case } from '#khaf/functions/case/reports.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { time, userMention, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
-import assert from 'node:assert'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'case',
       name: 'view-id'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     assert(interaction.inGuild())
 
     const id = interaction.options.getInteger('id', true)
@@ -39,8 +39,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const embed = Embed.json({ color: colors.ok, description: '' })
 
-    if (row.staffReason)
-      embed.description += `📑 Reason: ${row.staffReason}\n`
+    if (row.staffReason) embed.description += `📑 Reason: ${row.staffReason}\n`
 
     embed.description += `👤 Handled by: ${userMention(row.staffId)}\n`
     embed.description += `🗃️ Type: ${row.type}\n`
@@ -48,11 +47,9 @@ export class kSubCommand extends InteractionSubCommand {
     if (row.associatedTime)
       embed.description += `⏰ Ends/Ended: ${time(row.associatedTime, 'R')} (${time(row.associatedTime, 'f')})\n`
 
-    if (row.targetAttachments?.length)
-      embed.description += `🖼️ Attachments:\n${row.targetAttachments.join('\n')}`
+    if (row.targetAttachments?.length) embed.description += `🖼️ Attachments:\n${row.targetAttachments.join('\n')}`
 
-    if (row.contextAttachments)
-      embed.image = { url: row.contextAttachments }
+    if (row.contextAttachments) embed.image = { url: row.contextAttachments }
 
     return {
       embeds: [embed]

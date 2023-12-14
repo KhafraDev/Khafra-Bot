@@ -1,12 +1,12 @@
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { translate as libreTranslate } from '#khaf/functions/translate/libretranslate.mjs'
+import { Interactions } from '#khaf/Interaction'
 import { translate as googleTranslate } from '#khaf/functions/translate/google.mjs'
+import { translate as libreTranslate } from '#khaf/functions/translate/libretranslate.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'translate',
       description: 'Use Google Translate to translate some text!',
@@ -43,7 +43,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const to = interaction.options.getString('to')?.toLowerCase()
     const from = interaction.options.getString('from')?.toLowerCase()
     const query = interaction.options.getString('text', true)
@@ -60,7 +60,7 @@ export class kInteraction extends Interactions {
     if (engine === 'googletranslate') {
       embed.description = await googleTranslate({ query, to, from })
     } else if (engine === 'libretranslate') {
-      embed.description = await libreTranslate({ query, to, from }) ?? undefined
+      embed.description = (await libreTranslate({ query, to, from })) ?? undefined
     }
 
     return {

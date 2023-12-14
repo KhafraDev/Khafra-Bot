@@ -1,22 +1,22 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { days, minutes } from '#khaf/utility/ms.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
+import { env } from 'node:process'
 import { hideLinkEmbed } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type InteractionUpdateOptions
 } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
-import { env } from 'node:process'
 import { request } from 'undici'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { days, minutes } from '#khaf/utility/ms.mjs'
 
 const earliest = new Date('1995-06-16T00:00:00.000Z')
 
@@ -81,7 +81,7 @@ const fetchApod = async (url: URL, id: string): Promise<InteractionReplyOptions>
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'nasa',
       description: 'Gets a random image of space from NASA!'
@@ -90,7 +90,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void> {
+  async init(interaction: ChatInputCommandInteraction): Promise<void> {
     const id = randomUUID()
     const utc = new Date()
     utc.setUTCHours(0)
@@ -105,10 +105,7 @@ export class kInteraction extends Interactions {
     const collector = new InteractionCollector<ButtonInteraction>(interaction.client, {
       idle: minutes(3),
       message: reply,
-      filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.isButton() && interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
@@ -135,10 +132,10 @@ export class kInteraction extends Interactions {
       }
 
       url.searchParams.set('date', date.toString())
-      await i.update(await fetchApod(url, id) as InteractionUpdateOptions)
+      await i.update((await fetchApod(url, id)) as InteractionUpdateOptions)
     }
 
-    if (collector.endReason === 'time' || collector.endReason === 'idle' && reply.editable) {
+    if (collector.endReason === 'time' || (collector.endReason === 'idle' && reply.editable)) {
       await reply.edit({
         components: disableAll(reply)
       })

@@ -1,6 +1,3 @@
-import { Interactions } from '#khaf/Interaction'
-import { days, hours, minutes, weeks } from '#khaf/utility/ms.mjs'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import {
   ApplicationCommandOptionType,
   PermissionFlagsBits,
@@ -8,9 +5,12 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import { days, hours, minutes, weeks } from '#khaf/utility/ms.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'timeout',
       description: 'Timeout a member from the guild.',
@@ -30,11 +30,11 @@ export class kInteraction extends Interactions {
           required: true,
           choices: [
             { name: '60 secs', value: minutes(1) },
-            { name: '5 mins',  value: minutes(5) },
+            { name: '5 mins', value: minutes(5) },
             { name: '10 mins', value: minutes(10) },
-            { name: '1 hour',  value: hours(1) },
-            { name: '1 day',   value: days(1) },
-            { name: '1 week',  value: weeks(1) },
+            { name: '1 hour', value: hours(1) },
+            { name: '1 day', value: days(1) },
+            { name: '1 week', value: weeks(1) },
             { name: '2 weeks', value: weeks(2) },
             { name: '3 weeks', value: weeks(3) },
             { name: '4 weeks', value: weeks(4) }
@@ -51,7 +51,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const defaultPerms = BigInt(this.data.default_member_permissions!)
 
     if (!interaction.memberPermissions?.has(defaultPerms)) {
@@ -71,13 +71,10 @@ export class kInteraction extends Interactions {
     const user = interaction.options.getUser('user', true)
 
     try {
-      await interaction.guild.members.edit(
-        user,
-        {
-          communicationDisabledUntil: Date.now() + ms,
-          reason: interaction.options.getString('reason') ?? undefined
-        }
-      )
+      await interaction.guild.members.edit(user, {
+        communicationDisabledUntil: Date.now() + ms,
+        reason: interaction.options.getString('reason') ?? undefined
+      })
     } catch (e) {
       if ((e as DiscordAPIError).code === RESTJSONErrorCodes.MissingPermissions) {
         return {

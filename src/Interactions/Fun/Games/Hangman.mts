@@ -1,23 +1,23 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { assets } from '#khaf/utility/Constants/Path.mjs'
-import { seconds } from '#khaf/utility/ms.mjs'
-import { plural } from '#khaf/utility/String.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
+import { randomUUID } from 'node:crypto'
+import { readFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import { inlineCode } from '@discordjs/builders'
-import { ComponentType, TextInputStyle, type Snowflake } from 'discord-api-types/v10'
+import { ComponentType, type Snowflake, TextInputStyle } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
   type WebhookMessageEditOptions
 } from 'discord.js'
-import { randomUUID } from 'node:crypto'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { assets } from '#khaf/utility/Constants/Path.mjs'
+import { plural } from '#khaf/utility/String.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { seconds } from '#khaf/utility/ms.mjs'
 
 const assetsPath = assets('Hangman')
 const cachedLists = new Map<string, string[]>()
@@ -29,7 +29,7 @@ const images = [
   'https://i.imgur.com/Y3qL8m3.png', // left arm
   'https://i.imgur.com/2VrZF8h.png', // right arm
   'https://i.imgur.com/dOwLtrD.png', // left leg
-  'https://i.imgur.com/yM0HnGz.png'  // right leg
+  'https://i.imgur.com/yM0HnGz.png' // right leg
 ]
 
 class Hangman {
@@ -41,7 +41,7 @@ class Hangman {
   private usedHint = false
   public lastGuessWasWrong = false
 
-  constructor (word: string, id: string) {
+  constructor(word: string, id: string) {
     this.#word = word.toLowerCase()
     this.#id = id
   }
@@ -50,16 +50,13 @@ class Hangman {
    * Guess a given phrase or word
    * @returns true if the guess was added, false otherwise
    */
-  guess (phraseOrChar: string): boolean {
+  guess(phraseOrChar: string): boolean {
     const guess = phraseOrChar.toLowerCase()
 
     if (this.#guessed.includes(guess)) {
       return false
     } else {
-      if (
-        (guess.length === 1 && !this.#word.includes(guess)) ||
-        (guess.length > 1 && guess !== this.#word)
-      ) {
+      if ((guess.length === 1 && !this.#word.includes(guess)) || (guess.length > 1 && guess !== this.#word)) {
         this.lastGuessWasWrong = true
         ++this.#wrong
       } else {
@@ -74,7 +71,7 @@ class Hangman {
   /**
    * Replaces characters not guessed with a box.
    */
-  hide (): string {
+  hide(): string {
     let str = ''
 
     if (this.#guessed.includes(this.#word)) {
@@ -92,7 +89,7 @@ class Hangman {
     return str
   }
 
-  toJSON (title = 'Hangman'): WebhookMessageEditOptions {
+  toJSON(title = 'Hangman'): WebhookMessageEditOptions {
     return {
       content: undefined,
       embeds: [
@@ -101,7 +98,10 @@ class Hangman {
           description: `
             ${this.hide()}
             ${this.#wrong} wrong guess${plural(this.#wrong, 'es')}.
-            Guessed: ${this.#guessed.map(l => inlineCode(l)).join(', ').slice(0, 250)}`,
+            Guessed: ${this.#guessed
+              .map((l) => inlineCode(l))
+              .join(', ')
+              .slice(0, 250)}`,
           image: { url: images[this.#wrong] },
           title
         })
@@ -119,7 +119,7 @@ class Hangman {
     }
   }
 
-  hint (): string | null {
+  hint(): string | null {
     if (!this.canUseHint) return null
 
     while (!this.guess(this.#word[Math.floor(Math.random() * this.#word.length)]));
@@ -141,23 +141,21 @@ class Hangman {
   get winner(): boolean {
     const lessThan6Wrong = this.#wrong < 6
     const guessedEntireWord = this.#guessed.includes(this.#word)
-    const gussedEveryChar = [...this.#word].every(
-      c => c === ' ' || this.#guessed.includes(c.toLowerCase())
-    )
+    const gussedEveryChar = [...this.#word].every((c) => c === ' ' || this.#guessed.includes(c.toLowerCase()))
 
     return lessThan6Wrong && (guessedEntireWord || gussedEveryChar)
   }
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'games',
       name: 'hangman'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (currentGames.has(interaction.user.id)) {
       return {
         content: '❌ Finish your current game first!',
@@ -174,9 +172,7 @@ export class kSubCommand extends InteractionSubCommand {
       const path = join(assetsPath, `${listName}.txt`)
       const text = await readFile(path, 'utf-8')
 
-      words = text
-        .split(/\n\r|\n|\r/g)
-        .filter(l => !l.startsWith('#') && l.length > 0)
+      words = text.split(/\n\r|\n|\r/g).filter((l) => !l.startsWith('#') && l.length > 0)
 
       cachedLists.set(listName, words)
     }
@@ -190,10 +186,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: seconds(30),
-      filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => (i.isButton() || i.isModalSubmit()) && i.user.id === interaction.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -256,7 +249,7 @@ export class kSubCommand extends InteractionSubCommand {
 
         if (!guessed) {
           await i.reply({
-            content: 'You can\'t guess that again!',
+            content: "You can't guess that again!",
             ephemeral: true
           })
           continue
@@ -270,9 +263,10 @@ export class kSubCommand extends InteractionSubCommand {
           json = game.toJSON(`You lost! The word was "${word}"!`)
           c.stop()
         } else if (guess.length === 1) {
-          json = game.toJSON(!game.lastGuessWasWrong
-            ? `"${guess.slice(0, 10)}" is in the word!`
-            : `"${guess.slice(0, 10)}" is not in the word!`
+          json = game.toJSON(
+            !game.lastGuessWasWrong
+              ? `"${guess.slice(0, 10)}" is in the word!`
+              : `"${guess.slice(0, 10)}" is not in the word!`
           )
         } else {
           json = game.toJSON('Partial guesses are not allowed!')
@@ -291,9 +285,7 @@ export class kSubCommand extends InteractionSubCommand {
     currentGames.delete(interaction.user.id)
     await interaction.editReply({
       components: disableAll(m),
-      content: c.endReason === 'idle'
-        ? `By the way, the word was ${inlineCode(word)}!`
-        : null
+      content: c.endReason === 'idle' ? `By the way, the word was ${inlineCode(word)}!` : null
     })
   }
 }

@@ -55,7 +55,6 @@ export const fetchMDN = async (q: string, opts?: { locale: string }): Promise<MD
     throw new RangeError(`Expected query type "string", got "${typeof q}"!`)
   }
 
-  // eslint-disable-next-line no-restricted-globals
   const params = new URLSearchParams([
     ['q', q]
   ])

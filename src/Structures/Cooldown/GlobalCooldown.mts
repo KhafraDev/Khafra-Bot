@@ -1,5 +1,5 @@
-import { minutes } from '#khaf/utility/ms.mjs'
 import { setInterval } from 'node:timers'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 /**
  * Create and use a cooldown everywhere in 2 steps.
@@ -11,12 +11,13 @@ import { setInterval } from 'node:timers'
  * @param max Max uses allows in ``ms`` milliseconds
  * @param ms How long cooldown applies for
  */
-export const cooldown = (max: number, ms: number): (id: string) => boolean => {
+export const cooldown = (max: number, ms: number): ((id: string) => boolean) => {
   const m = new Map<string, number[]>()
-  setInterval(() => { // clear out old entries
+  setInterval(() => {
+    // clear out old entries
     for (const [k, v] of m) {
       const now = Date.now()
-      const f = v.filter(d => now - d < ms)
+      const f = v.filter((d) => now - d < ms)
       if (f.length === 0) {
         m.delete(k)
       } else {
@@ -31,7 +32,7 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
       m.set(id, [now])
       return true
     } else {
-      const i = m.get(id)!.filter(d => now - d < ms)
+      const i = m.get(id)!.filter((d) => now - d < ms)
       if (i.length >= max) {
         return false
       } else {

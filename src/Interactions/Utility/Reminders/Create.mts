@@ -1,21 +1,21 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
-import { ellipsis } from '#khaf/utility/String.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { formatMs } from '#khaf/utility/util.mjs'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { ellipsis } from '#khaf/utility/String.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
+import { formatMs } from '#khaf/utility/util.mjs'
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'reminders',
       name: 'create'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const text = interaction.options.getString('message', true)
     const time = interaction.options.getString('time', true)
     const once = !interaction.options.getBoolean('repeat')

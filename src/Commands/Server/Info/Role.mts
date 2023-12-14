@@ -1,33 +1,26 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Get role info',
-        '1234567891234567',
-        '@role'
-      ],
-      {
-        name: 'role',
-        folder: 'Server',
-        aliases: ['roleinfo'],
-        args: [1, 50],
-        guildOnly: true
-      }
-    )
+  constructor() {
+    super(['Get role info', '1234567891234567', '@role'], {
+      name: 'role',
+      folder: 'Server',
+      aliases: ['roleinfo'],
+      args: [1, 50],
+      guildOnly: true
+    })
   }
 
-  async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
+  async init(message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
     const role =
-      await getMentions(message, 'roles') ??
-      message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase())
+      (await getMentions(message, 'roles')) ??
+      message.guild.roles.cache.find((r) => r.name.toLowerCase() === content.toLowerCase())
 
     if (!role) {
       return Embed.error('No role found!')

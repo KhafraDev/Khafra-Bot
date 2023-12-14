@@ -1,21 +1,19 @@
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { Board } from '#khaf/utility/commands/MineSweeper'
-import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import type { InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { Board } from '#khaf/utility/commands/MineSweeper'
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'games',
       name: 'minesweeper'
     })
   }
 
-  handle (): InteractionReplyOptions {
+  handle(): InteractionReplyOptions {
     return {
-      embeds: [
-        Embed.ok(Board())
-      ]
+      embeds: [Embed.ok(Board())]
     }
   }
 }

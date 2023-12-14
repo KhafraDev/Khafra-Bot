@@ -1,21 +1,18 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import type { Event } from '#khaf/Event'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isTextBased } from '#khaf/utility/Discord.js'
-import { guildSettings } from '#khaf/utility/util.mjs'
 import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type GuildMember } from 'discord.js'
+import type { Event } from '#khaf/Event'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isTextBased } from '#khaf/utility/Discord.js'
+import { guildSettings } from '#khaf/utility/util.mjs'
 
-const basic =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const basic = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildMemberAdd as const
 
-  async init (member: GuildMember): Promise<void> {
+  async init(member: GuildMember): Promise<void> {
     await sql`
       INSERT INTO kbInsights (
           k_guild_id, k_joined
@@ -35,12 +32,7 @@ export class kEvent implements Event {
     const channel = await member.guild.channels.fetch(item.welcome_channel)
     const me = member.guild.members.me
 
-    if (
-      channel === null ||
-      me === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
-    ) {
+    if (channel === null || me === null || !isTextBased(channel) || !channel.permissionsFor(me).has(basic)) {
       return
     }
 

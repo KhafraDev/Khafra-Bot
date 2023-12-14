@@ -1,12 +1,12 @@
-import { InteractionUserCommand } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { userflagBitfieldToEmojis, formatPresence } from '#khaf/utility/util.mjs'
 import { bold, time } from '@discordjs/builders'
 import { ApplicationCommandType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, UserContextMenuCommandInteraction } from 'discord.js'
+import { InteractionUserCommand } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.mjs'
 
 export class kUserCommand extends InteractionUserCommand {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'User info',
       type: ApplicationCommandType.User
@@ -15,10 +15,10 @@ export class kUserCommand extends InteractionUserCommand {
     super(sc)
   }
 
-  async init (interaction: UserContextMenuCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: UserContextMenuCommandInteraction): Promise<InteractionReplyOptions> {
     const { targetUser: user, guild } = interaction
 
-    const member = await guild?.members.fetch(user.id).catch(() => null) ?? null
+    const member = (await guild?.members.fetch(user.id).catch(() => null)) ?? null
     const flags = user.flags?.bitfield
     const badgeEmojis = userflagBitfieldToEmojis(flags)
 

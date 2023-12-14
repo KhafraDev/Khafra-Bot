@@ -1,24 +1,24 @@
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { parseEmojiList } from '#khaf/utility/Emoji.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
+import { randomUUID } from 'node:crypto'
 import { bold, formatEmoji, time } from '@discordjs/builders'
 import {
+  type APIEmbed,
   ApplicationCommandOptionType,
   InteractionType,
-  type APIEmbed,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
-  SnowflakeUtil,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
-  type InteractionReplyOptions
+  InteractionCollector,
+  type InteractionReplyOptions,
+  SnowflakeUtil
 } from 'discord.js'
-import { randomUUID } from 'node:crypto'
-import { parse, toCodePoints, type EmojiEntity } from 'twemoji-parser'
+import { type EmojiEntity, parse, toCodePoints } from 'twemoji-parser'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { parseEmojiList } from '#khaf/utility/Emoji.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 interface GuildEmoji {
   animated: boolean
@@ -27,9 +27,7 @@ interface GuildEmoji {
   index: number
 }
 
-type EmojiUnion =
-  | { type: 'guild', value: GuildEmoji }
-  | { type: 'unicode', value: EmojiEntity }
+type EmojiUnion = { type: 'guild'; value: GuildEmoji } | { type: 'unicode'; value: EmojiEntity }
 
 type InferPromiseResult<T> = T extends Promise<infer U> ? U : never
 
@@ -68,7 +66,7 @@ const makeEmojiEmbed = <T extends EmojiUnion>(
   if (!unicodeEmoji) {
     return Embed.json({
       color: colors.error,
-      description: '❌ The text provided isn\'t an emoji or is currently unsupported!'
+      description: "❌ The text provided isn't an emoji or is currently unsupported!"
     })
   }
 
@@ -86,7 +84,7 @@ const makeEmojiEmbed = <T extends EmojiUnion>(
 }
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'emoji',
       description: 'Get information about a Discord or unicode emoji.',
@@ -103,7 +101,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
     const emoji = interaction.options.getString('name', true)
     const parsedList: EmojiUnion[] = []
 
@@ -134,7 +132,7 @@ export class kInteraction extends Interactions {
         embeds: [
           Embed.json({
             color: colors.ok,
-            description: 'You didn\'t include any emojis!'
+            description: "You didn't include any emojis!"
           })
         ],
         ephemeral: true
@@ -144,9 +142,7 @@ export class kInteraction extends Interactions {
     let page = 0
     const uuid = randomUUID()
     const cache = await parseEmojiList()
-    const pages: APIEmbed[] = [
-      makeEmojiEmbed(parsedList[page], cache)
-    ]
+    const pages: APIEmbed[] = [makeEmojiEmbed(parsedList[page], cache)]
 
     const int = await interaction.reply({
       embeds: [pages[page]],
@@ -164,10 +160,7 @@ export class kInteraction extends Interactions {
       interactionType: InteractionType.MessageComponent,
       message: int,
       idle: minutes(1),
-      filter: (i) =>
-        interaction.user.id === i.user.id &&
-        int.id === i.message.id &&
-        i.customId.endsWith(uuid)
+      filter: (i) => interaction.user.id === i.user.id && int.id === i.message.id && i.customId.endsWith(uuid)
     })
 
     for await (const [i] of collector) {

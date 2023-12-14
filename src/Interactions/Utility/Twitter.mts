@@ -1,26 +1,28 @@
-import { TwitterScraper } from '#khaf/functions/twitter/scraper.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { URL } from 'node:url'
 import { s } from '@sapphire/shapeshift'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { URL } from 'node:url'
+import { Interactions } from '#khaf/Interaction'
+import { TwitterScraper } from '#khaf/functions/twitter/scraper.mjs'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
-const schema = s.string.url({
-  allowedDomains: ['twitter.com'],
-  allowedProtocols: ['http:', 'https:']
-}).transform((value) => {
-  const url = new URL(value)
-  url.search = ''
-  url.hash = ''
-  return url
-})
+const schema = s.string
+  .url({
+    allowedDomains: ['twitter.com'],
+    allowedProtocols: ['http:', 'https:']
+  })
+  .transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    url.hash = ''
+    return url
+  })
 
 export class kInteraction extends Interactions {
   #scraper = new TwitterScraper()
 
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'twitter',
       description: 'Gets a list of media embedded in a tweet!',
@@ -37,7 +39,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const url = interaction.options.getString('tweet', true)
     const twitterURL = schema.run(url)
 
@@ -59,33 +61,30 @@ export class kInteraction extends Interactions {
       }
     }
 
-    /* eslint-disable */
-
     const id = /\/(\d+)$/.exec(pathname)![1]
     const api = await this.#scraper.getTweetAPILink(id)
+    // biome-ignore lint/suspicious/noExplicitAny:
     const body: any = JSON.parse((await api.bodyPromise).toString('utf-8'))
     const media: string[] = []
 
     if (body.__typename !== 'Tweet' || !Array.isArray(body.mediaDetails)) {
       return {
-        content: 'Not a tweet or there\'s no media, sorry.',
+        content: "Not a tweet or there's no media, sorry.",
         ephemeral: true
       }
     }
 
     for (const mediaItem of body.mediaDetails) {
       if (mediaItem.type === 'animated_gif' || mediaItem.type === 'video') {
-        const mp4 = mediaItem.video_info.variants.find(
-          (v: any) => v.content_type === 'video/mp4'
-        ) ?? mediaItem.video_info.variants[0]
+        const mp4 =
+          mediaItem.video_info.variants.find((v: { content_type: string }) => v.content_type === 'video/mp4') ??
+          mediaItem.video_info.variants[0]
 
         media.push(mp4.url)
       } else {
         media.push(mediaItem.media_url_https)
       }
     }
-
-    /* eslint-enable */
 
     return {
       embeds: [
@@ -94,11 +93,7 @@ export class kInteraction extends Interactions {
           description: media.join('\n')
         })
       ],
-      components: [
-        Components.actionRow([
-          Buttons.link('Go to Twitter', twitterURL.value.toString())
-        ])
-      ]
+      components: [Components.actionRow([Buttons.link('Go to Twitter', twitterURL.value.toString())])]
     }
   }
 }

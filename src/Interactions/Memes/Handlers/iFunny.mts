@@ -1,22 +1,22 @@
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { templates } from '#khaf/utility/Constants/Path.mjs'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
-import { Transformer } from '@napi-rs/image'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
+import { Transformer } from '@napi-rs/image'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { templates } from '#khaf/utility/Constants/Path.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'memes',
       name: 'ifunny'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const buffer = await this.image(interaction)
 
     if (typeof buffer === 'string') {
@@ -33,7 +33,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (interaction: ChatInputCommandInteraction): Promise<Buffer | string> {
+  async image(interaction: ChatInputCommandInteraction): Promise<Buffer | string> {
     const attachment = interaction.options.getAttachment('image', true)
 
     if (!ImageUtil.isImage(attachment.proxyURL, attachment.contentType)) {
@@ -46,19 +46,13 @@ export class kSubCommand extends InteractionSubCommand {
     const { body } = await request(attachment.proxyURL)
     const b = arrayBufferToBuffer(await body.arrayBuffer())
 
-    const resized = await new Transformer(b)
-      .fastResize({ width, height: width })
-      .png()
+    const resized = await new Transformer(b).fastResize({ width, height: width }).png()
 
     const logo = await new Transformer(await readFile(templates('iFunny.png')))
       .fastResize({ width, height: height - width })
       .png()
 
-    return await Transformer.fromRgbaPixels(
-      new Uint8Array(width * height * 4),
-      width,
-      height
-    )
+    return await Transformer.fromRgbaPixels(new Uint8Array(width * height * 4), width, height)
       .overlay(resized, 0, 0)
       .overlay(logo, 0, width)
       .png()

@@ -1,10 +1,4 @@
-import { KhafraClient } from '#khaf/Bot'
-import { Command, type Arguments } from '#khaf/Command'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { chunkSafe } from '#khaf/utility/util.mjs'
+import { randomUUID } from 'node:crypto'
 import { bold, codeBlock, hyperlink, inlineCode } from '@discordjs/builders'
 import type {
   APIActionRowComponent,
@@ -13,28 +7,27 @@ import type {
   ComponentType
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { randomUUID } from 'node:crypto'
+import { KhafraClient } from '#khaf/Bot'
+import { type Arguments, Command } from '#khaf/Command'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import { minutes } from '#khaf/utility/ms.mjs'
+import { chunkSafe } from '#khaf/utility/util.mjs'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Display examples and description of a command!',
-        'say',
-        ''
-      ],
-      {
-        name: 'help',
-        folder: 'Bot',
-        aliases: ['commandlist', 'list'],
-        args: [0, 1],
-        ratelimit: 3
-      }
-    )
+  constructor() {
+    super(['Display examples and description of a command!', 'say', ''], {
+      name: 'help',
+      folder: 'Bot',
+      aliases: ['commandlist', 'list'],
+      args: [0, 1],
+      ratelimit: 3
+    })
   }
 
-  async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
-    const folders = [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))]
+  async init(message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
+    const folders = [...new Set([...KhafraClient.Commands.values()].map((c) => c.settings.folder))]
 
     if (args.length !== 0) {
       const commandName = args[0].toLowerCase()
@@ -42,11 +35,8 @@ export class kCommand extends Command {
         return Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`)
 
       const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!
-      const helpF = [...help, Array(Math.max(help.length - 2, 0)).fill('')]
-        .map((h) => h || '[No Arguments]')
-      const aliases = !settings.aliases?.length
-        ? ['No aliases!']
-        : settings.aliases
+      const helpF = [...help, Array(Math.max(help.length - 2, 0)).fill('')].map((h) => h || '[No Arguments]')
+      const aliases = !settings.aliases?.length ? ['No aliases!'] : settings.aliases
 
       return Embed.json({
         color: colors.ok,
@@ -54,9 +44,9 @@ export class kCommand extends Command {
         The ${inlineCode(settings.name)} command:
         ${help.length ? codeBlock(help[0]) : ''}
 
-        Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
+        Aliases: ${aliases.map((a) => inlineCode(a)).join(', ')}
         Example:
-        ${helpF.map(c => inlineCode(`${settings.name} ${c || '\u200B'}`).trim()).join('\n')}`,
+        ${helpF.map((c) => inlineCode(`${settings.name} ${c || '\u200B'}`).trim()).join('\n')}`,
         fields: [
           { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
@@ -68,7 +58,7 @@ export class kCommand extends Command {
     if (!isGuildTextBased(message.channel)) {
       return Embed.json({
         color: colors.error,
-        description: 'Sorry, this command isn\'t available in this channel.'
+        description: "Sorry, this command isn't available in this channel."
       })
     }
 
@@ -96,15 +86,10 @@ export class kCommand extends Command {
       components: [categoryComponent]
     })
 
-    const collector = m.createMessageComponentCollector<
-      ComponentType.Button |
-      ComponentType.StringSelect
-    >({
+    const collector = m.createMessageComponentCollector<ComponentType.Button | ComponentType.StringSelect>({
       idle: minutes(1),
       max: 10,
-      filter: (i) =>
-        i.user.id === message.author.id &&
-        i.customId.endsWith(`-${id}`)
+      filter: (i) => i.user.id === message.author.id && i.customId.endsWith(`-${id}`)
     })
 
     const pages: APIEmbed[] = []
@@ -138,9 +123,7 @@ export class kCommand extends Command {
           pages.push(Embed.ok(desc))
         }
 
-        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [
-          categoryComponent
-        ]
+        const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [categoryComponent]
 
         if (pages.length > 1) {
           components.push(
@@ -176,17 +159,14 @@ export class kCommand extends Command {
 
     const last = collector.collected.last()
 
-    if (
-      collector.collected.size !== 0 &&
-            last?.replied === false
-    ) {
-      return void await last.update({
+    if (collector.collected.size !== 0 && last?.replied === false) {
+      return void (await last.update({
         components: disableAll(m)
-      })
+      }))
     }
 
-    return void await m.edit({
+    return void (await m.edit({
       components: disableAll(m)
-    })
+    }))
   }
 }

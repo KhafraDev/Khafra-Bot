@@ -1,40 +1,29 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import type { kGuild } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/utility/Discord.js'
-import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { bold } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import type { kGuild } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isText } from '#khaf/utility/Discord.js'
+import { getMentions } from '#khaf/utility/Mentions.mjs'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel | PermissionFlagsBits.SendMessages | PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Disables @everyone from sending messages.',
-        '#general',
-        '543940496683434014',
-        ''
-      ],
-      {
-        name: 'lock',
-        folder: 'Moderation',
-        args: [0, 1],
-        guildOnly: true,
-        permissions: [PermissionFlagsBits.ManageChannels]
-      }
-    )
+  constructor() {
+    super(['Disables @everyone from sending messages.', '#general', '543940496683434014', ''], {
+      name: 'lock',
+      folder: 'Moderation',
+      args: [0, 1],
+      guildOnly: true,
+      permissions: [PermissionFlagsBits.ManageChannels]
+    })
   }
 
-  async init (message: Message<true>, _args: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
-    const text = await getMentions(message, 'channels') ?? message.channel
+  async init(message: Message<true>, _args: Arguments, settings: kGuild): Promise<undefined | APIEmbed> {
+    const text = (await getMentions(message, 'channels')) ?? message.channel
     const everyone = message.guild.roles.everyone
     const me = message.guild.members.me
 
@@ -54,23 +43,18 @@ export class kCommand extends Command {
       await text.lockPermissions()
     } else {
       lockState = 'locked'
-      await text.permissionOverwrites.set(
-        [{ id: everyone.id, deny: [PermissionFlagsBits.SendMessages] }]
-      )
+      await text.permissionOverwrites.set([{ id: everyone.id, deny: [PermissionFlagsBits.SendMessages] }])
     }
 
     await message.reply({
-      embeds: [
-        Embed.ok(`${text} has been ${lockState} for ${everyone}!`)
-      ]
+      embeds: [Embed.ok(`${text} has been ${lockState} for ${everyone}!`)]
     })
 
     if (settings.mod_log_channel !== null) {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
-      const me = message.guild.members.me ?? await message.guild.members.fetchMe()
+      const me = message.guild.members.me ?? (await message.guild.members.fetchMe())
 
-      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
-        return
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms)) return
 
       return void channel.send({
         embeds: [

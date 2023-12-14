@@ -1,25 +1,20 @@
+import { inlineCode } from '@discordjs/builders'
+import type { Message } from 'discord.js'
 import type { Arguments } from '#khaf/Command'
 import { Command } from '#khaf/Command'
 import { stripIndents } from '#khaf/utility/Template.mjs'
-import { inlineCode } from '@discordjs/builders'
-import type { Message } from 'discord.js'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Test the stripIndents function.'
-      ],
-      {
-        name: 'debug:stripindents',
-        folder: 'Debug',
-        args: [1],
-        ratelimit: 3
-      }
-    )
+  constructor() {
+    super(['Test the stripIndents function.'], {
+      name: 'debug:stripindents',
+      folder: 'Debug',
+      args: [1],
+      ratelimit: 3
+    })
   }
 
-  init (_message: Message, { content }: Arguments): string {
+  init(_message: Message, { content }: Arguments): string {
     return stripIndents`
         ${inlineCode(content.slice(0, 2040))}
         `

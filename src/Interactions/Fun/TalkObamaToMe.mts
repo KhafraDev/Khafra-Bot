@@ -1,11 +1,11 @@
-import { Interactions } from '#khaf/Interaction'
-import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { talkObamaToMe } from '#khaf/utility/commands/TalkObamaToMe'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'talkobamatome',
       description: 'Have Obama say something.',
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const sentence = interaction.options.getString('sentence', true)
     const obama = await talkObamaToMe(sentence.slice(0, 280))
 

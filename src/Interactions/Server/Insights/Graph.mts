@@ -1,14 +1,14 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { stringify } from 'node:querystring'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 interface Insights {
-    k_date: Date
-    k_left: number
-    k_joined: number
+  k_date: Date
+  k_left: number
+  k_joined: number
 }
 
 const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {
@@ -24,14 +24,14 @@ const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'insights',
       name: 'graph'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const id = interaction.guildId ?? interaction.guild?.id
 
     if (!id) {
@@ -66,17 +66,20 @@ export class kSubCommand extends InteractionSubCommand {
     const locale = interaction.guild?.preferredLocale ?? 'en-US'
     const intl = Intl.DateTimeFormat(locale, { dateStyle: 'long' })
 
-    const { Dates, Joins, Leaves } = rows.reduce((red, row) => {
-      red.Dates.push(intl.format(row.k_date))
-      red.Joins.push(row.k_joined.toLocaleString(locale))
-      red.Leaves.push(row.k_left.toLocaleString(locale))
+    const { Dates, Joins, Leaves } = rows.reduce(
+      (red, row) => {
+        red.Dates.push(intl.format(row.k_date))
+        red.Joins.push(row.k_joined.toLocaleString(locale))
+        red.Leaves.push(row.k_left.toLocaleString(locale))
 
-      return red
-    }, {
-      Dates: [] as string[],
-      Joins: [] as string[],
-      Leaves: [] as string[]
-    })
+        return red
+      },
+      {
+        Dates: [] as string[],
+        Joins: [] as string[],
+        Leaves: [] as string[]
+      }
+    )
 
     // https://www.chartjs.org/docs/2.8.0/
     const data = JSON.stringify({
@@ -100,32 +103,36 @@ export class kSubCommand extends InteractionSubCommand {
       },
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Members',
-              fontColor: 'rgb(255, 255, 255)',
-              fontSize: 20
-            },
-            offset: true,
-            ticks: {
-              fontColor: 'rgb(255, 255, 255)',
-              fontSize: 30
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: 'Members',
+                fontColor: 'rgb(255, 255, 255)',
+                fontSize: 20
+              },
+              offset: true,
+              ticks: {
+                fontColor: 'rgb(255, 255, 255)',
+                fontSize: 30
+              }
             }
-          }],
-          xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'Date',
-              fontColor: 'rgb(255, 255, 255)',
-              fontSize: 20
-            },
-            offset: true,
-            ticks: {
-              fontColor: 'rgb(255, 255, 255)',
-              fontSize: 20
+          ],
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: 'Date',
+                fontColor: 'rgb(255, 255, 255)',
+                fontSize: 20
+              },
+              offset: true,
+              ticks: {
+                fontColor: 'rgb(255, 255, 255)',
+                fontSize: 20
+              }
             }
-          }]
+          ]
         },
         legend: {
           labels: {

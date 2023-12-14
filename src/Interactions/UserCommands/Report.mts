@@ -1,7 +1,3 @@
-import { InteractionUserCommand } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isGuildTextBased } from '#khaf/utility/Discord.js'
-import * as util from '#khaf/utility/util.mjs'
 import { codeBlock, hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import {
   ApplicationCommandType,
@@ -9,14 +5,15 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
+import { InteractionUserCommand } from '#khaf/Interaction'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isGuildTextBased } from '#khaf/utility/Discord.js'
+import * as util from '#khaf/utility/util.mjs'
 
-const perms =
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.SendMessages | PermissionFlagsBits.ViewChannel | PermissionFlagsBits.EmbedLinks
 
 export class kUserCommand extends InteractionUserCommand {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'Report Message',
       type: ApplicationCommandType.Message
@@ -27,12 +24,12 @@ export class kUserCommand extends InteractionUserCommand {
     })
   }
 
-  async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async init(interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const settings = interaction.inGuild() ? await util.guildSettings(interaction.guildId) : null
 
     if (!settings?.staffChannel) {
       return {
-        content: '❌ The staff channel hasn\'t been setup in the guild yet, ask an admin to set it up!',
+        content: "❌ The staff channel hasn't been setup in the guild yet, ask an admin to set it up!",
         ephemeral: true
       }
     }
@@ -67,10 +64,7 @@ export class kUserCommand extends InteractionUserCommand {
         content: '❌ I can only send messages in text based channels, sorry!',
         ephemeral: true
       }
-    } else if (
-      !interaction.guild?.members.me ||
-      !channel.permissionsFor(interaction.guild.members.me).has(perms)
-    ) {
+    } else if (!interaction.guild?.members.me || !channel.permissionsFor(interaction.guild.members.me).has(perms)) {
       return {
         content: '❌ I cannot send the message to staff, please contact an admin to correct this!',
         ephemeral: true
@@ -91,9 +85,7 @@ export class kUserCommand extends InteractionUserCommand {
     })
 
     await channel.send({
-      content: a !== undefined
-        ? a.map(att => att.proxyURL).join('\n')
-        : undefined,
+      content: a !== undefined ? a.map((att) => att.proxyURL).join('\n') : undefined,
       embeds: [embed]
     })
 

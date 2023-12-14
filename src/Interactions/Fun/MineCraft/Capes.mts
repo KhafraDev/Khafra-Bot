@@ -1,15 +1,15 @@
-import { capes as getCapes } from '#khaf/functions/minecraft/textures.mjs'
-import { usernameToUUID } from '#khaf/functions/minecraft/username-to-uuid.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
-import { bold } from '@discordjs/builders'
-import { ResizeFilterType, ResizeFit, Transformer } from '@napi-rs/image'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { AssertionError } from 'node:assert'
 import assert from 'node:assert'
 import type { Buffer } from 'node:buffer'
+import { bold } from '@discordjs/builders'
+import { ResizeFilterType, ResizeFit, Transformer } from '@napi-rs/image'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { capes as getCapes } from '#khaf/functions/minecraft/textures.mjs'
+import { usernameToUUID } from '#khaf/functions/minecraft/username-to-uuid.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 // Rinse - optifine and migrator cape
 // Bes - optifine cape
@@ -27,18 +27,17 @@ const dashUUID = (uuid: string): string => {
   return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
 }
 
-const missingCapeWarning =
-	'⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
+const missingCapeWarning = '⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'minecraft',
       name: 'capes'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const username = interaction.options.getString('username', true)
     let capes: string[]
     let uuid
@@ -54,7 +53,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const buffer = await this.image([
-      ...capes.map<Cape>(cape => ({ url: cape, type: 'mojang' })),
+      ...capes.map<Cape>((cape) => ({ url: cape, type: 'mojang' })),
       { url: `http://s.optifine.net/capes/${uuid.name}.png`, type: 'optifine' },
       { url: `https://dl.labymod.net/capes/${dashUUID(uuid.id)}`, type: 'labymod' }
     ])
@@ -71,18 +70,20 @@ export class kSubCommand extends InteractionSubCommand {
           image: { url: 'attachment://capes.png' }
         })
       ],
-      files: [{
-        attachment: buffer,
-        name: 'capes.png'
-      }]
+      files: [
+        {
+          attachment: buffer,
+          name: 'capes.png'
+        }
+      ]
     }
   }
 
-  async image (capes: Cape[]): Promise<Buffer> {
+  async image(capes: Cape[]): Promise<Buffer> {
     // Note: this includes capes that a user might not have (such as Optifine).
     const empty = Transformer.fromRgbaPixels(
-      new Uint8Array(((44 * capes.length) + 5 * (capes.length - 1)) * 64 * 4),
-      (44 * capes.length) + 5 * (capes.length - 1),
+      new Uint8Array((44 * capes.length + 5 * (capes.length - 1)) * 64 * 4),
+      44 * capes.length + 5 * (capes.length - 1),
       64
     )
 
@@ -106,18 +107,13 @@ export class kSubCommand extends InteractionSubCommand {
       let b: Buffer
 
       if (type === 'mojang') {
-        b = await transformer
-          .resize(92, 44, ResizeFilterType.Nearest, ResizeFit.Fill)
-          .crop(0, 0, 17, 23)
-          .png()
+        b = await transformer.resize(92, 44, ResizeFilterType.Nearest, ResizeFit.Fill).crop(0, 0, 17, 23).png()
       } else if (type === 'optifine') {
         const { width } = await transformer.metadata()
-        const args: [number, number, number, number] = width === 46
-          ? [0, 0, 12, 17]
-          : [2, 2, 20, 32]
+        const args: [number, number, number, number] = width === 46 ? [0, 0, 12, 17] : [2, 2, 20, 32]
 
         b = await transformer.crop(...args).png()
-      } else if (type === 'labymod') { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+      } else if (type === 'labymod') {
         const { width, height } = await transformer.metadata()
 
         b = await transformer.crop(0, 0, width / 2, height).png()
@@ -125,9 +121,7 @@ export class kSubCommand extends InteractionSubCommand {
         assert(false, 'Not implemented')
       }
 
-      const c = await new Transformer(b)
-        .resize(45, 64, ResizeFilterType.Nearest, ResizeFit.Fill)
-        .png()
+      const c = await new Transformer(b).resize(45, 64, ResizeFilterType.Nearest, ResizeFit.Fill).png()
 
       empty.overlay(c, 40 * i + 8 * i, 0)
     }

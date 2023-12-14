@@ -1,15 +1,11 @@
-import type { Image, SKRSContext2D } from '@napi-rs/canvas'
 import { extname } from 'node:path'
+import type { Image, SKRSContext2D } from '@napi-rs/canvas'
 
 export const ImageUtil = {
   /**
    * Splits text into different lines where each line is < maxWidth.
    */
-  split (
-    text: string,
-    maxWidth: number,
-    ctx: SKRSContext2D
-  ): string[] {
+  split(text: string, maxWidth: number, ctx: SKRSContext2D): string[] {
     const lines: string[] = []
 
     let i = 0
@@ -19,20 +15,12 @@ export const ImageUtil = {
 
     // stolen from https://stackoverflow.com/a/16221307/15299271
     while (text.length) {
-      for (
-        i = text.length;
-        ctx.measureText(text.substring(0, i)).width > maxWidth;
-        i--
-      );
+      for (i = text.length; ctx.measureText(text.substring(0, i)).width > maxWidth; i--);
 
       result = text.substring(0, i)
 
       if (i !== text.length) {
-        for (
-          j = 0;
-          result.includes(' ', j);
-          j = result.indexOf(' ', j) + 1
-        );
+        for (j = 0; result.includes(' ', j); j = result.indexOf(' ', j) + 1);
       }
 
       lines.push(result.substring(0, j || result.length))
@@ -47,37 +35,18 @@ export const ImageUtil = {
    * Checks if a url is a supported image extension. Currently supports
    * `png`, `jp(e)g`, `avif`, `webp`.
    */
-  isImage (url: string, mimeType?: string | null): boolean {
+  isImage(url: string, mimeType?: string | null): boolean {
     if (mimeType) {
       return mimeType.startsWith('image/')
     }
 
     const extension = extname(url)
-    const imageExts = [
-      '.png',
-      '.jpg',
-      '.jpeg',
-      '.avif',
-      '.webp'
-    ]
+    const imageExts = ['.png', '.jpg', '.jpeg', '.avif', '.webp']
 
-    return imageExts.some(ext => extension.startsWith(ext))
+    return imageExts.some((ext) => extension.startsWith(ext))
   },
 
-  centerImage (
-    context: SKRSContext2D,
-    image: Image,
-    x: number,
-    y: number,
-    width: number,
-    height: number
-  ): void {
-    context.drawImage(
-      image,
-      x - width / 2,
-      y - height / 2,
-      width,
-      height
-    )
+  centerImage(context: SKRSContext2D, image: Image, x: number, y: number, width: number, height: number): void {
+    context.drawImage(image, x - width / 2, y - height / 2, width, height)
   }
 }

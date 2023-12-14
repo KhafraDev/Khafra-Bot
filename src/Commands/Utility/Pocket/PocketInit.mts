@@ -1,33 +1,25 @@
+import { bold, inlineCode } from '@discordjs/builders'
+import { type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
+import { type Message, channelLink } from 'discord.js'
 import { Command } from '#khaf/Command'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
-import { bold, inlineCode } from '@discordjs/builders'
-import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
-import { channelLink, type Message } from 'discord.js'
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Pocket: Start the process of authorizing your Pocket account.'
-      ],
-      {
-        name: 'pocketinit',
-        folder: 'Pocket',
-        args: [0, 0],
-        ratelimit: 300,
-        permissions: [
-          PermissionFlagsBits.AddReactions,
-          PermissionFlagsBits.ManageEmojisAndStickers
-        ]
-      }
-    )
+  constructor() {
+    super(['Pocket: Start the process of authorizing your Pocket account.'], {
+      name: 'pocketinit',
+      folder: 'Pocket',
+      args: [0, 0],
+      ratelimit: 300,
+      permissions: [PermissionFlagsBits.AddReactions, PermissionFlagsBits.ManageEmojisAndStickers]
+    })
   }
 
-  async init (message: Message): Promise<undefined> {
+  async init(message: Message): Promise<undefined> {
     const pocket = new Pocket()
     pocket.redirect_uri = channelLink(message.channel.id)
 
@@ -45,30 +37,27 @@ export class kCommand extends Command {
       title: 'Pocket'
     })
 
-    const row = Components.actionRow([
-      Buttons.approve('Approve'),
-      Buttons.deny('Cancel')
-    ])
+    const row = Components.actionRow([Buttons.approve('Approve'), Buttons.deny('Cancel')])
 
     const msg = await message.reply({
       embeds: [embed],
       components: [row]
     })
 
-    const button = await msg.awaitMessageComponent<ComponentType.Button>({
-      filter: (interaction) =>
-        ['approve', 'deny'].includes(interaction.customId) &&
-        interaction.user.id === message.author.id &&
-        interaction.message.id === msg.id,
-      time: minutes(2)
-    }).catch(() => null)
+    const button = await msg
+      .awaitMessageComponent<ComponentType.Button>({
+        filter: (interaction) =>
+          ['approve', 'deny'].includes(interaction.customId) &&
+          interaction.user.id === message.author.id &&
+          interaction.message.id === msg.id,
+        time: minutes(2)
+      })
+      .catch(() => null)
 
     if (button === null) {
       if (msg.editable) {
         await msg.edit({
-          embeds: [
-            Embed.error('Canceled the command, took over 2 minutes. This is a limit set by Pocket, not by me.')
-          ],
+          embeds: [Embed.error('Canceled the command, took over 2 minutes. This is a limit set by Pocket, not by me.')],
           components: []
         })
       }
@@ -82,19 +71,19 @@ export class kCommand extends Command {
       const token = await pocket.getAccessToken().catch(() => null)
 
       if (token === null) {
-        return void await button.editReply({
-          embeds: [Embed.error('Khafra-Bot wasn\'t authorized.')],
+        return void (await button.editReply({
+          embeds: [Embed.error("Khafra-Bot wasn't authorized.")],
           components: []
-        })
+        }))
       }
 
       const { accessToken, requestToken, username } = pocket
 
       if (!accessToken || !requestToken || !username) {
-        return void await button.editReply({
+        return void (await button.editReply({
           embeds: [Embed.error('An unexpected issue occurred.')],
           components: []
-        })
+        }))
       }
 
       // Insert into the table, if username or user_id is already in,
@@ -128,7 +117,7 @@ export class kCommand extends Command {
     }
 
     return void button.editReply({
-      embeds: [Embed.error('Khafra-Bot wasn\'t authorized, command was canceled!')],
+      embeds: [Embed.error("Khafra-Bot wasn't authorized, command was canceled!")],
       components: disableAll(msg)
     })
   }

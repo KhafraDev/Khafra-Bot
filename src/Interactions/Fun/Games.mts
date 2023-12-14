@@ -1,14 +1,14 @@
-import { Interactions } from '#khaf/Interaction'
-import { assets } from '#khaf/utility/Constants/Path.mjs'
-import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import { readdirSync } from 'node:fs'
 import { extname } from 'node:path'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType } from 'discord-api-types/v10'
+import { Interactions } from '#khaf/Interaction'
+import { assets } from '#khaf/utility/Constants/Path.mjs'
 
-const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''))
+const listsByName = readdirSync(assets('Hangman')).map((f) => f.replace(extname(f), ''))
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'games',
       description: 'Command that handles games!',
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.String,
               name: 'lists',
               description: 'The list of words to randomly choose from.',
-              choices: listsByName.map(word => ({ name: word, value: word }))
+              choices: listsByName.map((word) => ({ name: word, value: word }))
             }
           ]
         },
@@ -50,7 +50,7 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.Boolean,
               name: 'official-word',
               description:
-                'Use the current word from the official Wordle site, might choose tomorrow\'s word based on timezones.'
+                "Use the current word from the official Wordle site, might choose tomorrow's word based on timezones."
             },
             {
               type: ApplicationCommandOptionType.Boolean,

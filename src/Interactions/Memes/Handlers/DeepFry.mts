@@ -1,18 +1,18 @@
-import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
-import type { ImageURLOptions } from '@discordjs/rest'
-import { createCanvas, Image, type SKRSContext2D } from '@napi-rs/canvas'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
+import type { ImageURLOptions } from '@discordjs/rest'
+import { Image, type SKRSContext2D, createCanvas } from '@napi-rs/canvas'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { request } from 'undici'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
+import { arrayBufferToBuffer } from '#khaf/utility/util.mjs'
 
 const desaturate = (ctx: SKRSContext2D, level: number, width: number, height: number): SKRSContext2D => {
   const data = ctx.getImageData(0, 0, width, height)
 
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      const xy = ((i * width) + j) * 4
+      const xy = (i * width + j) * 4
       // https://en.wikipedia.org/wiki/Luma_(video)
       const gray = 0.299 * data.data[xy] + 0.587 * data.data[xy + 1] + 0.114 * data.data[xy + 2]
 
@@ -28,13 +28,13 @@ const desaturate = (ctx: SKRSContext2D, level: number, width: number, height: nu
 
 const contrast = (ctx: SKRSContext2D, width: number, height: number): SKRSContext2D => {
   const data = ctx.getImageData(0, 0, width, height)
-  const factor = (259 / 100) + 1
+  const factor = 259 / 100 + 1
   const intercept = 64 * (1 - factor)
 
   for (let i = 0; i < data.data.length; i += 4) {
-    data.data[i] = (data.data[i] * factor) + intercept
-    data.data[i + 1] = (data.data[i + 1] * factor) + intercept
-    data.data[i + 2] = (data.data[i + 2] * factor) + intercept
+    data.data[i] = data.data[i] * factor + intercept
+    data.data[i + 1] = data.data[i + 1] * factor + intercept
+    data.data[i + 2] = data.data[i + 2] * factor + intercept
   }
 
   ctx.putImageData(data, 0, 0)
@@ -44,23 +44,23 @@ const contrast = (ctx: SKRSContext2D, width: number, height: number): SKRSContex
 const options: ImageURLOptions = { extension: 'jpeg', size: 256 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'memes',
       name: 'deep-fry'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const attachment = interaction.options.getAttachment('image')
     const option =
-			attachment?.proxyURL ??
-			interaction.options.getUser('person')?.displayAvatarURL(options) ??
-			interaction.user.displayAvatarURL(options)
+      attachment?.proxyURL ??
+      interaction.options.getUser('person')?.displayAvatarURL(options) ??
+      interaction.user.displayAvatarURL(options)
 
     if (!ImageUtil.isImage(option, attachment?.contentType)) {
       return {
-        content: 'What am I supposed to do with that? That\'s not an image!',
+        content: "What am I supposed to do with that? That's not an image!",
         ephemeral: true
       }
     }
@@ -81,7 +81,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
   }
 
-  async image (avatarURL: string): Promise<Buffer | string> {
+  async image(avatarURL: string): Promise<Buffer | string> {
     const { body } = await request(avatarURL)
 
     const image = new Image()
@@ -95,7 +95,7 @@ export class kSubCommand extends InteractionSubCommand {
     contrast(ctx, canvas.width, canvas.height)
 
     // pick random emojis to draw
-    const emojis = ['😂', '💯', '👌', '🔥'].filter(() => Math.random() < .75)
+    const emojis = ['😂', '💯', '👌', '🔥'].filter(() => Math.random() < 0.75)
     const width = Math.round(canvas.width / 5)
 
     ctx.textAlign = 'center'

@@ -1,22 +1,18 @@
-import * as util from '#khaf/utility/util.mjs'
 import {
-  SnowflakeUtil,
   type Channel,
   type GuildBasedChannel,
   type GuildMember,
   type Message,
   type Role,
   type Snowflake,
+  SnowflakeUtil,
   type User
 } from 'discord.js'
+import * as util from '#khaf/utility/util.mjs'
 
 type MentionTypes = User | Channel | GuildMember | Role
 
-type MessageMentionTypes =
-  | 'roles'
-  | 'users'
-  | 'members'
-  | 'channels'
+type MessageMentionTypes = 'roles' | 'users' | 'members' | 'channels'
 
 const epoch = new Date('January 1, 2015 GMT-0').getTime()
 
@@ -54,7 +50,7 @@ export async function getMentions(
     const mention = mentions[fetchType]
     const guildCache = fetchType === 'users' ? client.users : guild[fetchType]
 
-    return mention.get(id) ?? await guildCache.fetch(id).catch(() => null)
+    return mention.get(id) ?? (await guildCache.fetch(id).catch(() => null))
   }
 
   return null

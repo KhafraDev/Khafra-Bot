@@ -1,23 +1,23 @@
-import { spotify } from '#khaf/functions/spotify/spotify.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import { ellipsis } from '#khaf/utility/String.mjs'
+import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type StringSelectMenuInteraction
 } from 'discord.js'
-import assert from 'node:assert'
-import { randomUUID } from 'node:crypto'
+import { Interactions } from '#khaf/Interaction'
+import { spotify } from '#khaf/functions/spotify/spotify.mjs'
+import { Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { ellipsis } from '#khaf/utility/String.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'spotify',
       description: 'Search for a song on Spotify!',
@@ -25,7 +25,7 @@ export class kInteraction extends Interactions {
         {
           type: ApplicationCommandOptionType.String,
           name: 'song',
-          description: 'The song\'s name to search for.',
+          description: "The song's name to search for.",
           required: true
         },
         {
@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const search = interaction.options.getString('song', true)
     const artist = interaction.options.getString('artist', true)
 
@@ -68,14 +68,11 @@ export class kInteraction extends Interactions {
 
     for (const track of tracks) {
       const artistNames = track.artists
-        .map(a => a.name)
+        .map((a) => a.name)
         .join(' and ')
         .trim()
 
-      list.push([
-        ellipsis(`${track.name} by ${artistNames}`, 100),
-        track.id
-      ])
+      list.push([ellipsis(`${track.name} by ${artistNames}`, 100), track.id])
     }
 
     const description = `---\n${list.map(([label]) => label).join('\n')}\n---`
@@ -106,14 +103,11 @@ export class kInteraction extends Interactions {
     const collector = new InteractionCollector<StringSelectMenuInteraction>(interaction.client, {
       message: reply,
       time: minutes(5),
-      filter: (i) =>
-        i.isStringSelectMenu() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => i.isStringSelectMenu() && interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
-      const track = tracks.find(track => track.id === i.values[0])
+      const track = tracks.find((track) => track.id === i.values[0])
       assert(track)
       const image = track.album.images.sort((a, b) => a.height - b.height)[0]
 
@@ -128,9 +122,7 @@ export class kInteraction extends Interactions {
             fields: [
               {
                 name: 'Artists',
-                value: track.artists
-                  .map(track => hyperlink(track.name, track.external_urls.spotify))
-                  .join('\n'),
+                value: track.artists.map((track) => hyperlink(track.name, track.external_urls.spotify)).join('\n'),
                 inline: true
               },
               {

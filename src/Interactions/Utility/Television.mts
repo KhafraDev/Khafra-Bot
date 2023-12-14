@@ -1,15 +1,15 @@
-import { Interactions } from '#khaf/Interaction'
-import { searchTV } from '#khaf/utility/commands/TMDB'
-import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isDM, isText } from '#khaf/utility/Discord.js'
 import { bold, hyperlink, time } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { Interactions } from '#khaf/Interaction'
+import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isDM, isText } from '#khaf/utility/Discord.js'
+import { searchTV } from '#khaf/utility/commands/TMDB'
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'tv',
       description: 'Gets information about a TV show!',
@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const tv = await searchTV(
       interaction.options.getString('name', true),
       isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)
@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
       description: tv.overview,
       footer: { text: 'Data provided by https://www.themoviedb.org/' },
       fields: [
-        { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
+        { name: bold('Genres:'), value: tv.genres.map((g) => g.name).join(', '), inline: true },
         { name: bold('Status:'), value: tv.status, inline: true },
         {
           name: bold('Premiered:'),
@@ -71,11 +71,7 @@ export class kInteraction extends Interactions {
 
     return {
       embeds: [embed],
-      components: [
-        Components.actionRow([
-          Buttons.link('TMDB', link)
-        ])
-      ]
+      components: [Components.actionRow([Buttons.link('TMDB', link)])]
     }
   }
 }

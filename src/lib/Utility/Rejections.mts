@@ -1,7 +1,7 @@
+import process, { exit } from 'node:process'
 import { sql as PostgresClient } from '#khaf/database/Postgres.mjs'
 import { TwitterScraper } from '#khaf/functions/twitter/scraper.mjs'
 import { logger } from '#khaf/structures/Logger.mjs'
-import process, { exit } from 'node:process'
 
 type EventNames = NodeJS.UncaughtExceptionOrigin | NodeJS.Signals
 

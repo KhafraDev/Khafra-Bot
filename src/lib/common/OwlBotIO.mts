@@ -1,6 +1,6 @@
 import { env } from 'node:process'
+import { type InferType, s } from '@sapphire/shapeshift'
 import { request } from 'undici'
-import { s, type InferType } from '@sapphire/shapeshift'
 
 const schema = s.object({
   definitions: s.object({

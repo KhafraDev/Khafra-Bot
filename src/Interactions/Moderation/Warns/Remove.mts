@@ -1,29 +1,29 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import type { Warning } from '#khaf/types/KhafraBot.js'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import * as util from '#khaf/utility/util.mjs'
-import { plural } from '#khaf/utility/String.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import type { Warning } from '#khaf/types/KhafraBot.js'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { plural } from '#khaf/utility/String.mjs'
+import * as util from '#khaf/utility/util.mjs'
 
 interface WarningDel {
-    id: Warning['id']
-    k_points: Warning['k_points']
-    k_user_id: Warning['k_user_id']
+  id: Warning['id']
+  k_points: Warning['k_points']
+  k_user_id: Warning['k_user_id']
 }
 
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'warns',
       name: 'remove'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (!interaction.inGuild()) {
       return {
         content: '❌ The bot must be re-invited with all permissions to use this command.',

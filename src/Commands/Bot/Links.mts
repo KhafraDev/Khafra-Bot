@@ -1,9 +1,9 @@
+import type { APIEmbed } from 'discord-api-types/v10'
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import type { APIEmbed } from 'discord-api-types/v10'
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super([], {
       name: 'links',
       folder: 'Bot',
@@ -13,7 +13,7 @@ export class kCommand extends Command {
     })
   }
 
-  init (): APIEmbed {
+  init(): APIEmbed {
     return Embed.ok(`
     [Khafra-Bot GitHub](https://github.com/khafradev/khafra-bot)
     [Synergism Discord](https://discord.gg/synergism)

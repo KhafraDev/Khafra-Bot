@@ -1,21 +1,23 @@
-import type { Arguments } from '#khaf/Command'
-import { Command } from '#khaf/Command'
-import { sql } from '#khaf/database/Postgres.mjs'
-import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
+import { URL } from 'node:url'
 import { codeBlock, inlineCode } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
-import { URL } from 'node:url'
+import type { Arguments } from '#khaf/Command'
+import { Command } from '#khaf/Command'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Pocket } from '#khaf/functions/pocket/Pocket.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
 
-const schema = s.string.url({
-  allowedProtocols: ['http:', 'https:']
-}).transform((value) => {
-  const url = new URL(value)
-  url.search = ''
-  return url
-})
+const schema = s.string
+  .url({
+    allowedProtocols: ['http:', 'https:']
+  })
+  .transform((value) => {
+    const url = new URL(value)
+    url.search = ''
+    return url
+  })
 
 interface PocketUser {
   access_token: string
@@ -24,12 +26,12 @@ interface PocketUser {
 }
 
 export class kCommand extends Command {
-  constructor () {
+  constructor() {
     super(
       [
         'Pocket: add an article, video, or image to your saved items!',
         'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films ' +
-        'The 21st Century’s 100 greatest films'
+          'The 21st Century’s 100 greatest films'
       ],
       {
         name: 'pocketadd',
@@ -39,7 +41,7 @@ export class kCommand extends Command {
     )
   }
 
-  async init (message: Message, { args }: Arguments): Promise<APIEmbed> {
+  async init(message: Message, { args }: Arguments): Promise<APIEmbed> {
     const rows = await sql<[PocketUser] | []>`
       SELECT access_token, request_token, username
       FROM kbPocket
@@ -56,8 +58,7 @@ export class kCommand extends Command {
 
     const pocket = new Pocket(rows.shift())
     const article = schema.run(args[0])
-    if (!article.isOk())
-      return Embed.error('That\'s not an article URL, try again!')
+    if (!article.isOk()) return Embed.error("That's not an article URL, try again!")
     const added = await pocket.add(article.value, args.slice(1).join(' '))
 
     return Embed.json({

@@ -1,18 +1,18 @@
+import { PermissionFlagsBits } from 'discord-api-types/v10'
+import type { Client, User } from 'discord.js'
+import { Timer } from '#khaf/Timer'
 import { sql } from '#khaf/database/Postgres.mjs'
 import { logger } from '#khaf/structures/Logger.mjs'
-import { Timer } from '#khaf/Timer'
 import type { Giveaway } from '#khaf/types/KhafraBot.js'
 import { isText } from '#khaf/utility/Discord.js'
 import { seconds } from '#khaf/utility/ms.mjs'
-import { PermissionFlagsBits } from 'discord-api-types/v10'
-import type { Client, User } from 'discord.js'
 
 export class GiveawayTimer extends Timer {
-  constructor (client: Client) {
+  constructor(client: Client) {
     super({ interval: seconds(30), client })
   }
 
-  async setInterval (): Promise<void> {
+  async setInterval(): Promise<void> {
     for await (const _ of this.yieldEvery()) {
       // Delete all ended giveaways that are older than a week old.
       // This gives users a week to re-roll.
@@ -47,7 +47,7 @@ export class GiveawayTimer extends Timer {
     }
   }
 
-  async action (giveaway: Giveaway): Promise<void> {
+  async action(giveaway: Giveaway): Promise<void> {
     const { client } = this.options
 
     // If the timer is running before the client is logged in.
@@ -56,7 +56,7 @@ export class GiveawayTimer extends Timer {
     try {
       const guild = await client.guilds.fetch(giveaway.guildid)
       const channel = await guild.channels.fetch(giveaway.channelid)
-      const me = guild.members.me ?? await guild.members.fetchMe()
+      const me = guild.members.me ?? (await guild.members.fetchMe())
 
       if (!isText(channel)) return
       if (!channel.permissionsFor(me).has(PermissionFlagsBits.ReadMessageHistory)) return
@@ -64,7 +64,7 @@ export class GiveawayTimer extends Timer {
       const message = await channel.messages.fetch(giveaway.messageid)
       const reactions = message.reactions.cache
 
-      if (message.author.id !== client.user!.id) return
+      if (message.author.id !== client.user?.id) return
       if (!reactions.has('🎉')) {
         const emoji = message.reactions.resolve('🎉')
 
@@ -79,16 +79,18 @@ export class GiveawayTimer extends Timer {
       }
 
       const winners: User[] = []
-      if (count > giveaway.winners) { // bot react counts so the length must be greater
+      if (count > giveaway.winners) {
+        // bot react counts so the length must be greater
         while (winners.length < giveaway.winners) {
           const random = users.cache.random()
           if (!random) break
           if (random.bot) continue
-          if (winners.some(u => u.id === random.id)) continue
+          if (winners.some((u) => u.id === random.id)) continue
 
           winners.push(random)
         }
-      } else if (count === 1 && users.cache.first()!.id === client.user!.id) { // no one entered
+      } else if (count === 1 && users.cache.first()!.id === client.user!.id) {
+        // no one entered
         if (message.editable) {
           return void message.edit({
             content: 'No one entered the giveaway!'
@@ -98,7 +100,8 @@ export class GiveawayTimer extends Timer {
             content: 'No one entered the giveaway!'
           })
         }
-      } else if (count <= giveaway.winners) { // less entered than number of winners
+      } else if (count <= giveaway.winners) {
+        // less entered than number of winners
         for (const user of users.cache.values()) {
           if (user.bot) continue
           winners.push(user)

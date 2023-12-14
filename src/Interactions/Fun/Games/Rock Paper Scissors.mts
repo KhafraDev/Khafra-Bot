@@ -1,11 +1,11 @@
+import { randomUUID } from 'node:crypto'
+import { InteractionType } from 'discord-api-types/v10'
+import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { InteractionCollector } from 'discord.js'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
-import { InteractionType } from 'discord-api-types/v10'
-import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { InteractionCollector } from 'discord.js'
-import { randomUUID } from 'node:crypto'
 
 type Keys = keyof typeof emojis
 
@@ -16,14 +16,14 @@ const emojis = {
 } as const
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'games',
       name: 'rockpaperscissors'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const id = randomUUID()
     const row = Components.actionRow([
       Buttons.primary('🌑', `rock-${id}`),
@@ -32,9 +32,7 @@ export class kSubCommand extends InteractionSubCommand {
     ])
 
     const int = await interaction.editReply({
-      embeds: [
-        Embed.ok('Rock, paper, scissors, shoot!')
-      ],
+      embeds: [Embed.ok('Rock, paper, scissors, shoot!')],
       components: [row]
     })
 
@@ -43,10 +41,7 @@ export class kSubCommand extends InteractionSubCommand {
       message: int,
       time: seconds(15),
       max: 1,
-      filter: (i) =>
-        interaction.user.id === i.user.id &&
-        int.id === i.message.id &&
-        i.customId.endsWith(id)
+      filter: (i) => interaction.user.id === i.user.id && int.id === i.message.id && i.customId.endsWith(id)
     })
 
     let c: ButtonInteraction | undefined
@@ -57,9 +52,7 @@ export class kSubCommand extends InteractionSubCommand {
 
     if (c === undefined) {
       return void interaction.editReply({
-        embeds: [
-          Embed.error('❌ Game was canceled! Play again another time.')
-        ],
+        embeds: [Embed.error('❌ Game was canceled! Play again another time.')],
         components: disableAll(int)
       })
     }
@@ -72,8 +65,8 @@ export class kSubCommand extends InteractionSubCommand {
       embed = Embed.ok(`It's a tie - we both chose ${emojis[botChoice]}!`)
     } else if (
       (userChoice === 'rock' && botChoice === 'scissors') || // rock beats scissors
-            (userChoice === 'paper' && botChoice === 'rock') || // paper beats rock
-            (userChoice === 'scissors' && botChoice === 'paper') // scissors beats paper
+      (userChoice === 'paper' && botChoice === 'rock') || // paper beats rock
+      (userChoice === 'scissors' && botChoice === 'paper') // scissors beats paper
     ) {
       embed = Embed.ok(`You win with ${emojis[userChoice]}, I chose ${emojis[botChoice]}!`)
     }

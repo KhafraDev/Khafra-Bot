@@ -1,10 +1,4 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { Interactions } from '#khaf/Interaction'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { isText } from '#khaf/utility/Discord.js'
-import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import { stripIndents } from '#khaf/utility/Template.mjs'
-import { guildSettings } from '#khaf/utility/util.mjs'
+import assert from 'node:assert'
 import { bold, inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
@@ -13,16 +7,24 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import assert from 'node:assert'
+import { Interactions } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { isText } from '#khaf/utility/Discord.js'
+import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import { stripIndents } from '#khaf/utility/Template.mjs'
+import { guildSettings } from '#khaf/utility/util.mjs'
 
-const ifNot = (label: string): (value: unknown) => string =>
-  (value: unknown): string => inlineCode(`${value ?? label}`)
+const ifNot =
+  (label: string): ((value: unknown) => string) =>
+  (value: unknown): string =>
+    inlineCode(`${value ?? label}`)
 
 export class kInteraction extends Interactions {
-  constructor () {
+  constructor() {
     const sc: RESTPostAPIApplicationCommandsJSONBody = {
       name: 'settings',
-      description: 'Manage the bot\'s settings in your guild!',
+      description: "Manage the bot's settings in your guild!",
       default_member_permissions: bitfieldToString([PermissionFlagsBits.Administrator]),
       dm_permission: false,
       options: [
@@ -37,28 +39,19 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.Channel,
           name: 'mod-logs-channel',
           description: 'The channel where moderation logs are sent.',
-          channel_types: [
-            ChannelType.GuildAnnouncement,
-            ChannelType.GuildText
-          ]
+          channel_types: [ChannelType.GuildAnnouncement, ChannelType.GuildText]
         },
         {
           type: ApplicationCommandOptionType.Channel,
           name: 'welcome-channel',
           description: 'The channel where member join and leave messages are posted.',
-          channel_types: [
-            ChannelType.GuildAnnouncement,
-            ChannelType.GuildText
-          ]
+          channel_types: [ChannelType.GuildAnnouncement, ChannelType.GuildText]
         },
         {
           type: ApplicationCommandOptionType.Channel,
           name: 'staff-channel',
           description: 'Channel for general staff messages to be posted.',
-          channel_types: [
-            ChannelType.GuildAnnouncement,
-            ChannelType.GuildText
-          ]
+          channel_types: [ChannelType.GuildAnnouncement, ChannelType.GuildText]
         }
         // TODO: once tickets are added as interactions, add an option to change
         // ticket channel.
@@ -68,7 +61,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async init(interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.inCachedGuild()) {
       return {
         content: '❌ The bot is not in the guild, re-invite with the proper perms to change these settings!',
@@ -79,13 +72,13 @@ export class kInteraction extends Interactions {
     // The type needs to be downcasted on purpose. Expanding the
     // type causes the postgres types to error.
     const settings: Record<string, unknown> = {
-      'max_warning_points': interaction.options.getInteger('max-warning-points'),
-      'mod_log_channel': interaction.options.getChannel('mod-logs-channel'),
-      'welcome_channel': interaction.options.getChannel('welcome-channel'),
-      'staffChannel': interaction.options.getChannel('staff-channel')
+      max_warning_points: interaction.options.getInteger('max-warning-points'),
+      mod_log_channel: interaction.options.getChannel('mod-logs-channel'),
+      welcome_channel: interaction.options.getChannel('welcome-channel'),
+      staffChannel: interaction.options.getChannel('staff-channel')
     }
 
-    const keys = Object.keys(settings).filter(k => settings[k] != null)
+    const keys = Object.keys(settings).filter((k) => settings[k] != null)
 
     if (keys.length === 0) {
       const guild = await guildSettings(interaction.guildId)
@@ -140,9 +133,7 @@ export class kInteraction extends Interactions {
         WHERE guild_id = ${interaction.guildId}::text;
       `
 
-      const text = keys
-        .map(k => `- ${inlineCode(k.replace(/_/g, ' '))}: ${settings[k]}`)
-        .join('\n')
+      const text = keys.map((k) => `- ${inlineCode(k.replace(/_/g, ' '))}: ${settings[k]}`).join('\n')
 
       return {
         embeds: [

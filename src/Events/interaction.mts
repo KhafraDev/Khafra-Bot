@@ -1,3 +1,17 @@
+import assert from 'node:assert'
+import { bold, inlineCode } from '@discordjs/builders'
+import type { APIEmbed } from 'discord-api-types/v10'
+import {
+  type AutocompleteInteraction,
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+  Events,
+  type Interaction,
+  type InteractionReplyOptions,
+  type MessageContextMenuCommandInteraction,
+  type Role,
+  type UserContextMenuCommandInteraction
+} from 'discord.js'
 import { KhafraClient } from '#khaf/Bot'
 import { Command } from '#khaf/Command'
 import type { Event } from '#khaf/Event'
@@ -7,41 +21,23 @@ import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { validSnowflake } from '#khaf/utility/Mentions.mjs'
 import { hierarchy } from '#khaf/utility/Permissions.mjs'
 import { upperCase } from '#khaf/utility/String.mjs'
-import { bold, inlineCode } from '@discordjs/builders'
-import type { APIEmbed } from 'discord-api-types/v10'
-import {
-  Events,
-  type AutocompleteInteraction,
-  type ButtonInteraction,
-  type ChatInputCommandInteraction,
-  type Interaction,
-  type InteractionReplyOptions,
-  type MessageContextMenuCommandInteraction,
-  type Role,
-  type UserContextMenuCommandInteraction
-} from 'discord.js'
-import assert from 'node:assert'
 
-type Interactions =
-  ChatInputCommandInteraction &
+type Interactions = ChatInputCommandInteraction &
   MessageContextMenuCommandInteraction &
   UserContextMenuCommandInteraction
 
 export class kEvent implements Event {
   name = Events.InteractionCreate as const
 
-  async init (interaction: Interaction): Promise<void> {
+  async init(interaction: Interaction): Promise<void> {
     if (interaction.isButton()) {
       if (interaction.customId.startsWith('report::')) {
         assert(interaction.inGuild())
         return await handleReport(interaction)
       } else if (
-        interaction.inCachedGuild() &&
-        interaction.customId.startsWith('react-role') ||
-        (
-          validSnowflake(interaction.customId) && // the id used to just be a snowflake
-          interaction.message.author.id === interaction.client.user.id
-        )
+        (interaction.inCachedGuild() && interaction.customId.startsWith('react-role')) ||
+        (validSnowflake(interaction.customId) && // the id used to just be a snowflake
+          interaction.message.author.id === interaction.client.user.id)
       ) {
         return this.reactRole(interaction as ButtonInteraction<'cached'>)
       }
@@ -51,21 +47,15 @@ export class kEvent implements Event {
       return this.autoComplete(interaction)
     }
 
-    if (
-      !interaction.isChatInputCommand() &&
-      !interaction.isContextMenuCommand()
-    ) {
+    if (!interaction.isChatInputCommand() && !interaction.isContextMenuCommand()) {
       return
     }
 
     return this.command(interaction)
   }
 
-  async command (
-    interaction:
-      | ChatInputCommandInteraction
-      | MessageContextMenuCommandInteraction
-      | UserContextMenuCommandInteraction
+  async command(
+    interaction: ChatInputCommandInteraction | MessageContextMenuCommandInteraction | UserContextMenuCommandInteraction
   ): Promise<void> {
     const command = interaction.isContextMenuCommand()
       ? KhafraClient.Interactions.Context.get(interaction.commandName)
@@ -82,8 +72,7 @@ export class kEvent implements Event {
     }
 
     try {
-      if (command.options.defer)
-        await interaction.deferReply()
+      if (command.options.defer) await interaction.deferReply()
 
       const result = await command.init(interaction as Interactions)
       const param: InteractionReplyOptions = result ?? {}
@@ -96,10 +85,9 @@ export class kEvent implements Event {
         param.ephemeral = true
       }
 
-      if (interaction.deferred)
-        return void await interaction.editReply(param)
+      if (interaction.deferred) return void (await interaction.editReply(param))
 
-      return void await interaction.reply(param)
+      return void (await interaction.reply(param))
     } catch (e) {
       logger.error(e, `interaction error (${interaction.commandName})`)
 
@@ -109,17 +97,16 @@ export class kEvent implements Event {
           ephemeral: true
         } as const
 
-        if (interaction.deferred)
-          return void await interaction.editReply(options)
+        if (interaction.deferred) return void (await interaction.editReply(options))
 
-        return void await interaction.reply(options)
+        return void (await interaction.reply(options))
       }
     } finally {
       loggerUtility.logInteraction(interaction, command.data.name)
     }
   }
 
-  async reactRole (interaction: ButtonInteraction<'cached'>): Promise<void> {
+  async reactRole(interaction: ButtonInteraction<'cached'>): Promise<void> {
     const { guild, member, customId } = interaction
 
     let action = 'default'
@@ -144,15 +131,15 @@ export class kEvent implements Event {
     }
 
     if (role === null) {
-      return void await interaction.reply({
-        content: '❌ This role isn\'t cached or has been deleted.',
+      return void (await interaction.reply({
+        content: "❌ This role isn't cached or has been deleted.",
         ephemeral: true
-      })
+      }))
     } else if (!guild.members.me || !hierarchy(guild.members.me, member, false)) {
-      return void await interaction.reply({
+      return void (await interaction.reply({
         content: '❌ I do not have permission to manage your roles!',
         ephemeral: true
-      })
+      }))
     }
 
     try {
@@ -177,7 +164,7 @@ export class kEvent implements Event {
         }
       } else if (action === 'remove') {
         if (!had) {
-          opts.embeds.push(Embed.ok('This role can only be removed, and you don\'t have it.'))
+          opts.embeds.push(Embed.ok("This role can only be removed, and you don't have it."))
         } else {
           await remove(role)
         }
@@ -189,24 +176,20 @@ export class kEvent implements Event {
         }
       }
 
-      return void await interaction.reply(opts)
+      return void (await interaction.reply(opts))
     } catch (e) {
       logger.error(e, 'react role error')
 
-      return void await interaction.reply({
-        embeds: [
-          Embed.error('An error prevented me from granting you the role!')
-        ],
+      return void (await interaction.reply({
+        embeds: [Embed.error('An error prevented me from granting you the role!')],
         ephemeral: true
-      })
+      }))
     }
   }
 
-  async autoComplete (interaction: AutocompleteInteraction): Promise<void> {
+  async autoComplete(interaction: AutocompleteInteraction): Promise<void> {
     const autocomplete = interaction.options.getFocused(true)
-    const handler = KhafraClient.Interactions.Autocomplete.get(
-      `${interaction.commandName}-${autocomplete.name}`
-    )
+    const handler = KhafraClient.Interactions.Autocomplete.get(`${interaction.commandName}-${autocomplete.name}`)
 
     return handler?.handle(interaction)
   }

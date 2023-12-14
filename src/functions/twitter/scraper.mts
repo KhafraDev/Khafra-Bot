@@ -1,8 +1,8 @@
+import type { Buffer } from 'node:buffer'
+import { AsyncQueue } from '@sapphire/async-queue'
+import type { Browser } from 'playwright'
 import { once } from '#khaf/utility/Memoize.mjs'
 import { createDeferredPromise } from '#khaf/utility/util.mjs'
-import { AsyncQueue } from '@sapphire/async-queue'
-import type { Buffer } from 'node:buffer'
-import type { Browser } from 'playwright'
 
 /**
  * @example
@@ -24,10 +24,10 @@ export class TwitterScraper {
     })
   })
 
-  async getTweetAPILink (id: string): Promise<{ url: string, bodyPromise: Promise<Buffer> }> {
+  async getTweetAPILink(id: string): Promise<{ url: string; bodyPromise: Promise<Buffer> }> {
     await this.#queue.wait({ signal: AbortSignal.timeout(30_000) })
 
-    const promise = createDeferredPromise<{ url: string, bodyPromise: Promise<Buffer> }>()
+    const promise = createDeferredPromise<{ url: string; bodyPromise: Promise<Buffer> }>()
     promise.promise.finally(() => this.#queue.shift())
 
     const page = await this.#openPage()

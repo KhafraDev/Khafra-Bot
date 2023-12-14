@@ -1,12 +1,12 @@
-import { Command } from '#khaf/Command'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { once } from '#khaf/utility/Memoize.mjs'
-import { hours } from '#khaf/utility/ms.mjs'
-import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
 import { request } from 'undici'
+import { Command } from '#khaf/Command'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { once } from '#khaf/utility/Memoize.mjs'
+import { RSSReader } from '#khaf/utility/RSS.mjs'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 
 interface ITheOnionAPI {
   data: {
@@ -30,11 +30,11 @@ interface ITheOnionAPI {
     showAuthorBio: boolean
     byline: string
     showByline: boolean
-    categorization: {channelId: string, sectionId: string}
+    categorization: { channelId: string; sectionId: string }
     storyTypeId: unknown
     categoryId: unknown
     subcategoryId: unknown
-    properties:string
+    properties: string
     template: unknown
     isFeatured: boolean
     isVideo: boolean
@@ -42,8 +42,8 @@ interface ITheOnionAPI {
     relatedModule: unknown
     defaultBlogId: number
     approved: boolean
-    headline:string
-    headlineSfw:string
+    headline: string
+    headlineSfw: string
     subhead: unknown[]
     body: unknown[]
     lightbox: boolean
@@ -69,29 +69,23 @@ const rss = new RSSReader<ITheOnion>('https://www.theonion.com/rss')
 const cache = once(() => rss.parse(), hours(12))
 
 export class kCommand extends Command {
-  constructor () {
-    super(
-      [
-        'Read one of the latest articles from The Onion!',
-        ''
-      ],
-      {
-        name: 'theonion',
-        folder: 'Fun',
-        aliases: ['onion', 'realnews'],
-        args: [0, 0]
-      }
-    )
+  constructor() {
+    super(['Read one of the latest articles from The Onion!', ''], {
+      name: 'theonion',
+      folder: 'Fun',
+      aliases: ['onion', 'realnews'],
+      args: [0, 0]
+    })
   }
 
-  async init (): Promise<APIEmbed> {
+  async init(): Promise<APIEmbed> {
     await cache()
 
     const i = Math.floor(Math.random() * rss.results.size)
     const id = [...rss.results][i].guid
 
     const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`)
-    const j = await body.json() as ITheOnionAPI
+    const j = (await body.json()) as ITheOnionAPI
 
     if (j.data.length === 0)
       return Embed.error(`

@@ -1,21 +1,21 @@
-import { sql } from '#khaf/database/Postgres.mjs'
-import { InteractionSubCommand } from '#khaf/Interaction'
-import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { minutes } from '#khaf/utility/ms.mjs'
-import type { APIEmbed } from 'discord-api-types/v10'
-import {
-  hyperlink,
-  InteractionCollector,
-  messageLink,
-  time,
-  userMention,
-  type ButtonInteraction,
-  type ChatInputCommandInteraction,
-  type StringSelectMenuInteraction
-} from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
+import type { APIEmbed } from 'discord-api-types/v10'
+import {
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
+  InteractionCollector,
+  type StringSelectMenuInteraction,
+  hyperlink,
+  messageLink,
+  time,
+  userMention
+} from 'discord.js'
+import { InteractionSubCommand } from '#khaf/Interaction'
+import { sql } from '#khaf/database/Postgres.mjs'
+import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
+import { Embed, colors } from '#khaf/utility/Constants/Embeds.mjs'
+import { minutes } from '#khaf/utility/ms.mjs'
 
 interface Report {
   t: 'report'
@@ -60,8 +60,7 @@ const embedFromCase = (
     return cache.get(page - 1)!
   }
 
-  if ('staffReason' in row && row.staffReason)
-    embed.description += `📑 Reason: ${row.staffReason}\n`
+  if ('staffReason' in row && row.staffReason) embed.description += `📑 Reason: ${row.staffReason}\n`
 
   if (row.t === 'case') {
     embed.description += `👤 Handled by: ${userMention(row.contextUser)}\n`
@@ -79,11 +78,9 @@ const embedFromCase = (
     }
   }
 
-  if (row.targetAttachments?.length)
-    embed.description += `🖼️ Attachments:\n${row.targetAttachments.join('\n')}`
+  if (row.targetAttachments?.length) embed.description += `🖼️ Attachments:\n${row.targetAttachments.join('\n')}`
 
-  if (row.contextAttachments)
-    embed.image = { url: row.contextAttachments }
+  if (row.contextAttachments) embed.image = { url: row.contextAttachments }
 
   embed.footer = {
     text: `Case ${page}/${total}`
@@ -95,14 +92,14 @@ const embedFromCase = (
 }
 
 export class kSubCommand extends InteractionSubCommand {
-  constructor () {
+  constructor() {
     super({
       references: 'case',
       name: 'view-user'
     })
   }
 
-  async handle (interaction: ChatInputCommandInteraction): Promise<void> {
+  async handle(interaction: ChatInputCommandInteraction): Promise<void> {
     assert(interaction.inGuild())
 
     let page = 0
@@ -152,20 +149,21 @@ export class kSubCommand extends InteractionSubCommand {
         "kbCases"."targetId" = ${user.id}
     `
 
-    const { cases, report } = allCases.reduce((prev, curr) => {
-      if (curr.t === 'case') {
-        prev.cases.push(curr)
-      } else {
-        prev.report.push(curr)
-      }
+    const { cases, report } = allCases.reduce(
+      (prev, curr) => {
+        if (curr.t === 'case') {
+          prev.cases.push(curr)
+        } else {
+          prev.report.push(curr)
+        }
 
-      return prev
-    }, { cases: [] as Case[], report: [] as Report[] })
+        return prev
+      },
+      { cases: [] as Case[], report: [] as Report[] }
+    )
 
     const message = await interaction.editReply({
-      embeds: [
-        embedFromCase(allCases[page], interaction, allCases.length, page + 1, cache)
-      ],
+      embeds: [embedFromCase(allCases[page], interaction, allCases.length, page + 1, cache)],
       components: [
         Components.actionRow([
           Buttons.primary('⏩', `fastforward-${id}`),
@@ -186,14 +184,10 @@ export class kSubCommand extends InteractionSubCommand {
       ]
     })
 
-    const collector = new InteractionCollector<
-      ButtonInteraction | StringSelectMenuInteraction
-    >(interaction.client, {
+    const collector = new InteractionCollector<ButtonInteraction | StringSelectMenuInteraction>(interaction.client, {
       message,
       time: minutes(5),
-      filter: (i) =>
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+      filter: (i) => interaction.user.id === i.user.id && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
@@ -226,15 +220,7 @@ export class kSubCommand extends InteractionSubCommand {
       }
 
       await i.update({
-        embeds: [
-          embedFromCase(
-            (filter ?? allCases)[page],
-            interaction,
-            (filter ?? allCases).length,
-            page + 1,
-            cache
-          )
-        ]
+        embeds: [embedFromCase((filter ?? allCases)[page], interaction, (filter ?? allCases).length, page + 1, cache)]
       })
     }
 
