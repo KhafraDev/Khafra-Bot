@@ -4,12 +4,12 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isExplicitText } from '#khaf/utility/Discord.js'
 import {
+  type APIEmbed,
   ChannelType,
   GuildPremiumTier,
   OverwriteType,
   PermissionFlagsBits,
-  ThreadAutoArchiveDuration,
-  type APIEmbed
+  ThreadAutoArchiveDuration
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import assert from 'node:assert'
@@ -41,9 +41,8 @@ export class kCommand extends Command {
     }
 
     /** guild can use private threads */
-    const privateThreads =
-      message.guild.premiumTier !== GuildPremiumTier.None &&
-      message.guild.premiumTier !== GuildPremiumTier.Tier1
+    const privateThreads = message.guild.premiumTier !== GuildPremiumTier.None
+      && message.guild.premiumTier !== GuildPremiumTier.Tier1
 
     const channel = message.guild.channels.cache.has(settings.ticketchannel)
       ? message.guild.channels.cache.get(settings.ticketchannel)
@@ -51,8 +50,8 @@ export class kCommand extends Command {
 
     if (isExplicitText(channel) && !privateThreads) {
       return Embed.error(
-        'This guild is no longer tier 2 or above, and cannot use private threads. ' +
-        'Use the `ticketchannel` command to re-set the ticket channel!'
+        'This guild is no longer tier 2 or above, and cannot use private threads. '
+          + 'Use the `ticketchannel` command to re-set the ticket channel!'
       )
     }
 

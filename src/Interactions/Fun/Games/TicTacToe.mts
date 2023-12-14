@@ -1,11 +1,13 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
-import { TicTacToe, type Difficulty, type Turn } from '#khaf/utility/commands/TicTacToe'
+import { type Difficulty, TicTacToe, type Turn } from '#khaf/utility/commands/TicTacToe'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { minutes, seconds } from '#khaf/utility/ms.mjs'
 import { chunkSafe } from '#khaf/utility/util.mjs'
 import {
-  InteractionType,
-  type APIActionRowComponent, type APIButtonComponent, type APIMessageActionRowComponent
+  type APIActionRowComponent,
+  type APIButtonComponent,
+  type APIMessageActionRowComponent,
+  InteractionType
 } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
@@ -29,7 +31,7 @@ const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowCompone
     }
   }
 
-  return chunkSafe(rows, 3).map(r => Components.actionRow(r))
+  return chunkSafe(rows, 3).map((r) => Components.actionRow(r))
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -56,9 +58,9 @@ export class kSubCommand extends InteractionSubCommand {
       idle: seconds(30),
       max: 5,
       filter: (i) =>
-        i.message.id === int.id &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+        i.message.id === int.id
+        && i.user.id === interaction.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

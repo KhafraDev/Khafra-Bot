@@ -1,6 +1,7 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import type { Report } from '#khaf/functions/case/reports.mjs'
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
@@ -12,16 +13,15 @@ import { bold, hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType, InteractionType } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   type GuildBasedChannel,
+  InteractionCollector,
   type InteractionReplyOptions,
   type Message
 } from 'discord.js'
 import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -137,9 +137,9 @@ export class kInteraction extends Interactions {
       max: 1,
       message: confirm,
       filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+        i.isButton()
+        && interaction.user.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     collector.once('collect', (i) => p.resolve(i.customId.startsWith('create-')))
@@ -183,20 +183,18 @@ export class kInteraction extends Interactions {
 
         if (host !== 'discord.com' && !host.endsWith('.discord.com')) {
           return {
-            content:
-              '❌ This link is not from Discord. Right click on a message and select ' +
-              '"Copy Message Link" to get the link!',
+            content: '❌ This link is not from Discord. Right click on a message and select '
+              + '"Copy Message Link" to get the link!',
             ephemeral: true
           }
         } else if (
-          empty !== '' ||
-          channels !== 'channels' ||
-          rest.some((part) => !validSnowflake(part))
+          empty !== ''
+          || channels !== 'channels'
+          || rest.some((part) => !validSnowflake(part))
         ) {
           return {
-            content:
-              '❌ This link doesn\'t lead to a message. Right click on a message and select ' +
-              '"Copy Message Link" to get the link!',
+            content: '❌ This link doesn\'t lead to a message. Right click on a message and select '
+              + '"Copy Message Link" to get the link!',
             ephemeral: true
           }
         }
@@ -209,7 +207,7 @@ export class kInteraction extends Interactions {
         }
       }
 
-      attachments.push(...[...message.attachments.values()].map(a => a.url))
+      attachments.push(...[...message.attachments.values()].map((a) => a.url))
 
       const report = {
         targetAttachments: attachments,

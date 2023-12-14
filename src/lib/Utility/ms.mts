@@ -2,14 +2,39 @@ const durationRE = /(-?(?:\d+\.?\d*|\d*\.?\d+)(?:e[-+]?\d+)?)\s*([\p{L}]*)/uig
 
 const conversions: Record<string, number> = {}
 
-conversions.millisecond = conversions.milliseconds = conversions.ms = conversions[''] = 1
-conversions.second = conversions.seconds = conversions.sec = conversions.s = conversions.ms * 1_000
-conversions.minute = conversions.minutes = conversions.min = conversions.mins = conversions.m = conversions.s * 60
-conversions.hour = conversions.hours = conversions.hr = conversions.h = conversions.m * 60
+conversions.millisecond =
+  conversions.milliseconds =
+  conversions.ms =
+  conversions[''] =
+    1
+conversions.second =
+  conversions.seconds =
+  conversions.sec =
+  conversions.s =
+    conversions.ms * 1_000
+conversions.minute =
+  conversions.minutes =
+  conversions.min =
+  conversions.mins =
+  conversions.m =
+    conversions.s * 60
+conversions.hour =
+  conversions.hours =
+  conversions.hr =
+  conversions.h =
+    conversions.m * 60
 conversions.day = conversions.days = conversions.d = conversions.h * 24
-conversions.week = conversions.weeks = conversions.wk = conversions.w = conversions.d * 7
+conversions.week =
+  conversions.weeks =
+  conversions.wk =
+  conversions.w =
+    conversions.d * 7
 conversions.month = conversions.months = conversions.d * (365.25 / 12)
-conversions.year = conversions.years = conversions.yr = conversions.y = conversions.d * 365.25
+conversions.year =
+  conversions.years =
+  conversions.yr =
+  conversions.y =
+    conversions.d * 365.25
 
 /**
  * parse human readable string to ms

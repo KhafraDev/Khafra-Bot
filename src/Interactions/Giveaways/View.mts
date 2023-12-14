@@ -9,10 +9,10 @@ import { stripIndents } from '#khaf/utility/Template.mjs'
 import { time } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
-  channelMention,
-  InteractionCollector,
   type ButtonInteraction,
+  channelMention,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type StringSelectMenuInteraction
 } from 'discord.js'
@@ -132,8 +132,8 @@ export class kSubCommand extends InteractionSubCommand {
       message,
       time: minutes(5),
       filter: (i) =>
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+        interaction.user.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

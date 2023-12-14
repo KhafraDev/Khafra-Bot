@@ -128,11 +128,11 @@ export class kInteraction extends Interactions {
 
     const writeHorizontalDiv = (): void => {
       ctx.fillStyle = imageColors.horizontalDiv
-      ctx.fillRect(canvas.height * .05, (height += 12), canvas.width * .6, 2)
+      ctx.fillRect(canvas.height * .05, height += 12, canvas.width * .6, 2)
     }
 
     const writeMiscInfo = (text: string, addHeight: number): void => {
-      ctx.fillText(text, leftOffset, (height += addHeight))
+      ctx.fillText(text, leftOffset, height += addHeight)
     }
 
     // draw right side background
@@ -172,7 +172,7 @@ export class kInteraction extends Interactions {
       ? `${city}, ${state}`
       : `${city}, ${country}`
     ctx.fillStyle = '#fff'
-    ctx.font = `${resizeText(ctx, location, (canvas.width * .56), 50)} Arial`
+    ctx.font = `${resizeText(ctx, location, canvas.width * .56, 50)} Arial`
     ctx.fillText(location, leftOffset, height)
 
     // write time the weather was updated at
@@ -182,7 +182,7 @@ export class kInteraction extends Interactions {
     const time = `${weekdayName}, ${utcTime.getDate()} ${monthName} // ${hour12}`
 
     ctx.font = '16px Arial'
-    ctx.fillText(time, leftOffset, (height += 25))
+    ctx.fillText(time, leftOffset, height += 25)
 
     // horizontal divider
     writeHorizontalDiv()
@@ -191,7 +191,7 @@ export class kInteraction extends Interactions {
     const temp = `${Math.round(Number(current.temp_F))}°F`
     ctx.fillStyle = '#fff'
     ctx.font = '44px Arial'
-    ctx.fillText(temp, leftOffset, (height += 45))
+    ctx.fillText(temp, leftOffset, height += 45)
 
     // feels like
     const feelsLike = `Feels Like: ${Math.round(Number(current.FeelsLikeF))}°F`
@@ -203,14 +203,14 @@ export class kInteraction extends Interactions {
     const low = Math.round(Number(forecast.mintempF))
     const high = Math.round(Number(forecast.maxtempF))
     ctx.font = '16px Arial'
-    ctx.fillText(`${low}°F / ${high}°F`, leftOffset, (height += 25))
+    ctx.fillText(`${low}°F / ${high}°F`, leftOffset, height += 25)
 
     // description
     ctx.font = `italic ${ctx.font}`
     ctx.fillText(
-      hourly.weatherDesc.map(v => v.value).join(', '),
+      hourly.weatherDesc.map((v) => v.value).join(', '),
       leftOffset,
-      (height += 25)
+      height += 25
     )
 
     // divider

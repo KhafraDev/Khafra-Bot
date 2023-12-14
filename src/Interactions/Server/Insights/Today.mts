@@ -6,8 +6,8 @@ import { time } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 interface Insights {
-    k_left: number
-    k_joined: number
+  k_left: number
+  k_joined: number
 }
 
 export class kSubCommand extends InteractionSubCommand {

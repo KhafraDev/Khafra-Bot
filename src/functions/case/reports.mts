@@ -1,7 +1,7 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import { makeCase } from '#khaf/functions/case/makeCase.mjs'
 import { RESTJSONErrorCodes } from 'discord-api-types/v10'
-import { DiscordAPIError, type ButtonInteraction } from 'discord.js'
+import { type ButtonInteraction, DiscordAPIError } from 'discord.js'
 import assert from 'node:assert'
 
 const reportv1 = /^report::(ban|kick|ignore|softban|mute)::(\d+)$/

@@ -8,19 +8,19 @@ import { ellipsis, upperCase } from '#khaf/utility/String.mjs'
 import { chunkSafe } from '#khaf/utility/util.mjs'
 import { inlineCode } from '@discordjs/builders'
 import {
+  type APIActionRowComponent,
+  type APITextInputComponent,
   ApplicationCommandOptionType,
   ChannelType,
   ComponentType,
   PermissionFlagsBits,
-  TextInputStyle,
-  type APIActionRowComponent,
-  type APITextInputComponent,
-  type RESTPostAPIApplicationCommandsJSONBody
+  type RESTPostAPIApplicationCommandsJSONBody,
+  TextInputStyle
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction
 } from 'discord.js'
@@ -154,9 +154,9 @@ export class kInteraction extends Interactions {
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: minutes(5),
       filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+        (i.isButton() || i.isModalSubmit())
+        && i.user.id === interaction.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -203,10 +203,10 @@ export class kInteraction extends Interactions {
           const ruleNumber = Number(getTextField(i, `ruleInput-${id}`))
 
           if (
-            Number.isNaN(ruleNumber) ||
-            !Number.isInteger(ruleNumber) ||
-            ruleNumber > rules.length ||
-            ruleNumber <= 0
+            Number.isNaN(ruleNumber)
+            || !Number.isInteger(ruleNumber)
+            || ruleNumber > rules.length
+            || ruleNumber <= 0
           ) {
             embed.title = `Invalid rule #${ruleNumber} - max is #${rules.length}.`
           } else if (action === 'edit') {
@@ -239,11 +239,12 @@ export class kInteraction extends Interactions {
 
     const embeds = chunkSafe(
       rules.map(
-        (rule, idx) => Embed.json({
-          color: colors.ok,
-          title: `Rule ${idx + 1}`,
-          description: rule
-        })
+        (rule, idx) =>
+          Embed.json({
+            color: colors.ok,
+            title: `Rule ${idx + 1}`,
+            description: rule
+          })
       ),
       10
     )

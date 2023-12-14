@@ -5,7 +5,7 @@ import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import { readdirSync } from 'node:fs'
 import { extname } from 'node:path'
 
-const listsByName = readdirSync(assets('Hangman')).map(f => f.replace(extname(f), ''))
+const listsByName = readdirSync(assets('Hangman')).map((f) => f.replace(extname(f), ''))
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
               type: ApplicationCommandOptionType.String,
               name: 'lists',
               description: 'The list of words to randomly choose from.',
-              choices: listsByName.map(word => ({ name: word, value: word }))
+              choices: listsByName.map((word) => ({ name: word, value: word }))
             }
           ]
         },

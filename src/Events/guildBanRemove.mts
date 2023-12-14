@@ -7,10 +7,9 @@ import { bold, spoiler } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { cleanContent, Events, type GuildBan } from 'discord.js'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildBanRemove as const
@@ -32,9 +31,9 @@ export class kEvent implements Event {
     const channel = await unban.guild.channels.fetch(item.mod_log_channel)
 
     if (
-      channel === null ||
-      !DiscordUtil.isTextBased(channel) ||
-      !channel.permissionsFor(me).has(perms)
+      channel === null
+      || !DiscordUtil.isTextBased(channel)
+      || !channel.permissionsFor(me).has(perms)
     ) {
       return
     }

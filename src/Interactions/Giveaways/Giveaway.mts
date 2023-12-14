@@ -1,13 +1,7 @@
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  ChannelType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -28,7 +22,8 @@ export class kInteraction extends Interactions {
               description: 'Channel to create the giveaway in.',
               required: true,
               channel_types: [
-                ChannelType.GuildAnnouncement, ChannelType.GuildText
+                ChannelType.GuildAnnouncement,
+                ChannelType.GuildText
               ]
             },
             {
@@ -40,9 +35,8 @@ export class kInteraction extends Interactions {
             {
               type: ApplicationCommandOptionType.String,
               name: 'ends',
-              description:
-                'When the giveaway ends ("1h 30m", "December 3 2022", or timestamp). ' +
-                'tiny.one/d6j7f328 for timestamps',
+              description: 'When the giveaway ends ("1h 30m", "December 3 2022", or timestamp). '
+                + 'tiny.one/d6j7f328 for timestamps',
               required: true
             },
             {

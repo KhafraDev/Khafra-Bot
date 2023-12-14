@@ -22,7 +22,7 @@ export interface MDNResult {
   documents: MDNSearchResult[]
   metadata: {
     took_ms: number
-    total: { value: number, relation: string }
+    total: { value: number; relation: string }
     size: number
     page: 1
   }
@@ -41,15 +41,15 @@ const search = 'https://developer.mozilla.org/api/v1/search'
 export const randomSplit = Math.random().toString(16)
 
 /**
-* Fetch results from MDN's official API!
-* @example
-* // Search for "fetch", locale defaults to 'en-US'
-* const results = await fetchMDN('fetch');
-*
-* @example
-* // Use a different locale
-* const results = await fetchMDN('fetch', { locale: 'es' });
-*/
+ * Fetch results from MDN's official API!
+ * @example
+ * // Search for "fetch", locale defaults to 'en-US'
+ * const results = await fetchMDN('fetch');
+ *
+ * @example
+ * // Use a different locale
+ * const results = await fetchMDN('fetch', { locale: 'es' });
+ */
 export const fetchMDN = async (q: string, opts?: { locale: string }): Promise<MDNResult | MDNError> => {
   if (q.trim().length === 0) {
     throw new RangeError(`Expected query type "string", got "${typeof q}"!`)

@@ -3,9 +3,10 @@ import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import {
   ApplicationCommandOptionType,
   ChannelType,
-  PermissionFlagsBits, Routes,
+  PermissionFlagsBits,
   type RESTPatchAPIChannelJSONBody,
-  type RESTPostAPIApplicationCommandsJSONBody
+  type RESTPostAPIApplicationCommandsJSONBody,
+  Routes
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
@@ -47,7 +48,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -55,8 +57,8 @@ export class kInteraction extends Interactions {
     const thread = interaction.options.getChannel('thread') ?? interaction.channel
 
     if (
-      thread?.type !== ChannelType.PublicThread &&
-      thread?.type !== ChannelType.PrivateThread
+      thread?.type !== ChannelType.PublicThread
+      && thread?.type !== ChannelType.PrivateThread
     ) {
       const message = thread === null
         ? '❌ I\'m unsure what channel you are in, try putting it as an option instead.'
@@ -68,9 +70,8 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const reason =
-      interaction.options.getString('reason') ??
-      `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
+    const reason = interaction.options.getString('reason')
+      ?? `Lock requested by ${interaction.user.tag} (${interaction.user.id})`
 
     const body: RESTPatchAPIChannelJSONBody = {
       locked: true,

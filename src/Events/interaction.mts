@@ -10,10 +10,10 @@ import { upperCase } from '#khaf/utility/String.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
-  Events,
   type AutocompleteInteraction,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  Events,
   type Interaction,
   type InteractionReplyOptions,
   type MessageContextMenuCommandInteraction,
@@ -23,9 +23,9 @@ import {
 import assert from 'node:assert'
 
 type Interactions =
-  ChatInputCommandInteraction &
-  MessageContextMenuCommandInteraction &
-  UserContextMenuCommandInteraction
+  & ChatInputCommandInteraction
+  & MessageContextMenuCommandInteraction
+  & UserContextMenuCommandInteraction
 
 export class kEvent implements Event {
   name = Events.InteractionCreate as const
@@ -36,11 +36,11 @@ export class kEvent implements Event {
         assert(interaction.inGuild())
         return await handleReport(interaction)
       } else if (
-        interaction.inCachedGuild() &&
-        interaction.customId.startsWith('react-role') ||
-        (
-          validSnowflake(interaction.customId) && // the id used to just be a snowflake
-          interaction.message.author.id === interaction.client.user.id
+        interaction.inCachedGuild()
+          && interaction.customId.startsWith('react-role')
+        || (
+          validSnowflake(interaction.customId) // the id used to just be a snowflake
+          && interaction.message.author.id === interaction.client.user.id
         )
       ) {
         return this.reactRole(interaction as ButtonInteraction<'cached'>)
@@ -52,8 +52,8 @@ export class kEvent implements Event {
     }
 
     if (
-      !interaction.isChatInputCommand() &&
-      !interaction.isContextMenuCommand()
+      !interaction.isChatInputCommand()
+      && !interaction.isContextMenuCommand()
     ) {
       return
     }
@@ -82,8 +82,9 @@ export class kEvent implements Event {
     }
 
     try {
-      if (command.options.defer)
+      if (command.options.defer) {
         await interaction.deferReply()
+      }
 
       const result = await command.init(interaction as Interactions)
       const param: InteractionReplyOptions = result ?? {}
@@ -96,8 +97,9 @@ export class kEvent implements Event {
         param.ephemeral = true
       }
 
-      if (interaction.deferred)
+      if (interaction.deferred) {
         return void await interaction.editReply(param)
+      }
 
       return void await interaction.reply(param)
     } catch (e) {
@@ -109,8 +111,9 @@ export class kEvent implements Event {
           ephemeral: true
         } as const
 
-        if (interaction.deferred)
+        if (interaction.deferred) {
           return void await interaction.editReply(options)
+        }
 
         return void await interaction.reply(options)
       }

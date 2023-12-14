@@ -21,10 +21,9 @@ export class kSubCommand extends InteractionSubCommand {
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const attachment = interaction.options.getAttachment('image')
-    const option =
-			attachment?.proxyURL ??
-			interaction.options.getUser('person')?.displayAvatarURL(options) ??
-			interaction.user.displayAvatarURL(options)
+    const option = attachment?.proxyURL
+      ?? interaction.options.getUser('person')?.displayAvatarURL(options)
+      ?? interaction.user.displayAvatarURL(options)
 
     if (!ImageUtil.isImage(option, attachment?.contentType)) {
       return {

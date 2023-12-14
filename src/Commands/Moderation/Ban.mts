@@ -96,7 +96,7 @@ export class kCommand extends Command {
       // ban @user reason here -> reason here
       reason = args.slice(2).join(' ')
     } else {
-      const idx = args.findIndex(a => a.startsWith('--time') || a.startsWith('--days'))
+      const idx = args.findIndex((a) => a.startsWith('--time') || a.startsWith('--days'))
       let r = ''
 
       if (args.slice(idx + 2).length === 0 && idx !== -1) {

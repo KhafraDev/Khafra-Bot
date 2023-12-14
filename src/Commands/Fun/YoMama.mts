@@ -29,8 +29,9 @@ export class kCommand extends Command {
       .split(/\r?\n/g)
       .slice(0, -1)
 
-    if (isText(message.channel) && !message.channel.nsfw)
+    if (isText(message.channel) && !message.channel.nsfw) {
       return Embed.error('🔞 This command only works in NSFW channels.')
+    }
 
     const joke = jokes[Math.floor(Math.random() * jokes.length)]
     return Embed.ok(upperCase(joke))

@@ -24,7 +24,7 @@ export class kCommand extends Command {
       globalMessages
     } = Stats.stats
 
-    const totalMembers = guilds.map(g => g.memberCount)
+    const totalMembers = guilds.map((g) => g.memberCount)
       .reduce((a, b) => a + b, 0)
       .toLocaleString()
     const totalGuilds = guilds.size.toLocaleString()

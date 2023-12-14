@@ -12,23 +12,23 @@ import { assets, cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
 import type { RestEvents } from '@discordjs/rest'
-import { Routes, type APIApplicationCommand } from 'discord-api-types/v10'
+import { type APIApplicationCommand, Routes } from 'discord-api-types/v10'
 import { Client, type ClientEvents } from 'discord.js'
 import assert from 'node:assert'
 import { Buffer } from 'node:buffer'
-import { existsSync, readdirSync, readFileSync, writeFileSync, type Dirent } from 'node:fs'
+import { type Dirent, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import { performance } from 'node:perf_hooks'
 import { env } from 'node:process'
 import { pathToFileURL } from 'node:url'
 
-type DynamicImportCommand = Promise<{ kCommand: new (...args: unknown[]) => Command }>
-type DynamicImportEvent = Promise<{ kEvent: new (...args: unknown[]) => Event }>
+type DynamicImportCommand = Promise<{ kCommand: new(...args: unknown[]) => Command }>
+type DynamicImportEvent = Promise<{ kEvent: new(...args: unknown[]) => Event }>
 type DynamicImportAppCommand =
-    | Promise<{ kInteraction: new () => Interactions }>
-    | Promise<{ kSubCommand: new () => InteractionSubCommand }>
-    | Promise<{ kAutocomplete: new () => InteractionAutocomplete }>
-    | Promise<{ kUserCommand: new () => InteractionUserCommand }>
+  | Promise<{ kInteraction: new() => Interactions }>
+  | Promise<{ kSubCommand: new() => InteractionSubCommand }>
+  | Promise<{ kAutocomplete: new() => InteractionAutocomplete }>
+  | Promise<{ kUserCommand: new() => InteractionUserCommand }>
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
 const toBase64 = (command: unknown): string => Buffer.from(JSON.stringify(command)).toString('base64')
@@ -77,8 +77,8 @@ export class KhafraClient extends Client {
   }
 
   async loadCommands (): Promise<typeof KhafraClient.Commands> {
-    const commands = KhafraClient.walk('build/src/Commands', p => p.endsWith('.mjs'))
-    const importPromise = commands.map(command => import(pathToFileURL(command).href) as DynamicImportCommand)
+    const commands = KhafraClient.walk('build/src/Commands', (p) => p.endsWith('.mjs'))
+    const importPromise = commands.map((command) => import(pathToFileURL(command).href) as DynamicImportCommand)
     const settled = await Promise.allSettled(importPromise)
 
     for (const fileImport of settled) {
@@ -88,7 +88,7 @@ export class KhafraClient extends Client {
         const kCommand = new fileImport.value.kCommand()
 
         KhafraClient.Commands.set(kCommand.settings.name.toLowerCase(), kCommand)
-        kCommand.settings.aliases?.forEach(alias => KhafraClient.Commands.set(alias, kCommand))
+        kCommand.settings.aliases?.forEach((alias) => KhafraClient.Commands.set(alias, kCommand))
       }
     }
 
@@ -97,8 +97,8 @@ export class KhafraClient extends Client {
   }
 
   async loadEvents (): Promise<typeof KhafraClient.Events> {
-    const events = KhafraClient.walk('build/src/Events', p => p.endsWith('.mjs'))
-    const importPromise = events.map(event => import(pathToFileURL(event).href) as DynamicImportEvent)
+    const events = KhafraClient.walk('build/src/Events', (p) => p.endsWith('.mjs'))
+    const importPromise = events.map((event) => import(pathToFileURL(event).href) as DynamicImportEvent)
     const settled = await Promise.allSettled(importPromise)
 
     for (const fileImport of settled) {
@@ -117,9 +117,9 @@ export class KhafraClient extends Client {
   }
 
   async loadInteractions (): Promise<typeof KhafraClient.Interactions.Commands> {
-    const interactionPaths = KhafraClient.walk('build/src/Interactions', p => p.endsWith('.mjs'))
+    const interactionPaths = KhafraClient.walk('build/src/Interactions', (p) => p.endsWith('.mjs'))
     const importPromise = interactionPaths.map(
-      int => import(pathToFileURL(int).href) as DynamicImportAppCommand
+      (int) => import(pathToFileURL(int).href) as DynamicImportAppCommand
     )
     const imported = await Promise.allSettled(importPromise)
 
@@ -157,7 +157,7 @@ export class KhafraClient extends Client {
     // If we have to deal with slash commands :(
     if (loaded.length !== 0) {
       const lastDeployedPath = assets('interaction_last_deployed.txt')
-      const loadedCommands = loaded.map(command => command.data)
+      const loadedCommands = loaded.map((command) => command.data)
 
       // https://discord.com/developers/docs/interactions/application-commands#get-global-application-commands
       // Global slash commands that have already been deployed.
@@ -178,7 +178,7 @@ export class KhafraClient extends Client {
         ? readFileSync(lastDeployedPath, 'utf-8')
           .trim()
           .split(/\r?\n/g)
-          .map(line => line.split('|') as [string, string]) // "name|base64" -> ["name", "base64"]
+          .map((line) => line.split('|') as [string, string]) // "name|base64" -> ["name", "base64"]
         : []
 
       // If the file does not exist, meaning no commands
@@ -194,11 +194,11 @@ export class KhafraClient extends Client {
 
         setInteractionIds(overwritten)
 
-        data.push(...loadedCommands.map(l => `${l.name}|${toBase64(l)}`))
+        data.push(...loadedCommands.map((l) => `${l.name}|${toBase64(l)}`))
       } else {
         // Filters out commands that have been deleted or renamed on our side.
         const deleted = existingSlashCommands.filter(
-          c => !loadedCommands.find(n => n.name === c.name)
+          (c) => !loadedCommands.find((n) => n.name === c.name)
         )
 
         for (const deletedCommand of deleted) {
@@ -215,13 +215,13 @@ export class KhafraClient extends Client {
         for (const current of loadedCommands) {
           const previous = previouslyDeployed.find(([n]) => n === current.name)
           const [deployedName, deployedBase64] = previous ?? []
-          const existing = existingSlashCommands.find(command => command.name === deployedName)
+          const existing = existingSlashCommands.find((command) => command.name === deployedName)
 
           const command = KhafraClient.Interactions.Commands.get(current.name)
 
           if (command?.options.deploy === false) {
             // If the command was already deployed, and then marked as 'should not deploy'.
-            const deployedAlready = existingSlashCommands.find(c => c.name === current.name)
+            const deployedAlready = existingSlashCommands.find((c) => c.name === current.name)
 
             if (deployedAlready) {
               const { name, id } = deployedAlready
@@ -230,7 +230,6 @@ export class KhafraClient extends Client {
 
               await this.rest.delete(Routes.applicationCommand(config.botId, id))
             }
-
 
             logger.info(`Skipping ${current.name} :)`)
             continue
@@ -275,10 +274,9 @@ export class KhafraClient extends Client {
       }
     }
 
-    const loadedMessage =
-      `Loaded ${loaded.length} interactions, ` +
-      `${loadedSubCommands} sub commands, ` +
-      `and ${loadedUserCommands} user commands!`
+    const loadedMessage = `Loaded ${loaded.length} interactions, `
+      + `${loadedSubCommands} sub commands, `
+      + `and ${loadedUserCommands} user commands!`
 
     logger.info(loadedMessage)
     return KhafraClient.Interactions.Commands
@@ -290,8 +288,8 @@ export class KhafraClient extends Client {
       (p) => p.endsWith('.mjs')
     )
 
-    const importPromise = timers.map(timer =>
-      import(pathToFileURL(timer).href) as Promise<Record<string, new (client: Client) => Timer>>
+    const importPromise = timers.map((timer) =>
+      import(pathToFileURL(timer).href) as Promise<Record<string, new(client: Client) => Timer>>
     )
     const settled = await Promise.allSettled(importPromise)
     let loadedTimers = 0

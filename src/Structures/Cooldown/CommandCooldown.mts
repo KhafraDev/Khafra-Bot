@@ -3,8 +3,8 @@ import type { Snowflake } from 'discord.js'
 import { setInterval } from 'node:timers'
 
 interface UserCooldown {
-    added: number
-    notified?: boolean
+  added: number
+  notified?: boolean
 }
 
 export class Cooldown extends Map<Snowflake, UserCooldown> {
@@ -21,7 +21,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     this.#createClearInterval()
   }
 
-  #createClearInterval(): void {
+  #createClearInterval (): void {
     setInterval(() => {
       const maxAgeMs = this.#maxAge
       const now = Date.now()
@@ -34,7 +34,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     }, seconds(30))
   }
 
-  isRateLimited(id: Snowflake): boolean {
+  isRateLimited (id: Snowflake): boolean {
     const maxAgeMs = this.#maxAge
     const info = this.get(id)
 
@@ -48,7 +48,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     return true
   }
 
-  rateLimitUser(id: Snowflake): boolean {
+  rateLimitUser (id: Snowflake): boolean {
     this.set(id, { added: Date.now() })
     return true
   }
@@ -58,7 +58,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
    * @param {Snowflake} id
    * @returns {boolean} true if the user has been notified, false if they haven't been, null if not on cooldown
    */
-  isNotified(id: Snowflake): boolean | null {
+  isNotified (id: Snowflake): boolean | null {
     const info = this.get(id)
     if (!info) return null
     if (info.notified) return true
@@ -69,7 +69,7 @@ export class Cooldown extends Map<Snowflake, UserCooldown> {
     return false
   }
 
-  get rateLimitSeconds(): number {
+  get rateLimitSeconds (): number {
     return this.#maxAge / 1000
   }
 }

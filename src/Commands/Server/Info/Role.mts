@@ -25,9 +25,8 @@ export class kCommand extends Command {
   }
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
-    const role =
-      await getMentions(message, 'roles') ??
-      message.guild.roles.cache.find(r => r.name.toLowerCase() === content.toLowerCase())
+    const role = await getMentions(message, 'roles')
+      ?? message.guild.roles.cache.find((r) => r.name.toLowerCase() === content.toLowerCase())
 
     if (!role) {
       return Embed.error('No role found!')

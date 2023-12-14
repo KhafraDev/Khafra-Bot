@@ -5,12 +5,11 @@ import { upperCase } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { guildSettings } from '#khaf/utility/util.mjs'
 import { bold, time } from '@discordjs/builders'
-import { Events, PermissionFlagsBits, type GuildMember } from 'discord.js'
+import { Events, type GuildMember, PermissionFlagsBits } from 'discord.js'
 
-const basic =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const basic = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildMemberUpdate as const
@@ -24,10 +23,9 @@ export class kEvent implements Event {
     }
 
     // https://discord.js.org/#/docs/main/master/class/RoleManager?scrollTo=premiumSubscriberRole
-    const premiumRole =
-      oldMember.roles.premiumSubscriberRole ??
-      newMember.roles.premiumSubscriberRole ??
-      (await newMember.guild.roles.fetch(undefined, { force: true })).find(
+    const premiumRole = oldMember.roles.premiumSubscriberRole
+      ?? newMember.roles.premiumSubscriberRole
+      ?? (await newMember.guild.roles.fetch(undefined, { force: true })).find(
         (role) => role.tags?.premiumSubscriberRole
       )
 
@@ -68,9 +66,9 @@ export class kEvent implements Event {
     const channel = await oldMember.guild.channels.fetch(item.mod_log_channel)
 
     if (
-      channel === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
+      channel === null
+      || !isTextBased(channel)
+      || !channel.permissionsFor(me).has(basic)
     ) {
       return
     }
@@ -103,10 +101,10 @@ export class kEvent implements Event {
     const me = oldMember.guild.members.me
 
     if (
-      channel === null ||
-      me === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
+      channel === null
+      || me === null
+      || !isTextBased(channel)
+      || !channel.permissionsFor(me).has(basic)
     ) {
       return
     }

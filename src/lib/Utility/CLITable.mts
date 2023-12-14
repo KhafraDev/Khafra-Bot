@@ -42,8 +42,9 @@ const renderRow = (row: string[], columnWidths: number[]): string => {
     // round(needed) + ceil(needed) will always add up to the amount
     // of spaces we need while also left justifying the output.
     out += `${' '.repeat(needed)}${cell}${' '.repeat(Math.ceil(needed))}`
-    if (i !== row.length - 1)
+    if (i !== row.length - 1) {
       out += tableChars.middle
+    }
   }
   out += tableChars.right
   return out
@@ -68,8 +69,8 @@ export const table = (obj: Record<string, string[]>): string => {
   const columns = Object.values(obj)
 
   const rows: string[][] = []
-  const columnWidths = head.map(h => h.length)
-  const longestColumn = Math.max(...columns.map(h => h.length))
+  const columnWidths = head.map((h) => h.length)
+  const longestColumn = Math.max(...columns.map((h) => h.length))
 
   for (let i = 0; i < head.length; i++) {
     const column = columns[i]
@@ -80,15 +81,16 @@ export const table = (obj: Record<string, string[]>): string => {
     }
   }
 
-  const divider = columnWidths.map(i => tableChars.middleMiddle.repeat(i + 2))
+  const divider = columnWidths.map((i) => tableChars.middleMiddle.repeat(i + 2))
 
-  let result = `${tableChars.topLeft}${divider.join(tableChars.topMiddle)}` +
-                 `${tableChars.topRight}\n${renderRow(head, columnWidths)}\n` +
-                 `${tableChars.leftMiddle}${divider.join(tableChars.rowMiddle)}` +
-                 `${tableChars.rightMiddle}\n`
+  let result = `${tableChars.topLeft}${divider.join(tableChars.topMiddle)}`
+    + `${tableChars.topRight}\n${renderRow(head, columnWidths)}\n`
+    + `${tableChars.leftMiddle}${divider.join(tableChars.rowMiddle)}`
+    + `${tableChars.rightMiddle}\n`
 
-  for (const row of rows)
+  for (const row of rows) {
     result += `${renderRow(row, columnWidths)}\n`
+  }
 
   result += `${tableChars.bottomLeft}${divider.join(tableChars.bottomMiddle)}${tableChars.bottomRight}`
   return result

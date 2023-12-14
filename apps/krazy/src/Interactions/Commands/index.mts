@@ -4,9 +4,9 @@ import { command as NPMCommand } from '#/commands/Commands/dev/npm.mjs'
 import { command as InviteCommand } from '#/commands/Commands/general/Invite.mjs'
 import { InteractionOptions } from '#/core/InteractionOptions.mjs'
 import {
-  InteractionResponseType,
   type APIApplicationCommandInteraction,
-  type APIInteractionResponse
+  type APIInteractionResponse,
+  InteractionResponseType
 } from 'discord-api-types/v10'
 
 export const handleCommand = async (

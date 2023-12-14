@@ -13,9 +13,9 @@ export class InteractionOptions {
     }
   }
 
-  get <T extends APIApplicationCommandInteractionDataOption>(name: string, required: true): T
-  get <T extends APIApplicationCommandInteractionDataOption>(name: string, required?: boolean): T | null
-  get <T extends APIApplicationCommandInteractionDataOption>(
+  get<T extends APIApplicationCommandInteractionDataOption> (name: string, required: true): T
+  get<T extends APIApplicationCommandInteractionDataOption> (name: string, required?: boolean): T | null
+  get<T extends APIApplicationCommandInteractionDataOption> (
     name: string,
     required?: boolean
   ): T | null {
@@ -32,7 +32,7 @@ export class InteractionOptions {
     return null
   }
 
-  #getValue <T extends string | number | boolean>(
+  #getValue<T extends string | number | boolean> (
     name: string,
     required: boolean | undefined,
     type: Exclude<

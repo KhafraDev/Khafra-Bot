@@ -12,7 +12,7 @@ import { join } from 'node:path'
 const mw = once(async (client: Client) => {
   const stickers = await client.fetchPremiumStickerPacks()
 
-  return [...stickers.values()].flatMap(p => [...p.stickers.values()])
+  return [...stickers.values()].flatMap((p) => [...p.stickers.values()])
 })
 
 export class kInteraction extends Interactions {
@@ -60,7 +60,7 @@ export class kInteraction extends Interactions {
       }
     }
 
-    const fileNames = new Set(stickerMatches.map(n => `${n.name};${n.id}.gif`))
+    const fileNames = new Set(stickerMatches.map((n) => `${n.name};${n.id}.gif`))
     const offset = interaction.options.getInteger('offset') ?? 0
     const fileName = [...fileNames][offset - 1] ?? [...fileNames][0]
     const filePath = join(cwd, `assets/Stickers/${fileName}`)

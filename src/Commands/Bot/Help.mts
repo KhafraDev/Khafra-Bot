@@ -1,5 +1,5 @@
 import { KhafraClient } from '#khaf/Bot'
-import { Command, type Arguments } from '#khaf/Command'
+import { type Arguments, Command } from '#khaf/Command'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isGuildTextBased } from '#khaf/utility/Discord.js'
@@ -34,12 +34,13 @@ export class kCommand extends Command {
   }
 
   async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
-    const folders = [...new Set([...KhafraClient.Commands.values()].map(c => c.settings.folder))]
+    const folders = [...new Set([...KhafraClient.Commands.values()].map((c) => c.settings.folder))]
 
     if (args.length !== 0) {
       const commandName = args[0].toLowerCase()
-      if (!KhafraClient.Commands.has(commandName))
+      if (!KhafraClient.Commands.has(commandName)) {
         return Embed.error(`${inlineCode(commandName.slice(0, 100))} is not a valid command name. 😕`)
+      }
 
       const { settings, help, rateLimit } = KhafraClient.Commands.get(commandName)!
       const helpF = [...help, Array(Math.max(help.length - 2, 0)).fill('')]
@@ -54,9 +55,9 @@ export class kCommand extends Command {
         The ${inlineCode(settings.name)} command:
         ${help.length ? codeBlock(help[0]) : ''}
 
-        Aliases: ${aliases.map(a => inlineCode(a)).join(', ')}
+        Aliases: ${aliases.map((a) => inlineCode(a)).join(', ')}
         Example:
-        ${helpF.map(c => inlineCode(`${settings.name} ${c || '\u200B'}`).trim()).join('\n')}`,
+        ${helpF.map((c) => inlineCode(`${settings.name} ${c || '\u200B'}`).trim()).join('\n')}`,
         fields: [
           { name: bold('Guild Only:'), value: settings.guildOnly ? 'Yes' : 'No', inline: true },
           { name: bold('Owner Only:'), value: settings.ownerOnly ? 'Yes' : 'No', inline: true },
@@ -97,14 +98,14 @@ export class kCommand extends Command {
     })
 
     const collector = m.createMessageComponentCollector<
-      ComponentType.Button |
-      ComponentType.StringSelect
+      | ComponentType.Button
+      | ComponentType.StringSelect
     >({
       idle: minutes(1),
       max: 10,
       filter: (i) =>
-        i.user.id === message.author.id &&
-        i.customId.endsWith(`-${id}`)
+        i.user.id === message.author.id
+        && i.customId.endsWith(`-${id}`)
     })
 
     const pages: APIEmbed[] = []
@@ -177,8 +178,8 @@ export class kCommand extends Command {
     const last = collector.collected.last()
 
     if (
-      collector.collected.size !== 0 &&
-            last?.replied === false
+      collector.collected.size !== 0
+      && last?.replied === false
     ) {
       return void await last.update({
         components: disableAll(m)

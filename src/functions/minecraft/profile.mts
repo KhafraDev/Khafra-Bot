@@ -10,9 +10,9 @@ type Profile = InferType<typeof profileSchema>
 /**
  * @see https://wiki.vg/Mojang_API#UUID_to_Profile_and_Skin.2FCape
  */
-export async function profile (uuid: string): Promise<Profile>
-export async function profile (uuid: string, modifier: keyof typeof textures): Promise<string[]>
-export async function profile (uuid: string, modifier?: keyof typeof textures): Promise<Profile | string[]> {
+export async function profile(uuid: string): Promise<Profile>
+export async function profile(uuid: string, modifier: keyof typeof textures): Promise<string[]>
+export async function profile(uuid: string, modifier?: keyof typeof textures): Promise<Profile | string[]> {
   const url = new URL(uuid, routes.profile)
   const { body, statusCode } = await request(url)
 

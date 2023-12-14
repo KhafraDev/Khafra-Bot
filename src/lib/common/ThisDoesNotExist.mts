@@ -5,16 +5,16 @@ import { request } from 'undici'
 
 const formatURL = new Map<DNE, string>([
   ['artwork', 'https://thisartworkdoesnotexist.com/'],
-  ['cat',     'https://thiscatdoesnotexist.com/'],
-  ['horse',   'https://thishorsedoesnotexist.com/'],
-  ['person',  'https://thispersondoesnotexist.com/image']
+  ['cat', 'https://thiscatdoesnotexist.com/'],
+  ['horse', 'https://thishorsedoesnotexist.com/'],
+  ['person', 'https://thispersondoesnotexist.com/image']
 ])
 
 export type DNE =
-    | 'artwork'
-    | 'cat'
-    | 'horse'
-    | 'person'
+  | 'artwork'
+  | 'cat'
+  | 'horse'
+  | 'person'
 
 export const thisDoesNotExist = async (type: DNE): Promise<MessageReplyOptions | null> => {
   const url = formatURL.get(type)

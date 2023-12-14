@@ -50,4 +50,4 @@ export const spotify = new class Spotify {
 
     return this.#token
   }
-}
+}()

@@ -24,13 +24,13 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.String,
           name: 'size',
           description: 'Set the size of the avatar image.',
-          choices: sizes.map(s => ({ name: `${s}`, value: `${s}` }))
+          choices: sizes.map((s) => ({ name: `${s}`, value: `${s}` }))
         },
         {
           type: ApplicationCommandOptionType.String,
           name: 'format',
           description: 'Set the image type of the avatar.',
-          choices: formats.map(f => ({ name: f, value: f }))
+          choices: formats.map((f) => ({ name: f, value: f }))
         }
       ]
     }

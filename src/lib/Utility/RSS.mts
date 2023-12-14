@@ -3,36 +3,36 @@ import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { isRedirect } from '#khaf/utility/util.mjs'
-import { XMLParser, XMLValidator, type X2jOptionsOptional } from 'fast-xml-parser'
+import { type X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser'
 import { join } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
-import { request, type Dispatcher } from 'undici'
+import { type Dispatcher, request } from 'undici'
 
 const config = createFileWatcher<typeof import('../../../package.json')>(join(cwd, 'package.json'))
 
 interface RSSJSON<T> {
-    rss: {
-        channel?: {
-            title: string
-            link: string
-            description: string
-            ttl?: number
-            'sy:updatePeriod': number
-            'sy:updateFrequency': 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly'
-            item: T[] | T
-            [key: string]: unknown
-        }
+  rss: {
+    channel?: {
+      title: string
+      link: string
+      description: string
+      ttl?: number
+      'sy:updatePeriod': number
+      'sy:updateFrequency': 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly'
+      item: T[] | T
+      [key: string]: unknown
     }
+  }
 }
 
 interface AtomJSON<T> {
-    feed: {
-        id: string
-        title: string
-        updated: string
-        entry: T[] | T
-        [key: string]: unknown
-    }
+  feed: {
+    id: string
+    title: string
+    updated: string
+    entry: T[] | T
+    [key: string]: unknown
+  }
 }
 
 export class RSSReader<T> {
@@ -111,7 +111,7 @@ export class RSSReader<T> {
 
     const i = 'rss' in j
       ? j.rss.channel?.item // RSS feed
-      : j.feed.entry      // Atom feed
+      : j.feed.entry // Atom feed
 
     if (Array.isArray(i)) {
       for (const item of i.slice(0, this.save)) {

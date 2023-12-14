@@ -14,12 +14,12 @@ const randomRGB = (): RGB => [
   Math.floor(Math.random() * 256),
   Math.floor(Math.random() * 256)
 ]
-const rgbToHex = (rgb: RGB): string =>
-  '#' + rgb.map(c => c.toString(16).padStart(2, '0')).join('')
-const hexToRgb = (hex: string): RGB => hex.slice(1).replace(
-  /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-  (_: string, r: string, g: string, b: string): string => r + r + g + g + b + b
-).match(/.{2}/g)!.map(x => parseInt(x, 16)) as RGB
+const rgbToHex = (rgb: RGB): string => '#' + rgb.map((c) => c.toString(16).padStart(2, '0')).join('')
+const hexToRgb = (hex: string): RGB =>
+  hex.slice(1).replace(
+    /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
+    (_: string, r: string, g: string, b: string): string => r + r + g + g + b + b
+  ).match(/.{2}/g)!.map((x) => parseInt(x, 16)) as RGB
 
 export class kInteraction extends Interactions {
   constructor () {

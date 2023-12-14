@@ -1,4 +1,4 @@
-import { s, type InferType } from '@sapphire/shapeshift'
+import { type InferType, s } from '@sapphire/shapeshift'
 
 const mediaMetadataSchema = s.union(
   s.object({

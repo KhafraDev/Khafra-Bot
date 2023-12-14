@@ -28,8 +28,8 @@ export class kCommand extends Command {
     super(
       [
         'Pocket: add an article, video, or image to your saved items!',
-        'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films ' +
-        'The 21st Century’s 100 greatest films'
+        'https://www.bbc.com/culture/article/20160819-the-21st-centurys-100-greatest-films '
+        + 'The 21st Century’s 100 greatest films'
       ],
       {
         name: 'pocketadd',
@@ -47,17 +47,19 @@ export class kCommand extends Command {
       LIMIT 1;
     `
 
-    if (rows.length === 0)
+    if (rows.length === 0) {
       return Embed.error(`
       You haven't set-up Pocket integration!
 
       Try using the ${inlineCode('pocket')} command for more information.
       `)
+    }
 
     const pocket = new Pocket(rows.shift())
     const article = schema.run(args[0])
-    if (!article.isOk())
+    if (!article.isOk()) {
       return Embed.error('That\'s not an article URL, try again!')
+    }
     const added = await pocket.add(article.value, args.slice(1).join(' '))
 
     return Embed.json({

@@ -16,7 +16,7 @@ const { values } = parseArgs({
 })
 
 const all = await rest.get(Routes.applicationCommands(process.env.BOTID))
-const command = all.find(command => command.name === values.name.toLowerCase())
+const command = all.find((command) => command.name === values.name.toLowerCase())
 
 assert(command)
 

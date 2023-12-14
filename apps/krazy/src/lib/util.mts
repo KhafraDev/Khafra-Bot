@@ -1,16 +1,15 @@
 import { routes } from '#/lib/constants.mjs'
 import {
-  InteractionResponseType,
-  Routes,
   type APIInteraction,
   type APIMessage,
-  type RESTPatchAPIWebhookWithTokenMessageJSONBody
+  InteractionResponseType,
+  type RESTPatchAPIWebhookWithTokenMessageJSONBody,
+  Routes
 } from 'discord-api-types/v10'
 
-export const time = (unix: Date, format: string): string =>
-  `<t:${Math.floor(unix.getTime() / 1000)}:${format}>`
+export const time = (unix: Date, format: string): string => `<t:${Math.floor(unix.getTime() / 1000)}:${format}>`
 
-export function assert (condition: unknown): asserts condition {
+export function assert(condition: unknown): asserts condition {
   if (!condition) {
     throw new Error('false condition')
   }

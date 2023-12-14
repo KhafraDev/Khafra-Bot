@@ -10,15 +10,16 @@ interface Options {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-const optionSchema = (langs: Set<string>) => s.object({
-  to: s.string.optional.default('en').transform(
-    (value) => langs.has(value) ? value : 'en'
-  ),
-  from: s.string.optional.default('auto').transform(
-    (value) => langs.has(value) ? value : 'auto'
-  ),
-  query: s.string
-})
+const optionSchema = (langs: Set<string>) =>
+  s.object({
+    to: s.string.optional.default('en').transform(
+      (value) => langs.has(value) ? value : 'en'
+    ),
+    from: s.string.optional.default('auto').transform(
+      (value) => langs.has(value) ? value : 'auto'
+    ),
+    query: s.string
+  })
 
 export const getLanguages = once(async () => {
   const { body } = await request('https://libretranslate.com/languages')
@@ -28,7 +29,7 @@ export const getLanguages = once(async () => {
     return new Set<string>()
   }
 
-  return new Set(j.map(l => l.code))
+  return new Set(j.map((l) => l.code))
 })
 
 export const translate = async (opts: Options): Promise<string | null> => {

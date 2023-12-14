@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isDM, isExplicitText, isStage, isText, isThread, isVoice } from '#khaf/utility/Discord.js'
 import { getMentions } from '#khaf/utility/Mentions.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
-import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
+import { type APIEmbed, type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { GuildChannelCloneOptions, Message } from 'discord.js'
 import { GuildChannel } from 'discord.js'
 
@@ -60,9 +60,9 @@ export class kCommand extends Command {
     {
       const i = await m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
-          interaction.message.id === m.id &&
-          ['approve', 'deny'].includes(interaction.customId) &&
-          interaction.user.id === message.author.id,
+          interaction.message.id === m.id
+          && ['approve', 'deny'].includes(interaction.customId)
+          && interaction.user.id === message.author.id,
         time: minutes(1)
       }).catch(() => null)
 

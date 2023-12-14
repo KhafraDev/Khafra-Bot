@@ -3,12 +3,7 @@ import type { kGuild } from '#khaf/types/KhafraBot.js'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import {
-  PermissionsBitField,
-  type Message,
-  type PermissionResolvable,
-  type Snowflake
-} from 'discord.js'
+import { type Message, type PermissionResolvable, PermissionsBitField, type Snowflake } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))
@@ -69,8 +64,11 @@ export abstract class Command implements ICommand {
     }
   }
 
-  public abstract init (message?: Message, args?: Arguments, settings?: kGuild | Partial<kGuild>):
-    Promise<HandlerReturn> | HandlerReturn
+  public abstract init (
+    message?: Message,
+    args?: Arguments,
+    settings?: kGuild | Partial<kGuild>
+  ): Promise<HandlerReturn> | HandlerReturn
 
   public get permissions (): bigint[] {
     return [...defaultPerms, this.#perms]

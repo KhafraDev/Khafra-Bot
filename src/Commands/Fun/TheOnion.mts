@@ -30,11 +30,11 @@ interface ITheOnionAPI {
     showAuthorBio: boolean
     byline: string
     showByline: boolean
-    categorization: {channelId: string, sectionId: string}
+    categorization: { channelId: string; sectionId: string }
     storyTypeId: unknown
     categoryId: unknown
     subcategoryId: unknown
-    properties:string
+    properties: string
     template: unknown
     isFeatured: boolean
     isVideo: boolean
@@ -42,8 +42,8 @@ interface ITheOnionAPI {
     relatedModule: unknown
     defaultBlogId: number
     approved: boolean
-    headline:string
-    headlineSfw:string
+    headline: string
+    headlineSfw: string
     subhead: unknown[]
     body: unknown[]
     lightbox: boolean
@@ -93,11 +93,12 @@ export class kCommand extends Command {
     const { body } = await request(`https://theonion.com/api/core/corepost/getList?id=${id}`)
     const j = await body.json() as ITheOnionAPI
 
-    if (j.data.length === 0)
+    if (j.data.length === 0) {
       return Embed.error(`
       You'll have to read the article on TheOnion this time, sorry!
       https://www.theonion.com/${id}
       `)
+    }
 
     return Embed.json({
       color: colors.ok,

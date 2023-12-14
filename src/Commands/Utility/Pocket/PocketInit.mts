@@ -5,7 +5,7 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
-import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
+import { type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
 import { channelLink, type Message } from 'discord.js'
 
 export class kCommand extends Command {
@@ -57,9 +57,9 @@ export class kCommand extends Command {
 
     const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
-        ['approve', 'deny'].includes(interaction.customId) &&
-        interaction.user.id === message.author.id &&
-        interaction.message.id === msg.id,
+        ['approve', 'deny'].includes(interaction.customId)
+        && interaction.user.id === message.author.id
+        && interaction.message.id === msg.id,
       time: minutes(2)
     }).catch(() => null)
 

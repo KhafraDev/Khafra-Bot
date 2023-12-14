@@ -41,7 +41,7 @@ export class kSubCommand extends InteractionSubCommand {
       const commands = await interaction.client.rest.get(
         Routes.applicationGuildCommands(config.botId, config.guildId)
       ) as APIApplicationCommand[]
-      const commandId = commands.find(c => c.name === command.data.name)
+      const commandId = commands.find((c) => c.name === command.data.name)
 
       if (!commandId) {
         return {
@@ -59,7 +59,7 @@ export class kSubCommand extends InteractionSubCommand {
         Routes.applicationCommands(config.botId)
       ) as APIApplicationCommand[]
 
-      const commandId = commands.find(c => c.name === command.data.name)
+      const commandId = commands.find((c) => c.name === command.data.name)
 
       if (!commandId) {
         return {

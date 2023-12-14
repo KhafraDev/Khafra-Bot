@@ -24,10 +24,10 @@ export class TwitterScraper {
     })
   })
 
-  async getTweetAPILink (id: string): Promise<{ url: string, bodyPromise: Promise<Buffer> }> {
+  async getTweetAPILink (id: string): Promise<{ url: string; bodyPromise: Promise<Buffer> }> {
     await this.#queue.wait({ signal: AbortSignal.timeout(30_000) })
 
-    const promise = createDeferredPromise<{ url: string, bodyPromise: Promise<Buffer> }>()
+    const promise = createDeferredPromise<{ url: string; bodyPromise: Promise<Buffer> }>()
     promise.promise.finally(() => this.#queue.shift())
 
     const page = await this.#openPage()

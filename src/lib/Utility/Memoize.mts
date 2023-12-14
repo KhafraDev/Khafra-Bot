@@ -1,11 +1,11 @@
 import { createDeferredPromise } from '#khaf/utility/util.mjs'
 import assert from 'node:assert'
 
-function isThenable (value: unknown): value is Pick<Promise<unknown>, 'then' | 'catch'> {
+function isThenable(value: unknown): value is Pick<Promise<unknown>, 'then' | 'catch'> {
   return (
-    !!value &&
-    typeof (value as { then?: unknown }).then === 'function' &&
-    typeof (value as { catch?: unknown }).catch === 'function'
+    !!value
+    && typeof (value as { then?: unknown }).then === 'function'
+    && typeof (value as { catch?: unknown }).catch === 'function'
   )
 }
 
@@ -18,7 +18,7 @@ export function once<T extends (...args: any[]) => any>(fn: T, expires?: number)
   let isRunning = false // if async fn is running
   let deferred: ReturnType<typeof createDeferredPromise>
 
-  function expire (): void {
+  function expire(): void {
     res = undefined!
     ran = false
     isRunning = false

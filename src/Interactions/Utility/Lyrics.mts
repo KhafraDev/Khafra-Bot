@@ -4,14 +4,14 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { s } from '@sapphire/shapeshift'
-import type {
-  APIEmbed
-} from 'discord-api-types/v10'
+import type { APIEmbed } from 'discord-api-types/v10'
 import {
-  ApplicationCommandOptionType, InteractionType, type RESTPostAPIApplicationCommandsJSONBody
+  ApplicationCommandOptionType,
+  InteractionType,
+  type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ButtonInteraction } from 'discord.js'
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { type ChatInputCommandInteraction, InteractionCollector, type InteractionReplyOptions } from 'discord.js'
 import { XMLParser } from 'fast-xml-parser'
 import { randomUUID } from 'node:crypto'
 import { URL } from 'node:url'
@@ -107,15 +107,16 @@ export class kInteraction extends Interactions {
       LyricSong
     } = lyricXML.GetLyricResult
 
-    const basicEmbed = (): APIEmbed => Embed.json({
-      color: colors.ok,
-      title: `${LyricArtist} - ${LyricSong}`,
-      description: Lyric,
-      url: LyricUrl,
-      thumbnail: {
-        url: LyricCovertArtUrl
-      }
-    })
+    const basicEmbed = (): APIEmbed =>
+      Embed.json({
+        color: colors.ok,
+        title: `${LyricArtist} - ${LyricSong}`,
+        description: Lyric,
+        url: LyricUrl,
+        thumbnail: {
+          url: LyricCovertArtUrl
+        }
+      })
 
     if (Lyric.length <= maxDescriptionLength) {
       return {
@@ -152,10 +153,10 @@ export class kInteraction extends Interactions {
       interactionType: InteractionType.MessageComponent,
       idle: minutes(5),
       filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        int.interaction?.id === i.message.interaction?.id &&
-        i.customId.endsWith(id)
+        i.isButton()
+        && interaction.user.id === i.user.id
+        && int.interaction?.id === i.message.interaction?.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [collected] of collector) {
@@ -176,8 +177,8 @@ export class kInteraction extends Interactions {
     const last = collector.collected.last()
 
     if (
-      collector.collected.size !== 0 &&
-      last?.replied === false
+      collector.collected.size !== 0
+      && last?.replied === false
     ) {
       return void await last.update({
         components: disableAll(int)

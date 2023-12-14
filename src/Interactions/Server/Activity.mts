@@ -2,12 +2,16 @@ import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import type {
-  APIInvite, RESTPostAPIApplicationCommandsJSONBody,
+  APIInvite,
+  RESTPostAPIApplicationCommandsJSONBody,
   RESTPostAPIChannelInviteJSONBody
 } from 'discord-api-types/v10'
 import {
-  ApplicationCommandOptionType, ChannelType,
-  InviteTargetType, PermissionFlagsBits, Routes
+  ApplicationCommandOptionType,
+  ChannelType,
+  InviteTargetType,
+  PermissionFlagsBits,
+  Routes
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
@@ -68,7 +72,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

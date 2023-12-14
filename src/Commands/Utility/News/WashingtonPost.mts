@@ -2,11 +2,11 @@ import { Command } from '#khaf/Command'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
-import { hours } from '#khaf/utility/ms.mjs'
 import { URL } from 'node:url'
 
 const schema = s.string.url({
@@ -25,14 +25,14 @@ const settings = {
 } as const
 
 interface IWashingtonPost {
-    title: string
-    link: string
-    pubDate: string
-    'dc:creator': string
-    description: string
-    'media:group': string
-    guid: string
-    'wp:arc_uuid': string
+  title: string
+  link: string
+  pubDate: string
+  'dc:creator': string
+  description: string
+  'media:group': string
+  guid: string
+  'wp:arc_uuid': string
 }
 
 const rss = new RSSReader<IWashingtonPost>(settings.rss)
@@ -61,7 +61,7 @@ export class kCommand extends Command {
       return Embed.error('An unexpected error occurred!')
     }
 
-    const posts = [...rss.results.values()].map(p => {
+    const posts = [...rss.results.values()].map((p) => {
       p.link = schema.parse(p.link).toString()
       return p
     })
@@ -69,7 +69,7 @@ export class kCommand extends Command {
     return Embed.json({
       color: colors.ok,
       description: posts
-        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .map((p, i) => `[${i + 1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
         .slice(0, maxDescriptionLength),
       author: settings.author

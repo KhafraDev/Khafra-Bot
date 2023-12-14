@@ -6,9 +6,9 @@ import { codeBlock } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 interface Insights {
-    k_date: Date
-    k_left: number
-    k_joined: number
+  k_date: Date
+  k_left: number
+  k_joined: number
 }
 
 export class kSubCommand extends InteractionSubCommand {

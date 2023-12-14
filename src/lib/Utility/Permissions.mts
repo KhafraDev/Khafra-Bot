@@ -1,6 +1,6 @@
 import { inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
-import { PermissionsBitField, type GuildMember, type PermissionResolvable } from 'discord.js'
+import { type GuildMember, type PermissionResolvable, PermissionsBitField } from 'discord.js'
 
 /**
  * Compares 2 guildmembers and checks if @see {a} is higher in the hierarchy than @see {b}
@@ -21,7 +21,8 @@ export const hierarchy = (
 }
 
 const all = Object.entries(PermissionFlagsBits) as [
-    keyof typeof PermissionFlagsBits, bigint
+  keyof typeof PermissionFlagsBits,
+  bigint
 ][]
 
 export const permResolvableToReadable = (

@@ -3,7 +3,7 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { assets } from '#khaf/utility/Constants/Path.mjs'
 import { splitEvery } from '#khaf/utility/util.mjs'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
-import { codeBlock, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { type ChatInputCommandInteraction, codeBlock, type InteractionReplyOptions } from 'discord.js'
 import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { basename, extname } from 'node:path'
@@ -47,7 +47,7 @@ export class kInteraction extends Interactions {
           type: ApplicationCommandOptionType.String,
           name: 'format',
           description: 'The cowfile to use.',
-          choices: readdirSync((assets('Cowsay')))
+          choices: readdirSync(assets('Cowsay'))
             .filter((_, i) => i % 2 === 0) // include cowsay.txt & tux.txt, thanks Discord
             .slice(0, 25) // Thanks Discord. I'm sure 25 choices is enough!!!
             .map((name) => ({ name: basename(name, extname(name)), value: name }))

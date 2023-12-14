@@ -10,7 +10,8 @@ export class kCommand extends Command {
     super(
       [
         'Get the content of a message stringified (guild emojis, etc.).',
-        '<guildemoji:1294020340213912>', 'testing stuff?'
+        '<guildemoji:1294020340213912>',
+        'testing stuff?'
       ],
       {
         name: 'debug:content',

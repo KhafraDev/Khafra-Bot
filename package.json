@@ -46,6 +46,7 @@
     "@types/twemoji-parser": "^13.1.1",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",
+    "dprint": "0.43.2",
     "eslint": "^8.28.0",
     "husky": "^8.0.2",
     "typescript": "^5.0.2"

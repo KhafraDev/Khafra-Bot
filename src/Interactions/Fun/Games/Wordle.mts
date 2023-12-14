@@ -8,16 +8,16 @@ import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
 import { createCanvas } from '@napi-rs/canvas'
 import {
-  ComponentType,
-  TextInputStyle,
   type APIActionRowComponent,
   type APIEmbed,
-  type APIMessageActionRowComponent
+  type APIMessageActionRowComponent,
+  ComponentType,
+  TextInputStyle
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction,
   type WebhookMessageEditOptions
@@ -47,7 +47,7 @@ const wordleChoose = (WordList: string[]): string => {
 
 const wordleGetShareComponent = (
   c: APIActionRowComponent<APIMessageActionRowComponent>[],
-  { word, guesses }: { word: string, guesses: string[] },
+  { word, guesses }: { word: string; guesses: string[] },
   highContrast: boolean
 ): APIActionRowComponent<APIMessageActionRowComponent> => {
   let board = `Wordle ${guesses.length}/6\n\n`
@@ -167,9 +167,9 @@ export class kSubCommand extends InteractionSubCommand {
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: minutes(5),
       filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+        (i.isButton() || i.isModalSubmit())
+        && i.user.id === interaction.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {

@@ -1,6 +1,7 @@
 import { search } from '#khaf/functions/wikipedia/search.mjs'
 import { extractArticleText } from '#khaf/functions/wikipedia/source.mjs'
 import { Interactions } from '#khaf/Interaction'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { Buttons, Components } from '#khaf/utility/Constants/Components.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
@@ -13,10 +14,9 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ButtonInteraction, InteractionEditReplyOptions, StringSelectMenuInteraction } from 'discord.js'
-import { InteractionCollector, type ChatInputCommandInteraction, type InteractionReplyOptions } from 'discord.js'
+import { type ChatInputCommandInteraction, InteractionCollector, type InteractionReplyOptions } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 interface WikiCache {
   text: string[]
@@ -63,7 +63,7 @@ export class kInteraction extends Interactions {
         Components.selectMenu({
           custom_id: `wikipedia-${id}`,
           placeholder: 'Which article summary would you like to get?',
-          options: wiki.pages.map(w => ({
+          options: wiki.pages.map((w) => ({
             label: ellipsis(w.title, 25),
             description: ellipsis(w.excerpt.replaceAll(/<span.*?>(.*?)<\/span>/g, '$1'), 50),
             value: `${w.id}`
@@ -100,9 +100,9 @@ export class kInteraction extends Interactions {
       message: m,
       time: minutes(10),
       filter: (i) =>
-        i.user.id === interaction.user.id &&
-        i.message.id === m.id &&
-        i.customId.endsWith(id)
+        i.user.id === interaction.user.id
+        && i.message.id === m.id
+        && i.customId.endsWith(id)
     })
 
     let article!: WikiCache
@@ -120,7 +120,7 @@ export class kInteraction extends Interactions {
           const text = article.extract.split(/\n{3,}/g)
           const parts: string[] = []
 
-          for (const part of text.map(p => splitEvery(p, maxDescriptionLength)).flat()) {
+          for (const part of text.map((p) => splitEvery(p, maxDescriptionLength)).flat()) {
             if (parts.length === 0) {
               parts.push(part)
               continue

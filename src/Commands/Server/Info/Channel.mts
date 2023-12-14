@@ -28,10 +28,9 @@ export class kCommand extends Command {
 
   async init (message: Message<true>, { content }: Arguments): Promise<APIEmbed> {
     const member = message.member ?? await message.guild.members.fetch({ user: message.author })
-    const channel =
-      await getMentions(message, 'channels') ??
-      message.guild.channels.cache.find(c => c.name.toLowerCase() === content.toLowerCase()) ??
-      message.channel
+    const channel = await getMentions(message, 'channels')
+      ?? message.guild.channels.cache.find((c) => c.name.toLowerCase() === content.toLowerCase())
+      ?? message.channel
 
     if (!channel.permissionsFor(member).has(PermissionFlagsBits.ViewChannel)) {
       return Embed.error('No channel with that name was found!')
@@ -51,7 +50,7 @@ export class kCommand extends Command {
     })
 
     if (isText(channel)) {
-      embed.description =  `${channel}\n${channel.topic ? codeBlock(`${channel.topic}`) : ''}`
+      embed.description = `${channel}\n${channel.topic ? codeBlock(`${channel.topic}`) : ''}`
       embed.fields?.push(
         { name: bold('Name:'), value: channel.name, inline: true },
         { name: bold('Parent:'), value: channel.parent ? `${channel.parent}` : 'None', inline: true },
@@ -72,7 +71,7 @@ export class kCommand extends Command {
         { name: bold('Full:'), value: channel.full ? 'Yes' : 'No', inline: true },
         {
           name: bold('Max Users:'),
-          value: channel.userLimit === 0 ? 'Unlimited': `${channel.userLimit}`,
+          value: channel.userLimit === 0 ? 'Unlimited' : `${channel.userLimit}`,
           inline: true
         },
         { name: bold('Region:'), value: channel.rtcRegion ?? 'Auto', inline: true }

@@ -1,6 +1,6 @@
 import { Interactions } from '#khaf/Interaction'
 import { bold } from '@discordjs/builders'
-import { Routes, type APIGuildPreview, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { type APIGuildPreview, type RESTPostAPIApplicationCommandsJSONBody, Routes } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 export class kInteraction extends Interactions {
@@ -22,10 +22,9 @@ export class kInteraction extends Interactions {
     }
 
     // The bot can fetch a guild preview even if the bot isn't in the server.
-    const guild =
-      interaction.guild ??
-      await interaction.client.guilds.fetch(interaction.guildId).catch(() => null) ??
-      await interaction.client.rest.get(Routes.guildPreview(interaction.guildId)) as APIGuildPreview
+    const guild = interaction.guild
+      ?? await interaction.client.guilds.fetch(interaction.guildId).catch(() => null)
+      ?? await interaction.client.rest.get(Routes.guildPreview(interaction.guildId)) as APIGuildPreview
 
     const count = 'memberCount' in guild ? guild.memberCount : guild.approximate_member_count
     const note = 'memberCount' in guild ? '' : ' [Approximate]'

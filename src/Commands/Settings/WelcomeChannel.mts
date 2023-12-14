@@ -7,17 +7,17 @@ import type { APIEmbed } from 'discord-api-types/v10'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const basic =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+const basic = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
   constructor () {
     super(
       [
         'Set the welcome channel for messages when a user leaves, joins, or is kicked from the guild!',
-        '#general', '705896428287033375'
+        '#general',
+        '705896428287033375'
       ],
       {
         name: 'welcome',

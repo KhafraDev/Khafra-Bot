@@ -1,0 +1,23 @@
+{
+  "$schema": "https://plugins.dprint.dev/dprint/dprint-plugin-typescript/latest/schema.json",
+  "typescript": {
+    "semiColons": "asi",
+    "quoteStyle": "alwaysSingle",
+    "trailingCommas": "never",
+    "arrowFunction.useParentheses": "force",
+    "method.spaceBeforeParentheses": true,
+    "setAccessor.spaceBeforeParentheses": true,
+    "constructor.spaceBeforeParentheses": true,
+    "getAccessor.spaceBeforeParentheses": true
+  },
+  "json": {
+  },
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.88.7.wasm",
+    "https://plugins.dprint.dev/json-0.19.1.wasm"
+  ]
+}

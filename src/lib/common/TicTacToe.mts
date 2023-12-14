@@ -14,29 +14,36 @@ export class TicTacToe {
   }
 
   /** Go at a given position (0-8) */
-  public go(at: number): true | Turn {
-    if (this.winner())
+  public go (at: number): true | Turn {
+    if (this.winner()) {
       return this.turn
+    }
 
     this.board[at] = this.turn
     this.#turns++
 
-    if (this.winner())
+    if (this.winner()) {
       return this.turn
+    }
 
     this.setTurn()
     return true
   }
 
   /** Use totally legit AI (copyright 2021, @KhafraDev) to go */
-  public botGo(): true | undefined | Turn {
+  public botGo (): true | undefined | Turn {
     const lines = [
       // horizontal
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
       // vertical
-      [0, 3, 6], [4, 7, 1], [2, 5, 8],
+      [0, 3, 6],
+      [4, 7, 1],
+      [2, 5, 8],
       // diagonal
-      [0, 4, 8], [2, 4, 6]
+      [0, 4, 8],
+      [2, 4, 6]
     ]
 
     if (this.#difficulty !== 'easy') {
@@ -49,9 +56,9 @@ export class TicTacToe {
 
         // If two spots in the same row are empty, ignore it.
         if (
-          atA === null && atB === null ||
-          atA === null && atC === null ||
-          atB === null && atC === null
+          atA === null && atB === null
+          || atA === null && atC === null
+          || atB === null && atC === null
         ) {
           continue
         }
@@ -101,16 +108,16 @@ export class TicTacToe {
   }
 
   /** Utility method to change turns */
-  public setTurn(): 'X' | 'O' {
+  public setTurn (): 'X' | 'O' {
     return this.turn = this.turn === 'X' ? 'O' : 'X'
   }
 
   /** Detect if the board is full */
-  public isFull(): boolean {
+  public isFull (): boolean {
     return this.#turns === 9
   }
 
-  public winner(): boolean {
+  public winner (): boolean {
     // winning options
     const lines = [
       [0, 1, 2],
@@ -125,9 +132,9 @@ export class TicTacToe {
 
     for (const [a, b, c] of lines) {
       if (
-        this.board[a] !== null && // make sure it's not an empty box
-                this.board[a] === this.board[b] &&
-                this.board[a] === this.board[c]
+        this.board[a] !== null // make sure it's not an empty box
+        && this.board[a] === this.board[b]
+        && this.board[a] === this.board[c]
       ) {
         return true
       }

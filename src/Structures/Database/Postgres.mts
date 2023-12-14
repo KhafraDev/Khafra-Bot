@@ -5,7 +5,7 @@ import postgres from 'postgres'
 
 const sqlFiles = KhafraClient.walk(
   assets('SQL/Postgres'),
-  p => p.endsWith('.sql')
+  (p) => p.endsWith('.sql')
 )
 
 export const sql = postgres({
@@ -16,4 +16,4 @@ export const sql = postgres({
   onnotice: () => {}
 })
 
-await Promise.all(sqlFiles.map(file => sql.file(file)))
+await Promise.all(sqlFiles.map((file) => sql.file(file)))

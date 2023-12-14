@@ -5,7 +5,7 @@
     "declaration": false,
     "types": ["@cloudflare/workers-types"],
     "paths": {
-      "#/functions/*": ["./src/functions/*"],
+      "#/functions/*": ["./src/functions/*"]
     },
     "rootDir": "."
   },

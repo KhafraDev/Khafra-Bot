@@ -7,10 +7,9 @@ import { time } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import { Events, type GuildMember } from 'discord.js'
 
-const basic =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const basic = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 export class kEvent implements Event {
   name = Events.GuildMemberAdd as const
@@ -36,10 +35,10 @@ export class kEvent implements Event {
     const me = member.guild.members.me
 
     if (
-      channel === null ||
-      me === null ||
-      !isTextBased(channel) ||
-      !channel.permissionsFor(me).has(basic)
+      channel === null
+      || me === null
+      || !isTextBased(channel)
+      || !channel.permissionsFor(me).has(basic)
     ) {
       return
     }

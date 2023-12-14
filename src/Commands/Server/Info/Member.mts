@@ -12,7 +12,8 @@ export class kCommand extends Command {
     super(
       [
         'Get info about a guild member.',
-        '@Khafra#0001', '267774648622645249'
+        '@Khafra#0001',
+        '267774648622645249'
       ],
       {
         name: 'member',
@@ -39,7 +40,7 @@ export class kCommand extends Command {
             ${formatPresence(member.presence?.activities)}
             
             Roles:
-            ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`,
+            ${[...member.roles.cache.filter((r) => r.name !== '@everyone').values()].slice(0, 20).join(', ')}`,
       thumbnail: { url: member.user.displayAvatarURL() },
       fields: [
         { name: bold('Role Color:'), value: member.displayHexColor, inline: true },

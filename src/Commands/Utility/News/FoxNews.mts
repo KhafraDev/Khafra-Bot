@@ -2,10 +2,10 @@ import { Command } from '#khaf/Command'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
-import { hours } from '#khaf/utility/ms.mjs'
 
 const settings = {
   rss: 'http://feeds.foxnews.com/foxnews/world',
@@ -15,15 +15,15 @@ const settings = {
 } as const
 
 interface IFoxNews {
-    guid: string
-    link: string
-    'media:group': string
-    'media:thumbnail': string
-    category: string
-    title: string
-    description: string
-    pubDate: string
-    'feedburner:origLink': string
+  guid: string
+  link: string
+  'media:group': string
+  'media:thumbnail': string
+  category: string
+  title: string
+  description: string
+  pubDate: string
+  'feedburner:origLink': string
 }
 
 const rss = new RSSReader<IFoxNews>(settings.rss)
@@ -55,7 +55,7 @@ export class kCommand extends Command {
     return Embed.json({
       color: colors.ok,
       description: posts
-        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .map((p, i) => `[${i + 1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
         .slice(0, maxDescriptionLength),
       author: settings.author

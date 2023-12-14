@@ -84,7 +84,7 @@ export class GiveawayTimer extends Timer {
           const random = users.cache.random()
           if (!random) break
           if (random.bot) continue
-          if (winners.some(u => u.id === random.id)) continue
+          if (winners.some((u) => u.id === random.id)) continue
 
           winners.push(random)
         }

@@ -14,7 +14,8 @@ export class kCommand extends Command {
     super(
       [
         'Send a message with a given number of random buttons attached.',
-        '1', '5'
+        '1',
+        '5'
       ],
       {
         name: 'debug:components',
@@ -28,8 +29,9 @@ export class kCommand extends Command {
 
   async init (message: Message, { args }: Arguments): Promise<undefined | APIEmbed> {
     const amount = Number(args[0])
-    if (!schema.is(amount))
+    if (!schema.is(amount)) {
       return Embed.error('Invalid number of buttons to add!')
+    }
 
     const row = Components.actionRow()
     const keys = Object.keys(Buttons) as (keyof typeof Buttons)[]

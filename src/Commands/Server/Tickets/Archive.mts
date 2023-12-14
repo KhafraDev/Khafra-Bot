@@ -8,9 +8,8 @@ import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const channelTicketName = /^Ticket-[0-9a-f]{8}$/i
-const memberPermsExpected =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages
+const memberPermsExpected = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
 
 export class kCommand extends Command {
   constructor () {

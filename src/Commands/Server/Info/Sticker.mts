@@ -23,8 +23,9 @@ export class kCommand extends Command {
   }
 
   async init ({ stickers, guild }: Message<true>): Promise<APIEmbed> {
-    if (stickers.size === 0)
+    if (stickers.size === 0) {
       return Embed.error('No stickers in message! 😕')
+    }
 
     const sticker = stickers.first()!
 
@@ -51,7 +52,7 @@ export class kCommand extends Command {
     }
 
     if (Array.isArray(sticker.tags) && sticker.tags.length > 0) {
-      embed.description = `${bold('Tags:')}\n${sticker.tags.map(t => inlineCode(t)).join(', ')}`
+      embed.description = `${bold('Tags:')}\n${sticker.tags.map((t) => inlineCode(t)).join(', ')}`
     }
 
     if (sticker.format === StickerFormatType.Lottie) {

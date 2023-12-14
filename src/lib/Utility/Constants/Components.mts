@@ -1,17 +1,17 @@
 import {
-  ButtonStyle,
-  ComponentType,
-  type APIMessage,
   type APIActionRowComponent,
-  type APIMessageActionRowComponent,
-  type APIButtonComponent,
-  type APITextInputComponent,
   type APIActionRowComponentTypes,
-  type APIStringSelectComponent,
-  type APIUserSelectComponent,
-  type APIRoleSelectComponent,
+  type APIButtonComponent,
   type APIChannelSelectComponent,
-  type APIMentionableSelectComponent
+  type APIMentionableSelectComponent,
+  type APIMessage,
+  type APIMessageActionRowComponent,
+  type APIRoleSelectComponent,
+  type APIStringSelectComponent,
+  type APITextInputComponent,
+  type APIUserSelectComponent,
+  ButtonStyle,
+  ComponentType
 } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
@@ -24,7 +24,7 @@ interface SelectMenuReturnType {
 }
 
 export const Components = {
-  actionRow <T extends APIActionRowComponentTypes = APIMessageActionRowComponent>(
+  actionRow<T extends APIActionRowComponentTypes = APIMessageActionRowComponent> (
     components: T[] = []
   ): APIActionRowComponent<T> {
     return {
@@ -32,9 +32,8 @@ export const Components = {
       components
     }
   },
-  selectMenu <T extends keyof SelectMenuReturnType = ComponentType.StringSelect>(
-    options: T extends ComponentType.StringSelect
-      ? Omit<SelectMenuReturnType[T], 'type'>
+  selectMenu<T extends keyof SelectMenuReturnType = ComponentType.StringSelect> (
+    options: T extends ComponentType.StringSelect ? Omit<SelectMenuReturnType[T], 'type'>
       : SelectMenuReturnType[T],
     type: T = ComponentType.StringSelect as T
   ): SelectMenuReturnType[T] {
@@ -44,10 +43,11 @@ export const Components = {
     } as SelectMenuReturnType[T]
   },
   textInput (
-    options: Required<
-      Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>> &
-      Partial<Omit<APITextInputComponent, 'type'>
-    >
+    options:
+      & Required<
+        Pick<APITextInputComponent, 'custom_id' | 'label' | 'style'>
+      >
+      & Partial<Omit<APITextInputComponent, 'type'>>
   ): APITextInputComponent {
     return {
       type: ComponentType.TextInput,
@@ -107,9 +107,9 @@ export const Buttons = {
 }
 
 type ToggleableComponent =
-    | Message
-    | APIMessage
-    | { components: APIActionRowComponent<APIButtonComponent>[] }
+  | Message
+  | APIMessage
+  | { components: APIActionRowComponent<APIButtonComponent>[] }
 
 const toggleComponents = (
   item: ToggleableComponent,
@@ -134,7 +134,7 @@ const toggleComponents = (
   return rows
 }
 
-export const disableAll = (item: ToggleableComponent):
-    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, true)
-export const enableAll = (item: ToggleableComponent):
-    APIActionRowComponent<APIMessageActionRowComponent>[] => toggleComponents(item, false)
+export const disableAll = (item: ToggleableComponent): APIActionRowComponent<APIMessageActionRowComponent>[] =>
+  toggleComponents(item, true)
+export const enableAll = (item: ToggleableComponent): APIActionRowComponent<APIMessageActionRowComponent>[] =>
+  toggleComponents(item, false)

@@ -4,10 +4,10 @@ import { mdnIndexSchema } from '#/lib/schema.mjs'
 import { assert } from '#/lib/util.mjs'
 import type { InteractionHandler } from '#/types'
 import {
+  type APIMessageComponentInteraction,
   ComponentType,
   InteractionResponseType,
-  MessageFlags,
-  type APIMessageComponentInteraction
+  MessageFlags
 } from 'discord-api-types/v10'
 
 export const mdnSelectMenu: InteractionHandler<APIMessageComponentInteraction> = {

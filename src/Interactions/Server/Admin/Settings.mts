@@ -15,8 +15,7 @@ import {
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import assert from 'node:assert'
 
-const ifNot = (label: string): (value: unknown) => string =>
-  (value: unknown): string => inlineCode(`${value ?? label}`)
+const ifNot = (label: string): (value: unknown) => string => (value: unknown): string => inlineCode(`${value ?? label}`)
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -85,7 +84,7 @@ export class kInteraction extends Interactions {
       'staffChannel': interaction.options.getChannel('staff-channel')
     }
 
-    const keys = Object.keys(settings).filter(k => settings[k] != null)
+    const keys = Object.keys(settings).filter((k) => settings[k] != null)
 
     if (keys.length === 0) {
       const guild = await guildSettings(interaction.guildId)
@@ -141,7 +140,7 @@ export class kInteraction extends Interactions {
       `
 
       const text = keys
-        .map(k => `- ${inlineCode(k.replace(/_/g, ' '))}: ${settings[k]}`)
+        .map((k) => `- ${inlineCode(k.replace(/_/g, ' '))}: ${settings[k]}`)
         .join('\n')
 
       return {

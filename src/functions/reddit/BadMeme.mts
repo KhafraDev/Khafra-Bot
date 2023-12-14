@@ -1,12 +1,12 @@
 import { apiSchema, type Reddit } from '#khaf/functions/reddit/schema.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { decodeXML } from 'entities'
+import { platform } from 'node:os'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
 import { request } from 'undici'
-import { platform } from 'node:os'
 
-export { type Reddit, apiSchema }
+export { apiSchema, type Reddit }
 
 export interface IBadMemeCache {
   nsfw: boolean
@@ -26,7 +26,7 @@ const getItemRespectNSFW = (
     return null
   }
 
-  const item = [...cachedItems].find(p => allowNSFW || !p.nsfw)
+  const item = [...cachedItems].find((p) => allowNSFW || !p.nsfw)
   if (item) {
     cachedItems.delete(item)
     cachedItems.size === 0
@@ -44,9 +44,9 @@ export const badmeme = async (
   modifier: typeof SortBy[keyof typeof SortBy] = SortBy.NEW,
   timeframe: typeof Timeframe[keyof typeof Timeframe] = Timeframe.MONTH
 ): Promise<
-    IBadMemeCache |
-    { message: string, error: number, reason?: string } |
-    null
+  | IBadMemeCache
+  | { message: string; error: number; reason?: string }
+  | null
 > => {
   subreddit = subreddit.toLowerCase()
 

@@ -127,7 +127,8 @@ export class kCommand extends Command {
     super(
       [
         'Get a King James Bible verse.',
-        'Nahum 3:7', 'Proverbs 25:19'
+        'Nahum 3:7',
+        'Proverbs 25:19'
       ],
       {
         name: 'bible',
@@ -161,7 +162,7 @@ export class kCommand extends Command {
 
     // list all books available to the bot
     if (args[0].toLowerCase() === 'list') {
-      return Embed.ok(Object.keys(titles).map(t => inlineCode(t)).join(', '))
+      return Embed.ok(Object.keys(titles).map((t) => inlineCode(t)).join(', '))
     } else if (!titleRegex.test(content)) {
       return Embed.error(`
       No book with that name was found!
@@ -208,7 +209,7 @@ export class kCommand extends Command {
       const embed = Embed.json({
         color: colors.ok,
         title: `${bookAcronym.pop()} ${chapter}:${first.verse}-${last.verse}`,
-        description: `${rows.map(v => v.content).join('\n')}`.slice(0, maxDescriptionLength)
+        description: `${rows.map((v) => v.content).join('\n')}`.slice(0, maxDescriptionLength)
       })
 
       return embed

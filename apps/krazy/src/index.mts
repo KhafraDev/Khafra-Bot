@@ -1,11 +1,7 @@
 import { handleCommand } from '#/commands/Commands/index.mjs'
 import { handleSelectMenu } from '#/commands/SelectMenu/index.mjs'
 import { verify } from '#/verify.mjs'
-import {
-  InteractionResponseType,
-  InteractionType,
-  type APIInteraction
-} from 'discord-api-types/v10'
+import { type APIInteraction, InteractionResponseType, InteractionType } from 'discord-api-types/v10'
 
 interface Env {
   // wrangler secret put publicKey
@@ -15,8 +11,8 @@ interface Env {
 export default {
   async fetch (request, env, ctx): Promise<Response> {
     if (
-      !request.headers.get('X-Signature-Ed25519') ||
-      !request.headers.get('X-Signature-Timestamp')
+      !request.headers.get('X-Signature-Ed25519')
+      || !request.headers.get('X-Signature-Timestamp')
     ) {
       return Response.json({ error: 'Invalid request' }, {
         status: 400

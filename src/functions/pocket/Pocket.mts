@@ -2,15 +2,15 @@ import { addSchema, oauthAuthSchema, oauthSchema, retrieveSchema } from '#khaf/f
 import type { InferType } from '@sapphire/shapeshift'
 import assert from 'node:assert'
 import { env } from 'node:process'
-import { request, type Dispatcher } from 'undici'
+import { type Dispatcher, request } from 'undici'
 
 const limits = {
-  'x-limit-user-limit': -1,     // Current rate limit enforced per user
+  'x-limit-user-limit': -1, // Current rate limit enforced per user
   'x-limit-user-remaining': -1, // Number of calls remaining before hitting user's rate limit
-  'x-limit-user-reset': -1,     // Seconds until user's rate limit resets
-  'x-limit-key-limit': -1,      // Current rate limit enforced per consumer key
-  'x-limit-key-remaining': -1,  // Number of calls remaining before hitting consumer key's rate limit
-  'x-limit-key-reset': -1       // Seconds until consumer key rate limit resets
+  'x-limit-user-reset': -1, // Seconds until user's rate limit resets
+  'x-limit-key-limit': -1, // Current rate limit enforced per consumer key
+  'x-limit-key-remaining': -1, // Number of calls remaining before hitting consumer key's rate limit
+  'x-limit-key-reset': -1 // Seconds until consumer key rate limit resets
 } satisfies Record<string, number>
 
 export class Pocket {
@@ -19,7 +19,7 @@ export class Pocket {
   accessToken?: string
   username?: string
 
-  constructor (user?: { request_token: string, access_token: string, username: string }) {
+  constructor (user?: { request_token: string; access_token: string; username: string }) {
     if (user) {
       this.requestToken = user.request_token
       this.accessToken = user.access_token
@@ -62,8 +62,8 @@ export class Pocket {
   get requestAuthorization (): string {
     assert(this.requestToken && this.redirect_uri)
 
-    return 'https://getpocket.com/auth/authorize?request_token=' +
-           `${this.requestToken}&redirect_uri=${this.redirect_uri}`
+    return 'https://getpocket.com/auth/authorize?request_token='
+      + `${this.requestToken}&redirect_uri=${this.redirect_uri}`
   }
 
   async getAccessToken (): Promise<string> {

@@ -1,13 +1,8 @@
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const perms = PermissionFlagsBits.Administrator
@@ -47,7 +42,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(perms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

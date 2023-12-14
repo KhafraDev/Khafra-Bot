@@ -5,57 +5,57 @@ import type { APIEmbed } from 'discord-api-types/v10'
 import { request } from 'undici'
 
 interface IMCOnline {
-    online: true
-	ip: string
-	port: number
-	debug: {
-		ping: boolean
-		query: boolean
-		srv: boolean
-		querymismatch: boolean
-		ipinsrv: boolean
-		cnameinsrv: boolean
-		animatedmotd: boolean
-		cachetime: number
-	}
-	motd: {
-		raw: string[]
-		clean: string[]
-		html: string
-	}
-	players: {
-		online: number
-		max: number
-		list?: string[]
-		uuid?: Record<string, string>
-	}
-	version: string | string[]
-	protocol?: number
-	hostname?: string
-	icon?: string
-	software?: string
-	map: string
-	plugins?: {
-		names: string[]
-		raw: string[]
-	}
-	mods?: {
-		names: string[]
-		raw: string[]
-	}
-	info?: {
-		raw: string[]
-		clean: string[]
-		html: string[]
-	}
+  online: true
+  ip: string
+  port: number
+  debug: {
+    ping: boolean
+    query: boolean
+    srv: boolean
+    querymismatch: boolean
+    ipinsrv: boolean
+    cnameinsrv: boolean
+    animatedmotd: boolean
+    cachetime: number
+  }
+  motd: {
+    raw: string[]
+    clean: string[]
+    html: string
+  }
+  players: {
+    online: number
+    max: number
+    list?: string[]
+    uuid?: Record<string, string>
+  }
+  version: string | string[]
+  protocol?: number
+  hostname?: string
+  icon?: string
+  software?: string
+  map: string
+  plugins?: {
+    names: string[]
+    raw: string[]
+  }
+  mods?: {
+    names: string[]
+    raw: string[]
+  }
+  info?: {
+    raw: string[]
+    clean: string[]
+    html: string[]
+  }
 }
 
 interface IMCOffline {
-    online: false
-	ip: string | ''
-	port: number | ''
-	debug: IMCOnline['debug']
-	hostname: string
+  online: false
+  ip: string | ''
+  port: number | ''
+  debug: IMCOnline['debug']
+  hostname: string
 }
 
 const fetchMeepOnline = async (): Promise<{ playersOnline: number }> => {

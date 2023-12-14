@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { bold } from '@discordjs/builders'
-import { OAuth2Scopes, PermissionFlagsBits, type APIEmbed } from 'discord-api-types/v10'
+import { type APIEmbed, OAuth2Scopes, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const scopes = [OAuth2Scopes.Bot, OAuth2Scopes.ApplicationsCommands]

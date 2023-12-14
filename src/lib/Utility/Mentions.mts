@@ -1,12 +1,12 @@
 import * as util from '#khaf/utility/util.mjs'
 import {
-  SnowflakeUtil,
   type Channel,
   type GuildBasedChannel,
   type GuildMember,
   type Message,
   type Role,
   type Snowflake,
+  SnowflakeUtil,
   type User
 } from 'discord.js'
 

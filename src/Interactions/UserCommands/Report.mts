@@ -10,10 +10,9 @@ import {
 } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, MessageContextMenuCommandInteraction } from 'discord.js'
 
-const perms =
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.EmbedLinks
 
 export class kUserCommand extends InteractionUserCommand {
   constructor () {
@@ -68,8 +67,8 @@ export class kUserCommand extends InteractionUserCommand {
         ephemeral: true
       }
     } else if (
-      !interaction.guild?.members.me ||
-      !channel.permissionsFor(interaction.guild.members.me).has(perms)
+      !interaction.guild?.members.me
+      || !channel.permissionsFor(interaction.guild.members.me).has(perms)
     ) {
       return {
         content: '❌ I cannot send the message to staff, please contact an admin to correct this!',
@@ -92,7 +91,7 @@ export class kUserCommand extends InteractionUserCommand {
 
     await channel.send({
       content: a !== undefined
-        ? a.map(att => att.proxyURL).join('\n')
+        ? a.map((att) => att.proxyURL).join('\n')
         : undefined,
       embeds: [embed]
     })

@@ -44,9 +44,9 @@ export class kSubCommand extends InteractionSubCommand {
       time: seconds(15),
       max: 1,
       filter: (i) =>
-        interaction.user.id === i.user.id &&
-        int.id === i.message.id &&
-        i.customId.endsWith(id)
+        interaction.user.id === i.user.id
+        && int.id === i.message.id
+        && i.customId.endsWith(id)
     })
 
     let c: ButtonInteraction | undefined
@@ -71,9 +71,9 @@ export class kSubCommand extends InteractionSubCommand {
     if (userChoice === botChoice) {
       embed = Embed.ok(`It's a tie - we both chose ${emojis[botChoice]}!`)
     } else if (
-      (userChoice === 'rock' && botChoice === 'scissors') || // rock beats scissors
-            (userChoice === 'paper' && botChoice === 'rock') || // paper beats rock
-            (userChoice === 'scissors' && botChoice === 'paper') // scissors beats paper
+      (userChoice === 'rock' && botChoice === 'scissors') // rock beats scissors
+      || (userChoice === 'paper' && botChoice === 'rock') // paper beats rock
+      || (userChoice === 'scissors' && botChoice === 'paper') // scissors beats paper
     ) {
       embed = Embed.ok(`You win with ${emojis[userChoice]}, I chose ${emojis[botChoice]}!`)
     }

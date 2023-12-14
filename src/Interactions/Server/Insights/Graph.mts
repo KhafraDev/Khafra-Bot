@@ -6,9 +6,9 @@ import { stringify } from 'node:querystring'
 import { request } from 'undici'
 
 interface Insights {
-    k_date: Date
-    k_left: number
-    k_joined: number
+  k_date: Date
+  k_left: number
+  k_joined: number
 }
 
 const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {

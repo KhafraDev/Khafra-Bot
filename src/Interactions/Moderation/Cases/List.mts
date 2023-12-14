@@ -5,14 +5,14 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import {
+  type ButtonInteraction,
+  type ChatInputCommandInteraction,
   hyperlink,
   InteractionCollector,
   messageLink,
+  type StringSelectMenuInteraction,
   time,
-  userMention,
-  type ButtonInteraction,
-  type ChatInputCommandInteraction,
-  type StringSelectMenuInteraction
+  userMention
 } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
@@ -60,15 +60,17 @@ const embedFromCase = (
     return cache.get(page - 1)!
   }
 
-  if ('staffReason' in row && row.staffReason)
+  if ('staffReason' in row && row.staffReason) {
     embed.description += `📑 Reason: ${row.staffReason}\n`
+  }
 
   if (row.t === 'case') {
     embed.description += `👤 Handled by: ${userMention(row.contextUser)}\n`
     embed.description += `🗃️ Type: ${row.type}\n`
 
-    if (row.associatedTime)
+    if (row.associatedTime) {
       embed.description += `⏰ Ends/Ended: ${time(row.associatedTime, 'R')} (${time(row.associatedTime, 'f')})\n`
+    }
   } else {
     embed.description += `👤 Reported by: ${userMention(row.contextUser)}\n`
     embed.description += `❗ Status: ${row.status}\n`
@@ -79,11 +81,13 @@ const embedFromCase = (
     }
   }
 
-  if (row.targetAttachments?.length)
+  if (row.targetAttachments?.length) {
     embed.description += `🖼️ Attachments:\n${row.targetAttachments.join('\n')}`
+  }
 
-  if (row.contextAttachments)
+  if (row.contextAttachments) {
     embed.image = { url: row.contextAttachments }
+  }
 
   embed.footer = {
     text: `Case ${page}/${total}`
@@ -192,8 +196,8 @@ export class kSubCommand extends InteractionSubCommand {
       message,
       time: minutes(5),
       filter: (i) =>
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+        interaction.user.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

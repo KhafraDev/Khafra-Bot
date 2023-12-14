@@ -16,7 +16,7 @@ const Dims = {
   Template: 40
 } as const
 
-const coords =  [
+const coords = [
   [0, 0],
   [-5, -5],
   [-10, -5],

@@ -1,6 +1,6 @@
 import { InteractionUserCommand } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import { userflagBitfieldToEmojis, formatPresence } from '#khaf/utility/util.mjs'
+import { formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.mjs'
 import { bold, time } from '@discordjs/builders'
 import { ApplicationCommandType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, UserContextMenuCommandInteraction } from 'discord.js'
