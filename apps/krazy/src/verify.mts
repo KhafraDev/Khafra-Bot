@@ -1,7 +1,7 @@
 // https://gist.github.com/devsnek/77275f6e3f810a9545440931ed314dc1
 // https://github.com/advaith1/activities/blob/main/src/verify.ts
 
-function hex2bin(hex: string): Uint8Array {
+function hex2bin (hex: string): Uint8Array {
   const buf = new Uint8Array(Math.ceil(hex.length / 2))
 
   for (let i = 0; i < buf.length; i++) {

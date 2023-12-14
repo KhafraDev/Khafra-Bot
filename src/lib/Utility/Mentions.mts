@@ -20,15 +20,15 @@ type MessageMentionTypes =
 
 const epoch = new Date('January 1, 2015 GMT-0').getTime()
 
-export async function getMentions(message: Message<true>, type: 'roles'): Promise<Role | null>
-export async function getMentions(message: Message, type: 'users', content?: string): Promise<User | null>
-export async function getMentions(
+export async function getMentions (message: Message<true>, type: 'roles'): Promise<Role | null>
+export async function getMentions (message: Message, type: 'users', content?: string): Promise<User | null>
+export async function getMentions (
   message: Message<true>,
   type: 'members',
   content?: string
 ): Promise<GuildMember | null>
-export async function getMentions(message: Message<true>, type: 'channels'): Promise<GuildBasedChannel | null>
-export async function getMentions(
+export async function getMentions (message: Message<true>, type: 'channels'): Promise<GuildBasedChannel | null>
+export async function getMentions (
   message: Message,
   fetchType: MessageMentionTypes,
   text?: string

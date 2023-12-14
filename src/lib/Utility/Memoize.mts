@@ -1,7 +1,7 @@
 import { createDeferredPromise } from '#khaf/utility/util.mjs'
 import assert from 'node:assert'
 
-function isThenable(value: unknown): value is Pick<Promise<unknown>, 'then' | 'catch'> {
+function isThenable (value: unknown): value is Pick<Promise<unknown>, 'then' | 'catch'> {
   return (
     !!value
     && typeof (value as { then?: unknown }).then === 'function'
@@ -10,7 +10,7 @@ function isThenable(value: unknown): value is Pick<Promise<unknown>, 'then' | 'c
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function once<T extends (...args: any[]) => any>(fn: T, expires?: number): T {
+export function once<T extends (...args: any[]) => any> (fn: T, expires?: number): T {
   assert(typeof fn === 'function')
 
   let res: ReturnType<T> | Promise<ReturnType<T>> // sync return value
@@ -18,7 +18,7 @@ export function once<T extends (...args: any[]) => any>(fn: T, expires?: number)
   let isRunning = false // if async fn is running
   let deferred: ReturnType<typeof createDeferredPromise>
 
-  function expire(): void {
+  function expire (): void {
     res = undefined!
     ran = false
     isRunning = false
