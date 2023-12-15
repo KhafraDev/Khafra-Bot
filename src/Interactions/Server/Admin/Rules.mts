@@ -17,9 +17,9 @@ import {
   TextInputStyle
 } from 'discord-api-types/v10'
 import {
-  ComponentType,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  ComponentType,
   InteractionCollector,
   type InteractionReplyOptions,
   type ModalSubmitInteraction

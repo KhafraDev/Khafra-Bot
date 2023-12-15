@@ -8,9 +8,9 @@ import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
 import { TextInputStyle } from 'discord-api-types/v10'
 import {
-  ComponentType,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  ComponentType,
   InteractionCollector,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
