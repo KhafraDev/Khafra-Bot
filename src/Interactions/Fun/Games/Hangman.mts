@@ -6,7 +6,8 @@ import { seconds } from '#khaf/utility/ms.mjs'
 import { plural } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
-import { ComponentType, type Snowflake, TextInputStyle } from 'discord-api-types/v10'
+import { type Snowflake, TextInputStyle } from 'discord-api-types/v10'
+import { ComponentType } from 'discord.js'
 import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,

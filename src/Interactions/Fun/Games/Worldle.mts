@@ -6,8 +6,9 @@ import { assets } from '#khaf/utility/Constants/Path.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
-import { ComponentType, TextInputStyle } from 'discord-api-types/v10'
+import { TextInputStyle } from 'discord-api-types/v10'
 import {
+  ComponentType,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   InteractionCollector,

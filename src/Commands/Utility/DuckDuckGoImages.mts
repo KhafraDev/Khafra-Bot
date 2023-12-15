@@ -67,7 +67,7 @@ export class kCommand extends Command {
   }
 
   async init (message: Message, { content }: Arguments): Promise<MessageReplyOptions | void> {
-    let safeSearch: typeof SafeSearchType[keyof typeof SafeSearchType]
+    let safeSearch: typeof SafeSearchType[keyof typeof SafeSearchType] = SafeSearchType.MODERATE
 
     if (message.guild) {
       switch (message.guild.nsfwLevel) {

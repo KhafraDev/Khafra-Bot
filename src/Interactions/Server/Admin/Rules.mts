@@ -12,12 +12,12 @@ import {
   type APITextInputComponent,
   ApplicationCommandOptionType,
   ChannelType,
-  ComponentType,
   PermissionFlagsBits,
   type RESTPostAPIApplicationCommandsJSONBody,
   TextInputStyle
 } from 'discord-api-types/v10'
 import {
+  ComponentType,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   InteractionCollector,

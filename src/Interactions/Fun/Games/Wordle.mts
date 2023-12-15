@@ -11,9 +11,9 @@ import {
   type APIActionRowComponent,
   type APIEmbed,
   type APIMessageActionRowComponent,
-  ComponentType,
   TextInputStyle
 } from 'discord-api-types/v10'
+import { ComponentType } from 'discord.js'
 import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
