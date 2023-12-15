@@ -30,11 +30,11 @@ export class kInteraction extends Interactions {
           required: true,
           choices: [
             { name: '60 secs', value: minutes(1) },
-            { name: '5 mins',  value: minutes(5) },
+            { name: '5 mins', value: minutes(5) },
             { name: '10 mins', value: minutes(10) },
-            { name: '1 hour',  value: hours(1) },
-            { name: '1 day',   value: days(1) },
-            { name: '1 week',  value: weeks(1) },
+            { name: '1 hour', value: hours(1) },
+            { name: '1 day', value: days(1) },
+            { name: '1 week', value: weeks(1) },
             { name: '2 weeks', value: weeks(2) },
             { name: '3 weeks', value: weeks(3) },
             { name: '4 weeks', value: weeks(4) }

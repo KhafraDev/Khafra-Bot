@@ -7,7 +7,7 @@ import { days, minutes, parseStrToMs } from '#khaf/utility/ms.mjs'
 import { hierarchy } from '#khaf/utility/Permissions.mjs'
 import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
-import { PermissionFlagsBits, type ComponentType } from 'discord-api-types/v10'
+import { type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const schema = s.number.int.greaterThanOrEqual(0).lessThanOrEqual(7)
@@ -56,9 +56,9 @@ export class kCommand extends Command {
 
     const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
-        ['approve', 'deny'].includes(interaction.customId) &&
-        interaction.user.id === message.author.id &&
-        interaction.message.id === msg.id,
+        ['approve', 'deny'].includes(interaction.customId)
+        && interaction.user.id === message.author.id
+        && interaction.message.id === msg.id,
       time: minutes(1)
     }).catch(() => null)
 
@@ -69,11 +69,12 @@ export class kCommand extends Command {
       })
     }
 
-    if (button.customId === 'deny')
+    if (button.customId === 'deny') {
       return void button.update({
         embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
         components: []
       })
+    }
 
     await button.deferUpdate()
 
@@ -92,8 +93,9 @@ export class kCommand extends Command {
     await button.editReply({
       embeds: [
         Embed.ok(
-          `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}` +
-          ' days worth of messages have been removed.'
+          `${user} has been banned from the guild and ${
+            Number.isNaN(clear) ? '7' : clear
+          } days worth of messages have been removed.`
         )
       ],
       components: disableAll(msg)

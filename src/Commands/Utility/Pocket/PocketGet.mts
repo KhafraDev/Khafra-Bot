@@ -34,25 +34,26 @@ export class kCommand extends Command {
       LIMIT 1;
     `
 
-    if (rows.length === 0)
+    if (rows.length === 0) {
       return Embed.error(`
       You haven't set-up Pocket integration!
 
       Try using the ${inlineCode('pocket')} command for more information.
       `)
+    }
 
     const pocket = new Pocket(rows.shift())
     const latest = await pocket.getList()
 
     const formatted = Object.values(latest.list)
-      .map(item => `[${item.resolved_title}](${item.resolved_url})`)
+      .map((item) => `[${item.resolved_title}](${item.resolved_url})`)
       .join('\n')
 
     return Embed.json({
       color: colors.ok,
       description: formatted,
       author: {
-        name: message.author.username + '\'s latest saves',
+        name: `${message.author.username}'s latest saves`,
         icon_url: message.author.displayAvatarURL(),
         url: 'https://getpocket.com/'
       }

@@ -7,27 +7,26 @@ import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { bold, inlineCode, italic } from '@discordjs/builders'
 import {
   ActivityType,
+  type APIEmbed,
+  type ApplicationFlags,
   ChannelType,
   MessageType,
   PermissionFlagsBits,
-  type APIEmbed,
-  type ApplicationFlags,
   type Snowflake
 } from 'discord-api-types/v10'
 import {
-  formatEmoji,
   type Activity,
   type ChatInputCommandInteraction,
+  formatEmoji,
   type Message,
   type UserFlagsString
 } from 'discord.js'
 import { Buffer } from 'node:buffer'
 import { join } from 'node:path'
 
-const perms =
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 const config = createFileWatcher<typeof import('../../../config.json')>(join(cwd, 'config.json'))
 
@@ -47,13 +46,13 @@ type MagicType<U> = UnionToIntersection<U> extends infer O ? { [K in keyof O]: O
  */
 export const Sanitize = (message: Message): message is Message<true> => {
   if (
-    message.webhookId || // author is null in webhook messages
-    message.author.bot ||
-    (message.type !== MessageType.Default && message.type !== MessageType.Reply) ||
-    message.system ||
-    message.tts ||
-    message.content.length === 0 ||
-    !message.guild?.available
+    message.webhookId // author is null in webhook messages
+    || message.author.bot
+    || (message.type !== MessageType.Default && message.type !== MessageType.Reply)
+    || message.system
+    || message.tts
+    || message.content.length === 0
+    || !message.guild?.available
   ) {
     return false
   }
@@ -199,9 +198,8 @@ export const formatPresence = (activities: Activity[] | undefined): string => {
           desc += `${emoji} ${activity.state} - ${activity.details}\n`
         } else {
           const details = activity.details ?? activity.url
-          desc +=
-            `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}` +
-            `${details ? `- ${inlineCode(details)}` : ''}\n`
+          desc += `Streaming ${bold(activity.state ?? 'N/A')} on ${activity.name}`
+            + `${details ? `- ${inlineCode(details)}` : ''}\n`
         }
         break
       }
@@ -232,7 +230,7 @@ export const formatMs = (ms: number): string => {
   }
 
   return Object.keys(durations)
-    .map(k => durations[k] > 0 ? `${durations[k]}${k}` : '')
+    .map((k) => durations[k] > 0 ? `${durations[k]}${k}` : '')
     .join(' ')
 }
 
@@ -261,8 +259,6 @@ export const formatApplicationPresence = (key: keyof typeof ApplicationFlags): s
   return 'OK TYPESCRIPT'
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 export const createDeferredPromise = <T extends unknown>(): {
   promise: Promise<T>
   resolve: (v: T) => void
@@ -282,8 +278,7 @@ export const createDeferredPromise = <T extends unknown>(): {
 // https://fetch.spec.whatwg.org/#redirect-status
 const redirectStatuses = [301, 302, 303, 307, 308]
 
-export const isRedirect = (statusCode: number): boolean =>
-  redirectStatuses.includes(statusCode)
+export const isRedirect = (statusCode: number): boolean => redirectStatuses.includes(statusCode)
 
 export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   if (ArrayBuffer.isView(buffer)) {
@@ -293,12 +288,11 @@ export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   return Buffer.from(buffer, buffer.byteLength)
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 export const chunkSafe = <T extends unknown>(arr: T[], step: number): T[][] => {
   const res: T[][] = []
-  for (let i = 0; i < arr.length; i += step)
+  for (let i = 0; i < arr.length; i += step) {
     res.push(arr.slice(i, i + step))
+  }
 
   return res
 }

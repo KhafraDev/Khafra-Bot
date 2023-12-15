@@ -5,20 +5,20 @@ import { parseEmojiList } from '#khaf/utility/Emoji.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { bold, formatEmoji, time } from '@discordjs/builders'
 import {
+  type APIEmbed,
   ApplicationCommandOptionType,
   InteractionType,
-  type APIEmbed,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
-  SnowflakeUtil,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
-  type InteractionReplyOptions
+  InteractionCollector,
+  type InteractionReplyOptions,
+  SnowflakeUtil
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
-import { parse, toCodePoints, type EmojiEntity } from 'twemoji-parser'
+import { type EmojiEntity, parse, toCodePoints } from 'twemoji-parser'
 
 interface GuildEmoji {
   animated: boolean
@@ -28,8 +28,8 @@ interface GuildEmoji {
 }
 
 type EmojiUnion =
-  | { type: 'guild', value: GuildEmoji }
-  | { type: 'unicode', value: EmojiEntity }
+  | { type: 'guild'; value: GuildEmoji }
+  | { type: 'unicode'; value: EmojiEntity }
 
 type InferPromiseResult<T> = T extends Promise<infer U> ? U : never
 
@@ -165,9 +165,9 @@ export class kInteraction extends Interactions {
       message: int,
       idle: minutes(1),
       filter: (i) =>
-        interaction.user.id === i.user.id &&
-        int.id === i.message.id &&
-        i.customId.endsWith(uuid)
+        interaction.user.id === i.user.id
+        && int.id === i.message.id
+        && i.customId.endsWith(uuid)
     })
 
     for await (const [i] of collector) {

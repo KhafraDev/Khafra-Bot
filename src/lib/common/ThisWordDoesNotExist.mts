@@ -1,18 +1,18 @@
 import { request } from 'undici'
 
 interface NonexistentWord {
-    word: {
-        word: string
-        definition: string
-        /** Part of speech */
-        pos: string
-        topic: null | string
-        example?: string | undefined
-        syllables: string[]
-        probably_exists: boolean
-        dataset_type: null | string
-    }
-    permalink_url: string
+  word: {
+    word: string
+    definition: string
+    /** Part of speech */
+    pos: string
+    topic: null | string
+    example?: string | undefined
+    syllables: string[]
+    probably_exists: boolean
+    dataset_type: null | string
+  }
+  permalink_url: string
 }
 
 export const thisWordDoesNotExist = async (): Promise<NonexistentWord | null> => {

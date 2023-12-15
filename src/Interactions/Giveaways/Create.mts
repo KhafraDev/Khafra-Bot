@@ -8,17 +8,16 @@ import { plural } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
-import { PermissionFlagsBits, ChannelType } from 'discord-api-types/v10'
+import { ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 type GiveawayId = Pick<Giveaway, 'id'>
 
 const schema = s.number.greaterThanOrEqual(seconds(60)).lessThanOrEqual(weeks(52))
 
-const perms =
-  PermissionFlagsBits.SendMessages |
-  PermissionFlagsBits.ViewChannel |
-  PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.EmbedLinks
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -48,11 +47,12 @@ export class kSubCommand extends InteractionSubCommand {
         ephemeral: true
       }
     } else if (
-      !interaction.guild?.members.me ||
-      !channel.permissionsFor(interaction.guild.members.me).has(perms)
+      !interaction.guild?.members.me
+      || !channel.permissionsFor(interaction.guild.members.me).has(perms)
     ) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

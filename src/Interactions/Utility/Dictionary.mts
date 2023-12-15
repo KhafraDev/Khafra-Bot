@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     }
 
     const definitions = word.definitions
-      .map(w => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
+      .map((w) => `${italic(w.type)} - ${w.definition}${w.emoji ? ` ${w.emoji}` : ''}`)
       .join('\n')
       .slice(0, maxDescriptionLength - word.word.length - (word.pronunciation ? word.pronunciation.length + 2 : 0))
 

@@ -14,7 +14,8 @@ export class kCommand extends Command {
     super(
       [
         'Get info about an emoji!',
-        '<emoji>', 'united states'
+        '<emoji>',
+        'united states'
       ],
       {
         name: 'emojiinfo',
@@ -70,7 +71,7 @@ export class kCommand extends Command {
       })
     }
 
-    const name = [...cache.values()].find(n => n.comment.endsWith(content))
+    const name = [...cache.values()].find((n) => n.comment.endsWith(content))
 
     if (name) {
       const unicodeEmoji = parse(name.comment, { assetType: 'png' })[0]

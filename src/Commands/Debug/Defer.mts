@@ -18,8 +18,9 @@ export class kCommand extends Command {
   }
 
   async init (message: Message): Promise<void> {
-    if (message.deletable)
+    if (message.deletable) {
       await message.delete()
+    }
     await message.reply({
       embeds: [
         Embed.error('If you\'re seeing this, something went wrong...')

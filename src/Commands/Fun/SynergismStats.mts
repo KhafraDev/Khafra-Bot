@@ -30,7 +30,7 @@ export class kCommand extends Command {
     }
 
     const quarks = await quarkBonus.body.json() as { bonus: number }
-    const [, average,, ratings] = stats.average_rating_with_count.split(/\s+/g)
+    const [, average, , ratings] = stats.average_rating_with_count.split(/\s+/g)
 
     return Embed.json({
       color: colors.ok,

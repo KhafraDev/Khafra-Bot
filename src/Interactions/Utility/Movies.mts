@@ -52,7 +52,7 @@ export class kInteraction extends Interactions {
       fields: [
         {
           name: bold('Genres:'),
-          value: movies.genres.map(g => g.name).join(', '),
+          value: movies.genres.map((g) => g.name).join(', '),
           inline: true
         },
         { name: bold('Runtime:'), value: formatMs(Number(movies.runtime) * 60000), inline: true },

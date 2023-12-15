@@ -2,10 +2,10 @@ import { Command } from '#khaf/Command'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
-import { hours } from '#khaf/utility/ms.mjs'
 
 const settings = {
   rss: 'https://nbc-2.com/category/news/feed/',
@@ -15,14 +15,14 @@ const settings = {
 } as const
 
 interface INBC {
-    title: string
-    link: string
-    'dc:creator': string
-    pubDate: string
-    category: string[]
-    guid: string
-    description: string
-    'post-id': string
+  title: string
+  link: string
+  'dc:creator': string
+  pubDate: string
+  category: string[]
+  guid: string
+  description: string
+  'post-id': string
 }
 
 const rss = new RSSReader<INBC>(settings.rss)
@@ -54,7 +54,7 @@ export class kCommand extends Command {
     return Embed.json({
       color: colors.ok,
       description: posts
-        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .map((p, i) => `[${i + 1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
         .slice(0, maxDescriptionLength),
       author: settings.author

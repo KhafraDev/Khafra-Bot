@@ -95,13 +95,13 @@ export class kInteraction extends Interactions {
         const listJoined = await body.text()
         const emojis = parse(listJoined)
 
-        list.push(...emojis.map(e => e.text))
+        list.push(...emojis.map((e) => e.text))
       }
 
       let page = 0
       const uuid = randomUUID()
       const pages = chunkSafe(list, 195).map(
-        items => Embed.ok(items.join(' '))
+        (items) => Embed.ok(items.join(' '))
       )
 
       const i = await interaction.reply({
@@ -121,10 +121,10 @@ export class kInteraction extends Interactions {
         message: i,
         idle: seconds(30),
         filter: (i) =>
-          i.user.id === interaction.user.id &&
-          i.customId === `${uuid}-next` ||
-          i.customId === `${uuid}-prev` ||
-          i.customId === `${uuid}-trash`
+          i.user.id === interaction.user.id
+            && i.customId === `${uuid}-next`
+          || i.customId === `${uuid}-prev`
+          || i.customId === `${uuid}-trash`
       })
 
       for await (const [collected] of collector) {
@@ -143,8 +143,8 @@ export class kInteraction extends Interactions {
       const last = collector.collected.last()
 
       if (
-        collector.collected.size !== 0 &&
-        last?.replied === false
+        collector.collected.size !== 0
+        && last?.replied === false
       ) {
         return void await last.update({
           components: disableAll(i)
@@ -163,12 +163,12 @@ export class kInteraction extends Interactions {
     const oneParsed = parse(emojiOne)
     const twoParsed = parse(emojiTwo)
 
-    if (oneParsed.map(p => p.text).join('') !== emojiOne) {
+    if (oneParsed.map((p) => p.text).join('') !== emojiOne) {
       return {
         content: '❌ First emoji could not be parsed correctly!',
         ephemeral: true
       }
-    } else if (twoParsed.map(p => p.text).join('') !== emojiTwo) {
+    } else if (twoParsed.map((p) => p.text).join('') !== emojiTwo) {
       return {
         content: '❌ Second emoji could not be parsed correctly!',
         ephemeral: true

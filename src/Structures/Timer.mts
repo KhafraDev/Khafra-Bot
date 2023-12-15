@@ -20,12 +20,12 @@ export abstract class Timer {
   public yieldEvery (): {
     runs: number
     [Symbol.asyncIterator](): AsyncGenerator<number, void>
-  } { // eslint-disable-line indent
+  } {
     const { interval, maxRuns = Infinity } = this.options
 
     return {
       runs: 0,
-      async * [Symbol.asyncIterator](): AsyncGenerator<number, void> {
+      async *[Symbol.asyncIterator] (): AsyncGenerator<number, void> {
         while (this.runs < maxRuns) {
           await setTimeout(interval)
           yield this.runs++

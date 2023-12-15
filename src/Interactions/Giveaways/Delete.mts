@@ -2,8 +2,8 @@ import { sql } from '#khaf/database/Postgres.mjs'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Giveaway } from '#khaf/types/KhafraBot.js'
 import { inlineCode } from '@discordjs/builders'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { ChannelType } from 'discord-api-types/v10'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 type GiveawayRow = Pick<Giveaway, 'messageid' | 'channelid' | 'id'>
 

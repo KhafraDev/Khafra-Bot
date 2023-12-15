@@ -26,7 +26,7 @@ const verseSchema = s.object({
 })
 
 export default {
-  async fetch(
+  async fetch (
     request: Request,
     env: Env
   ): Promise<Response> {
@@ -39,7 +39,7 @@ export default {
 
       return Response.json(result)
     } else if (pathname === '/bible/between') {
-      if (!['book', 'chapter', 'verse1', 'verse2'].every(v => searchParams.has(v))) {
+      if (!['book', 'chapter', 'verse1', 'verse2'].every((v) => searchParams.has(v))) {
         return Response.json({ error: 'missing one on more params' }, { status: 400 })
       }
 
@@ -61,7 +61,7 @@ export default {
 
       return Response.json(results)
     } else if (pathname === '/bible/verse') {
-      if (!['book', 'chapter', 'verse'].every(v => searchParams.has(v))) {
+      if (!['book', 'chapter', 'verse'].every((v) => searchParams.has(v))) {
         return Response.json({ error: 'missing one on more params' }, { status: 400 })
       }
 
@@ -86,4 +86,3 @@ export default {
     return Response.json({ error: 'unknown route' }, { status: 400 })
   }
 } satisfies ExportedHandler<Env>
-

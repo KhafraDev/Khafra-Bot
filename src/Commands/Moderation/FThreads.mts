@@ -5,21 +5,21 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { isCategory, isStage, isThread, isVoice } from '#khaf/utility/Discord.js'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { bold, inlineCode, italic } from '@discordjs/builders'
-import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
+import { type APIEmbed, type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { GuildChannel, Message, NonThreadGuildBasedChannel } from 'discord.js'
 
-const threadPerms =
-  PermissionFlagsBits.ManageThreads |
-  PermissionFlagsBits.CreatePublicThreads |
-  PermissionFlagsBits.CreatePrivateThreads |
-  PermissionFlagsBits.SendMessagesInThreads
+const threadPerms = PermissionFlagsBits.ManageThreads
+  | PermissionFlagsBits.CreatePublicThreads
+  | PermissionFlagsBits.CreatePrivateThreads
+  | PermissionFlagsBits.SendMessagesInThreads
 
 export class kCommand extends Command {
   constructor () {
     super(
       [
-        `By default, Discord threads are allowed to be created by ${italic('anyone')}. ` +
-        'This command disables all 3 default permissions.'
+        `By default, Discord threads are allowed to be created by ${
+          italic('anyone')
+        }. This command disables all 3 default permissions.`
       ],
       {
         name: 'fthreads',
@@ -53,9 +53,9 @@ export class kCommand extends Command {
     {
       const i = await m.awaitMessageComponent<ComponentType.Button>({
         filter: (interaction) =>
-          ['approve', 'deny'].includes(interaction.customId) &&
-          interaction.user.id === message.author.id &&
-          interaction.message.id === m.id,
+          ['approve', 'deny'].includes(interaction.customId)
+          && interaction.user.id === message.author.id
+          && interaction.message.id === m.id,
         time: minutes(1)
       }).catch(() => null)
 
@@ -106,8 +106,9 @@ export class kCommand extends Command {
     const rejected = settled.filter((p): p is PromiseRejectedResult => p.status === 'rejected')
 
     let description = ''
-    if (success.length > 0)
+    if (success.length > 0) {
       description += `${bold('Success:')}\n`
+    }
 
     while (success.length !== 0 && description.length < maxDescriptionLength) {
       const { value } = success.shift()!
@@ -119,8 +120,9 @@ export class kCommand extends Command {
       description += line
     }
 
-    if (rejected.length > 0 && description.length + `\n\n${bold('Rejected!')}\n`.length <= maxDescriptionLength)
+    if (rejected.length > 0 && description.length + `\n\n${bold('Rejected!')}\n`.length <= maxDescriptionLength) {
       description += `\n${bold('Rejected!')}\n`
+    }
 
     while (rejected.length !== 0 && description.length < maxDescriptionLength) {
       const { reason } = rejected.shift()! as { reason: Error }

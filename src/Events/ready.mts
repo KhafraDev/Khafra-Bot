@@ -4,7 +4,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { validSnowflake } from '#khaf/utility/Mentions.mjs'
-import { Events, type Client } from 'discord.js'
+import { type Client, Events } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../config.json')>(join(cwd, 'config.json'))

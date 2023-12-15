@@ -7,11 +7,11 @@ import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
 
 interface IxKCD {
-    title: string
-    link: string
-    description: string
-    pubDate: string
-    guid: string
+  title: string
+  link: string
+  description: string
+  pubDate: string
+  guid: string
 }
 
 const rss = new RSSReader<IxKCD>('https://xkcd.com/rss.xml')

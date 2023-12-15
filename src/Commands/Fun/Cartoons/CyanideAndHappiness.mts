@@ -9,12 +9,12 @@ import type { Message } from 'discord.js'
 import { decodeXML } from 'entities'
 
 interface ICyanideAndHappiness {
-    title: string
-    link: string
-    description: string
-    category: string
-    guid: string
-    pubDate: string
+  title: string
+  link: string
+  description: string
+  category: string
+  guid: string
+  pubDate: string
 }
 
 const rss = new RSSReader<ICyanideAndHappiness>('https://explosm-1311.appspot.com/')

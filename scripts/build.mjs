@@ -1,5 +1,5 @@
-import { rm } from 'fs/promises';
+import { rm } from 'fs/promises'
 
 await rm('./build/', {
-    recursive: true
-}).catch(() => {});
+  recursive: true
+}).catch(() => {})

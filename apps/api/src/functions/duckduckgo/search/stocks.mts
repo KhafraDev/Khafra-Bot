@@ -27,8 +27,8 @@ export const getStockInfo = async (params: URLSearchParams): Promise<Response> =
   const intraday = new URLSearchParams({ action: 'intraday', ...search }).toString()
 
   const [response1, response2] = await Promise.all([
-    fetch(`${routes.stocks}?${quote}`).then(r => r.json()),
-    fetch(`${routes.stocks}?${intraday}`).then(r => r.json())
+    fetch(`${routes.stocks}?${quote}`).then((r) => r.json()),
+    fetch(`${routes.stocks}?${intraday}`).then((r) => r.json())
   ])
 
   if (!stockQuote.is(response1)) {

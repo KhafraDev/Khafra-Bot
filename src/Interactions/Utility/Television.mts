@@ -46,7 +46,7 @@ export class kInteraction extends Interactions {
       description: tv.overview,
       footer: { text: 'Data provided by https://www.themoviedb.org/' },
       fields: [
-        { name: bold('Genres:'), value: tv.genres.map(g => g.name).join(', '), inline: true },
+        { name: bold('Genres:'), value: tv.genres.map((g) => g.name).join(', '), inline: true },
         { name: bold('Status:'), value: tv.status, inline: true },
         {
           name: bold('Premiered:'),

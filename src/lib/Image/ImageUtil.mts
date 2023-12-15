@@ -61,7 +61,7 @@ export const ImageUtil = {
       '.webp'
     ]
 
-    return imageExts.some(ext => extension.startsWith(ext))
+    return imageExts.some((ext) => extension.startsWith(ext))
   },
 
   centerImage (

@@ -27,8 +27,7 @@ const dashUUID = (uuid: string): string => {
   return `${uuid.slice(0, 8)}-${uuid.slice(8, 12)}-${uuid.slice(12, 16)}-${uuid.slice(16, 20)}-${uuid.slice(20)}`
 }
 
-const missingCapeWarning =
-	'⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
+const missingCapeWarning = '⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
 
 export class kSubCommand extends InteractionSubCommand {
   constructor () {
@@ -54,7 +53,7 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const buffer = await this.image([
-      ...capes.map<Cape>(cape => ({ url: cape, type: 'mojang' })),
+      ...capes.map<Cape>((cape) => ({ url: cape, type: 'mojang' })),
       { url: `http://s.optifine.net/capes/${uuid.name}.png`, type: 'optifine' },
       { url: `https://dl.labymod.net/capes/${dashUUID(uuid.id)}`, type: 'labymod' }
     ])
@@ -117,7 +116,7 @@ export class kSubCommand extends InteractionSubCommand {
           : [2, 2, 20, 32]
 
         b = await transformer.crop(...args).png()
-      } else if (type === 'labymod') { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+      } else if (type === 'labymod') {
         const { width, height } = await transformer.metadata()
 
         b = await transformer.crop(0, 0, width / 2, height).png()

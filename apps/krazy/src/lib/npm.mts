@@ -49,21 +49,21 @@ interface Package {
   }>
   readme: string
   maintainers: {
-      name: string
-      email: string
+    name: string
+    email: string
   }[]
   time?: Record<string, string>
   homepage?: string
   keywords: string[]
   repository: {
-      type: string
-      url: string
+    type: string
+    url: string
   }
   author?: {
-      name: string
+    name: string
   }
   bugs: {
-      url: string
+    url: string
   }
   license: string
   readmeFilename: string

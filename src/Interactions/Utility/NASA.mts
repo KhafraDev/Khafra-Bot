@@ -7,9 +7,9 @@ import { hideLinkEmbed } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type InteractionUpdateOptions
 } from 'discord.js'
@@ -106,9 +106,9 @@ export class kInteraction extends Interactions {
       idle: minutes(3),
       message: reply,
       filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+        i.isButton()
+        && interaction.user.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

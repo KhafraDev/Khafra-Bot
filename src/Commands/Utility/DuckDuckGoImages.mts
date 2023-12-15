@@ -4,9 +4,9 @@ import { logger } from '#khaf/Logger'
 import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Components.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { hideLinkEmbed } from '@discordjs/builders'
-import { s, type InferType } from '@sapphire/shapeshift'
+import { type InferType, s } from '@sapphire/shapeshift'
 import { GuildNSFWLevel } from 'discord-api-types/v10'
-import { InteractionCollector, type ButtonInteraction, type Message, type MessageReplyOptions } from 'discord.js'
+import { type ButtonInteraction, InteractionCollector, type Message, type MessageReplyOptions } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
 import { env } from 'node:process'
@@ -35,7 +35,6 @@ const SafeSearchType = {
   OFF: -2
 } as const
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getOptions = (images: InferType<typeof imageSchema>, page: number, id: string) => {
   const image = images.results[page]
 
@@ -68,7 +67,7 @@ export class kCommand extends Command {
   }
 
   async init (message: Message, { content }: Arguments): Promise<MessageReplyOptions | void> {
-    let safeSearch: typeof SafeSearchType[keyof typeof SafeSearchType]
+    let safeSearch: typeof SafeSearchType[keyof typeof SafeSearchType] = SafeSearchType.MODERATE
 
     if (message.guild) {
       switch (message.guild.nsfwLevel) {
@@ -116,9 +115,9 @@ export class kCommand extends Command {
       idle: minutes(30),
       message: reply,
       filter: (i) =>
-        i.isButton() &&
-        message.author.id === i.user.id &&
-        i.customId.endsWith(id)
+        i.isButton()
+        && message.author.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

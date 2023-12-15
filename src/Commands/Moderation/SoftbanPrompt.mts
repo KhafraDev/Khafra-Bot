@@ -7,7 +7,7 @@ import { days, parseStrToMs, seconds } from '#khaf/utility/ms.mjs'
 import { plural } from '#khaf/utility/String.mjs'
 import { bold } from '@discordjs/builders'
 import { s } from '@sapphire/shapeshift'
-import { PermissionFlagsBits, type APIEmbed, type ComponentType } from 'discord-api-types/v10'
+import { type APIEmbed, type ComponentType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
 const schema = s.number.int.greaterThanOrEqual(0).greaterThanOrEqual(7)
@@ -16,8 +16,8 @@ export class kCommand extends Command {
   constructor () {
     super(
       [
-        'Softban a member (bans and instantly unbans them; clearing recent messages).\n' +
-                'Will prompt you to confirm before soft-banning them.',
+        'Softban a member (bans and instantly unbans them; clearing recent messages).\n'
+        + 'Will prompt you to confirm before soft-banning them.',
         '@user for a good reason',
         '@user bye!',
         '239566240987742220'
@@ -51,21 +51,23 @@ export class kCommand extends Command {
 
     const msg = await message.reply({
       embeds: [
-        Embed.ok(`
+        Embed.ok(
+          `
         Are you sure you want to soft-ban ${user}? 
 
-        This will delete ${clear} day${plural(clear)} worth of messages from them, ` +
-        `but they ${bold('will be')} allowed to rejoin the guild.
-        `)
+        This will delete ${clear} day${plural(clear)} worth of messages from them, `
+            + `but they ${bold('will be')} allowed to rejoin the guild.
+        `
+        )
       ],
       components: [row]
     })
 
     const button = await msg.awaitMessageComponent<ComponentType.Button>({
       filter: (interaction) =>
-        ['approve', 'deny'].includes(interaction.customId) &&
-        interaction.user.id === message.author.id &&
-        interaction.message.id === msg.id,
+        ['approve', 'deny'].includes(interaction.customId)
+        && interaction.user.id === message.author.id
+        && interaction.message.id === msg.id,
       time: seconds(20)
     }).catch(() => null)
 
@@ -74,11 +76,12 @@ export class kCommand extends Command {
         embeds: [Embed.error(`Didn't get confirmation to soft-ban ${user}!`)],
         components: []
       })
-    } else if (button.customId === 'deny')
+    } else if (button.customId === 'deny') {
       return void button.update({
         embeds: [Embed.error(`${user} gets off lucky... this time (command was canceled)!`)],
         components: []
       })
+    }
 
     await button.deferUpdate()
 

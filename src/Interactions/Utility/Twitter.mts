@@ -59,10 +59,9 @@ export class kInteraction extends Interactions {
       }
     }
 
-    /* eslint-disable */
-
     const id = /\/(\d+)$/.exec(pathname)![1]
     const api = await this.#scraper.getTweetAPILink(id)
+    // biome-ignore lint/suspicious/noExplicitAny:
     const body: any = JSON.parse((await api.bodyPromise).toString('utf-8'))
     const media: string[] = []
 
@@ -76,7 +75,7 @@ export class kInteraction extends Interactions {
     for (const mediaItem of body.mediaDetails) {
       if (mediaItem.type === 'animated_gif' || mediaItem.type === 'video') {
         const mp4 = mediaItem.video_info.variants.find(
-          (v: any) => v.content_type === 'video/mp4'
+          (v: { content_type: unknown }) => v.content_type === 'video/mp4'
         ) ?? mediaItem.video_info.variants[0]
 
         media.push(mp4.url)
@@ -84,8 +83,6 @@ export class kInteraction extends Interactions {
         media.push(mediaItem.media_url_https)
       }
     }
-
-    /* eslint-enable */
 
     return {
       embeds: [

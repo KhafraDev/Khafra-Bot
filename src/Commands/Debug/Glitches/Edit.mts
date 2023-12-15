@@ -3,7 +3,7 @@ import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 
-const symbol = String.fromCodePoint(Number.parseInt('202B', 16))
+const symbol = String.fromCodePoint(0x202B)
 const clean = 'The edit button won\'t be where you expect it to be!'
 const edited = `The edit button is right there -> ${symbol} !Over here ->`
 

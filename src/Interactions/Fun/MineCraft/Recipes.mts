@@ -1,9 +1,9 @@
 import { InteractionSubCommand } from '#khaf/Interaction'
-import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
+import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { assets } from '#khaf/utility/Constants/Path.mjs'
+import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { readdirSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
-import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 
 let recipeImages: string[] | undefined
 

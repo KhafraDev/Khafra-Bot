@@ -1,11 +1,12 @@
 import { Interactions } from '#khaf/Interaction'
-import * as util from '#khaf/utility/util.mjs'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
+import * as util from '#khaf/utility/util.mjs'
 import { inlineCode } from '@discordjs/builders'
 import {
   ApplicationCommandOptionType,
   PermissionFlagsBits,
-  RESTJSONErrorCodes, type RESTPostAPIApplicationCommandsJSONBody
+  RESTJSONErrorCodes,
+  type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, DiscordAPIError, InteractionReplyOptions } from 'discord.js'
 

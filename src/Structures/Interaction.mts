@@ -10,10 +10,10 @@ import type {
 interface InteractionOptions {
   defer?: boolean
   ownerOnly?: boolean
-	/**
-	 * If the command should not be deployed automatically.
-	 */
-	deploy?: boolean
+  /**
+   * If the command should not be deployed automatically.
+   */
+  deploy?: boolean
 }
 
 interface SubcommandOptions {
@@ -26,8 +26,7 @@ type HandlerReturn =
   | null
   | void
 
-type InteractionData =
-  | RESTPostAPIApplicationCommandsJSONBody
+type InteractionData = RESTPostAPIApplicationCommandsJSONBody
 
 export class Interactions {
   #id: APIApplicationCommand['id'] | undefined
@@ -38,9 +37,8 @@ export class Interactions {
   ) {}
 
   init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn {
-    const subcommand =
-      interaction.options.getSubcommandGroup(false) ??
-      interaction.options.getSubcommand()
+    const subcommand = interaction.options.getSubcommandGroup(false)
+      ?? interaction.options.getSubcommand()
     const subcommandName = `${this.data.name}-${subcommand}`
 
     if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {

@@ -14,10 +14,9 @@ import type { Message } from 'discord.js'
 
 const MAX_SECS = parseStrToMs('6h') / 1000
 const schema = s.number.greaterThanOrEqual(0).lessThanOrEqual(MAX_SECS)
-const perms =
-    PermissionFlagsBits.ViewChannel |
-    PermissionFlagsBits.SendMessages |
-    PermissionFlagsBits.EmbedLinks
+const perms = PermissionFlagsBits.ViewChannel
+  | PermissionFlagsBits.SendMessages
+  | PermissionFlagsBits.EmbedLinks
 
 export class kCommand extends Command {
   constructor () {
@@ -77,8 +76,9 @@ export class kCommand extends Command {
       const channel = message.guild.channels.cache.get(settings.mod_log_channel)
       const me = message.guild.members.me ?? await message.guild.members.fetchMe()
 
-      if (!isText(channel) || !channel.permissionsFor(me).has(perms))
+      if (!isText(channel) || !channel.permissionsFor(me).has(perms)) {
         return
+      }
 
       return void channel.send({
         embeds: [

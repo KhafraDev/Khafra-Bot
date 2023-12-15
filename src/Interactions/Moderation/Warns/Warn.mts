@@ -2,18 +2,18 @@ import { sql } from '#khaf/database/Postgres.mjs'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Warning } from '#khaf/types/KhafraBot.js'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
-import * as util from '#khaf/utility/util.mjs'
 import { hierarchy } from '#khaf/utility/Permissions.mjs'
 import { plural } from '#khaf/utility/String.mjs'
+import * as util from '#khaf/utility/util.mjs'
 import { bold, inlineCode } from '@discordjs/builders'
 import { PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { GuildMember } from 'discord.js'
 
 interface WarnInsert {
-    insertedid: Warning['id']
-    insertedpoints: Warning['k_points']
-    k_ts: Warning['k_ts']
+  insertedid: Warning['id']
+  insertedpoints: Warning['k_points']
+  k_ts: Warning['k_ts']
 }
 
 export class kSubCommand extends InteractionSubCommand {
@@ -34,14 +34,13 @@ export class kSubCommand extends InteractionSubCommand {
 
     const points = interaction.options.getInteger('points', true)
     const reason = interaction.options.getString('reason') ?? undefined
-    const member =
-      interaction.options.getMember('member') ??
-      interaction.options.getUser('member', true)
+    const member = interaction.options.getMember('member')
+      ?? interaction.options.getUser('member', true)
 
     if (member instanceof GuildMember) {
       if (
-        member.permissions.has(PermissionFlagsBits.KickMembers) ||
-        member.permissions.has(PermissionFlagsBits.Administrator)
+        member.permissions.has(PermissionFlagsBits.KickMembers)
+        || member.permissions.has(PermissionFlagsBits.Administrator)
       ) {
         return {
           content: '❌ This member cannot be warned!',
@@ -116,7 +115,6 @@ export class kSubCommand extends InteractionSubCommand {
           .then(() => true, () => false)
       }
 
-
       if (!kicked) {
         return {
           content: `✅ Member was warned (${inlineCode(k_id)}) but an error prevented me from kicking them.`,
@@ -125,15 +123,13 @@ export class kSubCommand extends InteractionSubCommand {
       }
 
       await interaction.editReply({
-        content:
-          `${member} was automatically kicked from the server for having ` +
-          `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
+        content: `${member} was automatically kicked from the server for having `
+          + `${totalPoints.toLocaleString()} warning point${plural(totalPoints)} (#${inlineCode(k_id)}).`
       })
     } else {
       await interaction.editReply({
-        content:
-          `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).` +
-          ` Member has ${totalPoints.toLocaleString()} points total.`
+        content: `Gave ${member} ${points.toLocaleString()} warning point${plural(points)} (${inlineCode(k_id)}).`
+          + ` Member has ${totalPoints.toLocaleString()} points total.`
       })
     }
 

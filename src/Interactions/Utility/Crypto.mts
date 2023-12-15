@@ -63,7 +63,8 @@ export class kInteraction extends Interactions {
         field('All Time High:', currency.market_data.ath.usd),
         field(
           'All Time High Change:',
-          `${g.format(currency.market_data.ath_change_percentage.usd)}%`),
+          `${g.format(currency.market_data.ath_change_percentage.usd)}%`
+        ),
         field('All Time High Date:', time(new Date(currency.market_data.ath_date.usd))),
 
         field('All Time Low:', currency.market_data.atl.usd),

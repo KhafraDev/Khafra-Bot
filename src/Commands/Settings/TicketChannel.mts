@@ -11,8 +11,8 @@ export class kCommand extends Command {
   constructor () {
     super(
       [
-        'Select a channel to create private ticket threads on (if the server has enough boosts), ' +
-                'or a category channel to create ticket channels in.',
+        'Select a channel to create private ticket threads on (if the server has enough boosts), '
+        + 'or a category channel to create ticket channels in.',
         '866022233330810930 [channel id]',
         '#general [channel mention]'
       ],
@@ -39,9 +39,8 @@ export class kCommand extends Command {
     }
 
     /** guild can use private threads */
-    const privateThreads =
-      message.guild.premiumTier !== GuildPremiumTier.None &&
-      message.guild.premiumTier !== GuildPremiumTier.Tier1
+    const privateThreads = message.guild.premiumTier !== GuildPremiumTier.None
+      && message.guild.premiumTier !== GuildPremiumTier.Tier1
 
     const ticketChannel = await getMentions(message, 'channels')
 

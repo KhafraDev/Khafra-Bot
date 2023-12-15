@@ -1,11 +1,11 @@
 import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import { templates } from '#khaf/utility/Constants/Path.mjs'
+import { once } from '#khaf/utility/Memoize.mjs'
 import { createCanvas, Image } from '@napi-rs/canvas'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
-import { once } from '#khaf/utility/Memoize.mjs'
 
 const lazyImage = once(() => {
   const image = new Image()

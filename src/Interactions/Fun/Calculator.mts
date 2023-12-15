@@ -10,9 +10,8 @@ import type { ButtonInteraction, ChatInputCommandInteraction } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import { randomUUID } from 'node:crypto'
 
-const squiggles =
-    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~' +
-    '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
+const squiggles = '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
+  + '\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~\\~'
 
 const isNumber = (char: string): boolean => {
   const code = char.charCodeAt(0)
@@ -80,10 +79,10 @@ export class kInteraction extends Interactions {
       interactionType: InteractionType.MessageComponent,
       idle: seconds(30),
       filter: (i) =>
-        i.isButton() &&
-        interaction.user.id === i.user.id &&
-        int.id === i.message.interaction?.id &&
-        i.customId.endsWith(id)
+        i.isButton()
+        && interaction.user.id === i.user.id
+        && int.id === i.message.interaction?.id
+        && i.customId.endsWith(id)
     })
 
     const equation: string[] = []

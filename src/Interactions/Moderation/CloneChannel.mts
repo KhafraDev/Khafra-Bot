@@ -7,10 +7,10 @@ import {
   ApplicationCommandOptionType,
   ChannelType,
   PermissionFlagsBits,
-  Routes,
   type RESTPostAPIApplicationCommandsJSONBody,
   type RESTPostAPIGuildChannelJSONBody,
-  type RESTPostAPIGuildChannelResult
+  type RESTPostAPIGuildChannelResult,
+  Routes
 } from 'discord-api-types/v10'
 import type {
   ChatInputCommandInteraction,
@@ -21,9 +21,9 @@ import type {
 } from 'discord.js'
 
 type CloneableChannel =
-    | TextChannel
-    | NewsChannel
-    | VoiceChannel
+  | TextChannel
+  | NewsChannel
+  | VoiceChannel
 
 export class kInteraction extends Interactions {
   constructor () {
@@ -68,7 +68,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -88,7 +89,7 @@ export class kInteraction extends Interactions {
       rate_limit_per_user: !isVoice && !isNews ? channel.rateLimitPerUser : undefined,
       position: channel.rawPosition,
       permission_overwrites: channel.permissionOverwrites.cache.toJSON().map(
-        overwrite => ({
+        (overwrite) => ({
           id: overwrite.id,
           type: overwrite.type,
           allow: overwrite.allow.bitfield.toString(),
@@ -100,43 +101,43 @@ export class kInteraction extends Interactions {
       default_auto_archive_duration: !isVoice ? channel.defaultAutoArchiveDuration : undefined
     }
 
-        await interaction.client.rest.post(
-          Routes.guildChannels(interaction.guild.id),
-          { body }
-        ) as RESTPostAPIGuildChannelResult
+    await interaction.client.rest.post(
+      Routes.guildChannels(interaction.guild.id),
+      { body }
+    ) as RESTPostAPIGuildChannelResult
 
-        const embed = Embed.json({
-          color: colors.ok,
-          description: `✅ Successfully cloned ${channel.name}` + (deleteAfterwards
-            ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
-            : '!')
-        })
+    const embed = Embed.json({
+      color: colors.ok,
+      description: `✅ Successfully cloned ${channel.name}` + (deleteAfterwards
+        ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
+        : '!')
+    })
 
-        // The channel being deleted could be the current channel, which would cause
-        // an error if we tried to response to the interaction. Therefore, send the
-        // reply *before* deleting the channel.
-        await interaction.editReply({ embeds: [embed] })
+    // The channel being deleted could be the current channel, which would cause
+    // an error if we tried to response to the interaction. Therefore, send the
+    // reply *before* deleting the channel.
+    await interaction.editReply({ embeds: [embed] })
 
-        if (deleteAfterwards) {
-          // https://discord.com/developers/docs/resources/channel#deleteclose-channel
-          await interaction.client.rest.delete(Routes.channel(channel.id))
-        }
+    if (deleteAfterwards) {
+      // https://discord.com/developers/docs/resources/channel#deleteclose-channel
+      await interaction.client.rest.delete(Routes.channel(channel.id))
+    }
 
-        // If the channel is private, we shouldn't broadcast
-        // information about it.
-        const everyone = channel.guild.roles.everyone.id
+    // If the channel is private, we shouldn't broadcast
+    // information about it.
+    const everyone = channel.guild.roles.everyone.id
 
-        if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
-          const embed = Embed.json({
-            color: colors.ok,
-            description: `
+    if (channel.permissionsFor(everyone)?.has(PermissionFlagsBits.ViewChannel)) {
+      const embed = Embed.json({
+        color: colors.ok,
+        description: `
               ${bold('Channel:')} ${channel}
               ${bold('Staff:')} ${interaction.user}
               ${bold('Time:')} ${time(new Date())}`,
-            title: 'Channel Cloned'
-          })
+        title: 'Channel Cloned'
+      })
 
-          return util.postToModLog(interaction, [embed])
-        }
+      return util.postToModLog(interaction, [embed])
+    }
   }
 }

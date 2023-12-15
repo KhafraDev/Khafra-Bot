@@ -1,10 +1,10 @@
 import { sql } from '#khaf/database/Postgres.mjs'
 import { InteractionSubCommand } from '#khaf/Interaction'
 import type { Warning } from '#khaf/types/KhafraBot.js'
+import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { plural } from '#khaf/utility/String.mjs'
 import { bold, inlineCode, time } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 
 interface Total {
   total_points: string
@@ -26,9 +26,8 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    const member =
-      interaction.options.getMember('member') ??
-      interaction.options.getUser('member', true)
+    const member = interaction.options.getMember('member')
+      ?? interaction.options.getUser('member', true)
 
     const id = 'id' in member ? member.id : null
 
@@ -61,9 +60,8 @@ export class kSubCommand extends InteractionSubCommand {
 
     const { dates, ids, points, total_points } = rows[0]
     const mapped = ids.map<MappedWarning>((id, idx) => [id, dates[idx], points[idx]])
-    let content =
-      `✅ ${member} has ${ids.length.toLocaleString()} warnings ` +
-      `with ${Number(total_points).toLocaleString()} warning points total.\n`
+    let content = `✅ ${member} has ${ids.length.toLocaleString()} warnings `
+      + `with ${Number(total_points).toLocaleString()} warning points total.\n`
 
     // embeds can have a maximum of 25 fields
     for (const [id, date, p] of mapped) {

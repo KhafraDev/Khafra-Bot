@@ -1,9 +1,9 @@
+import { translate as googleTranslate } from '#khaf/functions/translate/google.mjs'
+import { translate as libreTranslate } from '#khaf/functions/translate/libretranslate.mjs'
 import { Interactions } from '#khaf/Interaction'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { ApplicationCommandOptionType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
-import { translate as libreTranslate } from '#khaf/functions/translate/libretranslate.mjs'
-import { translate as googleTranslate } from '#khaf/functions/translate/google.mjs'
 
 export class kInteraction extends Interactions {
   constructor () {

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.4.1/schema.json",
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "noNonNullAssertion": "off",
+        "noUselessElse": "off",
+        "noParameterAssign": "off"
+      },
+      "suspicious": {
+        "noConfusingVoidType": "off",
+        "noAssignInExpressions": "off"
+      },
+      "complexity": {
+        "noUselessTypeConstraint": "off"
+      }
+    },
+    "ignore": ["build"]
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "json": {
+    "formatter": {
+      "enabled": false
+    },
+    "parser": {
+      "allowComments": true
+    }
+  }
+}

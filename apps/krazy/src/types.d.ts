@@ -11,13 +11,13 @@ interface Options {
 }
 
 export interface InteractionCommand {
-	data: RESTPostAPIApplicationCommandsJSONBody
-  run (
+  data: RESTPostAPIApplicationCommandsJSONBody
+  run(
     interaction: APIApplicationCommandInteraction,
     options: Options
   ): Promise<APIInteractionResponse>
 }
 
 export interface InteractionHandler<T extends APIInteraction> {
-  run (interaction: T): Promise<APIInteractionResponse | void>
+  run(interaction: T): Promise<APIInteractionResponse | void>
 }

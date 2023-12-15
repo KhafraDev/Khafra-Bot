@@ -1,5 +1,5 @@
 import { once } from '#khaf/utility/Memoize.mjs'
-import { s, type InferType } from '@sapphire/shapeshift'
+import { type InferType, s } from '@sapphire/shapeshift'
 import { stringify } from 'node:querystring'
 import { Client } from 'undici'
 

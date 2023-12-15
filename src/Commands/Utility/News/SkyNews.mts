@@ -2,10 +2,10 @@ import { Command } from '#khaf/Command'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
-import { hours } from '#khaf/utility/ms.mjs'
 
 const settings = {
   rss: 'http://feeds.skynews.com/feeds/rss/world.xml',
@@ -15,15 +15,15 @@ const settings = {
 } as const
 
 interface ISkyNews {
-    title: string
-    link: string
-    description: string
-    pubDate: string
-    guid: string
-    enclosure: string
-    'media:description': string
-    'media:thumbnail': string
-    'media:content': string
+  title: string
+  link: string
+  description: string
+  pubDate: string
+  guid: string
+  enclosure: string
+  'media:description': string
+  'media:thumbnail': string
+  'media:content': string
 }
 
 const rss = new RSSReader<ISkyNews>(settings.rss)
@@ -55,7 +55,7 @@ export class kCommand extends Command {
     return Embed.json({
       color: colors.ok,
       description: posts
-        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .map((p, i) => `[${i + 1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
         .slice(0, maxDescriptionLength),
       author: settings.author

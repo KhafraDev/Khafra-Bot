@@ -2,7 +2,7 @@ import { colors } from '#/lib/constants.mjs'
 import { cratesio } from '#/lib/cratesio.mjs'
 import { time } from '#/lib/util.mjs'
 import type { InteractionCommand } from '#/types'
-import { ApplicationCommandOptionType, InteractionResponseType, type APIEmbedField } from 'discord-api-types/v10'
+import { type APIEmbedField, ApplicationCommandOptionType, InteractionResponseType } from 'discord-api-types/v10'
 
 const logo = 'https://crates.io/assets/Cargo-Logo-Small.png'
 
@@ -31,7 +31,7 @@ export const command: InteractionCommand = {
           embeds: [
             {
               color: colors.error,
-              description: result.errors.map(err => err.detail).join(', ')
+              description: result.errors.map((err) => err.detail).join(', ')
             }
           ]
         }
@@ -85,17 +85,19 @@ export const command: InteractionCommand = {
                 value: `[${repository.split('//').slice(1).join('//')}](${repository})`,
                 inline: true
               },
-              homepage ? {
-                name: 'Homepage:',
-                value: `[${homepage.split('//').slice(1).join('//')}](${homepage})`,
-                inline: true
-              } : undefined,
+              homepage
+                ? {
+                  name: 'Homepage:',
+                  value: `[${homepage.split('//').slice(1).join('//')}](${homepage})`,
+                  inline: true
+                }
+                : undefined,
               {
                 name: 'All-Time Downloads:',
                 value: downloads.toLocaleString(interaction.locale),
                 inline: true
               }
-            ].filter(field => field !== undefined) as APIEmbedField[]
+            ].filter((field) => field !== undefined) as APIEmbedField[]
           }
         ]
       }

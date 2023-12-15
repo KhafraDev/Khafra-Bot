@@ -69,7 +69,8 @@ export class kCommand extends Command {
     })
 
     // days of messages to clear
-    let clear = 7, usedMs = false
+    let clear = 7
+    let usedMs = false
 
     if (cli.days !== undefined || cli.time !== undefined) {
       const time = Number(cli.days ?? cli.time)
@@ -96,7 +97,7 @@ export class kCommand extends Command {
       // ban @user reason here -> reason here
       reason = args.slice(2).join(' ')
     } else {
-      const idx = args.findIndex(a => a.startsWith('--time') || a.startsWith('--days'))
+      const idx = args.findIndex((a) => a.startsWith('--time') || a.startsWith('--days'))
       let r = ''
 
       if (args.slice(idx + 2).length === 0 && idx !== -1) {

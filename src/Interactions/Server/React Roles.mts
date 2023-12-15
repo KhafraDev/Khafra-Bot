@@ -82,11 +82,12 @@ export class kInteraction extends Interactions {
         ephemeral: true
       }
     } else if (
-      !interaction.member ||
-      !interaction.guild?.members.me?.permissions.has(defaultPerms)
+      !interaction.member
+      || !interaction.guild?.members.me?.permissions.has(defaultPerms)
     ) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -140,9 +141,9 @@ export class kInteraction extends Interactions {
         ephemeral: true
       }
     } else if (
-      !(role instanceof Role) ||
-      !(interaction.member instanceof GuildMember) ||
-      !(interaction.member.roles instanceof GuildMemberRoleManager)
+      !(role instanceof Role)
+      || !(interaction.member instanceof GuildMember)
+      || !(interaction.member.roles instanceof GuildMemberRoleManager)
     ) {
       return {
         content:
@@ -150,18 +151,18 @@ export class kInteraction extends Interactions {
         ephemeral: true
       }
     } else if (
-      role.id === interaction.guild.members.me.roles.highest.id ||
+      role.id === interaction.guild.members.me.roles.highest.id
       // Negative if this role's position is lower (param is higher),
       // positive number if this one is higher (other's is lower), 0 if equal
-      role.comparePositionTo(interaction.guild.members.me.roles.highest) > 0
+      || role.comparePositionTo(interaction.guild.members.me.roles.highest) > 0
     ) {
       return {
         content: '❌ I do not have enough permission to give others this role!',
         ephemeral: true
       }
     } else if (
-      role.id === interaction.member.roles.highest.id ||
-            role.comparePositionTo(interaction.member.roles.highest) > 0
+      role.id === interaction.member.roles.highest.id
+      || role.comparePositionTo(interaction.member.roles.highest) > 0
     ) {
       return {
         content: '❌ You cannot give this role out to others!',

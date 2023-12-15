@@ -7,8 +7,8 @@ export class kCommand extends Command {
   constructor () {
     super(
       [
-        'Ghost ping yourself! Bug [here](https://bugs.discord.com/T812#28651); ' +
-        'message [here](https://paste.ee/p/4IcZq).'
+        'Ghost ping yourself! Bug [here](https://bugs.discord.com/T812#28651); '
+        + 'message [here](https://paste.ee/p/4IcZq).'
       ],
       {
         name: 'hacks:ghostping',

@@ -8,8 +8,8 @@ import { hyperlink } from '@discordjs/builders'
 import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import { ApplicationCommandOptionType } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions,
   type StringSelectMenuInteraction
 } from 'discord.js'
@@ -68,7 +68,7 @@ export class kInteraction extends Interactions {
 
     for (const track of tracks) {
       const artistNames = track.artists
-        .map(a => a.name)
+        .map((a) => a.name)
         .join(' and ')
         .trim()
 
@@ -107,13 +107,13 @@ export class kInteraction extends Interactions {
       message: reply,
       time: minutes(5),
       filter: (i) =>
-        i.isStringSelectMenu() &&
-        interaction.user.id === i.user.id &&
-        i.customId.endsWith(id)
+        i.isStringSelectMenu()
+        && interaction.user.id === i.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {
-      const track = tracks.find(track => track.id === i.values[0])
+      const track = tracks.find((track) => track.id === i.values[0])
       assert(track)
       const image = track.album.images.sort((a, b) => a.height - b.height)[0]
 
@@ -129,7 +129,7 @@ export class kInteraction extends Interactions {
               {
                 name: 'Artists',
                 value: track.artists
-                  .map(track => hyperlink(track.name, track.external_urls.spotify))
+                  .map((track) => hyperlink(track.name, track.external_urls.spotify))
                   .join('\n'),
                 inline: true
               },

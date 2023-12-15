@@ -59,9 +59,9 @@ export const infixToPostfix = (expression: string): string => {
   for (const token of tokens) {
     if (Object.hasOwn(operators, token)) {
       while (
-        operatorStack.length > 0 &&
-        Object.hasOwn(operators, operatorStack[operatorStack.length - 1]) &&
-        operators[operatorStack[operatorStack.length - 1]].precedence >= operators[token].precedence
+        operatorStack.length > 0
+        && Object.hasOwn(operators, operatorStack[operatorStack.length - 1])
+        && operators[operatorStack[operatorStack.length - 1]].precedence >= operators[token].precedence
       ) {
         postfix.push(operatorStack.pop()!)
       }

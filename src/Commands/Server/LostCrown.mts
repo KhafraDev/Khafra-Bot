@@ -23,18 +23,16 @@ export class kCommand extends Command {
   }
 
   init (message: Message<true>): APIEmbed {
-    let desc =
-      'For the server owner to regain the crown icon, the following roles must ' +
-      'have admin perms removed, or must be unhoisted:\n'
-    const next =
-      'It is recommended to have a role with admin perms that is not hoisted, ' +
-      'and have separate role(s) without perms that are hoisted!'
+    let desc = 'For the server owner to regain the crown icon, the following roles must '
+      + 'have admin perms removed, or must be unhoisted:\n'
+    const next = 'It is recommended to have a role with admin perms that is not hoisted, '
+      + 'and have separate role(s) without perms that are hoisted!'
     let amount = 0
 
     for (const role of message.guild.roles.cache.values()) {
       if (
-        role.hoist &&
-        message.channel.permissionsFor(role).has(PermissionFlagsBits.Administrator)
+        role.hoist
+        && message.channel.permissionsFor(role).has(PermissionFlagsBits.Administrator)
       ) {
         const line = `${role}\n`
         if (desc.length + next.length + line.length > maxDescriptionLength) break

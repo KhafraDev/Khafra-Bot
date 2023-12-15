@@ -16,7 +16,7 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
   setInterval(() => { // clear out old entries
     for (const [k, v] of m) {
       const now = Date.now()
-      const f = v.filter(d => now - d < ms)
+      const f = v.filter((d) => now - d < ms)
       if (f.length === 0) {
         m.delete(k)
       } else {
@@ -31,7 +31,7 @@ export const cooldown = (max: number, ms: number): (id: string) => boolean => {
       m.set(id, [now])
       return true
     } else {
-      const i = m.get(id)!.filter(d => now - d < ms)
+      const i = m.get(id)!.filter((d) => now - d < ms)
       if (i.length >= max) {
         return false
       } else {

@@ -1,33 +1,33 @@
 {
-    "botOwner": "267774648622645249",
-    "botId": "736802057863823420",
-    "guildId": "503024525076725771",
-    "colors": {
-        "error": "#ff5c5c",
-        "default": "#ffe449",
-        "boost": "#8749a2"
-    },
-    "emoji": {
-        "flags": {
-            "PremiumEarlySupporter": [512, "829468904790687795"],
-            "VerifiedDeveloper": [131072, "829469395239174144"],
-            "HypeSquadOnlineHouse3": [256, "829467250851446797"],
-            "HypeSquadOnlineHouse1": [64, "829468658178719776"],
-            "HypeSquadOnlineHouse2": [128, "829468012599312456"],
-            "Partner": [2, "829464454173163541"],
-            "VerifiedBot": [65536, "829469395239174144"],
-            "BugHunterLevel1": [8, "865406920814100510"],
-            "BugHunterLevel2": [16384, "865405436182134805"],
-            "Staff": [1, "852744525045956648"],
-            "CertifiedModerator": [262144, "1056215078145359902"],
-            "Hypesquad": [4, "865406317640417310"],
-            "ActiveBotDeveloper": [4194304, "1040336159538159709"]
-        }
-    },
-    "interactions": {
-        "mdn": "828993033306505218",
-        "spotify": "1041200507907231757",
-        "twitch": "1041409308736364584",
-        "youtube": "1041411250913018036"
+  "botOwner": "267774648622645249",
+  "botId": "736802057863823420",
+  "guildId": "503024525076725771",
+  "colors": {
+    "error": "#ff5c5c",
+    "default": "#ffe449",
+    "boost": "#8749a2"
+  },
+  "emoji": {
+    "flags": {
+      "PremiumEarlySupporter": [512, "829468904790687795"],
+      "VerifiedDeveloper": [131072, "829469395239174144"],
+      "HypeSquadOnlineHouse3": [256, "829467250851446797"],
+      "HypeSquadOnlineHouse1": [64, "829468658178719776"],
+      "HypeSquadOnlineHouse2": [128, "829468012599312456"],
+      "Partner": [2, "829464454173163541"],
+      "VerifiedBot": [65536, "829469395239174144"],
+      "BugHunterLevel1": [8, "865406920814100510"],
+      "BugHunterLevel2": [16384, "865405436182134805"],
+      "Staff": [1, "852744525045956648"],
+      "CertifiedModerator": [262144, "1056215078145359902"],
+      "Hypesquad": [4, "865406317640417310"],
+      "ActiveBotDeveloper": [4194304, "1040336159538159709"]
     }
+  },
+  "interactions": {
+    "mdn": "828993033306505218",
+    "spotify": "1041200507907231757",
+    "twitch": "1041409308736364584",
+    "youtube": "1041411250913018036"
+  }
 }

@@ -1,7 +1,7 @@
 import { Command } from '#khaf/Command'
 import { Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
-import { s, type InferType } from '@sapphire/shapeshift'
+import { type InferType, s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { format } from 'node:util'
 import { request } from 'undici'
@@ -89,7 +89,7 @@ export class kCommand extends Command {
 
     const stories = [...cache.values()]
     const list = stories
-      .map((s, i) => `[${i+1}]: [${s.title}](${s.url})`)
+      .map((s, i) => `[${i + 1}]: [${s.title}](${s.url})`)
       .join('\n')
 
     return Embed.ok(list)

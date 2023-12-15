@@ -39,8 +39,9 @@ export class kCommand extends Command {
       }
     })
 
-    if (!user)
+    if (!user) {
       return Embed.error('Invalid ID or the user couldn\'t be fetched, sorry! 😕')
+    }
 
     const reason = cli.reason ?? args.slice(1).join(' ')
 

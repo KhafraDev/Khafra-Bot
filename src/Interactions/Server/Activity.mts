@@ -2,17 +2,21 @@ import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { hideLinkEmbed, hyperlink } from '@discordjs/builders'
 import type {
-  APIInvite, RESTPostAPIApplicationCommandsJSONBody,
+  APIInvite,
+  RESTPostAPIApplicationCommandsJSONBody,
   RESTPostAPIChannelInviteJSONBody
 } from 'discord-api-types/v10'
 import {
-  ApplicationCommandOptionType, ChannelType,
-  InviteTargetType, PermissionFlagsBits, Routes
+  ApplicationCommandOptionType,
+  ChannelType,
+  InviteTargetType,
+  PermissionFlagsBits,
+  Routes
 } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
 const Activities = {
-  'Poker': '755827207812677713',
+  Poker: '755827207812677713',
   'Betrayal.io': '773336526917861400',
   'YouTube Together': '755600276941176913',
   'Fishington.io': '814288819477020702',
@@ -20,9 +24,9 @@ const Activities = {
   'Doodle Crew': '878067389634314250',
   'Word Snacks': '879863976006127627',
   'Letter Tile': '879863686565621790',
-  'Awkword': '879863881349087252',
+  Awkword: '879863881349087252',
   'Spell Cast': '852509694341283871',
-  'Checkers': '832013003968348200',
+  Checkers: '832013003968348200',
   // 'Sketchy Artist': '879864070101172255',
   'Putt Party': '832012854282158180'
 } as const
@@ -68,7 +72,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

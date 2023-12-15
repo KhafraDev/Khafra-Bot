@@ -86,7 +86,7 @@ export class kInteraction extends Interactions {
         color: colors.ok,
         description: `
           ${bold('Dependencies')}
-          ${Object.keys(pkg.dependencies).map(k => `[${k}](https://npm.im/${k})`).join(', ')}`,
+          ${Object.keys(pkg.dependencies).map((k) => `[${k}](https://npm.im/${k})`).join(', ')}`,
         fields: [
           { name: bold('Memory:'), value: `${memoryMB.toFixed(2)} MB` },
           { name: bold('Khafra-Bot:'), value: `v${pkg.version}`, inline: true },
@@ -124,7 +124,7 @@ export class kInteraction extends Interactions {
         globalMessages
       } = Stats.stats
 
-      const totalMembers = guilds.map(g => g.memberCount)
+      const totalMembers = guilds.map((g) => g.memberCount)
         .reduce((a, b) => a + b, 0)
         .toLocaleString()
       const totalGuilds = guilds.size.toLocaleString()

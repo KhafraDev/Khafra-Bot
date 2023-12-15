@@ -13,7 +13,7 @@ export class kCommand extends Command {
     super(
       [
         'Upload a paste to a number of different pastebin services!',
-        ...keys.slice(1).map(k => `${k} const bot = KhafraClient;`)
+        ...keys.slice(1).map((k) => `${k} const bot = KhafraClient;`)
       ],
       {
         name: 'pastebin',
@@ -27,17 +27,19 @@ export class kCommand extends Command {
   async init (_message: Message, { content, commandName }: Arguments): Promise<APIEmbed> {
     const command = commandName.toLowerCase()
 
-    if (command === 'pastebin' || content.length == 0)
+    if (command === 'pastebin' || content.length === 0) {
       return Embed.ok(`
       Here is a list of the sites currently supported by this command:
-      ${keys.map(k => inlineCode(k)).join(', ')}
+      ${keys.map((k) => inlineCode(k)).join(', ')}
       `)
+    }
 
     const paste = pasteAliases.get(command)!
     const pasteLink = await paste(content)
 
-    if (!pasteLink)
+    if (!pasteLink) {
       return Embed.error('A server error prevented me from uploading the paste. Try a different server!')
+    }
 
     return Embed.ok(pasteLink)
   }

@@ -5,14 +5,8 @@ import { seconds } from '#khaf/utility/ms.mjs'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import * as util from '#khaf/utility/util.mjs'
 import { bold, time } from '@discordjs/builders'
-import type {
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  ChannelType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
+import type { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
@@ -60,7 +54,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }

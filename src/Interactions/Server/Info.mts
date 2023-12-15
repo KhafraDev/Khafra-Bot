@@ -6,22 +6,23 @@ import { stripIndents } from '#khaf/utility/Template.mjs'
 import { formatApplicationPresence, formatPresence, userflagBitfieldToEmojis } from '#khaf/utility/util.mjs'
 import { bold, inlineCode, italic, quote, time } from '@discordjs/builders'
 import {
-  ApplicationCommandOptionType,
-  InteractionType,
   type APIApplication,
   type APIEmbed,
   type APIEmbedField,
+  ApplicationCommandOptionType,
+  InteractionType,
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
   ApplicationFlagsBitField,
-  GuildMember,
-  InteractionCollector, Role,
-  SnowflakeUtil,
-  User,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
-  type InteractionReplyOptions
+  GuildMember,
+  InteractionCollector,
+  type InteractionReplyOptions,
+  Role,
+  SnowflakeUtil,
+  User
 } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
@@ -54,8 +55,8 @@ export class kInteraction extends Interactions {
       const isGuildMember = option instanceof GuildMember
 
       const user = 'user' in option ? option.user : option
-      const member = isGuildMember ?
-        option
+      const member = isGuildMember
+        ? option
         : await interaction.guild?.members.fetch(option.id).catch(() => null) ?? null
 
       let currentPage: 'user' | 'member' = isGuildMember ? 'member' : 'user'
@@ -94,7 +95,7 @@ export class kInteraction extends Interactions {
           ${formatPresence(member.presence?.activities)}
           
           Roles:
-          ${[...member.roles.cache.filter(r => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
+          ${[...member.roles.cache.filter((r) => r.name !== '@everyone').values()].slice(0, 20).join(', ')}
           `,
         thumbnail: { url: user.displayAvatarURL() },
         fields: [
@@ -139,7 +140,7 @@ export class kInteraction extends Interactions {
           assert(rpcInfo)
 
           const flags = new ApplicationFlagsBitField(rpcInfo.flags).toArray()
-            .map(flag => `• Bot ${formatApplicationPresence(flag)}`)
+            .map((flag) => `• Bot ${formatApplicationPresence(flag)}`)
             .join('\n')
 
           embeds.push(
@@ -188,9 +189,9 @@ export class kInteraction extends Interactions {
         time: minutes(2),
         max: 10,
         filter: (i) =>
-          interaction.user.id === i.user.id &&
-          message.id === i.message.id &&
-          i.customId.endsWith(uuid)
+          interaction.user.id === i.user.id
+          && message.id === i.message.id
+          && i.customId.endsWith(uuid)
       })
 
       for await (const [i] of collector) {

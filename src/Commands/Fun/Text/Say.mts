@@ -9,7 +9,8 @@ export class kCommand extends Command {
     super(
       [
         'Have KhafraBot say something!',
-        'Have a great day!', 'You suck.'
+        'Have a great day!',
+        'You suck.'
       ],
       {
         name: 'say',

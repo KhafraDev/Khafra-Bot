@@ -1,15 +1,15 @@
 import { mdnSelectMenu } from '#/commands/SelectMenu/mdn.mjs'
 import {
-  InteractionResponseType,
-  MessageFlags,
   type APIInteractionResponse,
-  type APIMessageComponentInteraction
+  type APIMessageComponentInteraction,
+  InteractionResponseType,
+  MessageFlags
 } from 'discord-api-types/v10'
 
 export const handleSelectMenu = async (
   interaction: APIMessageComponentInteraction
 ): Promise<APIInteractionResponse | void> => {
-  const { name } = JSON.parse(interaction.data.custom_id) as { name: string, id: string }
+  const { name } = JSON.parse(interaction.data.custom_id) as { name: string; id: string }
 
   switch (name) {
     case 'mdn':

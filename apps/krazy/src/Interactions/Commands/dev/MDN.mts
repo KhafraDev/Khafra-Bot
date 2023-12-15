@@ -81,7 +81,7 @@ export const command: InteractionCommand = {
               name: 'Mozilla Development Network',
               icon_url: logo
             },
-            description: results.map(doc =>
+            description: results.map((doc) =>
               `[${doc.title}](https://developer.mozilla.org/${doc.locale}/docs/${doc.slug}): ${doc.summary}`
             ).join('\n'),
             footer: interaction.user ? { text: `Requested by ${interaction.user.username}` } : undefined,
@@ -98,7 +98,7 @@ export const command: InteractionCommand = {
                   id: interaction.user?.id ?? interaction.channel_id,
                   name: 'mdn'
                 }),
-                options: results.map(result => ({
+                options: results.map((result) => ({
                   label: result.title,
                   value: result.mdn_url
                 }))

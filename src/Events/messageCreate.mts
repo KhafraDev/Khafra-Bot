@@ -49,9 +49,9 @@ export class kEvent implements Event {
     const botManagedRole = guild.roles.botRoleFor(message.client.user)
 
     if (
-      mention !== `<@!${config.botId}>` &&
-      mention !== `<@${config.botId}>` &&
-      (!botManagedRole || mention !== botManagedRole.toString())
+      mention !== `<@!${config.botId}>`
+      && mention !== `<@${config.botId}>`
+      && (!botManagedRole || mention !== botManagedRole.toString())
     ) {
       return
     }
@@ -99,9 +99,8 @@ export class kEvent implements Event {
       const delay = rateLimitSeconds - ((Date.now() - cooldownInfo.added) / seconds(1))
 
       return void message.reply({
-        content:
-          `${upperCase(settings.name)} has a ${rateLimitSeconds} second rate limit! ` +
-          `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
+        content: `${upperCase(settings.name)} has a ${rateLimitSeconds} second rate limit! `
+          + `Please wait ${delay.toFixed(2)} second${plural(Number(delay.toFixed(2)))} to use this command again! ❤️`
       })
     } else {
       rateLimit.rateLimitUser(author.id)
@@ -129,7 +128,7 @@ export class kEvent implements Event {
 
           The command requires ${min} minimum arguments and ${max} max.
           Example(s):
-          ${helpMessage.slice(1).map(c => inlineCode(`${settings.name} ${c || '\u200B'}`.trim())).join('\n')}
+          ${helpMessage.slice(1).map((c) => inlineCode(`${settings.name} ${c || '\u200B'}`.trim())).join('\n')}
           `)
         ]
       })
@@ -140,8 +139,8 @@ export class kEvent implements Event {
     } else if (!_cooldownGuild(guildId)) {
       return void message.reply({ embeds: [Embed.error('Guilds are limited to 30 commands a minute.')] })
     } else if (
-      member === null ||
-      !channel.permissionsFor(member).has(permissions)
+      member === null
+      || !channel.permissionsFor(member).has(permissions)
     ) {
       return void message.reply({
         embeds: [

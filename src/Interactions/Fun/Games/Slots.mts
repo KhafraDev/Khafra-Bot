@@ -15,13 +15,27 @@ const Dims = {
 } as const
 
 const possible = [
-  '🍎', '🍇', '🍑',
-  '🍓', '🍋', '🍒',
-  '🍌', '🍊', '🍉',
-  '🍎', '🍇', '🍑',
-  '🍓', '🍋', '🍒',
-  '🍌', '🍊', '🍉',
-  'BAR', 'BARBAR', 'BARBARBAR'
+  '🍎',
+  '🍇',
+  '🍑',
+  '🍓',
+  '🍋',
+  '🍒',
+  '🍌',
+  '🍊',
+  '🍉',
+  '🍎',
+  '🍇',
+  '🍑',
+  '🍓',
+  '🍋',
+  '🍒',
+  '🍌',
+  '🍊',
+  '🍉',
+  'BAR',
+  'BARBAR',
+  'BARBARBAR'
 ]
 
 const lazyImages = once(() => {
@@ -43,10 +57,13 @@ export class kSubCommand extends InteractionSubCommand {
   }
 
   handle (): InteractionReplyOptions {
-    const board = chunkSafe(Array.from(
-      { length: 9 },
-      () => possible[Math.floor(Math.random() * possible.length)]
-    ), 3)
+    const board = chunkSafe(
+      Array.from(
+        { length: 9 },
+        () => possible[Math.floor(Math.random() * possible.length)]
+      ),
+      3
+    )
 
     const slots = this.image(board)
 
@@ -113,9 +130,9 @@ export class kSubCommand extends InteractionSubCommand {
         won = true
         break
       } else if (
-        a.includes('BAR') &&
-                b.includes('BAR') &&
-                c.includes('BAR')
+        a.includes('BAR')
+        && b.includes('BAR')
+        && c.includes('BAR')
       ) {
         ctx.fillText('You won!', 400, 315)
         won = true

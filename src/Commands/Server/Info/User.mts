@@ -21,7 +21,8 @@ export class kCommand extends Command {
     super(
       [
         'Get basic info about any user on Discord.',
-        '@Khafra#0001', '165930518360227842'
+        '@Khafra#0001',
+        '165930518360227842'
       ],
       {
         name: 'user',

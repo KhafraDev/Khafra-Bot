@@ -7,10 +7,14 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions, TextChannel 
 
 const getReasonString = (reason: string): string => {
   switch (reason) {
-    case 'banned': return '❌ Subreddit is banned!'
-    case 'private': return '❌ Subreddit is set as private!'
-    case 'quarantined': return '❌ Subreddit is quarantined!'
-    default: return `❌ Subreddit is blocked for reason "${reason}"!`
+    case 'banned':
+      return '❌ Subreddit is banned!'
+    case 'private':
+      return '❌ Subreddit is set as private!'
+    case 'quarantined':
+      return '❌ Subreddit is quarantined!'
+    default:
+      return `❌ Subreddit is blocked for reason "${reason}"!`
   }
 }
 
@@ -31,7 +35,7 @@ export class kInteraction extends Interactions {
           name: 'sort-by',
           description: 'Sort posts by the given modifier.',
           choices: Object.values(SortBy).map(
-            choice => ({ name: choice, value: choice })
+            (choice) => ({ name: choice, value: choice })
           )
         },
         {
@@ -39,7 +43,7 @@ export class kInteraction extends Interactions {
           name: 'timeframe',
           description: 'Timeframe to sort posts by (only if "sort-by" is top).',
           choices: Object.values(Timeframe).map(
-            choice => ({ name: choice, value: choice })
+            (choice) => ({ name: choice, value: choice })
           )
         }
       ]
@@ -49,16 +53,16 @@ export class kInteraction extends Interactions {
   }
 
   async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
-    const subreddit =
-      interaction.options.getString('subreddit')?.toLowerCase() ??
-      'dankmemes'
+    const subreddit = interaction.options.getString('subreddit')?.toLowerCase()
+      ?? 'dankmemes'
     const modifier = interaction.options.getString('sort-by') as typeof SortBy[keyof typeof SortBy] | null
     const timeframe = modifier === 'top'
       ? interaction.options.getString('timeframe') as typeof Timeframe[keyof typeof Timeframe] | null
       : undefined
 
-    if (!cache.has(subreddit))
+    if (!cache.has(subreddit)) {
       await interaction.deferReply()
+    }
 
     const isNSFW = Boolean((interaction.channel as TextChannel | null)?.nsfw)
     const item = await badmeme(

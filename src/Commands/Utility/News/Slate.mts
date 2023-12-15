@@ -2,10 +2,10 @@ import { Command } from '#khaf/Command'
 import { maxDescriptionLength } from '#khaf/utility/constants.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { once } from '#khaf/utility/Memoize.mjs'
+import { hours } from '#khaf/utility/ms.mjs'
 import { RSSReader } from '#khaf/utility/RSS.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
 import { decodeXML } from 'entities'
-import { hours } from '#khaf/utility/ms.mjs'
 
 const settings = {
   rss: 'https://slate.com/feeds/all.rss',
@@ -18,17 +18,17 @@ const settings = {
 } as const
 
 interface ISlate {
-    'slate:id': string
-    title: string
-    link: string
-    pubDate: string
-    guid: string
-    description: string
-    'dc:creator': string
-    'media:content': {
-        'media:credit': string
-        'media:description': string
-    }
+  'slate:id': string
+  title: string
+  link: string
+  pubDate: string
+  guid: string
+  description: string
+  'dc:creator': string
+  'media:content': {
+    'media:credit': string
+    'media:description': string
+  }
 }
 
 const rss = new RSSReader<ISlate>(settings.rss)
@@ -60,7 +60,7 @@ export class kCommand extends Command {
     return Embed.json({
       color: colors.ok,
       description: posts
-        .map((p, i) => `[${i+1}] [${decodeXML(p.title)}](${p.link})`)
+        .map((p, i) => `[${i + 1}] [${decodeXML(p.title)}](${p.link})`)
         .join('\n')
         .slice(0, maxDescriptionLength),
       author: settings.author

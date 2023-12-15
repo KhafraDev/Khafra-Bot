@@ -1,14 +1,8 @@
 import { Interactions } from '#khaf/Interaction'
 import { days } from '#khaf/utility/ms.mjs'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
-import type {
-  APIApplicationCommandOption,
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
+import type { APIApplicationCommandOption, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, GuildMemberManager, InteractionReplyOptions } from 'discord.js'
 import { setTimeout } from 'node:timers/promises'
 
@@ -49,14 +43,14 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(perms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
 
-    const reason =
-      interaction.options.getString('reason') ??
-      `Requested by ${interaction.user.tag} (${interaction.user.id})`
+    const reason = interaction.options.getString('reason')
+      ?? `Requested by ${interaction.user.tag} (${interaction.user.id})`
 
     const users = new Map<string, ReturnType<GuildMemberManager['ban']>>()
 
@@ -83,7 +77,8 @@ export class kInteraction extends Interactions {
         users.set(
           userOption.id,
           interaction.guild.members.ban(userOption, {
-            reason, deleteMessageSeconds
+            reason,
+            deleteMessageSeconds
           })
         )
       }

@@ -3,13 +3,13 @@ import { Buttons, Components, disableAll } from '#khaf/utility/Constants/Compone
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { templates } from '#khaf/utility/Constants/Path.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
+import { Transformer } from '@napi-rs/image'
 import { InteractionType } from 'discord-api-types/v10'
 import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { randomUUID } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
-import { Transformer } from '@napi-rs/image'
 
 type Card =
   | [value: number, suit: typeof suits[number]]
@@ -25,7 +25,7 @@ const suits = ['Hearts', 'Diamond', 'Clubs', 'Spades'] as const
 
 const gameUtil = {
   getTotalCardValue (cards: Card[]) {
-    return cards.reduce((a, [b,, picked]) => {
+    return cards.reduce((a, [b, , picked]) => {
       if (b === 1 || b === 15) {
         if (!picked) {
           return a + 0
@@ -79,16 +79,16 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const id = randomUUID()
-    /* eslint-disable @typescript-eslint/explicit-function-return-type */
-    const turnComponents = (disable = false) => Components.actionRow([
-      Buttons.approve('Hit', `hit-${id}`, { disabled: disable }),
-      Buttons.secondary('Stay', `stay-${id}`, { disabled: disable })
-    ])
-    const pickAceComponents = (disable = false) => Components.actionRow([
-      Buttons.primary('1', `ace-1-${id}`, { disabled: disable }),
-      Buttons.primary('11', `ace-15-${id}`, { disabled: disable })
-    ])
-    /* eslint-enable @typescript-eslint/explicit-function-return-type */
+    const turnComponents = (disable = false) =>
+      Components.actionRow([
+        Buttons.approve('Hit', `hit-${id}`, { disabled: disable }),
+        Buttons.secondary('Stay', `stay-${id}`, { disabled: disable })
+      ])
+    const pickAceComponents = (disable = false) =>
+      Components.actionRow([
+        Buttons.primary('1', `ace-1-${id}`, { disabled: disable }),
+        Buttons.primary('11', `ace-15-${id}`, { disabled: disable })
+      ])
 
     const deck = gameUtil.deckFactory()
     const score: Game = {
@@ -151,9 +151,9 @@ export class kSubCommand extends InteractionSubCommand {
       message: int,
       idle: seconds(30),
       filter: (i) =>
-        interaction.user.id === i.user.id &&
-        int.id === i.message.id &&
-        i.customId.endsWith(id)
+        interaction.user.id === i.user.id
+        && int.id === i.message.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of collector) {

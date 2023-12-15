@@ -1,6 +1,6 @@
 export const colors = {
-  ok: Number.parseInt('ffe449', 16),
-  error: Number.parseInt('ff5c5c', 16)
+  ok: 0xffe449,
+  error: 0xff5c5c
 } as const
 
 export const routes = {

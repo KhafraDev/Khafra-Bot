@@ -12,7 +12,7 @@ export const Stats = {
   messages: 0,
   session: 0,
 
-  get stats(): typeof config {
+  get stats (): typeof config {
     return {
       globalCommandsUsed: config.globalCommandsUsed + Stats.session,
       globalMessages: config.globalMessages + Stats.messages
@@ -26,10 +26,15 @@ export const Stats = {
         globalMessages
       } = Stats.stats
 
-      void writeFile(path, JSON.stringify({
-        globalCommandsUsed: globalCommandsUsed + Stats.session,
-        globalMessages: globalMessages + Stats.messages
-      } satisfies typeof config))
+      void writeFile(
+        path,
+        JSON.stringify(
+          {
+            globalCommandsUsed: globalCommandsUsed + Stats.session,
+            globalMessages: globalMessages + Stats.messages
+          } satisfies typeof config
+        )
+      )
 
       Stats.messages = 0
       Stats.session = 0

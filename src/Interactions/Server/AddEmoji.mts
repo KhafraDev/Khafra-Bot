@@ -2,14 +2,8 @@ import { ImageUtil } from '#khaf/image/ImageUtil.mjs'
 import { Interactions } from '#khaf/Interaction'
 import { bitfieldToString } from '#khaf/utility/Permissions.mjs'
 import { inlineCode } from '@discordjs/builders'
-import type {
-  APIRole,
-  RESTPostAPIApplicationCommandsJSONBody
-} from 'discord-api-types/v10'
-import {
-  ApplicationCommandOptionType,
-  PermissionFlagsBits
-} from 'discord-api-types/v10'
+import type { APIRole, RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord-api-types/v10'
 import type { ChatInputCommandInteraction, InteractionReplyOptions, Role } from 'discord.js'
 
 export class kInteraction extends Interactions {
@@ -78,7 +72,8 @@ export class kInteraction extends Interactions {
       }
     } else if (!interaction.guild?.members.me?.permissions.has(defaultPerms)) {
       return {
-        content: '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
+        content:
+          '❌ I do not have full permissions in this guild, please re-invite with permission to manage channels.',
         ephemeral: true
       }
     }
@@ -115,7 +110,7 @@ export class kInteraction extends Interactions {
       name,
       reason,
       attachment: attachment.proxyURL,
-      roles: roles.map(role => role.id)
+      roles: roles.map((role) => role.id)
     })
 
     return {

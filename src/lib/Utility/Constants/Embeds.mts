@@ -2,12 +2,7 @@ import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { permResolvableToReadable } from '#khaf/utility/Permissions.mjs'
 import type { APIEmbed } from 'discord-api-types/v10'
-import type {
-  Channel,
-  GuildMember,
-  PermissionResolvable,
-  Role
-} from 'discord.js'
+import type { Channel, GuildMember, PermissionResolvable, Role } from 'discord.js'
 import { join } from 'node:path'
 
 const config = createFileWatcher<typeof import('../../../../config.json')>(
@@ -55,8 +50,8 @@ export const Embed = {
     const checkType = userOrRole && 'color' in userOrRole
       ? `The role ${userOrRole}`
       : userOrRole
-        ? `User ${userOrRole}`
-        : 'The user'
+      ? `User ${userOrRole}`
+      : 'The user'
     const amountMissing = perms.length === 1 ? 'this permission' : 'these permissions'
 
     return this.json({

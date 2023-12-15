@@ -6,11 +6,12 @@ import { assets } from '#khaf/utility/Constants/Path.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
-import { ComponentType, TextInputStyle } from 'discord-api-types/v10'
+import { TextInputStyle } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  ComponentType,
+  InteractionCollector,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
   type ModalSubmitInteraction
@@ -41,9 +42,9 @@ const getDistance: CompareCoordsFn<number> = (x, y) => {
   const Δφ = (lat2 - lat1) * Math.PI / 180
   const Δλ = (lon2 - lon1) * Math.PI / 180
 
-  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ / 2) * Math.sin(Δλ / 2)
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2)
+    + Math.cos(φ1) * Math.cos(φ2)
+      * Math.sin(Δλ / 2) * Math.sin(Δλ / 2)
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 
   return (R * c) / 1000 // km
@@ -95,7 +96,7 @@ const replyOptions = async (
     description += `${guess.country} ${distance.toLocaleString()}km ${direction}\n`
   }
 
-  if (guesses.some(guess => guess.code === country.code)) {
+  if (guesses.some((guess) => guess.code === country.code)) {
     content = `You won, the country was ${inlineCode(country.country)}!`
   } else if (guesses.length >= 6) {
     content = `You lost, the country was ${inlineCode(country.country)}.`
@@ -144,7 +145,7 @@ export class kSubCommand extends InteractionSubCommand {
     countries ??= JSON.parse(readFileSync(assets('worldle', 'countries.json'), 'utf-8')) as typeof countries
     codes ??= new Map<string, string>(
       KhafraClient.walk(assets('worldle'), (p) => p.endsWith('.png'))
-        .map(filePath => [basename(filePath, '.png'), filePath])
+        .map((filePath) => [basename(filePath, '.png'), filePath])
     )
 
     // For typescript
@@ -160,9 +161,9 @@ export class kSubCommand extends InteractionSubCommand {
     const c = new InteractionCollector<ButtonInteraction | ModalSubmitInteraction>(interaction.client, {
       idle: minutes(5),
       filter: (i) =>
-        (i.isButton() || i.isModalSubmit()) &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+        (i.isButton() || i.isModalSubmit())
+        && i.user.id === interaction.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [i] of c) {
@@ -208,12 +209,10 @@ export class kSubCommand extends InteractionSubCommand {
           ComponentType.TextInput
         ).value.toLowerCase()
 
-        const isValidGuess = countries.find(country =>
-          country.country.toLowerCase() === guess
-        )
+        const isValidGuess = countries.find((country) => country.country.toLowerCase() === guess)
 
         if (!isValidGuess) {
-          const closest: ({ country: typeof countries[number], distance: number })[] = []
+          const closest: ({ country: typeof countries[number]; distance: number })[] = []
 
           for (const country of countries) {
             const distance = compareTwoStrings(guess, country.country.toLowerCase())
@@ -226,7 +225,7 @@ export class kSubCommand extends InteractionSubCommand {
           const sorted = closest
             .sort((a, b) => b.distance - a.distance)
             .slice(0, 50)
-            .map(country => country.country.country) // ...
+            .map((country) => country.country.country) // ...
             .join('\n')
 
           await i.reply({

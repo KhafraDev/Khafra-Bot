@@ -4,12 +4,12 @@
 import { request } from 'undici'
 
 interface ISimpson {
-    url: string
-    key: string
-    next_item_key: string
-    next_item_url: string
-    transition_url: string
-    permalink: string
+  url: string
+  key: string
+  next_item_key: string
+  next_item_url: string
+  transition_url: string
+  permalink: string
 }
 
 const url = 'https://www.thisfuckeduphomerdoesnotexist.com/'

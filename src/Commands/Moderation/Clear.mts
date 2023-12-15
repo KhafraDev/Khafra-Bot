@@ -15,7 +15,8 @@ export class kCommand extends Command {
     super(
       [
         'Clear messages from a given channel.',
-        '100', '53'
+        '100',
+        '53'
       ],
       {
         name: 'clear',

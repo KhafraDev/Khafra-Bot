@@ -14,11 +14,13 @@ export const spotify = new class Spotify {
    * @see https://developer.spotify.com/documentation/web-api/reference/#/operations/search
    */
   async search (query: string, artist: string | null): Promise<InferType<typeof searchSchema>> {
-    const params = '?' + stringify({
-      type: 'track',
-      limit: '10',
-      q: encodeURIComponent((`track:${query} ` + (artist ? `artist:${artist}` : '')).trim())
-    })
+    const params = `?${
+      stringify({
+        type: 'track',
+        limit: '10',
+        q: encodeURIComponent((`track:${query} ` + (artist ? `artist:${artist}` : '')).trim())
+      })
+    }`
 
     const { body } = await request(new URL(params, routes.search), {
       headers: {
@@ -50,4 +52,4 @@ export const spotify = new class Spotify {
 
     return this.#token
   }
-}
+}()

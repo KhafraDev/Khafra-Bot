@@ -8,9 +8,9 @@ import {
   type RESTPostAPIApplicationCommandsJSONBody
 } from 'discord-api-types/v10'
 import {
-  InteractionCollector,
   type ButtonInteraction,
   type ChatInputCommandInteraction,
+  InteractionCollector,
   type InteractionReplyOptions
 } from 'discord.js'
 import { randomUUID } from 'node:crypto'
@@ -81,9 +81,9 @@ export class kInteraction extends Interactions {
       message: int,
       idle: minutes(2),
       filter: (i) =>
-        i.message.id === int.id &&
-        i.user.id === interaction.user.id &&
-        i.customId.endsWith(id)
+        i.message.id === int.id
+        && i.user.id === interaction.user.id
+        && i.customId.endsWith(id)
     })
 
     for await (const [collected] of collector) {
@@ -103,8 +103,8 @@ export class kInteraction extends Interactions {
     const last = collector.collected.last()
 
     if (
-      collector.collected.size !== 0 &&
-            last?.replied === false
+      collector.collected.size !== 0
+      && last?.replied === false
     ) {
       return void await last.update({
         components: disableAll(int)

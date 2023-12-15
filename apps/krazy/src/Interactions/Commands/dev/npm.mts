@@ -44,7 +44,7 @@ export const command: InteractionCommand = {
 
     const maintainers = dist.maintainers
       .slice(0, 10)
-      .map(u => u.name)
+      .map((u) => u.name)
       .join(', ')
 
     return {
