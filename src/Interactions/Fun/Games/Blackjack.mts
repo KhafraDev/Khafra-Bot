@@ -79,7 +79,6 @@ export class kSubCommand extends InteractionSubCommand {
     }
 
     const id = randomUUID()
-    /* eslint-disable @typescript-eslint/explicit-function-return-type */
     const turnComponents = (disable = false) =>
       Components.actionRow([
         Buttons.approve('Hit', `hit-${id}`, { disabled: disable }),
@@ -90,7 +89,6 @@ export class kSubCommand extends InteractionSubCommand {
         Buttons.primary('1', `ace-1-${id}`, { disabled: disable }),
         Buttons.primary('11', `ace-15-${id}`, { disabled: disable })
       ])
-    /* eslint-enable @typescript-eslint/explicit-function-return-type */
 
     const deck = gameUtil.deckFactory()
     const score: Game = {

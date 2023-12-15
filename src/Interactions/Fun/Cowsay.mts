@@ -24,7 +24,7 @@ const calculateMaxLineLength = (lines: string[]): string[] => {
         f.push(word)
       }
     } else {
-      f[Math.max(f.length - 1, 0)] = (last + ' ' + word).trim()
+      f[Math.max(f.length - 1, 0)] = (`${last} ${word}`).trim()
     }
   }
 

@@ -116,7 +116,7 @@ export class kSubCommand extends InteractionSubCommand {
           : [2, 2, 20, 32]
 
         b = await transformer.crop(...args).png()
-      } else if (type === 'labymod') { // eslint-disable-line @typescript-eslint/no-unnecessary-condition
+      } else if (type === 'labymod') {
         const { width, height } = await transformer.metadata()
 
         b = await transformer.crop(0, 0, width / 2, height).png()

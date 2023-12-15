@@ -35,7 +35,6 @@ const SafeSearchType = {
   OFF: -2
 } as const
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const getOptions = (images: InferType<typeof imageSchema>, page: number, id: string) => {
   const image = images.results[page]
 

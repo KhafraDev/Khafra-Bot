@@ -8,7 +8,7 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import { Buffer } from 'node:buffer'
 import { inspect } from 'node:util'
 
-const AsyncFunction = (async function(): Promise<void> {}.constructor) as new(
+const AsyncFunction = (async (): Promise<void> => {}).constructor as new(
   ...args: unknown[]
 ) => (interaction: ChatInputCommandInteraction) => Promise<unknown>
 

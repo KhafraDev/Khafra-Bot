@@ -69,7 +69,8 @@ export class kCommand extends Command {
     })
 
     // days of messages to clear
-    let clear = 7, usedMs = false
+    let clear = 7
+    let usedMs = false
 
     if (cli.days !== undefined || cli.time !== undefined) {
       const time = Number(cli.days ?? cli.time)

@@ -24,7 +24,6 @@ type RecordFromMatch<T extends string> = {
   [Key in Matches<T>]: string | undefined
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const typedRegexMatchAll = <
   T extends string
 >(pattern: T, flags?: string) => {
@@ -52,7 +51,8 @@ export const parseEmojiList = once(async () => {
   const { body } = await request('https://unicode.org/Public/emoji/15.0/emoji-test.txt')
   const fullList = await body.text()
 
-  let group = '', subgroup = ''
+  let group = ''
+  let subgroup = ''
 
   for (const item of matchFn<EmojiLine | GroupOrSubgroup>(fullList)) {
     const {

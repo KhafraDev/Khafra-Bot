@@ -78,10 +78,10 @@ export class kInteraction extends Interactions {
     // The type needs to be downcasted on purpose. Expanding the
     // type causes the postgres types to error.
     const settings: Record<string, unknown> = {
-      'max_warning_points': interaction.options.getInteger('max-warning-points'),
-      'mod_log_channel': interaction.options.getChannel('mod-logs-channel'),
-      'welcome_channel': interaction.options.getChannel('welcome-channel'),
-      'staffChannel': interaction.options.getChannel('staff-channel')
+      max_warning_points: interaction.options.getInteger('max-warning-points'),
+      mod_log_channel: interaction.options.getChannel('mod-logs-channel'),
+      welcome_channel: interaction.options.getChannel('welcome-channel'),
+      staffChannel: interaction.options.getChannel('staff-channel')
     }
 
     const keys = Object.keys(settings).filter((k) => settings[k] != null)

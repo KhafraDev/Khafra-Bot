@@ -27,7 +27,7 @@ export class kCommand extends Command {
   async init (_message: Message, { content, commandName }: Arguments): Promise<APIEmbed> {
     const command = commandName.toLowerCase()
 
-    if (command === 'pastebin' || content.length == 0) {
+    if (command === 'pastebin' || content.length === 0) {
       return Embed.ok(`
       Here is a list of the sites currently supported by this command:
       ${keys.map((k) => inlineCode(k)).join(', ')}

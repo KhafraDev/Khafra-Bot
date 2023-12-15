@@ -17,8 +17,9 @@ export class kCommand extends Command {
   constructor () {
     super(
       [
-        `By default, Discord threads are allowed to be created by ${italic('anyone')}. `
-        + 'This command disables all 3 default permissions.'
+        `By default, Discord threads are allowed to be created by ${
+          italic('anyone')
+        }. This command disables all 3 default permissions.`
       ],
       {
         name: 'fthreads',

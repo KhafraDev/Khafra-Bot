@@ -31,9 +31,10 @@ jobs:
       - name: Install
         run: |
           npm install
-      - name: Lint
+      - name: Lint and Format
         run: |
           npm run lint
+          npm run format
       - name: Test build
         run: |
           npm run dev:check

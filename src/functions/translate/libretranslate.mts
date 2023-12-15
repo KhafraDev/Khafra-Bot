@@ -9,7 +9,6 @@ interface Options {
   query: string
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const optionSchema = (langs: Set<string>) =>
   s.object({
     to: s.string.optional.default('en').transform(
@@ -49,7 +48,7 @@ export const translate = async (opts: Options): Promise<string | null> => {
     headers: {
       'User-Agent': 'Khafra-Bot (https://github.com/KhafraDev/Khafra-Bot)',
       // https://github.com/LibreTranslate/LibreTranslate/blob/ffc0c1dcda7ffc6870b3767f83624c32b8525609/app/app.py#L180
-      'Origin': 'https://libretranslate.com'
+      Origin: 'https://libretranslate.com'
     }
   })
 

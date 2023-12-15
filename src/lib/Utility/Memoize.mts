@@ -9,7 +9,7 @@ function isThenable (value: unknown): value is Pick<Promise<unknown>, 'then' | '
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny:
 export function once<T extends (...args: any[]) => any> (fn: T, expires?: number): T {
   assert(typeof fn === 'function')
 
@@ -26,7 +26,7 @@ export function once<T extends (...args: any[]) => any> (fn: T, expires?: number
   }
 
   return ((...args: Parameters<T>) => {
-    if (ran) return res // eslint-disable-line @typescript-eslint/no-unsafe-return
+    if (ran) return res
     if (isRunning) return deferred.promise
 
     res = fn(...args) as ReturnType<T> | Promise<ReturnType<T>>
@@ -53,6 +53,6 @@ export function once<T extends (...args: any[]) => any> (fn: T, expires?: number
     }
 
     ran = true
-    return res // eslint-disable-line @typescript-eslint/no-unsafe-return
+    return res
   }) as T
 }

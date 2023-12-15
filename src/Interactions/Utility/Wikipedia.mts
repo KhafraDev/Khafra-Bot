@@ -120,7 +120,7 @@ export class kInteraction extends Interactions {
           const text = article.extract.split(/\n{3,}/g)
           const parts: string[] = []
 
-          for (const part of text.map((p) => splitEvery(p, maxDescriptionLength)).flat()) {
+          for (const part of text.flatMap((p) => splitEvery(p, maxDescriptionLength))) {
             if (parts.length === 0) {
               parts.push(part)
               continue

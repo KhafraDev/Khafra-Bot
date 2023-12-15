@@ -36,7 +36,7 @@ export class Pocket {
     const { body, headers, statusCode } = await request('https://getpocket.com/v3/oauth/request', {
       method: 'POST',
       headers: {
-        'Host': 'getpocket.com',
+        Host: 'getpocket.com',
         'Content-Type': 'application/json; charset=UTF-8',
         'X-Accept': 'application/json'
       },
@@ -62,8 +62,7 @@ export class Pocket {
   get requestAuthorization (): string {
     assert(this.requestToken && this.redirect_uri)
 
-    return 'https://getpocket.com/auth/authorize?request_token='
-      + `${this.requestToken}&redirect_uri=${this.redirect_uri}`
+    return `https://getpocket.com/auth/authorize?request_token=${this.requestToken}&redirect_uri=${this.redirect_uri}`
   }
 
   async getAccessToken (): Promise<string> {
@@ -72,7 +71,7 @@ export class Pocket {
     const { body, headers, statusCode } = await request('https://getpocket.com/v3/oauth/authorize', {
       method: 'POST',
       headers: {
-        'Host': 'getpocket.com',
+        Host: 'getpocket.com',
         'Content-Type': 'application/json; charset=UTF-8',
         'X-Accept': 'application/json'
       },
@@ -99,7 +98,7 @@ export class Pocket {
     const { body, headers, statusCode } = await request('https://getpocket.com/v3/get', {
       method: 'POST',
       headers: {
-        'Host': 'getpocket.com',
+        Host: 'getpocket.com',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -127,7 +126,7 @@ export class Pocket {
     const { body, headers, statusCode } = await request('https://getpocket.com/v3/add', {
       method: 'POST',
       headers: {
-        'Host': 'getpocket.com',
+        Host: 'getpocket.com',
         'Content-Type': 'application/json; charset=UTF-8',
         'X-Accept': 'application/json'
       },

@@ -93,8 +93,9 @@ export class kCommand extends Command {
     await button.editReply({
       embeds: [
         Embed.ok(
-          `${user} has been banned from the guild and ${Number.isNaN(clear) ? '7' : clear}`
-            + ' days worth of messages have been removed.'
+          `${user} has been banned from the guild and ${
+            Number.isNaN(clear) ? '7' : clear
+          } days worth of messages have been removed.`
         )
       ],
       components: disableAll(msg)

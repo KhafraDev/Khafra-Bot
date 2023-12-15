@@ -53,7 +53,7 @@ export class kCommand extends Command {
       color: colors.ok,
       description: formatted,
       author: {
-        name: message.author.username + '\'s latest saves',
+        name: `${message.author.username}'s latest saves`,
         icon_url: message.author.displayAvatarURL(),
         url: 'https://getpocket.com/'
       }

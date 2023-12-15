@@ -88,6 +88,7 @@ export class KhafraClient extends Client {
         const kCommand = new fileImport.value.kCommand()
 
         KhafraClient.Commands.set(kCommand.settings.name.toLowerCase(), kCommand)
+        // biome-ignore lint/complexity/noForEach:
         kCommand.settings.aliases?.forEach((alias) => KhafraClient.Commands.set(alias, kCommand))
       }
     }

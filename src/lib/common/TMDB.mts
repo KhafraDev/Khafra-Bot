@@ -165,7 +165,7 @@ const base = {
   detail_tv: 'https://api.themoviedb.org/3/tv/'
 } as const
 const headers = {
-  'Authorization': `Bearer ${env.TMDB}`,
+  Authorization: `Bearer ${env.TMDB}`,
   'Content-Type': 'application/json;charset=utf-8'
 }
 

@@ -259,8 +259,6 @@ export const formatApplicationPresence = (key: keyof typeof ApplicationFlags): s
   return 'OK TYPESCRIPT'
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 export const createDeferredPromise = <T extends unknown>(): {
   promise: Promise<T>
   resolve: (v: T) => void
@@ -290,8 +288,6 @@ export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
   return Buffer.from(buffer, buffer.byteLength)
 }
 
-// https://github.com/typescript-eslint/typescript-eslint/issues/5449
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
 export const chunkSafe = <T extends unknown>(arr: T[], step: number): T[][] => {
   const res: T[][] = []
   for (let i = 0; i < arr.length; i += step) {
