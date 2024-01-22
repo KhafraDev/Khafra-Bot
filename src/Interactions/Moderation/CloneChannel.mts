@@ -108,9 +108,11 @@ export class kInteraction extends Interactions {
 
     const embed = Embed.json({
       color: colors.ok,
-      description: `✅ Successfully cloned ${channel.name}` + (deleteAfterwards
-        ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
-        : '!')
+      description: `✅ Successfully cloned ${channel.name}${
+        deleteAfterwards
+          ? ` and I am in the process of deleting ${inlineCode(channel.name)} (${channel.id})!`
+          : '!'
+      }`
     })
 
     // The channel being deleted could be the current channel, which would cause

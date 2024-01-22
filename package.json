@@ -38,14 +38,14 @@
     "playwright": "^1.38.0",
     "postgres": "^3.3.2",
     "twemoji-parser": "^14.0.0",
-    "undici": "^5.13.0"
+    "undici": "^6.4.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.4.1",
+    "@biomejs/biome": "^1.5.3",
     "@cloudflare/workers-types": "^3.16.0",
-    "@types/node": "^18.11.10",
+    "@types/node": "^20.11.5",
     "@types/twemoji-parser": "^13.1.1",
-    "dprint": "0.43.2",
+    "dprint": "^0.45.0",
     "husky": "^8.0.3",
     "typescript": "^5.3.3"
   },

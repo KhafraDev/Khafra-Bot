@@ -52,8 +52,9 @@ export class kEvent implements Event {
       return
     }
 
-    const joined = (member.joinedAt ? time(member.joinedAt) : 'N/A')
-      + ` (${member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'})`
+    const joined = `${member.joinedAt ? time(member.joinedAt) : 'N/A'} (${
+      member.joinedAt ? time(member.joinedAt, 'R') : 'N/A'
+    })`
 
     const embed = Embed.json({
       color: colors.ok,

@@ -18,7 +18,7 @@ export const spotify = new class Spotify {
       stringify({
         type: 'track',
         limit: '10',
-        q: encodeURIComponent((`track:${query} ` + (artist ? `artist:${artist}` : '')).trim())
+        q: encodeURIComponent((`track:${query} ${artist ? `artist:${artist}` : ''}`).trim())
       })
     }`
 

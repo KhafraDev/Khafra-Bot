@@ -20,7 +20,7 @@ export class kSubCommand extends InteractionSubCommand {
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const username = interaction.options.getString('username', true)
     const type = interaction.options.getString('type') ?? 'frontfull'
-    let uuid
+    let uuid: ReturnType<typeof usernameToUUID> extends Promise<infer U> ? U : never
 
     try {
       uuid = await usernameToUUID(username)
