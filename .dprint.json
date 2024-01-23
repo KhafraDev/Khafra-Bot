@@ -10,7 +10,7 @@
     "constructor.spaceBeforeParentheses": true,
     "getAccessor.spaceBeforeParentheses": true,
     "functionDeclaration.spaceBeforeParentheses": true,
-    "newLineKind": "lf"
+    "newLineKind": "system"
   },
   "json": {
   },
