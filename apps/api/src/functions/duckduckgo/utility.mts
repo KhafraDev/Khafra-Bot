@@ -7,5 +7,5 @@ export async function getVQD (query: string, ia: string): Promise<string | undef
     }
   })
 
-  return /vqd='(\d+-\d+(?:-\d+)?)'/.exec(await response.text())?.[1]
+  return /vqd=['"](\d+-\d+(?:-\d+)?)['"]/.exec(await response.text())?.[1]
 }
