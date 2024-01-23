@@ -3,7 +3,7 @@ import { cwd } from '#khaf/utility/Constants/Path.mjs'
 import { createFileWatcher } from '#khaf/utility/FileWatcher.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { isRedirect } from '#khaf/utility/util.mjs'
-import { type X2jOptionsOptional, XMLParser, XMLValidator } from 'fast-xml-parser'
+import { type X2jOptions, XMLParser, XMLValidator } from 'fast-xml-parser'
 import { join } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { type Dispatcher, request } from 'undici'
@@ -36,7 +36,7 @@ interface AtomJSON<T> {
 }
 
 export class RSSReader<T> {
-  #options: X2jOptionsOptional = {}
+  #options: X2jOptions = {}
   #parser: XMLParser
   #url: string
 
@@ -47,7 +47,7 @@ export class RSSReader<T> {
    * @param loadFunction function to run after RSS feed has been fetched and parsed.
    * @param options RSS reader options
    */
-  constructor (url: string, options: X2jOptionsOptional = {}) {
+  constructor (url: string, options: X2jOptions = {}) {
     this.#url = url
     this.#parser = new XMLParser(options)
     this.#options = options
