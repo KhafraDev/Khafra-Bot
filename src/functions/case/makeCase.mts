@@ -32,7 +32,7 @@ export const makeCase = async (report: CreateCase): Promise<void> => {
       assert(false, 'unreachable')
   }
 
-  const _case = {
+  const _case: Record<string, unknown> = {
     type,
     targetId: rest.targetId,
     targetAttachments: rest.targetAttachments,
@@ -46,6 +46,6 @@ export const makeCase = async (report: CreateCase): Promise<void> => {
 
   await sql`
     INSERT INTO "kbCases"
-    ${sql(_case as Record<string, unknown>, ...Object.keys(_case))}
+    ${sql(_case, ...Object.keys(_case))}
   `
 }

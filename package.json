@@ -35,7 +35,6 @@
     "entities": "^4.4.0",
     "fast-xml-parser": "^4.0.12",
     "pino": "^8.6.1",
-    "playwright": "^1.38.0",
     "postgres": "^3.3.2",
     "twemoji-parser": "^14.0.0",
     "undici": "^5.13.0"
