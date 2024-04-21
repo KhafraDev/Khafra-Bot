@@ -1,5 +1,5 @@
 import { Command } from '#khaf/Command'
-import { PermissionFlagsBits, type Message } from 'discord.js'
+import { type Message, PermissionFlagsBits } from 'discord.js'
 import { inspect } from 'node:util'
 
 let list: string[]
