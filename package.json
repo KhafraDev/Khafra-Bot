@@ -54,12 +54,13 @@
     "dev:build": "node scripts/build.mjs && npx tsc",
     "prod:build": "npx tsc",
     "dev:run": "node --enable-source-maps --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs --dev",
-    "prod:run": "pm2 start node --name KhafraBot --restart-delay 300000 -- --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs",
+    "prod:run": "node --disable-proto=throw --env-file=.env build/src/index.mjs",
     "lint": "npx @biomejs/biome lint .",
     "lint:fix": "npx @biomejs/biome lint --apply-unsafe .",
     "format": "npx dprint fmt",
     "prepare": "husky install",
-    "test": "npm run dev:build && node --test"
+    "test": "npm run dev:build && node --test",
+    "start": "npm run dev:build && npm run prod:run"
   },
   "repository": {
     "type": "git",

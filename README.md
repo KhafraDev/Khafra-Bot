@@ -5,9 +5,43 @@ A multi-purpose bot that enhances Discord.
 * Khafra-Bot does not sell access to any content or features. ♥️
 
 # Setup
-1. Install dependencies using ``npm i``.
-2. Install pm2 globally using ``npm i -g pm2``.
-3. Create a ``.env`` file in the root directory and fill in the required values.
+1. Install dependencies using `npm i`.
+2. Follow [nodesource's](https://nodesource.com/blog/running-your-node-js-app-with-systemd-part-1/) guide for running Node.js apps with `systemd`.
+3. Create a `.env` file in the root directory and fill in the required values.
+4. Edit the [config](./config.json) file.
+* For multiple bot owners, an array can be used, or a single string.
+5. Install Postgres. For Windows:
+    - Download and setup WSL2
+    - [Installing Postgres with WSL2](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database#install-postgresql)
+6. Create a new user account in Postgres with the same name as specified in the `.env` file.
+    - `sudo -u postgres psql`
+    - `CREATE USER [username] WITH PASSWORD '[password]';`
+    - `ALTER USER [username] WITH SUPERUSER;`
+7. Run the bot:
+    - dev: `npm run dev:build && npm run dev:run`
+    - prod: `npm run dev:build && npm run prod:run`
+
+# Example Config Files:
+
+khafra_bot.service:
+```
+[Unit]
+Description=Khafra Bot
+Documentation=https://example.com
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/var/Khafra-Bot
+ExecStart=/root/.volta/tools/image/node/21.7.3/bin/node --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+.env:
 ```
 HERE_WEATHER: string
 NASA: string
@@ -21,20 +55,6 @@ TOKEN: string
 WORKER_API_BASE: string | undefined
 WORKER_BIBLE_BASE: string | undefined
 ```
-All values are required, as there is no guarantee that there is error handling for missing credentials. 
-
-4. Edit the [config](./config.json) file.
-* For multiple bot owners, an array can be used, or a single string.
-5. Install Postgres. For Windows:
-    - Download and setup WSL2
-    - [Installing Postgres with WSL2](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-database#install-postgresql)
-6. Create a new user account in Postgres with the same name as specified in the `.env` file.
-    - `sudo -u postgres psql`
-    - `CREATE USER [username] WITH PASSWORD '[password]';`
-    - `ALTER USER [username] WITH SUPERUSER;`
-7. Run the bot:
-    - dev: `npm run dev:build && npm run dev:run`
-    - prod: `npm run dev:build && npm run prod:run`
 
 ## Migrating Versions
 
