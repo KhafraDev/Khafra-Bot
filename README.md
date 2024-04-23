@@ -34,7 +34,7 @@ After=network.target
 Type=simple
 User=ubuntu
 WorkingDirectory=/var/Khafra-Bot
-ExecStart=/root/.volta/tools/image/node/21.7.3/bin/node --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs
+ExecStart=/root/.volta/tools/image/node/21.7.3/bin/node --disable-proto=throw --env-file=.env build/src/index.mjs
 Restart=on-failure
 
 [Install]
