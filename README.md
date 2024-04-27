@@ -18,8 +18,8 @@ A multi-purpose bot that enhances Discord.
     - `CREATE USER [username] WITH PASSWORD '[password]';`
     - `ALTER USER [username] WITH SUPERUSER;`
 7. Run the bot:
-    - dev: `npm run dev:build && npm run dev:run`
-    - prod: `npm run dev:build && npm run prod:run`
+    - dev: `node --run dev:build && node --run dev:run`
+    - prod: `node --run dev:build && node --run prod:run`
 
 # Example Config Files:
 

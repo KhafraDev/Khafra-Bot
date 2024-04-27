@@ -49,18 +49,18 @@
     "typescript": "^5.3.3"
   },
   "scripts": {
-    "dev:check": "npx -p typescript tsc",
-    "dev:watch": "npx -p typescript tsc --watch",
-    "dev:build": "node scripts/build.mjs && npx tsc",
-    "prod:build": "npx tsc",
+    "dev:check": "tsc",
+    "dev:watch": "tsc --watch",
+    "dev:build": "node scripts/build.mjs && tsc",
+    "prod:build": "tsc",
     "dev:run": "node --enable-source-maps --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs --dev",
     "prod:run": "node --disable-proto=throw --env-file=.env build/src/index.mjs",
-    "lint": "npx @biomejs/biome lint .",
-    "lint:fix": "npx @biomejs/biome lint --apply-unsafe .",
-    "format": "npx dprint fmt",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --apply-unsafe .",
+    "format": "dprint fmt",
     "prepare": "husky install",
-    "test": "npm run dev:build && node --test",
-    "start": "npm run dev:build && npm run prod:run"
+    "test": "node --run dev:build && node --test",
+    "start": "node --run dev:build && node --run prod:run"
   },
   "repository": {
     "type": "git",
@@ -73,6 +73,6 @@
   },
   "homepage": "https://github.com/khafradev/khafra-bot#readme",
   "engines": {
-    "node": ">=18.3.0"
+    "node": ">=22.0.0"
   }
 }
