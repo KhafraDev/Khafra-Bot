@@ -33,7 +33,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     f ??= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
     g ??= new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
 

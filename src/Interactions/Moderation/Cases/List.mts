@@ -98,12 +98,10 @@ const embedFromCase = (
   return embed
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'case',
-      name: 'view-user'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'case',
+    name: 'view-user'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<void> {

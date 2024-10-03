@@ -27,7 +27,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.memberPermissions?.has(perms)) {
       if (interaction.memberPermissions?.has(PermissionFlagsBits.BanMembers)) {
         return {

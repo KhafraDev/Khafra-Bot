@@ -39,8 +39,8 @@ class Hangman {
   #wrong = 0
   #id: string
 
-  private usedHint = false
-  public lastGuessWasWrong = false
+  #usedHint = false
+  lastGuessWasWrong = false
 
   constructor (word: string, id: string) {
     this.#word = word.toLowerCase()
@@ -111,7 +111,7 @@ class Hangman {
         Components.actionRow([
           Buttons.approve('Guess', `showModal-${this.#id}`),
           Buttons.primary('Hint', `hint-${this.#id}`, {
-            disabled: this.usedHint,
+            disabled: this.#usedHint,
             emoji: { name: '❓' }
           }),
           Buttons.deny('Quit', `quit-${this.#id}`)
@@ -125,14 +125,14 @@ class Hangman {
 
     while (!this.guess(this.#word[Math.floor(Math.random() * this.#word.length)]));
 
-    this.usedHint = true
+    this.#usedHint = true
     this.#wrong++
 
     return this.#guessed[this.#guessed.length - 1]
   }
 
   get canUseHint (): boolean {
-    return this.#wrong + 1 < 6 && !this.usedHint
+    return this.#wrong + 1 < 6 && !this.#usedHint
   }
 
   get lost (): boolean {
@@ -150,12 +150,10 @@ class Hangman {
   }
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'hangman'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'hangman'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

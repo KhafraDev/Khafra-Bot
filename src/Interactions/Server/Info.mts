@@ -45,7 +45,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const option = interaction.options.getMentionable('user-role-or-member', true)
     const createdAt = 'joined_at' in option
       ? new Date(option.joined_at)

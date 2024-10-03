@@ -67,7 +67,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.inCachedGuild()) {
       return {
         content: '❌ The bot is not in the guild, re-invite with the proper perms to change these settings!',

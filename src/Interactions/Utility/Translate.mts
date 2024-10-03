@@ -43,7 +43,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const to = interaction.options.getString('to')?.toLowerCase()
     const from = interaction.options.getString('from')?.toLowerCase()
     const query = interaction.options.getString('text', true)

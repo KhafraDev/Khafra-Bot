@@ -22,11 +22,6 @@ import {
 } from 'discord.js'
 import assert from 'node:assert'
 
-type Interactions =
-  & ChatInputCommandInteraction
-  & MessageContextMenuCommandInteraction
-  & UserContextMenuCommandInteraction
-
 export class kEvent implements Event {
   name = Events.InteractionCreate as const
 
@@ -75,18 +70,19 @@ export class kEvent implements Event {
       return void interaction.reply({
         content: '❌ This command is no longer available, try to refresh your client!'
       })
-    } else if (command.options.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
+    } else if (command.options?.ownerOnly && !Command.isBotOwner(interaction.user.id)) {
       return void interaction.reply({
         content: `${upperCase(command.data.name)} is ${bold('only')} available to the bot owner!`
       })
     }
 
     try {
-      if (command.options.defer) {
+      if (command.options?.defer) {
         await interaction.deferReply()
       }
 
-      const result = await command.init(interaction as Interactions)
+      // @ts-expect-error TODO
+      const result = await command.handle(interaction)
       const param: InteractionReplyOptions = result ?? {}
 
       if (interaction.replied) {

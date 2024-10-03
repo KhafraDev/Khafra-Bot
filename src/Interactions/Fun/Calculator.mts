@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = randomUUID()
     const rows = [
       Components.actionRow([

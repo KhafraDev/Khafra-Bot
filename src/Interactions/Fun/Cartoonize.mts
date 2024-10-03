@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
     })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
     const image = interaction.options.getAttachment('image', true)
 
     if (!ImageUtil.isImage(image.proxyURL, image.contentType)) {

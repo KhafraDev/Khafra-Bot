@@ -90,7 +90,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<void> {
     const id = randomUUID()
     const utc = new Date()
     utc.setUTCHours(0)

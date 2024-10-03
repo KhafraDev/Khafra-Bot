@@ -5,12 +5,10 @@ import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { type ChatInputCommandInteraction, type InteractionReplyOptions, time, userMention } from 'discord.js'
 import assert from 'node:assert'
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'case',
-      name: 'view-id'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'case',
+    name: 'view-id'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

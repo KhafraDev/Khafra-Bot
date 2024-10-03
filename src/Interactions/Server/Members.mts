@@ -13,7 +13,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.inGuild()) {
       return {
         content: 'Come on really? It\'s just you and me... (2)',

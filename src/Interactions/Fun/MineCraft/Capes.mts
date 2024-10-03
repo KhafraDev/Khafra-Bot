@@ -29,12 +29,10 @@ const dashUUID = (uuid: string): string => {
 
 const missingCapeWarning = '⚠️ This account may have more capes than shown! Mojang only shows the active cape! ⚠️'
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'minecraft',
-      name: 'capes'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'minecraft',
+    name: 'capes'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

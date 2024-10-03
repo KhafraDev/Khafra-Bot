@@ -35,7 +35,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const type = interaction.options.getString('type', true)
     if (type === 'tdne_fuhomer') {
       const homer = await thisSimpsonDoesNotExist()

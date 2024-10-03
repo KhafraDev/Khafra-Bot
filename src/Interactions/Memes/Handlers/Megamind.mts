@@ -14,12 +14,10 @@ const lazyImage = once(() => {
   return image
 })
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'memes',
-      name: 'megamind'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'memes',
+    name: 'megamind'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

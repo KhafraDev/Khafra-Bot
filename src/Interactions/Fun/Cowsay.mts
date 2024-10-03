@@ -58,7 +58,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const message = interaction.options.getString('message', true)
     const format = interaction.options.getString('format') ?? 'cowsay.txt'
 

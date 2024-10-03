@@ -12,12 +12,10 @@ const config = createFileWatcher<typeof import('../../../../config.json')>(
   join(cwd, 'config.json')
 )
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'interaction',
-      name: 'delete'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'interaction',
+    name: 'delete'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

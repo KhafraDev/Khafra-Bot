@@ -83,7 +83,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<void | InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<void | InteractionReplyOptions> {
     if (!interaction.inGuild()) {
       return {
         content: 'Cannot use the command here.',

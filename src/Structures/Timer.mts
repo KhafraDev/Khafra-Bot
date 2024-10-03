@@ -8,16 +8,20 @@ interface Options {
 }
 
 export abstract class Timer {
-  public constructor (public options: Options) {}
+  options: Options
 
-  public abstract setInterval (): Promise<unknown>
+  constructor (options: Options) {
+    this.options = options
+  }
+
+  abstract setInterval (): Promise<unknown>
 
   /**
    * Run once a timer has ended for an item. This ***MUST NOT*** throw an error.
    */
-  public abstract action (...items: unknown[]): Promise<void>
+  abstract action (...items: unknown[]): Promise<void>
 
-  public yieldEvery (): {
+  yieldEvery (): {
     runs: number
     [Symbol.asyncIterator](): AsyncGenerator<number, void>
   } {

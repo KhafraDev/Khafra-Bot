@@ -62,12 +62,10 @@ const gameUtil = {
   }
 } as const
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'blackjack'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'blackjack'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

@@ -7,12 +7,10 @@ const birds: string[] = []
 
 const schema = s.string.array
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'animal',
-      name: 'bird'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'animal',
+    name: 'bird'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

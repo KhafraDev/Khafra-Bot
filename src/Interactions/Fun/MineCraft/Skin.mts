@@ -9,12 +9,10 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 import type { AssertionError } from 'node:assert'
 import { request } from 'undici'
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'minecraft',
-      name: 'skin'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'minecraft',
+    name: 'skin'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

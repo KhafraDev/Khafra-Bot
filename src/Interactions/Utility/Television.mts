@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const tv = await searchTV(
       interaction.options.getString('name', true),
       isDM(interaction.channel) || (isText(interaction.channel) && interaction.channel.nsfw)

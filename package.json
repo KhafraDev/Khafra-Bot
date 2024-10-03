@@ -53,7 +53,7 @@
     "dev:watch": "tsc --watch",
     "dev:build": "node scripts/build.mjs && tsc",
     "prod:build": "tsc",
-    "dev:run": "node --enable-source-maps --disable-proto=throw -r ./scripts/env.cjs build/src/index.mjs --dev",
+    "dev:run": "node --enable-source-maps --disable-proto=throw --env-file=.env build/src/index.mjs --dev",
     "prod:run": "node --disable-proto=throw --env-file=.env build/src/index.mjs",
     "lint": "biome lint .",
     "lint:fix": "biome lint --apply-unsafe .",

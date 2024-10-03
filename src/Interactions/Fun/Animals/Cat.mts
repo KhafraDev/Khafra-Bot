@@ -5,12 +5,10 @@ import { request } from 'undici'
 
 const schema = s.object({ file: s.string })
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'animal',
-      name: 'cat'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'animal',
+    name: 'cat'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

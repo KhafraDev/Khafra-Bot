@@ -14,12 +14,10 @@ const schema = s.object({
   source: s.string
 })
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'animal',
-      name: 'bunny'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'animal',
+    name: 'bunny'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

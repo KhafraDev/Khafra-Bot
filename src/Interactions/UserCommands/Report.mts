@@ -14,19 +14,17 @@ const perms = PermissionFlagsBits.SendMessages
   | PermissionFlagsBits.ViewChannel
   | PermissionFlagsBits.EmbedLinks
 
-export class kUserCommand extends InteractionUserCommand {
-  constructor () {
-    const sc: RESTPostAPIApplicationCommandsJSONBody = {
-      name: 'Report Message',
-      type: ApplicationCommandType.Message
-    }
-
-    super(sc, {
-      defer: true
-    })
+export class kUserCommand implements InteractionUserCommand<MessageContextMenuCommandInteraction> {
+  data: RESTPostAPIApplicationCommandsJSONBody = {
+    name: 'Report Message',
+    type: ApplicationCommandType.Message
   }
 
-  async init (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
+  options = {
+    defer: true
+  }
+
+  async handle (interaction: MessageContextMenuCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     const settings = interaction.inGuild() ? await util.guildSettings(interaction.guildId) : null
 
     if (!settings?.staffChannel) {

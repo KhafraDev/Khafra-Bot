@@ -48,12 +48,10 @@ const lazyImages = once(() => {
   return { image, bar }
 })
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'slots'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'slots'
   }
 
   async handle (): Promise<InteractionReplyOptions> {

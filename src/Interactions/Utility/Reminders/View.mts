@@ -50,12 +50,10 @@ const embedFromReminder = (
   return embed
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'reminders',
-      name: 'view'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'reminders',
+    name: 'view'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

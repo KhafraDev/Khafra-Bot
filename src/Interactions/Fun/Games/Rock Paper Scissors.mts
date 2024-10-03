@@ -15,12 +15,10 @@ const emojis = {
   scissors: '✂️'
 } as const
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'rockpaperscissors'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'rockpaperscissors'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

@@ -26,7 +26,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const location = interaction.options.getString('location', true)
     const hour12 = interaction.options.getBoolean('12hour') ?? true
     const tz = await timezone(location)

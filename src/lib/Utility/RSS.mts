@@ -40,8 +40,8 @@ export class RSSReader<T> {
   #parser: XMLParser
   #url: string
 
-  public readonly results = new Set<T>()
-  public save = 10
+  readonly results = new Set<T>()
+  save = 10
 
   /**
    * @param loadFunction function to run after RSS feed has been fetched and parsed.

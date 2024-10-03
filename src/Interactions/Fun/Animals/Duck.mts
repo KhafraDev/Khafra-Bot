@@ -8,12 +8,10 @@ const schema = s.object({
   url: s.string
 })
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'animal',
-      name: 'duck'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'animal',
+    name: 'duck'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

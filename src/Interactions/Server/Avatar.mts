@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const user = interaction.options.getUser('user', true)
     const size = interaction.options.getString('size') ?? '256'
     const format = interaction.options.getString('format') ?? 'webp'

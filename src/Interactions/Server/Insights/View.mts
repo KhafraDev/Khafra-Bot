@@ -11,12 +11,10 @@ interface Insights {
   k_joined: number
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'insights',
-      name: 'view'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'insights',
+    name: 'view'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

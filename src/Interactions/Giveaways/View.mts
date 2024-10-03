@@ -62,12 +62,10 @@ const embedFromGiveaway = async (
   return embed
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'giveaway',
-      name: 'view'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'giveaway',
+    name: 'view'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

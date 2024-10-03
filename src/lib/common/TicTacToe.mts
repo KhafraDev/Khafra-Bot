@@ -6,15 +6,15 @@ export class TicTacToe {
   #turns = 0
   #difficulty: Difficulty
 
-  public board: Turn[] = Array<null>(9).fill(null)
-  public turn: Turn = 'X'
+  board: Turn[] = Array<null>(9).fill(null)
+  turn: Turn = 'X'
 
-  public constructor (difficulty: Difficulty) {
+  constructor (difficulty: Difficulty) {
     this.#difficulty = difficulty
   }
 
   /** Go at a given position (0-8) */
-  public go (at: number): true | Turn {
+  go (at: number): true | Turn {
     if (this.winner()) {
       return this.turn
     }
@@ -31,7 +31,7 @@ export class TicTacToe {
   }
 
   /** Use totally legit AI (copyright 2021, @KhafraDev) to go */
-  public botGo (): true | undefined | Turn {
+  botGo (): true | undefined | Turn {
     const lines = [
       // horizontal
       [0, 1, 2],
@@ -108,16 +108,16 @@ export class TicTacToe {
   }
 
   /** Utility method to change turns */
-  public setTurn (): 'X' | 'O' {
+  setTurn (): 'X' | 'O' {
     return this.turn = this.turn === 'X' ? 'O' : 'X'
   }
 
   /** Detect if the board is full */
-  public isFull (): boolean {
+  isFull (): boolean {
     return this.#turns === 9
   }
 
-  public winner (): boolean {
+  winner (): boolean {
     // winning options
     const lines = [
       [0, 1, 2],

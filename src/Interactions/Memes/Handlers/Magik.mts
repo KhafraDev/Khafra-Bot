@@ -11,12 +11,10 @@ import { request } from 'undici'
 
 const options: ImageURLOptions = { extension: 'png', size: 256 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'memes',
-      name: 'magik'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'memes',
+    name: 'magik'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

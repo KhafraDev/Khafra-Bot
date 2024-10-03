@@ -34,12 +34,10 @@ const makeRows = (turns: Turn[], id: string, ended = false): APIActionRowCompone
   return chunkSafe(rows, 3).map((r) => Components.actionRow(r))
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'tictactoe'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'tictactoe'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<void> {

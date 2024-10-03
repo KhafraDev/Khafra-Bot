@@ -7,12 +7,10 @@ import { formatMs } from '#khaf/utility/util.mjs'
 import { inlineCode, time as formatTime } from '@discordjs/builders'
 import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'discord.js'
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'reminders',
-      name: 'create'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'reminders',
+    name: 'create'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

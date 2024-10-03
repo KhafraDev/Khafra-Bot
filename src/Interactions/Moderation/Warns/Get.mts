@@ -17,12 +17,10 @@ type FromArray<T extends unknown[]> = T extends (infer U)[] ? U : never
 
 type MappedWarning = [FromArray<Total['ids']>, FromArray<Total['dates']>, FromArray<Total['points']>]
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'warns',
-      name: 'get'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'warns',
+    name: 'get'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

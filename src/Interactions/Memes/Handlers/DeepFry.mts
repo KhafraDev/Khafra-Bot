@@ -43,12 +43,10 @@ const contrast = (ctx: SKRSContext2D, width: number, height: number): SKRSContex
 
 const options: ImageURLOptions = { extension: 'jpeg', size: 256 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'memes',
-      name: 'deep-fry'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'memes',
+    name: 'deep-fry'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

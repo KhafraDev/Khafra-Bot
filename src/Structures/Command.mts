@@ -50,13 +50,18 @@ const defaultPerms = [
 
 export abstract class Command implements ICommand {
   #perms = PermissionsBitField.Default
+  help: string[]
+  settings: ICommand['settings']
 
-  public readonly rateLimit: Cooldown
+  readonly rateLimit: Cooldown
 
-  public constructor (
-    public readonly help: string[],
-    public readonly settings: ICommand['settings']
+  constructor (
+    help: string[],
+    settings: ICommand['settings']
   ) {
+    this.help = [...help]
+    this.settings = settings
+
     this.rateLimit = new Cooldown(settings.ratelimit ?? 5)
 
     if (this.settings.permissions) {
@@ -64,17 +69,17 @@ export abstract class Command implements ICommand {
     }
   }
 
-  public abstract init (
+  abstract init (
     message?: Message,
     args?: Arguments,
     settings?: kGuild | Partial<kGuild>
   ): Promise<HandlerReturn> | HandlerReturn
 
-  public get permissions (): bigint[] {
+  get permissions (): bigint[] {
     return [...defaultPerms, this.#perms]
   }
 
-  public static isBotOwner (id: Snowflake): boolean {
+  static isBotOwner (id: Snowflake): boolean {
     return Array.isArray(config.botOwner)
       ? config.botOwner.includes(id)
       : config.botOwner === id

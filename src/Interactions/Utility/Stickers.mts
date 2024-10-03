@@ -39,7 +39,7 @@ export class kInteraction extends Interactions {
     super(sc, { ownerOnly: true, deploy: false })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const stickers = await mw(interaction.client)
 
     const name = interaction.options.getString('name', true).toLowerCase()

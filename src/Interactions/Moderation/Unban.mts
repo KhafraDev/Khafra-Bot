@@ -32,7 +32,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     if (!interaction.memberPermissions?.has(perms)) {
       return {
         content: '❌ You do not have permission to use this command!',

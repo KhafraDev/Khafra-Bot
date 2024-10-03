@@ -125,12 +125,10 @@ const replyOptions = async (
   }
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'games',
-      name: 'worldle'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'games',
+    name: 'worldle'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {

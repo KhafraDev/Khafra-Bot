@@ -5,17 +5,13 @@ import { bold, time } from '@discordjs/builders'
 import { ApplicationCommandType, type RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10'
 import type { InteractionReplyOptions, UserContextMenuCommandInteraction } from 'discord.js'
 
-export class kUserCommand extends InteractionUserCommand {
-  constructor () {
-    const sc: RESTPostAPIApplicationCommandsJSONBody = {
-      name: 'User info',
-      type: ApplicationCommandType.User
-    }
-
-    super(sc)
+export class kUserCommand implements InteractionUserCommand<UserContextMenuCommandInteraction> {
+  data: RESTPostAPIApplicationCommandsJSONBody = {
+    name: 'User info',
+    type: ApplicationCommandType.User
   }
 
-  async init (interaction: UserContextMenuCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: UserContextMenuCommandInteraction): Promise<InteractionReplyOptions> {
     const { targetUser: user, guild } = interaction
 
     const member = await guild?.members.fetch(user.id).catch(() => null) ?? null

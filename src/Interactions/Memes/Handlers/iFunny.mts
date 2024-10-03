@@ -8,12 +8,10 @@ import type { Buffer } from 'node:buffer'
 import { readFile } from 'node:fs/promises'
 import { request } from 'undici'
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'memes',
-      name: 'ifunny'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'memes',
+    name: 'ifunny'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

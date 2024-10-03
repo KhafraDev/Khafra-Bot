@@ -38,7 +38,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const hex = interaction.options.getString('hex-color')
     const isHex = !!hex && /^#+([A-F0-9]{6}|[A-F0-9]{3})$/i.test(hex)
 

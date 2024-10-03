@@ -103,7 +103,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<undefined | InteractionReplyOptions> {
     const emoji = interaction.options.getString('name', true)
     const parsedList: EmojiUnion[] = []
 

@@ -7,12 +7,10 @@ import type { ChatInputCommandInteraction, InteractionReplyOptions } from 'disco
 // https://github.com/nodejs/node/blob/a518e4b871d39f0631beefc79cfa9dd81b82fe9f/test/parallel/test-crypto-randomuuid.js#L20
 const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'reminders',
-      name: 'delete'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'reminders',
+    name: 'delete'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

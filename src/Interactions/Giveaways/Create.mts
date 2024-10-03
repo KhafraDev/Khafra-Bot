@@ -19,12 +19,10 @@ const perms = PermissionFlagsBits.SendMessages
   | PermissionFlagsBits.ViewChannel
   | PermissionFlagsBits.EmbedLinks
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'giveaway',
-      name: 'create'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'giveaway',
+    name: 'create'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

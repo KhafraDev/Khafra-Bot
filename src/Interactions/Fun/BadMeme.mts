@@ -52,7 +52,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const subreddit = interaction.options.getString('subreddit')?.toLowerCase()
       ?? 'dankmemes'
     const modifier = interaction.options.getString('sort-by') as typeof SortBy[keyof typeof SortBy] | null

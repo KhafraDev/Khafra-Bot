@@ -22,7 +22,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const sentence = interaction.options.getString('sentence', true)
     const obama = await talkObamaToMe(sentence.slice(0, 280))
 

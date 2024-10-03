@@ -16,12 +16,10 @@ interface WarnInsert {
   k_ts: Warning['k_ts']
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'warns',
-      name: 'warn'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'warns',
+    name: 'warn'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {

@@ -15,12 +15,10 @@ const TWO_FIFTY_SIX = 256
 const imagePaths = KhafraClient.walk(templates('communism'), (p) => p.endsWith('.png'))
 const imageCache = new Map<string, Image>()
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'memes',
-      name: 'communism'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'memes',
+    name: 'communism'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

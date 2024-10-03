@@ -23,12 +23,10 @@ const Chart = async (o: Record<string, string>): Promise<ArrayBuffer> => {
   return body.arrayBuffer()
 }
 
-export class kSubCommand extends InteractionSubCommand {
-  constructor () {
-    super({
-      references: 'insights',
-      name: 'graph'
-    })
+export class kSubCommand implements InteractionSubCommand {
+  data = {
+    references: 'insights',
+    name: 'graph'
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {

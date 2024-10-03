@@ -40,7 +40,7 @@ export class kInteraction extends Interactions {
     super(sc, { defer: true })
   }
 
-  async init (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
     const search = interaction.options.getString('song', true)
     const artist = interaction.options.getString('artist', true)
 
