@@ -99,11 +99,15 @@ export type InteractionAutocomplete = Dispatcher<
  * @link {https://discord.com/developers/docs/interactions/application-commands#user-commands}
  */
 export interface InteractionUserCommand<
-  I extends UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction = UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction
-> extends Dispatcher<
-  InteractionData,
-  [input: I],
-  Promise<HandlerReturn>
-> {
+  I extends UserContextMenuCommandInteraction | MessageContextMenuCommandInteraction =
+    | UserContextMenuCommandInteraction
+    | MessageContextMenuCommandInteraction
+> extends
+  Dispatcher<
+    InteractionData,
+    [input: I],
+    Promise<HandlerReturn>
+  >
+{
   options?: InteractionOptions
 }
