@@ -285,7 +285,7 @@ export const arrayBufferToBuffer = (buffer: ArrayBuffer): Buffer => {
     return Buffer.from(buffer.buffer, buffer.byteOffset, buffer.byteLength)
   }
 
-  return Buffer.from(buffer, buffer.byteLength)
+  return Buffer.from(buffer)
 }
 
 export const chunkSafe = <T extends unknown>(arr: T[], step: number): T[][] => {
