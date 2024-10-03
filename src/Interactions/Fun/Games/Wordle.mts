@@ -13,7 +13,7 @@ import {
   type APIMessageActionRowComponent,
   TextInputStyle
 } from 'discord-api-types/v10'
-import { ComponentType } from 'discord.js'
+import { ComponentType, Interaction } from 'discord.js'
 import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
@@ -102,6 +102,10 @@ export class kSubCommand implements InteractionSubCommand {
     name: 'wordle'
   }
 
+  onEnd (interaction: Interaction) {
+    games.delete(interaction.user.id)
+  }
+
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (games.has(interaction.user.id)) {
       return {
@@ -109,6 +113,8 @@ export class kSubCommand implements InteractionSubCommand {
         ephemeral: true
       }
     }
+
+    games.add(interaction.user.id)
 
     const highContrast = interaction.options.getBoolean('official-word') ?? false
     const useOfficialWord = interaction.options.getBoolean('official-word') ?? false
@@ -242,7 +248,6 @@ export class kSubCommand implements InteractionSubCommand {
       const embed = (options.embeds as APIEmbed[])[0]
 
       embed.title = game.word.split('').join(' ')
-      games.delete(interaction.user.id)
 
       await interaction.editReply({
         embeds: options.embeds,

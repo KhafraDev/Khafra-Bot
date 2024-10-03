@@ -77,6 +77,8 @@ export class kEvent implements Event {
     }
 
     try {
+      command.onStart?.(interaction)
+
       if (command.options?.defer) {
         await interaction.deferReply()
       }
@@ -115,6 +117,7 @@ export class kEvent implements Event {
       }
     } finally {
       loggerUtility.logInteraction(interaction, command.data.name)
+      command.onEnd?.(interaction)
     }
   }
 

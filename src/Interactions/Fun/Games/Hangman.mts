@@ -7,7 +7,7 @@ import { plural } from '#khaf/utility/String.mjs'
 import { stripIndents } from '#khaf/utility/Template.mjs'
 import { inlineCode } from '@discordjs/builders'
 import { type Snowflake, TextInputStyle } from 'discord-api-types/v10'
-import { ComponentType } from 'discord.js'
+import { ComponentType, Interaction } from 'discord.js'
 import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
@@ -156,6 +156,10 @@ export class kSubCommand implements InteractionSubCommand {
     name: 'hangman'
   }
 
+  onEnd (interaction: Interaction) {
+    currentGames.delete(interaction.user.id)
+  }
+
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (currentGames.has(interaction.user.id)) {
       return {
@@ -288,7 +292,6 @@ export class kSubCommand implements InteractionSubCommand {
       }
     }
 
-    currentGames.delete(interaction.user.id)
     await interaction.editReply({
       components: disableAll(m),
       content: c.endReason === 'idle'

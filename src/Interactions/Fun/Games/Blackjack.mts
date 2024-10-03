@@ -5,7 +5,7 @@ import { templates } from '#khaf/utility/Constants/Path.mjs'
 import { seconds } from '#khaf/utility/ms.mjs'
 import { Transformer } from '@napi-rs/image'
 import { InteractionType } from 'discord-api-types/v10'
-import type { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, Snowflake } from 'discord.js'
+import type { ButtonInteraction, ChatInputCommandInteraction, Interaction, InteractionReplyOptions, Snowflake } from 'discord.js'
 import { InteractionCollector } from 'discord.js'
 import type { Buffer } from 'node:buffer'
 import { randomUUID } from 'node:crypto'
@@ -68,6 +68,10 @@ export class kSubCommand implements InteractionSubCommand {
     name: 'blackjack'
   }
 
+  onEnd (interaction: Interaction) {
+    games.delete(interaction.user.id)
+  }
+
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | undefined> {
     if (games.has(interaction.user.id)) {
       return {
@@ -75,6 +79,8 @@ export class kSubCommand implements InteractionSubCommand {
         ephemeral: true
       }
     }
+
+    games.add(interaction.user.id)
 
     const id = randomUUID()
     const turnComponents = (disable = false) =>

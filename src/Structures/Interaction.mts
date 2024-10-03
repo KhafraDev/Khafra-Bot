@@ -3,6 +3,7 @@ import type { APIApplicationCommand, RESTPostAPIApplicationCommandsJSONBody } fr
 import type {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
+  Interaction,
   MessageContextMenuCommandInteraction,
   UserContextMenuCommandInteraction
 } from 'discord.js'
@@ -28,7 +29,7 @@ type HandlerReturn =
 
 type InteractionData = RESTPostAPIApplicationCommandsJSONBody
 
-export class Interactions {
+export class Interactions implements Hooks<[Interaction]> {
   #id: APIApplicationCommand['id'] | undefined
 
   data: InteractionData
@@ -63,9 +64,10 @@ export class Interactions {
     }
 
     try {
+      option.onStart?.(interaction)
       return await option.handle(interaction)
     } finally {
-      // option.onEnd()
+      option.onEnd?.(interaction)
     }
   }
 
@@ -76,9 +78,17 @@ export class Interactions {
   get id (): string {
     return this.#id!
   }
+
+  onEnd?: (() => void) | undefined
+  onStart?: (() => void) | undefined
 }
 
-interface Dispatcher<Data, Args extends unknown[], Return extends Promise<unknown>> {
+interface Hooks<Args extends unknown[] = unknown[]> {
+  onStart?: (...args: Args) => void
+  onEnd?: (...args: Args) => void
+}
+
+interface Dispatcher<Data, Args extends unknown[], Return extends Promise<unknown>> extends Hooks<[Interaction]> {
   data: Data
   handle: (...args: Args) => Return
 }

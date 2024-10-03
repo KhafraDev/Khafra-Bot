@@ -14,7 +14,8 @@ import {
   InteractionCollector,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
-  type ModalSubmitInteraction
+  type ModalSubmitInteraction,
+  Interaction
 } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
@@ -129,6 +130,10 @@ export class kSubCommand implements InteractionSubCommand {
   data = {
     references: 'games',
     name: 'worldle'
+  }
+
+  onEnd (interaction: Interaction) {
+    currentGames.delete(interaction.user.id)
   }
 
   async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions | void> {
@@ -273,8 +278,6 @@ export class kSubCommand implements InteractionSubCommand {
         await interaction.editReply(json)
       }
     }
-
-    currentGames.delete(interaction.user.id)
 
     if (c.endReason === 'idle') {
       await interaction.editReply({
