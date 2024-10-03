@@ -11,11 +11,11 @@ import {
   type ButtonInteraction,
   type ChatInputCommandInteraction,
   ComponentType,
+  Interaction,
   InteractionCollector,
   type InteractionEditReplyOptions,
   type InteractionReplyOptions,
-  type ModalSubmitInteraction,
-  Interaction
+  type ModalSubmitInteraction
 } from 'discord.js'
 import assert from 'node:assert'
 import { randomUUID } from 'node:crypto'
