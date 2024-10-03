@@ -22,7 +22,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  handle (interaction: ChatInputCommandInteraction): InteractionReplyOptions {
+  async handle (interaction: ChatInputCommandInteraction): Promise<InteractionReplyOptions> {
     const buffer = this.image(interaction)
 
     return {

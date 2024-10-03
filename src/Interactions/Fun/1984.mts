@@ -28,7 +28,7 @@ export class kInteraction extends Interactions {
     super(sc)
   }
 
-  init (): InteractionReplyOptions {
+  async init (): Promise<InteractionReplyOptions> {
     return {
       content: codeBlock(boomer1984())
     }

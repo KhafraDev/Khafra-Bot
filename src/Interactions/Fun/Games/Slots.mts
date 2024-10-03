@@ -56,7 +56,7 @@ export class kSubCommand extends InteractionSubCommand {
     })
   }
 
-  handle (): InteractionReplyOptions {
+  async handle (): Promise<InteractionReplyOptions> {
     const board = chunkSafe(
       Array.from(
         { length: 9 },

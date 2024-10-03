@@ -36,12 +36,13 @@ export class Interactions {
     public options: InteractionOptions = {}
   ) {}
 
-  init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn {
+  async init (interaction: ChatInputCommandInteraction): Promise<HandlerReturn> {
     const subcommand = interaction.options.getSubcommandGroup(false)
       ?? interaction.options.getSubcommand()
     const subcommandName = `${this.data.name}-${subcommand}`
+    const option = KhafraClient.Interactions.Subcommands.get(subcommandName)
 
-    if (!KhafraClient.Interactions.Subcommands.has(subcommandName)) {
+    if (!option) {
       return {
         content: '❌ This option has not been implemented yet!'
       }
@@ -55,9 +56,11 @@ export class Interactions {
       }
     }
 
-    const option = KhafraClient.Interactions.Subcommands.get(subcommandName)!
-
-    return option.handle(interaction)
+    try {
+      return await option.handle(interaction)
+    } finally {
+      // option.onEnd()
+    }
   }
 
   public set id (body: APIApplicationCommand['id']) {
@@ -76,13 +79,13 @@ export abstract class InteractionSubCommand {
     return KhafraClient.Interactions.Commands.get(this.data.references)!
   }
 
-  abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn> | HandlerReturn
+  abstract handle (arg: ChatInputCommandInteraction): Promise<HandlerReturn>
 }
 
 export abstract class InteractionAutocomplete {
   public constructor (public data: SubcommandOptions) {}
 
-  abstract handle (arg: AutocompleteInteraction): Promise<void> | void
+  abstract handle (arg: AutocompleteInteraction): Promise<void>
 }
 
 /**
