@@ -19,7 +19,7 @@ export class Queue {
   }
 
   fetchToken () {
-    if (this.#tokenTask || !this.#isExpired()) {
+    if (this.#tokenTask && !this.#isExpired()) {
       return this.#tokenTask?.promise ?? Promise.reject(new Error('Token not fetched.'))
     }
 
