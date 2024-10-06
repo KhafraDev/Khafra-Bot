@@ -1,10 +1,11 @@
+import { Queue } from '#khaf/functions/reddit/queue.mjs'
 import { apiSchema, type Reddit } from '#khaf/functions/reddit/schema.mjs'
 import { minutes } from '#khaf/utility/ms.mjs'
 import { decodeXML } from 'entities'
+import { get } from 'node:https'
 import { platform } from 'node:os'
 import { setInterval } from 'node:timers'
 import { URLSearchParams } from 'node:url'
-import { request } from 'undici'
 
 export { apiSchema, type Reddit }
 
@@ -16,6 +17,8 @@ export interface IBadMemeCache {
 export const cache = new Map<string, Set<IBadMemeCache>>()
 const lastUsed = new Map<string, number>()
 const after = new Map<string, string>()
+
+let queue: Queue
 
 const getItemRespectNSFW = (
   subreddit: string,
@@ -49,6 +52,10 @@ export const badmeme = async (
   | null
 > => {
   subreddit = subreddit.toLowerCase()
+  queue ??= new Queue(
+    process.env.REDDIT_CLIENT_ID,
+    process.env.REDDIT_CLIENT_SECRET
+  )
 
   if (cache.has(subreddit)) {
     return getItemRespectNSFW(subreddit, nsfw)
@@ -66,24 +73,33 @@ export const badmeme = async (
 
   // https://github.com/reddit-archive/reddit/wiki/API#rules
   // https://www.reddit.com/dev/api#GET_new
-  const { body, statusCode } = await request(
-    `https://old.reddit.com/r/${subreddit}/${modifier}.json?${o}`,
-    {
+  const { access_token, token_type } = await queue.fetchToken()
+
+  const response = await new Promise<Response>((resolve, reject) => {
+    get(`https://oauth.reddit.com/r/${subreddit}/${modifier}.json?${o}`, {
       headers: {
-        'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy, https://github.com/KhafraDev/Khafra-Bot)`
+        'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy)`,
+        authorization: `${token_type} ${access_token}`
       }
-    }
-  )
+    }, (res) =>
+      resolve(
+        new Response(res, {
+          headers: res.headers as Record<string, string>,
+          status: res.statusCode,
+          statusText: res.statusMessage
+        })
+      )).on('error', reject)
+  })
 
   // When a subreddit doesn't exist, reddit automatically redirects to a search API URL.
-  if (statusCode !== 200) {
+  if (response.status !== 200) {
     return {
-      message: `Received status ${statusCode} when looking up posts for ${subreddit}.`,
-      error: statusCode
+      message: `Received status ${response.status} when looking up posts for ${subreddit}.`,
+      error: response.status
     }
   }
 
-  const j: unknown = await body.json().catch(() => null)
+  const j: unknown = await response.json().catch(() => null)
 
   if (!apiSchema.is(j)) {
     return {

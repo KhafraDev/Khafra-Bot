@@ -203,3 +203,10 @@ const errorSchema = s.object({
 export const apiSchema = s.union(listingSchema, errorSchema)
 
 export type Reddit = InferType<typeof listingSchema> | InferType<typeof errorSchema>
+
+export const accessTokenSchema = s.object({
+  access_token: s.string,
+  token_type: s.string,
+  expires_in: s.number,
+  scope: s.string
+})

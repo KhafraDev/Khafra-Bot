@@ -54,6 +54,8 @@ TMDB: string
 TOKEN: string
 WORKER_API_BASE: string | undefined
 WORKER_BIBLE_BASE: string | undefined
+REDDIT_CLIENT_ID: string # this is needed for BadMeme
+REDDIT_CLIENT_SECRET: string # this is needed for BadMeme
 ```
 
 ## Migrating Versions
