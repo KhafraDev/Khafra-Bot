@@ -67,7 +67,7 @@ export const badmeme = async (
   // https://github.com/reddit-archive/reddit/wiki/API#rules
   // https://www.reddit.com/dev/api#GET_new
   const { body, statusCode } = await request(
-    `https://www.reddit.com/r/${subreddit}/${modifier}.json?${o}`,
+    `https://old.reddit.com/r/${subreddit}/${modifier}.json?${o}`,
     {
       headers: {
         'user-agent': `${platform()}:KhafraBot:v1.0.0 (by /u/worthy, https://github.com/KhafraDev/Khafra-Bot)`
