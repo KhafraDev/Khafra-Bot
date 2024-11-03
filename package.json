@@ -37,7 +37,8 @@
     "pino": "^8.6.1",
     "postgres": "^3.3.2",
     "twemoji-parser": "^14.0.0",
-    "undici": "^5.13.0"
+    "undici": "^6.20.1",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@biomejs/biome": "1.4.1",

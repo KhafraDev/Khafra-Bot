@@ -3,18 +3,24 @@ import { Command } from '#khaf/Command'
 import { apiSchema } from '#khaf/functions/reddit/schema.mjs'
 import { colors, Embed } from '#khaf/utility/Constants/Embeds.mjs'
 import { inlineCode } from '@discordjs/builders'
-import { s } from '@sapphire/shapeshift'
 import type { APIEmbed } from 'discord-api-types/v10'
 import type { Message } from 'discord.js'
 import { URL } from 'node:url'
 import { request } from 'undici'
+import { z } from 'zod'
 
 const PER_COIN = 1.99 / 500
 const isArray = (arr: unknown): arr is unknown[] => Array.isArray(arr)
-const schema = s.string.url({
-  allowedDomains: ['www.reddit.com', 'reddit.com', 'old.reddit.com'],
-  allowedProtocols: ['http:', 'https:']
-}).transform((value) => {
+const schema = z.string().url().refine(
+  (value) => {
+    const url = new URL(value)
+    return [
+      'www.reddit.com',
+      'reddit.com',
+      'old.reddit.com'
+    ].includes(url.hostname)
+  }
+).transform((value) => {
   const url = new URL(value)
   url.search = ''
   return url
@@ -38,11 +44,11 @@ export class kCommand extends Command {
   }
 
   async init (_message: Message, { args }: Arguments): Promise<APIEmbed> {
-    if (!schema.is(args[0])) {
+    const { data: url, success } = schema.safeParse(args[0])
+
+    if (!success) {
       return Embed.error('Invalid Reddit post!')
     }
-
-    const url = schema.parse(args[0])
 
     if (
       // "Names cannot have spaces, must be between 3-21 characters, and underscores are allowed."
@@ -52,15 +58,15 @@ export class kCommand extends Command {
     }
 
     const { body } = await request(`${url.href.replace(/.json$/, '')}.json`)
-    const json: unknown = await body.json().catch(() => null)
+    const { success: apiSuccess, data: json } = apiSchema.safeParse(await body.json().catch(() => null))
 
-    if (json === null || !isArray(json) || !apiSchema.is(json[0])) {
+    if (!apiSuccess || !isArray(json)) {
       return Embed.error('Received an invalid response.')
-    } else if ('error' in json[0]) {
+    } else if ('error' in json) {
       return Embed.error('Error occurred.')
     }
 
-    const post = json[0].data.children[0].data
+    const post = json.data.children[0].data
     const coins = post.all_awardings.reduce(
       (p, c) => p + c.coin_price * c.count,
       0
